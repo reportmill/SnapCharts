@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView PrefWidth="275">
+  <RowView Padding="10,5,5,5" LeanX="CENTER" Spacing="10">
+    <Label PrefWidth="60" Align="CENTER_RIGHT" text="Rendering:" />
+    <ComboBox Name="RenderingComboBox" MinWidth="80" MinHeight="24" />
+  </RowView>
+  <RowView Align="CENTER" Padding="5" GrowWidth="true" Spacing="10">
+    <View Name="Trackball" MinWidth="80" MinHeight="80" LeanX="CENTER" Class="snap.gfx3d.Trackball" />
+    <ColView Spacing="8">
+      <RowView>
+        <Label PrefWidth="40" Padding="0" text="Yaw:" />
+        <Spinner Name="YawSpinner" PrefWidth="60" Align="CENTER" Value="0" />
+      </RowView>
+      <RowView>
+        <Label PrefWidth="40" text="Pitch:" />
+        <Spinner Name="PitchSpinner" PrefWidth="60" Align="CENTER" Value="0" />
+      </RowView>
+      <RowView>
+        <Label PrefWidth="40" text="Roll:" />
+        <Spinner Name="RollSpinner" PrefWidth="60" Align="CENTER" Value="0" />
+      </RowView>
+    </ColView>
+  </RowView>
+  <TitleView Margin="5" Padding="8" GrowWidth="true" Text="Depth">
+    <RowView Padding="0,4,0,0" Spacing="5">
+      <Slider Name="DepthSlider" PrefWidth="180" GrowWidth="true" Min="10" Max="200" />
+      <TextField Name="DepthText" PrefWidth="50" PrefHeight="20" Align="CENTER" ColCount="12">
+        <LineBorder Color="#c0c0c0" />
+      </TextField>
+    </RowView>
+  </TitleView>
+  <TitleView Margin="5" Padding="8" GrowWidth="true" Text="Focal Length (inches from screen to eye)">
+    <RowView Padding="0,4,0,0" Spacing="5">
+      <Slider Name="FOVSlider" PrefWidth="180" GrowWidth="true" Min="6" Max="60" />
+      <TextField Name="FOVText" PrefWidth="50" PrefHeight="20" Align="CENTER" ColCount="12">
+        <LineBorder Color="#c0c0c0" />
+      </TextField>
+    </RowView>
+  </TitleView>
+</ColView>
