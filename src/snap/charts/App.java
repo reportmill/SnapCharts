@@ -21,10 +21,11 @@ public static void main(String args[])
     //} else
     
     ViewUtils.runLater(() -> {
-        ChartPane chartPane = new ChartPane(); chartPane.setWindowVisible(true);
-        //String jsonText = WebURL.getURL(App.class, "Sample.json").getText();
+        ChartPane chartPane = new ChartPane();
+        chartPane.setWindowVisible(true);
+        String jsonText = WebURL.getURL(App.class, "Sample.json").getText();
         //String jsonText = WebURL.getURL("/Temp/ChartSamples/ColBasic.json").getText();
-        String jsonText = WebURL.getURL("/Temp/ChartSamples/ColBasic3D.json").getText();
+        //String jsonText = WebURL.getURL("/Users/jeff/dev/ChartSamples/ColBasic3D.json").getText();
         //String jsonText = WebURL.getURL("/Temp/ChartSamples/PieBasic.json").getText();
         //String jsonText = WebURL.getURL("/Temp/ChartSamples/ThriveLeads.json").getText();
         chartPane._chartView.loadFromString(jsonText);

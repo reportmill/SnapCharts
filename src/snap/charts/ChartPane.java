@@ -81,13 +81,16 @@ protected View createUI()
 {
     // Create OptionButton
     _optionButton = new Button(" Max "); _optionButton.setName("OptionButton");
-    _optionButton.setManaged(false); _optionButton.setLean(Pos.TOP_RIGHT); _optionButton.setMargin(4,5,0,0);
+    _optionButton.setManaged(false);
+    _optionButton.setLean(Pos.TOP_RIGHT);
+    _optionButton.setMargin(4,5,0,0);
     _optionButton.setSizeToPrefSize();
     
     // Create ChartView
     _chartView = new ChartView();
-    _chartBox = new BoxView(_chartView, true, true); _chartBox.setGrowHeight(true);
-    _chartBox.setContent(_optionButton);
+    _chartBox = new BoxView(_chartView, true, true);
+    _chartBox.setGrowHeight(true);
+    ViewUtils.addChild(_chartBox, _optionButton);
     
     // Create TextView
     _textView = new TextView();
