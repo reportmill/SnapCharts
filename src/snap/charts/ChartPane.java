@@ -1,4 +1,7 @@
 package snap.charts;
+import snap.geom.Pos;
+import snap.geom.Rect;
+import snap.geom.Size;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;

@@ -3,6 +3,10 @@
  */
 package snap.gfx3d;
 import java.util.*;
+
+import snap.geom.Path;
+import snap.geom.PathIter;
+import snap.geom.Point;
 import snap.gfx.*;
 
 /**
@@ -11,7 +15,7 @@ import snap.gfx.*;
 public class PathBox3D extends Shape3D {
     
     // The path
-    Path          _path;
+    Path _path;
     
     // The min/max depth
     double        _z1, _z2;

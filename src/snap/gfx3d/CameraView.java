@@ -1,4 +1,5 @@
 package snap.gfx3d;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snap.util.SnapUtils;

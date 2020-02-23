@@ -1,7 +1,7 @@
 package snap.charts;
 import java.util.*;
 import snap.gfx.Color;
-import snap.gfx.VPos;
+import snap.geom.VPos;
 import snap.util.*;
 
 /**

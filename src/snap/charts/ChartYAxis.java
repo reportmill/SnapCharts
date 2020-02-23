@@ -1,4 +1,6 @@
 package snap.charts;
+import snap.geom.Insets;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
 

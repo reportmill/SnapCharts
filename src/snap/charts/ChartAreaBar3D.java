@@ -1,4 +1,6 @@
 package snap.charts;
+import snap.geom.Path;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.gfx3d.*;
 
@@ -20,7 +22,7 @@ public class ChartAreaBar3D extends ChartAreaBar {
     int             _layerCount = 1;
     
     // Shapes for grid
-    Path              _grid = new Path();
+    Path _grid = new Path();
     
     // Shapes for the minor grid
     Path              _gridMinor = new Path();

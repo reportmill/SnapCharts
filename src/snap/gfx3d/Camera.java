@@ -3,6 +3,10 @@
  */
 package snap.gfx3d;
 import java.util.*;
+
+import snap.geom.Point;
+import snap.geom.Rect;
+import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.ViewEvent;
@@ -64,7 +68,7 @@ public class Camera {
     boolean        _rebuildPaths;
     
     // Mouse drag variable - mouse drag last point
-    Point          _pointLast;
+    Point _pointLast;
     
     // used for shift-drag to indicate which axis to constrain rotation to
     int            _dragConstraint;

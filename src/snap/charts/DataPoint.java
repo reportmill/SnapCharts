@@ -1,6 +1,6 @@
 package snap.charts;
 import java.util.List;
-import snap.gfx.Point;
+import snap.geom.Point;
 import snap.util.SnapUtils;
 
 /**

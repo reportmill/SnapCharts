@@ -1,5 +1,7 @@
 package snap.charts;
 import java.text.DecimalFormat;
+
+import snap.geom.*;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -53,7 +55,7 @@ public class ChartView extends ColView {
     Color              _colors[] = COLORS;
     
     // The series shapes
-    Shape              _markerShapes[];
+    Shape _markerShapes[];
     
     // The selected and targeted (under mouse) data point
     DataPoint          _selPoint, _targPoint;

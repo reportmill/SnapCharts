@@ -1,5 +1,9 @@
 package snap.charts;
 import java.util.List;
+
+import snap.geom.Rect;
+import snap.geom.Shape;
+import snap.geom.Transform;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.*;

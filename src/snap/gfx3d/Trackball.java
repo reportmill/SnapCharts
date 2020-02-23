@@ -3,6 +3,8 @@
  */
 package snap.gfx3d;
 import java.util.Random;
+
+import snap.geom.Point;
 import snap.gfx.*;
 import snap.view.*;
 

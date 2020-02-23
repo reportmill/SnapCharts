@@ -1,5 +1,7 @@
 package snap.charts;
 import java.text.DecimalFormat;
+
+import snap.geom.*;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.ViewEvent;
@@ -335,7 +337,7 @@ private class Wedge {
     
     // Cached Arc and label point
     Arc    _arc; Point  _textPoint; double _tw, _th;
-    Shape  _labelLine;
+    Shape _labelLine;
     
     /** Returns the basic arc. */
     public Arc getArc()
