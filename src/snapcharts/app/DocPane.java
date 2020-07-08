@@ -49,7 +49,7 @@ public class DocPane extends ViewOwner {
     protected void initUI()
     {
         SplitView splitView = getView("SplitView", SplitView.class);
-        splitView.setDividerSpan(4);
+        splitView.setDividerSpan(5);
         splitView.addItem(_editorPane.getUI());
 
         // Set Toolbar images

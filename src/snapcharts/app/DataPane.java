@@ -97,8 +97,12 @@ void configureCell(ListCell aCell)
     int pointCount = dset.getPointCount();
     
     // Get series count, point count, row and column
-    int row = aCell.getRow(); if(row>=seriesCount) return;
-    int col = aCell.getCol(); if(col>pointCount) return;
+    int row = aCell.getRow();
+    int col = aCell.getCol();
+    if (row>=seriesCount || col>pointCount) {
+        aCell.setText("");
+        return;
+    }
     
     // Get DataSet and cell series
     DataSeries series = dset.getSeries(row);

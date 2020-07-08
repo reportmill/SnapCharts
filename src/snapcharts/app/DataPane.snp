@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="10,5,5,5" Spacing="4">
   <RowView Margin="4" GrowWidth="true" Spacing="4">
+    <Label text="Data:    " />
     <Label text="Series:" />
     <Spinner Name="SeriesSpinner" PrefWidth="54" PrefHeight="22" Align="CENTER" />
     <Label Margin="0,0,0,8" text="Points:" />

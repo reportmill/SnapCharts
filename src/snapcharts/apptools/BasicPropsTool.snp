@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4" Spacing="4" FillWidth="true">
+  <RowView Padding="4" Spacing="4">
+    <Label text="Chart Title:" />
+    <TextField Name="TitleText" GrowWidth="true" ColCount="12">
+      <LineBorder Color="#c0c0c0" />
+    </TextField>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Chart Subtitle:" />
+    <TextField Name="SubtitleText" GrowWidth="true" ColCount="12">
+      <LineBorder Color="#c0c0c0" />
+    </TextField>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Y-Axis Title:" />
+    <TextField Name="YAxisTitleText" GrowWidth="true" ColCount="12">
+      <LineBorder Color="#c0c0c0" />
+    </TextField>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="PartialYAxisCheckBox" text="Show Partial Y Axis" />
+  </RowView>
+</ColView>
