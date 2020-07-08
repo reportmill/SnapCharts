@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="10,5,5,5" Spacing="4">
+  <RowView Margin="4" GrowWidth="true" Spacing="4">
+    <Label text="Series:" />
+    <Spinner Name="SeriesSpinner" PrefWidth="54" PrefHeight="22" Align="CENTER" />
+    <Label Margin="0,0,0,8" text="Points:" />
+    <Spinner Name="PointSpinner" PrefWidth="54" PrefHeight="22" Align="CENTER" />
+    <Button Name="ClearButton" Padding="2" LeanX="RIGHT" text="Clear" />
+  </RowView>
+  <RowView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
+    <TableView Name="SheetView" MinWidth="380" MinHeight="80" GrowWidth="true" GrowHeight="true" Class="snapcharts.app.SheetView" />
+  </RowView>
+</ColView>
