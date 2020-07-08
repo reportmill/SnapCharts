@@ -68,8 +68,5 @@ public class DocPane extends ViewOwner {
     protected void respondUI(ViewEvent anEvent)
     {
         System.out.println("DocPane.respondUI: " + anEvent);
-        getUI().setBorder(Color.RED, 1);
-        getUI(ColView.class).getChild(1).setBorder(Color.BLUE, 1);
-        _editorPane.getUI().setBorder(Color.GREEN, 1);
     }
 }

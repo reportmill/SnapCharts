@@ -4,10 +4,9 @@
   <Label Name="TitleLabel" PrefWidth="275" PrefHeight="24" Align="CENTER" text="Inspector">
     <font name="Arial" size="14" />
   </Label>
-  <RowView PrefWidth="269" Align="CENTER" Padding="4,8,3,8">
-    <ToggleButton Name="GalleryButton" PrefWidth="50" PrefHeight="42" GrowWidth="true" ToolTip="View Gallery" image="Gallery.png" Position="CENTER_LEFT" Selected="true" Group="InspTG" />
-    <ToggleButton Name="ViewGeneralButton" PrefWidth="50" PrefHeight="42" GrowWidth="true" ToolTip="View Inspector" image="ViewGeneral.png" Position="CENTER" Group="InspTG" />
-    <ToggleButton Name="ViewStyleButton" PrefWidth="50" PrefHeight="42" GrowWidth="true" ToolTip="View Style Inspector" image="ViewFills.png" Position="CENTER_RIGHT" Group="InspTG" />
+  <RowView Padding="0,8,3,8" >
+    <font name="Arial" size="12" />
+    <TextField Name="SearchTextField" Margin="4,12,4,12" GrowWidth="true" PrefHeight="28" PromptText="Search" Radius="10"/>
   </RowView>
   <ScrollView Name="ContentBox" GrowHeight="true">
     <ColView Name="InspColView" FillWidth="true" />
