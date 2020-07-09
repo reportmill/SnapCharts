@@ -1,10 +1,11 @@
 package snapcharts.app;
-import java.util.List;
 
 import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.View;
+import snapcharts.model.AxisX;
+import snapcharts.model.Chart;
 
 /**
  * A view to paint Chart X Axis.
@@ -13,16 +14,9 @@ public class ChartXAxis extends View {
 
     // The ChartArea
     ChartArea         _chartArea;
-    
-    // The categories
-    List <String>     _categories;
-    
-    // The x/y offset of labels
-    double            _labelsX, _labelsY = 8;
-    
-    // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
-    double            _tickLength = 10;
 
+    private AxisX  _axis;
+    
     // Constants
     static Color           AXIS_LINES_COLOR = Color.LIGHTGRAY;
     static Color           AXIS_LABELS_COLOR = Color.GRAY;
@@ -36,61 +30,21 @@ public ChartXAxis()
 }
 
 /**
- * Returns the categories.
+ * Returns the Chart.
  */
-public List <String> getCategories()  { return _categories; }
-
-/**
- * Sets the categories.
- */
-public void setCategories(List <String> theStrings)
+public Chart getChart()
 {
-    _categories = theStrings;
+    return _chartArea.getChart();
 }
 
 /**
- * Returns the x of labels.
+ * Returns the axis.
  */
-public double getLabelsX()  { return _labelsX; }
-
-/**
- * Sets the x of labels.
- */
-public void setLabelsX(double aValue)  { _labelsX = aValue; }
-
-/**
- * Returns the y offset of labels.
- */
-public double getLabelsY()  { return _labelsY; }
-
-/**
- * Returns the y offset of labels.
- */
-public void setLabelsY(double aValue)  { _labelsY = aValue; }
-
-/**
- * Returns the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
- */
-public double getTickLength()  { return _tickLength; }
-
-/**
- * Sets the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
- */
-public void setTickLength(double aValue)  { _tickLength = aValue; }
-
-/**
- * Returns the label string at given index.
- */
-public String getLabel(int anIndex)
+public AxisX getAxis()
 {
-    // If categories exist, return the category string at index
-    if(_categories!=null && anIndex<_categories.size())
-        return _categories.get(anIndex);
-        
-    // Otherwise, return string for start value and index
-    DataSet dset = _chartArea.getDataSet();
-    int val = dset.getSeriesStart() + anIndex;
-    return String.valueOf(val);
+    if (_axis!=null) return _axis;
+    _axis = getChart().getAxisX();
+    return _axis;
 }
 
 /**
@@ -111,26 +65,31 @@ protected void paintAxis(Painter aPntr, double aX, double aW, double aH)
     if(_chartArea instanceof ChartAreaBar) { paintAxisBar(aPntr, 0, getWidth(), aH); return; }
     
     // Set font, color
-    Font font = getFont(); aPntr.setFont(font);
-    double labelsYOff = getLabelsY(), fontHeight = Math.ceil(font.getAscent());
+    Font font = getFont();
+    aPntr.setFont(font);
+
+    //
+    AxisX axis = getAxis();
+    double labelsYOff = axis.getLabelsY();
+    double fontHeight = Math.ceil(font.getAscent());
     double labelY = labelsYOff + fontHeight;
     
     // Get number of data points
     int pointCount = _chartArea.getPointCount();
     double sectionW = aW/(pointCount-1);
-    double tickLen = getTickLength();
+    double tickLen = axis.getTickLength();
     
     // Draw axis ticks
     aPntr.setColor(AXIS_LINES_COLOR); aPntr.setStroke(Stroke.Stroke1);
-    for(int i=0;i<pointCount;i++) {
+    for (int i=0;i<pointCount;i++) {
         double tickX = Math.round(aX + i*sectionW);
         aPntr.drawLine(tickX, 0, tickX, tickLen);
     }
         
     // Draw axis labels
     aPntr.setColor(AXIS_LABELS_COLOR);
-    for(int i=0;i<pointCount;i++) {
-        String str = getLabel(i);
+    for (int i=0;i<pointCount;i++) {
+        String str = axis.getLabel(i);
         Rect strBnds = aPntr.getStringBounds(str);
         double lx = aX + sectionW*i;
         double x = lx - Math.round(strBnds.getMidX());
@@ -144,17 +103,22 @@ protected void paintAxis(Painter aPntr, double aX, double aW, double aH)
 protected void paintAxisBar(Painter aPntr, double aX, double aW, double aH)
 {
     // Set font, color
-    Font font = getFont(); aPntr.setFont(font);
-    double labelsYOff = getLabelsY(), fontHeight = Math.ceil(font.getAscent());
+    Font font = getFont();
+    aPntr.setFont(font);
+    AxisX axis = getAxis();
+    double labelsYOff = axis.getLabelsY();
+
+    double fontHeight = Math.ceil(font.getAscent());
     double labelY = labelsYOff + fontHeight;
     
     // Get number of data points
     int pointCount = _chartArea.getPointCount();
     double sectionW = aW/pointCount;
-    double tickLen = getTickLength();
+    double tickLen = axis.getTickLength();
     
     // Draw axis ticks
-    aPntr.setColor(AXIS_LINES_COLOR); aPntr.setStroke(Stroke.Stroke1);
+    aPntr.setColor(AXIS_LINES_COLOR);
+    aPntr.setStroke(Stroke.Stroke1);
     for(int i=0;i<pointCount+1;i++) {
         double tickX = Math.round(aX + i*sectionW);
         if(tickX<=0) tickX += .5; else if(tickX>=aW) tickX -= .5;
@@ -164,7 +128,7 @@ protected void paintAxisBar(Painter aPntr, double aX, double aW, double aH)
     // Draw axis labels
     aPntr.setColor(AXIS_LABELS_COLOR);
     for(int i=0;i<pointCount;i++) {
-        String str = getLabel(i);
+        String str = axis.getLabel(i);
         Rect strBnds = aPntr.getStringBounds(str);
         double lx = aX + sectionW*i + sectionW/2;
         double x = lx - strBnds.getMidX(); x = Math.round(x);
@@ -178,8 +142,9 @@ protected void paintAxisBar(Painter aPntr, double aX, double aW, double aH)
 protected double getPrefHeightImpl(double aW)
 {
     double labelsHeight = Math.ceil(getFont().getLineHeight());
-    double yoff = getLabelsY();
-    double tickLen = getTickLength();
+    AxisX axis = getAxis();
+    double yoff = axis.getLabelsY();
+    double tickLen = axis.getTickLength();
     double ph = Math.max(labelsHeight + yoff, tickLen);
     return ph;
 }

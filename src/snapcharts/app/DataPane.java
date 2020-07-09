@@ -4,6 +4,9 @@ import java.util.List;
 import snap.geom.HPos;
 import snap.util.*;
 import snap.view.*;
+import snapcharts.model.DataPoint;
+import snapcharts.model.DataSeries;
+import snapcharts.model.DataSet;
 
 /**
  * A class to manage the datasets.

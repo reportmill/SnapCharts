@@ -3,6 +3,7 @@ import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
+import snapcharts.model.Chart;
 
 /**
  * A view to paint Chart Y Axis.
@@ -53,6 +54,11 @@ public ChartYAxis()
     _titleViewBox = new WrapView(_titleView);
     addChild(_titleViewBox);
 }
+
+/**
+ * Returns the Chart.
+ */
+public Chart getChart()  { return _chartArea.getChart(); }
 
 /**
  * Returns the YAxis title view.
@@ -272,7 +278,7 @@ protected void processEvent(ViewEvent anEvent)
 {
     // Handle MousePress
     if(anEvent.isMousePress())
-        _chartArea._chartView.setShowPartialY(!_chartArea._chartView.isShowPartialY());
+        getChart().setShowPartialY(!getChart().isShowPartialY());
 }
 
 }

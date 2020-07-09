@@ -1,25 +1,29 @@
 package snapcharts.app;
 import java.text.DecimalFormat;
-
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
-import snap.web.WebURL;
+import snapcharts.model.Chart;
+import snapcharts.model.DataPoint;
+import snapcharts.model.DataSet;
 
 /**
  * A view to render a chart.
  */
 public class ChartView extends ColView {
-    
+
+    // The Chart
+    private Chart  _chart;
+
     // The title
-    StringView         _titleView;
+    private StringView  _titleView;
     
     // The subtitle
-    StringView         _subtitleView;
+    private StringView  _subtitleView;
     
     // The ChartArea
-    ChartArea          _chartArea;
+    private ChartArea  _chartArea;
     
     // The XAxis
     ChartXAxis         _xaxis;
@@ -44,21 +48,9 @@ public class ChartView extends ColView {
     
     // The ToolTipView
     ToolTipView        _toolTipView;
-    
-    // The DataSet
-    DataSet            _dataSet = new DataSet(this);
-    
-    // Whether to show partial Y axis intervals if min/max don't include zero
-    boolean            _showPartialY;
-    
-    // The graph colors
-    Color              _colors[] = COLORS;
-    
-    // The series shapes
-    Shape _markerShapes[];
-    
+
     // The selected and targeted (under mouse) data point
-    DataPoint          _selPoint, _targPoint;
+    DataPoint _selPoint, _targPoint;
     
     // Constants
     public static final String BAR_TYPE = "Bar";
@@ -81,6 +73,9 @@ public class ChartView extends ColView {
  */
 public ChartView()
 {
+    // Create new chart
+    _chart = new Chart();
+
     // Configure this view
     setPadding(10,10,10,10); setAlign(Pos.CENTER); setSpacing(8); setGrowWidth(true);
     setFill(Color.WHITE);
@@ -120,9 +115,14 @@ public ChartView()
     
     // Set sample values
     //setTitle("Sample Growth by Sector, 2012-2018");
-    _dataSet.addSeriesForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
+    getDataSet().addSeriesForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
     reloadContents(true);
 }
+
+/**
+ * Returns the Chart.
+ */
+public Chart getChart()  { return _chart; }
 
 /**
  * Returns the type.
@@ -141,11 +141,6 @@ public void setType(String aType)
     setChartArea(chartArea);
     reloadContents(true);
 }
-
-/**
- * Returns the ChartTypes object.
- */
-public ChartTypes getChartTypes()  { return _chartTypes; }
 
 /**
  * Returns the title.
@@ -229,84 +224,7 @@ public ToolTipView getToolTipView()  { return _toolTipView; }
 /**
  * Returns the dataset.
  */
-public DataSet getDataSet()  { return _dataSet; }
-
-/**
- * Adds a new series.
- */
-public void addSeries(DataSeries aSeries)  { _dataSet.addSeries(aSeries); }
-
-/**
- * Returns the start of the series.
- */
-public int getSeriesStart()  { return _dataSet.getSeriesStart(); }
-
-/**
- * Sets the start of the series.
- */
-public void setSeriesStart(int aValue)  { _dataSet.setSeriesStart(aValue); }
-
-/**
- * Returns whether to show partial Y axis intervals if min/max don't include zero. 
- */
-public boolean isShowPartialY()  { return _showPartialY; }
-
-/**
- * Returns whether to show partial Y axis intervals if min/max don't include zero. 
- */
-public void setShowPartialY(boolean aValue)
-{
-    if(aValue==_showPartialY) return;
-    _showPartialY = aValue; reloadContents(true);
-}
-
-/**
- * Returns the colors.
- */
-public Color[] getColors()  { return _colors; }
-
-/**
- * Sets the graph colors.
- */
-public void setColors(Color ... theColors)
-{
-    _colors = theColors;
-    reloadContents(true);
-}
-
-/**
- * Returns the series color at index.
- */
-public Color getColor(int anIndex)
-{
-    if(anIndex<_colors.length) return _colors[anIndex];
-    return COLORS[(anIndex - _colors.length)%COLORS.length];
-}
-
-/**
- * Returns the series shape at index.
- */
-public Shape getMarkerShape(int anIndex)
-{
-    switch(getType()) {
-        case LINE_TYPE: return getMarkerShapes()[anIndex];
-        default: return getMarkerShapes()[0];
-    }
-}
-
-/**
- * Returns the marker shapes.
- */
-public Shape[] getMarkerShapes()
-{
-    if(_markerShapes!=null) return _markerShapes;
-    Shape shp0 = new Ellipse(0,0,8,8);
-    Shape shp1 = new Polygon(4,0,8,4,4,8,0,4);
-    Shape shp2 = new Rect(0,0,8,8);
-    Shape shp3 = new Polygon(4,0,8,8,0,8);
-    Shape shp4 = new Polygon(0,0,8,0,4,8);
-    return _markerShapes = new Shape[] { shp0, shp1, shp2, shp3, shp4 };
-}
+public DataSet getDataSet()  { return getChart().getDataSet(); }
 
 /**
  * Returns the selected data point.
@@ -339,6 +257,16 @@ public void setTargDataPoint(DataPoint aDP)
 }
 
 /**
+ * Returns the given data point in local coords.
+ */
+public Point dataPointInLocal(DataPoint aDP)
+{
+      ChartArea carea = _chartArea;
+      Point pnt = carea.dataPointInLocal(aDP);
+      return carea.localToParent(pnt.x, pnt.y, this);
+}
+
+/**
  * Reloads chart view contents.
  */
 public void reloadContents(boolean doAnim)
@@ -348,28 +276,6 @@ public void reloadContents(boolean doAnim)
     if(doAnim) _chartArea.animate();
     _yaxis.repaint();
     _xaxis.repaint();
-}
-
-/**
- * Loads the ChartView from JSON source.
- */
-public void loadFromSource(Object aSrc)
-{
-    WebURL url = WebURL.getURL(aSrc);
-    String jsonText = url.getText();
-    loadFromString(jsonText);
-}
-
-/**
- * Loads the ChartView from JSON string.
- */
-public void loadFromString(String aStr)
-{
-    _dataSet.clear();
-    ChartParser parser = new ChartParser(this);
-    parser.parseString(aStr);
-    if(_dataSet.isEmpty()) _dataSet.addSeriesForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
-    reloadContents(true);
 }
 
 /**

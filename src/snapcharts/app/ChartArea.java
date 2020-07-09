@@ -7,6 +7,10 @@ import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.model.Chart;
+import snapcharts.model.DataPoint;
+import snapcharts.model.DataSeries;
+import snapcharts.model.DataSet;
 
 /**
  * A view to display the actual contents of a chart.
@@ -19,11 +23,12 @@ public class ChartArea extends ParentView {
     // The amount of the chart to show horizontally (0-1)
     double              _reveal = 1;
     
-    // Constants
+    // Constants for properties
     public static String   Reveal_Prop = "Reveal";
     public static String   DataPoint_Prop = "DataPoint";
-    static Color           AXIS_LINES_COLOR = Color.LIGHTGRAY;
-    static Stroke          Stroke3 = new Stroke(3), Stroke4 = new Stroke(4), Stroke5 = new Stroke(5);
+
+    // Constants for defaults
+    private static Color  AXIS_LINES_COLOR = Color.LIGHTGRAY;
 
 /**
  * Creates a ChartArea.
@@ -37,7 +42,12 @@ public ChartArea()
 /**
  * Sets the chart view.
  */
-protected void setChartView(ChartView aCV)  { _chartView = aCV; }    
+protected void setChartView(ChartView aCV)  { _chartView = aCV; }
+
+/**
+ * Returns the chart.
+ */
+public Chart getChart()  { return _chartView.getChart(); }
 
 /**
  * Returns the XAxis View.
@@ -87,17 +97,21 @@ public int getPointCount()  { return getDataSet().getPointCount(); }
 /**
  * Returns the intervals.
  */
-public Intervals getActiveIntervals()  { return getDataSet().getActiveIntervals(); }
+public Intervals getActiveIntervals()
+{
+    double height = getHeight() - getInsetsAll().getHeight();
+    return getDataSet().getActiveIntervals(height);
+}
 
 /**
  * Returns the series color at index.
  */
-public Color getColor(int anIndex)  { return _chartView.getColor(anIndex); }
+public Color getColor(int anIndex)  { return getChart().getColor(anIndex); }
 
 /**
  * Returns the series shape at index.
  */
-public Shape getMarkerShape(int anIndex)  { return _chartView.getMarkerShape(anIndex); }
+public Shape getMarkerShape(int anIndex)  { return getChart().getMarkerShape(anIndex); }
 
 /**
  * Return the ratio of the chart to show horizontally.

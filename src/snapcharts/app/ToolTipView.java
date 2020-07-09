@@ -2,6 +2,10 @@ package snapcharts.app;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.view.*;
+import snapcharts.model.Chart;
+import snapcharts.model.DataPoint;
+import snapcharts.model.DataSeries;
+import snapcharts.model.DataSet;
 
 /**
  * A view to show tooltip.
@@ -12,7 +16,7 @@ public class ToolTipView extends ColView {
     ChartView      _chartView;
     
     // The selected data point
-    DataPoint      _selPoint;
+    DataPoint _selPoint;
     
     // A runnable to reload contents
     Runnable       _reloadLater, _reloadRun = () -> { reloadContentsNow(); _reloadLater = null; };
@@ -68,7 +72,8 @@ protected void reloadContentsNow()
     _chartView.repaint();
     
     // Get DataPoint - if null - remove view
-    DataSet dset = _chartView.getDataSet();
+    Chart chart = _chartView.getChart();
+    DataSet dset = chart.getDataSet();
     DataPoint dataPoint = _chartView.getTargDataPoint();
     if(dataPoint==null) {
         getAnimCleared(1000).setOpacity(0).setOnFinish(a -> _chartView.removeChild(this)).play(); return; }
@@ -87,7 +92,7 @@ protected void reloadContentsNow()
     keyLabel.setText(selKey);
     
     // Create RowView: BulletView
-    Color color = _chartView.getColor(series.getIndex());
+    Color color = chart.getColor(series.getIndex());
     ShapeView bulletView = new ShapeView(new Ellipse(0,0,5,5)); bulletView.setFill(color);
     
     // Create RowView: NameLabel, ValLabel
@@ -119,7 +124,7 @@ protected void reloadContentsNow()
     addChild(shpView, 0);
     
     // Colculate new location
-    Point pnt = dataPoint.getPointInChartView();
+    Point pnt = _chartView.dataPointInLocal(dataPoint);
     double nx = pnt.x - getWidth()/2;
     double ny = pnt.y - getHeight() - 8;
     

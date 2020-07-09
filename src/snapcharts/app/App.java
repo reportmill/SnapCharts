@@ -9,7 +9,7 @@ package snapcharts.app;
 public class App {
     
     // The last created chart pane
-    static ChartPane  _chartPane;
+    //static ChartPane  _chartPane;
 
 public static void main(String args[])
 {

@@ -4,6 +4,7 @@ import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartView;
 import snapcharts.app.EditorPane;
+import snapcharts.model.Chart;
 
 /**
  * A class to manage UI to edit a ChartView.
@@ -26,14 +27,17 @@ public class BasicPropsTool extends ViewOwner {
      */
     protected void resetUI()
     {
+        // Get Chart
+        Chart chart = _chartView.getChart();
+
         // Reset TitleText, SubtitleText, YAxisTitleText
-        setViewValue("TitleText", _chartView.getTitle());
-        setViewValue("SubtitleText", _chartView.getSubtitle());
-        setViewValue("YAxisTitleText", _chartView.getYAxis().getTitle());
+        setViewValue("TitleText", chart.getTitle());
+        setViewValue("SubtitleText", chart.getSubtitle());
+        setViewValue("YAxisTitleText", chart.getAxisY().getTitle());
 
         // Reset ShowLegendCheckBox, PartialYAxisCheckBox
-        setViewValue("ShowLegendCheckBox", _chartView.isShowLegend());
-        setViewValue("PartialYAxisCheckBox", _chartView.isShowPartialY());
+        setViewValue("ShowLegendCheckBox", chart.isShowLegend());
+        setViewValue("PartialYAxisCheckBox", chart.isShowPartialY());
     }
 
     /**
@@ -41,13 +45,16 @@ public class BasicPropsTool extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Get Chart
+        Chart chart = _chartView.getChart();
+
         // Handle TitleText, SubtitleText, YAxisTitleText
-        if(anEvent.equals("TitleText")) _chartView.setTitle(anEvent.getStringValue());
-        if(anEvent.equals("SubtitleText")) _chartView.setSubtitle(anEvent.getStringValue());
-        if(anEvent.equals("YAxisTitleText")) _chartView.getYAxis().setTitle(anEvent.getStringValue());
+        if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
+        if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
+        if(anEvent.equals("YAxisTitleText")) chart.getAxisY().setTitle(anEvent.getStringValue());
 
         // Handle ShowLegendCheckBox, PartialYAxisCheckBox
-        if(anEvent.equals("ShowLegendCheckBox")) _chartView.setShowLegend(anEvent.getBoolValue());
-        if(anEvent.equals("PartialYAxisCheckBox")) _chartView.setShowPartialY(anEvent.getBoolValue());
+        if(anEvent.equals("ShowLegendCheckBox")) chart.setShowLegend(anEvent.getBoolValue());
+        if(anEvent.equals("PartialYAxisCheckBox")) chart.setShowPartialY(anEvent.getBoolValue());
     }
 }
