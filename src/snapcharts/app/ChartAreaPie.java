@@ -192,8 +192,8 @@ public class ChartAreaPie extends ChartArea {
      */
     public void activate()
     {
-        _chartView.getXAxis().setVisible(false);
-        _chartView.getYAxis().setVisible(false);
+        _chartView.getAxisX().setVisible(false);
+        _chartView.getAxisY().setVisible(false);
         _showLegend = _chartView.isShowLegend(); _chartView.setShowLegend(getSeriesCount()>1);
 
         // If multiple series, make sure only first is enabled
@@ -208,8 +208,8 @@ public class ChartAreaPie extends ChartArea {
      */
     public void deactivate()
     {
-        _chartView.getXAxis().setVisible(true);
-        _chartView.getYAxis().setVisible(true);
+        _chartView.getAxisX().setVisible(true);
+        _chartView.getAxisY().setVisible(true);
         _chartView.setShowLegend(_showLegend);
     }
 

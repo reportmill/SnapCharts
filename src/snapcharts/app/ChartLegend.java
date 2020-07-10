@@ -85,6 +85,6 @@ public class ChartLegend extends ColView {
         series.setDisabled(!series.isDisabled());
 
         // Redraw chart and reload legend
-        chart.reloadContents(true);
+        chart.resetLater();
     }
 }

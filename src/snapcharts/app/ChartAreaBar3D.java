@@ -380,8 +380,8 @@ public class ChartAreaBar3D extends ChartAreaBar {
      */
     public void activate()
     {
-        _chartView.getXAxis().setVisible(false);
-        _chartView.getYAxis().setVisible(false);
+        _chartView.getAxisX().setVisible(false);
+        _chartView.getAxisY().setVisible(false);
     }
 
     /**
@@ -389,8 +389,8 @@ public class ChartAreaBar3D extends ChartAreaBar {
      */
     public void deactivate()
     {
-        _chartView.getXAxis().setVisible(true);
-        _chartView.getYAxis().setVisible(true);
+        _chartView.getAxisX().setVisible(true);
+        _chartView.getAxisY().setVisible(true);
     }
 
     /**

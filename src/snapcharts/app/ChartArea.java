@@ -52,12 +52,12 @@ public Chart getChart()  { return _chartView.getChart(); }
 /**
  * Returns the XAxis View.
  */
-public ChartXAxis getXAxis()  { return _chartView._xaxis; }
+public ChartXAxis getXAxis()  { return _chartView._axisX; }
 
 /**
  * Returns the YAxis View.
  */
-public ChartYAxis getYAxis()  { return _chartView._yaxis; }
+public ChartYAxis getYAxis()  { return _chartView._axisY; }
 
 /**
  * Returns the data set.
@@ -187,7 +187,7 @@ protected void paintFront(Painter aPntr)
     aPntr.setStroke(stroke);
     
     // Have YAxisView paint lines
-    if(_chartView.getYAxis().isVisible())
+    if(_chartView.getAxisY().isVisible())
         paintAxisY(aPntr, 0, ins.top, pw, h);
     
     // Paint chart
