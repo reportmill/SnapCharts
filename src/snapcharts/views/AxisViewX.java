@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.views;
 
 import snap.geom.Insets;
 import snap.geom.Rect;
@@ -10,10 +10,10 @@ import snapcharts.model.Chart;
 /**
  * A view to paint Chart X Axis.
  */
-public class ChartXAxis extends View {
+public class AxisViewX extends View {
 
     // The ChartArea
-    ChartArea         _chartArea;
+    DataView _chartArea;
 
     private AxisX  _axis;
     
@@ -24,7 +24,7 @@ public class ChartXAxis extends View {
 /**
  * Creates the ChartXAxis.
  */
-public ChartXAxis()
+public AxisViewX()
 {
     setFont(Font.Arial12);
 }
@@ -62,7 +62,7 @@ protected void paintFront(Painter aPntr)
 protected void paintAxis(Painter aPntr, double aX, double aW, double aH)
 {
     // If Bar chart, go there instead
-    if(_chartArea instanceof ChartAreaBar) { paintAxisBar(aPntr, 0, getWidth(), aH); return; }
+    if(_chartArea instanceof DataViewBar) { paintAxisBar(aPntr, 0, getWidth(), aH); return; }
     
     // Set font, color
     Font font = getFont();

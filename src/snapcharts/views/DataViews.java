@@ -1,34 +1,34 @@
-package snapcharts.app;
+package snapcharts.views;
 
 /**
  * A class to hold the different types of charts.
  */
-public class ChartTypes {
+public class DataViews {
     
     // The ChartView
-    ChartView             _chartView;
+    private ChartView  _chartView;
 
     // A column chart
-    ChartAreaBar          _colChart;
+    private DataViewBar  _colChart;
     
     // A line chart
-    ChartAreaLine         _lineChart;
+    private DataViewLine _lineChart;
 
     // A pie chart
-    ChartAreaPie          _pieChart;
+    private DataViewPie _pieChart;
 
     // A column chart 3D
-    ChartAreaBar3D        _colChart3D;
+    private DataViewBar3D _colChart3D;
     
 /**
  * Creates the ChartTypes.
  */
-public ChartTypes(ChartView aCV)  { _chartView = aCV; }
+public DataViews(ChartView aCV)  { _chartView = aCV; }
 
 /**
  * Returns the type for given string.
  */
-public ChartArea getChart(String aType)
+public DataView getChart(String aType)
 {
     switch(aType) {
         case ChartView.BAR_TYPE: return getColumnChart();
@@ -42,37 +42,37 @@ public ChartArea getChart(String aType)
 /**
  * Returns the column chart.
  */
-public ChartAreaBar getColumnChart()
+public DataViewBar getColumnChart()
 {
     if(_colChart!=null) return _colChart;
-    _colChart = new ChartAreaBar(); _colChart.setChartView(_chartView); return _colChart;
+    _colChart = new DataViewBar(); _colChart.setChartView(_chartView); return _colChart;
 }
 
 /**
  * Returns the column chart.
  */
-public ChartAreaBar3D getColumnChart3D()
+public DataViewBar3D getColumnChart3D()
 {
     if(_colChart3D!=null) return _colChart3D;
-    _colChart3D = new ChartAreaBar3D(); _colChart3D.setChartView(_chartView); return _colChart3D;
+    _colChart3D = new DataViewBar3D(); _colChart3D.setChartView(_chartView); return _colChart3D;
 }
 
 /**
  * Returns the line chart.
  */
-public ChartAreaLine getLineChart()
+public DataViewLine getLineChart()
 {
     if(_lineChart!=null) return _lineChart;
-    _lineChart = new ChartAreaLine(); _lineChart.setChartView(_chartView); return _lineChart;
+    _lineChart = new DataViewLine(); _lineChart.setChartView(_chartView); return _lineChart;
 }
 
 /**
  * Returns the pie chart.
  */
-public ChartAreaPie getPieChart()
+public DataViewPie getPieChart()
 {
     if(_pieChart!=null) return _pieChart;
-    _pieChart = new ChartAreaPie(); _pieChart.setChartView(_chartView); return _pieChart;
+    _pieChart = new DataViewPie(); _pieChart.setChartView(_chartView); return _pieChart;
 }
 
 }

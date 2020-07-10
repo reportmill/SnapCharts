@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.views;
 import java.util.*;
 
 import snap.geom.Insets;
@@ -7,6 +7,7 @@ import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.app.Intervals;
 import snapcharts.model.Chart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSeries;
@@ -15,7 +16,7 @@ import snapcharts.model.DataSet;
 /**
  * A view to display the actual contents of a chart.
  */
-public class ChartArea extends ParentView {
+public class DataView extends ParentView {
     
     // The ChartView that owns the area
     ChartView           _chartView;
@@ -33,7 +34,7 @@ public class ChartArea extends ParentView {
 /**
  * Creates a ChartArea.
  */
-public ChartArea()
+public DataView()
 {
     setGrowWidth(true); setPrefSize(600,350);
     enableEvents(MouseMove, MouseRelease, MouseExit);
@@ -52,12 +53,12 @@ public Chart getChart()  { return _chartView.getChart(); }
 /**
  * Returns the XAxis View.
  */
-public ChartXAxis getXAxis()  { return _chartView._axisX; }
+public AxisViewX getXAxis()  { return _chartView._axisX; }
 
 /**
  * Returns the YAxis View.
  */
-public ChartYAxis getYAxis()  { return _chartView._axisY; }
+public AxisViewY getYAxis()  { return _chartView._axisY; }
 
 /**
  * Returns the data set.

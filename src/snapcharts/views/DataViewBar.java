@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.views;
 import java.util.List;
 
 import snap.geom.Point;
@@ -11,7 +11,7 @@ import snapcharts.model.DataSeries;
 /**
  * A ChartArea subclass to display the contents of bar chart.
  */
-public class ChartAreaBar extends ChartArea {
+public class DataViewBar extends DataView {
 
     // The Area
     private AreaBar  _area;
@@ -25,7 +25,7 @@ public class ChartAreaBar extends ChartArea {
     /**
      * Creates a ChartAreaBar.
      */
-    public ChartAreaBar()
+    public DataViewBar()
     {
         setPadding(5,0,0,0); // Add top so top axis line isn't on edge
     }

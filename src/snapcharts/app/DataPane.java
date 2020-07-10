@@ -7,6 +7,7 @@ import snap.view.*;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSeries;
 import snapcharts.model.DataSet;
+import snapcharts.views.ChartView;
 
 /**
  * A class to manage the datasets.
@@ -14,7 +15,7 @@ import snapcharts.model.DataSet;
 public class DataPane extends ViewOwner {
     
     // The ChartView
-    ChartView               _chartView;
+    ChartView _chartView;
     
     // The SheetView
     SheetView               _sheetView;

@@ -2,7 +2,6 @@ package snapcharts.model;
 import java.util.*;
 
 import snap.util.*;
-import snapcharts.app.ChartView;
 import snapcharts.app.Intervals;
 
 /**

@@ -3,6 +3,7 @@ package snapcharts.app;
 import snap.gfx.Font;
 import snap.gfx.ShadowEffect;
 import snap.view.*;
+import snapcharts.views.ChartView;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -10,7 +11,7 @@ import snap.view.*;
 public class EditorPane extends ViewOwner {
     
     // The chartView
-    private ChartView  _chartView;
+    private ChartView _chartView;
     
     // The ChartBox
     private BoxView  _chartBox;

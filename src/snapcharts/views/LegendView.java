@@ -1,5 +1,4 @@
-package snapcharts.app;
-import java.util.List;
+package snapcharts.views;
 
 import snap.geom.Rect;
 import snap.geom.Shape;
@@ -15,7 +14,7 @@ import snapcharts.model.DataSet;
 /**
  * A view to display chart legend.
  */
-public class ChartLegend extends ColView {
+public class LegendView extends ColView {
     
     // The ChartView
     private ChartView    _chartView;

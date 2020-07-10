@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.views;
 import java.util.*;
 import snap.geom.*;
 import snap.gfx.*;
@@ -8,7 +8,7 @@ import snapcharts.model.DataSeries;
 /**
  * A ChartArea subclass to display the contents of line chart.
  */
-public class ChartAreaLine extends ChartArea {
+public class DataViewLine extends DataView {
 
     // Constants for defaults
     protected static Stroke Stroke3 = new Stroke(3);
@@ -17,7 +17,7 @@ public class ChartAreaLine extends ChartArea {
     /**
      * Creates a ChartAreaLine.
      */
-    public ChartAreaLine()
+    public DataViewLine()
     {
         setPadding(5,10,0,10); // Add padding so endpoints aren't on edges
     }

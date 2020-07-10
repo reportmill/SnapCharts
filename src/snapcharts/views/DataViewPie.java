@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.views;
 import java.text.DecimalFormat;
 
 import snap.geom.*;
@@ -12,7 +12,7 @@ import snapcharts.model.DataSet;
 /**
  * A ChartArea subclass to display the contents of pie chart.
  */
-public class ChartAreaPie extends ChartArea {
+public class DataViewPie extends DataView {
     
     // The cached values, ratios and angles
     private double  _vals[], _ratios[], _angles[];
@@ -40,7 +40,7 @@ public class ChartAreaPie extends ChartArea {
     /**
      * Creates a ChartAreaPie.
      */
-    public ChartAreaPie()
+    public DataViewPie()
     {
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
         setFont(Font.Arial12.getBold());

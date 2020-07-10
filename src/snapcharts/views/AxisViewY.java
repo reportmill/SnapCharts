@@ -1,23 +1,25 @@
-package snapcharts.app;
+package snapcharts.views;
 import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
+import snapcharts.app.Intervals;
+import snapcharts.app.WrapView;
 import snapcharts.model.Chart;
 
 /**
  * A view to paint Chart Y Axis.
  */
-public class ChartYAxis extends ParentView {
+public class AxisViewY extends ParentView {
     
     // The ChartArea
-    ChartArea      _chartArea;
+    DataView _chartArea;
     
     // The Title view
     StringView     _titleView;
     
     // The Title view wrapper (to allow rotation)
-    WrapView       _titleViewBox;
+    WrapView _titleViewBox;
     
     // Title offset - distance from title left edge to axis
     Double         _titleOffset;
@@ -44,7 +46,7 @@ public class ChartYAxis extends ParentView {
 /**
  * Creates the ChartYAxis.
  */
-public ChartYAxis()
+public AxisViewY()
 {
     enableEvents(MousePress);
     

@@ -2,7 +2,7 @@ package snapcharts.apptools;
 
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
-import snapcharts.app.ChartView;
+import snapcharts.views.ChartView;
 import snapcharts.app.EditorPane;
 import snapcharts.model.Chart;
 

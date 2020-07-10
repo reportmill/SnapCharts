@@ -1,19 +1,22 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.app;
+package snapcharts.apptools;
 import snap.view.*;
 import snapcharts.gfx3d.Camera;
 import snapcharts.gfx3d.CameraView;
 import snapcharts.gfx3d.Trackball;
+import snapcharts.views.DataView;
+import snapcharts.views.DataViewBar3D;
+import snapcharts.views.ChartView;
 
 /**
  * Tool for visual editing RMScene3D.
  */
-public class Thr3DPane extends ViewOwner {
+public class Thr3DTool extends ViewOwner {
     
     // The ChartView
-    ChartView        _chartView;
+    ChartView _chartView;
 
     // The Trackball control for rotating selected scene3d
     Trackball _trackball;
@@ -21,16 +24,16 @@ public class Thr3DPane extends ViewOwner {
 /**
  * Creates a Thr3DPane.
  */
-public Thr3DPane(ChartView aCV)  { _chartView = aCV; }
+public Thr3DTool(ChartView aCV)  { _chartView = aCV; }
 
 /**
  * Returns the Camera View.
  */
 public CameraView getCameraView()
 {
-    ChartArea ca = _chartView.getChartArea();
-    ChartAreaBar3D ca3d = ca instanceof ChartAreaBar3D? (ChartAreaBar3D)ca : null; if(ca3d==null) return null;
-    return ca3d._camView;
+    DataView ca = _chartView.getChartArea();
+    DataViewBar3D ca3d = ca instanceof DataViewBar3D ? (DataViewBar3D)ca : null; if(ca3d==null) return null;
+    return ca3d.getCameraView();
 }
 
 /**

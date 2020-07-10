@@ -1,9 +1,10 @@
-package snapcharts.app;
+package snapcharts.views;
 import java.text.DecimalFormat;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.app.ToolTipView;
 import snapcharts.model.Chart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
@@ -23,19 +24,19 @@ public class ChartView extends ColView {
     private StringView  _subtitleView;
     
     // The ChartArea
-    private ChartArea  _chartArea;
+    private DataView _chartArea;
     
     // The XAxis
-    ChartXAxis _axisX;
+    AxisViewX _axisX;
     
     // The YAxis
-    ChartYAxis _axisY;
+    AxisViewY _axisY;
     
     // The Legend
-    ChartLegend        _legend;
+    LegendView _legend;
     
     // The object holding specific chart types
-    ChartTypes         _chartTypes = new ChartTypes(this);
+    DataViews _dataViews = new DataViews(this);
     
     // The view to hold ChartArea and X/Y axis views
     ChartAreaBox       _chartAreaBox;
@@ -47,7 +48,7 @@ public class ChartView extends ColView {
     String             _type = LINE_TYPE;
     
     // The ToolTipView
-    ToolTipView        _toolTipView;
+    ToolTipView _toolTipView;
 
     // The selected and targeted (under mouse) data point
     DataPoint _selPoint, _targPoint;
@@ -62,9 +63,6 @@ public class ChartView extends ColView {
     public static final String PIE_TYPE = "Pie";
     public static final String SelDataPoint_Prop = "SelDataPoint";
     public static final String TargDataPoint_Prop = "TargDataPoint";
-    
-    // Shared
-    static DecimalFormat _fmt = new DecimalFormat("#,###.##");
     
     /**
      * Creates a ChartView.
@@ -94,18 +92,18 @@ public class ChartView extends ColView {
         addChild(_rowView);
 
         // Create XAxis and YAxis
-        _axisX = new ChartXAxis();
-        _axisY = new ChartYAxis();
+        _axisX = new AxisViewX();
+        _axisY = new AxisViewY();
 
         // Create/add ChartAreaBox
         _chartAreaBox = new ChartAreaBox();
         _rowView.addChild(_chartAreaBox);
 
         // Create/set ChartArea
-        setChartArea(_chartTypes.getLineChart());
+        setChartArea(_dataViews.getLineChart());
 
         // Create/configure ChartLegend
-        _legend = new ChartLegend();
+        _legend = new LegendView();
         _rowView.addChild(_legend);
 
         // Create ToolTipView
@@ -151,7 +149,7 @@ public class ChartView extends ColView {
         _type = aType;
 
         // Get ChartArea for type, set in ChartView and reload contents
-        ChartArea chartArea = _chartTypes.getChart(aType);
+        DataView chartArea = _dataViews.getChart(aType);
         setChartArea(chartArea);
         resetLater();
     }
@@ -159,12 +157,12 @@ public class ChartView extends ColView {
     /**
      * Returns the ChartArea.
      */
-    public ChartArea getChartArea()  { return _chartArea; }
+    public DataView getChartArea()  { return _chartArea; }
 
     /**
      * Sets the ChartArea.
      */
-    protected void setChartArea(ChartArea aCA)
+    protected void setChartArea(DataView aCA)
     {
         if (_chartArea!=null) _chartArea.deactivate();
 
@@ -176,17 +174,17 @@ public class ChartView extends ColView {
     /**
      * Returns the X Axis View.
      */
-    public ChartXAxis getAxisX()  { return _axisX; }
+    public AxisViewX getAxisX()  { return _axisX; }
 
     /**
      * Returns the Y Axis View.
      */
-    public ChartYAxis getAxisY()  { return _axisY; }
+    public AxisViewY getAxisY()  { return _axisY; }
 
     /**
      * Returns the Legend.
      */
-    public ChartLegend getLegend()  { return _legend; }
+    public LegendView getLegend()  { return _legend; }
 
     /**
      * Returns whether to show legend.
@@ -292,7 +290,7 @@ public class ChartView extends ColView {
      */
     public Point dataPointInLocal(DataPoint aDP)
     {
-          ChartArea carea = _chartArea;
+          DataView carea = _chartArea;
           Point pnt = carea.dataPointInLocal(aDP);
           return carea.localToParent(pnt.x, pnt.y, this);
     }
@@ -322,7 +320,7 @@ public class ChartView extends ColView {
         public ChartAreaBox()  { setGrowWidth(true); setGrowHeight(true); setChildren(_axisY, _axisX); }
 
         /** Sets the ChartArea. */
-        protected void setChartArea(ChartArea aCA)
+        protected void setChartArea(DataView aCA)
         {
             if (_chartArea!=null) removeChild(_chartArea);
             addChild(_chartArea = aCA, 1);

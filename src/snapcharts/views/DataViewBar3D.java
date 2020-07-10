@@ -1,14 +1,15 @@
-package snapcharts.app;
+package snapcharts.views;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.*;
+import snapcharts.app.Intervals;
 import snapcharts.gfx3d.*;
 import snapcharts.model.DataPoint;
 
 /**
  * A ChartArea subclass to display the contents of bar chart.
  */
-public class ChartAreaBar3D extends ChartAreaBar {
+public class DataViewBar3D extends DataViewBar {
     
     // The Camera
     protected CameraView _camView;
@@ -34,7 +35,7 @@ public class ChartAreaBar3D extends ChartAreaBar {
     /**
      * Creates a ChartAreaBar.
      */
-    public ChartAreaBar3D()
+    public DataViewBar3D()
     {
         _camView = new CameraView() {
             protected void layoutImpl() { rebuildScene(); }
@@ -46,6 +47,11 @@ public class ChartAreaBar3D extends ChartAreaBar {
         _camera.setYaw(26); _camera.setPitch(10); _camera.setDepth(100);
         _camera.setFocalLength(8*72); _camera.setAdjustZ(true);
     }
+
+    /**
+     * Returns the CameraView.
+     */
+    public CameraView getCameraView()  { return _camView; }
 
     /**
      * Returns the number of intervals for this filled graph.
