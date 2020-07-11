@@ -40,6 +40,14 @@ public class EditorPane extends ViewOwner {
     }
 
     /**
+     * Sets the Chart.
+     */
+    public void setChart(Chart aChart)
+    {
+        _chartView.setChart(aChart);
+    }
+
+    /**
      * Create UI.
      */
     protected View createUI()

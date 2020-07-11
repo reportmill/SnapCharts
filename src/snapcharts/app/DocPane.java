@@ -1,19 +1,28 @@
 package snapcharts.app;
-import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
+import snap.web.WebURL;
+import snapcharts.model.Chart;
+import snapcharts.model.ChartDoc;
+import snapcharts.model.ChartPart;
 
 /**
  * A class to manage charts/data in a ChartBook.
  */
 public class DocPane extends ViewOwner {
-    
+
+    // The ChartDoc
+    private ChartDoc  _doc;
+
     // The EditorPane
     private EditorPane _editorPane;
 
     // The DocMenuBar
     private DocPaneMenuBar  _menuBar;
+
+    // The ChartDoc tree
+    private TreeView  _treeView;
 
     /**
      * Constructor.
@@ -22,6 +31,31 @@ public class DocPane extends ViewOwner {
     {
         _editorPane = new EditorPane();
     }
+
+    /**
+     * Returns the doc.
+     */
+    public ChartDoc getDoc()  { return _doc; }
+
+    /**
+     * Sets the doc.
+     */
+    public void setDoc(ChartDoc aDoc)
+    {
+        // Set Doc
+        _doc = aDoc;
+
+        // Set First chart in editor
+        Chart chart = _doc.getChartCount()>0 ? _doc.getChart(0) : null;
+        if (chart!=null) {
+            getEditorPane().setChart(chart);
+        }
+    }
+
+    /**
+     * Returns the EditorPane.
+     */
+    public EditorPane getEditorPane()  { return _editorPane; }
 
     /**
      * Returns the SwingOwner for the menu bar.
@@ -60,6 +94,10 @@ public class DocPane extends ViewOwner {
         getView("DeleteButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Delete.png"));
         getView("UndoButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Undo.png"));
         getView("RedoButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Redo.png"));
+
+        // Get/configure TreeView
+        _treeView = getView("TreeView", TreeView.class);
+        _treeView.setResolver(null);
     }
 
     /**
@@ -69,4 +107,39 @@ public class DocPane extends ViewOwner {
     {
         System.out.println("DocPane.respondUI: " + anEvent);
     }
-}
+
+    /**
+     * Loads a sample.
+     */
+    protected void loadSampleDoc()
+    {
+        String jsonText = WebURL.getURL(App.class, "Sample.json").getText();
+        ChartDoc doc = ChartDoc.createDocFromJSONString(jsonText);
+        setDoc(doc);
+    }
+
+    /**
+     * A TreeResolver for Document Shapes.
+     */
+    public class ChartDocTreeResolver extends TreeResolver <ChartPart> {
+
+        @Override
+        public ChartPart getParent(ChartPart anItem)
+        {
+            return null;
+        }
+
+        @Override
+        public boolean isParent(ChartPart anItem)
+        {
+            return false;
+        }
+
+        @Override
+        public ChartPart[] getChildren(ChartPart aParent)
+        {
+            return new ChartPart[0];
+        }
+    }
+
+    }

@@ -1,24 +1,14 @@
 package snapcharts.model;
-
-import snap.geom.HPos;
-import snap.geom.Pos;
-import snap.geom.VPos;
+import snap.geom.*;
 import snap.gfx.Color;
-import snap.util.DeepChangeListener;
-import snap.util.PropChange;
-import snap.util.PropChangeListener;
-import snap.util.PropChangeSupport;
 
 /**
  * A class to represent a Chart Axis.
  */
-public class Axis {
-
-    // The Chart that owns this dataset
-    protected Chart  _chart;
+public class Axis extends ChartPart {
 
     // The Title
-    private String _titleView;
+    private String _title;
 
     // The title alignment
     private Pos _titleAlign = Pos.CENTER;
@@ -27,25 +17,22 @@ public class Axis {
     private double _titleRot;
 
     // Title offset - distance from title left edge to axis
-    Double         _titleOffset;
+    private Double  _titleOffset;
 
     // Title margin - distance of title right edge to labels
-    double         _titleMargin = 10;
+    private double  _titleMargin = 10;
 
     // Title x/y - additional offset for title
-    double         _titleX, _titleY;
+    private double  _titleX, _titleY;
 
     // Labels margin - distance of labels right edge to axis
-    double         _labelsMargin = 15;
+    private double  _labelsMargin = 15;
 
     // THe grid line color
-    Color _gridLineColor = GRID_LINES_COLOR;
+    private Color  _gridLineColor = GRID_LINES_COLOR;
 
     // The grid line
-    double         _gridLineDashArray[];
-
-    // PropertyChangeSupport
-    private PropChangeSupport _pcs = PropChangeSupport.EMPTY;
+    private double  _gridLineDashArray[];
 
     // Constants for properties
     public static final String Type_Prop = "Type";
@@ -58,27 +45,17 @@ public class Axis {
     static Color   GRID_LINES_COLOR = Color.get("#E6");
 
     /**
-     * Returns the chart.
-     */
-    public Chart getChart()  { return _chart; }
-
-    /**
-     * Returns the dataset.
-     */
-    public DataSet getDataSet()  { return _chart.getDataSet(); }
-
-    /**
      * Returns the YAxis title.
      */
-    public String getTitle()  { return _titleView; }
+    public String getTitle()  { return _title; }
 
     /**
      * Sets the YAxis title.
      */
     public void setTitle(String aStr)
     {
-        if (aStr==_titleView) return;
-        firePropChange(Title_Prop, _titleView, _titleView=aStr);
+        if (aStr== _title) return;
+        firePropChange(Title_Prop, _title, _title =aStr);
     }
 
     /**
@@ -207,55 +184,4 @@ public class Axis {
      * Returns the grid line dash array.
      */
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
-
-    /**
-     * Add listener.
-     */
-    public void addPropChangeListener(PropChangeListener aPCL)
-    {
-        if(_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addPropChangeListener(aPCL);
-    }
-
-    /**
-     * Remove listener.
-     */
-    public void removePropChangeListener(PropChangeListener aPCL)  { _pcs.removePropChangeListener(aPCL); }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal)
-    {
-        if(!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal));
-    }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal, int anIndex)
-    {
-        if(!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal, anIndex));
-    }
-
-    /**
-     * Fires a given property change.
-     */
-    protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
-
-    /**
-     * Add DeepChange listener.
-     */
-    public void addDeepChangeListener(DeepChangeListener aDCL)
-    {
-        if(_pcs==PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addDeepChangeListener(aDCL);
-    }
-
-    /**
-     * Remove DeepChange listener.
-     */
-    public void removeDeepChangeListener(DeepChangeListener aPCL)  { _pcs.removeDeepChangeListener(aPCL); }
 }

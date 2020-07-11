@@ -15,7 +15,17 @@ public class ChartParser {
     /**
      * Create ChartParser for given ChartView.
      */
-    public ChartParser(Chart aChart)  { _chart = aChart; }
+    public ChartParser()  { }
+
+    /**
+     * Returns the chart.
+     */
+    public Chart getChartForJSONString(String aStr)
+    {
+        _chart = new Chart();
+        parseString(aStr);
+        return _chart;
+    }
 
     /**
      * Parse given JSON string.

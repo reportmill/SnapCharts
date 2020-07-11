@@ -1,6 +1,8 @@
 package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
+import snap.util.DeepChangeListener;
+import snap.util.PropChangeListener;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.app.ToolTipView;
@@ -49,7 +51,13 @@ public class ChartView extends ColView {
 
     // The runnable to trigger resetView() before layout/paint
     private Runnable  _resetViewRun, _resetViewRunShared = () -> { resetView(); _resetViewRun = null; };
+
+    // The PropChangeListener
+    private PropChangeListener  _pcl = pc -> chartDidPropChange();
     
+    // The DeepChangeListener
+    private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange();
+
     // Constants
     public static final String BAR_TYPE = "Bar";
     public static final String BAR3D_TYPE = "Bar3D";
@@ -119,10 +127,24 @@ public class ChartView extends ColView {
      */
     public void setChart(Chart aChart)
     {
+        // If already set, just return
+        if (aChart==_chart) return;
+
+        // Stop listening to old chart
+        if (_chart!=null) {
+            _chart.removePropChangeListener(_pcl);
+            _chart.removeDeepChangeListener(_dcl);
+        }
+
+        // Set Chart
         _chart = aChart;
 
-        _chart.addPropChangeListener(pc -> chartDidPropChange());
-        _chart.addDeepChangeListener((src,pc) -> chartDidDeepChange());
+        // Start listening to new chart
+        _chart.addPropChangeListener(_pcl);
+        _chart.addDeepChangeListener(_dcl);
+
+        // Reset
+        resetLater();
     }
 
     /**

@@ -3,8 +3,11 @@ package snapcharts.app;
 //import org.teavm.jso.JSObject;
 //import snap.util.SnapUtils;
 
+import snap.view.ViewUtils;
+import snap.web.WebURL;
+
 /**
- * A custom class.
+ * The main class for SnapCharts app.
  */
 public class App {
     
@@ -15,6 +18,8 @@ public static void main(String args[])
 {
     DocPane docPane = new DocPane();
     docPane.setWindowVisible(true);
+
+    ViewUtils.runLater(() -> docPane.loadSampleDoc());
 
 
 //    ViewUtils.runLater(() -> {

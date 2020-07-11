@@ -9,18 +9,13 @@
     <Separator PrefHeight="18" Vertical="true" />
     <Button Name="UndoButton" PrefWidth="22" PrefHeight="22" ToolTip="Undo" image="Edit_Undo.png" ShowArea="false" />
     <Button Name="RedoButton" PrefWidth="22" PrefHeight="22" ToolTip="Redo" image="Edit_Redo.png" ShowArea="false" />
-    <RowView Margin="0,0,0,120">
-      <ToggleButton Name="EditButton" PrefWidth="52" PrefHeight="20" text="Edit" Position="CENTER_LEFT" Selected="true" Group="tge" />
-      <ToggleButton Name="XMLButton" PrefWidth="52" PrefHeight="20" LeanX="RIGHT" text="XML" Position="CENTER" Group="tge" />
-      <ToggleButton Name="PreviewButton" PrefWidth="52" PrefHeight="20" text="Run" Position="CENTER_RIGHT" Group="tge" />
-    </RowView>
     <RowView PrefWidth="300" LeanX="RIGHT">
       <Button Name="SamplesButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Samples" />
     </RowView>
   </RowView>
   <SplitView Name="SplitView" GrowHeight="true">
     <ColView FillWidth="true">
-      <TreeView Name="BookItemTree" GrowHeight="true" />
+      <TreeView Name="TreeView" MinWidth="150" GrowHeight="true" />
     </ColView>
   </SplitView>
 </ColView>

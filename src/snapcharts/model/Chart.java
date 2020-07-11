@@ -7,7 +7,7 @@ import snap.web.WebURL;
 /**
  * A view to render a chart.
  */
-public class Chart {
+public class Chart extends ChartPart {
 
     // The chart type
     private ChartType  _type = ChartType.LINE;
@@ -42,9 +42,6 @@ public class Chart {
     // The DataSet
     private DataSet  _dataSet = new DataSet(this);
 
-    // PropertyChangeSupport
-    private PropChangeSupport _pcs = PropChangeSupport.EMPTY;
-
     // Property constants
     public static final String Type_Prop = "Type";
     public static final String Title_Prop = "Title";
@@ -66,8 +63,18 @@ public class Chart {
      */
     public Chart()
     {
-        _axisX = new AxisX(); _axisX._chart = this;
-        _axisY = new AxisY(); _axisY._chart = this;
+        // Set chart
+        _chart = this;
+
+        // Add X Axis
+        _axisX = new AxisX();
+        _axisX._chart = this;
+        _axisX.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Add Y Axis
+        _axisY = new AxisY();
+        _axisY._chart = this;
+        _axisY.addPropChangeListener(pc -> chartPartDidPropChange(pc));
     }
 
     /**
@@ -225,82 +232,12 @@ public class Chart {
     }
 
     /**
-     * Loads the ChartView from JSON source.
+     * Called when chart part has prop change.
      */
-    public void loadFromSource(Object aSrc)
+    protected void chartPartDidPropChange(PropChange aPC)
     {
-        WebURL url = WebURL.getURL(aSrc);
-        String jsonText = url.getText();
-        loadFromString(jsonText);
+        _pcs.fireDeepChange(this, aPC);
     }
-
-    /**
-     * Loads the ChartView from JSON string.
-     */
-    public void loadFromString(String aStr)
-    {
-        _dataSet.clear();
-        ChartParser parser = new ChartParser(this);
-        parser.parseString(aStr);
-        if(_dataSet.isEmpty()) _dataSet.addSeriesForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
-        //reloadContents(true);
-    }
-
-    /**
-     * Add listener.
-     */
-    public void addPropChangeListener(PropChangeListener aPCL)
-    {
-        if(_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addPropChangeListener(aPCL);
-    }
-
-    /**
-     * Add listener.
-     */
-    public void addPropChangeListener(PropChangeListener aPCL, String ... theProps)
-    {
-        if(_pcs==PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        for(String prop : theProps)
-            _pcs.addPropChangeListener(aPCL, prop);
-    }
-
-    /**
-     * Remove listener.
-     */
-    public void removePropChangeListener(PropChangeListener aPCL)  { _pcs.removePropChangeListener(aPCL); }
-
-    /**
-     * Remove listener.
-     */
-    public void removePropChangeListener(PropChangeListener aPCL, String ... theProps)
-    {
-        for(String prop : theProps)
-            _pcs.removePropChangeListener(aPCL, prop);
-    }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal)
-    {
-        if(!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal));
-    }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal, int anIndex)
-    {
-        if(!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal, anIndex));
-    }
-
-    /**
-     * Fires a given property change.
-     */
-    protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
 
     /**
      * Add DeepChange listener.

@@ -7,10 +7,7 @@ import snapcharts.app.Intervals;
 /**
  * A class to manage a list of DataSeries.
  */
-public class DataSet {
-
-    // The Chart that owns this dataset
-    private Chart  _chart;
+public class DataSet extends ChartPart {
 
     // The list of series
     List <DataSeries>  _series = new ArrayList();
@@ -27,9 +24,6 @@ public class DataSet {
     // The cached min/max values
     double             _minVal = Float.MAX_VALUE, _maxVal = -Float.MAX_VALUE;
 
-    // PropertyChangeSupport
-    private PropChangeSupport _pcs = PropChangeSupport.EMPTY;
-
     // Constants for properties
     public static final String SeriesStart_Prop = "SeriesStart";
 
@@ -37,11 +31,6 @@ public class DataSet {
      * Creates a DataSet for given ChartView.
      */
     public DataSet(Chart aChart)  { _chart = aChart; }
-
-    /**
-     * Returns the chart.
-     */
-    public Chart getChart()  { return _chart; }
 
     /**
      * Returns the series.
@@ -258,55 +247,4 @@ public class DataSet {
         //_chartView.getChartArea().clearCache();
         //_chartView.reloadContents(false);
     }
-
-    /**
-     * Add listener.
-     */
-    public void addPropChangeListener(PropChangeListener aPCL)
-    {
-        if (_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addPropChangeListener(aPCL);
-    }
-
-    /**
-     * Remove listener.
-     */
-    public void removePropChangeListener(PropChangeListener aPCL)  { _pcs.removePropChangeListener(aPCL); }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal)
-    {
-        if (!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal));
-    }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal, int anIndex)
-    {
-        if (!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal, anIndex));
-    }
-
-    /**
-     * Fires a given property change.
-     */
-    protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
-
-    /**
-     * Add DeepChange listener.
-     */
-    public void addDeepChangeListener(DeepChangeListener aDCL)
-    {
-        if (_pcs==PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addDeepChangeListener(aDCL);
-    }
-
-    /**
-     * Remove DeepChange listener.
-     */
-    public void removeDeepChangeListener(DeepChangeListener aPCL)  { _pcs.removeDeepChangeListener(aPCL); }
 }
