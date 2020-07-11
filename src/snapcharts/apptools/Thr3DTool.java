@@ -31,7 +31,7 @@ public Thr3DTool(ChartView aCV)  { _chartView = aCV; }
  */
 public CameraView getCameraView()
 {
-    DataView ca = _chartView.getChartArea();
+    DataView ca = _chartView.getDataView();
     DataViewBar3D ca3d = ca instanceof DataViewBar3D ? (DataViewBar3D)ca : null; if(ca3d==null) return null;
     return ca3d.getCameraView();
 }

@@ -13,7 +13,7 @@ import snapcharts.model.Chart;
 public class AxisViewX extends View {
 
     // The ChartArea
-    DataView _chartArea;
+    DataView _dataView;
 
     private AxisX  _axis;
     
@@ -34,7 +34,7 @@ public AxisViewX()
  */
 public Chart getChart()
 {
-    return _chartArea.getChart();
+    return _dataView.getChart();
 }
 
 /**
@@ -52,7 +52,7 @@ public AxisX getAxis()
  */
 protected void paintFront(Painter aPntr)
 {
-    Insets ins = _chartArea.getInsetsAll();
+    Insets ins = _dataView.getInsetsAll();
     paintAxis(aPntr, ins.left, getWidth() - ins.getWidth(), getHeight());
 }
 
@@ -62,7 +62,7 @@ protected void paintFront(Painter aPntr)
 protected void paintAxis(Painter aPntr, double aX, double aW, double aH)
 {
     // If Bar chart, go there instead
-    if(_chartArea instanceof DataViewBar) { paintAxisBar(aPntr, 0, getWidth(), aH); return; }
+    if(_dataView instanceof DataViewBar) { paintAxisBar(aPntr, 0, getWidth(), aH); return; }
     
     // Set font, color
     Font font = getFont();
@@ -75,7 +75,7 @@ protected void paintAxis(Painter aPntr, double aX, double aW, double aH)
     double labelY = labelsYOff + fontHeight;
     
     // Get number of data points
-    int pointCount = _chartArea.getPointCount();
+    int pointCount = _dataView.getPointCount();
     double sectionW = aW/(pointCount-1);
     double tickLen = axis.getTickLength();
     
@@ -112,7 +112,7 @@ protected void paintAxisBar(Painter aPntr, double aX, double aW, double aH)
     double labelY = labelsYOff + fontHeight;
     
     // Get number of data points
-    int pointCount = _chartArea.getPointCount();
+    int pointCount = _dataView.getPointCount();
     double sectionW = aW/pointCount;
     double tickLen = axis.getTickLength();
     

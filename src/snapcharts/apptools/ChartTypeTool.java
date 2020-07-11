@@ -2,6 +2,8 @@ package snapcharts.apptools;
 
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
+import snapcharts.model.Chart;
+import snapcharts.model.ChartType;
 import snapcharts.views.ChartView;
 import snapcharts.app.EditorPane;
 
@@ -11,14 +13,14 @@ import snapcharts.app.EditorPane;
 public class ChartTypeTool extends ViewOwner {
 
     // The ChartView
-    ChartView        _chartView;
+    private EditorPane  _epane;
 
     /**
      * Constructor.
      */
     public ChartTypeTool(EditorPane anEP)
     {
-        _chartView = anEP.getChartView();
+        _epane = anEP;
     }
 
     /**
@@ -26,8 +28,12 @@ public class ChartTypeTool extends ViewOwner {
      */
     protected void resetUI()
     {
+        // Get chart
+        Chart chart = _epane.getChart();
+
         // Reset LineChartButton, BarChartButton
-        String typeName = _chartView.getType() + "ChartButton";
+        ChartType type = chart.getType();
+        String typeName = type.getStringPlain() + "ChartButton";
         setViewValue(typeName, true);
     }
 
@@ -36,10 +42,13 @@ public class ChartTypeTool extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Get chart and type
+        Chart chart = _epane.getChart();
+
         // Handle BarChartButton, LineChartButton, PieChartButton
-        if(anEvent.equals("BarChartButton")) _chartView.setType(ChartView.BAR_TYPE);
-        if(anEvent.equals("Bar3DChartButton")) _chartView.setType(ChartView.BAR3D_TYPE);
-        if(anEvent.equals("LineChartButton")) _chartView.setType(ChartView.LINE_TYPE);
-        if(anEvent.equals("PieChartButton")) _chartView.setType(ChartView.PIE_TYPE);
+        if(anEvent.equals("BarChartButton")) chart.setType(ChartType.BAR);
+        if(anEvent.equals("Bar3DChartButton")) chart.setType(ChartType.BAR_3D);
+        if(anEvent.equals("LineChartButton")) chart.setType(ChartType.LINE);
+        if(anEvent.equals("PieChartButton")) chart.setType(ChartType.PIE);
     }
 }

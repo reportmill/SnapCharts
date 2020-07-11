@@ -13,7 +13,7 @@ import snapcharts.model.Chart;
 public class AxisViewY extends ParentView {
     
     // The ChartArea
-    DataView _chartArea;
+    DataView _dataView;
     
     // The Title view
     StringView     _titleView;
@@ -60,7 +60,7 @@ public AxisViewY()
 /**
  * Returns the Chart.
  */
-public Chart getChart()  { return _chartArea.getChart(); }
+public Chart getChart()  { return _dataView.getChart(); }
 
 /**
  * Returns the YAxis title view.
@@ -164,7 +164,7 @@ public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVa
  */
 protected void paintFront(Painter aPntr)
 {
-    Insets ins = _chartArea.getInsetsAll();
+    Insets ins = _dataView.getInsetsAll();
     double w = getWidth(), aw = getLabelsOffset(), ax = w - aw;
     paintAxis(aPntr, ax, ins.top, aw, getHeight() - ins.getHeight());
 }
@@ -179,7 +179,7 @@ protected void paintAxis(Painter aPntr, double aX, double aY, double aW, double 
     double fontDesc = Font.Arial12.getDescent();
     
     // Get intervals
-    Intervals intervals = _chartArea.getActiveIntervals();
+    Intervals intervals = _dataView.getActiveIntervals();
     int lineCount = intervals.getCount(), sectionCount = lineCount - 1;
     double intervalDelta = intervals.getDelta(), intervalMax = intervals.getMax();
     double marginx = getLabelsMargin();
@@ -257,7 +257,7 @@ protected String getLabel(double aLineVal, double aDelta)
 protected double getMaxLabelWidth()
 {
     // Get intervals
-    Intervals intervals = _chartArea.getActiveIntervals();
+    Intervals intervals = _dataView.getActiveIntervals();
     int lineCount = intervals.getCount(), sectionCount = lineCount - 1;
     double intervalDelta = intervals.getDelta(), intervalMax = intervals.getMax();
     

@@ -2,6 +2,7 @@ package snapcharts.views;
 import java.util.*;
 import snap.geom.*;
 import snap.gfx.*;
+import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSeries;
 
@@ -21,6 +22,11 @@ public class DataViewLine extends DataView {
     {
         setPadding(5,10,0,10); // Add padding so endpoints aren't on edges
     }
+
+    /**
+     * Returns the type.
+     */
+    public ChartType getType()  { return ChartType.LINE; }
 
     /**
      * Returns the list of paths for each series.

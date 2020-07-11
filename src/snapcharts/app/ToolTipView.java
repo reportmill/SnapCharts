@@ -41,7 +41,7 @@ public class ToolTipView extends ColView {
      */
     public void setXYInChartArea(Point aPnt)
     {
-        Point pnt = _chartView.getChartArea().localToParent(aPnt.x, aPnt.y, _chartView);
+        Point pnt = _chartView.getDataView().localToParent(aPnt.x, aPnt.y, _chartView);
         setXYInChartView(pnt);
     }
 

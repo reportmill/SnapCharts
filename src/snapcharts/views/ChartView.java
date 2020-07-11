@@ -1,11 +1,11 @@
 package snapcharts.views;
-import java.text.DecimalFormat;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.app.ToolTipView;
 import snapcharts.model.Chart;
+import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
 
@@ -23,35 +23,29 @@ public class ChartView extends ColView {
     // The subtitle
     private StringView  _subtitleView;
     
-    // The ChartArea
-    private DataView _chartArea;
+    // The DataView
+    private DataView  _dataView;
     
     // The XAxis
-    AxisViewX _axisX;
+    protected AxisViewX  _axisX;
     
     // The YAxis
-    AxisViewY _axisY;
+    protected AxisViewY  _axisY;
     
     // The Legend
-    LegendView _legend;
+    private LegendView  _legend;
     
-    // The object holding specific chart types
-    DataViews _dataViews = new DataViews(this);
+    // The view to hold DataView and X/Y axis views
+    private DataViewBox  _dataViewBox;
     
-    // The view to hold ChartArea and X/Y axis views
-    ChartAreaBox       _chartAreaBox;
-    
-    // The view to hold ChartAreaBox and Legend
-    RowView            _rowView;
-    
-    // The chart type
-    String             _type = LINE_TYPE;
-    
+    // The view to hold DataViewBox and Legend
+    private RowView  _rowView;
+
     // The ToolTipView
-    ToolTipView _toolTipView;
+    private ToolTipView  _toolTipView;
 
     // The selected and targeted (under mouse) data point
-    DataPoint _selPoint, _targPoint;
+    private DataPoint  _selPoint, _targPoint;
 
     // The runnable to trigger resetView() before layout/paint
     private Runnable  _resetViewRun, _resetViewRunShared = () -> { resetView(); _resetViewRun = null; };
@@ -95,12 +89,12 @@ public class ChartView extends ColView {
         _axisX = new AxisViewX();
         _axisY = new AxisViewY();
 
-        // Create/add ChartAreaBox
-        _chartAreaBox = new ChartAreaBox();
-        _rowView.addChild(_chartAreaBox);
+        // Create/add DataViewBox
+        _dataViewBox = new DataViewBox();
+        _rowView.addChild(_dataViewBox);
 
-        // Create/set ChartArea
-        setChartArea(_dataViews.getLineChart());
+        // Create/set DataView
+        setDataView(DataView.createDataViewForType(ChartType.LINE));
 
         // Create/configure ChartLegend
         _legend = new LegendView();
@@ -137,38 +131,34 @@ public class ChartView extends ColView {
     public DataSet getDataSet()  { return getChart().getDataSet(); }
 
     /**
-     * Returns the type.
+     * Returns the DataView.
      */
-    public String getType()  { return _type; }
+    public DataView getDataView()  { return _dataView; }
+
+    /**
+     * Sets the DataView.
+     */
+    protected void setDataView(DataView aDataView)
+    {
+        if (_dataView !=null) _dataView.deactivate();
+
+        _dataViewBox.setDataView(aDataView);
+        _dataView.setChartView(this);
+        _dataView.activate();
+    }
 
     /**
      * Sets the type.
      */
-    public void setType(String aType)
+    public void setDataViewForType(ChartType aType)
     {
-        _type = aType;
+        // If already set, just return
+        if (aType==getDataView().getType()) return;
 
-        // Get ChartArea for type, set in ChartView and reload contents
-        DataView chartArea = _dataViews.getChart(aType);
-        setChartArea(chartArea);
+        // Get DataView for type, set in ChartView and reload contents
+        DataView dataView = DataView.createDataViewForType(aType);
+        setDataView(dataView);
         resetLater();
-    }
-
-    /**
-     * Returns the ChartArea.
-     */
-    public DataView getChartArea()  { return _chartArea; }
-
-    /**
-     * Sets the ChartArea.
-     */
-    protected void setChartArea(DataView aCA)
-    {
-        if (_chartArea!=null) _chartArea.deactivate();
-
-        _chartAreaBox.setChartArea(aCA);
-        _chartArea._chartView = this;
-        _chartArea.activate();
     }
 
     /**
@@ -213,6 +203,9 @@ public class ChartView extends ColView {
         // Get info
         Chart chart = getChart();
 
+        // Reset Type
+        setDataViewForType(chart.getType());
+
         // Reset Title
         String title = chart.getTitle();
         _titleView.setText(title);
@@ -235,11 +228,11 @@ public class ChartView extends ColView {
         if (showLegend)
             _legend.reloadContents();
 
-        // Reset ChartArea
-        _chartArea.reactivate();
+        // Reset DataView
+        _dataView.reactivate();
 
         // Trigger animate
-        _chartArea.animate();
+        _dataView.animate();
         _axisY.repaint();
         _axisX.repaint();
     }
@@ -290,7 +283,7 @@ public class ChartView extends ColView {
      */
     public Point dataPointInLocal(DataPoint aDP)
     {
-          DataView carea = _chartArea;
+          DataView carea = _dataView;
           Point pnt = carea.dataPointInLocal(aDP);
           return carea.localToParent(pnt.x, pnt.y, this);
     }
@@ -312,25 +305,25 @@ public class ChartView extends ColView {
     }
 
     /**
-     * A class to layout ChartArea and X/Y axis views.
+     * A class to layout DataView and X/Y axis views.
      */
-    private class ChartAreaBox extends ParentView {
+    private class DataViewBox extends ParentView {
 
-        /** Create ChartAreaBox. */
-        public ChartAreaBox()  { setGrowWidth(true); setGrowHeight(true); setChildren(_axisY, _axisX); }
+        /** Create DataViewBox. */
+        public DataViewBox()  { setGrowWidth(true); setGrowHeight(true); setChildren(_axisY, _axisX); }
 
-        /** Sets the ChartArea. */
-        protected void setChartArea(DataView aCA)
+        /** Sets the DataView. */
+        protected void setDataView(DataView aCA)
         {
-            if (_chartArea!=null) removeChild(_chartArea);
-            addChild(_chartArea = aCA, 1);
-            _axisY._chartArea = _axisX._chartArea = aCA;
+            if (_dataView !=null) removeChild(_dataView);
+            addChild(_dataView = aCA, 1);
+            _axisY._dataView = _axisX._dataView = aCA;
         }
 
         /** Calculates the preferred width. */
         protected double getPrefWidthImpl(double aH)
         {
-            double pw = _chartArea.getPrefWidth();
+            double pw = _dataView.getPrefWidth();
             if (_axisY.isVisible()) pw += _axisY.getPrefWidth();
             return pw;
         }
@@ -338,7 +331,7 @@ public class ChartView extends ColView {
         /** Calculates the preferred height. */
         protected double getPrefHeightImpl(double aW)
         {
-            double ph = _chartArea.getPrefHeight();
+            double ph = _dataView.getPrefHeight();
             if (_axisX.isVisible()) ph += _axisX.getPrefHeight();
             return ph;
         }
@@ -349,12 +342,12 @@ public class ChartView extends ColView {
             // Set chart area height first, since height can effect yaxis label width
             double pw = getWidth(), ph = getHeight();
             double ah = _axisX.isVisible()? _axisX.getPrefHeight() : 0;
-            _chartArea.setHeight(ph - ah);
+            _dataView.setHeight(ph - ah);
 
             // Now set bounds of areay, xaxis and yaxis
             double aw = _axisY.isVisible()? _axisY.getPrefWidth(ph - ah) : 0;
             double cw = pw - aw, ch = ph - ah;
-            _chartArea.setBounds(aw,0,cw,ch);
+            _dataView.setBounds(aw,0,cw,ch);
             _axisX.setBounds(aw,ch,cw,ah);
             _axisY.setBounds(0,0,aw,ch);
         }

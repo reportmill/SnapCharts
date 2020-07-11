@@ -3,6 +3,7 @@ package snapcharts.app;
 import snap.gfx.Font;
 import snap.gfx.ShadowEffect;
 import snap.view.*;
+import snapcharts.model.Chart;
 import snapcharts.views.ChartView;
 
 /**
@@ -28,6 +29,14 @@ public class EditorPane extends ViewOwner {
     public ChartView getChartView()
     {
         return _chartView;
+    }
+
+    /**
+     * Returns the chart.
+     */
+    public Chart getChart()
+    {
+        return _chartView.getChart();
     }
 
     /**

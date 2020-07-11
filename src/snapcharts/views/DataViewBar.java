@@ -5,6 +5,7 @@ import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snapcharts.model.AreaBar;
+import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSeries;
 
@@ -29,6 +30,11 @@ public class DataViewBar extends DataView {
     {
         setPadding(5,0,0,0); // Add top so top axis line isn't on edge
     }
+
+    /**
+     * Returns the type.
+     */
+    public ChartType getType()  { return ChartType.BAR; }
 
     /**
      * Returns the area.

@@ -4,6 +4,7 @@ import snap.geom.Rect;
 import snap.gfx.*;
 import snapcharts.app.Intervals;
 import snapcharts.gfx3d.*;
+import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 
 /**
@@ -47,6 +48,11 @@ public class DataViewBar3D extends DataViewBar {
         _camera.setYaw(26); _camera.setPitch(10); _camera.setDepth(100);
         _camera.setFocalLength(8*72); _camera.setAdjustZ(true);
     }
+
+    /**
+     * Returns the type.
+     */
+    public ChartType getType()  { return ChartType.BAR_3D; }
 
     /**
      * Returns the CameraView.

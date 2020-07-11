@@ -5,6 +5,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.ViewEvent;
+import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSeries;
 import snapcharts.model.DataSet;
@@ -45,6 +46,11 @@ public class DataViewPie extends DataView {
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
         setFont(Font.Arial12.getBold());
     }
+
+    /**
+     * Returns the type.
+     */
+    public ChartType getType()  { return ChartType.PIE; }
 
     /**
      * Sets the chart view.
