@@ -2,12 +2,14 @@ package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.util.*;
-import snap.web.WebURL;
 
 /**
  * A view to render a chart.
  */
 public class Chart extends ChartPart {
+
+    // The ChartDoc that owns this chart
+    private ChartDoc  _doc;
 
     // The chart type
     private ChartType  _type = ChartType.LINE;
@@ -75,6 +77,19 @@ public class Chart extends ChartPart {
         _axisY = new AxisY();
         _axisY._chart = this;
         _axisY.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+    }
+
+    /**
+     * Returns the chart doc.
+     */
+    public ChartDoc getDoc() { return _doc; }
+
+    /**
+     * Sets the doc.
+     */
+    protected void setDoc(ChartDoc aDoc)
+    {
+        _doc = aDoc;
     }
 
     /**
@@ -230,6 +245,11 @@ public class Chart extends ChartPart {
         Shape shp4 = new Polygon(0,0,8,0,4,8);
         return _markerShapes = new Shape[] { shp0, shp1, shp2, shp3, shp4 };
     }
+
+    /**
+     * Returns the parent part.
+     */
+    public ChartPart getParent() { return getDoc(); }
 
     /**
      * Called when chart part has prop change.

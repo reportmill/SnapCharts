@@ -7,6 +7,8 @@ import snapcharts.model.Chart;
 import snapcharts.model.ChartDoc;
 import snapcharts.model.ChartPart;
 
+import java.util.Arrays;
+
 /**
  * A class to manage charts/data in a ChartBook.
  */
@@ -50,6 +52,8 @@ public class DocPane extends ViewOwner {
         if (chart!=null) {
             getEditorPane().setChart(chart);
         }
+
+        resetLater();
     }
 
     /**
@@ -97,7 +101,17 @@ public class DocPane extends ViewOwner {
 
         // Get/configure TreeView
         _treeView = getView("TreeView", TreeView.class);
-        _treeView.setResolver(null);
+        _treeView.setResolver(new ChartDocTreeResolver());
+    }
+
+    /**
+     * Reset UI.
+     */
+    @Override
+    protected void resetUI()
+    {
+        _treeView.setItems(getDoc());
+        _treeView.expandAll();
     }
 
     /**
@@ -113,8 +127,8 @@ public class DocPane extends ViewOwner {
      */
     protected void loadSampleDoc()
     {
-        String jsonText = WebURL.getURL(App.class, "Sample.json").getText();
-        ChartDoc doc = ChartDoc.createDocFromJSONString(jsonText);
+        WebURL url = WebURL.getURL(App.class, "Sample.json");
+        ChartDoc doc = ChartDoc.createDocFromSource(url);
         setDoc(doc);
     }
 
@@ -126,19 +140,29 @@ public class DocPane extends ViewOwner {
         @Override
         public ChartPart getParent(ChartPart anItem)
         {
-            return null;
+            return anItem.getParent();
         }
 
         @Override
         public boolean isParent(ChartPart anItem)
         {
-            return false;
+            return anItem instanceof Chart || anItem instanceof ChartDoc;
         }
 
         @Override
         public ChartPart[] getChildren(ChartPart aParent)
         {
+            if (aParent instanceof ChartDoc)
+                return ((ChartDoc)aParent).getCharts().toArray(new ChartPart[0]);
+            if (aParent instanceof Chart)
+                return Arrays.asList(aParent.getDataSet()).toArray(new ChartPart[0]);
             return new ChartPart[0];
+        }
+
+        @Override
+        public String getText(ChartPart anItem)
+        {
+            return anItem.getName();
         }
     }
 

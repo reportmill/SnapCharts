@@ -1,6 +1,4 @@
 package snapcharts.model;
-import snap.web.WebURL;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +39,7 @@ public class ChartDoc extends ChartPart {
     public void addChart(Chart aChart, int anIndex)
     {
         _charts.add(anIndex, aChart);
+        aChart.setDoc(this);
     }
 
     /**
@@ -52,28 +51,22 @@ public class ChartDoc extends ChartPart {
     }
 
     /**
+     * Override to return null.
+     */
+    public ChartPart getParent()  { return null; }
+
+    /**
      * Loads the ChartView from JSON source.
      */
     public static ChartDoc createDocFromSource(Object aSrc)
     {
-        WebURL url = WebURL.getURL(aSrc);
-        String jsonText = url.getText();
-        return createDocFromJSONString(jsonText);
-    }
-
-    /**
-     * Loads the ChartView from JSON string.
-     */
-    public static ChartDoc createDocFromJSONString(String aStr)
-    {
         ChartParser parser = new ChartParser();
-        Chart chart = parser.getChartForJSONString(aStr);
+        ChartDoc doc = parser.getDocForSource(aSrc);
 
-        if(chart.getDataSet().isEmpty())
+        Chart chart = doc.getChartCount()>0 ? doc.getChart(0) : null;
+        if(chart!=null && chart.getDataSet().isEmpty())
             chart.getDataSet().addSeriesForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
 
-        ChartDoc cdoc = new ChartDoc();
-        cdoc.addChart(chart);
-        return cdoc;
+        return doc;
     }
 }

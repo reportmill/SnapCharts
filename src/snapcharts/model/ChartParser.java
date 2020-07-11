@@ -3,6 +3,7 @@ import java.util.*;
 import snap.gfx.Color;
 import snap.geom.VPos;
 import snap.util.*;
+import snap.web.WebURL;
 
 /**
  * A class to load chart parameters from JSON.
@@ -16,6 +17,26 @@ public class ChartParser {
      * Create ChartParser for given ChartView.
      */
     public ChartParser()  { }
+
+    /**
+     * Returns a chart for Source.
+     */
+    public ChartDoc getDocForSource(Object aSource)
+    {
+        WebURL url = WebURL.getURL(aSource);
+        String name = url.getPathNameSimple();
+        String jsonText = url.getText();
+        Chart chart = getChartForJSONString(jsonText);
+        chart.setName(name);
+
+        if (chart.getDataSet().getName()==null)
+            chart.getDataSet().setName(name + " Data");
+
+        ChartDoc doc = new ChartDoc();
+        doc.setName(name + " Doc");
+        doc.addChart(chart);
+        return doc;
+    }
 
     /**
      * Returns the chart.

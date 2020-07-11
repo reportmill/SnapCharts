@@ -1,10 +1,15 @@
 package snapcharts.model;
 import snap.util.*;
 
+import java.util.Objects;
+
 /**
  * Base class for parts of a chart: Axis, Area, Legend, etc.
  */
 public class ChartPart {
+
+    // The name
+    private String  _name;
 
     // The Chart
     protected Chart  _chart;
@@ -12,10 +17,27 @@ public class ChartPart {
     // PropertyChangeSupport
     protected PropChangeSupport _pcs = PropChangeSupport.EMPTY;
 
+    // Constants for properties
+    public static final String Name_Prop = "Name";
+
+    /**
+     * Returns the ChartDoc.
+     */
+    public ChartDoc getDoc()
+    {
+        ChartPart par = getParent();
+        return par!=null ? par.getDoc() : par instanceof ChartDoc ? (ChartDoc)par : null;
+    }
+
     /**
      * Returns the chart.
      */
     public Chart getChart()  { return _chart; }
+
+    /**
+     * Sets the chart.
+     */
+    protected void setChart(Chart aChart)  { _chart = aChart; }
 
     /**
      * Returns the dataset.
@@ -23,9 +45,26 @@ public class ChartPart {
     public DataSet getDataSet()  { return _chart.getDataSet(); }
 
     /**
-     * Sets the chart.
+     * Returns the parent part.
      */
-    protected void setChart(Chart aChart)  { _chart = aChart; }
+    public ChartPart getParent()  { return _chart; }
+
+    /**
+     * Returns the name.
+     */
+    public String getName()  { return _name; }
+
+    /**
+     * Sets the name.
+     */
+    public void setName(String aName)
+    {
+        // If value already set, just return
+        if (Objects.equals(aName, _name)) return;
+
+        // Set value and fire prop change
+        firePropChange(Name_Prop, _name, _name = aName);
+    }
 
     /**
      * Add listener.
