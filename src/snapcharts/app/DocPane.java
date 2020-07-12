@@ -1,6 +1,7 @@
 package snapcharts.app;
 import snap.gfx.Image;
 import snap.view.*;
+import snap.viewx.FilePanel;
 import snap.viewx.TextPane;
 import snap.web.WebURL;
 import snapcharts.model.Chart;
@@ -32,6 +33,14 @@ public class DocPane extends ViewOwner {
     public DocPane()
     {
         _editorPane = new EditorPane();
+    }
+
+    /**
+     * Returns the source URL.
+     */
+    public WebURL getSourceURL()
+    {
+        return getDoc().getSourceURL();
     }
 
     /**
@@ -70,6 +79,67 @@ public class DocPane extends ViewOwner {
         return _menuBar = new DocPaneMenuBar(this);
     }
 
+    /**
+     * Creates a new default editor pane.
+     */
+    public DocPane newDoc()
+    {
+        loadSampleDoc();
+        return this;
+    }
+
+    /**
+     * Creates a new editor window from an open panel.
+     */
+    public DocPane showOpenPanel(View aView)
+    {
+        // Get path from open panel for supported file extensions
+        String path = FilePanel.showOpenPanel(aView, "Snap Charts File", "charts");
+        return open(path);
+    }
+
+    /**
+     * Creates a new editor window by opening the document from the given source.
+     */
+    public DocPane open(Object aSource)
+    {
+        // If source is already opened, return editor pane
+        WebURL url = WebURL.getURL(aSource);
+
+        ChartDoc doc = ChartDoc.createDocFromSource(url);
+
+        setDoc(doc);
+
+        // If source is string, add to recent files menu
+        //if(url!=null) RecentFilesPanel.addRecentFile(url.getString());
+
+        // Return the editor
+        return this;
+    }
+
+    /**
+     * Closes this editor pane
+     */
+    public boolean close()
+    {
+        // Close window, called EditorClosed and return true to indicate we closed the window
+        getWindow().hide();
+        docPaneClosed();
+        return true;
+    }
+
+    /**
+     * Called when DocPane is closed.
+     */
+    protected void docPaneClosed()
+    {
+        // If another open editor is available focus on it, otherwise run WelcomePanel
+        DocPane dpane = WindowView.getOpenWindowOwner(DocPane.class);
+        //if (dpane!=null) dpane.getEditor().requestFocus(); else
+         if (dpane==null)
+             WelcomePanel.getShared().showPanel();
+    }
+
     @Override
     protected View createUI()
     {
@@ -102,6 +172,10 @@ public class DocPane extends ViewOwner {
         // Get/configure TreeView
         _treeView = getView("TreeView", TreeView.class);
         _treeView.setResolver(new ChartDocTreeResolver());
+
+        // Configure window
+        WindowView win = getWindow();
+        enableEvents(win, WinClose);
     }
 
     /**
@@ -119,7 +193,10 @@ public class DocPane extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        System.out.println("DocPane.respondUI: " + anEvent);
+
+        // Handle WinClosing
+        if (anEvent.isWinClose()) {
+            close(); anEvent.consume(); }
     }
 
     /**

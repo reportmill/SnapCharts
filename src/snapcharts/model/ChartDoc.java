@@ -1,4 +1,6 @@
 package snapcharts.model;
+import snap.web.WebURL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +9,24 @@ import java.util.List;
  */
 public class ChartDoc extends ChartPart {
 
+    // The Source URL
+    private WebURL  _srcURL;
+
     // The list of charts
-    List<Chart> _charts = new ArrayList<>();
+    private List<Chart> _charts = new ArrayList<>();
+
+    /**
+     * Returns the Source URL.
+     */
+    public WebURL getSourceURL()  { return _srcURL; }
+
+    /**
+     * Sets the Source URL.
+     */
+    protected void setSourceURL(WebURL aURL)
+    {
+        _srcURL = aURL;
+    }
 
     /**
      * Returns the charts.

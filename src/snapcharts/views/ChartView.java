@@ -270,6 +270,14 @@ public class ChartView extends ColView {
             updater.runBeforeUpdate(_resetViewRun = _resetViewRunShared);
     }
 
+    @Override
+    protected void setShowing(boolean aValue)
+    {
+        if (aValue==isShowing()) return; super.setShowing(aValue);
+        if (aValue)
+            resetLater();
+    }
+
     /**
      * Returns the selected data point.
      */

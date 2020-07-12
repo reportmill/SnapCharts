@@ -33,6 +33,7 @@ public class ChartParser {
             chart.getDataSet().setName(name + " Data");
 
         ChartDoc doc = new ChartDoc();
+        doc.setSourceURL(url);
         doc.setName(name + " Doc");
         doc.addChart(chart);
         return doc;

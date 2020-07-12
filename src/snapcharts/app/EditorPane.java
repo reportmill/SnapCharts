@@ -44,7 +44,9 @@ public class EditorPane extends ViewOwner {
      */
     public void setChart(Chart aChart)
     {
+        getUI();
         _chartView.setChart(aChart);
+        resetLater();
     }
 
     /**
