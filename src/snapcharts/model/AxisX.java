@@ -68,8 +68,8 @@ public class AxisX extends Axis {
             return _categories.get(anIndex);
 
         // Otherwise, return string for start value and index
-        DataSet dset = getChart().getDataSet();
-        int val = dset.getSeriesStart() + anIndex;
+        DataSetList dset = getChart().getDataSetList();
+        int val = dset.getStartValue() + anIndex;
         return String.valueOf(val);
     }
 }

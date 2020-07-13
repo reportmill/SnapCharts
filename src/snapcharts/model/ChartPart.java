@@ -42,7 +42,7 @@ public class ChartPart {
     /**
      * Returns the dataset.
      */
-    public DataSet getDataSet()  { return _chart.getDataSet(); }
+    public DataSetList getDataSetList()  { return _chart.getDataSetList(); }
 
     /**
      * Returns the parent part.

@@ -82,8 +82,8 @@ public class ChartDoc extends ChartPart {
         ChartDoc doc = parser.getDocForSource(aSrc);
 
         Chart chart = doc.getChartCount()>0 ? doc.getChart(0) : null;
-        if(chart!=null && chart.getDataSet().isEmpty())
-            chart.getDataSet().addSeriesForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
+        if(chart!=null && chart.getDataSetList().isEmpty())
+            chart.getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
 
         return doc;
     }

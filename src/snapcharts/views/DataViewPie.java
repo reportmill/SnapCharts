@@ -7,8 +7,8 @@ import snap.util.*;
 import snap.view.ViewEvent;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
-import snapcharts.model.DataSeries;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 
 /**
  * A ChartArea subclass to display the contents of pie chart.
@@ -66,10 +66,10 @@ public class DataViewPie extends DataView {
      */
     public double[] getAngles()
     {
-        DataSet dset = getActiveSet();
-        DataSeries series = dset.getSeriesCount()>0? dset.getSeries(0) : getSeries(0);
+        DataSetList dsetList = getActiveDataSetList();
+        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : getDataSet(0);
         int count = getPointCount();
-        double ratios[] = series.getRatios();
+        double ratios[] = dset.getRatios();
         double angles[] = new double[count]; for (int i=0;i<count;i++) angles[i] = Math.round(ratios[i]*360);
         return angles;
     }
@@ -82,12 +82,12 @@ public class DataViewPie extends DataView {
         // If wedges cached, just return
         if (_wedges!=null && _wedges.length==getPointCount()) return _wedges;
 
-        // Get series and point count
-        DataSet dset = getActiveSet();
-        DataSeries series = dset.getSeriesCount()>0? dset.getSeries(0) : getSeries(0);
+        // Get dataset and point count
+        DataSetList dsetList = getActiveDataSetList();
+        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : getDataSet(0);
 
         // Get ratios and angles
-        double ratios[] = series.getRatios();
+        double ratios[] = dset.getRatios();
         double angles[] = getAngles();
 
         // Get chart size and insets and calculate pie radius, diameter and center x/y
@@ -100,7 +100,7 @@ public class DataViewPie extends DataView {
         Wedge wedges[] = new Wedge[angles.length]; double start = 0;
         for (int i=0; i<angles.length; i++) { double angle = angles[i];
             Wedge wedge = wedges[i] = new Wedge(); wedge._start = start; wedge._angle = angle;
-            String text = series.getPoint(i).getKeyString();
+            String text = dset.getPoint(i).getKeyString();
             if (text!=null && text.length()>0)
                 wedge._text = text + ": " + _fmt.format(ratios[i]);
             start += angle;
@@ -169,7 +169,7 @@ public class DataViewPie extends DataView {
         for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
             Arc arc = wedge.getArc();
             if (arc.contains(aX, aY))
-                return getSeries(0).getPoint(i);
+                return getDataSet(0).getPoint(i);
         }
 
         // Return null since no wedge contains point
@@ -200,12 +200,12 @@ public class DataViewPie extends DataView {
     {
         _chartView.getAxisX().setVisible(false);
         _chartView.getAxisY().setVisible(false);
-        _showLegend = _chartView.isShowLegend(); _chartView.setShowLegend(getSeriesCount()>1);
+        _showLegend = _chartView.isShowLegend(); _chartView.setShowLegend(getDataSetCount()>1);
 
-        // If multiple series, make sure only first is enabled
-        if (getSeriesCount()>1) {
-            getSeries(0).setDisabled(false);
-            for (int i=1; i<getSeriesCount(); i++) getSeries(i).setDisabled(true);
+        // If multiple datasets, make sure only first is enabled
+        if (getDataSetCount()>1) {
+            getDataSet(0).setDisabled(false);
+            for (int i = 1; i< getDataSetCount(); i++) getDataSet(i).setDisabled(true);
         }
     }
 
@@ -224,8 +224,8 @@ public class DataViewPie extends DataView {
      */
     public void reactivate()
     {
-        DataSet dset = getActiveSet(); if (dset.getSeriesCount()==0 || dset.getPointCount()==0) return;
-        DataPoint dp = dset.getSeries(0).getPoint(0);
+        DataSetList dset = getActiveDataSetList(); if (dset.getDataSetCount()==0 || dset.getPointCount()==0) return;
+        DataPoint dp = dset.getDataSet(0).getPoint(0);
         _disableMorph = true; _chartView.setSelDataPoint(dp); _disableMorph = false;
 
         // Fix padding to accommodate bottom label, if needed

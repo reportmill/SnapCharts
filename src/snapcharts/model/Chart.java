@@ -35,14 +35,14 @@ public class Chart extends ChartPart {
     // Whether to show partial Y axis intervals if min/max don't include zero
     private boolean  _showPartialY;
 
-    // The graph colors
+    // The dataset colors
     private Color  _colors[] = COLORS;
 
-    // The series shapes
+    // The dataset shapes
     private Shape _markerShapes[];
 
     // The DataSet
-    private DataSet  _dataSet = new DataSet(this);
+    private DataSetList _dsetList = new DataSetList(this);
 
     // Property constants
     public static final String Type_Prop = "Type";
@@ -164,24 +164,24 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the dataset.
+     * Returns the DataSetList.
      */
-    public DataSet getDataSet()  { return _dataSet; }
+    public DataSetList getDataSetList()  { return _dsetList; }
 
     /**
-     * Adds a new series.
+     * Adds a new dataset.
      */
-    public void addSeries(DataSeries aSeries)  { _dataSet.addSeries(aSeries); }
+    public void addDataSet(DataSet aDataSet)  { _dsetList.addDataSet(aDataSet); }
 
     /**
-     * Returns the start of the series.
+     * Returns the start value of the dataset.
      */
-    public int getSeriesStart()  { return _dataSet.getSeriesStart(); }
+    public int getDataSetStartValue()  { return _dsetList.getStartValue(); }
 
     /**
-     * Sets the start of the series.
+     * Sets the start value of the dataset.
      */
-    public void setSeriesStart(int aValue)  { _dataSet.setSeriesStart(aValue); }
+    public void setDataSetStartValue(int aValue)  { _dsetList.setStartValue(aValue); }
 
     /**
      * Returns whether to show partial Y axis intervals if min/max don't include zero.
@@ -213,7 +213,7 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the series color at index.
+     * Returns the dataset color at index.
      */
     public Color getColor(int anIndex)
     {
@@ -222,7 +222,7 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the series shape at index.
+     * Returns the dataset shape at index.
      */
     public Shape getMarkerShape(int anIndex)
     {

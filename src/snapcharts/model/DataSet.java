@@ -1,250 +1,267 @@
 package snapcharts.model;
+
 import java.util.*;
 
-import snap.util.*;
-import snapcharts.app.Intervals;
-
 /**
- * A class to manage a list of DataSeries.
+ * A class to represent a list of data points.
  */
-public class DataSet extends ChartPart {
-
-    // The list of series
-    List <DataSeries>  _series = new ArrayList();
+public class DataSet {
     
-    // The series start
-    int                _seriesStart = 0;
+    // The DataSetList that owns this dataset
+    protected DataSetList  _dsetList;
 
-    // The intervals
-    Intervals _intervals = new Intervals(0, 4, 100);
+    // The name
+    private String  _name;
     
-    // Hold a subset of enabled series in this dataset
-    DataSet            _active;
+    // The values
+    private List <DataPoint>  _points = new ArrayList<>();
     
-    // The cached min/max values
-    double             _minVal = Float.MAX_VALUE, _maxVal = -Float.MAX_VALUE;
-
-    // Constants for properties
-    public static final String SeriesStart_Prop = "SeriesStart";
-
-    /**
-     * Creates a DataSet for given ChartView.
-     */
-    public DataSet(Chart aChart)  { _chart = aChart; }
+    // The index in data set
+    protected int  _index;
+    
+    // Whether dataset is disabled
+    private boolean  _disabled;
+    
+    // Cached array of values, ratios, total
+    private double  _vals[], _ratios[], _total;
 
     /**
-     * Returns the series.
+     * Returns the dataset.
      */
-    public List <DataSeries> getSeries()  { return _series; }
+    public DataSetList getDataSetList()  { return _dsetList; }
 
     /**
-     * Returns whether series is empty.
+     * Returns the chart.
      */
-    public boolean isEmpty()  { return _series.isEmpty(); }
+    public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
 
     /**
-     * Returns the number of series.
+     * Returns the name.
      */
-    public int getSeriesCount()  { return _series.size(); }
+    public String getName()  { return _name; }
 
     /**
-     * Sets the number of series.
+     * Sets the name.
      */
-    public void setSeriesCount(int aValue)
+    public void setName(String aValue)
     {
-        // Ignore silly values
-        if (aValue<1 || aValue>20) return;
-
-        // If value larger than cound, create empty series
-        while (aValue>getSeriesCount()) {
-            DataSeries series = addSeriesForNameAndValues((String)null, (Double)null);
-            series.setPointCount(getPointCount());
-        }
-
-        // If value smaller than count, remove series
-        while (aValue<getSeriesCount())
-            removeSeries(getSeriesCount()-1);
-    }
-
-    /**
-     * Returns the individual series at given index.
-     */
-    public DataSeries getSeries(int anIndex)  { return _series.get(anIndex); }
-
-    /**
-     * Adds a new series.
-     */
-    public void addSeries(DataSeries aSeries)
-    {
-        aSeries._index = _series.size();
-        _series.add(aSeries);
-        aSeries._dset = this;
+        _name = aValue;
         clearCache();
     }
 
     /**
-     * Removes the series at index.
+     * Returns the number of points.
      */
-    public DataSeries removeSeries(int anIndex)
-    {
-        DataSeries series = _series.remove(anIndex);
-        clearCache();
-        return series;
-    }
+    public int getPointCount()  { return _points.size(); }
 
     /**
-     * Removes the given series.
-     */
-    public int removeSeries(DataSeries aSeries)
-    {
-        int index = _series.indexOf(aSeries);
-        if (index>=0) removeSeries(index);
-        return index;
-    }
-
-    /**
-     * Clears the series.
-     */
-    public void clear()
-    {
-        _series.clear();
-        clearCache();
-    }
-
-    /**
-     * Returns the minimum value for active series.
-     */
-    public double getMinValue()
-    {
-        if (_minVal<Float.MAX_VALUE) return _minVal;
-        double minVal = Float.MAX_VALUE;
-        for (DataSeries s : getSeries()) { double mval = s.getMinValue(); if (mval<minVal) minVal = mval; }
-        return _minVal = minVal;
-    }
-
-    /**
-     * Returns the maximum value for active series.
-     */
-    public double getMaxValue()
-    {
-        if (_maxVal>-Float.MAX_VALUE) return _maxVal;
-        double maxVal = -Float.MAX_VALUE;
-        for (DataSeries s : getSeries()) { double mval = s.getMaxValue(); if (mval>maxVal) maxVal = mval; }
-        return _maxVal = maxVal;
-    }
-
-    /**
-     * Adds a new series for given name and values.
-     */
-    public DataSeries addSeriesForNameAndValues(String aName, Double ... theVals)
-    {
-        DataSeries series = new DataSeries(); series.setName(aName);
-        addSeries(series);
-        series.setValues(theVals);
-        return series;
-    }
-
-    /**
-     * Returns the start of the series.
-     */
-    public int getSeriesStart()  { return _seriesStart; }
-
-    /**
-     * Sets the start of the series.
-     */
-    public void setSeriesStart(int aValue)
-    {
-        if (aValue==_seriesStart) return;
-        firePropChange(SeriesStart_Prop, _seriesStart, _seriesStart=aValue);
-        //_chartView.repaint();
-    }
-
-    /**
-     * Returns the number of points in each series.
-     */
-    public int getPointCount()  { return _series.get(0).getPointCount(); }
-
-    /**
-     * Sets the point count.
+     * Sets the number of points.
      */
     public void setPointCount(int aValue)
     {
-        for (DataSeries series : getSeries())
-            series.setPointCount(aValue);
+        // If silly value, just return
+        if (aValue<1 || aValue>1000) return;
+
+        // If not enough points, add
+        while(aValue>getPointCount())
+            addPoint(null, null);
+
+        // If too many points, remove
+        while(aValue<getPointCount())
+            removePoint(getPointCount()-1);
     }
 
     /**
-     * Returns whether slice at point index is empty.
+     * Returns the data points list.
      */
-    public boolean isSliceEmpty(int anIndex)
+    public List <DataPoint> getPoints()  { return _points; }
+
+    /**
+     * Returns the data point at given index.
+     */
+    public DataPoint getPoint(int anIndex)
     {
-        for (DataSeries ser : getSeries())
-            if (ser.getPoint(anIndex).isValueSet())
+        return anIndex<getPointCount()? _points.get(anIndex) : null;
+    }
+
+    /**
+     * Adds a point.
+     */
+    public void addPoint(DataPoint aPoint)
+    {
+        aPoint._dset = this; aPoint._index = getPointCount();
+        _points.add(aPoint);
+        clearCache();
+    }
+
+    /**
+     * Removes a point at given index.
+     */
+    public DataPoint removePoint(int anIndex)
+    {
+        DataPoint dpnt = _points.remove(anIndex);
+        clearCache();
+        return dpnt;
+    }
+
+    /**
+     * Adds a point for name and value.
+     */
+    public void addPoint(String aName, Double aValue)
+    {
+        DataPoint dpnt = new DataPoint();
+        dpnt._name = aName; dpnt._y = aValue; addPoint(dpnt);
+    }
+
+    /**
+     * Returns the value at given index.
+     */
+    public Double getValue(int anIndex)
+    {
+        DataPoint dp = getPoint(anIndex); return dp!=null? dp.getValue() : null;
+    }
+
+    /**
+     * Returns the value at given index.
+     */
+    public double getValueX(int anIndex)
+    {
+        DataPoint dp = getPoint(anIndex); return dp!=null? dp.getValueX() : 0;
+    }
+
+    /**
+     * Sets the value at given index.
+     */
+    public void setValue(Double aValue, int anIndex)
+    {
+        while(anIndex>=getPointCount()) addPoint(null, null);
+        DataPoint dpnt = getPoint(anIndex);
+        dpnt.setValue(aValue);
+    }
+
+    /**
+     * Sets the values.
+     */
+    public void setValues(Double ... theVals)
+    {
+        _points.clear();
+        for (Double v : theVals) addPoint(null, v);
+    }
+
+    /**
+     * Returns the total of all values.
+     */
+    public double getTotal()
+    {
+        if (_vals==null) getValues();
+        return _total;
+    }
+
+    /**
+     * Returns an array of dataset values.
+     */
+    public double[] getValues()
+    {
+        if (_vals!=null) return _vals;
+        int count = getPointCount(); _total = 0;
+        double vals[] = new double[count];
+        for (int i=0;i<count;i++) { double v = getValueX(i); vals[i] = v; _total += v; }
+        return _vals = vals;
+    }
+
+    /**
+     * Returns an array of dataset ratios.
+     */
+    public double[] getRatios()
+    {
+        if (_ratios!=null) return _ratios;
+        double vals[] = getValues();
+        double total = getTotal();
+        int count = vals.length;
+        double ratios[] = new double[count];
+        for (int i=0;i<count;i++) ratios[i] = vals[i]/total;
+        return _ratios = ratios;
+    }
+
+    /**
+     * Returns the index in dataset.
+     */
+    public int getIndex()  { return _index; }
+
+    /**
+     * Returns the index in dataset active dataset.
+     */
+    public int getActiveIndex()  { return _dsetList.getActiveDataSets().indexOf(this); }
+
+    /**
+     * Returns whether this dataset is disabled.
+     */
+    public boolean isDisabled()  { return _disabled; }
+
+    /**
+     * Sets whether this dataset is disabled.
+     */
+    public void setDisabled(boolean aValue)
+    {
+        if (aValue==isDisabled()) return;
+        _disabled = aValue;
+        _dsetList.clearCache();
+
+        // if Pie chart, clear other
+        boolean isPie = getChart().getType() == ChartType.PIE;
+        if ((!aValue) && isPie) {
+            for (DataSet s : _dsetList.getDataSets())
+                s.setDisabled(s!=this);
+        }
+    }
+
+    /**
+     * Returns whether this dataset is enabled.
+     */
+    public boolean isEnabled()  { return !_disabled; }
+
+    /**
+     * Returns the minimum value in this dataset.
+     */
+    public double getMinValue()
+    {
+        double minVal = Float.MAX_VALUE;
+        for (DataPoint dp : _points)
+            if (dp.getValueX()<minVal)
+                minVal = dp.getValueX();
+        return minVal;
+    }
+
+    /**
+     * Returns the maximum value in this dataset.
+     */
+    public double getMaxValue()
+    {
+        double maxVal = -Float.MAX_VALUE;
+        for (DataPoint dp : _points)
+            if (dp.getValueX()>maxVal)
+                maxVal = dp.getValueX();
+        return maxVal;
+    }
+
+    /**
+     * Returns whether this dataset is clear (no name and no values).
+     */
+    public boolean isClear()
+    {
+        if (getName()!=null && getName().length()>0) return false;
+        for (DataPoint dp : getPoints())
+            if (dp.isValueSet())
                 return false;
         return true;
     }
-
-    /**
-     * Returns the intervals.
-     */
-    public Intervals getIntervals(double aHeight)
-    {
-        // Get chart min value, max value and height
-        double minVal = getMinValue();
-        double maxVal = getMaxValue();
-        double height = aHeight; //_chartView._chartArea.getHeight() - _chartView._chartArea.getInsetsAll().getHeight();
-        if (!_chart.isShowPartialY() && minVal*maxVal>0) {
-            if (minVal>0) minVal = 0; else maxVal = 0; }
-
-        // If intervals are cached for current min, max and height, return them
-        double seedMax = _intervals.getSeedValueMax(), seedMin = _intervals.getSeedValueMin();
-        double seedHeight = _intervals.getSeedHeight();
-        if (MathUtils.equals(seedMax, maxVal) && MathUtils.equals(seedMin, minVal) && MathUtils.equals(seedHeight, height))
-            return _intervals;
-
-        // Create new intervals and return
-        _intervals = new Intervals(minVal, maxVal, height);
-        return _intervals;
-    }
-
-    /**
-     * Returns the active dataset.
-     */
-    public DataSet getActiveSet()
-    {
-        if (_active!=null) return _active;
-
-        // If all series are enabled, return this dataset
-        int ac = 0; for (DataSeries s : _series) if (s.isEnabled()) ac++;
-        if (ac==getSeriesCount()) return _active = this;
-
-        // Create new dataset and initialize
-        DataSet active = new DataSet(_chart);
-        active._series = new ArrayList(ac);
-        for (DataSeries s : _series) if (s.isEnabled()) active._series.add(s);
-        active._seriesStart = _seriesStart;
-        return _active = active;
-    }
-
-    /**
-     * Returns the active series.
-     */
-    public List <DataSeries> getActiveSeries()  { return getActiveSet().getSeries(); }
-
-    /**
-     * Returns the intervals.
-     */
-    public Intervals getActiveIntervals(double aHeight)  { return getActiveSet().getIntervals(aHeight); }
 
     /**
      * Clears cached values.
      */
     protected void clearCache()
     {
-        _active = null; _minVal = Float.MAX_VALUE; _maxVal = -Float.MAX_VALUE;
-
-        System.out.println("DataSet.clearCache: Need to do something here");
-        //_chartView.getChartArea().clearCache();
-        //_chartView.reloadContents(false);
+        _vals = _ratios = null;
+        if (_dsetList !=null) _dsetList.clearCache();
     }
 }

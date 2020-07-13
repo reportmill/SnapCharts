@@ -415,7 +415,7 @@ public class ChartWriter {
         Map map = new HashMap();
 
         // Handle pointStart
-        int pointStart = _chart.getSeriesStart();
+        int pointStart = _chart.getDataSetStartValue();
         if (pointStart!=0) map.put("pointStart", pointStart);
 
         // Add map
@@ -431,8 +431,8 @@ public class ChartWriter {
         List list = new ArrayList();
 
         // Iterate over series
-        DataSet dset = _chart.getDataSet();
-        for (DataSeries series : dset.getSeries()) {
+        DataSetList dset = _chart.getDataSetList();
+        for (DataSet series : dset.getDataSets()) {
 
             // Create map
             Map map = new HashMap();
@@ -455,7 +455,7 @@ public class ChartWriter {
     /**
      * Write series data node.
      */
-    protected void writeSeriesData(Map aMap, DataSeries aSeries)
+    protected void writeSeriesData(Map aMap, DataSet aSeries)
     {
         // Create list
         List list = new ArrayList();

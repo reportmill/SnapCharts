@@ -29,8 +29,8 @@ public class ChartParser {
         Chart chart = getChartForJSONString(jsonText);
         chart.setName(name);
 
-        if (chart.getDataSet().getName()==null)
-            chart.getDataSet().setName(name + " Data");
+        if (chart.getDataSetList().getName()==null)
+            chart.getDataSetList().setName(name + " Data");
 
         ChartDoc doc = new ChartDoc();
         doc.setSourceURL(url);
@@ -154,11 +154,11 @@ public class ChartParser {
      */
     protected void parseXAxisCategories(JSONNode aNode)
     {
-        // Complain if not series
+        // Complain if not array
         if(!aNode.isArray()) { System.err.println("ChartParser.parseXAxisCategories: Node not array"); return; }
 
         // Iterate over array
-        List <String> strings = new ArrayList();
+        List <String> strings = new ArrayList<>();
         for(int i=0;i<aNode.getNodeCount();i++) { JSONNode strNode = aNode.getNode(i);
             strings.add(strNode.getString()); }
 
@@ -475,7 +475,7 @@ public class ChartParser {
                 // Handle pointStart
                 case "pointstart": {
                     int start = SnapUtils.intValue(child.getNumber());
-                    _chart.setSeriesStart(start);
+                    _chart.setDataSetStartValue(start);
                 } break;
 
                 // Handle default (complain)
@@ -495,9 +495,9 @@ public class ChartParser {
         // Iterate over array
         for(int i=0;i<aNode.getNodeCount();i++) { JSONNode seriesNode = aNode.getNode(i);
 
-            // Create series
-            DataSeries series = new DataSeries();
-            _chart.addSeries(series);
+            // Create dataset
+            DataSet dset = new DataSet();
+            _chart.addDataSet(dset);
 
             // Iterate over nodes
             for(JSONNode child : seriesNode.getNodes()) { String key = child.getKey();
@@ -506,11 +506,11 @@ public class ChartParser {
                     // Handle name
                     case "name": {
                         String name = child.getString();
-                        series.setName(name);
+                        dset.setName(name);
                     } break;
 
                     // Handle data
-                    case "data": parseSeriesData(child, series); break;
+                    case "data": parseSeriesData(child, dset); break;
 
                     // Handle default (complain)
                     default: System.out.println("Unsupported node: series[" + i + "]." + key + " = " + child.getString());
@@ -520,11 +520,11 @@ public class ChartParser {
     }
 
     /**
-     * Parse series data node.
+     * Parse dataset data node.
      */
-    protected void parseSeriesData(JSONNode aNode, DataSeries aSeries)
+    protected void parseSeriesData(JSONNode aNode, DataSet aDataSet)
     {
-        // Complain if not series
+        // Complain if not array
         if(!aNode.isArray()) { System.err.println("ChartParser.series.data: Series.data is not array"); return; }
 
         // Iterate over array
@@ -550,14 +550,14 @@ public class ChartParser {
                 }
 
                 // Add point
-                aSeries.addPoint(name, val);
+                aDataSet.addPoint(name, val);
             }
 
             // Handle Node is number
             else {
                 Number value = dataNode.getNumber();
                 if(value!=null)
-                    aSeries.addPoint(null, value.doubleValue());
+                    aDataSet.addPoint(null, value.doubleValue());
             }
         }
     }

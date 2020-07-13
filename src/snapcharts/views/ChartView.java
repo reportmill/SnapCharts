@@ -9,7 +9,7 @@ import snapcharts.app.ToolTipView;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 
 /**
  * A view to render a chart.
@@ -113,7 +113,7 @@ public class ChartView extends ColView {
 
         // Set sample values
         //setTitle("Sample Growth by Sector, 2012-2018");
-        getDataSet().addSeriesForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
+        getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
         resetLater();
     }
 
@@ -150,7 +150,7 @@ public class ChartView extends ColView {
     /**
      * Returns the dataset.
      */
-    public DataSet getDataSet()  { return getChart().getDataSet(); }
+    public DataSetList getDataSetList()  { return getChart().getDataSetList(); }
 
     /**
      * Returns the DataView.

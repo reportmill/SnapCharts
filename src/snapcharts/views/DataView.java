@@ -63,39 +63,39 @@ public abstract class DataView extends ParentView {
     public AxisViewY getAxisY()  { return _chartView._axisY; }
 
     /**
-     * Returns the data set.
+     * Returns the data set list.
      */
-    public DataSet getDataSet()  { return _chartView.getDataSet(); }
+    public DataSetList getDataSetList()  { return _chartView.getDataSetList(); }
 
     /**
-     * Returns the series.
+     * Returns the actual list of datasets.
      */
-    public List <DataSeries> getSeries()  { return getDataSet().getSeries(); }
+    public List <DataSet> getDataSets()  { return getDataSetList().getDataSets(); }
 
     /**
-     * Returns the number of series.
+     * Returns the number of datasets.
      */
-    public int getSeriesCount()  { return getDataSet().getSeriesCount(); }
+    public int getDataSetCount()  { return getDataSetList().getDataSetCount(); }
 
     /**
-     * Returns the individual series at given index.
+     * Returns the individual dataset at given index.
      */
-    public DataSeries getSeries(int anIndex)  { return getDataSet().getSeries(anIndex); }
+    public DataSet getDataSet(int anIndex)  { return getDataSetList().getDataSet(anIndex); }
 
     /**
-     * Returns the active data set.
+     * Returns the DataSetList of active data sets.
      */
-    public DataSet getActiveSet()  { return getDataSet().getActiveSet(); }
+    public DataSetList getActiveDataSetList()  { return getDataSetList().getActiveDataSetList(); }
 
     /**
-     * Returns the active series.
+     * Returns the active dataset.
      */
-    public List <DataSeries> getActiveSeries()  { return getDataSet().getActiveSeries(); }
+    public List <DataSet> getActiveDataSets()  { return getDataSetList().getActiveDataSets(); }
 
     /**
-     * Returns the length of the series.
+     * Returns number of points in datasets.
      */
-    public int getPointCount()  { return getDataSet().getPointCount(); }
+    public int getPointCount()  { return getDataSetList().getPointCount(); }
 
     /**
      * Returns the intervals.
@@ -103,16 +103,16 @@ public abstract class DataView extends ParentView {
     public Intervals getActiveIntervals()
     {
         double height = getHeight() - getInsetsAll().getHeight();
-        return getDataSet().getActiveIntervals(height);
+        return getDataSetList().getActiveIntervals(height);
     }
 
     /**
-     * Returns the series color at index.
+     * Returns the dataset color at index.
      */
     public Color getColor(int anIndex)  { return getChart().getColor(anIndex); }
 
     /**
-     * Returns the series shape at index.
+     * Returns the dataset shape at index.
      */
     public Shape getMarkerShape(int anIndex)  { return getChart().getMarkerShape(anIndex); }
 
@@ -140,15 +140,15 @@ public abstract class DataView extends ParentView {
     }
 
     /**
-     * Converts a point from series to local.
+     * Converts a point from dataset coords to view coords.
      */
-    public Point seriesToLocal(double aX, double aY)
+    public Point dataToView(double aX, double aY)
     {
         // Get insets
         Insets ins = getInsetsAll();
 
         // Convert X
-        DataSet dset = getDataSet();
+        DataSetList dset = getDataSetList();
         int count = dset.getPointCount();
         double w = getWidth() - ins.getWidth();
         double dx = w/(count-1);
@@ -168,7 +168,7 @@ public abstract class DataView extends ParentView {
     public Point dataPointInLocal(DataPoint aDP)
     {
         int index = aDP.getIndex(); double y = aDP.getValueX();
-        return seriesToLocal(index, y);
+        return dataToView(index, y);
     }
 
     /**
@@ -251,19 +251,19 @@ public abstract class DataView extends ParentView {
         // If point out of bounds, return null
         if (aX<0 || aX>getWidth() || aY<0 || aY>getWidth()) return null;
 
-        // Iterate over active series to find series + value index closest to point
+        // Iterate over active dataset to find dataset + value index closest to point
         DataPoint dataPoint = null; double dist = Float.MAX_VALUE;
-        List <DataSeries> seriesList = getActiveSeries();
-        for (int i=0;i<seriesList.size();i++) { DataSeries series = seriesList.get(i);
+        List <DataSet> dsets = getActiveDataSets();
+        for (int i=0;i<dsets.size();i++) { DataSet dset = dsets.get(i);
             for (int j=0;j<getPointCount();j++) {
-                Point pnt = seriesToLocal(j,series.getValueX(j));
+                Point pnt = dataToView(j,dset.getValueX(j));
                 double d = Point.getDistance(aX, aY, pnt.x, pnt.y);
                 if (d<dist) { dist = d;
-                    dataPoint = series.getPoint(j); }
+                    dataPoint = dset.getPoint(j); }
             }
         }
 
-        // Return DataPoint for closest series+index
+        // Return DataPoint for closest dataset+index
         return dataPoint;
     }
 
@@ -272,8 +272,8 @@ public abstract class DataView extends ParentView {
      */
     public void activate()
     {
-        // Enable all series
-        for (int i=0; i<getSeriesCount(); i++) getSeries(i).setDisabled(false);
+        // Enable all datasets
+        for (int i = 0; i< getDataSetCount(); i++) getDataSet(i).setDisabled(false);
     }
 
     /**

@@ -7,7 +7,7 @@ import snap.gfx.*;
 import snapcharts.model.AreaBar;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
-import snapcharts.model.DataSeries;
+import snapcharts.model.DataSet;
 
 /**
  * A ChartArea subclass to display the contents of bar chart.
@@ -17,8 +17,11 @@ public class DataViewBar extends DataView {
     // The Area
     private AreaBar  _area;
 
-    // The number of series and values to chart
-    protected int  _seriesCount, _pointCount;
+    // The number of datasets to display
+    protected int  _dsetCount;
+
+    // The number of values in dataset(s)
+    protected int  _pointCount;
 
     // The cached sections
     private Section  _sections[];
@@ -66,19 +69,19 @@ public class DataViewBar extends DataView {
     protected Section[] getSections()
     {
         // If recacl not needed, just return
-        int seriesCount = getActiveSeries().size(), pointCount = getPointCount();
-        if (_sections!=null && _sections.length==pointCount && _seriesCount==seriesCount) return _sections;
+        int dsetCount = getActiveDataSets().size(), pointCount = getPointCount();
+        if (_sections!=null && _sections.length==pointCount && _dsetCount ==dsetCount) return _sections;
 
         // Get ChartAreaBar info
         AreaBar barArea = getArea();
         double groupPad = barArea.getGroupPadding();
         double barPad = barArea.getBarPadding();
         double cx = 0, cy = 0, cw = getWidth(), ch = getHeight();
-        boolean colorSeries = !barArea.isColorValues();
+        boolean colorDataSets = !barArea.isColorValues();
 
-        // Get number of series, points and section width
-        List <DataSeries> seriesList = getActiveSeries();
-        _seriesCount = seriesCount;
+        // Get number of datasets, points and section width
+        List <DataSet> dsets = getActiveDataSets();
+        _dsetCount = dsetCount;
         _pointCount = getPointCount();
         double sectionWidth = getWidth()/_pointCount;
 
@@ -89,8 +92,8 @@ public class DataViewBar extends DataView {
 
         // Get width of individual bar (bar count + bar spaces + bar&space at either end)
         double barWidthRatio = 1 - barPad*2;
-        double barWidth = barWidthRatio>=0? barWidthRatio*groupWidth/_seriesCount : 1;
-        double barPadWidth = barWidthRatio>=0? barPad*groupWidth/_seriesCount : 1;
+        double barWidth = barWidthRatio>=0? barWidthRatio*groupWidth/ _dsetCount : 1;
+        double barPadWidth = barWidthRatio>=0? barPad*groupWidth/ _dsetCount : 1;
 
         // Create new bars array
         Section sections[] = new Section[pointCount];
@@ -100,17 +103,17 @@ public class DataViewBar extends DataView {
 
             // Create/set new section and section.bars
             Section section = sections[i] = new Section(cx + i*sectionWidth, cy, sectionWidth, ch);
-            section.bars = new Bar[_seriesCount];
+            section.bars = new Bar[_dsetCount];
 
-            // Iterate over series
-            for (int j=0;j<_seriesCount;j++) { DataSeries series = seriesList.get(j);
-                DataPoint dataPoint = series.getPoint(i);
+            // Iterate over datasets
+            for (int j = 0; j< _dsetCount; j++) { DataSet dset = dsets.get(j);
+                DataPoint dataPoint = dset.getPoint(i);
                 double val = dataPoint.getValueX();
 
                 // Draw bar
-                Color color = colorSeries? getColor(series.getIndex()) : getColor(i);
+                Color color = colorDataSets? getColor(dset.getIndex()) : getColor(i);
                 double bx = cx + i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
-                double by = seriesToLocal(i, val).y, bh = cy + ch - by;
+                double by = dataToView(i, val).y, bh = cy + ch - by;
                 section.bars[j] = new Bar(dataPoint, bx, by, barWidth, bh, color);
             }
         }
@@ -142,11 +145,14 @@ public class DataViewBar extends DataView {
 
             // If selected section, draw background
             if (i==selIndex) {
-                aPntr.setColor(Color.get("#4488FF09")); aPntr.fillRect(cx + i*section.width, cy, section.width, ch); }
+                aPntr.setColor(Color.get("#4488FF09"));
+                aPntr.fillRect(cx + i*section.width, cy, section.width, ch);
+            }
 
-            // Iterate over series and draw bars
-            for (int j=0;j<_seriesCount;j++) { Bar bar = section.bars[j];
-                aPntr.setColor(bar.color); aPntr.fillRect(bar.x, bar.y, bar.width, bar.height - .5);
+            // Iterate over datasets and draw bars
+            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
+                aPntr.setColor(bar.color);
+                aPntr.fillRect(bar.x, bar.y, bar.width, bar.height - .5);
             }
         }
 
@@ -160,12 +166,13 @@ public class DataViewBar extends DataView {
     public Point dataPointInLocal(DataPoint aDP)
     {
         // Get data point info
-        int seriesIndex = aDP.getSeriesActiveIndex();
+        DataSet dset = aDP.getDataSet();
+        int dsetIndex = dset.getActiveIndex();
         int pointIndex = aDP.getIndex();
 
         // Get bar for data point and return top-center point
         Section sections[] = getSections(), section = sections[pointIndex];
-        Bar bars[] = section.bars, bar = bars[seriesIndex];
+        Bar bars[] = section.bars, bar = bars[dsetIndex];
         return new Point(Math.round(bar.x + bar.width/2), Math.round(bar.y));
     }
 
@@ -177,9 +184,9 @@ public class DataViewBar extends DataView {
         // Get sections array
         Section sections[] = getSections();
 
-        // Iterate over sections (points) and bars (series) and if bar contains point, return data point
+        // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
         for (int i=0;i<_pointCount;i++) { Section section = sections[i];
-            for (int j=0;j<_seriesCount;j++) { Bar bar = section.bars[j];
+            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
                 if (bar.contains(aX,aY))
                     return bar.point;
             }

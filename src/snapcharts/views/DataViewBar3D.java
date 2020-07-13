@@ -255,8 +255,8 @@ public class DataViewBar3D extends DataViewBar {
             //if (i==selIndex) {
             //    aPntr.setColor(Color.get("#4488FF09")); aPntr.fillRect(cx + i*section.width, cy, section.width, ch); }
 
-            // Iterate over series and draw bars
-            for (int j=0;j<_seriesCount;j++) { Bar bar = section.bars[j];
+            // Iterate over datasets and draw bars
+            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
                 addBar(bar.x, bar.y, bar.width, bar.height - .5, bar.color);
             }
         }

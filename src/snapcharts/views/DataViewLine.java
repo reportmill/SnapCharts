@@ -4,7 +4,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
-import snapcharts.model.DataSeries;
+import snapcharts.model.DataSet;
 
 /**
  * A ChartArea subclass to display the contents of line chart.
@@ -29,23 +29,23 @@ public class DataViewLine extends DataView {
     public ChartType getType()  { return ChartType.LINE; }
 
     /**
-     * Returns the list of paths for each series.
+     * Returns the list of paths for each dataset.
      */
-    public List <Path> getSeriesPaths()
+    public List <Path> getDataSetPaths()
     {
-        // Get series paths
+        // Get dataset paths
         List <Path> paths = new ArrayList();
-        int seriesCount = getSeriesCount();
+        int dsetCount = getDataSetCount();
         int pointCount = getPointCount();
 
-        // Iterate over series
-        for (int i=0; i<seriesCount;i++) { DataSeries series = getSeries(i); if (series.isDisabled()) continue;
+        // Iterate over datasets
+        for (int i=0; i<dsetCount;i++) { DataSet dset = getDataSet(i); if (dset.isDisabled()) continue;
 
             Path path = new Path(); paths.add(path);
 
             // Iterate over values
-            for (int j=0;j<pointCount;j++) { double val = series.getValueX(j);
-                Point p = seriesToLocal(j, val);
+            for (int j=0;j<pointCount;j++) { double val = dset.getValueX(j);
+                Point p = dataToView(j, val);
                 if (j==0) path.moveTo(p.x,p.y); else path.lineTo(p.x,p.y);
             }
         }
@@ -57,39 +57,40 @@ public class DataViewLine extends DataView {
      */
     protected void paintChart(Painter aPntr, double aX, double aY, double aW, double aH)
     {
-        // Get Series list
-        List <DataSeries> seriesList = getActiveSeries();
-        int scount = seriesList.size();
+        // Get DataSet list
+        List <DataSet> dsets = getActiveDataSets();
+        int dsetCount = dsets.size();
 
         int pointCount = getPointCount();
         DataPoint selPoint = _chartView.getTargDataPoint();
-        DataSeries selSeries = selPoint!=null? selPoint.getSeries() : null;
+        DataSet selSet = selPoint!=null? selPoint.getDataSet() : null;
         int selIndex = selPoint!=null? selPoint.getIndex() : -1;
 
         // If reveal is not full (1) then clip
         if (getReveal()<1) {
             aPntr.save(); aPntr.clipRect(0,0,getWidth()*getReveal(),getHeight()); }
 
-        // Draw series paths
-        List <Path> paths = getSeriesPaths();
-        for (int i=0;i<paths.size();i++) { Path path = paths.get(i); DataSeries series = seriesList.get(i);
-            aPntr.setColor(getColor(series.getIndex()));
-            aPntr.setStroke(Stroke.Stroke2); if (series==selSeries) aPntr.setStroke(Stroke3);
+        // Draw dataset paths
+        List <Path> paths = getDataSetPaths();
+        for (int i=0;i<paths.size();i++) { Path path = paths.get(i);
+            DataSet dset = dsets.get(i);
+            aPntr.setColor(getColor(dset.getIndex()));
+            aPntr.setStroke(Stroke.Stroke2); if (dset==selSet) aPntr.setStroke(Stroke3);
             aPntr.draw(path);
         }
 
-        // Draw series points
-        for (int i=0; i<scount;i++) { DataSeries series = seriesList.get(i);
+        // Draw dataset points
+        for (int i=0; i<dsetCount;i++) { DataSet dset = dsets.get(i);
 
             // Iterate over values
-            for (int j=0;j<pointCount;j++) { double val = series.getValueX(j);
+            for (int j=0;j<pointCount;j++) { double val = dset.getValueX(j);
 
-                Point p = seriesToLocal(j, val);
+                Point p = dataToView(j, val);
 
-                Shape marker = getMarkerShape(series.getIndex()).copyFor(new Transform(p.x-4,p.y-4));
-                Color c = getColor(series.getIndex());
+                Shape marker = getMarkerShape(dset.getIndex()).copyFor(new Transform(p.x-4,p.y-4));
+                Color c = getColor(dset.getIndex());
 
-                if (series==selSeries && j==selIndex) {
+                if (dset==selSet && j==selIndex) {
                     aPntr.setColor(c.blend(Color.CLEARWHITE, .5));
                     aPntr.fill(new Ellipse(p.x-10,p.y-10,20,20));
                     aPntr.setStroke(Stroke5); aPntr.setColor(Color.WHITE); aPntr.draw(marker);

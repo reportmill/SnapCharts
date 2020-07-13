@@ -232,7 +232,7 @@ public class DocPane extends ViewOwner {
             if (aParent instanceof ChartDoc)
                 return ((ChartDoc)aParent).getCharts().toArray(new ChartPart[0]);
             if (aParent instanceof Chart)
-                return Arrays.asList(aParent.getDataSet()).toArray(new ChartPart[0]);
+                return Arrays.asList(aParent.getDataSetList()).toArray(new ChartPart[0]);
             return new ChartPart[0];
         }
 

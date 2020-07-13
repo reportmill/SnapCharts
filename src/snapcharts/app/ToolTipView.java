@@ -4,8 +4,8 @@ import snap.gfx.*;
 import snap.view.*;
 import snapcharts.model.Chart;
 import snapcharts.model.DataPoint;
-import snapcharts.model.DataSeries;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
 
 import java.text.DecimalFormat;
@@ -79,13 +79,12 @@ public class ToolTipView extends ColView {
 
         // Get DataPoint - if null - remove view
         Chart chart = _chartView.getChart();
-        DataSet dset = chart.getDataSet();
         DataPoint dataPoint = _chartView.getTargDataPoint();
         if(dataPoint==null) {
             getAnimCleared(1000).setOpacity(0).setOnFinish(a -> _chartView.removeChild(this)).play(); return; }
 
-        // Get series and value
-        DataSeries series = dataPoint.getSeries();
+        // Get dataset and value
+        DataSet dset = dataPoint.getDataSet();
         String selKey = dataPoint.getKeyString();
         double selValue = dataPoint.getValueX();
 
@@ -98,13 +97,13 @@ public class ToolTipView extends ColView {
         keyLabel.setText(selKey);
 
         // Create RowView: BulletView
-        Color color = chart.getColor(series.getIndex());
+        Color color = chart.getColor(dset.getIndex());
         ShapeView bulletView = new ShapeView(new Ellipse(0,0,5,5));
         bulletView.setFill(color);
 
         // Create RowView: NameLabel, ValLabel
         StringView nameLabel = new StringView(); nameLabel.setFont(Font.Arial12);
-        nameLabel.setText(series.getName() + ":");
+        nameLabel.setText(dset.getName() + ":");
         StringView valLabel = new StringView();
         valLabel.setFont(Font.Arial12.deriveFont(13).getBold());
         valLabel.setText(_fmt.format(selValue));

@@ -7,35 +7,35 @@ import snap.util.SnapUtils;
  */
 public class DataPoint {
     
-    // The series this point belongs to
-    DataSeries   _series;
+    // The DataSet this point belongs to
+    protected DataSet  _dset;
     
     // The data point name
-    String       _name;
+    protected String  _name;
     
     // The data point x value (usually the index)
-    Double       _x;
+    protected Double  _x;
     
     // The data point y value
-    Double       _y;
+    protected Double  _y;
     
     // The index
-    int          _index;
+    protected int  _index;
     
-    /**
-     * Returns the series.
-     */
-    public DataSeries getSeries()  { return _series; }
-
     /**
      * Returns the DataSet.
      */
-    public DataSet getDataSet()  { return _series.getDataSet(); }
+    public DataSet getDataSet()  { return _dset; }
+
+    /**
+     * Returns the DataSetList.
+     */
+    public DataSetList getDataSetList()  { return _dset.getDataSetList(); }
 
     /**
      * Returns the chart.
      */
-    public Chart getChart()  { return getDataSet().getChart(); }
+    public Chart getChart()  { return getDataSetList().getChart(); }
 
     /**
      * Returns the name.
@@ -48,7 +48,7 @@ public class DataPoint {
     public double getX()
     {
         if(_x!=null) return _x;
-        _x = (double)(_series._dset.getSeriesStart() + _index);
+        _x = (double)(_dset._dsetList.getStartValue() + _index);
         return _x;
     }
 
@@ -68,24 +68,9 @@ public class DataPoint {
     }
 
     /**
-     * Returns the index of this point in series.
+     * Returns the index of this point in dataset.
      */
     public int getIndex()  { return _index; }
-
-    /**
-     * Return series name.
-     */
-    public String getSeriesName()  { return _series.getName(); }
-
-    /**
-     * Return index of data point series.
-     */
-    public int getSeriesIndex()  { return _series.getIndex(); }
-
-    /**
-     * Return index of data point series in dataset active series.
-     */
-    public int getSeriesActiveIndex()  { return _series.getActiveIndex(); }
 
     /**
      * Return data point key - either the name or the x value.
@@ -121,26 +106,26 @@ public class DataPoint {
     public boolean isValueSet()  { return _y!=null; }
 
     /**
-     * Return series value.
+     * Return data point value.
      */
     public Double getValue()  { return _y; }
 
     /**
-     * Sets series value.
+     * Sets data point value.
      */
     public void setValue(Double aValue)  { setY(aValue); }
 
     /**
-     * Return series value or zero (if null).
+     * Return data point value or zero (if null).
      */
-    public double getValueX()  { return _y!=null? _y : 0; }
+    public double getValueX()  { return _y!=null ? _y : 0; }
 
     /**
      * Clears cached values.
      */
     protected void clearCache()
     {
-        if(_series!=null) _series.clearCache();
+        if(_dset !=null) _dset.clearCache();
     }
 
     /**
@@ -148,7 +133,7 @@ public class DataPoint {
      */
     public boolean equals(Object anObj)
     {
-        DataPoint other = anObj instanceof DataPoint? (DataPoint)anObj : null; if(other==null) return false;
-        return other._series==_series && other._index==_index;
+        DataPoint other = anObj instanceof DataPoint ? (DataPoint)anObj : null; if(other==null) return false;
+        return other._dset == _dset && other._index==_index;
     }
 }
