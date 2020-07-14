@@ -2,6 +2,7 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.DeepChangeListener;
+import snap.util.PropChange;
 import snap.util.PropChangeListener;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -9,6 +10,7 @@ import snapcharts.app.ToolTipView;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
+import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 
 /**
@@ -56,13 +58,9 @@ public class ChartView extends ColView {
     private PropChangeListener  _pcl = pc -> chartDidPropChange();
     
     // The DeepChangeListener
-    private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange();
+    private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange(pc);
 
     // Constants
-    public static final String BAR_TYPE = "Bar";
-    public static final String BAR3D_TYPE = "Bar3D";
-    public static final String LINE_TYPE = "Line";
-    public static final String PIE_TYPE = "Pie";
     public static final String SelDataPoint_Prop = "SelDataPoint";
     public static final String TargDataPoint_Prop = "TargDataPoint";
     
@@ -329,9 +327,15 @@ public class ChartView extends ColView {
     /**
      * Called when Chart has a DeppChange.
      */
-    protected void chartDidDeepChange()
+    protected void chartDidDeepChange(PropChange aPC)
     {
         resetLater();
+
+        // If DataSet change, clear caches
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList) {
+            getDataView().clearCache();
+        }
     }
 
     /**

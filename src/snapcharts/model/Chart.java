@@ -77,6 +77,9 @@ public class Chart extends ChartPart {
         _axisY = new AxisY();
         _axisY._chart = this;
         _axisY.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Start listening to DataSet changes
+        _dsetList.addPropChangeListener(pc -> dataSetDidPropChange(pc));
     }
 
     /**
@@ -159,7 +162,7 @@ public class Chart extends ChartPart {
      */
     public void setShowLegend(boolean aValue)
     {
-        if(aValue==isShowLegend()) return;
+        if (aValue==isShowLegend()) return;
         firePropChange(ShowLegend_Prop, _showLegend, _showLegend=aValue);
     }
 
@@ -171,7 +174,10 @@ public class Chart extends ChartPart {
     /**
      * Adds a new dataset.
      */
-    public void addDataSet(DataSet aDataSet)  { _dsetList.addDataSet(aDataSet); }
+    public void addDataSet(DataSet aDataSet)
+    {
+        _dsetList.addDataSet(aDataSet);
+    }
 
     /**
      * Returns the start value of the dataset.
@@ -193,7 +199,7 @@ public class Chart extends ChartPart {
      */
     public void setShowPartialY(boolean aValue)
     {
-        if(aValue==_showPartialY) return;
+        if (aValue==_showPartialY) return;
         _showPartialY = aValue;
         //reloadContents(true);
     }
@@ -217,7 +223,7 @@ public class Chart extends ChartPart {
      */
     public Color getColor(int anIndex)
     {
-        if(anIndex<_colors.length) return _colors[anIndex];
+        if (anIndex<_colors.length) return _colors[anIndex];
         return COLORS[(anIndex - _colors.length)%COLORS.length];
     }
 
@@ -226,7 +232,7 @@ public class Chart extends ChartPart {
      */
     public Shape getMarkerShape(int anIndex)
     {
-        switch(getType()) {
+        switch (getType()) {
             case LINE: return getMarkerShapes()[anIndex];
             default: return getMarkerShapes()[0];
         }
@@ -237,7 +243,7 @@ public class Chart extends ChartPart {
      */
     public Shape[] getMarkerShapes()
     {
-        if(_markerShapes!=null) return _markerShapes;
+        if (_markerShapes!=null) return _markerShapes;
         Shape shp0 = new Ellipse(0,0,8,8);
         Shape shp1 = new Polygon(4,0,8,4,4,8,0,4);
         Shape shp2 = new Rect(0,0,8,8);
@@ -260,11 +266,19 @@ public class Chart extends ChartPart {
     }
 
     /**
+     * Called when dataset has prop change.
+     */
+    protected void dataSetDidPropChange(PropChange aPC)
+    {
+        _pcs.fireDeepChange(this, aPC);
+    }
+
+    /**
      * Add DeepChange listener.
      */
     public void addDeepChangeListener(DeepChangeListener aDCL)
     {
-        if(_pcs==PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
+        if (_pcs==PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
         _pcs.addDeepChangeListener(aDCL);
     }
 

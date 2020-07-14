@@ -1,18 +1,14 @@
 package snapcharts.model;
-
 import java.util.*;
 
 /**
  * A class to represent a list of data points.
  */
-public class DataSet {
+public class DataSet extends ChartPart {
     
     // The DataSetList that owns this dataset
     protected DataSetList  _dsetList;
 
-    // The name
-    private String  _name;
-    
     // The values
     private List <DataPoint>  _points = new ArrayList<>();
     
@@ -25,29 +21,25 @@ public class DataSet {
     // Cached array of values, ratios, total
     private double  _vals[], _ratios[], _total;
 
+    // Constants for properties
+    public static final String Disabled_Prop = "Disabled";
+    public static final String Points_Prop = "Points";
+
     /**
      * Returns the dataset.
      */
     public DataSetList getDataSetList()  { return _dsetList; }
 
     /**
+     * Override to return DataSetList.
+     */
+    @Override
+    public ChartPart getParent()  { return _dsetList; }
+
+    /**
      * Returns the chart.
      */
     public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
-
-    /**
-     * Returns the name.
-     */
-    public String getName()  { return _name; }
-
-    /**
-     * Sets the name.
-     */
-    public void setName(String aValue)
-    {
-        _name = aValue;
-        clearCache();
-    }
 
     /**
      * Returns the number of points.
@@ -89,9 +81,18 @@ public class DataSet {
      */
     public void addPoint(DataPoint aPoint)
     {
-        aPoint._dset = this; aPoint._index = getPointCount();
-        _points.add(aPoint);
-        clearCache();
+        addPoint(aPoint, getPointCount());
+    }
+
+    /**
+     * Adds a point.
+     */
+    public void addPoint(DataPoint aPoint, int anIndex)
+    {
+        aPoint._dset = this;
+        aPoint._index = anIndex;
+        _points.add(anIndex, aPoint);
+        firePropChange(Points_Prop, null, aPoint, anIndex);
     }
 
     /**
@@ -100,7 +101,7 @@ public class DataSet {
     public DataPoint removePoint(int anIndex)
     {
         DataPoint dpnt = _points.remove(anIndex);
-        clearCache();
+        firePropChange(Points_Prop, dpnt, null, anIndex);
         return dpnt;
     }
 
@@ -109,8 +110,19 @@ public class DataSet {
      */
     public void addPoint(String aName, Double aValue)
     {
+        DataPoint dpnt = createPoint(aName, aValue);
+        addPoint(dpnt);
+    }
+
+    /**
+     * Creates a point for name and value.
+     */
+    public DataPoint createPoint(String aName, Double aValue)
+    {
         DataPoint dpnt = new DataPoint();
-        dpnt._name = aName; dpnt._y = aValue; addPoint(dpnt);
+        dpnt._name = aName;
+        dpnt._y = aValue;
+        return dpnt;
     }
 
     /**
@@ -134,9 +146,15 @@ public class DataSet {
      */
     public void setValue(Double aValue, int anIndex)
     {
-        while(anIndex>=getPointCount()) addPoint(null, null);
-        DataPoint dpnt = getPoint(anIndex);
-        dpnt.setValue(aValue);
+        // Make sure we have enough points
+        while (anIndex>=getPointCount())
+            addPoint(null, null);
+
+        // Get old point, copy for new value, swap old point for new
+        DataPoint pnt = getPoint(anIndex);
+        DataPoint pnt2 = createPoint(pnt.getName(), aValue);
+        removePoint(anIndex);
+        addPoint(pnt2, anIndex);
     }
 
     /**
@@ -204,15 +222,7 @@ public class DataSet {
     public void setDisabled(boolean aValue)
     {
         if (aValue==isDisabled()) return;
-        _disabled = aValue;
-        _dsetList.clearCache();
-
-        // if Pie chart, clear other
-        boolean isPie = getChart().getType() == ChartType.PIE;
-        if ((!aValue) && isPie) {
-            for (DataSet s : _dsetList.getDataSets())
-                s.setDisabled(s!=this);
-        }
+        firePropChange(Disabled_Prop, _disabled, _disabled = aValue);
     }
 
     /**
@@ -254,14 +264,5 @@ public class DataSet {
             if (dp.isValueSet())
                 return false;
         return true;
-    }
-
-    /**
-     * Clears cached values.
-     */
-    protected void clearCache()
-    {
-        _vals = _ratios = null;
-        if (_dsetList !=null) _dsetList.clearCache();
     }
 }

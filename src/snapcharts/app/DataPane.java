@@ -169,8 +169,7 @@ public class DataPane extends ViewOwner {
         // Get data point for dataset col and set value
         else {
             Double newVal = text!=null && text.length()>0? SnapUtils.doubleValue(text) : null;
-            DataPoint dpoint = dset.getPoint(col-1);
-            dpoint.setValue(newVal);
+            dset.setValue(newVal, col-1);
             _sheetView.updateItems(dset);
         }
 

@@ -21,7 +21,15 @@ public class DataPoint {
     
     // The index
     protected int  _index;
-    
+
+    /**
+     * Constructor.
+     */
+    public DataPoint()
+    {
+        super();
+    }
+
     /**
      * Returns the DataSet.
      */
@@ -56,16 +64,6 @@ public class DataPoint {
      * Returns the Y value.
      */
     public double getY()  { return _y!=null? _y : 0; }
-
-    /**
-     * Sets the Y value.
-     */
-    public void setY(Double aValue)
-    {
-        if(aValue==_y) return;
-        _y = aValue;
-        clearCache();
-    }
 
     /**
      * Returns the index of this point in dataset.
@@ -111,29 +109,16 @@ public class DataPoint {
     public Double getValue()  { return _y; }
 
     /**
-     * Sets data point value.
-     */
-    public void setValue(Double aValue)  { setY(aValue); }
-
-    /**
      * Return data point value or zero (if null).
      */
     public double getValueX()  { return _y!=null ? _y : 0; }
-
-    /**
-     * Clears cached values.
-     */
-    protected void clearCache()
-    {
-        if(_dset !=null) _dset.clearCache();
-    }
 
     /**
      * Standard equals implementation.
      */
     public boolean equals(Object anObj)
     {
-        DataPoint other = anObj instanceof DataPoint ? (DataPoint)anObj : null; if(other==null) return false;
+        DataPoint other = anObj instanceof DataPoint ? (DataPoint)anObj : null; if (other==null) return false;
         return other._dset == _dset && other._index==_index;
     }
 }

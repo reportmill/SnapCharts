@@ -79,10 +79,23 @@ public class DataSetList extends ChartPart {
      */
     public void addDataSet(DataSet aDataSet)
     {
-        aDataSet._index = _dsets.size();
-        _dsets.add(aDataSet);
+        addDataSet(aDataSet, getDataSetCount());
+    }
+
+    /**
+     * Adds a new dataset.
+     */
+    public void addDataSet(DataSet aDataSet, int anIndex)
+    {
+        // Add DataSet at index
+        _dsets.add(anIndex, aDataSet);
         aDataSet._dsetList = this;
-        clearCache();
+        aDataSet.addPropChangeListener(pc -> dataSetDidPropChange(pc));
+
+        // Reset index
+        for (int i=0; i<_dsets.size(); i++)
+            getDataSet(i)._index = i;
+        clearCachedValues();
     }
 
     /**
@@ -91,7 +104,7 @@ public class DataSetList extends ChartPart {
     public DataSet removeDataSet(int anIndex)
     {
         DataSet dset = _dsets.remove(anIndex);
-        clearCache();
+        clearCachedValues();
         return dset;
     }
 
@@ -111,7 +124,7 @@ public class DataSetList extends ChartPart {
     public void clear()
     {
         _dsets.clear();
-        clearCache();
+        clearCachedValues();
     }
 
     /**
@@ -240,14 +253,34 @@ public class DataSetList extends ChartPart {
     public Intervals getActiveIntervals(double aHeight)  { return getActiveDataSetList().getIntervals(aHeight); }
 
     /**
+     * Called when a DataSet changes a property.
+     */
+    private void dataSetDidPropChange(PropChange aPC)
+    {
+        clearCachedValues();
+
+        // Handle Disabled: if Pie chart, clear other
+        String prop = aPC.getPropName();
+        if (prop==DataSet.Disabled_Prop) {
+            DataSet dset = (DataSet)aPC.getSource();
+            boolean isPie = getChart().getType() == ChartType.PIE;
+            if (isPie && !dset.isDisabled()) {
+                for (DataSet ds : getDataSets())
+                    ds.setDisabled(ds != dset);
+            }
+        }
+
+        // Fire PropChange
+        firePropChange(aPC);
+    }
+
+    /**
      * Clears cached values.
      */
-    protected void clearCache()
+    private void clearCachedValues()
     {
-        _active = null; _minVal = Float.MAX_VALUE; _maxVal = -Float.MAX_VALUE;
-
-        System.out.println("DataSetList.clearCache: Need to do something here");
-        //_chartView.getChartArea().clearCache();
-        //_chartView.reloadContents(false);
+        _active = null;
+        _minVal = Float.MAX_VALUE;
+        _maxVal = -Float.MAX_VALUE;
     }
 }
