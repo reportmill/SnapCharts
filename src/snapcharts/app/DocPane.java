@@ -7,8 +7,10 @@ import snap.web.WebURL;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartDoc;
 import snapcharts.model.ChartPart;
+import snapcharts.model.DataSet;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -18,21 +20,31 @@ public class DocPane extends ViewOwner {
     // The ChartDoc
     private ChartDoc  _doc;
 
+    // The selected ChartPart
+    private ChartPart  _selPart;
+
+    // A map of editors for ChartParts
+    private Map<ChartPart,ViewOwner>  _editors = new HashMap<>();
+
     // The EditorPane
-    private EditorPane _editorPane;
+    //private EditorPane _editorPane;
 
     // The DocMenuBar
     private DocPaneMenuBar  _menuBar;
 
+    // The SplitView
+    private SplitView _splitView;
+
     // The ChartDoc tree
-    private TreeView  _treeView;
+    private TreeView<ChartPart>  _treeView;
 
     /**
      * Constructor.
      */
     public DocPane()
     {
-        _editorPane = new EditorPane();
+        super();
+        //_editorPane = new EditorPane();
     }
 
     /**
@@ -56,19 +68,87 @@ public class DocPane extends ViewOwner {
         // Set Doc
         _doc = aDoc;
 
-        // Set First chart in editor
-        Chart chart = _doc.getChartCount()>0 ? _doc.getChart(0) : null;
-        if (chart!=null) {
-            getEditorPane().setChart(chart);
+        // Load UI
+        getUI();
+
+        // Set Doc as SelPart
+        setSelPart(_doc);
+    }
+
+    /**
+     * Returns the selected chart part.
+     */
+    public ChartPart getSelPart()  { return _selPart; }
+
+    /**
+     * Sets the selected chart part.
+     */
+    public void setSelPart(ChartPart aCP)
+    {
+        // If already set, just return
+        if (aCP==getSelPart()) return;
+
+        // Remove old sel part UI
+        if (_selPart!=null) {
+            ViewOwner partUI = getEditorForChartPart(_selPart);
+            _splitView.removeItem(partUI.getUI());
         }
 
+        // Set sel part
+        _selPart = aCP;
+
+        // Install new sel part UI
+        if (_selPart!=null) {
+            ViewOwner partUI = getEditorForChartPart(_selPart);
+            partUI.getUI().setGrowWidth(true);
+            _splitView.addItem(partUI.getUI());
+        }
+
+        // Reset UI
         resetLater();
     }
 
     /**
-     * Returns the EditorPane.
+     * Returns the editor for a chart part.
      */
-    public EditorPane getEditorPane()  { return _editorPane; }
+    public ViewOwner getEditorForChartPart(ChartPart aChartPart)
+    {
+        ViewOwner partEditor = _editors.get(aChartPart);
+        if (partEditor==null) {
+            partEditor = createEditorForChartPart(aChartPart);
+            _editors.put(aChartPart, partEditor);
+        }
+        return partEditor;
+    }
+
+    /**
+     * Creates an editor for ChartPart.
+     */
+    protected ViewOwner createEditorForChartPart(ChartPart aChartPart)
+    {
+        // Handle Chart
+        if (aChartPart instanceof Chart) {
+            ChartPane epane = new ChartPane();
+            epane.setChart((Chart) aChartPart);
+            return epane;
+        }
+
+        // Handle DataSet
+        if (aChartPart instanceof DataSet) {
+            ChartPane epane = new ChartPane();
+            epane.setChart(aChartPart.getChart());
+            return epane;
+        }
+
+        // Handle ChartDoc
+        if (aChartPart instanceof ChartDoc) { ChartDoc doc = (ChartDoc)aChartPart;
+            ChartSetPane dpane = new ChartSetPane();
+            dpane.setCharts(doc.getCharts());
+            return dpane;
+        }
+
+        throw new RuntimeException("FilePane.createEditorForChartPart: Unknown part: " + aChartPart.getClass());
+    }
 
     /**
      * Returns the SwingOwner for the menu bar.
@@ -120,12 +200,10 @@ public class DocPane extends ViewOwner {
     /**
      * Closes this editor pane
      */
-    public boolean close()
+    public void close()
     {
-        // Close window, called EditorClosed and return true to indicate we closed the window
         getWindow().hide();
         docPaneClosed();
-        return true;
     }
 
     /**
@@ -156,9 +234,8 @@ public class DocPane extends ViewOwner {
     @Override
     protected void initUI()
     {
-        SplitView splitView = getView("SplitView", SplitView.class);
-        splitView.setDividerSpan(5);
-        splitView.addItem(_editorPane.getUI());
+        _splitView = getView("SplitView", SplitView.class);
+        _splitView.setDividerSpan(5);
 
         // Set Toolbar images
         getView("SaveButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/File_Save.png"));
@@ -185,6 +262,7 @@ public class DocPane extends ViewOwner {
     protected void resetUI()
     {
         _treeView.setItems(getDoc());
+        _treeView.setSelItem(getSelPart());
         _treeView.expandAll();
     }
 
@@ -193,6 +271,11 @@ public class DocPane extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle TreeView
+        if (anEvent.equals(_treeView)) {
+            ChartPart part = _treeView.getSelItem();
+            setSelPart(part);
+        }
 
         // Handle WinClosing
         if (anEvent.isWinClose()) {
@@ -212,11 +295,13 @@ public class DocPane extends ViewOwner {
     /**
      * A TreeResolver for Document Shapes.
      */
-    public class ChartDocTreeResolver extends TreeResolver <ChartPart> {
+    private static class ChartDocTreeResolver extends TreeResolver <ChartPart> {
 
         @Override
         public ChartPart getParent(ChartPart anItem)
         {
+            if (anItem instanceof DataSet)
+                return anItem.getChart();
             return anItem.getParent();
         }
 
@@ -232,7 +317,7 @@ public class DocPane extends ViewOwner {
             if (aParent instanceof ChartDoc)
                 return ((ChartDoc)aParent).getCharts().toArray(new ChartPart[0]);
             if (aParent instanceof Chart)
-                return Arrays.asList(aParent.getDataSetList()).toArray(new ChartPart[0]);
+                return aParent.getDataSetList().getDataSets().toArray(new ChartPart[0]);
             return new ChartPart[0];
         }
 
@@ -242,5 +327,4 @@ public class DocPane extends ViewOwner {
             return anItem.getName();
         }
     }
-
-    }
+}

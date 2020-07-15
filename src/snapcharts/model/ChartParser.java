@@ -27,7 +27,7 @@ public class ChartParser {
         String name = url.getPathNameSimple();
         String jsonText = url.getText();
         Chart chart = getChartForJSONString(jsonText);
-        chart.setName(name);
+        chart.setName(name + " Chart");
 
         if (chart.getDataSetList().getName()==null)
             chart.getDataSetList().setName(name + " Data");

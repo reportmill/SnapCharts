@@ -3,50 +3,39 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
-import snapcharts.apptools.BasicPropsTool;
-import snapcharts.apptools.ChartTypeTool;
 
 /**
- * A class to manage inspector.
+ * A class to manage the inspector for ChartSetPane.
  */
-public class InspectorPane extends ViewOwner {
+public class ChartSetPaneInsp extends ViewOwner {
 
-    // The EditorPane
-    protected EditorPane  _epane;
-    
+    // The ChartSetPane
+    protected ChartSetPane _epane;
+
     // The Title label
     private Label  _titleLabel;
-    
+
     // The ScrollView that holds UI for child inspectors
     private ScrollView _inspScroll;
-    
+
     // The ColView that holds UI for child inspectors
     private ColView  _inspColView;
 
     // The child inspector current installed in inspector panel
     private ViewOwner  _childInspector;
 
-    // The ChartTypeTool
-    private ChartTypeTool _chartType;
-    
-    // The BasicPropsTool
-    private BasicPropsTool _basicProps;
-
-    // The inspector for view general
-    //private ViewTool  _viewTool;
-
     /**
      * Constructor.
      */
-    public InspectorPane(EditorPane anEP)
+    public ChartSetPaneInsp(ChartSetPane anDP)
     {
-        _epane = anEP;
+        _epane = anDP;
     }
 
     /**
-     * Returns the editor pane.
+     * Returns the ChartSetPane.
      */
-    public EditorPane getEditorPane()  { return _epane; }
+    public ChartSetPane getChartSetPane()  { return _epane; }
 
     /**
      * Initializes UI panel for the inspector.
@@ -74,17 +63,9 @@ public class InspectorPane extends ViewOwner {
         _inspColView = getView("InspColView", ColView.class);
 
         // Get BasicPropsTool
-        _chartType = new ChartTypeTool(_epane);
-        _inspColView.addChild(_chartType.getUI());
-        Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types").setCollapsed(true);
-
-        // Get BasicPropsTool
-        _basicProps = new BasicPropsTool(_epane);
-        _inspColView.addChild(_basicProps.getUI());
-        Collapser.createCollapserAndLabel(_basicProps.getUI(), "Basic Properties").setCollapsed(true);
-
-        // Get ViewTool
-        //_viewTool = _epane._viewTool;
+        //_chartType = new ChartTypeTool(_epane);
+        //_inspColView.addChild(_chartType.getUI());
+        //Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types").setCollapsed(true);
     }
 
     /**
@@ -93,20 +74,13 @@ public class InspectorPane extends ViewOwner {
     public void resetUI()
     {
         // Get editor (and just return if null) and tool for selected shapes
-        EditorPane epane = getEditorPane();
-
-        // If ViewGeneralButton is selected, instal inspector
-        //if (getViewBoolValue("ViewGeneralButton")) setInspector(_viewTool);
+        ChartSetPane dpane = getChartSetPane();
 
         // Get the inspector (owner)
         ViewOwner owner = getInspector();
 
         // Get inspector title from owner and set
         String title = "Inspector";
-        //if (owner==_gallery) title = "Gallery";
-        //else if (owner==_viewTool) title = "View Inspector";
-        //else if (owner==_stylerPane) title = "Style Inspector";
-        //else if (owner instanceof ViewTool) title = selView.getClass().getSimpleName() + " Inspector";
         _titleLabel.setText(title);
 
         // If owner non-null, tell it to reset

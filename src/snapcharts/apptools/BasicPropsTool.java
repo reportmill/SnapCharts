@@ -3,7 +3,7 @@ package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.views.ChartView;
-import snapcharts.app.EditorPane;
+import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
 
 /**
@@ -17,7 +17,7 @@ public class BasicPropsTool extends ViewOwner {
     /**
      * Constructor.
      */
-    public BasicPropsTool(EditorPane anEP)
+    public BasicPropsTool(ChartPane anEP)
     {
         _chartView = anEP.getChartView();
     }

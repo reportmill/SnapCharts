@@ -4,8 +4,7 @@ import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
-import snapcharts.views.ChartView;
-import snapcharts.app.EditorPane;
+import snapcharts.app.ChartPane;
 
 /**
  * A class to manage UI to edit a ChartView.
@@ -13,12 +12,12 @@ import snapcharts.app.EditorPane;
 public class ChartTypeTool extends ViewOwner {
 
     // The ChartView
-    private EditorPane  _epane;
+    private ChartPane _epane;
 
     /**
      * Constructor.
      */
-    public ChartTypeTool(EditorPane anEP)
+    public ChartTypeTool(ChartPane anEP)
     {
         _epane = anEP;
     }

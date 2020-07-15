@@ -9,7 +9,7 @@ import snapcharts.views.ChartView;
 /**
  * A class to manage charts/data in a ChartBook.
  */
-public class EditorPane extends ViewOwner {
+public class ChartPane extends ViewOwner {
     
     // The chartView
     private ChartView _chartView;
@@ -21,7 +21,7 @@ public class EditorPane extends ViewOwner {
     private DataPane  _dataPane;
 
     // The Inspector
-    private InspectorPane  _insp;
+    private ChartPaneInsp _insp;
 
     /**
      * Returns the ChartView.
@@ -76,8 +76,8 @@ public class EditorPane extends ViewOwner {
         SplitView splitView = SplitView.makeSplitView(topColView);
         splitView.setDividerSpan(5);
 
-        // Create InspectorPane
-        _insp = new InspectorPane(this);
+        // Create/add InspectorPane
+        _insp = new ChartPaneInsp(this);
         topRowView.addChild(_insp.getUI());
 
         // Return TopRowView
