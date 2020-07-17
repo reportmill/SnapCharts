@@ -134,9 +134,9 @@ public class DocPane extends ViewOwner {
         }
 
         // Handle DataSet
-        if (aChartPart instanceof DataSet) {
-            ChartPane epane = new ChartPane();
-            epane.setChart(aChartPart.getChart());
+        if (aChartPart instanceof DataSet) { DataSet dset = (DataSet)aChartPart;
+            DataSetPane epane = new DataSetPane();
+            epane.setDataSet(dset);
             return epane;
         }
 

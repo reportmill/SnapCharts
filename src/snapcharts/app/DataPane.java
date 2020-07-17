@@ -49,16 +49,16 @@ public class DataPane extends ViewOwner {
      */
     protected void resetUI()
     {
-        DataSetList dset = getDataSet();
-        List <DataSet> dsets = dset.getDataSets();
+        DataSetList dsetList = getDataSet();
+        List <DataSet> dsets = dsetList.getDataSets();
 
         // Update SeriesSpinner, PointSpinner
         setViewValue("SeriesSpinner", dsets.size());
-        setViewValue("PointSpinner", dset.getPointCount());
+        setViewValue("PointSpinner", dsetList.getPointCount());
 
         // Set TableView row & col count
-        _sheetView.setMinRowCount(dset.getDataSetCount());
-        _sheetView.setMinColCount(dset.getPointCount()+1);
+        _sheetView.setMinRowCount(dsetList.getDataSetCount());
+        _sheetView.setMinColCount(dsetList.getPointCount()+1);
     }
 
     /**
