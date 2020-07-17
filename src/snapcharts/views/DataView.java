@@ -167,7 +167,8 @@ public abstract class DataView extends ParentView {
      */
     public Point dataPointInLocal(DataPoint aDP)
     {
-        int index = aDP.getIndex(); double y = aDP.getValueX();
+        int index = aDP.getIndex();
+        double y = aDP.getY();
         return dataToView(index, y);
     }
 
@@ -255,8 +256,10 @@ public abstract class DataView extends ParentView {
         DataPoint dataPoint = null; double dist = Float.MAX_VALUE;
         List <DataSet> dsets = getActiveDataSets();
         for (int i=0;i<dsets.size();i++) { DataSet dset = dsets.get(i);
+
+            // Iterate over points
             for (int j=0;j<getPointCount();j++) {
-                Point pnt = dataToView(j,dset.getValueX(j));
+                Point pnt = dataToView(j, dset.getY(j));
                 double d = Point.getDistance(aX, aY, pnt.x, pnt.y);
                 if (d<dist) { dist = d;
                     dataPoint = dset.getPoint(j); }

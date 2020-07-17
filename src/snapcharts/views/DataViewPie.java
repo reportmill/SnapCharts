@@ -5,10 +5,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.ViewEvent;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.*;
 
 /**
  * A ChartArea subclass to display the contents of pie chart.
@@ -69,7 +66,7 @@ public class DataViewPie extends DataView {
         DataSetList dsetList = getActiveDataSetList();
         DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : getDataSet(0);
         int count = getPointCount();
-        double ratios[] = dset.getRatios();
+        double ratios[] = dset.getRatiosYtoTotalY();
         double angles[] = new double[count]; for (int i=0;i<count;i++) angles[i] = Math.round(ratios[i]*360);
         return angles;
     }
@@ -87,7 +84,7 @@ public class DataViewPie extends DataView {
         DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : getDataSet(0);
 
         // Get ratios and angles
-        double ratios[] = dset.getRatios();
+        double ratios[] = dset.getRatiosYtoTotalY();
         double angles[] = getAngles();
 
         // Get chart size and insets and calculate pie radius, diameter and center x/y
@@ -97,10 +94,13 @@ public class DataViewPie extends DataView {
         _pieY = ins.top + Math.round((ch - ins.getHeight() - _pieD)/2);
 
         // Iterate over angles and create/configure wedges
-        Wedge wedges[] = new Wedge[angles.length]; double start = 0;
+        Wedge wedges[] = new Wedge[angles.length];
+        double start = 0;
         for (int i=0; i<angles.length; i++) { double angle = angles[i];
-            Wedge wedge = wedges[i] = new Wedge(); wedge._start = start; wedge._angle = angle;
-            String text = dset.getPoint(i).getKeyString();
+            Wedge wedge = wedges[i] = new Wedge();
+            wedge._start = start;
+            wedge._angle = angle;
+            String text = dset.getString(i);
             if (text!=null && text.length()>0)
                 wedge._text = text + ": " + _fmt.format(ratios[i]);
             start += angle;

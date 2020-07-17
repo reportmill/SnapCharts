@@ -5,7 +5,6 @@ import snap.view.*;
 import snapcharts.model.Chart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
 
 import java.text.DecimalFormat;
@@ -85,8 +84,8 @@ public class ToolTipView extends ColView {
 
         // Get dataset and value
         DataSet dset = dataPoint.getDataSet();
-        String selKey = dataPoint.getKeyString();
-        double selValue = dataPoint.getValueX();
+        String selKey = dset.getString(dataPoint.getIndex());
+        double selValue = dataPoint.getY();
 
         // Remove children and reset opacity, padding and spacing
         removeChildren(); setOpacity(1);

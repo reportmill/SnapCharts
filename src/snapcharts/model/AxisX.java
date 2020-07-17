@@ -1,4 +1,6 @@
 package snapcharts.model;
+import snap.util.MathUtils;
+
 import java.util.List;
 
 /**

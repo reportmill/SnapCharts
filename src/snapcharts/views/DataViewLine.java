@@ -41,12 +41,15 @@ public class DataViewLine extends DataView {
         // Iterate over datasets
         for (int i=0; i<dsetCount;i++) { DataSet dset = getDataSet(i); if (dset.isDisabled()) continue;
 
-            Path path = new Path(); paths.add(path);
+            Path path = new Path();
+            paths.add(path);
 
             // Iterate over values
-            for (int j=0;j<pointCount;j++) { double val = dset.getValueX(j);
+            for (int j=0;j<pointCount;j++) { double val = dset.getY(j);
                 Point p = dataToView(j, val);
-                if (j==0) path.moveTo(p.x,p.y); else path.lineTo(p.x,p.y);
+                if (j==0)
+                    path.moveTo(p.x,p.y);
+                else path.lineTo(p.x,p.y);
             }
         }
         return paths;
@@ -83,7 +86,7 @@ public class DataViewLine extends DataView {
         for (int i=0; i<dsetCount;i++) { DataSet dset = dsets.get(i);
 
             // Iterate over values
-            for (int j=0;j<pointCount;j++) { double val = dset.getValueX(j);
+            for (int j=0;j<pointCount;j++) { double val = dset.getY(j);
 
                 Point p = dataToView(j, val);
 

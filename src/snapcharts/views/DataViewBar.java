@@ -108,7 +108,7 @@ public class DataViewBar extends DataView {
             // Iterate over datasets
             for (int j = 0; j< _dsetCount; j++) { DataSet dset = dsets.get(j);
                 DataPoint dataPoint = dset.getPoint(i);
-                double val = dataPoint.getValueX();
+                double val = dataPoint.getY();
 
                 // Draw bar
                 Color color = colorDataSets? getColor(dset.getIndex()) : getColor(i);

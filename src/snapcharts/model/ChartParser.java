@@ -550,14 +550,14 @@ public class ChartParser {
                 }
 
                 // Add point
-                aDataSet.addPoint(name, val);
+                aDataSet.addPointCY(name, val);
             }
 
             // Handle Node is number
             else {
                 Number value = dataNode.getNumber();
                 if(value!=null)
-                    aDataSet.addPoint(null, value.doubleValue());
+                    aDataSet.addPointXY(null, value.doubleValue());
             }
         }
     }

@@ -1,19 +1,9 @@
 package snapcharts.app;
 
 import snap.geom.HPos;
-import snap.gfx.Color;
-import snap.gfx.ShadowEffect;
 import snap.util.SnapUtils;
-import snap.util.StringUtils;
 import snap.view.*;
-import snapcharts.model.Chart;
-import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
-import snapcharts.views.ChartView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A ViewOwner to handle display of whole ChartDoc.
@@ -122,7 +112,7 @@ public class DataSetPane extends ViewOwner {
         Object val;
         if (col==0)
             val = dset.getValueX(row);
-        else val = dset.getValue(row);
+        else val = dset.getValueY(row);
 
         // Get cell text and set
         String text = SnapUtils.stringValue(val);
@@ -154,7 +144,7 @@ public class DataSetPane extends ViewOwner {
             // Get data point for dataset col and set value
 //        else {
             Double newVal = text!=null && text.length()>0 ? SnapUtils.doubleValue(text) : null;
-            dset.setValue(newVal, row);
+            dset.setValueY(newVal, row);
             _sheetView.updateItems(dset);
 //        }
 
@@ -182,7 +172,7 @@ public class DataSetPane extends ViewOwner {
         // While last slice is empty, remove it
         DataSet dset = getDataSet();
         int pc = dset.getPointCount();
-        while (pc>1 && !dset.getPoint(pc-1).isValueSet())
+        while (pc>1 && dset.getPoint(pc-1).getValueY()!=null)
             dset.setPointCount(--pc);
     }
 }

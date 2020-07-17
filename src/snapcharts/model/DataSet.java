@@ -9,17 +9,23 @@ public class DataSet extends ChartPart {
     // The DataSetList that owns this dataset
     protected DataSetList  _dsetList;
 
+    // The index in data set
+    protected int  _index;
+
     // The values
     private List <DataPoint>  _points = new ArrayList<>();
     
-    // The index in data set
-    protected int  _index;
-    
+    // Cached array of Y values
+    private double  _dataY[];
+
+    // Cached array of ratios
+    private double  _ratios[];
+
+    // Cached total of Y
+    private double  _total;
+
     // Whether dataset is disabled
     private boolean  _disabled;
-    
-    // Cached array of values, ratios, total
-    private double  _vals[], _ratios[], _total;
 
     // Constants for properties
     public static final String Disabled_Prop = "Disabled";
@@ -31,6 +37,11 @@ public class DataSet extends ChartPart {
     public DataSetList getDataSetList()  { return _dsetList; }
 
     /**
+     * Returns the index in dataset.
+     */
+    public int getIndex()  { return _index; }
+
+    /**
      * Override to return DataSetList.
      */
     @Override
@@ -39,6 +50,7 @@ public class DataSet extends ChartPart {
     /**
      * Returns the chart.
      */
+    @Override
     public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
 
     /**
@@ -55,11 +67,11 @@ public class DataSet extends ChartPart {
         if (aValue<1 || aValue>1000) return;
 
         // If not enough points, add
-        while(aValue>getPointCount())
-            addPoint(null, null);
+        while (aValue>getPointCount())
+            addPointXY(null, null);
 
         // If too many points, remove
-        while(aValue<getPointCount())
+        while (aValue<getPointCount())
             removePoint(getPointCount()-1);
     }
 
@@ -106,53 +118,104 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Adds a point for name and value.
+     * Adds a point for X and Y values.
      */
-    public void addPoint(String aName, Double aValue)
+    public void addPointXY(Double aX, Double aY)
     {
-        DataPoint dpnt = createPoint(aName, aValue);
+        DataPoint dpnt = new DataPoint(aX, aY);
         addPoint(dpnt);
     }
 
     /**
-     * Creates a point for name and value.
+     * Adds a point for a string and value.
      */
-    public DataPoint createPoint(String aName, Double aValue)
+    public void addPointCY(String aStr, Double aValue)
     {
-        DataPoint dpnt = new DataPoint();
-        dpnt._name = aName;
-        dpnt._y = aValue;
-        return dpnt;
+        DataPoint dpnt = new DataPoint(aStr, aValue);
+        addPoint(dpnt);
     }
 
     /**
      * Returns the value at given index.
      */
-    public Double getValue(int anIndex)
+    public double getX(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex); return dp!=null? dp.getValue() : null;
+        DataPoint dp = getPoint(anIndex);
+        return dp!=null ? dp.getX() : 0;
     }
 
     /**
      * Returns the value at given index.
      */
-    public double getValueX(int anIndex)
+    public double getY(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex); return dp!=null? dp.getValueX() : 0;
+        DataPoint dp = getPoint(anIndex);
+        return dp!=null ? dp.getY() : 0;
+    }
+
+    /**
+     * Returns the value at given index.
+     */
+    public Double getValueX(int anIndex)
+    {
+        DataPoint dp = getPoint(anIndex);
+        return dp!=null ? dp.getValueX() : 0;
+    }
+
+    /**
+     * Returns the value at given index.
+     */
+    public Double getValueY(int anIndex)
+    {
+        DataPoint dp = getPoint(anIndex);
+        return dp!=null ? dp.getValueY() : null;
+    }
+
+    /**
+     * Return data point as a string (either C or X).
+     */
+    public String getString(int anIndex)
+    {
+        // Get DataPoint
+        DataPoint dpnt = getPoint(anIndex);
+        if (dpnt==null)
+            return null;
+
+        // If point string is set, just return it
+        String str = dpnt.getC();
+        if(str!=null)
+            return str;
+
+        // If categories, return that
+        Chart chart = getChart();
+        List <String> cats = chart.getAxisX().getCategories();
+        if (cats!=null && anIndex<cats.size())
+            return cats.get(anIndex);
+
+        // If start value is set
+        int startValue = getDataSetList().getStartValue();
+        if (startValue!=0)
+            return String.valueOf(startValue + anIndex);
+
+        // Otherwise return x val (as int, if whole number)
+        double kval = dpnt.getX();
+        if (kval==(int)kval)
+            return String.valueOf((int)kval);
+        return String.valueOf(kval);
     }
 
     /**
      * Sets the value at given index.
      */
-    public void setValue(Double aValue, int anIndex)
+    public void setValueY(Double aValue, int anIndex)
     {
         // Make sure we have enough points
         while (anIndex>=getPointCount())
-            addPoint(null, null);
+            setPointCount(anIndex+1);
 
         // Get old point, copy for new value, swap old point for new
         DataPoint pnt = getPoint(anIndex);
-        DataPoint pnt2 = createPoint(pnt.getName(), aValue);
+        DataPoint pnt2 = pnt.copyForNewY(aValue);
         removePoint(anIndex);
         addPoint(pnt2, anIndex);
     }
@@ -163,48 +226,47 @@ public class DataSet extends ChartPart {
     public void setValues(Double ... theVals)
     {
         _points.clear();
-        for (Double v : theVals) addPoint(null, v);
-    }
-
-    /**
-     * Returns the total of all values.
-     */
-    public double getTotal()
-    {
-        if (_vals==null) getValues();
-        return _total;
+        for (Double val : theVals)
+            addPointXY(null, val);
     }
 
     /**
      * Returns an array of dataset values.
      */
-    public double[] getValues()
+    public double[] getDataY()
     {
-        if (_vals!=null) return _vals;
+        if (_dataY !=null) return _dataY;
         int count = getPointCount(); _total = 0;
         double vals[] = new double[count];
-        for (int i=0;i<count;i++) { double v = getValueX(i); vals[i] = v; _total += v; }
-        return _vals = vals;
+        for (int i=0;i<count;i++) { double v = getY(i); vals[i] = v; _total += v; }
+        return _dataY = vals;
+    }
+
+    /**
+     * Returns the total of all values.
+     */
+    public double getTotalY()
+    {
+        if (_dataY ==null) getDataY();
+        return _total;
     }
 
     /**
      * Returns an array of dataset ratios.
      */
-    public double[] getRatios()
+    public double[] getRatiosYtoTotalY()
     {
+        // If value cached, just return
         if (_ratios!=null) return _ratios;
-        double vals[] = getValues();
-        double total = getTotal();
+
+        // Calculate rations and return
+        double vals[] = getDataY();
+        double total = getTotalY();
         int count = vals.length;
         double ratios[] = new double[count];
         for (int i=0;i<count;i++) ratios[i] = vals[i]/total;
         return _ratios = ratios;
     }
-
-    /**
-     * Returns the index in dataset.
-     */
-    public int getIndex()  { return _index; }
 
     /**
      * Returns the index in dataset active dataset.
@@ -231,27 +293,27 @@ public class DataSet extends ChartPart {
     public boolean isEnabled()  { return !_disabled; }
 
     /**
-     * Returns the minimum value in this dataset.
+     * Returns the minimum Y value in this dataset.
      */
-    public double getMinValue()
+    public double getMinY()
     {
-        double minVal = Float.MAX_VALUE;
+        double min = Float.MAX_VALUE;
         for (DataPoint dp : _points)
-            if (dp.getValueX()<minVal)
-                minVal = dp.getValueX();
-        return minVal;
+            if (dp.getY()<min)
+                min = dp.getY();
+        return min;
     }
 
     /**
-     * Returns the maximum value in this dataset.
+     * Returns the maximum Y value in this dataset.
      */
-    public double getMaxValue()
+    public double getMaxY()
     {
-        double maxVal = -Float.MAX_VALUE;
+        double max = -Float.MAX_VALUE;
         for (DataPoint dp : _points)
-            if (dp.getValueX()>maxVal)
-                maxVal = dp.getValueX();
-        return maxVal;
+            if (dp.getY()>max)
+                max = dp.getY();
+        return max;
     }
 
     /**
@@ -261,7 +323,7 @@ public class DataSet extends ChartPart {
     {
         if (getName()!=null && getName().length()>0) return false;
         for (DataPoint dp : getPoints())
-            if (dp.isValueSet())
+            if (dp.getValueY()!=null)
                 return false;
         return true;
     }

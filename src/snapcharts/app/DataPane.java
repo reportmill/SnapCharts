@@ -4,7 +4,6 @@ import java.util.List;
 import snap.geom.HPos;
 import snap.util.*;
 import snap.view.*;
-import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
@@ -31,7 +30,7 @@ public class DataPane extends ViewOwner {
     /**
      * Returns the DataSet.
      */
-    public DataSetList getDataSet()  { return _chartView.getDataSetList(); }
+    public DataSetList getDataSetList()  { return _chartView.getDataSetList(); }
 
     /**
      * Create UI.
@@ -49,7 +48,7 @@ public class DataPane extends ViewOwner {
      */
     protected void resetUI()
     {
-        DataSetList dsetList = getDataSet();
+        DataSetList dsetList = getDataSetList();
         List <DataSet> dsets = dsetList.getDataSets();
 
         // Update SeriesSpinner, PointSpinner
@@ -68,22 +67,22 @@ public class DataPane extends ViewOwner {
     {
         // Handle ClearButton
         if (anEvent.equals("ClearButton")) {
-            DataSetList dset = getDataSet();
-            dset.clear();
-            dset.addDataSetForNameAndValues("Series 1", 1d, 2d, 3d);
+            DataSetList dsetList = getDataSetList();
+            dsetList.clear();
+            dsetList.addDataSetForNameAndValues("Series 1", 1d, 2d, 3d);
             _sheetView.setSelCell(0,0); _sheetView.requestFocus();
         }
 
         // Handle SeriesSpinner
         if (anEvent.equals("SeriesSpinner")) {
-            DataSetList dset = getDataSet();
-            dset.setDataSetCount(anEvent.getIntValue());
+            DataSetList dsetList = getDataSetList();
+            dsetList.setDataSetCount(anEvent.getIntValue());
         }
 
         // Handle PointSpinner
         if (anEvent.equals("PointSpinner")) {
-            DataSetList dset = getDataSet();
-            dset.setPointCount(anEvent.getIntValue());
+            DataSetList dsetList = getDataSetList();
+            dsetList.setPointCount(anEvent.getIntValue());
         }
     }
 
@@ -96,7 +95,7 @@ public class DataPane extends ViewOwner {
         aCell.getStringView().setMinSize(40, Math.ceil(aCell.getFont().getLineHeight()));
 
         // Get dataset count and point count
-        DataSetList dsetList = getDataSet();
+        DataSetList dsetList = getDataSetList();
         int dsetCount = dsetList.getDataSetCount();
         int pointCount = dsetList.getPointCount();
 
@@ -115,7 +114,7 @@ public class DataPane extends ViewOwner {
         if (col==0) { aCell.setText(dset.getName()); return; }
 
         // Get value
-        Double val = dset.getValue(col-1);
+        Double val = dset.getValueY(col-1);
         aCell.setText(val!=null? StringUtils.toString(val) : null);
         aCell.setAlign(HPos.RIGHT);
     }
@@ -126,7 +125,7 @@ public class DataPane extends ViewOwner {
     void configureColumn(TableCol aCol)
     {
         // Get DataSetList, dataset and column index
-        DataSetList dsetList = getDataSet();
+        DataSetList dsetList = getDataSetList();
         DataSet dset = dsetList.getDataSet(0);
         int col = aCol.getColIndex(); if (col>dsetList.getPointCount()) { aCol.getHeader().setText(null); return; }
 
@@ -140,8 +139,7 @@ public class DataPane extends ViewOwner {
         }
 
         // Set the rest of column headers to DataSet.Point[i].KeyString
-        DataPoint dpnt = dset.getPoint(col-1);
-        String hdrText = dpnt.getKeyString();
+        String hdrText = dset.getString(col - 1);
         aCol.getHeader().setText(hdrText);
     }
 
@@ -159,7 +157,7 @@ public class DataPane extends ViewOwner {
         expandDataSet(row, col);
 
         // Get dataset
-        DataSetList dsetList = getDataSet();
+        DataSetList dsetList = getDataSetList();
         DataSet dset = dsetList.getDataSet(row);
 
         // If header column, set dataset name and return
@@ -169,7 +167,7 @@ public class DataPane extends ViewOwner {
         // Get data point for dataset col and set value
         else {
             Double newVal = text!=null && text.length()>0? SnapUtils.doubleValue(text) : null;
-            dset.setValue(newVal, col-1);
+            dset.setValueY(newVal, col-1);
             _sheetView.updateItems(dset);
         }
 
@@ -184,11 +182,11 @@ public class DataPane extends ViewOwner {
      */
     void expandDataSet(int aRow, int aCol)
     {
-        DataSetList dset = getDataSet();
-        if (aRow>=dset.getDataSetCount())
-            dset.setDataSetCount(aRow+1);
-        if (aCol>=dset.getPointCount())
-            dset.setPointCount(aCol+1);
+        DataSetList dsetList = getDataSetList();
+        if (aRow>=dsetList.getDataSetCount())
+            dsetList.setDataSetCount(aRow+1);
+        if (aCol>=dsetList.getPointCount())
+            dsetList.setPointCount(aCol+1);
     }
 
     /**
@@ -197,7 +195,7 @@ public class DataPane extends ViewOwner {
     void trimDataSet()
     {
         // While last dataset is clear, remove it
-        DataSetList dsetList = getDataSet();
+        DataSetList dsetList = getDataSetList();
         int sc = dsetList.getDataSetCount();
         while (sc>1 && dsetList.getDataSet(sc-1).isClear())
             dsetList.removeDataSet(--sc);

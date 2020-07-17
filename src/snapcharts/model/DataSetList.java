@@ -22,10 +22,10 @@ public class DataSetList extends ChartPart {
     private DataSetList  _active;
     
     // The cached min values
-    private double  _minVal = Float.MAX_VALUE;
+    private double _minY = Float.MAX_VALUE;
 
     // The cached max values
-    private double  _maxVal = -Float.MAX_VALUE;
+    private double _maxY = -Float.MAX_VALUE;
 
     // Constants for properties
     public static final String StartValue_Prop = "StartValue";
@@ -128,25 +128,33 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the minimum value for active datasets.
+     * Returns the minimum Y value for active datasets.
      */
-    public double getMinValue()
+    public double getMinY()
     {
-        if (_minVal<Float.MAX_VALUE) return _minVal;
-        double minVal = Float.MAX_VALUE;
-        for (DataSet s : getDataSets()) { double mval = s.getMinValue(); if (mval<minVal) minVal = mval; }
-        return _minVal = minVal;
+        // If value already cached, just return
+        if (_minY < Float.MAX_VALUE) return _minY;
+
+        // Iterate over datasets to get min of all
+        double min = Float.MAX_VALUE;
+        for (DataSet dset : getDataSets())
+            min = Math.min(min, dset.getMinY());
+        return _minY = min;
     }
 
     /**
-     * Returns the maximum value for active datasets.
+     * Returns the maximum Y value for active datasets.
      */
-    public double getMaxValue()
+    public double getMaxY()
     {
-        if (_maxVal>-Float.MAX_VALUE) return _maxVal;
-        double maxVal = -Float.MAX_VALUE;
-        for (DataSet s : getDataSets()) { double mval = s.getMaxValue(); if (mval>maxVal) maxVal = mval; }
-        return _maxVal = maxVal;
+        // If value already cached, just return
+        if (_maxY > -Float.MAX_VALUE) return _maxY;
+
+        // Iterate over datasets to get max of all
+        double max = -Float.MAX_VALUE;
+        for (DataSet dset : getDataSets())
+            max = Math.max(max, dset.getMaxY());
+        return _maxY = max;
     }
 
     /**
@@ -194,32 +202,36 @@ public class DataSetList extends ChartPart {
      */
     public boolean isSliceEmpty(int anIndex)
     {
-        for (DataSet ser : getDataSets())
-            if (ser.getPoint(anIndex).isValueSet())
+        for (DataSet dset : getDataSets())
+            if (dset.getPoint(anIndex).getValueY()!=null)
                 return false;
         return true;
     }
 
     /**
-     * Returns the intervals.
+     * Returns the intervals for Y axis.
      */
-    public Intervals getIntervals(double aHeight)
+    public Intervals getIntervalsY(double aHeight)
     {
         // Get chart min value, max value and height
-        double minVal = getMinValue();
-        double maxVal = getMaxValue();
-        double height = aHeight; //_chartView._chartArea.getHeight() - _chartView._chartArea.getInsetsAll().getHeight();
-        if (!_chart.isShowPartialY() && minVal*maxVal>0) {
-            if (minVal>0) minVal = 0; else maxVal = 0; }
+        double minY = getMinY();
+        double maxY = getMaxY();
+
+        // If ShowPartialY, reset min or max
+        if (!_chart.isShowPartialY() && minY*maxY>0) {
+            if (minY>0) minY = 0;
+            else maxY = 0;
+        }
 
         // If intervals are cached for current min, max and height, return them
-        double seedMax = _intervals.getSeedValueMax(), seedMin = _intervals.getSeedValueMin();
+        double seedMax = _intervals.getSeedValueMax();
+        double seedMin = _intervals.getSeedValueMin();
         double seedHeight = _intervals.getSeedHeight();
-        if (MathUtils.equals(seedMax, maxVal) && MathUtils.equals(seedMin, minVal) && MathUtils.equals(seedHeight, height))
+        if (MathUtils.equals(seedMax, maxY) && MathUtils.equals(seedMin, minY) && MathUtils.equals(seedHeight, aHeight))
             return _intervals;
 
         // Create new intervals and return
-        _intervals = new Intervals(minVal, maxVal, height);
+        _intervals = new Intervals(minY, maxY, aHeight);
         return _intervals;
     }
 
@@ -228,16 +240,20 @@ public class DataSetList extends ChartPart {
      */
     public DataSetList getActiveDataSetList()
     {
+        // If already cached, just return it
         if (_active!=null) return _active;
 
         // If all datasets are enabled, return this dataset
-        int ac = 0; for (DataSet s : _dsets) if (s.isEnabled()) ac++;
-        if (ac== getDataSetCount()) return _active = this;
+        int ac = 0; for (DataSet dset : _dsets) if (dset.isEnabled()) ac++;
+        if (ac== getDataSetCount())
+            return _active = this;
 
         // Create new dataset and initialize
         DataSetList active = new DataSetList(_chart);
         active._dsets = new ArrayList(ac);
-        for (DataSet s : _dsets) if (s.isEnabled()) active._dsets.add(s);
+        for (DataSet dset : _dsets)
+            if (dset.isEnabled())
+                active._dsets.add(dset);
         active._startValue = _startValue;
         return _active = active;
     }
@@ -245,12 +261,18 @@ public class DataSetList extends ChartPart {
     /**
      * Returns the active datasets.
      */
-    public List <DataSet> getActiveDataSets()  { return getActiveDataSetList().getDataSets(); }
+    public List <DataSet> getActiveDataSets()
+    {
+        return getActiveDataSetList().getDataSets();
+    }
 
     /**
      * Returns the intervals.
      */
-    public Intervals getActiveIntervals(double aHeight)  { return getActiveDataSetList().getIntervals(aHeight); }
+    public Intervals getActiveIntervals(double aHeight)
+    {
+        return getActiveDataSetList().getIntervalsY(aHeight);
+    }
 
     /**
      * Called when a DataSet changes a property.
@@ -280,7 +302,7 @@ public class DataSetList extends ChartPart {
     private void clearCachedValues()
     {
         _active = null;
-        _minVal = Float.MAX_VALUE;
-        _maxVal = -Float.MAX_VALUE;
+        _minY = Float.MAX_VALUE;
+        _maxY = -Float.MAX_VALUE;
     }
 }

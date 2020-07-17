@@ -468,12 +468,11 @@ public class ChartWriter {
             Map map = new HashMap();
 
             // Handle name
-            String name = dpnt.getName();
+            String name = dpnt.getC();
             if (name!=null) { map.put("name", name); rich = true; }
 
             // Handle y
-            Double y = dpnt.getValue();
-            if (y!=null) map.put("y", y);
+            if (dpnt.getValueY()!=null) map.put("y", dpnt.getY());
 
             // Add map
             if (!map.isEmpty()) list.add(map);
@@ -482,12 +481,14 @@ public class ChartWriter {
         // If not rich, just get values
         if (!rich) {
             List list2 = new ArrayList();
-            for (Map m : (List <Map>)list) list2.add(m.get("y"));
+            for (Map m : (List <Map>)list)
+                list2.add(m.get("y"));
             list = list2;
         }
 
         // Add list
-        if (!list.isEmpty()) aMap.put("data", list);
+        if (!list.isEmpty())
+            aMap.put("data", list);
     }
 
     /**

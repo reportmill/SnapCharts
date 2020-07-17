@@ -1,6 +1,4 @@
 package snapcharts.model;
-import java.util.List;
-import snap.util.SnapUtils;
 
 /**
  * A class to represent a data point.
@@ -9,26 +7,28 @@ public class DataPoint {
     
     // The DataSet this point belongs to
     protected DataSet  _dset;
-    
-    // The data point name
-    protected String  _name;
-    
-    // The data point x value (usually the index)
+
+    // The index of point in data set
+    protected int  _index;
+
+    // The data point x value
     protected Double  _x;
     
     // The data point y value
     protected Double  _y;
-    
-    // The index
-    protected int  _index;
+
+    // The data point text value
+    protected String  _c;
 
     /**
-     * Constructor.
+     * Constructor for XY.
      */
-    public DataPoint()
-    {
-        super();
-    }
+    public DataPoint(Double aX, Double aY)  { _x = aX; _y = aY; }
+
+    /**
+     * Constructor for CY.
+     */
+    public DataPoint(String aStr, Double aY)  { _c = aStr; _y = aY; }
 
     /**
      * Returns the DataSet.
@@ -36,82 +36,43 @@ public class DataPoint {
     public DataSet getDataSet()  { return _dset; }
 
     /**
-     * Returns the DataSetList.
-     */
-    public DataSetList getDataSetList()  { return _dset.getDataSetList(); }
-
-    /**
-     * Returns the chart.
-     */
-    public Chart getChart()  { return getDataSetList().getChart(); }
-
-    /**
-     * Returns the name.
-     */
-    public String getName()  { return _name; }
-
-    /**
-     * Returns the X value.
-     */
-    public double getX()
-    {
-        if(_x!=null) return _x;
-        _x = (double)(_dset._dsetList.getStartValue() + _index);
-        return _x;
-    }
-
-    /**
-     * Returns the Y value.
-     */
-    public double getY()  { return _y!=null? _y : 0; }
-
-    /**
      * Returns the index of this point in dataset.
      */
     public int getIndex()  { return _index; }
 
     /**
-     * Return data point key - either the name or the x value.
+     * Returns the X value.
      */
-    public Object getKey()
+    public double getX()  { return _x!=null ? _x : _index; }
+
+    /**
+     * Returns the Y value.
+     */
+    public double getY()  { return _y!=null ? _y : 0; }
+
+    /**
+     * Returns the name.
+     */
+    public String getC()  { return _c; }
+
+    /**
+     * Returns X as a Double.
+     */
+    public Double getValueX()  { return _x; }
+
+    /**
+     * Returns Y as a Double.
+     */
+    public Double getValueY()  { return _y; }
+
+    /**
+     * Copies this point with new Y value.
+     */
+    public DataPoint copyForNewY(Double aY)
     {
-        // If name, just return it
-        if(_name!=null) return _name;
-
-        // If categories, return that
-        Chart chart = getChart();
-        List <String> cats = chart.getAxisX().getCategories();
-        if(cats!=null && getIndex()<cats.size())
-            return cats.get(getIndex());
-
-        // Otherwise return x val (as int, if whole number)
-        double kval = getX();
-        return kval==(int)kval ? (int)kval : kval;
+        DataPoint copy = new DataPoint(_x, aY); copy._c = _c;
+        return copy;
     }
-
-    /**
-     * Return data point key as a string.
-     */
-    public String getKeyString()
-    {
-        Object key = getKey();
-        return SnapUtils.stringValue(key);
-    }
-
-    /**
-     * Returns whether value is set.
-     */
-    public boolean isValueSet()  { return _y!=null; }
-
-    /**
-     * Return data point value.
-     */
-    public Double getValue()  { return _y; }
-
-    /**
-     * Return data point value or zero (if null).
-     */
-    public double getValueX()  { return _y!=null ? _y : 0; }
 
     /**
      * Standard equals implementation.
