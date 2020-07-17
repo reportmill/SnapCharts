@@ -12,6 +12,9 @@ public class DataSet extends ChartPart {
     // The index in data set
     protected int  _index;
 
+    // The format of the data
+    private DataType _dataType;
+
     // The values
     private List <DataPoint>  _points = new ArrayList<>();
     
@@ -32,6 +35,18 @@ public class DataSet extends ChartPart {
     public static final String Points_Prop = "Points";
 
     /**
+     * Returns the chart.
+     */
+    @Override
+    public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
+
+    /**
+     * Override to return DataSetList.
+     */
+    @Override
+    public ChartPart getParent()  { return _dsetList; }
+
+    /**
      * Returns the dataset.
      */
     public DataSetList getDataSetList()  { return _dsetList; }
@@ -42,16 +57,29 @@ public class DataSet extends ChartPart {
     public int getIndex()  { return _index; }
 
     /**
-     * Override to return DataSetList.
+     * Returns the DataType.
      */
-    @Override
-    public ChartPart getParent()  { return _dsetList; }
+    public DataType getDataType()
+    {
+        if (_dataType!=null) return _dataType;
+
+        return _dataType = guessDataType();
+    }
 
     /**
-     * Returns the chart.
+     * Tries to guess the data type.
      */
-    @Override
-    public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
+    private DataType guessDataType()
+    {
+        for (DataPoint pnt : _points) {
+            if (pnt.getC()!=null)
+                return DataType.CY;
+            if (pnt.getValueX()!=null)
+                return DataType.XY;
+        }
+        return DataType.UNKNOWN;
+    }
+
 
     /**
      * Returns the number of points.
@@ -105,6 +133,10 @@ public class DataSet extends ChartPart {
         aPoint._index = anIndex;
         _points.add(anIndex, aPoint);
         firePropChange(Points_Prop, null, aPoint, anIndex);
+
+        // If data type still unknown, clear to re-evaluate
+        if (_dataType == DataType.UNKNOWN)
+            _dataType = null;
     }
 
     /**
@@ -115,6 +147,15 @@ public class DataSet extends ChartPart {
         DataPoint dpnt = _points.remove(anIndex);
         firePropChange(Points_Prop, dpnt, null, anIndex);
         return dpnt;
+    }
+
+    /**
+     * Sets point at given index to new point.
+     */
+    public void setPoint(DataPoint aPoint, int anIndex)
+    {
+        removePoint(anIndex);
+        addPoint(aPoint, anIndex);
     }
 
     /**
@@ -159,7 +200,7 @@ public class DataSet extends ChartPart {
     public Double getValueX(int anIndex)
     {
         DataPoint dp = getPoint(anIndex);
-        return dp!=null ? dp.getValueX() : 0;
+        return dp!=null ? dp.getValueX() : null;
     }
 
     /**
@@ -205,19 +246,42 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Sets the value at given index.
+     * Sets the X value at given index.
+     */
+    public void setValueX(Double aValue, int anIndex)
+    {
+        // Make sure we have enough points
+        if (anIndex>=getPointCount()) setPointCount(anIndex+1);
+
+        // Get old point, copy for new value, swap old point for new
+        DataPoint pnt = getPoint(anIndex).copyForX(aValue);
+        setPoint(pnt, anIndex);
+    }
+
+    /**
+     * Sets the Y value at given index.
      */
     public void setValueY(Double aValue, int anIndex)
     {
         // Make sure we have enough points
-        while (anIndex>=getPointCount())
-            setPointCount(anIndex+1);
+        if (anIndex>=getPointCount()) setPointCount(anIndex+1);
 
         // Get old point, copy for new value, swap old point for new
-        DataPoint pnt = getPoint(anIndex);
-        DataPoint pnt2 = pnt.copyForNewY(aValue);
-        removePoint(anIndex);
-        addPoint(pnt2, anIndex);
+        DataPoint pnt = getPoint(anIndex).copyForY(aValue);
+        setPoint(pnt, anIndex);
+    }
+
+    /**
+     * Sets the C value at given index.
+     */
+    public void setValueC(String aValue, int anIndex)
+    {
+        // Make sure we have enough points
+        if (anIndex>=getPointCount()) setPointCount(anIndex+1);
+
+        // Get old point, copy for new value, swap old point for new
+        DataPoint pnt = getPoint(anIndex).copyForC(aValue);
+        setPoint(pnt, anIndex);
     }
 
     /**
@@ -321,7 +385,8 @@ public class DataSet extends ChartPart {
      */
     public boolean isClear()
     {
-        if (getName()!=null && getName().length()>0) return false;
+        if (getName()!=null && getName().length()>0)
+            return false;
         for (DataPoint dp : getPoints())
             if (dp.getValueY()!=null)
                 return false;

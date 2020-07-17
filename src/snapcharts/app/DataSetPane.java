@@ -4,6 +4,7 @@ import snap.geom.HPos;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataType;
 
 /**
  * A ViewOwner to handle display of whole ChartDoc.
@@ -37,9 +38,10 @@ public class DataSetPane extends ViewOwner {
      */
     protected void initUI()
     {
+        // Get/configure SheetView
         _sheetView = getView("SheetView", SheetView.class);
         _sheetView.setColConfigure(c -> configureColumn(c));
-        _sheetView.setCellConfigure(c -> configureCell(c));  //_sheetView.setCellEditStart(c -> cellEditStart(c));
+        _sheetView.setCellConfigure(c -> configureCell(c));
         _sheetView.setCellEditEnd(c -> cellEditEnd(c));
 
         // Create/add InspectorPane
@@ -97,13 +99,13 @@ public class DataSetPane extends ViewOwner {
 
         // Get dataset count and point count
         DataSet dset = getDataSet();
-        int valCount = 2; //dsetList.getDataSetCount();
         int pointCount = dset.getPointCount();
+        int colCount = 2;
 
         // Get dataset count, point count, row and column
         int row = aCell.getRow();
         int col = aCell.getCol();
-        if (row>=pointCount || col>=valCount) {
+        if (row>=pointCount || col>=colCount) {
             aCell.setText("");
             return;
         }
@@ -111,7 +113,7 @@ public class DataSetPane extends ViewOwner {
         // Get cell value
         Object val;
         if (col==0)
-            val = dset.getValueX(row);
+            val = dset.getString(row);
         else val = dset.getValueY(row);
 
         // Get cell text and set
@@ -119,9 +121,6 @@ public class DataSetPane extends ViewOwner {
         aCell.setText(text);
         aCell.setAlign(HPos.RIGHT);
     }
-
-    ///** Called when cell starts editing. */
-    //void cellEditStart(ListCell <DataSet> aCell)  { aCell.setEditing(true); }
 
     /**
      * Called when cell stops editing.
@@ -137,16 +136,26 @@ public class DataSetPane extends ViewOwner {
         // Get dataset
         DataSet dset = getDataSet();
 
-        // If header column, set dataset name and return
-//        if (col==0)
-//            dset.setName(text);
+        // Handle Col 0
+        if (col==0) {
+            if (dset.getDataType() == DataType.XY) {
+                Double newVal = text != null && text.length() > 0 ? SnapUtils.doubleValue(text) : null;
+                dset.setValueX(newVal, row);
+            }
+            else if (dset.getDataType() == DataType.CY) {
+                dset.setValueC(text, row);
+            }
+            else {
+                System.err.println("DataSetPane: cellEditEnd: Unknown data type: " + dset.getDataType());
+                ViewUtils.beep();
+            }
+        }
 
-            // Get data point for dataset col and set value
-//        else {
+        // Handle Col 1
+        else if (col==1) {
             Double newVal = text!=null && text.length()>0 ? SnapUtils.doubleValue(text) : null;
             dset.setValueY(newVal, row);
-            _sheetView.updateItems(dset);
-//        }
+        }
 
         // Update row and trim DataSet in case dataset/points were cleared
         _sheetView.updateItems(aCell.getItem());
@@ -172,7 +181,7 @@ public class DataSetPane extends ViewOwner {
         // While last slice is empty, remove it
         DataSet dset = getDataSet();
         int pc = dset.getPointCount();
-        while (pc>1 && dset.getPoint(pc-1).getValueY()!=null)
+        while (pc>1 && dset.getPoint(pc-1).getValueY()==null)
             dset.setPointCount(--pc);
     }
 }

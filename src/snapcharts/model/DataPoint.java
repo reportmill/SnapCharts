@@ -66,11 +66,29 @@ public class DataPoint {
     public Double getValueY()  { return _y; }
 
     /**
+     * Copies this point with new X value.
+     */
+    public DataPoint copyForX(Double aX)
+    {
+        DataPoint copy = new DataPoint(aX, _y); copy._c = _c;
+        return copy;
+    }
+
+    /**
      * Copies this point with new Y value.
      */
-    public DataPoint copyForNewY(Double aY)
+    public DataPoint copyForY(Double aY)
     {
         DataPoint copy = new DataPoint(_x, aY); copy._c = _c;
+        return copy;
+    }
+
+    /**
+     * Copies this point with new C value.
+     */
+    public DataPoint copyForC(String aStr)
+    {
+        DataPoint copy = new DataPoint(_x, _y); copy._c = aStr;
         return copy;
     }
 
