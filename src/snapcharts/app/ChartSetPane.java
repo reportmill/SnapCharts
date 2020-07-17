@@ -1,11 +1,10 @@
 package snapcharts.app;
 import snap.gfx.Color;
-import snap.gfx.ShadowEffect;
 import snap.view.ColView;
 import snap.view.RowView;
 import snap.view.ViewOwner;
 import snapcharts.model.Chart;
-import snapcharts.views.ChartView;
+import snapcharts.views.PageView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +16,17 @@ public class ChartSetPane extends ViewOwner {
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();
 
+    // The top ColView
+    private ColView  _topColView;
+
+    // The list of pages
+    private List<PageView> _pageViews = new ArrayList<>();
+
     // The Inspector
     private ChartSetPaneInsp _insp;
+
+    // Constants
+    public static Color BACK_FILL = new Color(165, 179, 216).brighter();
 
     /**
      * Returns the list of charts.
@@ -30,8 +38,37 @@ public class ChartSetPane extends ViewOwner {
      */
     public void setCharts(List<Chart> theCharts)
     {
+        getUI();
         _charts.clear();
         _charts.addAll(theCharts);
+
+        _topColView.removeChildren();
+        _pageViews.clear();
+
+        for (Chart chart : _charts) {
+            PageView pageView = new PageView();
+            pageView.addChart(chart);
+            _pageViews.add(pageView);
+            _topColView.addChild(pageView);
+        }
+    }
+
+    /**
+     * Returns whether pages are portrait.
+     */
+    public boolean isPortrait()
+    {
+        PageView pview = _pageViews.size()>0 ? _pageViews.get(0) : null;
+        return pview==null || pview.isVertical();
+    }
+
+    /**
+     * Sets whether pages are portrait.
+     */
+    public void setPortrait(boolean aValue)
+    {
+        for (PageView pview : _pageViews)
+            pview.setVertical(aValue);
     }
 
     /**
@@ -46,14 +83,7 @@ public class ChartSetPane extends ViewOwner {
         _insp = new ChartSetPaneInsp(this);
         topRowView.addChild(_insp.getUI());
 
-        ColView colView = getView("TopColView", ColView.class);
-
-        for (Chart chart : getCharts()) {
-            ChartView chartView = new ChartView();
-            chartView.setBorder(Color.BLACK, 1);
-            chartView.setEffect(new ShadowEffect());
-            chartView.setChart(chart);
-            colView.addChild(chartView);
-        }
+        _topColView = getView("TopColView", ColView.class);
+        _topColView.setFill(BACK_FILL);
     }
 }

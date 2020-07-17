@@ -64,6 +64,7 @@ public class ChartPane extends ViewOwner {
         // Create ChartBox
         _chartBox = (BoxView)topRowView.getChild("ChartBox");
         _chartBox.setContent(_chartView);
+        _chartBox.setFill(ChartSetPane.BACK_FILL);
 
         // Create DataPane
         _dataPane = new DataPane(_chartView);

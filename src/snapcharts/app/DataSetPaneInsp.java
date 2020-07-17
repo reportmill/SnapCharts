@@ -1,6 +1,7 @@
 package snapcharts.app;
 import snap.gfx.Color;
 import snap.gfx.Image;
+import snap.util.PropChangeListener;
 import snap.view.*;
 import snap.viewx.TextPane;
 import snapcharts.apptools.DataSetBasicTool;
@@ -69,7 +70,12 @@ public class DataSetPaneInsp extends ViewOwner {
         // Get ChartBasicTool
         _dsetBasic = new DataSetBasicTool(_epane);
         _inspColView.addChild(_dsetBasic.getUI());
-        Collapser.createCollapserAndLabel(_dsetBasic.getUI(), "Basic Properties").setCollapsed(true);
+        Collapser cpsr = Collapser.createCollapserAndLabel(_dsetBasic.getUI(), "Basic Properties");
+        cpsr.setCollapsed(true);
+        _inspColView.addPropChangeListener(pc -> {
+            if (_inspColView.isShowing())
+                cpsr.setExpandedAnimated(true);
+        });
     }
 
     /**

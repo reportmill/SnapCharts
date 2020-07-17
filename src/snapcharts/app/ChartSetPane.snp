@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RowView FillHeight="true">
-  <ColView Name="TopColView" Align="TOP_CENTER" Padding="40,50,40,50" GrowWidth="true" FillWidth="true">
-    <color value="#ffffff" />
-  </ColView>
+  <ScrollView GrowWidth="true">
+    <ColView Name="TopColView" Align="TOP_CENTER" Padding="20">
+      <color value="#ffffff" />
+    </ColView>
+  </ScrollView>
 </RowView>

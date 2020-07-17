@@ -3,6 +3,7 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
+import snapcharts.apptools.ChartSetBasicTool;
 
 /**
  * A class to manage the inspector for ChartSetPane.
@@ -23,6 +24,9 @@ public class ChartSetPaneInsp extends ViewOwner {
 
     // The child inspector current installed in inspector panel
     private ViewOwner  _childInspector;
+
+    // The ChartSetBasicTool
+    private ChartSetBasicTool  _csetBasic;
 
     /**
      * Constructor.
@@ -62,10 +66,15 @@ public class ChartSetPaneInsp extends ViewOwner {
         // Get InspColView
         _inspColView = getView("InspColView", ColView.class);
 
-        // Get BasicPropsTool
-        //_chartType = new ChartTypeTool(_epane);
-        //_inspColView.addChild(_chartType.getUI());
-        //Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types").setCollapsed(true);
+        // Get ChartSetBasicTool
+        _csetBasic = new ChartSetBasicTool(_epane);
+        _inspColView.addChild(_csetBasic.getUI());
+        Collapser cpsr = Collapser.createCollapserAndLabel(_csetBasic.getUI(), "Page Properties");
+        cpsr.setCollapsed(true);
+        _inspColView.addPropChangeListener(pc -> {
+            if (_inspColView.isShowing())
+                cpsr.setExpandedAnimated(true);
+        });
     }
 
     /**
