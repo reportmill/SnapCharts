@@ -3,7 +3,7 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
-import snapcharts.apptools.BasicPropsTool;
+import snapcharts.apptools.ChartBasicTool;
 import snapcharts.apptools.ChartTypeTool;
 
 /**
@@ -30,7 +30,7 @@ public class ChartPaneInsp extends ViewOwner {
     private ChartTypeTool _chartType;
     
     // The BasicPropsTool
-    private BasicPropsTool _basicProps;
+    private ChartBasicTool _basicProps;
 
     // The inspector for view general
     //private ViewTool  _viewTool;
@@ -73,13 +73,13 @@ public class ChartPaneInsp extends ViewOwner {
         // Get InspColView
         _inspColView = getView("InspColView", ColView.class);
 
-        // Get BasicPropsTool
+        // Get ChartTypeTool
         _chartType = new ChartTypeTool(_epane);
         _inspColView.addChild(_chartType.getUI());
         Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types").setCollapsed(true);
 
-        // Get BasicPropsTool
-        _basicProps = new BasicPropsTool(_epane);
+        // Get ChartBasicTool
+        _basicProps = new ChartBasicTool(_epane);
         _inspColView.addChild(_basicProps.getUI());
         Collapser.createCollapserAndLabel(_basicProps.getUI(), "Basic Properties").setCollapsed(true);
 

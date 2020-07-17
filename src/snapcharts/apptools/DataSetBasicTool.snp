@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
+  <RowView Padding="4" Spacing="4">
+    <Label text="DataSet Name:" />
+    <TextField Name="NameText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Line width:" />
+    <TextField Name="LineWidthText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Line color:" />
+    <ColorWell MinWidth="60" MinHeight="30" />
+    <ColorButton Title="Stroke"/>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowLegendCheckBox" text="Show Symbols" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
+  </RowView>
+</ColView>

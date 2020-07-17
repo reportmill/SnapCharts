@@ -9,7 +9,7 @@ import snapcharts.model.Chart;
 /**
  * A class to manage UI to edit a ChartView.
  */
-public class BasicPropsTool extends ViewOwner {
+public class ChartBasicTool extends ViewOwner {
     
     // The ChartView
     ChartView        _chartView;
@@ -17,7 +17,7 @@ public class BasicPropsTool extends ViewOwner {
     /**
      * Constructor.
      */
-    public BasicPropsTool(ChartPane anEP)
+    public ChartBasicTool(ChartPane anEP)
     {
         _chartView = anEP.getChartView();
     }
