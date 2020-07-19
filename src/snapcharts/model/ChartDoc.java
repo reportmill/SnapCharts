@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.util.FilePathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snap.web.WebURL;
@@ -20,6 +21,9 @@ public class ChartDoc extends ChartPart {
     // Constants for properties
     public static final String Charts_Prop = "Charts";
 
+    // Constants
+    public static final String CHARTS_FILE_EXTENSION = "charts";
+
     /**
      * Returns the Source URL.
      */
@@ -28,7 +32,7 @@ public class ChartDoc extends ChartPart {
     /**
      * Sets the Source URL.
      */
-    protected void setSourceURL(WebURL aURL)
+    public void setSourceURL(WebURL aURL)
     {
         _srcURL = aURL;
     }
@@ -62,6 +66,7 @@ public class ChartDoc extends ChartPart {
     public void addChart(Chart aChart, int anIndex)
     {
         _charts.add(anIndex, aChart);
+        firePropChange(Charts_Prop, null, aChart, anIndex);
         aChart.setDoc(this);
     }
 
@@ -70,7 +75,9 @@ public class ChartDoc extends ChartPart {
      */
     public Chart removeChart(int anIndex)
     {
-        return _charts.remove(anIndex);
+        Chart chart = _charts.remove(anIndex);
+        firePropChange(Charts_Prop, chart, null, anIndex);
+        return chart;
     }
 
     /**
@@ -79,18 +86,13 @@ public class ChartDoc extends ChartPart {
     public ChartPart getParent()  { return null; }
 
     /**
-     * Loads the ChartView from JSON source.
+     * Returns XML bytes for ChartDoc.
      */
-    public static ChartDoc createDocFromSource(Object aSrc)
+    public byte[] getChartsFileXMLBytes()
     {
-        ChartParser parser = new ChartParser();
-        ChartDoc doc = parser.getDocForSource(aSrc);
-
-        Chart chart = doc.getChartCount()>0 ? doc.getChart(0) : null;
-        if(chart!=null && chart.getDataSetList().isEmpty())
-            chart.getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
-
-        return doc;
+        ChartArchiver archiver = new ChartArchiver();
+        byte bytes[] = archiver.writeToXMLBytes(this);
+        return bytes;
     }
 
     /**
@@ -104,6 +106,7 @@ public class ChartDoc extends ChartPart {
 
         // Archive charts
         XMLElement chartsXML = new XMLElement(Charts_Prop);
+        e.add(chartsXML);
         for (Chart chart : getCharts())
             chartsXML.add(anArchiver.toXML(chart));
 
@@ -125,7 +128,7 @@ public class ChartDoc extends ChartPart {
         if (chartsXML!=null) {
             List<XMLElement> chartXMLs = chartsXML.getElements("Chart");
             for (XMLElement chartXML : chartXMLs) {
-                Chart chart = (Chart)anArchiver.fromXML(anElement, this);
+                Chart chart = (Chart)anArchiver.fromXML(chartXML, this);
                 if (chart!=null)
                     addChart(chart);
             }
@@ -133,5 +136,40 @@ public class ChartDoc extends ChartPart {
 
         // Return this part
         return this;
+    }
+
+    /**
+     * Loads the ChartView from JSON source.
+     */
+    public static ChartDoc createDocFromSource(Object aSource)
+    {
+        WebURL url = WebURL.getURL(aSource);
+        if (url==null) {
+            System.err.println("ChartDoc.createDocFromSource: Can't find URL for source: " + aSource);
+            return null;
+        }
+
+        // Handle SnapCharts .charts file
+        String path = url.getPath();
+        String ext = FilePathUtils.getExtension(path).toLowerCase();
+        if (ext.equals(CHARTS_FILE_EXTENSION)) {
+            ChartArchiver archiver = new ChartArchiver();
+            ChartDoc doc = archiver.getDocFromXMLSource(url);
+            return doc;
+        }
+
+        // Handle json file
+        if (ext.equals("json")) {
+            ChartParser parser = new ChartParser();
+            ChartDoc doc = parser.getDocForSource(url);
+
+            Chart chart = doc.getChartCount() > 0 ? doc.getChart(0) : null;
+            if (chart != null && chart.getDataSetList().isEmpty())
+                chart.getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
+            return doc;
+        }
+
+        // Just return null
+        return null;
     }
 }

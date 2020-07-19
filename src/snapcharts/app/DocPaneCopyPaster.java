@@ -1,4 +1,5 @@
 package snapcharts.app;
+import snap.gfx.Image;
 import snap.util.XMLElement;
 import snap.view.*;
 import snapcharts.model.ChartArchiver;
@@ -49,10 +50,12 @@ public class DocPaneCopyPaster {
         Clipboard cb = Clipboard.get();
 
         // Get image and add to clipbard
-        //PageView pageView = _editor._page
-        //int scale = ViewUtils.isAltDown() ? 1 : 0;
-        //Image image = ViewUtils.getImageForScale(view, scale);
-        //cb.addData(image);
+        View view = _docPane.getChartPartView(selPart);
+        if (view!=null) {
+            int scale = 1; //ViewUtils.isAltDown() ? 1 : 0;
+            Image image = ViewUtils.getImageForScale(view, scale);
+            cb.addData(image);
+        }
 
         // Get xml string for selected shapes and add to clipboard as SNAP_XML
         XMLElement xml = new ChartArchiver().writeToXML(selPart);
@@ -75,7 +78,7 @@ public class DocPaneCopyPaster {
         if (cb.hasData(SNAPCHART_XML_TYPE)) {
             byte bytes[] = cb.getDataBytes(SNAPCHART_XML_TYPE);
             ChartPart chartPart = new ChartArchiver().getChartPartFromXMLSource(bytes);
-            //_docPane.addChartPart(view);
+            _docPane.addChartPart(chartPart);
         }
 
         // Paste Image

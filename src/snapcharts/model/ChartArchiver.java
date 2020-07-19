@@ -22,6 +22,8 @@ public class ChartArchiver extends XMLArchiver {
     public ChartDoc getDocFromXMLSource(Object anObj)
     {
         ChartDoc doc = (ChartDoc)getChartPartFromXMLSource(anObj);
+        if (doc!=null)
+            doc.setSourceURL(getSourceURL());
         return doc;
     }
 

@@ -1,4 +1,7 @@
 package snapcharts.model;
+import snap.util.XMLArchiver;
+import snap.util.XMLElement;
+
 import java.util.*;
 
 /**
@@ -75,6 +78,8 @@ public class DataSet extends ChartPart {
             if (pnt.getC()!=null)
                 return DataType.CY;
             if (pnt.getValueX()!=null)
+                return DataType.XY;
+            if (pnt.getValueY()!=null)
                 return DataType.XY;
         }
         return DataType.UNKNOWN;
@@ -297,6 +302,17 @@ public class DataSet extends ChartPart {
     /**
      * Returns an array of dataset values.
      */
+    public double[] getDataX()
+    {
+        int count = getPointCount();
+        double vals[] = new double[count];
+        for (int i=0;i<count;i++) { double v = getX(i); vals[i] = v; }
+        return vals;
+    }
+
+    /**
+     * Returns an array of dataset values.
+     */
     public double[] getDataY()
     {
         if (_dataY !=null) return _dataY;
@@ -391,5 +407,84 @@ public class DataSet extends ChartPart {
             if (dp.getValueY()!=null)
                 return false;
         return true;
+    }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Archive basic attributes
+        XMLElement e = super.toXML(anArchiver);
+
+        // Archive DataType
+        DataType dataType = getDataType();
+        e.add("DataType", dataType);
+
+        // Handle XY
+        if (dataType==DataType.XY) {
+
+            // Add DataX
+            String dataXStr = DataUtils.getStringForDoubleArray(getDataX());
+            XMLElement dataX_XML = new XMLElement("DataX");
+            dataX_XML.setValue(dataXStr);
+            e.add(dataX_XML);
+
+            // Add DataY
+            String dataYStr = DataUtils.getStringForDoubleArray(getDataY());
+            XMLElement dataY_XML = new XMLElement("DataY");
+            dataY_XML.setValue(dataYStr);
+            e.add(dataY_XML);
+        }
+
+        // Complain
+        else System.err.println("DataSet.toXML: Unknown DataType: " + dataType);
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive basic attributes
+        super.fromXML(anArchiver, anElement);
+
+        // Unarchive DataType
+        String dataTypeStr = anElement.getAttributeValue("DataType");
+        DataType dataType = DataType.valueOf(dataTypeStr);
+
+        // Handle XY
+        if (dataType==DataType.XY) {
+
+            // Add DataX
+            XMLElement dataX_XML = anElement.get("DataX");
+            if (dataX_XML==null) {
+                System.err.println("DataSet.fromXML: Couldn't find DataX for DataType XY"); return null; }
+            String dataXStr = dataX_XML.getValue();
+            double dataX[] = DataUtils.getDoubleArrayForString(dataXStr);
+
+            // Add DataY
+            XMLElement dataY_XML = anElement.get("DataY");
+            if (dataY_XML==null) {
+                System.err.println("DataSet.fromXML: Couldn't find DataY for DataType XY"); return null; }
+            String dataYStr = dataY_XML.getValue();
+            double dataY[] = DataUtils.getDoubleArrayForString(dataYStr);
+
+            // Add points
+            int len = Math.min(dataX.length, dataY.length);
+            for (int i=0; i<len; i++)
+                addPointXY(dataX[i], dataY[i]);
+        }
+
+        // Complain
+        else System.err.println("DataSet.toXML: Unknown DataType: " + dataType);
+
+        // Return this part
+        return this;
     }
 }

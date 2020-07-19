@@ -1,16 +1,18 @@
 package snapcharts.app;
 import snap.gfx.Image;
+import snap.util.SnapUtils;
 import snap.view.*;
+import snap.viewx.DialogBox;
 import snap.viewx.FilePanel;
+import snap.viewx.RecentFiles;
 import snap.viewx.TextPane;
+import snap.web.WebFile;
 import snap.web.WebURL;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartDoc;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -40,6 +42,9 @@ public class DocPane extends ViewOwner {
 
     // A helper class for Copy/Paste functionality
     private DocPaneCopyPaster  _copyPaster;
+
+    // Constants
+    public static final String RECENT_FILES_ID = "RecentChartDocs";
 
     /**
      * Constructor.
@@ -109,6 +114,43 @@ public class DocPane extends ViewOwner {
 
         // Reset UI
         resetLater();
+    }
+
+    /**
+     * Returns the view associated with given chart part.
+     */
+    public View getChartPartView(ChartPart aPart)
+    {
+        if (aPart instanceof Chart) {
+            ChartPane cpane = (ChartPane) getEditorForChartPart(aPart);
+            return cpane.getChartView();
+        }
+        return null;
+    }
+
+    /**
+     * Adds a chart part.
+     */
+    public void addChartPart(ChartPart aPart)
+    {
+        // Get current SelPart
+        ChartPart selPart = getSelPart();
+
+        // Handle Chart
+        if (aPart instanceof Chart) { Chart chart = (Chart)aPart;
+            ChartDoc doc = selPart.getDoc();
+            doc.addChart(chart);
+            setSelPart(chart);
+        }
+
+        // Handle DataSet
+        else if (aPart instanceof DataSet) { DataSet dset = (DataSet) aPart;
+            Chart chart = selPart.getChart();
+            if (chart!=null) {
+                chart.addDataSet(dset);
+                setSelPart(dset);
+            }
+        }
     }
 
     /**
@@ -194,10 +236,80 @@ public class DocPane extends ViewOwner {
         setDoc(doc);
 
         // If source is string, add to recent files menu
-        //if(url!=null) RecentFilesPanel.addRecentFile(url.getString());
+        if(url!=null) RecentFiles.addPath(RECENT_FILES_ID, url.getString(), 10);
 
         // Return the editor
         return this;
+    }
+
+    /**
+     * Saves the current editor document, running the save panel.
+     */
+    public void saveAs()
+    {
+        // Run save panel, set Document.Source to path and re-save (or just return if cancelled)
+        String exts[] = new String[] { "charts" };
+        String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
+        getDoc().setSourceURL(WebURL.getURL(path));
+        save();
+    }
+
+    /**
+     * Saves the current editor document, running the save panel if needed.
+     */
+    public void save()
+    {
+        // If can't save to current source, do SaveAs instead
+        WebURL url = getSourceURL(); if (url==null) { saveAs(); return; }
+
+        // Make sure editor isn't previewing and has focus (to commit any inspector textfield changes)
+        //getEditor().requestFocus();
+
+        // Do actual save - if exception, print stack trace and set error string
+        try { saveImpl(); }
+        catch(Throwable e) {
+            e.printStackTrace();
+            String msg = "The file " + url.getPath() + " could not be saved (" + e + ").";
+            DialogBox dbox = new DialogBox("Error on Save"); dbox.setErrorMessage(msg);
+            dbox.showMessageDialog(getUI());
+            return;
+        }
+
+        // Add URL.String to RecentFilesMenu, clear undoer and reset UI
+        RecentFiles.addPath(RECENT_FILES_ID, url.getPath(), 10);
+        //getDoc().getUndoer().reset();
+        resetLater();
+    }
+
+    /**
+     * The real save method.
+     */
+    protected void saveImpl()
+    {
+        WebURL url = getSourceURL();
+        WebFile file = url.getFile();
+        if (file==null) file = url.createFile(false);
+        file.setBytes(getDoc().getChartsFileXMLBytes());
+        file.save();
+    }
+
+    /**
+     * Reloads the current editor document from the last saved version.
+     */
+    public void revert()
+    {
+        // Get filename (just return if null)
+        WebURL surl = getSourceURL(); if (surl==null) return;
+
+        // Run option panel for revert confirmation (just return if denied)
+        String msg = "Revert to saved version of " + surl.getPathName() + "?";
+        DialogBox dbox = new DialogBox("Revert to Saved");
+        dbox.setQuestionMessage(msg);
+        if (!dbox.showConfirmDialog(getUI())) return;
+
+        // Re-open filename
+        getSourceURL().getFile().reload();
+        open(getSourceURL());
     }
 
     /**
@@ -208,6 +320,11 @@ public class DocPane extends ViewOwner {
         getWindow().hide();
         docPaneClosed();
     }
+
+    /**
+     * Called when the app is about to exit to gracefully handle any open documents.
+     */
+    public void quit()  { App.quitApp(); }
 
     /**
      * Returns the CopyPaster.
@@ -239,6 +356,11 @@ public class DocPane extends ViewOwner {
     public void delete()  { getCopyPaster().delete(); }
 
     /**
+     * Standard selectAll.
+     */
+    public void selectAll()  { getCopyPaster().selectAll(); }
+
+    /**
      * Called when DocPane is closed.
      */
     protected void docPaneClosed()
@@ -248,6 +370,20 @@ public class DocPane extends ViewOwner {
         //if (dpane!=null) dpane.getEditor().requestFocus(); else
          if (dpane==null)
              WelcomePanel.getShared().showPanel();
+    }
+
+    /**
+     * Returns the window title.
+     */
+    public String getWindowTitle()
+    {
+        // Get window title: Basic filename + optional "Doc edited asterisk + optional "Doc Scaled"
+        String title = getSourceURL()!=null ? getSourceURL().getPath() : null;
+        if (title==null) title = "Untitled";
+
+        // If has undos, add asterisk
+        //if (getEditor().getUndoer()!=null && getEditor().getUndoer().hasUndos()) title = "* " + title;
+        return title;
     }
 
     @Override
@@ -296,6 +432,16 @@ public class DocPane extends ViewOwner {
         _treeView.setItems(getDoc());
         _treeView.setSelItem(getSelPart());
         _treeView.expandAll();
+
+        // If title has changed, update window title
+        if(isWindowVisible()) {
+            String title = getWindowTitle();
+            WindowView win = getWindow();
+            if(!SnapUtils.equals(title, win.getTitle())) {
+                win.setTitle(title);
+                win.setDocURL(getSourceURL());
+            }
+        }
     }
 
     /**

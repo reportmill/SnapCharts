@@ -23,12 +23,7 @@ public class DocPaneMenuBar extends ViewOwner {
     /**
      * Returns the DocPane.
      */
-    public DocPane getEditorPane()  { return _dpane; }
-
-    /**
-     * Returns the editor.
-     */
-    //public Editor getEditor()  { return _epane.getEditor(); }
+    public DocPane getDocPane()  { return _dpane; }
 
     /**
      * Override to return node as MenuBar.
@@ -64,10 +59,9 @@ public class DocPaneMenuBar extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-//        // Get editor pane
-//        DocPane epane = getEditorPane();
-//        Editor editor = getEditor();
-//
+        // Get DocPane pane
+        DocPane docPane = getDocPane();
+
 //        // Handle NewMenuItem, NewButton: Get new editor pane and make visible
 //        if (anEvent.equals("NewMenuItem") || anEvent.equals("NewButton")) {
 //            EditorPane editorPane = ClassUtils.newInstance(epane).newDocument();
@@ -90,39 +84,26 @@ public class DocPaneMenuBar extends ViewOwner {
 //        // Handle CloseMenuItem
 //        if(anEvent.equals("CloseMenuItem")) epane.close();
 //
-//        // Handle SaveMenuItem, SaveButton, SaveAsMenuItem, RevertMenuItem
-//        if (anEvent.equals("SaveMenuItem") || anEvent.equals("SaveButton"))
-//            epane.save();
-//        if (anEvent.equals("SaveAsMenuItem"))
-//            epane.saveAs();
-//        if (anEvent.equals("RevertMenuItem"))
-//            epane.revert();
-//
-//        // Handle QuitMenuItem
-//        if (anEvent.equals("QuitMenuItem"))
-//            epane.quit();
-//
+        // Handle SaveMenuItem, SaveButton, SaveAsMenuItem, RevertMenuItem
+        if (anEvent.equals("SaveMenuItem") || anEvent.equals("SaveButton"))
+            docPane.save();
+        if (anEvent.equals("SaveAsMenuItem"))
+            docPane.saveAs();
+        if (anEvent.equals("RevertMenuItem"))
+            docPane.revert();
+
+        // Handle QuitMenuItem
+        if (anEvent.equals("QuitMenuItem"))
+            docPane.quit();
+
 //        // Handle Edit menu items
 //        if (anEvent.equals("UndoMenuItem") || anEvent.equals("UndoButton")) editor.undo();
 //        if (anEvent.equals("RedoMenuItem") || anEvent.equals("RedoButton")) editor.redo();
-//        if (anEvent.equals("CutMenuItem") || anEvent.equals("CutButton")) editor.cut();
-//        if (anEvent.equals("CopyMenuItem") || anEvent.equals("CopyButton")) editor.copy();
-//        if (anEvent.equals("PasteMenuItem") || anEvent.equals("PasteButton")) editor.paste();
-//        if (anEvent.equals("SelectAllMenuItem")) editor.selectAll();
-//
-//        // Edit -> CheckSpellingAsYouTypeMenuItem
-//        if (anEvent.equals("CheckSpellingAsYouTypeMenuItem")) {
-//            TextEditor.isSpellChecking = anEvent.getBooleanValue();
-//            Prefs.get().setValue("SpellChecking", TextEditor.isSpellChecking);
-//            editor.repaint();
-//        }
-//
-//        // Edit -> HyphenateTextMenuItem
-//        if (anEvent.equals("HyphenateTextMenuItem")) {
-//            TextEditor.setHyphenating(anEvent.getBooleanValue());
-//            editor.repaint();
-//        }
-//
+        if (anEvent.equals("CutMenuItem") || anEvent.equals("CutButton")) docPane.cut();
+        if (anEvent.equals("CopyMenuItem") || anEvent.equals("CopyButton")) docPane.copy();
+        if (anEvent.equals("PasteMenuItem") || anEvent.equals("PasteButton")) docPane.paste();
+        if (anEvent.equals("SelectAllMenuItem")) docPane.selectAll();
+
 //        // Handle Format menu items (use name because anObj may come from popup menu)
 //        if (anEvent.equals("FontPanelMenuItem"))
 //            epane.getInspector().setVisibleForName(InspectorPane.STYLE_PANE);

@@ -289,7 +289,7 @@ public class WelcomePanel extends ViewOwner {
 
         // Add path to RecentFiles
         String path = dpane.getSourceURL().getPath();
-        RecentFiles.addPath("RecentDocuments", path, 99);
+        RecentFiles.addPath(DocPane.RECENT_FILES_ID, path, 99);
     }
 
     /**
@@ -306,7 +306,7 @@ public class WelcomePanel extends ViewOwner {
 
         // Add path to RecentFiles
         String path = dpane.getSourceURL().getPath();
-        RecentFiles.addPath("RecentDocuments", path, 99);
+        RecentFiles.addPath(DocPane.RECENT_FILES_ID, path, 99);
     }
 
     /**
@@ -319,7 +319,7 @@ public class WelcomePanel extends ViewOwner {
 
         // Handle Local
         if (!isCloud()) {
-            List <WebFile> rfiles = RecentFiles.getFiles("RecentChartDocs");
+            List <WebFile> rfiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
             return _recentFiles = rfiles;
         }
 
