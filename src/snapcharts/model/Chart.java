@@ -15,19 +15,10 @@ public class Chart extends ChartPart {
     private ChartType  _type = ChartType.LINE;
 
     // The title
-    private String  _titleView;
+    private String  _title;
 
     // The subtitle
-    private String  _subtitleView;
-
-    // The object holding specific chart types
-    private AreaTypes _areaTypes = new AreaTypes(this);
-
-    // The XAxis
-    private AxisX _axisX;
-
-    // The YAxis
-    private AxisY _axisY;
+    private String  _subtitle;
 
     // Whether legend is showing
     private boolean  _showLegend;
@@ -35,14 +26,23 @@ public class Chart extends ChartPart {
     // Whether to show partial Y axis intervals if min/max don't include zero
     private boolean  _showPartialY;
 
+    // The XAxis
+    private AxisX _axisX;
+
+    // The YAxis
+    private AxisY _axisY;
+
+    // The DataSet
+    private DataSetList _dsetList = new DataSetList(this);
+
     // The dataset colors
     private Color  _colors[] = COLORS;
 
     // The dataset shapes
     private Shape _markerShapes[];
 
-    // The DataSet
-    private DataSetList _dsetList = new DataSetList(this);
+    // The object holding specific chart types
+    private AreaTypes _areaTypes = new AreaTypes(this);
 
     // Property constants
     public static final String Type_Prop = "Type";
@@ -50,6 +50,7 @@ public class Chart extends ChartPart {
     public static final String Subtitle_Prop = "Subtitle";
     public static final String Colors_Prop = "Colors";
     public static final String ShowLegend_Prop = "ShowLegend";
+    public static final String ShowPartialY_Prop = "ShowPartialY_Prop";
 
     // Constants
     public static final String SelDataPoint_Prop = "SelDataPoint";
@@ -110,14 +111,9 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the AreaTypes object.
-     */
-    public AreaTypes getAreaTypes()  { return _areaTypes; }
-
-    /**
      * Returns the title.
      */
-    public String getTitle()  { return _titleView; }
+    public String getTitle()  { return _title; }
 
     /**
      * Sets the title.
@@ -125,13 +121,13 @@ public class Chart extends ChartPart {
     public void setTitle(String aStr)
     {
         if (SnapUtils.equals(aStr, getTitle())) return;
-        firePropChange(Title_Prop, _titleView, _titleView = aStr);
+        firePropChange(Title_Prop, _title, _title = aStr);
     }
 
     /**
      * Returns the subtitle.
      */
-    public String getSubtitle()  { return _subtitleView; }
+    public String getSubtitle()  { return _subtitle; }
 
     /**
      * Sets the subtitle.
@@ -139,18 +135,8 @@ public class Chart extends ChartPart {
     public void setSubtitle(String aStr)
     {
         if (SnapUtils.equals(aStr, getSubtitle())) return;
-        firePropChange(Subtitle_Prop, _subtitleView, _subtitleView = aStr);
+        firePropChange(Subtitle_Prop, _subtitle, _subtitle = aStr);
     }
-
-    /**
-     * Returns the X axis object.
-     */
-    public AxisX getAxisX()  { return _axisX; }
-
-    /**
-     * Returns the Y axis object.
-     */
-    public AxisY getAxisY()  { return _axisY; }
 
     /**
      * Returns whether to show legend.
@@ -165,6 +151,30 @@ public class Chart extends ChartPart {
         if (aValue==isShowLegend()) return;
         firePropChange(ShowLegend_Prop, _showLegend, _showLegend=aValue);
     }
+
+    /**
+     * Returns whether to show partial Y axis intervals if min/max don't include zero.
+     */
+    public boolean isShowPartialY()  { return _showPartialY; }
+
+    /**
+     * Returns whether to show partial Y axis intervals if min/max don't include zero.
+     */
+    public void setShowPartialY(boolean aValue)
+    {
+        if (aValue==_showPartialY) return;
+        firePropChange(ShowPartialY_Prop, _showPartialY, _showPartialY = aValue);
+    }
+
+    /**
+     * Returns the X axis object.
+     */
+    public AxisX getAxisX()  { return _axisX; }
+
+    /**
+     * Returns the Y axis object.
+     */
+    public AxisY getAxisY()  { return _axisY; }
 
     /**
      * Returns the DataSetList.
@@ -188,21 +198,6 @@ public class Chart extends ChartPart {
      * Sets the start value of the dataset.
      */
     public void setDataSetStartValue(int aValue)  { _dsetList.setStartValue(aValue); }
-
-    /**
-     * Returns whether to show partial Y axis intervals if min/max don't include zero.
-     */
-    public boolean isShowPartialY()  { return _showPartialY; }
-
-    /**
-     * Returns whether to show partial Y axis intervals if min/max don't include zero.
-     */
-    public void setShowPartialY(boolean aValue)
-    {
-        if (aValue==_showPartialY) return;
-        _showPartialY = aValue;
-        //reloadContents(true);
-    }
 
     /**
      * Returns the colors.
@@ -253,6 +248,11 @@ public class Chart extends ChartPart {
     }
 
     /**
+     * Returns the AreaTypes object.
+     */
+    public AreaTypes getAreaTypes()  { return _areaTypes; }
+
+    /**
      * Returns the parent part.
      */
     public ChartPart getParent() { return getDoc(); }
@@ -286,4 +286,74 @@ public class Chart extends ChartPart {
      * Remove DeepChange listener.
      */
     public void removeDeepChangeListener(DeepChangeListener aPCL)  { _pcs.removeDeepChangeListener(aPCL); }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Archive basic attributes
+        XMLElement e = super.toXML(anArchiver);
+
+        // Archive Type, Title, Subtitle
+        e.add(Type_Prop, getType());
+        if (getTitle()!=null && getTitle().length()>0)
+            e.add(Title_Prop, getTitle());
+        if (getSubtitle()!=null && getSubtitle().length()>0)
+            e.add(Subtitle_Prop, getSubtitle());
+
+        // Archive ShowLegend, ShowPartialY
+        if (isShowLegend())
+            e.add(ShowLegend_Prop, isShowLegend());
+        if (isShowPartialY())
+            e.add(ShowPartialY_Prop, isShowPartialY());
+
+        // Archive AxisX, AxisY
+        e.add(anArchiver.toXML(_axisX));
+        e.add(anArchiver.toXML(_axisY));
+
+        // Archive DataSetList
+        e.add(anArchiver.toXML(_dsetList));
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive basic attributes
+        super.fromXML(anArchiver, anElement);
+
+        // Unarchive Type, Title, Subtitle
+        setType(ChartType.get(anElement.getAttributeValue(Type_Prop)));
+        setTitle(anElement.getAttributeValue(Title_Prop));
+        setSubtitle(anElement.getAttributeValue(Subtitle_Prop));
+
+        // Unarchive ShowLegend, ShowPartialY
+        if (anElement.hasAttribute(ShowLegend_Prop))
+            setShowLegend(anElement.getAttributeBoolValue(ShowLegend_Prop));
+        if (anElement.hasAttribute(ShowPartialY_Prop))
+            setShowPartialY(anElement.getAttributeBoolValue(ShowPartialY_Prop));
+
+        // Unarchive AxisX, AxisY
+        XMLElement axisX_XML = anElement.get("AxisX");
+        if (axisX_XML!=null)
+            anArchiver.fromXML(axisX_XML, _axisX, this);
+        XMLElement axisY_XML = anElement.get("AxisY");
+        if (axisY_XML!=null)
+            anArchiver.fromXML(axisY_XML, _axisY, this);
+
+        // Unarchive DataSetList
+        XMLElement dsetListXML = anElement.get("DataSetList");
+        if (dsetListXML!=null)
+            anArchiver.fromXML(dsetListXML, _dsetList, this);
+
+        // Return this part
+        return this;
+    }
 }

@@ -1,4 +1,6 @@
 package snapcharts.model;
+import snap.util.XMLArchiver;
+import snap.util.XMLElement;
 import snap.web.WebURL;
 
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ public class ChartDoc extends ChartPart {
 
     // The list of charts
     private List<Chart> _charts = new ArrayList<>();
+
+    // Constants for properties
+    public static final String Charts_Prop = "Charts";
 
     /**
      * Returns the Source URL.
@@ -86,5 +91,47 @@ public class ChartDoc extends ChartPart {
             chart.getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
 
         return doc;
+    }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Archive basic attributes
+        XMLElement e = super.toXML(anArchiver);
+
+        // Archive charts
+        XMLElement chartsXML = new XMLElement(Charts_Prop);
+        for (Chart chart : getCharts())
+            chartsXML.add(anArchiver.toXML(chart));
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive basic attributes
+        super.fromXML(anArchiver, anElement);
+
+        // Unarchive charts
+        XMLElement chartsXML = anElement.get(Charts_Prop);
+        if (chartsXML!=null) {
+            List<XMLElement> chartXMLs = chartsXML.getElements("Chart");
+            for (XMLElement chartXML : chartXMLs) {
+                Chart chart = (Chart)anArchiver.fromXML(anElement, this);
+                if (chart!=null)
+                    addChart(chart);
+            }
+        }
+
+        // Return this part
+        return this;
     }
 }

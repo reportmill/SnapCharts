@@ -1,6 +1,8 @@
 package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
+import snap.util.XMLArchiver;
+import snap.util.XMLElement;
 
 /**
  * A class to represent a Chart Axis.
@@ -11,7 +13,7 @@ public class Axis extends ChartPart {
     private String _title;
 
     // The title alignment
-    private Pos _titleAlign = Pos.CENTER;
+    private Pos _titleAlign = DEFAULT_TITLE_ALIGN;
 
     // The title rotation
     private double _titleRot;
@@ -43,6 +45,7 @@ public class Axis extends ChartPart {
     // Constants for default values
     static Color   AXIS_LABELS_COLOR = Color.GRAY;
     static Color   GRID_LINES_COLOR = Color.get("#E6");
+    static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
 
     /**
      * Returns the YAxis title.
@@ -184,4 +187,43 @@ public class Axis extends ChartPart {
      * Returns the grid line dash array.
      */
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Archive basic attributes
+        XMLElement e = super.toXML(anArchiver);
+
+        // Archive Title, TitleAlign, TitleRotate
+        if (getTitle()!=null && getTitle().length()>0)
+            e.add(Title_Prop, getTitle());
+        if (getTitleAlign()!= DEFAULT_TITLE_ALIGN)
+            e.add(TitleAlign_Prop, getTitleAlign());
+        if (getTitleRotate()!=0)
+            e.add(TitleRotate_Prop, getTitleRotate());
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive basic attributes
+        super.fromXML(anArchiver, anElement);
+
+        // Unarchive Title, TitleAlign, TitleRotate
+        setTitle(anElement.getAttributeValue(Title_Prop));
+        setTitleAlign(Pos.get(anElement.getAttributeValue(TitleAlign_Prop, DEFAULT_TITLE_ALIGN.toString())));
+        setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
+
+        // Return this part
+        return this;
+    }
 }

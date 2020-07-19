@@ -29,4 +29,15 @@ public enum ChartType {
         String str = toString();
         return str.charAt(0) + str.substring(1).toLowerCase();
     }
+
+    /**
+     * Returns the ChartType for string.
+     */
+    public static ChartType get(String aStr)
+    {
+        String str = aStr.toUpperCase();
+        str = str.replace(" ", "_").replace("-", "_");
+        try { return ChartType.valueOf(str); }
+        catch(Exception e)  { return BAR; }
+    }
 }

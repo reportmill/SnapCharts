@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Base class for parts of a chart: Axis, Area, Legend, etc.
  */
-public class ChartPart {
+public class ChartPart implements XMLArchiver.Archivable {
 
     // The name
     private String  _name;
@@ -102,4 +102,35 @@ public class ChartPart {
      * Fires a given property change.
      */
     protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Get new element with class name
+        String cname = getClass().getSimpleName();
+        XMLElement e = new XMLElement(cname);
+
+        // Archive name
+        if(getName()!=null && getName().length()>0) e.add(Name_Prop, getName());
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive Name
+        if(anElement.hasAttribute(Name_Prop))
+            setName(anElement.getAttributeValue(Name_Prop));
+
+        // Return this part
+        return this;
+    }
 }

@@ -305,4 +305,42 @@ public class DataSetList extends ChartPart {
         _minY = Float.MAX_VALUE;
         _maxY = -Float.MAX_VALUE;
     }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Archive basic attributes
+        XMLElement e = super.toXML(anArchiver);
+
+        // Archive DataSets
+        for (DataSet dset : getDataSets())
+            e.add(anArchiver.toXML(dset));
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive basic attributes
+        super.fromXML(anArchiver, anElement);
+
+        // Unarchive DataSets
+        List<XMLElement> dsetXMLs = anElement.getElements(DataSet.class.getSimpleName());
+        for (XMLElement dsetXML : dsetXMLs) {
+            DataSet dset = (DataSet)anArchiver.fromXML(dsetXML, this);
+            if (dset!=null)
+                addDataSet(dset);
+        }
+
+        // Return this part
+        return this;
+    }
 }

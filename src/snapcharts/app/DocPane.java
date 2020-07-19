@@ -38,6 +38,9 @@ public class DocPane extends ViewOwner {
     // The ChartDoc tree
     private TreeView<ChartPart>  _treeView;
 
+    // A helper class for Copy/Paste functionality
+    private DocPaneCopyPaster  _copyPaster;
+
     /**
      * Constructor.
      */
@@ -205,6 +208,35 @@ public class DocPane extends ViewOwner {
         getWindow().hide();
         docPaneClosed();
     }
+
+    /**
+     * Returns the CopyPaster.
+     */
+    public DocPaneCopyPaster getCopyPaster()
+    {
+        if (_copyPaster!=null) return _copyPaster;
+        return _copyPaster = new DocPaneCopyPaster(this);
+    }
+
+    /**
+     * Standard clipboard cut.
+     */
+    public void cut()  { getCopyPaster().cut(); }
+
+    /**
+     * Standard clipboard copy.
+     */
+    public void copy()  { getCopyPaster().copy(); }
+
+    /**
+     * Standard clipboard paste.
+     */
+    public void paste()  { getCopyPaster().paste(); }
+
+    /**
+     * Standard clipboard delete.
+     */
+    public void delete()  { getCopyPaster().delete(); }
 
     /**
      * Called when DocPane is closed.
