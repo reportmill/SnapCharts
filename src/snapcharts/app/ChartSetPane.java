@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A ViewOwner to handle display of whole ChartDoc.
  */
-public class ChartSetPane extends ViewOwner {
+public class ChartSetPane extends PartPane {
 
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();

@@ -1,11 +1,13 @@
 package snapcharts.apptools;
 
+import snap.view.ComboBox;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartPane;
 import snapcharts.app.DataSetPane;
 import snapcharts.model.Chart;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataType;
 import snapcharts.views.ChartView;
 
 /**
@@ -30,6 +32,16 @@ public class DataSetBasicTool extends ViewOwner {
     public DataSet getDataSet()  { return _dsetPane.getDataSet(); }
 
     /**
+     * Init UI.
+     */
+    @Override
+    protected void initUI()
+    {
+        ComboBox<DataType> dataTypeComboBox = getView("DataTypeComboBox", ComboBox.class);
+        dataTypeComboBox.setItems(DataType.values());
+    }
+
+    /**
      * Reset UI.
      */
     protected void resetUI()
@@ -37,8 +49,11 @@ public class DataSetBasicTool extends ViewOwner {
         // Get DataSet
         DataSet dset = getDataSet();
 
-        // Reset NameText, SubtitleText, YAxisTitleText
+        // Reset NameText
         setViewValue("NameText", dset.getName());
+
+        // Reset DataTypeComboBox
+        setViewValue("DataTypeComboBox", dset.getDataType());
 
         // Reset StrokeWidth
         setViewValue("LineWidthText", 1);

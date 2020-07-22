@@ -25,8 +25,8 @@ public class DocPane extends ViewOwner {
     // The selected ChartPart
     private ChartPart  _selPart;
 
-    // A map of editors for ChartParts
-    private Map<ChartPart,ViewOwner>  _editors = new HashMap<>();
+    // A map of PartPanes for ChartParts
+    private Map<ChartPart,PartPane>  _editors = new HashMap<>();
 
     // The EditorPane
     //private EditorPane _editorPane;
@@ -98,7 +98,7 @@ public class DocPane extends ViewOwner {
 
         // Remove old sel part UI
         if (_selPart!=null) {
-            ViewOwner partUI = getEditorForChartPart(_selPart);
+            ViewOwner partUI = getPartPaneForChartPart(_selPart);
             _splitView.removeItem(partUI.getUI());
         }
 
@@ -107,7 +107,7 @@ public class DocPane extends ViewOwner {
 
         // Install new sel part UI
         if (_selPart!=null) {
-            ViewOwner partUI = getEditorForChartPart(_selPart);
+            ViewOwner partUI = getPartPaneForChartPart(_selPart);
             partUI.getUI().setGrowWidth(true);
             _splitView.addItem(partUI.getUI());
         }
@@ -117,15 +117,12 @@ public class DocPane extends ViewOwner {
     }
 
     /**
-     * Returns the view associated with given chart part.
+     * Returns the PartPane for SelPart.
      */
-    public View getChartPartView(ChartPart aPart)
+    public PartPane getSelPartPane()
     {
-        if (aPart instanceof Chart) {
-            ChartPane cpane = (ChartPane) getEditorForChartPart(aPart);
-            return cpane.getChartView();
-        }
-        return null;
+        ChartPart selPart = getSelPart();
+        return getPartPaneForChartPart(selPart);
     }
 
     /**
@@ -156,20 +153,20 @@ public class DocPane extends ViewOwner {
     /**
      * Returns the editor for a chart part.
      */
-    public ViewOwner getEditorForChartPart(ChartPart aChartPart)
+    public PartPane getPartPaneForChartPart(ChartPart aChartPart)
     {
-        ViewOwner partEditor = _editors.get(aChartPart);
-        if (partEditor==null) {
-            partEditor = createEditorForChartPart(aChartPart);
-            _editors.put(aChartPart, partEditor);
+        PartPane partPane = _editors.get(aChartPart);
+        if (partPane==null) {
+            partPane = createEditorForChartPart(aChartPart);
+            _editors.put(aChartPart, partPane);
         }
-        return partEditor;
+        return partPane;
     }
 
     /**
      * Creates an editor for ChartPart.
      */
-    protected ViewOwner createEditorForChartPart(ChartPart aChartPart)
+    protected PartPane createEditorForChartPart(ChartPart aChartPart)
     {
         // Handle Chart
         if (aChartPart instanceof Chart) {

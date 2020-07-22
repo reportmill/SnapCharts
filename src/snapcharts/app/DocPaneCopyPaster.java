@@ -27,7 +27,7 @@ public class DocPaneCopyPaster {
     /**
      * Returns the DocPane.
      */
-    public DocPane getEditor()  { return _docPane; }
+    public DocPane getDocPane()  { return _docPane; }
 
     /**
      * Handles editor cut operation.
@@ -50,7 +50,8 @@ public class DocPaneCopyPaster {
         Clipboard cb = Clipboard.get();
 
         // Get image and add to clipbard
-        View view = _docPane.getChartPartView(selPart);
+        PartPane partPane = _docPane.getSelPartPane();
+        View view = partPane.getPartView();
         if (view!=null) {
             int scale = 1; //ViewUtils.isAltDown() ? 1 : 0;
             Image image = ViewUtils.getImageForScale(view, scale);
