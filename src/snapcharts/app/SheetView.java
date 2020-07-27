@@ -214,17 +214,4 @@ protected void configureColumns()
     }
 }
 
-/**
- * Override to handle header col special.
- */
-protected void configureCell(TableCol <Object> aCol, ListCell <Object> aCell)
-{
-    // Handle Header Col special
-    if(aCell.getCol()<0) {
-        aCell.setText(String.valueOf(aCell.getRow()+1)); aCell.setAlign(HPos.CENTER); return; }
-        
-    // Do normal version
-    super.configureCell(aCol, aCell);
-}
-
 }
