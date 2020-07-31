@@ -40,7 +40,7 @@ public class DataPane extends ViewOwner {
         _sheetView = getView("SheetView", SheetView.class);
         _sheetView.setCellConfigure(c -> configureCell(c));  //_sheetView.setCellEditStart(c -> cellEditStart(c));
         _sheetView.setColConfigure(c -> configureColumn(c));
-        _sheetView.setCellEditEnd(c -> cellEditEnd(c));
+        _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
     }
 
     /**
@@ -143,17 +143,17 @@ public class DataPane extends ViewOwner {
         aCol.getHeader().setText(hdrText);
     }
 
-    ///** Called when cell starts editing. */
-    //void cellEditStart(ListCell <DataSet> aCell)  { aCell.setEditing(true); }
-
     /**
-     * Called when cell stops editing.
+     * Called when cell editing changes.
      */
-    void cellEditEnd(ListCell aCell)
+    private void editingCellChanged(PropChange aPC)
     {
+        // If cell that stopped editing (just return if null)
+        ListCell cell = (ListCell)aPC.getOldValue(); if (cell==null) return;
+
         // Get row/col and make sure there are dataset/points to cover it
-        String text = aCell.getText();
-        int row = aCell.getRow(), col = aCell.getCol();
+        String text = cell.getText();
+        int row = cell.getRow(), col = cell.getCol();
         expandDataSet(row, col);
 
         // Get dataset
@@ -172,7 +172,7 @@ public class DataPane extends ViewOwner {
         }
 
         // Update row and trim DataSet in case dataset/points were cleared
-        _sheetView.updateItems(aCell.getItem());
+        _sheetView.updateItems(cell.getItem());
         trimDataSet();
         resetLater();
     }

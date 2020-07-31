@@ -1,6 +1,7 @@
 package snapcharts.app;
 
 import snap.geom.HPos;
+import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.DataSet;
@@ -42,7 +43,7 @@ public class DataSetPane extends PartPane {
         _sheetView = getView("SheetView", SheetView.class);
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.setCellConfigure(c -> configureCell(c));
-        _sheetView.setCellEditEnd(c -> cellEditEnd(c));
+        _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
 
         // Create/add InspectorPane
         RowView topRowView = getUI(RowView.class);
@@ -123,14 +124,17 @@ public class DataSetPane extends PartPane {
     }
 
     /**
-     * Called when cell stops editing.
+     * Called when cell editing changes.
      */
-    void cellEditEnd(ListCell aCell)
+    private void editingCellChanged(PropChange aPC)
     {
+        // If cell that stopped editing (just return if null)
+        ListCell cell = (ListCell)aPC.getOldValue(); if (cell==null) return;
+
         // Get row/col and make sure there are dataset/points to cover it
-        String text = aCell.getText();
-        int row = aCell.getRow();
-        int col = aCell.getCol();
+        String text = cell.getText();
+        int row = cell.getRow();
+        int col = cell.getCol();
         expandDataSet(row, col);
 
         // Get dataset
@@ -158,7 +162,7 @@ public class DataSetPane extends PartPane {
         }
 
         // Update row and trim DataSet in case dataset/points were cleared
-        _sheetView.updateItems(aCell.getItem());
+        _sheetView.updateItems(cell.getItem());
         trimDataSet();
         resetLater();
     }
