@@ -155,7 +155,7 @@ public class SheetView extends TableView <Object> {
     protected void rebuild()
     {
         if (_rebuildRun==null && getUpdater()!=null)
-            getUpdater().runBeforeUpdate(_rebuildRun=_rebuildRunCached);
+            getEnv().runLater(_rebuildRun=_rebuildRunCached);
     }
 
     /**
