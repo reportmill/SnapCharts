@@ -1,6 +1,7 @@
 package snapcharts.app;
 
 import snap.geom.HPos;
+import snap.util.ListSel;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -20,6 +21,11 @@ public class DataSetPane extends PartPane {
 
     // The Inspector
     private DataSetPaneInsp _insp;
+
+    // Constants for actions
+    private final String Cut_Action = "CutAction";
+    private final String Paste_Action = "PasteAction";
+    private final String Delete_Action = "DeleteAction";
 
     /**
      * Returns the DataSet.
@@ -49,6 +55,12 @@ public class DataSetPane extends PartPane {
         RowView topRowView = getUI(RowView.class);
         _insp = new DataSetPaneInsp(this);
         topRowView.addChild(_insp.getUI());
+
+        // Add PasteAction
+        addKeyActionHandler(Cut_Action, "Shortcut+X");
+        addKeyActionHandler(Paste_Action, "Shortcut+V");
+        //addKeyActionFilter(Delete_Action, "DELETE");
+        //addKeyActionFilter(Delete_Action, "BACKSPACE");
     }
 
     /**
@@ -68,6 +80,23 @@ public class DataSetPane extends PartPane {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle Cut_Action
+        if (anEvent.equals(Cut_Action)) {
+            ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
+            if (_sheetView.getEditingCell()!=null) return;
+            getDataSet().deleteData(sel);
+            _sheetView.setSelIndex(sel.getMin()-1);
+            anEvent.consume();
+        }
+
+        // Handle Paste_Action
+        if (anEvent.equals(Paste_Action)) {
+            String dataCells[][] = DataUtils.getClipboardCellData();
+
+            if (dataCells!=null) {
+                getDataSet().replaceData(dataCells, _sheetView.getSel());
+            }
+        }
     }
 
     /**

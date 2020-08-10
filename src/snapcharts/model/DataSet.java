@@ -1,4 +1,6 @@
 package snapcharts.model;
+import snap.util.ListSel;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
@@ -407,6 +409,60 @@ public class DataSet extends ChartPart {
             if (dp.getValueY()!=null)
                 return false;
         return true;
+    }
+
+    /**
+     * Replaces data.
+     */
+    public void deleteData(ListSel aSel)
+    {
+        int indexes[] = aSel.getIndexes();
+        for (int i = indexes.length - 1; i >= 0; i--) {
+            int ind = indexes[i];
+            if (ind < getPointCount())
+                removePoint(ind);
+        }
+    }
+
+    /**
+     * Replaces data.
+     */
+    public void replaceData(String theCells[][], ListSel aSel)
+    {
+        DataType dataType = getDataType();
+        int indexes[] = aSel.getIndexes();
+        for (int i=indexes.length-1; i>=0; i--) {
+            int ind = indexes[i];
+            if (ind<getPointCount())
+                removePoint(ind);
+        }
+
+        for (String line[] : theCells) {
+
+            String f0 = line.length > 0 ? line[0] : null;
+            String f1 = line.length > 1 ? line[1] : null;
+
+            switch (dataType) {
+
+                case XY: {
+                    double x = f0 != null ? SnapUtils.doubleValue(f0) : 0;
+                    double y = f1 != null ? SnapUtils.doubleValue(f1) : 0;
+                    addPointXY(x, y);
+                    break;
+                }
+
+                case CY: {
+                    String c = f0;
+                    double y = f1 != null ? SnapUtils.doubleValue(f1) : 0;
+                    addPointCY(c, y);
+                    break;
+                }
+
+                default:
+                    System.out.println("Unsupported data type import");
+                    return;
+            }
+        }
     }
 
     /**

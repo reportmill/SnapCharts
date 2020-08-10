@@ -41,6 +41,8 @@ public class DataPane extends ViewOwner {
         _sheetView.setCellConfigure(c -> configureCell(c));  //_sheetView.setCellEditStart(c -> cellEditStart(c));
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
+
+        addKeyActionHandler("PasteAction", "Shortcut+V");
     }
 
     /**
@@ -83,6 +85,11 @@ public class DataPane extends ViewOwner {
         if (anEvent.equals("PointSpinner")) {
             DataSetList dsetList = getDataSetList();
             dsetList.setPointCount(anEvent.getIntValue());
+        }
+
+        // Handle PasteAction
+        if (anEvent.equals("PasteAction")) {
+
         }
     }
 
