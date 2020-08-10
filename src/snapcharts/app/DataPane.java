@@ -70,7 +70,7 @@ public class DataPane extends ViewOwner {
             DataSetList dsetList = getDataSetList();
             dsetList.clear();
             dsetList.addDataSetForNameAndValues("Series 1", 1d, 2d, 3d);
-            _sheetView.setSelCell(0,0); _sheetView.requestFocus();
+            _sheetView.setSelRowColIndex(0,0); _sheetView.requestFocus();
         }
 
         // Handle SeriesSpinner
