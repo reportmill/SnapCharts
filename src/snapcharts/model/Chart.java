@@ -97,6 +97,14 @@ public class Chart extends ChartPart {
     }
 
     /**
+     * Returns the index of this chart in doc.
+     */
+    public int getIndex()
+    {
+        return getDoc().getCharts().indexOf(this);
+    }
+
+    /**
      * Returns the type.
      */
     public ChartType getType()  { return _type; }

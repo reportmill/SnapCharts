@@ -132,7 +132,7 @@ public class DataPane extends ViewOwner {
     void configureColumn(TableCol aCol)
     {
         // Get DataSetList, dataset and column index
-        DataSetList dsetList = getDataSetList();
+        DataSetList dsetList = getDataSetList(); if (dsetList.getDataSetCount()==0) return;
         DataSet dset = dsetList.getDataSet(0);
         int col = aCol.getColIndex(); if (col>dsetList.getPointCount()) { aCol.getHeader().setText(null); return; }
 

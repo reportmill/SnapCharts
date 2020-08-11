@@ -46,6 +46,11 @@ public class DocPane extends ViewOwner {
     // Constants
     public static final String RECENT_FILES_ID = "RecentChartDocs";
 
+    // Constants for actions
+    public static final String New_Action = "NewAction";
+    public static final String NewChart_Action = "NewChartAction";
+    public static final String NewDataset_Action = "NewDatasetAction";
+
     /**
      * Constructor.
      */
@@ -399,8 +404,10 @@ public class DocPane extends ViewOwner {
     @Override
     protected void initUI()
     {
+        // Get/configure SplitView
         _splitView = getView("SplitView", SplitView.class);
         _splitView.setDividerSpan(5);
+        _splitView.removeItem(1);
 
         // Set Toolbar images
         getView("SaveButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/File_Save.png"));
@@ -455,6 +462,33 @@ public class DocPane extends ViewOwner {
         // Handle WinClosing
         if (anEvent.isWinClose()) {
             close(); anEvent.consume(); }
+
+        // Handle NewAction
+        if (anEvent.equals("AddButton")) {
+            respondToNewAction();
+            //getSelPartPane().sendEvent(New_Action);
+        }
+    }
+
+    /**
+     * Responds to New_Action.
+     */
+    private void respondToNewAction()
+    {
+        DialogBox dbox = new DialogBox("New Document Item");
+        dbox.setMessage("Select new item type:");
+        dbox.setOptions("New Chart", "New Dataset");
+        int resp = dbox.showOptionDialog(getUI(), "New Chart");
+
+        if (resp==0) {
+            ChartPart part = getSelPart();
+            ChartDoc doc = part.getDoc();
+            Chart chart = part.getChart();
+            ChartSetPane chartSet = (ChartSetPane) getPartPaneForChartPart(doc);
+            int ind = chart!=null ? chart.getIndex() : doc.getChartCount();
+            Chart newChart = chartSet.addNewChart(doc, ind);
+            setSelPart(newChart);
+        }
     }
 
     /**

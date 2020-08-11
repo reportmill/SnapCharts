@@ -83,7 +83,14 @@ public class ChartDoc extends ChartPart {
     /**
      * Override to return null.
      */
+    @Override
     public ChartPart getParent()  { return null; }
+
+    /**
+     * Override to return this.
+     */
+    @Override
+    public ChartDoc getDoc()  { return this; }
 
     /**
      * Returns XML bytes for ChartDoc.

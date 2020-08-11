@@ -2,8 +2,8 @@ package snapcharts.app;
 import snap.gfx.Color;
 import snap.view.ColView;
 import snap.view.RowView;
-import snap.view.ViewOwner;
 import snapcharts.model.Chart;
+import snapcharts.model.ChartDoc;
 import snapcharts.views.PageView;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,17 +40,34 @@ public class ChartSetPane extends PartPane {
     {
         getUI();
         _charts.clear();
-        _charts.addAll(theCharts);
 
         _topColView.removeChildren();
         _pageViews.clear();
 
-        for (Chart chart : _charts) {
-            PageView pageView = new PageView();
-            pageView.addChart(chart);
-            _pageViews.add(pageView);
-            _topColView.addChild(pageView);
+        for (Chart chart : theCharts) {
+            addChart(chart);
         }
+    }
+
+    /**
+     * Adds a chart.
+     */
+    public void addChart(Chart aChart)
+    {
+        addChart(aChart, _charts.size());
+    }
+
+    /**
+     * Adds a chart.
+     */
+    public void addChart(Chart aChart, int anIndex)
+    {
+        _charts.add(anIndex, aChart);
+
+        PageView pageView = new PageView();
+        pageView.addChart(aChart);
+        _pageViews.add(pageView);
+        _topColView.addChild(pageView);
     }
 
     /**
@@ -69,6 +86,18 @@ public class ChartSetPane extends PartPane {
     {
         for (PageView pview : _pageViews)
             pview.setVertical(aValue);
+    }
+
+    /**
+     * Adds a new chart.
+     */
+    public Chart addNewChart(ChartDoc aDoc, int anIndex)
+    {
+        Chart chart = new Chart();
+        chart.setName("Untitled");
+        aDoc.addChart(chart, anIndex);
+        addChart(chart, anIndex);
+        return chart;
     }
 
     /**

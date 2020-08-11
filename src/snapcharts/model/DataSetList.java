@@ -186,7 +186,11 @@ public class DataSetList extends ChartPart {
     /**
      * Returns the number of points in datasets.
      */
-    public int getPointCount()  { return _dsets.get(0).getPointCount(); }
+    public int getPointCount()
+    {
+        DataSet dset = getDataSetCount()>0 ? getDataSet(0) : null;
+        return dset!=null ? dset.getPointCount() : 0;
+    }
 
     /**
      * Sets the point count.
