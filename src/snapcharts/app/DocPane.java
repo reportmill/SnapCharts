@@ -185,7 +185,9 @@ public class DocPane extends ViewOwner {
         setDoc(doc);
 
         // If source is string, add to recent files menu
-        if(url!=null) RecentFiles.addPath(RECENT_FILES_ID, url.getString(), 10);
+        String urls = url!=null ? url.getString() : null;
+        if(urls!=null)
+            RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
 
         // Return the editor
         return this;
@@ -225,7 +227,8 @@ public class DocPane extends ViewOwner {
         }
 
         // Add URL.String to RecentFilesMenu, clear undoer and reset UI
-        RecentFiles.addPath(RECENT_FILES_ID, url.getPath(), 10);
+        String urls = url.getString();
+        RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
         //getDoc().getUndoer().reset();
         resetLater();
     }

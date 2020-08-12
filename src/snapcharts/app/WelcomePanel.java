@@ -288,8 +288,8 @@ public class WelcomePanel extends ViewOwner {
         hide();
 
         // Add path to RecentFiles
-        String path = dpane.getSourceURL().getPath();
-        RecentFiles.addPath(DocPane.RECENT_FILES_ID, path, 99);
+        String urls = dpane.getSourceURL().getString();
+        RecentFiles.addPath(DocPane.RECENT_FILES_ID, urls, 99);
     }
 
     /**
@@ -305,8 +305,8 @@ public class WelcomePanel extends ViewOwner {
         hide();
 
         // Add path to RecentFiles
-        String path = dpane.getSourceURL().getPath();
-        RecentFiles.addPath(DocPane.RECENT_FILES_ID, path, 99);
+        String urls = dpane.getSourceURL().getString();
+        RecentFiles.addPath(DocPane.RECENT_FILES_ID, urls, 99);
     }
 
     /**
