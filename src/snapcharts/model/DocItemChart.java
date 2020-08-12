@@ -1,5 +1,6 @@
 package snapcharts.model;
 
+import snap.util.PropChange;
 import snapcharts.app.ChartPane;
 import snapcharts.app.DocItemPane;
 
@@ -22,7 +23,11 @@ public class DocItemChart extends DocItem {
         // Add Items for DataSets
         DataSetList dsetList = _chart.getDataSetList();
         for (DataSet dset : dsetList.getDataSets())
-            addDataSet(dset);
+            addItem(new DocItemDataSet(dset));
+
+        // Start listening to prop changes
+        _chart.addPropChangeListener(aPC -> chartDidPropChange(aPC));
+        _chart.addDeepChangeListener((obj,aPC) -> chartDidPropChange(aPC));
     }
 
     /**
@@ -51,12 +56,43 @@ public class DocItemChart extends DocItem {
     }
 
     /**
-     * Adds a DataSet.
+     * Override to return Chart.
      */
-    public DocItemDataSet addDataSet(DataSet aDataSet)
+    @Override
+    public ChartPart getChartPart()  { return getChart(); }
+
+    /**
+     * Override to accept DataSets.
+     */
+    public DocItem addChartPart(ChartPart aChartPart, DocItem aChildItem)
     {
-        DocItemDataSet dataSetItem = new DocItemDataSet(aDataSet);
-        addItem(dataSetItem);
-        return dataSetItem;
+        // Handle add DataSet
+        if (aChartPart instanceof DataSet) {
+            DataSet dset = (DataSet)aChartPart;
+            int ind = aChildItem!=null ? aChildItem.getIndex() + 1 : getItemCount();
+            getChart().getDataSetList().addDataSet(dset, ind);
+            return getItem(ind);
+        }
+
+        // Otherwise, try parent
+        return super.addChartPart(aChartPart, aChildItem);
+    }
+
+    /**
+     * Called when PropChanges.
+     */
+    private void chartDidPropChange(PropChange aPC)
+    {
+        // Get property name
+        String propName = aPC.getPropName();
+
+        // Handle DataSet add/remove
+        if (propName==DataSetList.DataSet_Prop) {
+            int ind = aPC.getIndex(); if (ind<0) return;
+            DataSet newVal = (DataSet)aPC.getNewValue();
+            if (newVal!=null)
+                addItem(new DocItemDataSet(newVal));
+            else removeItem(ind);
+        }
     }
 }

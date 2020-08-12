@@ -126,21 +126,9 @@ public class DocPane extends ViewOwner {
     {
         // Get current DocItem
         DocItem selItem = getSelItem();
-
-        // Handle Chart
-        if (aPart instanceof Chart) { Chart chart = (Chart)aPart;
-            Doc doc = selItem.getDoc();
-            DocItem docItem = doc.addChart(chart);
-            setSelItem(docItem);
-        }
-
-        // Handle DataSet
-        else if (aPart instanceof DataSet) { DataSet dset = (DataSet) aPart;
-            DocItemChart chartDocItem = selItem instanceof DocItemChart ? (DocItemChart) selItem : null;
-            if (chartDocItem!=null) {
-                DocItem docItem = chartDocItem.addDataSet(dset);
-                setSelItem(docItem);
-            }
+        if (selItem != null) {
+            DocItem item = selItem.addChartPart(aPart, null);
+            setSelItem(item);
         }
     }
 
@@ -384,8 +372,8 @@ public class DocPane extends ViewOwner {
     protected void resetUI()
     {
         _treeView.setItems(getDoc());
-        _treeView.setSelItem(getSelItem());
         _treeView.expandAll();
+        _treeView.setSelItem(getSelItem());
 
         // If title has changed, update window title
         if(isWindowVisible()) {
@@ -430,14 +418,30 @@ public class DocPane extends ViewOwner {
         dbox.setOptions("New Chart", "New Dataset");
         int resp = dbox.showOptionDialog(getUI(), "New Chart");
 
+        // Handle New Chart
         if (resp==0) {
-//            DocItem selItem = getSelItem();
-//            Doc doc = getDoc();
-//            Chart chart = part.getChart();
-//            ChartSetPane chartSet = (ChartSetPane) doc.getItemPane();
-//            int ind = chart!=null ? chart.getIndex() : doc.getChartCount();
-//            Chart newChart = chartSet.addNewChart(doc, ind);
-//            setSelItem(newChart);
+
+            // Create new chart
+            Chart chart = new Chart();
+            chart.setName("Untitled");
+
+            // Add to SelItem
+            DocItem selItem = getSelItem();
+            DocItem newChartItem = selItem.addChartPart(chart, null);
+            setSelItem(newChartItem);
+        }
+
+        // Handle Add new DataSet
+        else if (resp==1) {
+
+            // Create new dataset
+            DataSet dset = new DataSet();
+            dset.setName("New Dataset");
+
+            // Add to SelItem
+            DocItem selItem = getSelItem();
+            DocItem newDataSetItem = selItem.addChartPart(dset, null);
+            setSelItem(newDataSetItem);
         }
     }
 

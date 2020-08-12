@@ -29,6 +29,7 @@ public class DataSetList extends ChartPart {
 
     // Constants for properties
     public static final String StartValue_Prop = "StartValue";
+    public static final String DataSet_Prop = "DataSet";
 
     /**
      * Creates a DataSet for given ChartView.
@@ -92,10 +93,13 @@ public class DataSetList extends ChartPart {
         aDataSet._dsetList = this;
         aDataSet.addPropChangeListener(pc -> dataSetDidPropChange(pc));
 
-        // Reset index
+        // Reset indexes
         for (int i=0; i<_dsets.size(); i++)
             getDataSet(i)._index = i;
         clearCachedValues();
+
+        // FirePropChange
+        firePropChange(DataSet_Prop, null, aDataSet, anIndex);
     }
 
     /**
@@ -105,6 +109,8 @@ public class DataSetList extends ChartPart {
     {
         DataSet dset = _dsets.remove(anIndex);
         clearCachedValues();
+        if (dset!=null)
+            firePropChange(DataSet_Prop, dset, null, anIndex);
         return dset;
     }
 

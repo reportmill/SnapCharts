@@ -39,6 +39,12 @@ public class DocItemDataSet extends DocItem {
     public boolean isParent()  { return false; }
 
     /**
+     * Override to return DataSet.
+     */
+    @Override
+    public ChartPart getChartPart()  { return getDataSet(); }
+
+    /**
      * Creates the ItemPane.
      */
     @Override

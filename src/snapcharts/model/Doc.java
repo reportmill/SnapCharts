@@ -86,6 +86,29 @@ public class Doc extends DocItem {
     public Doc getDoc()  { return this; }
 
     /**
+     * Override to accept Chart.
+     */
+    public DocItem addChartPart(ChartPart aChartPart, DocItem aChildItem)
+    {
+        // Handle Chart
+        if (aChartPart instanceof Chart) {
+            Chart chart = (Chart) aChartPart;
+            int ind = aChildItem!=null ? aChildItem.getIndex() + 1 : getItemCount();
+            return addChart(chart, ind);
+        }
+
+        // Handle DataSet
+        if (aChartPart instanceof DataSet) {
+            for (DocItem item : getItems())
+                if (item instanceof DocItemChart)
+                    item.addChartPart(aChartPart, null);
+        }
+
+        // Do normal version (nothing)
+        return super.addChartPart(aChartPart, aChildItem);
+    }
+
+    /**
      * Returns XML bytes for ChartDoc.
      */
     public byte[] getChartsFileXMLBytes()

@@ -91,6 +91,15 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     }
 
     /**
+     * Returns the index of this item in parent.
+     */
+    public int getIndex()
+    {
+        List<DocItem> items = getParent()!=null ? getParent().getItems() : null;
+        return items!=null ? items.indexOf(this) : -1;
+    }
+
+    /**
      * Returns the items.
      */
     public List<DocItem> getItems()  { return _items; }
@@ -131,6 +140,22 @@ public abstract class DocItem implements XMLArchiver.Archivable {
         DocItem item = _items.remove(anIndex);
         firePropChange(Items_Prop, item, null, anIndex);
         return item;
+    }
+
+    /**
+     * Returns the ChartPart represented by this item.
+     */
+    public ChartPart getChartPart()  { return null; }
+
+    /**
+     * Adds a ChartPart to this DocItem.
+     */
+    public DocItem addChartPart(ChartPart aChartPart, DocItem anItem)
+    {
+        DocItem par = getParent();
+        if (par!=null)
+            return par.addChartPart(aChartPart, this);
+        return null;
     }
 
     /**

@@ -60,9 +60,12 @@ public class DocPaneCopyPaster {
         }
 
         // Get xml string for selected shapes and add to clipboard as SNAP_XML
-        XMLElement xml = new ChartArchiver().writeToXML(selPart);
-        String xmlStr = xml.getString();
-        cb.addData(SNAPCHART_XML_TYPE, xmlStr);
+        ChartPart chartPart = selPart.getChartPart();
+        if (chartPart!=null) {
+            XMLElement xml = new ChartArchiver().writeToXML(chartPart);
+            String xmlStr = xml.getString();
+            cb.addData(SNAPCHART_XML_TYPE, xmlStr);
+        }
 
         // Add xml as String (probably stupid)
         //cb.addData(xmlStr);
