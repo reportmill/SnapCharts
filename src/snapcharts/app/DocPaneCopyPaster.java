@@ -4,6 +4,7 @@ import snap.util.XMLElement;
 import snap.view.*;
 import snapcharts.model.ChartArchiver;
 import snapcharts.model.ChartPart;
+import snapcharts.model.DocItem;
 
 /**
  * A CopyPaster implementation for Editor.
@@ -44,14 +45,14 @@ public class DocPaneCopyPaster {
     public void copy()
     {
         // Get selected chart part
-        ChartPart selPart = _docPane.getSelPart();
+        DocItem selPart = _docPane.getSelItem();
 
         // Get clipboard
         Clipboard cb = Clipboard.get();
 
         // Get image and add to clipbard
-        PartPane partPane = _docPane.getSelPartPane();
-        View view = partPane.getPartView();
+        DocItemPane docItemPane = _docPane.getSelItemPane();
+        View view = docItemPane.getItemView();
         if (view!=null) {
             int scale = 1; //ViewUtils.isAltDown() ? 1 : 0;
             Image image = ViewUtils.getImageForScale(view, scale);

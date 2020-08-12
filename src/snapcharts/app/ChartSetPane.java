@@ -3,7 +3,7 @@ import snap.gfx.Color;
 import snap.view.ColView;
 import snap.view.RowView;
 import snapcharts.model.Chart;
-import snapcharts.model.ChartDoc;
+import snapcharts.model.Doc;
 import snapcharts.views.PageView;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A ViewOwner to handle display of whole ChartDoc.
  */
-public class ChartSetPane extends PartPane {
+public class ChartSetPane extends DocItemPane {
 
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();
@@ -91,7 +91,7 @@ public class ChartSetPane extends PartPane {
     /**
      * Adds a new chart.
      */
-    public Chart addNewChart(ChartDoc aDoc, int anIndex)
+    public Chart addNewChart(Doc aDoc, int anIndex)
     {
         Chart chart = new Chart();
         chart.setName("Untitled");

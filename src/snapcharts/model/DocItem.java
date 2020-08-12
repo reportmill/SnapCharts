@@ -1,48 +1,49 @@
 package snapcharts.model;
 import snap.util.*;
+import snapcharts.app.DocItemPane;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Base class for parts of a chart: Axis, Area, Legend, etc.
+ * Represents an item in a doc that holds other items.
  */
-public class ChartPart implements XMLArchiver.Archivable {
+public abstract class DocItem implements XMLArchiver.Archivable {
+
+    // The DocItem that holds this item
+    private DocItem  _parent;
 
     // The name
     private String  _name;
 
-    // The Chart
-    protected Chart  _chart;
+    // The ItemPane for item
+    private DocItemPane _itemPane;
+
+    // The child items
+    private List<DocItem> _items = new ArrayList<>();
 
     // PropertyChangeSupport
     protected PropChangeSupport _pcs = PropChangeSupport.EMPTY;
 
     // Constants for properties
     public static final String Name_Prop = "Name";
+    public static final String Items_Prop = "Items";
 
     /**
-     * Returns the Doc.
+     * Constructor.
      */
-    public Doc getDoc()
+    public DocItem()
     {
-        Chart chart = getChart();
-        return chart!=null ? chart.getDoc() : null;
+
     }
 
     /**
-     * Returns the chart.
+     * Returns the doc.
      */
-    public Chart getChart()  { return _chart; }
-
-    /**
-     * Sets the chart.
-     */
-    protected void setChart(Chart aChart)  { _chart = aChart; }
-
-    /**
-     * Returns the dataset.
-     */
-    public DataSetList getDataSetList()  { return _chart.getDataSetList(); }
+    public Doc getDoc()
+    {
+        return _parent!=null ? _parent.getDoc() : null;
+    }
 
     /**
      * Returns the name.
@@ -54,11 +55,82 @@ public class ChartPart implements XMLArchiver.Archivable {
      */
     public void setName(String aName)
     {
-        // If value already set, just return
-        if (Objects.equals(aName, _name)) return;
+        _name = aName;
+    }
 
-        // Set value and fire prop change
-        firePropChange(Name_Prop, _name, _name = aName);
+    /**
+     * Returns the item pane.
+     */
+    public DocItemPane getItemPane()
+    {
+        if (_itemPane!=null) return _itemPane;
+        return _itemPane = createItemPane();
+    }
+
+    /**
+     * Creates the ItemPane.
+     */
+    protected abstract DocItemPane createItemPane();
+
+    /**
+     * Returns whether this item is a parent.
+     */
+    public boolean isParent()  { return true; }
+
+    /**
+     * Returns the parent item.
+     */
+    public DocItem getParent()  { return _parent; }
+
+    /**
+     * Sets the parent item.
+     */
+    public void setParent(DocItem aPar)
+    {
+        _parent = aPar;
+    }
+
+    /**
+     * Returns the items.
+     */
+    public List<DocItem> getItems()  { return _items; }
+
+    /**
+     * Returns the number of items.
+     */
+    public int getItemCount() { return _items.size(); }
+
+    /**
+     * Returns the individual item at given index.
+     */
+    public DocItem getItem(int anIndex)  { return _items.get(anIndex); }
+
+    /**
+     * Adds an item.
+     */
+    public void addItem(DocItem anItem)
+    {
+        addItem(anItem, _items.size());
+    }
+
+    /**
+     * Adds an item at given index.
+     */
+    public void addItem(DocItem anItem, int anIndex)
+    {
+        _items.add(anIndex, anItem);
+        firePropChange(Items_Prop, null, anItem, anIndex);
+        anItem.setParent(this);
+    }
+
+    /**
+     * Removes an item at given index.
+     */
+    public DocItem removeItem(int anIndex)
+    {
+        DocItem item = _items.remove(anIndex);
+        firePropChange(Items_Prop, item, null, anIndex);
+        return item;
     }
 
     /**

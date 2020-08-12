@@ -48,8 +48,7 @@ public class DataSet extends ChartPart {
     /**
      * Override to return DataSetList.
      */
-    @Override
-    public ChartPart getParent()  { return _dsetList; }
+    //public ChartPart getParent()  { return _dsetList; }
 
     /**
      * Returns the dataset.

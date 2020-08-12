@@ -19,9 +19,9 @@ public class ChartArchiver extends XMLArchiver {
     /**
      * Returns a ChartDoc for XML source.
      */
-    public ChartDoc getDocFromXMLSource(Object anObj)
+    public Doc getDocFromXMLSource(Object anObj)
     {
-        ChartDoc doc = (ChartDoc)getChartPartFromXMLSource(anObj);
+        Doc doc = (Doc)readFromXMLSource(anObj);
         if (doc!=null)
             doc.setSourceURL(getSourceURL());
         return doc;
@@ -49,7 +49,8 @@ public class ChartArchiver extends XMLArchiver {
         cmap.put(AxisX.class.getSimpleName(), AxisX.class);
         cmap.put(AxisY.class.getSimpleName(), AxisY.class);
         cmap.put(Chart.class.getSimpleName(), Chart.class);
-        cmap.put(ChartDoc.class.getSimpleName(), ChartDoc.class);
+        cmap.put("ChartDoc", Doc.class); // Legacy - can go soon
+        cmap.put(Doc.class.getSimpleName(), Doc.class);
         cmap.put(DataSet.class.getSimpleName(), DataSet.class);
         cmap.put(DataSetList.class.getSimpleName(), DataSetList.class);
         return cmap;

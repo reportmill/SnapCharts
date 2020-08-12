@@ -9,7 +9,7 @@ import snapcharts.views.ChartView;
 /**
  * A class to manage charts/data in a ChartBook.
  */
-public class ChartPane extends PartPane {
+public class ChartPane extends DocItemPane {
     
     // The chartView
     private ChartView _chartView;
@@ -53,7 +53,7 @@ public class ChartPane extends PartPane {
      * Override to return the ChartView.
      */
     @Override
-    public View getPartView()
+    public View getItemView()
     {
         return getChartView();
     }

@@ -11,7 +11,7 @@ import snapcharts.model.DataType;
 /**
  * A ViewOwner to handle display of whole ChartDoc.
  */
-public class DataSetPane extends PartPane {
+public class DataSetPane extends DocItemPane {
 
     // The DataSet
     private DataSet  _dset;

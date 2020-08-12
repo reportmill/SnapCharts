@@ -9,7 +9,7 @@ import snap.util.*;
 public class Chart extends ChartPart {
 
     // The ChartDoc that owns this chart
-    private ChartDoc  _doc;
+    private Doc _doc;
 
     // The chart type
     private ChartType  _type = ChartType.LINE;
@@ -86,22 +86,14 @@ public class Chart extends ChartPart {
     /**
      * Returns the chart doc.
      */
-    public ChartDoc getDoc() { return _doc; }
+    public Doc getDoc() { return _doc; }
 
     /**
      * Sets the doc.
      */
-    protected void setDoc(ChartDoc aDoc)
+    protected void setDoc(Doc aDoc)
     {
         _doc = aDoc;
-    }
-
-    /**
-     * Returns the index of this chart in doc.
-     */
-    public int getIndex()
-    {
-        return getDoc().getCharts().indexOf(this);
     }
 
     /**
@@ -259,11 +251,6 @@ public class Chart extends ChartPart {
      * Returns the AreaTypes object.
      */
     public AreaTypes getAreaTypes()  { return _areaTypes; }
-
-    /**
-     * Returns the parent part.
-     */
-    public ChartPart getParent() { return getDoc(); }
 
     /**
      * Called when chart part has prop change.

@@ -21,7 +21,7 @@ public class ChartParser {
     /**
      * Returns a chart for Source.
      */
-    public ChartDoc getDocForSource(Object aSource)
+    public Doc getDocForSource(Object aSource)
     {
         WebURL url = WebURL.getURL(aSource);
         String name = url.getPathNameSimple();
@@ -32,7 +32,7 @@ public class ChartParser {
         if (chart.getDataSetList().getName()==null)
             chart.getDataSetList().setName(name + " Data");
 
-        ChartDoc doc = new ChartDoc();
+        Doc doc = new Doc();
         doc.setName(name + " Doc");
         doc.addChart(chart);
         return doc;

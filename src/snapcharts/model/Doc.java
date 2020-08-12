@@ -3,6 +3,8 @@ import snap.util.FilePathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snap.web.WebURL;
+import snapcharts.app.ChartSetPane;
+import snapcharts.app.DocItemPane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +12,10 @@ import java.util.List;
 /**
  * A class to hold multiple chart objects.
  */
-public class ChartDoc extends ChartPart {
+public class Doc extends DocItem {
 
     // The Source URL
     private WebURL  _srcURL;
-
-    // The list of charts
-    private List<Chart> _charts = new ArrayList<>();
 
     // Constants for properties
     public static final String Charts_Prop = "Charts";
@@ -38,59 +37,53 @@ public class ChartDoc extends ChartPart {
     }
 
     /**
+     * Creates the ItemPane.
+     */
+    @Override
+    protected DocItemPane createItemPane()
+    {
+        ChartSetPane pane = new ChartSetPane();
+        pane.setCharts(getCharts());
+        return pane;
+    }
+
+    /**
      * Returns the charts.
      */
-    public List<Chart> getCharts()  { return _charts; }
-
-    /**
-     * Returns the number of charts.
-     */
-    public int getChartCount() { return _charts.size(); }
-
-    /**
-     * Returns the individual chart at given index.
-     */
-    public Chart getChart(int anIndex)  { return _charts.get(anIndex); }
+    public List<Chart> getCharts()
+    {
+        List<Chart> charts = new ArrayList<>();
+        for (DocItem item : getItems())
+            if (item instanceof DocItemChart)
+                charts.add(((DocItemChart)item).getChart());
+        return charts;
+    }
 
     /**
      * Adds a chart.
      */
-    public void addChart(Chart aChart)
+    public DocItem addChart(Chart aChart)
     {
-        addChart(aChart, _charts.size());
+        DocItemChart chartDocItem = new DocItemChart(aChart);
+        addItem(chartDocItem);
+        return chartDocItem;
     }
 
     /**
      * Adds a chart at given index.
      */
-    public void addChart(Chart aChart, int anIndex)
+    public DocItem addChart(Chart aChart, int anIndex)
     {
-        _charts.add(anIndex, aChart);
-        firePropChange(Charts_Prop, null, aChart, anIndex);
-        aChart.setDoc(this);
+        DocItemChart chartDocItem = new DocItemChart(aChart);
+        addItem(chartDocItem, anIndex);
+        return chartDocItem;
     }
-
-    /**
-     * Removes a chart at given index.
-     */
-    public Chart removeChart(int anIndex)
-    {
-        Chart chart = _charts.remove(anIndex);
-        firePropChange(Charts_Prop, chart, null, anIndex);
-        return chart;
-    }
-
-    /**
-     * Override to return null.
-     */
-    @Override
-    public ChartPart getParent()  { return null; }
 
     /**
      * Override to return this.
      */
     @Override
-    public ChartDoc getDoc()  { return this; }
+    public Doc getDoc()  { return this; }
 
     /**
      * Returns XML bytes for ChartDoc.
@@ -148,7 +141,7 @@ public class ChartDoc extends ChartPart {
     /**
      * Loads the ChartView from JSON source.
      */
-    public static ChartDoc createDocFromSource(Object aSource)
+    public static Doc createDocFromSource(Object aSource)
     {
         WebURL url = WebURL.getURL(aSource);
         if (url==null) {
@@ -161,16 +154,17 @@ public class ChartDoc extends ChartPart {
         String ext = FilePathUtils.getExtension(path).toLowerCase();
         if (ext.equals(CHARTS_FILE_EXTENSION)) {
             ChartArchiver archiver = new ChartArchiver();
-            ChartDoc doc = archiver.getDocFromXMLSource(url);
+            Doc doc = archiver.getDocFromXMLSource(url);
             return doc;
         }
 
         // Handle json file
         if (ext.equals("json")) {
             ChartParser parser = new ChartParser();
-            ChartDoc doc = parser.getDocForSource(url);
+            Doc doc = parser.getDocForSource(url);
 
-            Chart chart = doc.getChartCount() > 0 ? doc.getChart(0) : null;
+            DocItemChart chartDocItem = doc.getItemCount()>0 ? (DocItemChart) doc.getItem(0) : null;
+            Chart chart = chartDocItem!=null ? chartDocItem.getChart() : null;
             if (chart != null && chart.getDataSetList().isEmpty())
                 chart.getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
             return doc;

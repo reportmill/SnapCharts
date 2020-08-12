@@ -8,11 +8,7 @@ import snap.viewx.RecentFiles;
 import snap.viewx.TextPane;
 import snap.web.WebFile;
 import snap.web.WebURL;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartDoc;
-import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
-import java.util.*;
+import snapcharts.model.*;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -20,16 +16,10 @@ import java.util.*;
 public class DocPane extends ViewOwner {
 
     // The ChartDoc
-    private ChartDoc  _doc;
+    private Doc _doc;
 
-    // The selected ChartPart
-    private ChartPart  _selPart;
-
-    // A map of PartPanes for ChartParts
-    private Map<ChartPart,PartPane>  _editors = new HashMap<>();
-
-    // The EditorPane
-    //private EditorPane _editorPane;
+    // The selected DocItem
+    private DocItem _selItem;
 
     // The DocMenuBar
     private DocPaneMenuBar  _menuBar;
@@ -38,7 +28,7 @@ public class DocPane extends ViewOwner {
     private SplitView _splitView;
 
     // The ChartDoc tree
-    private TreeView<ChartPart>  _treeView;
+    private TreeView<DocItem>  _treeView;
 
     // A helper class for Copy/Paste functionality
     private DocPaneCopyPaster  _copyPaster;
@@ -47,9 +37,8 @@ public class DocPane extends ViewOwner {
     public static final String RECENT_FILES_ID = "RecentChartDocs";
 
     // Constants for actions
-    public static final String New_Action = "NewAction";
-    public static final String NewChart_Action = "NewChartAction";
-    public static final String NewDataset_Action = "NewDatasetAction";
+    //public static final String New_Action = "NewAction";
+    //public static final String NewChart_Action = "NewChartAction";
 
     /**
      * Constructor.
@@ -71,12 +60,12 @@ public class DocPane extends ViewOwner {
     /**
      * Returns the doc.
      */
-    public ChartDoc getDoc()  { return _doc; }
+    public Doc getDoc()  { return _doc; }
 
     /**
      * Sets the doc.
      */
-    public void setDoc(ChartDoc aDoc)
+    public void setDoc(Doc aDoc)
     {
         // Set Doc
         _doc = aDoc;
@@ -84,37 +73,37 @@ public class DocPane extends ViewOwner {
         // Load UI
         getUI();
 
-        // Set Doc as SelPart
-        setSelPart(_doc);
+        // Set Doc as SelItem
+        setSelItem(_doc);
     }
 
     /**
-     * Returns the selected chart part.
+     * Returns the selected doc item.
      */
-    public ChartPart getSelPart()  { return _selPart; }
+    public DocItem getSelItem()  { return _selItem; }
 
     /**
-     * Sets the selected chart part.
+     * Sets the selected doc item.
      */
-    public void setSelPart(ChartPart aCP)
+    public void setSelItem(DocItem aCP)
     {
         // If already set, just return
-        if (aCP==getSelPart()) return;
+        if (aCP== getSelItem()) return;
 
-        // Remove old sel part UI
-        if (_selPart!=null) {
-            ViewOwner partUI = getPartPaneForChartPart(_selPart);
-            _splitView.removeItem(partUI.getUI());
+        // Remove old SelItem UI
+        if (_selItem !=null) {
+            ViewOwner itemUI = _selItem.getItemPane();
+            _splitView.removeItem(itemUI.getUI());
         }
 
-        // Set sel part
-        _selPart = aCP;
+        // Set SelItem
+        _selItem = aCP;
 
-        // Install new sel part UI
-        if (_selPart!=null) {
-            ViewOwner partUI = getPartPaneForChartPart(_selPart);
-            partUI.getUI().setGrowWidth(true);
-            _splitView.addItem(partUI.getUI());
+        // Install new sel item UI
+        if (_selItem !=null) {
+            ViewOwner itemUI = _selItem.getItemPane();
+            itemUI.getUI().setGrowWidth(true);
+            _splitView.addItem(itemUI.getUI());
         }
 
         // Reset UI
@@ -122,12 +111,12 @@ public class DocPane extends ViewOwner {
     }
 
     /**
-     * Returns the PartPane for SelPart.
+     * Returns the ItemPane for SelItem.
      */
-    public PartPane getSelPartPane()
+    public DocItemPane getSelItemPane()
     {
-        ChartPart selPart = getSelPart();
-        return getPartPaneForChartPart(selPart);
+        DocItem selItem = getSelItem();
+        return selItem.getItemPane();
     }
 
     /**
@@ -135,66 +124,24 @@ public class DocPane extends ViewOwner {
      */
     public void addChartPart(ChartPart aPart)
     {
-        // Get current SelPart
-        ChartPart selPart = getSelPart();
+        // Get current DocItem
+        DocItem selItem = getSelItem();
 
         // Handle Chart
         if (aPart instanceof Chart) { Chart chart = (Chart)aPart;
-            ChartDoc doc = selPart.getDoc();
-            doc.addChart(chart);
-            setSelPart(chart);
+            Doc doc = selItem.getDoc();
+            DocItem docItem = doc.addChart(chart);
+            setSelItem(docItem);
         }
 
         // Handle DataSet
         else if (aPart instanceof DataSet) { DataSet dset = (DataSet) aPart;
-            Chart chart = selPart.getChart();
-            if (chart!=null) {
-                chart.addDataSet(dset);
-                setSelPart(dset);
+            DocItemChart chartDocItem = selItem instanceof DocItemChart ? (DocItemChart) selItem : null;
+            if (chartDocItem!=null) {
+                DocItem docItem = chartDocItem.addDataSet(dset);
+                setSelItem(docItem);
             }
         }
-    }
-
-    /**
-     * Returns the editor for a chart part.
-     */
-    public PartPane getPartPaneForChartPart(ChartPart aChartPart)
-    {
-        PartPane partPane = _editors.get(aChartPart);
-        if (partPane==null) {
-            partPane = createEditorForChartPart(aChartPart);
-            _editors.put(aChartPart, partPane);
-        }
-        return partPane;
-    }
-
-    /**
-     * Creates an editor for ChartPart.
-     */
-    protected PartPane createEditorForChartPart(ChartPart aChartPart)
-    {
-        // Handle Chart
-        if (aChartPart instanceof Chart) {
-            ChartPane epane = new ChartPane();
-            epane.setChart((Chart) aChartPart);
-            return epane;
-        }
-
-        // Handle DataSet
-        if (aChartPart instanceof DataSet) { DataSet dset = (DataSet)aChartPart;
-            DataSetPane epane = new DataSetPane();
-            epane.setDataSet(dset);
-            return epane;
-        }
-
-        // Handle ChartDoc
-        if (aChartPart instanceof ChartDoc) { ChartDoc doc = (ChartDoc)aChartPart;
-            ChartSetPane dpane = new ChartSetPane();
-            dpane.setCharts(doc.getCharts());
-            return dpane;
-        }
-
-        throw new RuntimeException("FilePane.createEditorForChartPart: Unknown part: " + aChartPart.getClass());
     }
 
     /**
@@ -233,7 +180,7 @@ public class DocPane extends ViewOwner {
         // If source is already opened, return editor pane
         WebURL url = WebURL.getURL(aSource);
 
-        ChartDoc doc = ChartDoc.createDocFromSource(url);
+        Doc doc = Doc.createDocFromSource(url);
 
         setDoc(doc);
 
@@ -434,7 +381,7 @@ public class DocPane extends ViewOwner {
     protected void resetUI()
     {
         _treeView.setItems(getDoc());
-        _treeView.setSelItem(getSelPart());
+        _treeView.setSelItem(getSelItem());
         _treeView.expandAll();
 
         // If title has changed, update window title
@@ -455,8 +402,8 @@ public class DocPane extends ViewOwner {
     {
         // Handle TreeView
         if (anEvent.equals(_treeView)) {
-            ChartPart part = _treeView.getSelItem();
-            setSelPart(part);
+            DocItem docItem = _treeView.getSelItem();
+            setSelItem(docItem);
         }
 
         // Handle WinClosing
@@ -466,7 +413,7 @@ public class DocPane extends ViewOwner {
         // Handle NewAction
         if (anEvent.equals("AddButton")) {
             respondToNewAction();
-            //getSelPartPane().sendEvent(New_Action);
+            //getSelItemPane().sendEvent(New_Action);
         }
     }
 
@@ -481,13 +428,13 @@ public class DocPane extends ViewOwner {
         int resp = dbox.showOptionDialog(getUI(), "New Chart");
 
         if (resp==0) {
-            ChartPart part = getSelPart();
-            ChartDoc doc = part.getDoc();
-            Chart chart = part.getChart();
-            ChartSetPane chartSet = (ChartSetPane) getPartPaneForChartPart(doc);
-            int ind = chart!=null ? chart.getIndex() : doc.getChartCount();
-            Chart newChart = chartSet.addNewChart(doc, ind);
-            setSelPart(newChart);
+//            DocItem selItem = getSelItem();
+//            Doc doc = getDoc();
+//            Chart chart = part.getChart();
+//            ChartSetPane chartSet = (ChartSetPane) doc.getItemPane();
+//            int ind = chart!=null ? chart.getIndex() : doc.getChartCount();
+//            Chart newChart = chartSet.addNewChart(doc, ind);
+//            setSelItem(newChart);
         }
     }
 
@@ -497,41 +444,35 @@ public class DocPane extends ViewOwner {
     protected void loadSampleDoc()
     {
         WebURL url = WebURL.getURL(App.class, "Sample.json");
-        ChartDoc doc = ChartDoc.createDocFromSource(url);
+        Doc doc = Doc.createDocFromSource(url);
         setDoc(doc);
     }
 
     /**
      * A TreeResolver for Document Shapes.
      */
-    private static class ChartDocTreeResolver extends TreeResolver <ChartPart> {
+    private static class ChartDocTreeResolver extends TreeResolver <DocItem> {
 
         @Override
-        public ChartPart getParent(ChartPart anItem)
+        public DocItem getParent(DocItem anItem)
         {
-            if (anItem instanceof DataSet)
-                return anItem.getChart();
             return anItem.getParent();
         }
 
         @Override
-        public boolean isParent(ChartPart anItem)
+        public boolean isParent(DocItem anItem)
         {
-            return anItem instanceof Chart || anItem instanceof ChartDoc;
+            return anItem.isParent();
         }
 
         @Override
-        public ChartPart[] getChildren(ChartPart aParent)
+        public DocItem[] getChildren(DocItem aParent)
         {
-            if (aParent instanceof ChartDoc)
-                return ((ChartDoc)aParent).getCharts().toArray(new ChartPart[0]);
-            if (aParent instanceof Chart)
-                return aParent.getDataSetList().getDataSets().toArray(new ChartPart[0]);
-            return new ChartPart[0];
+            return aParent.getItems().toArray(new DocItem[0]);
         }
 
         @Override
-        public String getText(ChartPart anItem)
+        public String getText(DocItem anItem)
         {
             return anItem.getName();
         }
