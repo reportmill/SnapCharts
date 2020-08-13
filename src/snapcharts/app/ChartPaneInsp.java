@@ -76,12 +76,12 @@ public class ChartPaneInsp extends ViewOwner {
         // Get ChartTypeTool
         _chartType = new ChartTypeTool(_epane);
         _inspColView.addChild(_chartType.getUI());
-        Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types").setCollapsed(true);
+        Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types");//.setCollapsed(true);
 
         // Get ChartBasicTool
         _basicProps = new ChartBasicTool(_epane);
         _inspColView.addChild(_basicProps.getUI());
-        Collapser.createCollapserAndLabel(_basicProps.getUI(), "Basic Properties").setCollapsed(true);
+        Collapser.createCollapserAndLabel(_basicProps.getUI(), "Basic Properties");//.setCollapsed(true);
 
         // Get ViewTool
         //_viewTool = _epane._viewTool;

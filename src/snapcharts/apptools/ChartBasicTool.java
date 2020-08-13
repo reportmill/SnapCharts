@@ -30,7 +30,8 @@ public class ChartBasicTool extends ViewOwner {
         // Get Chart
         Chart chart = _chartView.getChart();
 
-        // Reset TitleText, SubtitleText, YAxisTitleText
+        // Reset NameText, TitleText, SubtitleText, YAxisTitleText
+        setViewValue("NameText", chart.getName());
         setViewValue("TitleText", chart.getTitle());
         setViewValue("SubtitleText", chart.getSubtitle());
         setViewValue("YAxisTitleText", chart.getAxisY().getTitle());
@@ -48,7 +49,8 @@ public class ChartBasicTool extends ViewOwner {
         // Get Chart
         Chart chart = _chartView.getChart();
 
-        // Handle TitleText, SubtitleText, YAxisTitleText
+        // Handle NameText, TitleText, SubtitleText, YAxisTitleText
+        if(anEvent.equals("NameText")) chart.setName(anEvent.getStringValue());
         if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
         if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
         if(anEvent.equals("YAxisTitleText")) chart.getAxisY().setTitle(anEvent.getStringValue());

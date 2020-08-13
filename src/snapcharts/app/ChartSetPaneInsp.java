@@ -69,12 +69,8 @@ public class ChartSetPaneInsp extends ViewOwner {
         // Get ChartSetBasicTool
         _csetBasic = new ChartSetBasicTool(_epane);
         _inspColView.addChild(_csetBasic.getUI());
-        Collapser cpsr = Collapser.createCollapserAndLabel(_csetBasic.getUI(), "Page Properties");
-        cpsr.setCollapsed(true);
-        _inspColView.addPropChangeListener(pc -> {
-            if (_inspColView.isShowing())
-                cpsr.setExpandedAnimated(true);
-        });
+        Collapser.createCollapserAndLabel(_csetBasic.getUI(), "Page Properties"); //cpsr.setCollapsed(true);
+        //_inspColView.addPropChangeListener(pc -> { if (_inspColView.isShowing()) cpsr.setExpandedAnimated(true); });
     }
 
     /**

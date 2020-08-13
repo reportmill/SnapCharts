@@ -70,12 +70,9 @@ public class DataSetPaneInsp extends ViewOwner {
         // Get ChartBasicTool
         _dsetBasic = new DataSetBasicTool(_epane);
         _inspColView.addChild(_dsetBasic.getUI());
-        Collapser cpsr = Collapser.createCollapserAndLabel(_dsetBasic.getUI(), "Basic Properties");
-        cpsr.setCollapsed(true);
-        _inspColView.addPropChangeListener(pc -> {
-            if (_inspColView.isShowing())
-                cpsr.setExpandedAnimated(true);
-        });
+        Collapser.createCollapserAndLabel(_dsetBasic.getUI(), "Basic Properties");
+        //cpsr.setCollapsed(true);
+        //_inspColView.addPropChangeListener(pc -> { if (_inspColView.isShowing()) cpsr.setExpandedAnimated(true); });
     }
 
     /**

@@ -16,12 +16,14 @@
   </RowView>
   <SplitView Name="SplitView" GrowHeight="true">
     <ColView FillWidth="true">
-      <RowView Padding="4" GrowWidth="true" Spacing="4">
+      <RowView Margin="2" Padding="4" GrowWidth="true" Spacing="4">
         <BevelBorder />
         <Label text="Charts" />
         <Button Name="AddButton" PrefWidth="20" PrefHeight="20" Padding="2" LeanX="RIGHT" text="+" />
       </RowView>
-      <TreeView Name="TreeView" MinWidth="150" GrowHeight="true" />
+      <TreeView Name="TreeView" MinWidth="170" GrowHeight="true">
+        <LineBorder Color="#cccccc" />
+      </TreeView>
     </ColView>
     <Label Name="EditorPane" Align="CENTER" GrowWidth="true" text="Editor Pane Area">
       <LineBorder Color="#a8a8a8" Width="3" />

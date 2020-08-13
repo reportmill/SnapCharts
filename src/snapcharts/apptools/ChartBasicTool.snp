@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="4" Spacing="4">
+    <Label text="Chart Name:" />
+    <TextField Name="NameText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
     <Label text="Chart Title:" />
-    <TextField Name="TitleText" GrowWidth="true" ColCount="12">
-      <LineBorder Color="#c0c0c0" />
-    </TextField>
+    <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label text="Chart Subtitle:" />
-    <TextField Name="SubtitleText" GrowWidth="true" ColCount="12">
-      <LineBorder Color="#c0c0c0" />
-    </TextField>
+    <TextField Name="SubtitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label text="Y-Axis Title:" />
-    <TextField Name="YAxisTitleText" GrowWidth="true" ColCount="12">
-      <LineBorder Color="#c0c0c0" />
-    </TextField>
+    <TextField Name="YAxisTitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
