@@ -7,6 +7,7 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
+import snapcharts.model.DataUtils;
 
 /**
  * A ViewOwner to handle display of whole ChartDoc.
@@ -25,6 +26,7 @@ public class DataSetPane extends DocItemPane {
     // Constants for actions
     private final String Cut_Action = "CutAction";
     private final String Paste_Action = "PasteAction";
+    private final String SelectAll_Action = "SelectAllAction";
     private final String Delete_Action = "DeleteAction";
 
     /**
@@ -41,6 +43,32 @@ public class DataSetPane extends DocItemPane {
     }
 
     /**
+     * Called to paste from clipboard.
+     */
+    private void paste()
+    {
+        Clipboard cb = Clipboard.get();
+
+        if (cb.hasString()) {
+            String str = cb.getString();
+            String cells[][] = DataUtils.getCellData(str);
+            if (cells != null)
+                getDataSet().replaceData(cells, _sheetView.getSel());
+        }
+    }
+
+    /**
+     * Called to delete selection.
+     */
+    private void delete()
+    {
+        ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
+        if (_sheetView.getEditingCell()!=null) return;
+        getDataSet().deleteData(sel);
+        _sheetView.setSelIndex(sel.getMin()-1);
+    }
+
+    /**
      * Create UI.
      */
     protected void initUI()
@@ -50,6 +78,7 @@ public class DataSetPane extends DocItemPane {
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.setCellConfigure(c -> configureCell(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
+        setFirstFocus(_sheetView);
 
         // Create/add InspectorPane
         RowView topRowView = getUI(RowView.class);
@@ -59,8 +88,18 @@ public class DataSetPane extends DocItemPane {
         // Add PasteAction
         addKeyActionHandler(Cut_Action, "Shortcut+X");
         addKeyActionHandler(Paste_Action, "Shortcut+V");
+        addKeyActionHandler(SelectAll_Action, "Shortcut+A");
         //addKeyActionFilter(Delete_Action, "DELETE");
         //addKeyActionFilter(Delete_Action, "BACKSPACE");
+    }
+
+    /**
+     * Initialization for first showing.
+     */
+    protected void initShowing()
+    {
+        // This sucks - twice to run after resetUI() + SheetView.rebuild()
+        runLater(() -> runLater(() -> _sheetView.setSelRowColIndex(0, 0)));
     }
 
     /**
@@ -73,6 +112,12 @@ public class DataSetPane extends DocItemPane {
         // Set TableView row & col count
         _sheetView.setMinRowCount(dset.getPointCount()+1);
         _sheetView.setMinColCount(2);
+
+        // Update PointCountLabel
+        setViewValue("PointCountLabel", dset.getPointCount() + " Points");
+
+        // Reset Inspector
+        _insp.resetLater();
     }
 
     /**
@@ -82,20 +127,17 @@ public class DataSetPane extends DocItemPane {
     {
         // Handle Cut_Action
         if (anEvent.equals(Cut_Action)) {
-            ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
-            if (_sheetView.getEditingCell()!=null) return;
-            getDataSet().deleteData(sel);
-            _sheetView.setSelIndex(sel.getMin()-1);
+            delete();
             anEvent.consume();
         }
 
         // Handle Paste_Action
-        if (anEvent.equals(Paste_Action)) {
-            String dataCells[][] = DataUtils.getClipboardCellData();
+        if (anEvent.equals(Paste_Action))
+            paste();
 
-            if (dataCells!=null) {
-                getDataSet().replaceData(dataCells, _sheetView.getSel());
-            }
+        // Handle SelectAll_Action
+        if (anEvent.equals(SelectAll_Action)) {
+            _sheetView.setSel(new ListSel(0, _sheetView.getRowCount()));
         }
     }
 
@@ -108,8 +150,11 @@ public class DataSetPane extends DocItemPane {
 
         // Handle first column: Set header to "DataSet Name" (left aligned) with adjustable width
         if (col==0) {
+            DataSet dset = getDataSet();
+            DataType dtype = dset!=null ? dset.getDataType() : DataType.UNKNOWN;
+            String str = dtype==DataType.IY ? "Index" : dtype==DataType.CY ? "C" : "X";
             Label hdr = aCol.getHeader();
-            hdr.setText("X");
+            hdr.setText(str);
             aCol.setPrefWidth(80);
         }
         else if (col==1) {

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RowView FillHeight="true">
-  <ColView Padding="10,5,5,5" Spacing="4" GrowWidth="true" FillWidth="true">
+  <ColView Padding="10,5,5,5" GrowWidth="true" Spacing="4" FillWidth="true">
     <RowView Margin="4" Spacing="4">
       <Label text="Data:    " />
+      <Label Name="PointCountLabel" LeanX="RIGHT" text="Points" />
     </RowView>
     <RowView Padding="4" GrowHeight="true" Spacing="4">
       <TableView Name="SheetView" GrowWidth="true" GrowHeight="true" Class="snapcharts.app.SheetView" />

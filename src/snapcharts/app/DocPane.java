@@ -446,8 +446,8 @@ public class DocPane extends ViewOwner {
 
             // Create new chart
             Chart chart = new Chart();
-            chart.setName("Untitled");
-            chart.setTitle("Untitled");
+            chart.setName("New Chart");
+            chart.setTitle("New Chart");
             chart.getAxisY().setTitle("Y Axis");
             chart.getAxisX().setTitle("X Axis");
 

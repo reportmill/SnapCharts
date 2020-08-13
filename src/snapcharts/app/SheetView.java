@@ -57,6 +57,10 @@ public class SheetView extends TableView <Object> {
      */
     public void setMinRowCount(int aValue)
     {
+        // If already set, just return
+        if (aValue==getMinRowCount()) return;
+
+        // Set and rebuild
         _minRowCount = aValue;
         rebuild();
     }
@@ -71,6 +75,10 @@ public class SheetView extends TableView <Object> {
      */
     public void setMinColCount(int aValue)
     {
+        // If already set, just return
+        if (aValue==getMinColCount()) return;
+
+        // Set and rebuild
         _minColCount = aValue;
         rebuild();
     }

@@ -22,6 +22,10 @@ public class DataPane extends ViewOwner {
     // A Cell Action event listener to handle cell text changes
     //EventListener           _cellEditLsnr;
 
+    // Constants for Actions
+    public static final String Paste_Action = "PasteAction";
+    public static final String SelectAll_Action = "SelectAll";
+
     /**
      * Creates a DataPane for given ChartView.
      */
@@ -42,7 +46,8 @@ public class DataPane extends ViewOwner {
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
 
-        addKeyActionHandler("PasteAction", "Shortcut+V");
+        addKeyActionHandler(Paste_Action, "Shortcut+V");
+        addKeyActionHandler(SelectAll_Action, "Shortcut+A");
     }
 
     /**

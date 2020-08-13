@@ -140,8 +140,8 @@ public class DataSetList extends ChartPart {
         // If value already cached, just return
         if (_minY < Float.MAX_VALUE) return _minY;
 
-        // If no datasets, just set to 0
-        if (getDataSetCount()==0) return _minY = 0;
+        // If no datasets/points, just set to 0
+        if (getPointCount()==0) return _minY = 0;
 
         // Iterate over datasets to get min of all
         double min = Float.MAX_VALUE;
@@ -159,7 +159,7 @@ public class DataSetList extends ChartPart {
         if (_maxY > -Float.MAX_VALUE) return _maxY;
 
         // If no datasets, just set to 0
-        if (getDataSetCount()==0) return _maxY = 5;
+        if (getPointCount()==0) return _maxY = 5;
 
         // Iterate over datasets to get max of all
         double max = -Float.MAX_VALUE;
@@ -199,8 +199,9 @@ public class DataSetList extends ChartPart {
      */
     public int getPointCount()
     {
-        DataSet dset = getDataSetCount()>0 ? getDataSet(0) : null;
-        return dset!=null ? dset.getPointCount() : 0;
+        int pc = Integer.MAX_VALUE; if (getDataSetCount()==0) return 0;
+        for (DataSet dset : getDataSets()) pc = Math.min(dset.getPointCount(), pc);
+        return pc;
     }
 
     /**

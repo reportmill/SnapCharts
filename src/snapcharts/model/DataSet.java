@@ -75,15 +75,16 @@ public class DataSet extends ChartPart {
      */
     private DataType guessDataType()
     {
+        if (getPointCount()==0)
+            return DataType.UNKNOWN;
+
         for (DataPoint pnt : _points) {
             if (pnt.getC()!=null)
                 return DataType.CY;
             if (pnt.getValueX()!=null)
                 return DataType.XY;
-            if (pnt.getValueY()!=null)
-                return DataType.XY;
         }
-        return DataType.UNKNOWN;
+        return DataType.IY;
     }
 
 
@@ -183,7 +184,7 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the value at given index.
+     * Returns the X value at given index.
      */
     public double getX(int anIndex)
     {
@@ -192,12 +193,21 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the value at given index.
+     * Returns the Y value at given index.
      */
     public double getY(int anIndex)
     {
         DataPoint dp = getPoint(anIndex);
         return dp!=null ? dp.getY() : 0;
+    }
+
+    /**
+     * Returns the C value at given index.
+     */
+    public String getC(int anIndex)
+    {
+        DataPoint dp = getPoint(anIndex);
+        return dp!=null ? dp.getC() : null;
     }
 
     /**
@@ -301,7 +311,7 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns an array of dataset values.
+     * Returns an array of dataset X values.
      */
     public double[] getDataX()
     {
@@ -312,7 +322,7 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns an array of dataset values.
+     * Returns an array of dataset Y values.
      */
     public double[] getDataY()
     {
@@ -321,6 +331,17 @@ public class DataSet extends ChartPart {
         double vals[] = new double[count];
         for (int i=0;i<count;i++) { double v = getY(i); vals[i] = v; _total += v; }
         return _dataY = vals;
+    }
+
+    /**
+     * Returns an array of dataset C values.
+     */
+    public String[] getDataC()
+    {
+        int count = getPointCount();
+        String vals[] = new String[count];
+        for (int i=0;i<count;i++) { String v = getC(i); vals[i] = v; }
+        return vals;
     }
 
     /**
@@ -430,35 +451,52 @@ public class DataSet extends ChartPart {
     {
         DataType dataType = getDataType();
         int indexes[] = aSel.getIndexes();
+
+        // Remove currently selected cells
         for (int i=indexes.length-1; i>=0; i--) {
             int ind = indexes[i];
             if (ind<getPointCount())
                 removePoint(ind);
         }
 
+        // Update DataType
+        if (dataType==DataType.UNKNOWN || getPointCount()==0) {
+            dataType = DataUtils.guessDataType(theCells);
+        }
+
+        // Add Cells
         for (String line[] : theCells) {
 
-            String f0 = line.length > 0 ? line[0] : null;
-            String f1 = line.length > 1 ? line[1] : null;
+            if (line.length==0) continue;
+
+            // Get vals: If only one val on line it's Y, X is index
+            String valX = line.length>1 ? line[0] : null;
+            String valY = line.length>1 ? line[1] : line[0];
 
             switch (dataType) {
 
+                case IY: {
+                    double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
+                    addPointCY(null, y);
+                    break;
+                }
+
                 case XY: {
-                    double x = f0 != null ? SnapUtils.doubleValue(f0) : 0;
-                    double y = f1 != null ? SnapUtils.doubleValue(f1) : 0;
+                    double x = valX != null ? SnapUtils.doubleValue(valX) : 0;
+                    double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
                     addPointXY(x, y);
                     break;
                 }
 
                 case CY: {
-                    String c = f0;
-                    double y = f1 != null ? SnapUtils.doubleValue(f1) : 0;
+                    String c = valX;
+                    double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
                     addPointCY(c, y);
                     break;
                 }
 
                 default:
-                    System.out.println("Unsupported data type import");
+                    System.out.println("DataSet.replaceData: Unsupported data type: " + dataType);
                     return;
             }
         }
@@ -477,17 +515,25 @@ public class DataSet extends ChartPart {
         DataType dataType = getDataType();
         e.add("DataType", dataType);
 
-        // Handle XY
+        // If XY, add DataX values
         if (dataType==DataType.XY) {
-
-            // Add DataX
-            String dataXStr = DataUtils.getStringForDoubleArray(getDataX());
+            String dataXStr = Arrays.toString(getDataX());
             XMLElement dataX_XML = new XMLElement("DataX");
             dataX_XML.setValue(dataXStr);
             e.add(dataX_XML);
+        }
 
-            // Add DataY
-            String dataYStr = DataUtils.getStringForDoubleArray(getDataY());
+        // If CY, add DataC values
+        if (dataType==DataType.CY) {
+            String dataCStr = Arrays.toString(getDataC());
+            XMLElement dataC_XML = new XMLElement("DataC");
+            dataC_XML.setValue(dataCStr);
+            e.add(dataC_XML);
+        }
+
+        // If not Unknown, add DataY values
+        if (dataType!=DataType.UNKNOWN) {
+            String dataYStr = Arrays.toString(getDataY());
             XMLElement dataY_XML = new XMLElement("DataY");
             dataY_XML.setValue(dataYStr);
             e.add(dataY_XML);
@@ -513,27 +559,49 @@ public class DataSet extends ChartPart {
         String dataTypeStr = anElement.getAttributeValue("DataType");
         DataType dataType = DataType.valueOf(dataTypeStr);
 
-        // Handle XY
-        if (dataType==DataType.XY) {
-
-            // Add DataX
-            XMLElement dataX_XML = anElement.get("DataX");
-            if (dataX_XML==null) {
-                System.err.println("DataSet.fromXML: Couldn't find DataX for DataType XY"); return null; }
+        // Get DataX
+        double dataX[] = null;
+        XMLElement dataX_XML = anElement.get("DataX");
+        if (dataX_XML!=null) {
             String dataXStr = dataX_XML.getValue();
-            double dataX[] = DataUtils.getDoubleArrayForString(dataXStr);
+            dataX = DataUtils.getDoubleArrayForString(dataXStr);
+        }
 
-            // Add DataY
-            XMLElement dataY_XML = anElement.get("DataY");
-            if (dataY_XML==null) {
-                System.err.println("DataSet.fromXML: Couldn't find DataY for DataType XY"); return null; }
+        // Get DataY
+        double dataY[] = null;
+        XMLElement dataY_XML = anElement.get("DataY");
+        if (dataY_XML!=null) {
             String dataYStr = dataY_XML.getValue();
-            double dataY[] = DataUtils.getDoubleArrayForString(dataYStr);
+            dataY = DataUtils.getDoubleArrayForString(dataYStr);
+        }
 
-            // Add points
+        // Get DataC
+        String dataC[] = null;
+        XMLElement dataC_XML = anElement.get("DataC");
+        if (dataC_XML!=null) {
+            String dataCStr = dataC_XML.getValue();
+            dataC = DataUtils.getStringArrayForString(dataCStr);
+        }
+
+        // Handle IY
+        if (dataType==DataType.IY && dataY!=null) {
+            int len = dataY.length;
+            for (int i=0; i<len; i++)
+                addPointXY(dataX[i], dataY[i]);
+        }
+
+        // Handle XY
+        else if (dataType==DataType.XY && dataX!=null && dataY!=null) {
             int len = Math.min(dataX.length, dataY.length);
             for (int i=0; i<len; i++)
                 addPointXY(dataX[i], dataY[i]);
+        }
+
+        // Handle CY
+        else if (dataType==DataType.CY && dataC!=null && dataY!=null) {
+            int len = Math.min(dataC.length, dataY.length);
+            for (int i=0; i<len; i++)
+                addPointCY(dataC[i], dataY[i]);
         }
 
         // Complain

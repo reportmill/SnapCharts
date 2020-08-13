@@ -23,9 +23,6 @@ public class DataSetPaneInsp extends ViewOwner {
     // The ColView that holds UI for child inspectors
     private ColView  _inspColView;
 
-    // The child inspector current installed in inspector panel
-    private ViewOwner  _childInspector;
-
     // The DataSetBasicTool
     private DataSetBasicTool  _dsetBasic;
 
@@ -83,16 +80,12 @@ public class DataSetPaneInsp extends ViewOwner {
         // Get editor (and just return if null) and tool for selected shapes
         DataSetPane dpane = getDataSetPane();
 
-        // Get the inspector (owner)
-        ViewOwner owner = getInspector();
-
         // Get inspector title from owner and set
         String title = "Inspector";
         _titleLabel.setText(title);
 
-        // If owner non-null, tell it to reset
-        if (owner!=null)
-            owner.resetLater();
+        // Reset child inspectors
+        _dsetBasic.resetLater();
     }
 
     /**
@@ -102,27 +95,5 @@ public class DataSetPaneInsp extends ViewOwner {
     {
         // Handle ViewGeneralButton
         //if (anEvent.equals("ViewGeneralButton")) setInspector(_viewTool);
-    }
-
-    /**
-     * Returns the inspector (owner) of the inspector pane.
-     */
-    protected ViewOwner getInspector()  { return _childInspector; }
-
-    /**
-     * Sets the inspector in the inspector pane.
-     */
-    protected void setInspector(ViewOwner anOwner)
-    {
-        // Set new inspector
-        _childInspector = anOwner;
-
-        // Get content and it grows height
-        View content = anOwner.getUI();
-        boolean contentGrowHeight = content.isGrowHeight();
-
-        // Set content and whether Inspector ScrollView sizes or scrolls content vertically
-        _inspScroll.setContent(content);
-        _inspScroll.setFillHeight(contentGrowHeight);
     }
 }

@@ -5,6 +5,7 @@ package snapcharts.model;
  */
 public enum DataType {
 
+    IY,
     XY,
     CY,
     UNKNOWN;
