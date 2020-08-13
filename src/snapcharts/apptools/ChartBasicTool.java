@@ -11,15 +11,15 @@ import snapcharts.model.Chart;
  */
 public class ChartBasicTool extends ViewOwner {
     
-    // The ChartView
-    ChartView        _chartView;
+    // The ChartPane
+    private ChartPane  _chartPane;
 
     /**
      * Constructor.
      */
-    public ChartBasicTool(ChartPane anEP)
+    public ChartBasicTool(ChartPane aCP)
     {
-        _chartView = anEP.getChartView();
+        _chartPane = aCP;
     }
 
     /**
@@ -28,7 +28,7 @@ public class ChartBasicTool extends ViewOwner {
     protected void resetUI()
     {
         // Get Chart
-        Chart chart = _chartView.getChart();
+        Chart chart = _chartPane.getChart();
 
         // Reset NameText, TitleText, SubtitleText, YAxisTitleText
         setViewValue("NameText", chart.getName());
@@ -47,10 +47,15 @@ public class ChartBasicTool extends ViewOwner {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get Chart
-        Chart chart = _chartView.getChart();
+        Chart chart = _chartPane.getChart();
 
-        // Handle NameText, TitleText, SubtitleText, YAxisTitleText
-        if(anEvent.equals("NameText")) chart.setName(anEvent.getStringValue());
+        // Handle NameText
+        if(anEvent.equals("NameText")) {
+            chart.setName(anEvent.getStringValue());
+            _chartPane.getDocPane().docItemNameChanged();
+        }
+
+        // Handle TitleText, SubtitleText, YAxisTitleText
         if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
         if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
         if(anEvent.equals("YAxisTitleText")) chart.getAxisY().setTitle(anEvent.getStringValue());

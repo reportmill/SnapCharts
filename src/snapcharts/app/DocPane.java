@@ -101,9 +101,10 @@ public class DocPane extends ViewOwner {
 
         // Install new sel item UI
         if (_selItem !=null) {
-            ViewOwner itemUI = _selItem.getItemPane();
-            itemUI.getUI().setGrowWidth(true);
-            _splitView.addItem(itemUI.getUI());
+            DocItemPane itemPane = _selItem.getItemPane();
+            itemPane.setDocPane(this);
+            itemPane.getUI().setGrowWidth(true);
+            _splitView.addItem(itemPane.getUI());
         }
 
         // Reset UI
@@ -313,6 +314,14 @@ public class DocPane extends ViewOwner {
      * Standard selectAll.
      */
     public void selectAll()  { getCopyPaster().selectAll(); }
+
+    /**
+     * Called when a DocItem changes name.
+     */
+    public void docItemNameChanged()
+    {
+        _treeView.updateItems(getSelItem());
+    }
 
     /**
      * Called when DocPane is closed.

@@ -7,6 +7,22 @@ import snap.view.ViewOwner;
  */
 public class DocItemPane extends ViewOwner {
 
+    // The DocPane that holds this DocItemPane
+    private DocPane  _docPane;
+
+    /**
+     * Returns the DocPane.
+     */
+    public DocPane getDocPane()  { return _docPane; }
+
+    /**
+     * Sets the DocPane.
+     */
+    public void setDocPane(DocPane aDP)
+    {
+        _docPane = aDP;
+    }
+
     /**
      * Returns the view for the DocItem.
      */

@@ -3,12 +3,9 @@ package snapcharts.apptools;
 import snap.view.ComboBox;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
-import snapcharts.app.ChartPane;
 import snapcharts.app.DataSetPane;
-import snapcharts.model.Chart;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
-import snapcharts.views.ChartView;
 
 /**
  * A class to manage UI to edit basic DataSet props.
@@ -71,7 +68,9 @@ public class DataSetBasicTool extends ViewOwner {
         DataSet dset = getDataSet();
 
         // Handle NameText
-        if(anEvent.equals("NameText"))
+        if(anEvent.equals("NameText")) {
             dset.setName(anEvent.getStringValue());
+            _dsetPane.getDocPane().docItemNameChanged();
+        }
     }
 }
