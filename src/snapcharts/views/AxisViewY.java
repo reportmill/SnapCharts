@@ -6,6 +6,8 @@ import snap.view.*;
 import snapcharts.model.Intervals;
 import snapcharts.model.Chart;
 
+import java.text.DecimalFormat;
+
 /**
  * A view to paint Chart Y Axis.
  */
@@ -228,29 +230,34 @@ public class AxisViewY extends ParentView {
     protected String getLabel(double aLineVal, double aDelta)
     {
         // Handle case where delta is in the billions
-        if (aDelta>=1000000000 && aDelta/1000000000==((int)aDelta)/1000000000) {
+        if (aDelta>=1000000000) { //&& aDelta/1000000000==((int)aDelta)/1000000000) {
             int val = (int)Math.round(aLineVal/1000000000);
             return val + "b";
         }
 
         // Handle case where delta is in the millions
-        if (aDelta>=1000000 && aDelta/1000000==((int)aDelta)/1000000) {
+        if (aDelta>=1000000) { //&& aDelta/1000000==((int)aDelta)/1000000) {
             int val = (int)Math.round(aLineVal/1000000);
             return val + "m";
         }
 
         // Handle case where delta is in the thousands
-        if (aDelta>=1000 && aDelta/1000==((int)aDelta)/1000) {
-            int val = (int)Math.round(aLineVal/1000);
-            return val + "k";
-        }
+        //if (aDelta>=1000 && aDelta/1000==((int)aDelta)/1000) {
+        //    int val = (int)Math.round(aLineVal/1000);
+        //    return val + "k";
+        //}
 
         // Handle  case where delta is integer
         if (aDelta==(int)aDelta)
             return String.valueOf((int)aLineVal);
 
-        return String.valueOf(aLineVal);
+        return _fmt.format(aLineVal);
     }
+
+    /**
+     * Returns a format for delta.
+     */
+    private static DecimalFormat _fmt = new DecimalFormat("#.###");
 
     /**
      * Returns the max label width.

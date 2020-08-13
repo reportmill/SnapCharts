@@ -18,7 +18,9 @@
     <ColView FillWidth="true">
       <RowView Margin="2" Padding="4" GrowWidth="true" Spacing="4">
         <BevelBorder />
-        <Label text="Charts" />
+        <Label text="Charts">
+          <font name="Arial" size="14" />
+        </Label>
         <Button Name="AddButton" PrefWidth="20" PrefHeight="20" Padding="2" LeanX="RIGHT" text="+" />
       </RowView>
       <TreeView Name="TreeView" MinWidth="170" GrowHeight="true">
