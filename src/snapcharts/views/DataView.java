@@ -7,7 +7,7 @@ import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
-import snapcharts.app.Intervals;
+import snapcharts.model.Intervals;
 import snapcharts.model.*;
 
 /**

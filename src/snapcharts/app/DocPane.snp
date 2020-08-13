@@ -22,7 +22,6 @@
         <Button Name="AddButton" PrefWidth="20" PrefHeight="20" Padding="2" LeanX="RIGHT" text="+" />
       </RowView>
       <TreeView Name="TreeView" MinWidth="150" GrowHeight="true" />
-      <Label text="Label" />
     </ColView>
     <Label Name="EditorPane" Align="CENTER" GrowWidth="true" text="Editor Pane Area">
       <LineBorder Color="#a8a8a8" Width="3" />

@@ -2,7 +2,6 @@ package snapcharts.model;
 import java.util.*;
 
 import snap.util.*;
-import snapcharts.app.Intervals;
 
 /**
  * A class to manage a list of DataSets.

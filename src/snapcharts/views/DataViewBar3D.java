@@ -2,7 +2,7 @@ package snapcharts.views;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.*;
-import snapcharts.app.Intervals;
+import snapcharts.model.Intervals;
 import snapcharts.gfx3d.*;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;

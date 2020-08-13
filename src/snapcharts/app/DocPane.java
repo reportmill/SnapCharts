@@ -146,7 +146,21 @@ public class DocPane extends ViewOwner {
      */
     public DocPane newDoc()
     {
-        loadSampleDoc();
+        // Crummy sample
+        if (ViewUtils.isAltDown()) {
+            //WebURL url = WebURL.getURL(App.class, "Sample.json");
+            WebURL url = WebURL.getURL("/Users/jeff/Samples/Charts/Sample.json");
+            Doc doc = Doc.createDocFromSource(url);
+            setDoc(doc);
+        }
+
+        // Create/set empty doc
+        else {
+            Doc doc = new Doc();
+            doc.setName("Untitled");
+            setDoc(doc);
+        }
+
         return this;
     }
 
@@ -443,16 +457,6 @@ public class DocPane extends ViewOwner {
             DocItem newDataSetItem = selItem.addChartPart(dset, null);
             setSelItem(newDataSetItem);
         }
-    }
-
-    /**
-     * Loads a sample.
-     */
-    protected void loadSampleDoc()
-    {
-        WebURL url = WebURL.getURL(App.class, "Sample.json");
-        Doc doc = Doc.createDocFromSource(url);
-        setDoc(doc);
     }
 
     /**
