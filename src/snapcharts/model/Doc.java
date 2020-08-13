@@ -43,7 +43,7 @@ public class Doc extends DocItem {
     protected DocItemPane createItemPane()
     {
         ChartSetPane pane = new ChartSetPane();
-        pane.setCharts(getCharts());
+        pane.setDocItem(this);
         return pane;
     }
 

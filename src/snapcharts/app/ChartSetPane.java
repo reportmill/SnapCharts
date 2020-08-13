@@ -1,16 +1,24 @@
 package snapcharts.app;
 import snap.gfx.Color;
+import snap.util.PropChange;
 import snap.view.ColView;
 import snap.view.RowView;
 import snapcharts.model.Chart;
+import snapcharts.model.DocItem;
+import snapcharts.model.DocItemChart;
 import snapcharts.views.PageView;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A ViewOwner to handle display of whole ChartDoc.
  */
 public class ChartSetPane extends DocItemPane {
+
+    // The DocItem that this class displays
+    private DocItem  _docItem;
 
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();
@@ -24,8 +32,38 @@ public class ChartSetPane extends DocItemPane {
     // The Inspector
     private ChartSetPaneInsp _insp;
 
+    // Runnable to reset charts later
+    private Runnable  _resetChartsRun, _resetChartsRunShared = () -> resetChartsImpl();
+
     // Constants
     public static Color BACK_FILL = new Color(165, 179, 216).brighter();
+
+    /**
+     * Returns the DocItem that this ChartSetPane displays.
+     */
+    public DocItem getDocItem()  { return _docItem; }
+
+    /**
+     * Sets the DocItem that this ChartSetPane displays.
+     */
+    public void setDocItem(DocItem anItem)
+    {
+        _docItem = anItem;
+        _docItem.addPropChangeListener(pc -> docItemDidPropChange(pc));
+    }
+
+    /**
+     * Called when DocItem has prop change.
+     */
+    private void docItemDidPropChange(PropChange aPC)
+    {
+        String propName = aPC.getPropName();
+
+        // Handle Items
+        if (propName==DocItem.Items_Prop) {
+            resetCharts();
+        }
+    }
 
     /**
      * Returns the list of charts.
@@ -33,40 +71,48 @@ public class ChartSetPane extends DocItemPane {
     public List<Chart> getCharts()  { return _charts; }
 
     /**
-     * Sets the chart list.
+     * Resets the charts.
      */
-    public void setCharts(List<Chart> theCharts)
+    private void resetCharts()
     {
-        getUI();
-        _charts.clear();
+        if (_resetChartsRun==null)
+            runLater(_resetChartsRun=_resetChartsRunShared);
+    }
 
+    /**
+     * Resets the charts.
+     */
+    private void resetChartsImpl()
+    {
+        _charts.clear();
         _topColView.removeChildren();
         _pageViews.clear();
 
-        for (Chart chart : theCharts) {
-            addChart(chart);
+        // Get List of DocItemChart
+        List<DocItemChart> chartDocItems = getFileteredList(_docItem.getItems(), DocItemChart.class);
+
+        // Get charts
+        for (DocItemChart item : chartDocItems) {
+
+            // Get Chart and to Charts list
+            Chart chart = item.getChart();
+            _charts.add(chart);
+
+            // Add to PageView
+            PageView pageView = new PageView();
+            pageView.addChart(chart);
+            _pageViews.add(pageView);
+            _topColView.addChild(pageView);
         }
+        _resetChartsRun = null;
     }
 
     /**
-     * Adds a chart.
+     * Returns a list of derived items for given collection of original items.
      */
-    public void addChart(Chart aChart)
+    private static <T,R> List<R> getFileteredList(Collection<T> aList, Class<R> aClass)
     {
-        addChart(aChart, _charts.size());
-    }
-
-    /**
-     * Adds a chart.
-     */
-    public void addChart(Chart aChart, int anIndex)
-    {
-        _charts.add(anIndex, aChart);
-
-        PageView pageView = new PageView();
-        pageView.addChart(aChart);
-        _pageViews.add(pageView);
-        _topColView.addChild(pageView);
+        return (List<R>) aList.stream().filter(item -> aClass.isInstance(item)).collect(Collectors.toList());
     }
 
     /**
@@ -101,5 +147,7 @@ public class ChartSetPane extends DocItemPane {
 
         _topColView = getView("TopColView", ColView.class);
         _topColView.setFill(BACK_FILL);
+
+        resetCharts();
     }
 }
