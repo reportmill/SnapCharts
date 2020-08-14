@@ -587,7 +587,7 @@ public class DataSet extends ChartPart {
         if (dataType==DataType.IY && dataY!=null) {
             int len = dataY.length;
             for (int i=0; i<len; i++)
-                addPointXY(dataX[i], dataY[i]);
+                addPointCY(null, dataY[i]);
         }
 
         // Handle XY

@@ -1,10 +1,12 @@
 package snapcharts.app;
 
+import snap.util.ListUtils;
 import snap.util.Prefs;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.DialogBox;
 import snap.viewx.RecentFiles;
+import snap.web.PathUtils;
 import snap.web.WebFile;
 import snap.web.WebURL;
 
@@ -108,6 +110,7 @@ public class WelcomePanel extends ViewOwner {
     public void showPanel()
     {
         getUI(); // This is bogus - if this isn't called, Window node get reset
+        _recentFiles = null;
         getWindow().setVisible(true); //getTimeline().play();
         resetLater();
     }
@@ -340,9 +343,15 @@ public class WelcomePanel extends ViewOwner {
      */
     private void setRecentFilesInBackground()
     {
+        // Get email
         String email = getCloudEmail();
         if (email==null || email.length()==0) email = "guest@guest";
+
+        // Get chart files
         List<WebFile> files = DropBox.getSiteForEmail(email).getRootDir().getFiles();
+        files = ListUtils.getFiltered(files, file -> "charts".equals(file.getType()));
+
+        // Set files and trigger reload
         _recentFiles = files;
         runLater(() -> recentFilesLoaded());
     }

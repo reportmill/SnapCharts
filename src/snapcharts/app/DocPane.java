@@ -203,8 +203,11 @@ public class DocPane extends ViewOwner {
     {
         // Run save panel, set Document.Source to path and re-save (or just return if cancelled)
         String exts[] = new String[] { "charts" };
-        String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
-        getDoc().setSourceURL(WebURL.getURL(path));
+        //String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
+
+        WebFile file = FilePanel.showSavePanelWeb(getUI(), "Snap Charts file", exts); if (file==null) return;
+
+        getDoc().setSourceURL(file.getURL());
         save();
     }
 
@@ -386,6 +389,10 @@ public class DocPane extends ViewOwner {
         // Configure window
         WindowView win = getWindow();
         enableEvents(win, WinClose);
+
+        // If TeaVM, go full window
+        if (SnapUtils.isTeaVM)
+            getWindow().setMaximized(true);
     }
 
     /**

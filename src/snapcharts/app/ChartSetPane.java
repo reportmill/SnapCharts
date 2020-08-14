@@ -1,5 +1,6 @@
 package snapcharts.app;
 import snap.gfx.Color;
+import snap.util.ListUtils;
 import snap.util.PropChange;
 import snap.view.ColView;
 import snap.view.RowView;
@@ -94,7 +95,7 @@ public class ChartSetPane extends DocItemPane {
         _pageViews.clear();
 
         // Get List of DocItemChart
-        List<DocItemChart> chartDocItems = getFileteredList(_docItem.getItems(), DocItemChart.class);
+        List<DocItemChart> chartDocItems = ListUtils.getFilteredForClass(_docItem.getItems(), DocItemChart.class);
 
         // Get number of plots per page
         DocItemGroup docItem = getDocItem();
@@ -148,13 +149,5 @@ public class ChartSetPane extends DocItemPane {
         _topColView.setFill(BACK_FILL);
 
         resetCharts();
-    }
-
-    /**
-     * Returns a list of derived items for given collection of original items.
-     */
-    private static <T,R> List<R> getFileteredList(Collection<T> aList, Class<R> aClass)
-    {
-        return (List<R>) aList.stream().filter(item -> aClass.isInstance(item)).collect(Collectors.toList());
     }
 }
