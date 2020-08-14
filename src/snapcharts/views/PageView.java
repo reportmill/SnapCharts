@@ -18,7 +18,8 @@ public class PageView extends ColView {
      */
     public PageView()
     {
-        setPadding(40,40,40, 40);
+        setPadding(36,36,36, 36);
+        setSpacing(20);
         setVertical(true);
         setFill(Color.WHITE);
         setBorder(Color.BLACK, 1);
@@ -32,6 +33,7 @@ public class PageView extends ColView {
     {
         ChartView chartView = new ChartView();
         chartView.setGrowWidth(true);
+        chartView.setGrowHeight(true);
         chartView.setBorder(Color.BLACK, 1);
         chartView.setEffect(new ShadowEffect());
         chartView.setChart(aChart);

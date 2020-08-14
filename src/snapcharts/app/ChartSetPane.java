@@ -6,6 +6,7 @@ import snap.view.RowView;
 import snapcharts.model.Chart;
 import snapcharts.model.DocItem;
 import snapcharts.model.DocItemChart;
+import snapcharts.model.DocItemGroup;
 import snapcharts.views.PageView;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class ChartSetPane extends DocItemPane {
 
     // The DocItem that this class displays
-    private DocItem  _docItem;
+    private DocItemGroup  _docItem;
 
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();
@@ -41,12 +42,12 @@ public class ChartSetPane extends DocItemPane {
     /**
      * Returns the DocItem that this ChartSetPane displays.
      */
-    public DocItem getDocItem()  { return _docItem; }
+    public DocItemGroup getDocItem()  { return _docItem; }
 
     /**
      * Sets the DocItem that this ChartSetPane displays.
      */
-    public void setDocItem(DocItem anItem)
+    public void setDocItem(DocItemGroup anItem)
     {
         _docItem = anItem;
         _docItem.addPropChangeListener(pc -> docItemDidPropChange(pc));
@@ -57,12 +58,16 @@ public class ChartSetPane extends DocItemPane {
      */
     private void docItemDidPropChange(PropChange aPC)
     {
+        // Get PropChange.PropName
         String propName = aPC.getPropName();
 
         // Handle Items
-        if (propName==DocItem.Items_Prop) {
+        if (propName==DocItem.Items_Prop)
             resetCharts();
-        }
+        if (propName==DocItemGroup.ItemsPerPage_Prop)
+            resetCharts();
+        if (propName==DocItemGroup.Portrait_Prop)
+            resetCharts();
     }
 
     /**
@@ -91,46 +96,40 @@ public class ChartSetPane extends DocItemPane {
         // Get List of DocItemChart
         List<DocItemChart> chartDocItems = getFileteredList(_docItem.getItems(), DocItemChart.class);
 
+        // Get number of plots per page
+        DocItemGroup docItem = getDocItem();
+        int plotsPerPage = docItem.getItemsPerPage();
+
+        // Get the current page
+        PageView pageView = new PageView();
+        pageView.setVertical(docItem.isPortrait());
+        _pageViews.add(pageView);
+        _topColView.addChild(pageView);
+
         // Get charts
-        for (DocItemChart item : chartDocItems) {
+        for (int i=0; i<chartDocItems.size(); i++) {
 
             // Get Chart and to Charts list
+            DocItemChart item = chartDocItems.get(i);
             Chart chart = item.getChart();
             _charts.add(chart);
 
+            // Create/add PageView if needed
+            if (pageView==null) {
+                pageView = new PageView();
+                pageView.setVertical(docItem.isPortrait());
+                _pageViews.add(pageView);
+                _topColView.addChild(pageView);
+            }
+
             // Add to PageView
-            PageView pageView = new PageView();
             pageView.addChart(chart);
-            _pageViews.add(pageView);
-            _topColView.addChild(pageView);
+
+            // If next chart needs new page, clear
+            if ((i+1)%plotsPerPage==0)
+                pageView = null;
         }
         _resetChartsRun = null;
-    }
-
-    /**
-     * Returns a list of derived items for given collection of original items.
-     */
-    private static <T,R> List<R> getFileteredList(Collection<T> aList, Class<R> aClass)
-    {
-        return (List<R>) aList.stream().filter(item -> aClass.isInstance(item)).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns whether pages are portrait.
-     */
-    public boolean isPortrait()
-    {
-        PageView pview = _pageViews.size()>0 ? _pageViews.get(0) : null;
-        return pview==null || pview.isVertical();
-    }
-
-    /**
-     * Sets whether pages are portrait.
-     */
-    public void setPortrait(boolean aValue)
-    {
-        for (PageView pview : _pageViews)
-            pview.setVertical(aValue);
     }
 
     /**
@@ -149,5 +148,13 @@ public class ChartSetPane extends DocItemPane {
         _topColView.setFill(BACK_FILL);
 
         resetCharts();
+    }
+
+    /**
+     * Returns a list of derived items for given collection of original items.
+     */
+    private static <T,R> List<R> getFileteredList(Collection<T> aList, Class<R> aClass)
+    {
+        return (List<R>) aList.stream().filter(item -> aClass.isInstance(item)).collect(Collectors.toList());
     }
 }

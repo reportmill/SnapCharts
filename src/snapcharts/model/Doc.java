@@ -3,22 +3,14 @@ import snap.util.FilePathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snap.web.WebURL;
-import snapcharts.app.ChartSetPane;
-import snapcharts.app.DocItemPane;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class to hold multiple chart objects.
  */
-public class Doc extends DocItem {
+public class Doc extends DocItemGroup {
 
     // The Source URL
     private WebURL  _srcURL;
-
-    // Constants for properties
-    public static final String Charts_Prop = "Charts";
 
     // Constants
     public static final String CHARTS_FILE_EXTENSION = "charts";
@@ -37,76 +29,10 @@ public class Doc extends DocItem {
     }
 
     /**
-     * Creates the ItemPane.
-     */
-    @Override
-    protected DocItemPane createItemPane()
-    {
-        ChartSetPane pane = new ChartSetPane();
-        pane.setDocItem(this);
-        return pane;
-    }
-
-    /**
-     * Returns the charts.
-     */
-    public List<Chart> getCharts()
-    {
-        List<Chart> charts = new ArrayList<>();
-        for (DocItem item : getItems())
-            if (item instanceof DocItemChart)
-                charts.add(((DocItemChart)item).getChart());
-        return charts;
-    }
-
-    /**
-     * Adds a chart.
-     */
-    public DocItem addChart(Chart aChart)
-    {
-        DocItemChart chartDocItem = new DocItemChart(aChart);
-        addItem(chartDocItem);
-        return chartDocItem;
-    }
-
-    /**
-     * Adds a chart at given index.
-     */
-    public DocItem addChart(Chart aChart, int anIndex)
-    {
-        DocItemChart chartDocItem = new DocItemChart(aChart);
-        addItem(chartDocItem, anIndex);
-        return chartDocItem;
-    }
-
-    /**
      * Override to return this.
      */
     @Override
     public Doc getDoc()  { return this; }
-
-    /**
-     * Override to accept Chart.
-     */
-    public DocItem addChartPart(ChartPart aChartPart, DocItem aChildItem)
-    {
-        // Handle Chart
-        if (aChartPart instanceof Chart) {
-            Chart chart = (Chart) aChartPart;
-            int ind = aChildItem!=null ? aChildItem.getIndex() + 1 : getItemCount();
-            return addChart(chart, ind);
-        }
-
-        // Handle DataSet
-        if (aChartPart instanceof DataSet) {
-            for (DocItem item : getItems())
-                if (item instanceof DocItemChart)
-                    item.addChartPart(aChartPart, null);
-        }
-
-        // Do normal version (nothing)
-        return super.addChartPart(aChartPart, aChildItem);
-    }
 
     /**
      * Returns XML bytes for ChartDoc.
@@ -127,12 +53,6 @@ public class Doc extends DocItem {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive charts
-        XMLElement chartsXML = new XMLElement(Charts_Prop);
-        e.add(chartsXML);
-        for (Chart chart : getCharts())
-            chartsXML.add(anArchiver.toXML(chart));
-
         // Return element
         return e;
     }
@@ -145,17 +65,6 @@ public class Doc extends DocItem {
     {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
-
-        // Unarchive charts
-        XMLElement chartsXML = anElement.get(Charts_Prop);
-        if (chartsXML!=null) {
-            List<XMLElement> chartXMLs = chartsXML.getElements("Chart");
-            for (XMLElement chartXML : chartXMLs) {
-                Chart chart = (Chart)anArchiver.fromXML(chartXML, this);
-                if (chart!=null)
-                    addChart(chart);
-            }
-        }
 
         // Return this part
         return this;
