@@ -47,16 +47,15 @@ public class DataSetPane extends DocItemPane {
      */
     private void paste()
     {
-        //if (SnapUtils.isTeaVM) {
-        System.out.println("DataSetPane.paste");
+        if (SnapUtils.isTeaVM) {
             Clipboard cb = Clipboard.get();
             cb.getApprovedClipboardAndRun(cb2 -> paste(cb2));
-//        }
-//
-//        else {
-//            Clipboard cb = Clipboard.get();
-//            paste(cb);
-//        }
+        }
+
+        else {
+            Clipboard cb = Clipboard.get();
+            paste(cb);
+        }
     }
 
     /**
@@ -70,6 +69,7 @@ public class DataSetPane extends DocItemPane {
             String cells[][] = DataUtils.getCellData(str);
             if (cells != null)
                 getDataSet().replaceData(cells, _sheetView.getSel());
+            resetLater();
         }
     }
 
