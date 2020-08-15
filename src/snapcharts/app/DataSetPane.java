@@ -47,7 +47,23 @@ public class DataSetPane extends DocItemPane {
      */
     private void paste()
     {
-        Clipboard cb = Clipboard.get();
+        //if (SnapUtils.isTeaVM) {
+        System.out.println("DataSetPane.paste");
+            Clipboard cb = Clipboard.get();
+            cb.getApprovedClipboardAndRun(cb2 -> paste(cb2));
+//        }
+//
+//        else {
+//            Clipboard cb = Clipboard.get();
+//            paste(cb);
+//        }
+    }
+
+    /**
+     * Called to paste from clipboard.
+     */
+    private void paste(Clipboard cb)
+    {
 
         if (cb.hasString()) {
             String str = cb.getString();
