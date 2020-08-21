@@ -30,10 +30,11 @@ public class ChartBasicTool extends ViewOwner {
         // Get Chart
         Chart chart = _chartPane.getChart();
 
-        // Reset NameText, TitleText, SubtitleText, YAxisTitleText
+        // Reset NameText, TitleText, SubtitleText, XAxisTitleText, YAxisTitleText
         setViewValue("NameText", chart.getName());
         setViewValue("TitleText", chart.getTitle());
         setViewValue("SubtitleText", chart.getSubtitle());
+        setViewValue("XAxisTitleText", chart.getAxisX().getTitle());
         setViewValue("YAxisTitleText", chart.getAxisY().getTitle());
 
         // Reset ShowLegendCheckBox, PartialYAxisCheckBox
@@ -55,9 +56,10 @@ public class ChartBasicTool extends ViewOwner {
             _chartPane.getDocPane().docItemNameChanged();
         }
 
-        // Handle TitleText, SubtitleText, YAxisTitleText
+        // Handle TitleText, SubtitleText, XAxisTitleText, YAxisTitleText
         if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
         if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
+        if(anEvent.equals("XAxisTitleText")) chart.getAxisX().setTitle(anEvent.getStringValue());
         if(anEvent.equals("YAxisTitleText")) chart.getAxisY().setTitle(anEvent.getStringValue());
 
         // Handle ShowLegendCheckBox, PartialYAxisCheckBox

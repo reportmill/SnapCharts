@@ -6,10 +6,8 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.DialogBox;
 import snap.viewx.RecentFiles;
-import snap.web.PathUtils;
 import snap.web.WebFile;
 import snap.web.WebURL;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -320,6 +318,9 @@ public class WelcomePanel extends ViewOwner {
         // If already set, just return
         if (_recentFiles!=null) return _recentFiles;
 
+        // Get DropBox
+        getDropBox();
+
         // Handle Local
         if (!isCloud()) {
             List <WebFile> rfiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
@@ -343,17 +344,27 @@ public class WelcomePanel extends ViewOwner {
      */
     private void setRecentFilesInBackground()
     {
-        // Get email
-        String email = getCloudEmail();
-        if (email==null || email.length()==0) email = "guest@guest";
-
         // Get chart files
-        List<WebFile> files = DropBox.getSiteForEmail(email).getRootDir().getFiles();
+        DropBox dropBox = getDropBox();
+        List<WebFile> files = dropBox.getRootDir().getFiles();
         files = ListUtils.getFiltered(files, file -> "charts".equals(file.getType()));
 
         // Set files and trigger reload
         _recentFiles = files;
         runLater(() -> recentFilesLoaded());
+    }
+
+    /**
+     * Gets the DropBox.
+     */
+    private DropBox getDropBox()
+    {
+        // Get email
+        String email = getCloudEmail();
+        if (email==null || email.length()==0) email = "guest@guest";
+
+        // Get chart files
+        return DropBox.getSiteForEmail(email);
     }
 
     /**

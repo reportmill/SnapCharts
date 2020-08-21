@@ -3,6 +3,8 @@ import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
+import snapcharts.model.AxisX;
+import snapcharts.model.AxisY;
 import snapcharts.model.Intervals;
 import snapcharts.model.Chart;
 
@@ -11,10 +13,7 @@ import java.text.DecimalFormat;
 /**
  * A view to paint Chart Y Axis.
  */
-public class AxisViewY extends ParentView {
-    
-    // The DataView
-    protected DataView  _dataView;
+public class AxisViewY extends AxisView {
     
     // The Title view
     private StringView  _titleView;
@@ -22,28 +21,6 @@ public class AxisViewY extends ParentView {
     // The Title view wrapper (to allow rotation)
     private WrapView  _titleViewBox;
     
-    // Title offset - distance from title left edge to axis
-    private Double  _titleOffset;
-    
-    // Title margin - distance of title right edge to labels
-    private double  _titleMargin = 10;
-    
-    // Title x/y - additional offset for title
-    private double  _titleX, _titleY;
-    
-    // Labels margin - distance of labels right edge to axis
-    private double  _labelsMargin = 15;
-    
-    // THe grid line color
-    private Color  _gridLineColor = GRID_LINES_COLOR;
-    
-    // The grid line
-    private double  _gridLineDashArray[];
-    
-    // Constants
-    static Color   AXIS_LABELS_COLOR = Color.GRAY;
-    static Color   GRID_LINES_COLOR = Color.get("#E6");
-
     /**
      * Creates the ChartYAxis.
      */
@@ -51,7 +28,7 @@ public class AxisViewY extends ParentView {
     {
         enableEvents(MousePress);
 
-        // Create configure YAxisTitleView
+        // Create configure TitleView
         _titleView = new StringView();
         _titleView.setTextFill(Color.GRAY);
         _titleView.setRotate(270);
@@ -61,28 +38,11 @@ public class AxisViewY extends ParentView {
     }
 
     /**
-     * Returns the Chart.
+     * Returns the axis.
      */
-    public Chart getChart()  { return _dataView.getChart(); }
-
-    /**
-     * Returns the YAxis title view.
-     */
-    public StringView getTitleView()  { return _titleView; }
-
-    /**
-     * Returns the YAxis title.
-     */
-    public String getTitle()  { return _titleView.getText(); }
-
-    /**
-     * Sets the YAxis title.
-     */
-    public void setTitle(String aStr)
+    public AxisY getAxis()
     {
-        _titleView.setText(aStr);
-        double titlePad = aStr!=null && aStr.length()>0 ? getTitleMargin() : 0;
-        _titleViewBox.setPadding(0, titlePad, 0, 0);
+        return getChart().getAxisY();
     }
 
     /**
@@ -90,47 +50,23 @@ public class AxisViewY extends ParentView {
      */
     public double getTitleOffset()
     {
-        if (_titleOffset!=null) return _titleOffset;
         return _titleViewBox.getPrefWidth() + getLabelsOffset();
-    }
-
-    /**
-     * Sets the distance from title left edge to axis.
-     */
-    public void setTitleOffset(double aValue)
-    {
-        _titleOffset = aValue>=0 ? aValue : null;
     }
 
     /**
      * Returns the distance between the title and axis labels.
      */
-    public double getTitleMargin()  { return _titleMargin; }
-
-    /**
-     * Sets the distance between the title and axis labels.
-     */
-    public void setTitleMargin(double aValue)  { _titleMargin = aValue; }
+    public double getTitleMargin()  { return getAxis().getTitleMargin(); }
 
     /**
      * Returns the additional offset of title.
      */
-    public double getTitleX()  { return _titleX; }
+    public double getTitleX()  { return getAxis().getTitleX(); }
 
     /**
      * Returns the additional offset of title.
      */
-    public void setTitleX(double aValue)  { _titleX = aValue; }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public double getTitleY()  { return _titleY; }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public void setTitleY(double aValue)  { _titleY = aValue; }
+    public double getTitleY()  { return getAxis().getTitleY(); }
 
     /**
      * Returns the distance between axis labels left edge and axis.
@@ -140,27 +76,19 @@ public class AxisViewY extends ParentView {
     /**
      * Returns the distance between axis labels right edge and the axis.
      */
-    public double getLabelsMargin()  { return _labelsMargin; }
+    public double getLabelsMargin()  { return getAxis().getLabelsMargin(); }
 
     /**
-     * Returns the grid line color.
+     * Called to reset view from Chart.
      */
-    public Color getGridLineColor()  { return _gridLineColor; }
-
-    /**
-     * Returns the grid line color.
-     */
-    public void setGridLineColor(Color aColor)  { _gridLineColor = aColor; }
-
-    /**
-     * Returns the grid line dash array.
-     */
-    public double[] getGridLineDashArray()  { return _gridLineDashArray; }
-
-    /**
-     * Returns the grid line dash array.
-     */
-    public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
+    protected void resetView()
+    {
+        // Reset title
+        String title = getAxis().getTitle();
+        _titleView.setText(title);
+        double titlePad = title!=null && title.length()>0 ? getTitleMargin() : 0;
+        _titleViewBox.setPadding(0, titlePad, 0, 0);
+    }
 
     /**
      * Paints chart y axis.
@@ -208,7 +136,8 @@ public class AxisViewY extends ParentView {
      */
     protected double getPrefWidthImpl(double aH)
     {
-        double toff = getTitleOffset() - getTitleX(), loff = getLabelsOffset();
+        double toff = getTitleOffset() - getTitleX();
+        double loff = getLabelsOffset();
         double pw = Math.max(toff, loff);
         return pw;
     }
@@ -219,7 +148,8 @@ public class AxisViewY extends ParentView {
     protected void layoutImpl()
     {
         double w = getWidth(), h = getHeight();
-        double toff = getTitleOffset() - getTitleX(), loff = getLabelsOffset(), tw = _titleViewBox.getPrefWidth();
+        double toff = getTitleOffset() - getTitleX();
+        double loff = getLabelsOffset(), tw = _titleViewBox.getPrefWidth();
         double titleX = toff>loff ? 0 : loff - toff;
         _titleViewBox.setBounds(titleX, getTitleY(), tw, h);
     }

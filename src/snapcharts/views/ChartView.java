@@ -240,9 +240,11 @@ public class ChartView extends ColView {
         boolean showLegend = chart.isShowLegend();
         setShowLegend(showLegend);
 
+        // Reset X Axis
+        getAxisX().resetView();
+
         // Reset Y Axis
-        String axisY_Title = chart.getAxisY().getTitle();
-        getAxisY().setTitle(axisY_Title);
+        getAxisY().resetView();
 
         // Reset Legend
         if (showLegend)

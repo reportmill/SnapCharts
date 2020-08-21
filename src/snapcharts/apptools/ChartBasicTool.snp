@@ -13,6 +13,10 @@
     <TextField Name="SubtitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
+    <Label text="X-Axis Title:" />
+    <TextField Name="XAxisTitleText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
     <Label text="Y-Axis Title:" />
     <TextField Name="YAxisTitleText" GrowWidth="true" />
   </RowView>
