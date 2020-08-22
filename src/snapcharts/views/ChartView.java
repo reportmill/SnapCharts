@@ -314,7 +314,9 @@ public class ChartView extends ColView {
     public Point dataPointInLocal(DataPoint aDP)
     {
           DataView carea = _dataView;
-          Point pnt = carea.dataPointInLocal(aDP);
+          double x = aDP.getX();
+          double y = aDP.getY();
+          Point pnt = carea.dataToView(x, y);
           return carea.localToParent(pnt.x, pnt.y, this);
     }
 

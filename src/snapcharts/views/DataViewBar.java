@@ -4,10 +4,7 @@ import java.util.List;
 import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
-import snapcharts.model.AreaBar;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
+import snapcharts.model.*;
 
 /**
  * A ChartArea subclass to display the contents of bar chart.
@@ -49,16 +46,6 @@ public class DataViewBar extends DataView {
     }
 
     /**
-     * Override to clear section/bar cache.
-     */
-    public void setWidth(double aValue)  { super.setWidth(aValue); clearCache(); }
-
-    /**
-     * Override to clear section/bar cache.
-     */
-    public void setHeight(double aValue)  { super.setHeight(aValue); clearCache(); }
-
-    /**
      * Call to clear section/bar cache.
      */
     protected void clearCache()  { _sections = null; }
@@ -69,18 +56,21 @@ public class DataViewBar extends DataView {
     protected Section[] getSections()
     {
         // If recacl not needed, just return
-        int dsetCount = getActiveDataSets().size(), pointCount = getPointCount();
+        DataSetList dsetList = getDataSetList();
+        List<DataSet> dsets = dsetList.getDataSets();
+        int dsetCount = dsetList.getDataSetCount();
+        int pointCount = dsetList.getPointCount();
         if (_sections!=null && _sections.length==pointCount && _dsetCount ==dsetCount) return _sections;
 
         // Get ChartAreaBar info
         AreaBar barArea = getArea();
         double groupPad = barArea.getGroupPadding();
         double barPad = barArea.getBarPadding();
-        double cx = 0, cy = 0, cw = getWidth(), ch = getHeight();
+        double cx = 0, cy = 0; //double cw = getWidth();
+        double ch = getHeight();
         boolean colorDataSets = !barArea.isColorValues();
 
         // Get number of datasets, points and section width
-        List <DataSet> dsets = getActiveDataSets();
         _dsetCount = dsetCount;
         _pointCount = getPointCount();
         double sectionWidth = getWidth()/_pointCount;

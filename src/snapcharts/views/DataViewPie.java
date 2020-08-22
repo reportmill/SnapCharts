@@ -12,9 +12,6 @@ import snapcharts.model.*;
  */
 public class DataViewPie extends DataView {
     
-    // The cached values, ratios and angles
-    private double  _vals[], _ratios[], _angles[];
-    
     // The cached wedges
     private Wedge  _wedges[];
     
@@ -26,10 +23,21 @@ public class DataViewPie extends DataView {
     
     // Whether legend was showing
     private boolean  _showLegend;
-    
+
+    // The last MouseMove point
+    private Point _lastMouseMovePoint;
+
+    // Vars for animating SelDataPoint change
+    private DataPoint  _selPointLast;
+    private double  _selPointMorph = 1;
+    private boolean  _disableMorph;
+
     // The format
     private static DecimalFormat _fmt = new DecimalFormat("#.# %");
-    
+
+    // Constants
+    private static final String SelDataPointMorph_Prop = "SelDataPointMorph";
+
     // Constants
     private static double LABEL_MARGIN = 30;
     private static double LABEL_PAD = 3;
@@ -63,11 +71,17 @@ public class DataViewPie extends DataView {
      */
     public double[] getAngles()
     {
-        DataSetList dsetList = getActiveDataSetList();
-        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : getDataSet(0);
+        DataSetList dsetList = getDataSetList();
+        if (dsetList.getDataSetCount()==0)
+            dsetList = getDataSetListAll();
+        DataSet dset = dsetList.getDataSet(0);
         int count = getPointCount();
+
+        // Get/set ratios, angles
         double ratios[] = dset.getRatiosYtoTotalY();
-        double angles[] = new double[count]; for (int i=0;i<count;i++) angles[i] = Math.round(ratios[i]*360);
+        double angles[] = new double[count];
+        for (int i=0;i<count;i++)
+            angles[i] = Math.round(ratios[i]*360);
         return angles;
     }
 
@@ -80,16 +94,21 @@ public class DataViewPie extends DataView {
         if (_wedges!=null && _wedges.length==getPointCount()) return _wedges;
 
         // Get dataset and point count
-        DataSetList dsetList = getActiveDataSetList();
-        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : getDataSet(0);
+        DataSetList dsetList = getDataSetList();
+        if (dsetList.getDataSetCount()==0)
+            dsetList = getDataSetListAll();
+        DataSet dset = dsetList.getDataSet(0);
 
         // Get ratios and angles
         double ratios[] = dset.getRatiosYtoTotalY();
         double angles[] = getAngles();
 
         // Get chart size and insets and calculate pie radius, diameter and center x/y
-        double cw = getWidth(), ch = getHeight(); Insets ins = getInsetsAll();
-        _pieD = ch - ins.getHeight(); _pieR = _pieD/2;
+        double cw = getWidth();
+        double ch = getHeight();
+        Insets ins = getInsetsAll();
+        _pieD = ch - ins.getHeight();
+        _pieR = _pieD/2;
         _pieX = ins.left + Math.round((cw - ins.getWidth() - _pieD)/2);
         _pieY = ins.top + Math.round((ch - ins.getHeight() - _pieD)/2);
 
@@ -130,11 +149,12 @@ public class DataViewPie extends DataView {
         aPntr.setFont(getFont()); aPntr.setStroke(Stroke.Stroke1);
 
         // Iterate over wedges and paint wedge
-        for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i]; Color color = getChart().getColor(i);
+        for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
+            Color color = getChart().getColor(i);
 
             // If targeted, paint targ area
             if (i==targIndex && i!=selIndex) {
-                Arc arc = wedge.getArc(i==selIndex, true, false, reveal, selPointMorph);
+                Arc arc = wedge.getArc(false, true, false, reveal, selPointMorph);
                 aPntr.setColor(color.blend(Color.CLEARWHITE, .55)); aPntr.fill(arc);
                 color = color.blend(Color.WHITE, .15);
             }
@@ -144,17 +164,21 @@ public class DataViewPie extends DataView {
             aPntr.setColor(color); aPntr.fill(arc);
 
             // Paint connector and white border
-            if (reveal>=1) aPntr.draw(wedge.getLabelLine());
-            aPntr.setColor(Color.WHITE); aPntr.draw(arc);
+            if (reveal>=1)
+                aPntr.draw(wedge.getLabelLine());
+            aPntr.setColor(Color.WHITE);
+            aPntr.draw(arc);
         }
 
         // Iterate over wedges and paint wedge label
-        if (reveal>=1)
-        for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
-            String text = wedge._text;
-            if (text!=null && text.length()>0) {
-                Point pnt = wedge.getLabelPoint();
-                aPntr.setColor(Color.BLACK); aPntr.drawString(text, pnt.x, pnt.y);
+        if (reveal>=1) {
+            for (Wedge wedge : wedges) {
+                String text = wedge._text;
+                if (text != null && text.length() > 0) {
+                    Point pnt = wedge.getLabelPoint();
+                    aPntr.setColor(Color.BLACK);
+                    aPntr.drawString(text, pnt.x, pnt.y);
+                }
             }
         }
     }
@@ -165,11 +189,12 @@ public class DataViewPie extends DataView {
     protected DataPoint getDataPointAt(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
+        DataSetList dsetList = getDataSetListAll();
         Wedge wedges[] = getWedges();
         for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
             Arc arc = wedge.getArc();
             if (arc.contains(aX, aY))
-                return getDataSet(0).getPoint(i);
+                return dsetList.getDataSet(0).getPoint(i);
         }
 
         // Return null since no wedge contains point
@@ -179,8 +204,10 @@ public class DataViewPie extends DataView {
     /**
      * Override to return current mouse point.
      */
-    public Point dataPointInLocal(DataPoint aDP) { return _pnt; }
-    private Point _pnt;
+    public Point dataToView(double aX, double aY)
+    {
+        return _lastMouseMovePoint;
+    }
 
     /**
      * Handle events.
@@ -189,7 +216,11 @@ public class DataViewPie extends DataView {
     {
         // Handle MouseMove
         if (anEvent.isMouseMove()) {
-            _chartView.getToolTipView().setXYInChartArea(_pnt = anEvent.getPoint()); }
+            _lastMouseMovePoint = anEvent.getPoint();
+            _chartView.getToolTipView().setXYInChartArea(_lastMouseMovePoint);
+        }
+
+        // Do normal version
         super.processEvent(anEvent);
     }
 
@@ -198,14 +229,21 @@ public class DataViewPie extends DataView {
      */
     public void activate()
     {
+        // Get info
+        DataSetList dataSetList = getDataSetListAll();
+        int dsetCount = dataSetList.getDataSetCount();
+
+        // Update parts
         _chartView.getAxisX().setVisible(false);
         _chartView.getAxisY().setVisible(false);
-        _showLegend = _chartView.isShowLegend(); _chartView.setShowLegend(getDataSetCount()>1);
+        _showLegend = _chartView.isShowLegend();
+        _chartView.setShowLegend(dsetCount>1);
 
         // If multiple datasets, make sure only first is enabled
-        if (getDataSetCount()>1) {
-            getDataSet(0).setDisabled(false);
-            for (int i = 1; i< getDataSetCount(); i++) getDataSet(i).setDisabled(true);
+        if (dsetCount>1) {
+            dataSetList.getDataSet(0).setDisabled(false);
+            for (int i=1; i<dsetCount; i++)
+                dataSetList.getDataSet(i).setDisabled(true);
         }
     }
 
@@ -224,9 +262,11 @@ public class DataViewPie extends DataView {
      */
     public void reactivate()
     {
-        DataSetList dset = getActiveDataSetList(); if (dset.getDataSetCount()==0 || dset.getPointCount()==0) return;
+        DataSetList dset = getDataSetList(); if (dset.getDataSetCount()==0 || dset.getPointCount()==0) return;
         DataPoint dp = dset.getDataSet(0).getPoint(0);
-        _disableMorph = true; _chartView.setSelDataPoint(dp); _disableMorph = false;
+        _disableMorph = true;
+        _chartView.setSelDataPoint(dp);
+        _disableMorph = false;
 
         // Fix padding to accommodate bottom label, if needed
         fixPaddingForBottomLabelIfNeeded();
@@ -238,26 +278,18 @@ public class DataViewPie extends DataView {
     protected void clearCache()  { _wedges = null; }
 
     /**
-     * Override to clear wedge cache.
-     */
-    public void setWidth(double aValue)  { super.setWidth(aValue); clearCache(); }
-
-    /**
-     * Override to clear wedge cache.
-     */
-    public void setHeight(double aValue)  { super.setHeight(aValue); clearCache(); }
-
-    /**
      * Sets label points such that they don't overlap.
      */
     void setLabelPoints(Wedge wedges[])
     {
         // Set first and last wedge points
         if (wedges.length==0) return;
-        wedges[0].getLabelPoint(); wedges[wedges.length-1].getLabelPoint();
+        wedges[0].getLabelPoint();
+        wedges[wedges.length-1].getLabelPoint();
 
         // Set label points for pie right side
-        for (int i=1; i<wedges.length; i++) { Wedge wedge = wedges[i], wedge2 = wedges[i-1];
+        for (int i=1; i<wedges.length; i++) {
+            Wedge wedge = wedges[i], wedge2 = wedges[i-1];
             if (wedge.getAngleMid()>90) break;
             double angle = Math.max(wedge.getAngleMid(), wedge2._textAngle+2);
             wedge.getLabelPoint(angle);
@@ -266,7 +298,8 @@ public class DataViewPie extends DataView {
         }
 
         // Set label points for pie left side
-        for (int i=wedges.length-2; i>=0; i--) { Wedge wedge = wedges[i], wedge2 = wedges[i+1];
+        for (int i=wedges.length-2; i>=0; i--) {
+            Wedge wedge = wedges[i], wedge2 = wedges[i+1];
             if (wedge.getAngleMid()<90) break;
             double angle = Math.min(wedge.getAngleMid(), wedge2._textAngle-2);
             wedge.getLabelPoint(angle);
@@ -275,26 +308,40 @@ public class DataViewPie extends DataView {
         }
     }
 
-    /** Changes padding to have an extra 20 points on bottom if label needed there. */
+    /**
+     * Changes padding to have an extra 20 points on bottom if label needed there.
+     * */
     void fixPaddingForBottomLabelIfNeeded()
     {
-        double angles[] = getAngles(), start = -90;
-        boolean hasBottomWedge = false; Insets ins = getPadding();
+        double angles[] = getAngles();
+        double start = -90;
+        boolean hasBottomWedge = false;
+        Insets ins = getPadding();
+
         for (double a : angles) { double ang = start + a/2;
-            if (ang>60 && ang<120) { hasBottomWedge = true; break; } start += a; }
+            if (ang>60 && ang<120) {
+                hasBottomWedge = true; break; }
+            start += a;
+        }
         if (hasBottomWedge && ins.bottom!=PAD_BOTTOM_MAX)
             setPadding(PAD_TOP, 10, PAD_BOTTOM_MAX, 10);
         else if (!hasBottomWedge && ins.bottom!=PAD_BOTTOM)
             setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
     }
 
-    // Vars for animating SelDataPoint change
-    DataPoint _selPointLast; double _selPointMorph = 1; boolean _disableMorph;
-    static final String SelDataPointMorph_Prop = "SelDataPointMorph";
-
-    /** Returns/sets the measure (from 0 to 1) of change of newly set SelDataPoint. */
+    /**
+     * Returns/sets the measure (from 0 to 1) of change of newly set SelDataPoint.
+     */
     double getSelDataPointMorph()  { return _selPointMorph; }
-    void setSelDataPointMorph(double aValue)  { _selPointMorph = aValue; repaint(); }
+
+    /**
+     * Sets the measure (from 0 to 1) of change of newly set SelDataPoint.
+     */
+    void setSelDataPointMorph(double aValue)
+    {
+        _selPointMorph = aValue;
+        repaint();
+    }
 
     /**
      * Called when ChartView.SelDataPoint changes.

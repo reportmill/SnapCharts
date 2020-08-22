@@ -3,10 +3,8 @@ import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
-import snapcharts.model.AxisX;
 import snapcharts.model.AxisY;
 import snapcharts.model.Intervals;
-import snapcharts.model.Chart;
 
 import java.text.DecimalFormat;
 
@@ -110,7 +108,7 @@ public class AxisViewY extends AxisView {
         double fontDesc = Font.Arial12.getDescent();
 
         // Get intervals
-        Intervals intervals = _dataView.getActiveIntervals();
+        Intervals intervals = _dataView.getIntervalsY();
         int lineCount = intervals.getCount(), sectionCount = lineCount - 1;
         double intervalDelta = intervals.getDelta(), intervalMax = intervals.getMax();
         double marginx = getLabelsMargin();
@@ -195,7 +193,7 @@ public class AxisViewY extends AxisView {
     protected double getMaxLabelWidth()
     {
         // Get intervals
-        Intervals intervals = _dataView.getActiveIntervals();
+        Intervals intervals = _dataView.getIntervalsY();
         int lineCount = intervals.getCount(), sectionCount = lineCount - 1;
         double intervalDelta = intervals.getDelta(), intervalMax = intervals.getMax();
 

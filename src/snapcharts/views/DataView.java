@@ -23,7 +23,6 @@ public abstract class DataView extends ParentView {
     
     // Constants for properties
     public static String   Reveal_Prop = "Reveal";
-    public static String   DataPoint_Prop = "DataPoint";
 
     // Constants for defaults
     private static Color  AXIS_LINES_COLOR = Color.LIGHTGRAY;
@@ -65,45 +64,30 @@ public abstract class DataView extends ParentView {
     /**
      * Returns the data set list.
      */
-    public DataSetList getDataSetList()  { return _chartView.getDataSetList(); }
-
-    /**
-     * Returns the actual list of datasets.
-     */
-    public List <DataSet> getDataSets()  { return getDataSetList().getDataSets(); }
-
-    /**
-     * Returns the number of datasets.
-     */
-    public int getDataSetCount()  { return getDataSetList().getDataSetCount(); }
-
-    /**
-     * Returns the individual dataset at given index.
-     */
-    public DataSet getDataSet(int anIndex)  { return getDataSetList().getDataSet(anIndex); }
+    public DataSetList getDataSetListAll()  { return _chartView.getDataSetList(); }
 
     /**
      * Returns the DataSetList of active data sets.
      */
-    public DataSetList getActiveDataSetList()  { return getDataSetList().getActiveDataSetList(); }
-
-    /**
-     * Returns the active dataset.
-     */
-    public List <DataSet> getActiveDataSets()  { return getDataSetList().getActiveDataSets(); }
+    public DataSetList getDataSetList()  { return getDataSetListAll().getActiveList(); }
 
     /**
      * Returns number of points in datasets.
      */
-    public int getPointCount()  { return getDataSetList().getPointCount(); }
+    public int getPointCount()
+    {
+        DataSetList dsetList = getDataSetList();
+        return dsetList.getPointCount();
+    }
 
     /**
-     * Returns the intervals.
+     * Returns the Y axis intervals for active datasets.
      */
-    public Intervals getActiveIntervals()
+    public Intervals getIntervalsY()
     {
+        DataSetList dsetList = getDataSetList();
         double height = getHeight() - getInsetsAll().getHeight();
-        return getDataSetList().getActiveIntervals(height);
+        return dsetList.getIntervalsY(height);
     }
 
     /**
@@ -148,28 +132,18 @@ public abstract class DataView extends ParentView {
         Insets ins = getInsetsAll();
 
         // Convert X
-        DataSetList dset = getDataSetList();
+        DataSetList dset = getDataSetListAll();
         int count = dset.getPointCount();
         double w = getWidth() - ins.getWidth();
         double dx = w/(count-1);
         double nx = ins.left + aX*dx;
 
         // Convert Y and return
-        double axisMinVal = getActiveIntervals().getMin();
-        double axisMaxVal = getActiveIntervals().getMax();
+        double axisMinVal = getIntervalsY().getMin();
+        double axisMaxVal = getIntervalsY().getMax();
         double h = getHeight() - ins.getHeight();
         double ny = ins.top + h - (aY-axisMinVal)/(axisMaxVal-axisMinVal)*h;
         return new Point(nx, ny);
-    }
-
-    /**
-     * Returns the given data point in local coords.
-     */
-    public Point dataPointInLocal(DataPoint aDP)
-    {
-        int index = aDP.getIndex();
-        double y = aDP.getY();
-        return dataToView(index, y);
     }
 
     /**
@@ -204,7 +178,7 @@ public abstract class DataView extends ParentView {
     protected void paintAxisY(Painter aPntr, double aX, double aY, double aW, double aH)
     {
         // Get number of interval lines and interval height
-        int intervalCount = getActiveIntervals().getCount();
+        int intervalCount = getIntervalsY().getCount();
         double ih = aH/(intervalCount-1);
 
         // Draw y axis lines
@@ -252,17 +226,24 @@ public abstract class DataView extends ParentView {
         // If point out of bounds, return null
         if (aX<0 || aX>getWidth() || aY<0 || aY>getWidth()) return null;
 
+        // Get data info
+        DataSetList dsetList = getDataSetList();
+        List<DataSet> dsets = dsetList.getDataSets();
+        int pointCount = dsetList.getPointCount();
+
         // Iterate over active dataset to find dataset + value index closest to point
-        DataPoint dataPoint = null; double dist = Float.MAX_VALUE;
-        List <DataSet> dsets = getActiveDataSets();
-        for (int i=0;i<dsets.size();i++) { DataSet dset = dsets.get(i);
+        DataPoint dataPoint = null;
+        double dist = Float.MAX_VALUE;
+        for (DataSet dset : dsets) {
 
             // Iterate over points
-            for (int j=0;j<getPointCount();j++) {
+            for (int j=0; j<pointCount; j++) {
                 Point pnt = dataToView(j, dset.getY(j));
                 double d = Point.getDistance(aX, aY, pnt.x, pnt.y);
-                if (d<dist) { dist = d;
-                    dataPoint = dset.getPoint(j); }
+                if (d<dist) {
+                    dist = d;
+                    dataPoint = dset.getPoint(j);
+                }
             }
         }
 
@@ -276,7 +257,10 @@ public abstract class DataView extends ParentView {
     public void activate()
     {
         // Enable all datasets
-        for (int i = 0; i< getDataSetCount(); i++) getDataSet(i).setDisabled(false);
+        DataSetList dataSetList = getDataSetListAll();
+        List<DataSet> dsets = dataSetList.getDataSets();
+        for (DataSet dset : dsets)
+            dset.setDisabled(false);
     }
 
     /**
@@ -293,6 +277,26 @@ public abstract class DataView extends ParentView {
      * Call to clear any cached data.
      */
     protected void clearCache()  { }
+
+    /**
+     * Override to clear section/bar cache.
+     */
+    public void setWidth(double aValue)
+    {
+        if (aValue==getWidth()) return;
+        super.setWidth(aValue);
+        clearCache();
+    }
+
+    /**
+     * Override to clear section/bar cache.
+     */
+    public void setHeight(double aValue)
+    {
+        if (aValue==getHeight()) return;
+        super.setHeight(aValue);
+        clearCache();
+    }
 
     /**
      * Returns the value for given key.

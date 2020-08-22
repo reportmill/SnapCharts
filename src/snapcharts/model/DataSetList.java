@@ -254,7 +254,7 @@ public class DataSetList extends ChartPart {
     /**
      * Returns a DataSetList of active datasets.
      */
-    public DataSetList getActiveDataSetList()
+    public DataSetList getActiveList()
     {
         // If already cached, just return it
         if (_active!=null) return _active;
@@ -272,22 +272,6 @@ public class DataSetList extends ChartPart {
                 active._dsets.add(dset);
         active._startValue = _startValue;
         return _active = active;
-    }
-
-    /**
-     * Returns the active datasets.
-     */
-    public List <DataSet> getActiveDataSets()
-    {
-        return getActiveDataSetList().getDataSets();
-    }
-
-    /**
-     * Returns the intervals.
-     */
-    public Intervals getActiveIntervals(double aHeight)
-    {
-        return getActiveDataSetList().getIntervalsY(aHeight);
     }
 
     /**

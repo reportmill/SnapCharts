@@ -5,6 +5,7 @@ import snap.gfx.*;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 
 /**
  * A ChartArea subclass to display the contents of line chart.
@@ -33,13 +34,14 @@ public class DataViewLine extends DataView {
      */
     public List <Path> getDataSetPaths()
     {
-        // Get dataset paths
-        List <Path> paths = new ArrayList();
-        int dsetCount = getDataSetCount();
+        // Get info
+        DataSetList dataSetList = getDataSetList();
         int pointCount = getPointCount();
 
         // Iterate over datasets
-        for (int i=0; i<dsetCount;i++) { DataSet dset = getDataSet(i); if (dset.isDisabled()) continue;
+        List<DataSet> dsets = dataSetList.getDataSets();
+        List <Path> paths = new ArrayList();
+        for (DataSet dset : dsets) {
 
             Path path = new Path();
             paths.add(path);
@@ -61,7 +63,8 @@ public class DataViewLine extends DataView {
     protected void paintChart(Painter aPntr, double aX, double aY, double aW, double aH)
     {
         // Get DataSet list
-        List <DataSet> dsets = getActiveDataSets();
+        DataSetList dataSetList = getDataSetList();
+        List<DataSet> dsets = dataSetList.getDataSets();
         int dsetCount = dsets.size();
 
         int pointCount = getPointCount();

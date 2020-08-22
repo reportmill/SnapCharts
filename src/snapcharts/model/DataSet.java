@@ -373,7 +373,12 @@ public class DataSet extends ChartPart {
     /**
      * Returns the index in dataset active dataset.
      */
-    public int getActiveIndex()  { return _dsetList.getActiveDataSets().indexOf(this); }
+    public int getActiveIndex()
+    {
+        DataSetList dsetList = getDataSetList().getActiveList();
+        List<DataSet> dsets = dsetList.getDataSets();
+        return dsets.indexOf(this);
+    }
 
     /**
      * Returns whether this dataset is disabled.

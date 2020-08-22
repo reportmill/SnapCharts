@@ -62,12 +62,12 @@ public class DataViewBar3D extends DataViewBar {
     /**
      * Returns the number of intervals for this filled graph.
      */
-    public int getIntervalCount()  { return getActiveIntervals().getCount(); }
+    public int getIntervalCount()  { return getIntervalsY().getCount(); }
 
     /**
      * Returns the individual interval at a given index as a float value.
      */
-    public Double getInterval(int anIndex)  { return getActiveIntervals().getInterval(anIndex); }
+    public Double getInterval(int anIndex)  { return getIntervalsY().getInterval(anIndex); }
 
     /**
      * Returns the last interval as a float value.
@@ -289,7 +289,7 @@ public class DataViewBar3D extends DataViewBar {
 
     void rebuildGridLines()
     {
-        Intervals intervals = getActiveIntervals();
+        Intervals intervals = getIntervalsY();
         _grid.clear(); _gridMinor.clear(); _gridWithoutSep.clear();
 
         // Get graph min interval and max interval
