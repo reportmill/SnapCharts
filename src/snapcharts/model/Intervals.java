@@ -27,7 +27,7 @@ public class Intervals {
     private int  _count;
 
     // The list of interval numbers
-    private List<Double>  _intervals;
+    private double  _intervals[];
 
     /**
      * Return well-chosen intervals given a min value, a max value and a height. For instance, (1,4) would return
@@ -36,12 +36,26 @@ public class Intervals {
     public Intervals(double minValue, double maxValue, double aHeight)
     {
         // Set seed value ivars
-        _minVal = minValue; _maxVal = maxValue; _height = aHeight;
+        _minVal = minValue;
+        _maxVal = maxValue;
+        _height = aHeight;
+
+        if (_height<0 && _minVal==(int)_minVal && _maxVal==(int)_maxVal) {
+            int min = (int)_minVal;
+            int max = (int)_maxVal;
+            int len = max - min + 1;
+            _intervals = new double[len];
+            for (int i=0; i<len; i++)
+                _intervals[i] = min + i;
+            _delta = 1;
+            _count = len;
+            return;
+        }
 
         // Calculate intervals and cache Delta, Count
         _intervals = getIntervalsFor(minValue, maxValue, aHeight, 40);
-        _delta = _intervals.get(1) - _intervals.get(0);
-        _count = _intervals.size();
+        _delta = _intervals[1] - _intervals[0];
+        _count = _intervals.length;
     }
 
     /**
@@ -67,7 +81,7 @@ public class Intervals {
     /**
      * Returns the individual interval at a given index as a float value.
      */
-    public Double getInterval(int anIndex)  { return _intervals.get(anIndex); }
+    public Double getInterval(int anIndex)  { return _intervals[anIndex]; }
 
     /**
      * Returns the last interval as a double value.
@@ -87,7 +101,7 @@ public class Intervals {
     /**
      * Returns well-chosen intervals from given min value to max value for given graph height and minimum step height.
      */
-    private static List <Double> getIntervalsFor(double aMinValue, double aMaxValue, double aHeight, double aMinHeight)
+    private static double[] getIntervalsFor(double aMinValue, double aMaxValue, double aHeight, double aMinHeight)
     {
         // Find factor of 10 that is just below maxValue (10 ^ factor+1 is above)
         if (aMinValue==aMaxValue) aMaxValue++;
@@ -101,7 +115,7 @@ public class Intervals {
         int steps = 1;
 
         // Iterate over pleasing increments to find one that results in reasonable height for increment
-        for(int i=0; i<increments.length; i++) { incr = increments[i]*factor;
+        for (int i=0; i<increments.length; i++) { incr = increments[i]*factor;
 
             // Calculate number of steps to get from zero to maxValue with current increment
             steps = getStepsToValueWithIncrement(aMaxValue, incr);
@@ -154,7 +168,9 @@ public class Intervals {
             return getIntervalsFor(aMinValue, aMaxValue, aHeight, 0);
 
         // Create intervals list and return
-        List <Double> ivals = new ArrayList(); for(int i=0;i<=steps;i++) ivals.add(axisMin + incr*i);
+        double ivals[] = new double[steps+1];
+        for (int i=0;i<=steps;i++)
+            ivals[i] = axisMin + incr*i;
         return ivals;
     }
 

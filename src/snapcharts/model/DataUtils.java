@@ -36,22 +36,33 @@ public class DataUtils {
      */
     public static double[] getDoubleArrayForString(String aStr)
     {
-        String valStrs[] = aStr.split("\\s*,\\s*");
+        // Get string, stripped of surrounding non-number chars
+        String str = aStr.trim();
+        int start = 0; while (start<str.length() && !isNumChar(str, start)) start++;
+        int end = str.length(); while(end>0 && !isNumChar(str, end-1)) end--;
+        str = str.substring(start, end);
+
+        // Get strings for values separated by comma
+        String valStrs[] = str.split("\\s*,\\s*");
         int len = valStrs.length;
-        int count = 0;
+
+        // Create array for return vals
         double vals[] = new double[len];
+        int count = 0;
+
+        // Iterate over strings and add valid numbers
         for (String valStr : valStrs) {
             if (valStr.length() > 0) {
                 try {
                     double val = Double.valueOf(valStr);
                     vals[count++] = val;
-                } catch (Exception e) {
                 }
+                catch (Exception e)  { }
             }
         }
-        if (count<len)
-            vals = Arrays.copyOf(vals, count);
-        return vals;
+
+        // Return vals (trimmed to size)
+        return count<len ? Arrays.copyOf(vals, count) : vals;
     }
 
     /**
@@ -129,5 +140,14 @@ public class DataUtils {
         if (oneCount>1)
             return 1;
         return 0;
+    }
+
+    /**
+     * Returns whether char at given index in given string is number char.
+     */
+    private static boolean isNumChar(String aStr, int anIndex)
+    {
+        char c = aStr.charAt(anIndex);
+        return Character.isDigit(c) || c=='.' || c=='-';
     }
 }

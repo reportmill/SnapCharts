@@ -4,6 +4,8 @@ import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.StringView;
 import snapcharts.model.AxisX;
+import snapcharts.model.ChartType;
+import snapcharts.model.Intervals;
 
 /**
  * A view to paint Chart X Axis.
@@ -53,87 +55,56 @@ public class AxisViewX extends AxisView {
      */
     protected void paintFront(Painter aPntr)
     {
-        Insets ins = _dataView.getInsetsAll();
-        paintAxis(aPntr, ins.left, getWidth() - ins.getWidth(), getHeight());
+        paintAxis(aPntr);
     }
 
     /**
      * Paints chart x axis.
      */
-    protected void paintAxis(Painter aPntr, double aX, double aW, double aH)
+    protected void paintAxis(Painter aPntr)
     {
-        // If Bar chart, go there instead
-        if (_dataView instanceof DataViewBar) { paintAxisBar(aPntr, 0, getWidth(), aH); return; }
-
-        // Set font, color
+        // Set font
         Font font = getFont();
         aPntr.setFont(font);
 
-        //
+        // Get axis and info
         AxisX axis = getAxis();
         double labelsYOff = axis.getLabelsY();
         double fontHeight = Math.ceil(font.getAscent());
         double labelY = labelsYOff + fontHeight;
-
-        // Get number of data points
-        int pointCount = _dataView.getPointCount();
-        double sectionW = aW/(pointCount-1);
         double tickLen = axis.getTickLength();
 
-        // Draw axis ticks
-        aPntr.setColor(AXIS_LINES_COLOR); aPntr.setStroke(Stroke.Stroke1);
-        for (int i=0;i<pointCount;i++) {
-            double tickX = Math.round(aX + i*sectionW);
-            aPntr.drawLine(tickX, 0, tickX, tickLen);
-        }
+        // Get Intervals info
+        Intervals intervals = _dataView.getIntervalsX();
+        int count = intervals.getCount();
 
-        // Draw axis labels
-        aPntr.setColor(AXIS_LABELS_COLOR);
-        for (int i=0;i<pointCount;i++) {
-            String str = axis.getLabel(i);
-            Rect strBnds = aPntr.getStringBounds(str);
-            double lx = aX + sectionW*i;
-            double x = lx - Math.round(strBnds.getMidX());
-            aPntr.drawString(str, x, labelY);
-        }
-    }
+        // Get whether this is Axis for Bar chart
+        boolean isBar = _dataView.getType()==ChartType.BAR;
 
-    /**
-     * Paints chart x axis.
-     */
-    protected void paintAxisBar(Painter aPntr, double aX, double aW, double aH)
-    {
-        // Set font, color
-        Font font = getFont();
-        aPntr.setFont(font);
-        AxisX axis = getAxis();
-        double labelsYOff = axis.getLabelsY();
-
-        double fontHeight = Math.ceil(font.getAscent());
-        double labelY = labelsYOff + fontHeight;
-
-        // Get number of data points
-        int pointCount = _dataView.getPointCount();
-        double sectionW = aW/pointCount;
-        double tickLen = axis.getTickLength();
-
-        // Draw axis ticks
+        // Set color/stroke for axis ticks
         aPntr.setColor(AXIS_LINES_COLOR);
         aPntr.setStroke(Stroke.Stroke1);
-        for (int i=0;i<pointCount+1;i++) {
-            double tickX = Math.round(aX + i*sectionW);
-            if (tickX<=0) tickX += .5;
-            else if (tickX>=aW) tickX -= .5;
-            aPntr.drawLine(tickX, 0, tickX, tickLen);
-        }
 
-        // Draw axis labels
-        aPntr.setColor(AXIS_LABELS_COLOR);
-        for (int i=0;i<pointCount;i++) {
+        // Iterate over intervals
+        for (int i=0; i<count; i++) {
+
+            // Get X in data and display coords and draw tick line
+            double dataX = intervals.getInterval(i);
+            double dispX = Math.round(dataToViewX(dataX));
+            aPntr.drawLine(dispX, 0, dispX, tickLen);
+
+            // If Bar, handle special: Shift labels to mid interval and skip last
+            if (isBar) {
+                if (i+1==count)
+                    break;
+                dataX = intervals.getInterval(i) + intervals.getDelta()/2;
+                dispX = Math.round(dataToViewX(dataX));
+            }
+
+            // Get label
             String str = axis.getLabel(i);
             Rect strBnds = aPntr.getStringBounds(str);
-            double lx = aX + sectionW*i + sectionW/2;
-            double x = lx - strBnds.getMidX(); x = Math.round(x);
+            double x = dispX - Math.round(strBnds.getMidX());
             aPntr.drawString(str, x, labelY);
         }
     }

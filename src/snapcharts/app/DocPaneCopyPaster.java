@@ -65,6 +65,7 @@ public class DocPaneCopyPaster {
             XMLElement xml = new ChartArchiver().writeToXML(chartPart);
             String xmlStr = xml.getString();
             cb.addData(SNAPCHART_XML_TYPE, xmlStr);
+            cb.addData(xmlStr);
         }
 
         // Add xml as String (probably stupid)

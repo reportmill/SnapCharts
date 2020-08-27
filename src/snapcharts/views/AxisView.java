@@ -51,4 +51,14 @@ public class AxisView extends ParentView {
      */
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
 
+    /**
+     * Converts a point from dataset coords to view coords.
+     */
+    public double dataToViewX(double dataX)
+    {
+        double dispX = _dataView.dataToViewX(dataX);
+        double dx = _dataView.getX() - getX();
+        return dispX - dx;
+    }
+
 }

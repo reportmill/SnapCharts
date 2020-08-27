@@ -81,6 +81,19 @@ public abstract class DataView extends ParentView {
     }
 
     /**
+     * Returns the X axis intervals for active datasets.
+     */
+    public Intervals getIntervalsX()
+    {
+        DataSetList dsetList = getDataSetList();
+        double width = getWidth() - getInsetsAll().getWidth();
+        ChartType chartType = getType();
+        if (chartType==ChartType.BAR || chartType==ChartType.LINE || chartType==ChartType.BAR_3D)
+            width = -1;
+        return dsetList.getIntervalsX(width);
+    }
+
+    /**
      * Returns the Y axis intervals for active datasets.
      */
     public Intervals getIntervalsY()
@@ -144,6 +157,18 @@ public abstract class DataView extends ParentView {
         double h = getHeight() - ins.getHeight();
         double ny = ins.top + h - (aY-axisMinVal)/(axisMaxVal-axisMinVal)*h;
         return new Point(nx, ny);
+    }
+
+    /**
+     * Converts a point from dataset coords to view coords.
+     */
+    public double dataToViewX(double dataX)
+    {
+        Insets ins = getInsetsAll();
+        double dataMin = getIntervalsX().getMin();
+        double dataMax = getIntervalsX().getMax();
+        double width = getWidth() - ins.getWidth();
+        return ins.left + (dataX - dataMin)/(dataMax - dataMin)*width;
     }
 
     /**

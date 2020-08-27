@@ -21,7 +21,6 @@ public class DataViewLine extends DataView {
      */
     public DataViewLine()
     {
-        setPadding(5,10,0,10); // Add padding so endpoints aren't on edges
     }
 
     /**

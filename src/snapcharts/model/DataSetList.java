@@ -14,16 +14,25 @@ public class DataSetList extends ChartPart {
     // The dataset start value
     private int _startValue = 0;
 
-    // The intervals
-    private Intervals  _intervals = new Intervals(0, 4, 100);
+    // The intervals for X axis
+    private Intervals _intervalsX;
     
+    // The intervals for Y axis
+    private Intervals _intervalsY;
+
     // A DataSetList to hold subset of enabled datasets
     private DataSetList  _active;
     
-    // The cached min values
+    // The cached min X value
+    private double _minX = Float.MAX_VALUE;
+
+    // The cached max X value
+    private double _maxX = -Float.MAX_VALUE;
+
+    // The cached min Y value
     private double _minY = Float.MAX_VALUE;
 
-    // The cached max values
+    // The cached max Y value
     private double _maxY = -Float.MAX_VALUE;
 
     // Constants for properties
@@ -133,7 +142,44 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the minimum Y value for active datasets.
+     * Returns the minimum X value for datasets.
+     */
+    public double getMinX()
+    {
+        // If value already cached, just return
+        if (_minX < Float.MAX_VALUE) return _minX;
+
+        // If no datasets/points, just set to 0
+        if (getPointCount()==0) return _minX = 0;
+
+        // Iterate over datasets to get min of all
+        double min = Float.MAX_VALUE;
+        for (DataSet dset : getDataSets())
+            min = Math.min(min, dset.getX(0));
+        return _minX = min;
+    }
+
+    /**
+     * Returns the maximum X value for datasets.
+     */
+    public double getMaxX()
+    {
+        // If value already cached, just return
+        if (_maxX > -Float.MAX_VALUE) return _maxX;
+
+        // If no datasets, just set to 0
+        int pointCount = getPointCount();
+        if (pointCount==0) return _maxX = 5;
+
+        // Iterate over datasets to get max of all
+        double max = -Float.MAX_VALUE;
+        for (DataSet dset : getDataSets())
+            max = Math.max(max, dset.getX(pointCount-1));
+        return _maxX = max;
+    }
+
+    /**
+     * Returns the minimum Y value for datasets.
      */
     public double getMinY()
     {
@@ -151,7 +197,7 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the maximum Y value for active datasets.
+     * Returns the maximum Y value for datasets.
      */
     public double getMaxY()
     {
@@ -225,6 +271,37 @@ public class DataSetList extends ChartPart {
     }
 
     /**
+     * Returns the intervals for X axis.
+     */
+    public Intervals getIntervalsX(double aWidth)
+    {
+        // Get chart min value, max value and height
+        double minX = getMinX();
+        double maxX = getMaxX();
+
+        // If indexed data,
+        DataType dataType = getDataSetCount()>0 ? getDataSet(0).getDataType() : null;
+        if (aWidth<0 || dataType==DataType.IY || dataType==DataType.CY) {
+            minX = 0;
+            maxX = getPointCount();
+            aWidth = -1;
+        }
+
+        // If intervals are cached for current min, max and height, return them
+        if (_intervalsX!=null) {
+            double seedMax = _intervalsX.getSeedValueMax();
+            double seedMin = _intervalsX.getSeedValueMin();
+            double seedHeight = _intervalsX.getSeedHeight();
+            if (MathUtils.equals(seedMax, maxX) && MathUtils.equals(seedMin, minX) && MathUtils.equals(seedHeight, aWidth))
+                return _intervalsX;
+        }
+
+        // Create new intervals and return
+        _intervalsX = new Intervals(minX, maxX, aWidth);
+        return _intervalsX;
+    }
+
+    /**
      * Returns the intervals for Y axis.
      */
     public Intervals getIntervalsY(double aHeight)
@@ -240,15 +317,17 @@ public class DataSetList extends ChartPart {
         }
 
         // If intervals are cached for current min, max and height, return them
-        double seedMax = _intervals.getSeedValueMax();
-        double seedMin = _intervals.getSeedValueMin();
-        double seedHeight = _intervals.getSeedHeight();
-        if (MathUtils.equals(seedMax, maxY) && MathUtils.equals(seedMin, minY) && MathUtils.equals(seedHeight, aHeight))
-            return _intervals;
+        if (_intervalsY!=null) {
+            double seedMax = _intervalsY.getSeedValueMax();
+            double seedMin = _intervalsY.getSeedValueMin();
+            double seedHeight = _intervalsY.getSeedHeight();
+            if (MathUtils.equals(seedMax, maxY) && MathUtils.equals(seedMin, minY) && MathUtils.equals(seedHeight, aHeight))
+                return _intervalsY;
+        }
 
         // Create new intervals and return
-        _intervals = new Intervals(minY, maxY, aHeight);
-        return _intervals;
+        _intervalsY = new Intervals(minY, maxY, aHeight);
+        return _intervalsY;
     }
 
     /**
@@ -302,8 +381,9 @@ public class DataSetList extends ChartPart {
     private void clearCachedValues()
     {
         _active = null;
-        _minY = Float.MAX_VALUE;
-        _maxY = -Float.MAX_VALUE;
+        _minX = _minY = Float.MAX_VALUE;
+        _maxX = _maxY = -Float.MAX_VALUE;
+        _intervalsX = _intervalsY = null;
     }
 
     /**
