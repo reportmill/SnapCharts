@@ -66,8 +66,7 @@ public class DataViewBar extends DataView {
         AreaBar barArea = getArea();
         double groupPad = barArea.getGroupPadding();
         double barPad = barArea.getBarPadding();
-        double cx = 0, cy = 0; //double cw = getWidth();
-        double ch = getHeight();
+        double viewHeight = getHeight();
         boolean colorDataSets = !barArea.isColorValues();
 
         // Get number of datasets, points and section width
@@ -77,13 +76,13 @@ public class DataViewBar extends DataView {
 
         // Get group widths
         double groupWidthRatio = 1 - groupPad*2;
-        double groupWidth = groupWidthRatio>=0? groupWidthRatio*sectionWidth : 1;
+        double groupWidth = groupWidthRatio>=0 ? groupWidthRatio*sectionWidth : 1;
         double groupPadWidth = (sectionWidth - groupWidth)/2;
 
         // Get width of individual bar (bar count + bar spaces + bar&space at either end)
         double barWidthRatio = 1 - barPad*2;
-        double barWidth = barWidthRatio>=0? barWidthRatio*groupWidth/ _dsetCount : 1;
-        double barPadWidth = barWidthRatio>=0? barPad*groupWidth/ _dsetCount : 1;
+        double barWidth = barWidthRatio>=0 ? barWidthRatio*groupWidth/ _dsetCount : 1;
+        double barPadWidth = barWidthRatio>=0 ? barPad*groupWidth/ _dsetCount : 1;
 
         // Create new bars array
         Section sections[] = new Section[pointCount];
@@ -92,19 +91,22 @@ public class DataViewBar extends DataView {
         for (int i=0;i<_pointCount;i++) {
 
             // Create/set new section and section.bars
-            Section section = sections[i] = new Section(cx + i*sectionWidth, cy, sectionWidth, ch);
+            Section section = sections[i] = new Section(i*sectionWidth, 0, sectionWidth, viewHeight);
             section.bars = new Bar[_dsetCount];
 
             // Iterate over datasets
             for (int j = 0; j< _dsetCount; j++) { DataSet dset = dsets.get(j);
+
+                // Get data point
                 DataPoint dataPoint = dset.getPoint(i);
-                double val = dataPoint.getY();
+                double dataY = dataPoint.getY();
+                double dispY = dataToViewY(dataY);
 
                 // Draw bar
-                Color color = colorDataSets? getColor(dset.getIndex()) : getColor(i);
-                double bx = cx + i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
-                double by = dataToView(i, val).y, bh = cy + ch - by;
-                section.bars[j] = new Bar(dataPoint, bx, by, barWidth, bh, color);
+                Color color = colorDataSets ? getColor(dset.getIndex()) : getColor(i);
+                double barX = i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
+                double barHeight = viewHeight - dispY;
+                section.bars[j] = new Bar(dataPoint, barX, dispY, barWidth, barHeight, color);
             }
         }
 
@@ -119,9 +121,9 @@ public class DataViewBar extends DataView {
     {
         // Get selected point index (section index)
         DataPoint dataPoint = _chartView.getTargDataPoint();
-        int selIndex = dataPoint!=null? dataPoint.getIndex() : -1;
+        int selIndex = dataPoint!=null ? dataPoint.getIndex() : -1;
 
-        double cx = 0, cy = 0, cw = getWidth(), ch = getHeight();
+        double viewHeight = getHeight();
         Section sections[] = getSections();
 
         // If reveal is not full (1) then clip
@@ -136,7 +138,7 @@ public class DataViewBar extends DataView {
             // If selected section, draw background
             if (i==selIndex) {
                 aPntr.setColor(Color.get("#4488FF09"));
-                aPntr.fillRect(cx + i*section.width, cy, section.width, ch);
+                aPntr.fillRect(i*section.width, 0, section.width, viewHeight);
             }
 
             // Iterate over datasets and draw bars
@@ -151,25 +153,10 @@ public class DataViewBar extends DataView {
     }
 
     /**
-     * Override to return point above bar.
-     */
-    public Point dataPointInLocal(DataPoint aDP)
-    {
-        // Get data point info
-        DataSet dset = aDP.getDataSet();
-        int dsetIndex = dset.getActiveIndex();
-        int pointIndex = aDP.getIndex();
-
-        // Get bar for data point and return top-center point
-        Section sections[] = getSections(), section = sections[pointIndex];
-        Bar bars[] = section.bars, bar = bars[dsetIndex];
-        return new Point(Math.round(bar.x + bar.width/2), Math.round(bar.y));
-    }
-
-    /**
      * Returns the data point best associated with given x/y (null if none).
      */
-    protected DataPoint getDataPointAt(double aX, double aY)
+    @Override
+    protected DataPoint getDataPointForXY(double aX, double aY)
     {
         // Get sections array
         Section sections[] = getSections();

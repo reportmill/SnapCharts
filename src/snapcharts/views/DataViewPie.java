@@ -186,7 +186,7 @@ public class DataViewPie extends DataView {
     /**
      * Returns the data point best associated with given x/y (null if none).
      */
-    protected DataPoint getDataPointAt(double aX, double aY)
+    protected DataPoint getDataPointForXY(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
         DataSetList dsetList = getDataSetListAll();

@@ -85,11 +85,16 @@ public abstract class DataView extends ParentView {
      */
     public Intervals getIntervalsX()
     {
+        // Get DataSetList and Width
         DataSetList dsetList = getDataSetList();
         double width = getWidth() - getInsetsAll().getWidth();
+
+        // If Bar/Line, reset width to -1 to use index as X
         ChartType chartType = getType();
         if (chartType==ChartType.BAR || chartType==ChartType.LINE || chartType==ChartType.BAR_3D)
             width = -1;
+
+        // Return intervals
         return dsetList.getIntervalsX(width);
     }
 
@@ -139,28 +144,15 @@ public abstract class DataView extends ParentView {
     /**
      * Converts a point from dataset coords to view coords.
      */
-    public Point dataToView(double aX, double aY)
+    public Point dataToView(double dataX, double dataY)
     {
-        // Get insets
-        Insets ins = getInsetsAll();
-
-        // Convert X
-        DataSetList dset = getDataSetListAll();
-        int count = dset.getPointCount();
-        double w = getWidth() - ins.getWidth();
-        double dx = w/(count-1);
-        double nx = ins.left + aX*dx;
-
-        // Convert Y and return
-        double axisMinVal = getIntervalsY().getMin();
-        double axisMaxVal = getIntervalsY().getMax();
-        double h = getHeight() - ins.getHeight();
-        double ny = ins.top + h - (aY-axisMinVal)/(axisMaxVal-axisMinVal)*h;
-        return new Point(nx, ny);
+        double dispX = dataToViewX(dataX);
+        double dispY = dataToViewY(dataY);
+        return new Point(dispX, dispY);
     }
 
     /**
-     * Converts a point from dataset coords to view coords.
+     * Converts a X coord from data coords to view coords.
      */
     public double dataToViewX(double dataX)
     {
@@ -169,6 +161,19 @@ public abstract class DataView extends ParentView {
         double dataMax = getIntervalsX().getMax();
         double width = getWidth() - ins.getWidth();
         return ins.left + (dataX - dataMin)/(dataMax - dataMin)*width;
+    }
+
+    /**
+     * Converts a X coord from data coords to view coords.
+     */
+    public double dataToViewY(double dataY)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervalsY();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double height = getHeight() - ins.getHeight();
+        return ins.top + height - (dataY - dataMin)/(dataMax - dataMin)*height;
     }
 
     /**
@@ -227,13 +232,13 @@ public abstract class DataView extends ParentView {
     {
         // Handle MouseMove
         if (anEvent.isMouseMove()) {
-            DataPoint dpnt = getDataPointAt(anEvent.getX(), anEvent.getY());
+            DataPoint dpnt = getDataPointForXY(anEvent.getX(), anEvent.getY());
             _chartView.setTargDataPoint(dpnt);
         }
 
         // Handle MouseClick
         if (anEvent.isMouseClick()) {
-            DataPoint dpnt = getDataPointAt(anEvent.getX(), anEvent.getY());
+            DataPoint dpnt = getDataPointForXY(anEvent.getX(), anEvent.getY());
             if (dpnt==_chartView.getSelDataPoint()) dpnt = null;
             _chartView.setSelDataPoint(dpnt);
         }
@@ -246,7 +251,7 @@ public abstract class DataView extends ParentView {
     /**
      * Returns the data point best associated with given x/y (null if none).
      */
-    protected DataPoint getDataPointAt(double aX, double aY)
+    protected DataPoint getDataPointForXY(double aX, double aY)
     {
         // If point out of bounds, return null
         if (aX<0 || aX>getWidth() || aY<0 || aY>getWidth()) return null;

@@ -37,22 +37,32 @@ public class DataViewLine extends DataView {
         DataSetList dataSetList = getDataSetList();
         int pointCount = getPointCount();
 
-        // Iterate over datasets
+        // Get DataSets list, create paths list
         List<DataSet> dsets = dataSetList.getDataSets();
         List <Path> paths = new ArrayList();
+
+        // Iterate over datasets
         for (DataSet dset : dsets) {
 
+            // Create/add path for dataset
             Path path = new Path();
             paths.add(path);
 
-            // Iterate over values
-            for (int j=0;j<pointCount;j++) { double val = dset.getY(j);
-                Point p = dataToView(j, val);
+            // Iterate over data points
+            for (int j=0; j<pointCount; j++) {
+
+                // Get data X/Y and disp X/Y (shift data by half interval, since this is really kind of a bar/line chart)
+                double shift = .5;
+                double dataX = dset.getX(j) + shift;
+                double dataY = dset.getY(j);
+                Point dispXY = dataToView(dataX, dataY);
                 if (j==0)
-                    path.moveTo(p.x,p.y);
-                else path.lineTo(p.x,p.y);
+                    path.moveTo(dispXY.x, dispXY.y);
+                else path.lineTo(dispXY.x, dispXY.y);
             }
         }
+
+        // Return paths
         return paths;
     }
 
@@ -80,7 +90,7 @@ public class DataViewLine extends DataView {
         for (int i=0;i<paths.size();i++) { Path path = paths.get(i);
             DataSet dset = dsets.get(i);
             aPntr.setColor(getColor(dset.getIndex()));
-            aPntr.setStroke(Stroke.Stroke2); if (dset==selSet) aPntr.setStroke(Stroke3);
+            aPntr.setStroke(dset==selSet ? Stroke3 : Stroke.Stroke2);
             aPntr.draw(path);
         }
 
@@ -88,20 +98,25 @@ public class DataViewLine extends DataView {
         for (int i=0; i<dsetCount;i++) { DataSet dset = dsets.get(i);
 
             // Iterate over values
-            for (int j=0;j<pointCount;j++) { double val = dset.getY(j);
+            for (int j=0;j<pointCount;j++) {
 
-                Point p = dataToView(j, val);
+                // Get data X/Y and disp X/Y (shift data by half interval, since this is really kind of a bar/line chart)
+                double shift = .5;
+                double dataX = dset.getX(j) + shift;
+                double dataY = dset.getY(j);
+                Point dispXY = dataToView(dataX, dataY);
 
-                Shape marker = getMarkerShape(dset.getIndex()).copyFor(new Transform(p.x-4,p.y-4));
+                Shape marker = getMarkerShape(dset.getIndex()).copyFor(new Transform(dispXY.x-4,dispXY.y-4));
                 Color c = getColor(dset.getIndex());
 
                 if (dset==selSet && j==selIndex) {
                     aPntr.setColor(c.blend(Color.CLEARWHITE, .5));
-                    aPntr.fill(new Ellipse(p.x-10,p.y-10,20,20));
+                    aPntr.fill(new Ellipse(dispXY.x-10,dispXY.y-10,20,20));
                     aPntr.setStroke(Stroke5); aPntr.setColor(Color.WHITE); aPntr.draw(marker);
                     aPntr.setStroke(Stroke3); aPntr.setColor(c); aPntr.draw(marker);
                 }
-                aPntr.setColor(c); aPntr.fill(marker);
+                aPntr.setColor(c);
+                aPntr.fill(marker);
             }
         }
 

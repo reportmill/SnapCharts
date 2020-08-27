@@ -46,11 +46,6 @@ public class DataSet extends ChartPart {
     public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
 
     /**
-     * Override to return DataSetList.
-     */
-    //public ChartPart getParent()  { return _dsetList; }
-
-    /**
      * Returns the dataset.
      */
     public DataSetList getDataSetList()  { return _dsetList; }
@@ -371,16 +366,6 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the index in dataset active dataset.
-     */
-    public int getActiveIndex()
-    {
-        DataSetList dsetList = getDataSetList().getActiveList();
-        List<DataSet> dsets = dsetList.getDataSets();
-        return dsets.indexOf(this);
-    }
-
-    /**
      * Returns whether this dataset is disabled.
      */
     public boolean isDisabled()  { return _disabled; }
@@ -494,9 +479,8 @@ public class DataSet extends ChartPart {
                 }
 
                 case CY: {
-                    String c = valX;
                     double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    addPointCY(c, y);
+                    addPointCY(valX, y);
                     break;
                 }
 
@@ -590,9 +574,8 @@ public class DataSet extends ChartPart {
 
         // Handle IY
         if (dataType==DataType.IY && dataY!=null) {
-            int len = dataY.length;
-            for (int i=0; i<len; i++)
-                addPointCY(null, dataY[i]);
+            for (double v : dataY)
+                addPointCY(null, v);
         }
 
         // Handle XY
