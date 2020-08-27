@@ -1,6 +1,4 @@
 package snapcharts.model;
-import snap.util.MathUtils;
-
 import java.util.List;
 
 /**
@@ -13,9 +11,6 @@ public class AxisX extends Axis {
 
     // The x/y offset of labels
     private double  _labelsX, _labelsY = 8;
-
-    // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
-    private double  _tickLength = 10;
 
     /**
      * Returns the categories.
@@ -49,29 +44,4 @@ public class AxisX extends Axis {
      * Returns the y offset of labels.
      */
     public void setLabelsY(double aValue)  { _labelsY = aValue; }
-
-    /**
-     * Returns the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
-     */
-    public double getTickLength()  { return _tickLength; }
-
-    /**
-     * Sets the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
-     */
-    public void setTickLength(double aValue)  { _tickLength = aValue; }
-
-    /**
-     * Returns the label string at given index.
-     */
-    public String getLabel(int anIndex)
-    {
-        // If categories exist, return the category string at index
-        if (_categories!=null && anIndex<_categories.size())
-            return _categories.get(anIndex);
-
-        // Otherwise, return string for start value and index
-        DataSetList dset = getChart().getDataSetList();
-        int val = dset.getStartValue() + anIndex;
-        return String.valueOf(val);
-    }
 }

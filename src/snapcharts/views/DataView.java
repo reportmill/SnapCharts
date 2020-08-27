@@ -89,9 +89,9 @@ public abstract class DataView extends ParentView {
         DataSetList dsetList = getDataSetList();
         double width = getWidth() - getInsetsAll().getWidth();
 
-        // If Bar/Line, reset width to -1 to use index as X
+        // If Bar, reset width to -1 to use index as X
         ChartType chartType = getType();
-        if (chartType==ChartType.BAR || chartType==ChartType.LINE || chartType==ChartType.BAR_3D)
+        if (chartType==ChartType.BAR || chartType==ChartType.BAR_3D)
             width = -1;
 
         // Return intervals
@@ -209,12 +209,12 @@ public abstract class DataView extends ParentView {
     {
         // Get number of interval lines and interval height
         int intervalCount = getIntervalsY().getCount();
-        double ih = aH/(intervalCount-1);
+        double intervalLen = aH/(intervalCount-1);
 
         // Draw y axis lines
         for (int i=0;i<intervalCount;i++) {
-            double y = aY + i*ih; y = Math.round(y);
-            aPntr.drawLine(0, y, aW, y);
+            double dispY = Math.round(aY + i*intervalLen);
+            aPntr.drawLine(0, dispY, aW, dispY);
         }
 
         aPntr.setStroke(Stroke.Stroke1);
@@ -268,8 +268,11 @@ public abstract class DataView extends ParentView {
 
             // Iterate over points
             for (int j=0; j<pointCount; j++) {
-                Point pnt = dataToView(j, dset.getY(j));
-                double d = Point.getDistance(aX, aY, pnt.x, pnt.y);
+                double dataX = dset.getX(j);
+                double dataY = dset.getY(j);
+                double dispX = dataToViewX(dataX);
+                double dispY = dataToViewY(dataY);
+                double d = Point.getDistance(aX, aY, dispX, dispY);
                 if (d<dist) {
                     dist = d;
                     dataPoint = dset.getPoint(j);

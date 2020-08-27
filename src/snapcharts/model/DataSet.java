@@ -82,7 +82,6 @@ public class DataSet extends ChartPart {
         return DataType.IY;
     }
 
-
     /**
      * Returns the number of points.
      */

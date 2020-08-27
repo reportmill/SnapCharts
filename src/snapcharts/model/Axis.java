@@ -30,7 +30,10 @@ public class Axis extends ChartPart {
     // Labels margin - distance of labels right edge to axis
     private double  _labelsMargin = 15;
 
-    // THe grid line color
+    // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
+    private double  _tickLength = 8;
+
+    // The grid line color
     private Color  _gridLineColor = GRID_LINES_COLOR;
 
     // The grid line
@@ -158,15 +161,22 @@ public class Axis extends ChartPart {
     /**
      * Returns the distance between axis labels left edge and axis.
      */
-//    public double getLabelsOffset()
-//    {
-//        return getMaxLabelWidth() + getLabelsMargin();
-//    }
+    //public double getLabelsOffset()  { return getMaxLabelWidth() + getLabelsMargin(); }
 
     /**
      * Returns the distance between axis labels right edge and the axis.
      */
     public double getLabelsMargin()  { return _labelsMargin; }
+
+    /**
+     * Returns the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
+     */
+    public double getTickLength()  { return _tickLength; }
+
+    /**
+     * Sets the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
+     */
+    public void setTickLength(double aValue)  { _tickLength = aValue; }
 
     /**
      * Returns the grid line color.

@@ -51,9 +51,8 @@ public class DataViewLine extends DataView {
             // Iterate over data points
             for (int j=0; j<pointCount; j++) {
 
-                // Get data X/Y and disp X/Y (shift data by half interval, since this is really kind of a bar/line chart)
-                double shift = .5;
-                double dataX = dset.getX(j) + shift;
+                // Get data X/Y and disp X/Y
+                double dataX = dset.getX(j);
                 double dataY = dset.getY(j);
                 Point dispXY = dataToView(dataX, dataY);
                 if (j==0)
@@ -95,25 +94,31 @@ public class DataViewLine extends DataView {
         }
 
         // Draw dataset points
-        for (int i=0; i<dsetCount;i++) { DataSet dset = dsets.get(i);
+        for (int i=0; i<dsetCount;i++) {
+
+            // Get dataset and index (could be different if DataSetList has disabled sets)
+            DataSet dset = dsets.get(i);
+            int dsetIndex = dset.getIndex();
 
             // Iterate over values
             for (int j=0;j<pointCount;j++) {
 
-                // Get data X/Y and disp X/Y (shift data by half interval, since this is really kind of a bar/line chart)
-                double shift = .5;
-                double dataX = dset.getX(j) + shift;
+                // Get data X/Y and disp X/Y
+                double dataX = dset.getX(j);
                 double dataY = dset.getY(j);
-                Point dispXY = dataToView(dataX, dataY);
+                double dispX = dataToViewX(dataX);
+                double dispY = dataToViewY(dataY);
 
-                Shape marker = getMarkerShape(dset.getIndex()).copyFor(new Transform(dispXY.x-4,dispXY.y-4));
-                Color c = getColor(dset.getIndex());
+                Shape marker = getMarkerShape(dsetIndex).copyFor(new Transform(dispX-4,dispY-4));
+                Color c = getColor(dsetIndex);
 
                 if (dset==selSet && j==selIndex) {
                     aPntr.setColor(c.blend(Color.CLEARWHITE, .5));
-                    aPntr.fill(new Ellipse(dispXY.x-10,dispXY.y-10,20,20));
-                    aPntr.setStroke(Stroke5); aPntr.setColor(Color.WHITE); aPntr.draw(marker);
-                    aPntr.setStroke(Stroke3); aPntr.setColor(c); aPntr.draw(marker);
+                    aPntr.fill(new Ellipse(dispX - 10,dispY - 10,20,20));
+                    aPntr.setStroke(Stroke5); aPntr.setColor(Color.WHITE);
+                    aPntr.draw(marker);
+                    aPntr.setStroke(Stroke3); aPntr.setColor(c);
+                    aPntr.draw(marker);
                 }
                 aPntr.setColor(c);
                 aPntr.fill(marker);

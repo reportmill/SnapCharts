@@ -339,13 +339,13 @@ public class DataSetList extends ChartPart {
         if (_active!=null) return _active;
 
         // If all datasets are enabled, return this dataset
-        int ac = 0; for (DataSet dset : _dsets) if (dset.isEnabled()) ac++;
-        if (ac== getDataSetCount())
+        int activeCount = 0; for (DataSet dset : _dsets) if (dset.isEnabled()) activeCount++;
+        if (activeCount==getDataSetCount())
             return _active = this;
 
-        // Create new dataset and initialize
+        // Create new DataSetList and initialize with enabled sets
         DataSetList active = new DataSetList(_chart);
-        active._dsets = new ArrayList(ac);
+        active._dsets = new ArrayList(activeCount);
         for (DataSet dset : _dsets)
             if (dset.isEnabled())
                 active._dsets.add(dset);

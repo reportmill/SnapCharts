@@ -1,5 +1,4 @@
 package snapcharts.views;
-import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.StringView;
@@ -77,9 +76,10 @@ public class AxisViewX extends AxisView {
         // Get Intervals info
         Intervals intervals = _dataView.getIntervalsX();
         int count = intervals.getCount();
+        double delta = intervals.getDelta();
 
         // Get whether this is Axis for Bar chart
-        boolean isBar = _dataView.getType()==ChartType.BAR || _dataView.getType()==ChartType.LINE;
+        boolean isBar = _dataView.getType()==ChartType.BAR;
 
         // Set color/stroke for axis ticks
         aPntr.setColor(AXIS_LINES_COLOR);
@@ -97,12 +97,12 @@ public class AxisViewX extends AxisView {
             if (isBar) {
                 if (i+1==count)
                     break;
-                dataX = intervals.getInterval(i) + intervals.getDelta()/2;
+                dataX = dataX + delta/2;
                 dispX = Math.round(dataToViewX(dataX));
             }
 
             // Get label
-            String str = axis.getLabel(i);
+            String str = getLabelStringForValueAndDelta(dataX, delta);
             Rect strBnds = aPntr.getStringBounds(str);
             double x = dispX - Math.round(strBnds.getMidX());
             aPntr.drawString(str, x, labelY);
@@ -114,12 +114,13 @@ public class AxisViewX extends AxisView {
      */
     protected Rect getTickLabelsBounds()
     {
-        double labelsHeight = Math.ceil(getFont().getLineHeight());
+        Font font = getFont();
+        double labelsHeight = Math.ceil(font.getLineHeight());
         AxisX axis = getAxis();
         double yoff = axis.getLabelsY();
         double tickLen = axis.getTickLength();
-        double ph = Math.max(labelsHeight + yoff, tickLen);
-        return new Rect(0, 0, getWidth(), ph);
+        double prefH = Math.max(labelsHeight + yoff, tickLen);
+        return new Rect(0, 0, getWidth(), prefH);
     }
 
     /**
@@ -146,8 +147,7 @@ public class AxisViewX extends AxisView {
     protected void layoutImpl()
     {
         // Get size of this view
-        double parW = getWidth();
-        double parH = getHeight();
+        double viewW = getWidth();
 
         // Get bounds of tick labels
         Rect tickLabelsBounds = getTickLabelsBounds();
@@ -155,7 +155,7 @@ public class AxisViewX extends AxisView {
         // Get TitleView width, height, X
         double titleW = _titleView.getPrefWidth();
         double titleH = _titleView.getPrefHeight();
-        double titleX = Math.round((parW - titleW)/2);
+        double titleX = Math.round((viewW - titleW)/2);
         double titleY = tickLabelsBounds.getMaxY() + AXIS_TITLE_MARGIN;
 
         // Set TitleView bounds

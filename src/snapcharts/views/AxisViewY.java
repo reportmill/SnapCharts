@@ -124,7 +124,7 @@ public class AxisViewY extends AxisView {
 
             // Draw labels
             double lineVal = (intervalMax-i*intervalDelta);
-            String str =  getLabel(lineVal, intervalDelta);
+            String str =  getLabelStringForValueAndDelta(lineVal, intervalDelta);
             Rect strBnds = aPntr.getStringBounds(str);
             double x = aX + aW - strBnds.width - marginx;
             double y = Math.round(ly + fontDesc);
@@ -156,41 +156,6 @@ public class AxisViewY extends AxisView {
     }
 
     /**
-     * Formats the label for a given line value.
-     */
-    protected String getLabel(double aLineVal, double aDelta)
-    {
-        // Handle case where delta is in the billions
-        if (aDelta>=1000000000) { //&& aDelta/1000000000==((int)aDelta)/1000000000) {
-            int val = (int)Math.round(aLineVal/1000000000);
-            return val + "b";
-        }
-
-        // Handle case where delta is in the millions
-        if (aDelta>=1000000) { //&& aDelta/1000000==((int)aDelta)/1000000) {
-            int val = (int)Math.round(aLineVal/1000000);
-            return val + "m";
-        }
-
-        // Handle case where delta is in the thousands
-        //if (aDelta>=1000 && aDelta/1000==((int)aDelta)/1000) {
-        //    int val = (int)Math.round(aLineVal/1000);
-        //    return val + "k";
-        //}
-
-        // Handle  case where delta is integer
-        if (aDelta==(int)aDelta)
-            return String.valueOf((int)aLineVal);
-
-        return _fmt.format(aLineVal);
-    }
-
-    /**
-     * Returns a format for delta.
-     */
-    private static DecimalFormat _fmt = new DecimalFormat("#.###");
-
-    /**
      * Returns the max label width.
      */
     protected double getMaxLabelWidth()
@@ -204,7 +169,7 @@ public class AxisViewY extends AxisView {
         String maxText = "";
         for (int i=0;i<lineCount;i++) {
             double lineVal = (intervalMax-i*intervalDelta);
-            String str =  getLabel(lineVal, intervalDelta);
+            String str =  getLabelStringForValueAndDelta(lineVal, intervalDelta);
             if (str.length()>maxText.length())
                 maxText = str;
         }
