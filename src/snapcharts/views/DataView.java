@@ -32,14 +32,15 @@ public abstract class DataView extends ParentView {
      */
     public DataView()
     {
-        setGrowWidth(true); setPrefSize(600,350);
+        setGrowWidth(true);
+        setPrefSize(600,350);
         enableEvents(MouseMove, MouseRelease, MouseExit);
     }
 
     /**
-     * Returns the type.
+     * Returns the ChartType.
      */
-    public abstract ChartType getType();
+    public abstract ChartType getChartType();
 
     /**
      * Sets the chart view.
@@ -90,7 +91,7 @@ public abstract class DataView extends ParentView {
         double width = getWidth() - getInsetsAll().getWidth();
 
         // If Bar, reset width to -1 to use index as X
-        ChartType chartType = getType();
+        ChartType chartType = getChartType();
         if (chartType==ChartType.BAR || chartType==ChartType.BAR_3D)
             width = -1;
 

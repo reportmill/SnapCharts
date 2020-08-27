@@ -96,7 +96,7 @@ public class ChartView extends ColView {
         _axisY = new AxisViewY();
 
         // Create/add DataViewBox
-        _dataViewBox = new DataViewBox();
+        _dataViewBox = new DataViewBox(this);
         _rowView.addChild(_dataViewBox);
 
         // Create/set DataView
@@ -162,6 +162,7 @@ public class ChartView extends ColView {
     {
         if (_dataView !=null) _dataView.deactivate();
 
+        _dataView = aDataView;
         _dataViewBox.setDataView(aDataView);
         _dataView.setChartView(this);
         _dataView.activate();
@@ -173,7 +174,7 @@ public class ChartView extends ColView {
     public void setDataViewForType(ChartType aType)
     {
         // If already set, just return
-        if (aType==getDataView().getType()) return;
+        if (aType==getDataView().getChartType()) return;
 
         // Get DataView for type, set in ChartView and reload contents
         DataView dataView = DataView.createDataViewForType(aType);
@@ -342,52 +343,4 @@ public class ChartView extends ColView {
         }
     }
 
-    /**
-     * A class to layout DataView and X/Y axis views.
-     */
-    private class DataViewBox extends ParentView {
-
-        /** Create DataViewBox. */
-        public DataViewBox()  { setGrowWidth(true); setGrowHeight(true); setChildren(_axisY, _axisX); }
-
-        /** Sets the DataView. */
-        protected void setDataView(DataView aCA)
-        {
-            if (_dataView !=null) removeChild(_dataView);
-            addChild(_dataView = aCA, 1);
-            _axisY._dataView = _axisX._dataView = aCA;
-        }
-
-        /** Calculates the preferred width. */
-        protected double getPrefWidthImpl(double aH)
-        {
-            double pw = _dataView.getPrefWidth();
-            if (_axisY.isVisible()) pw += _axisY.getPrefWidth();
-            return pw;
-        }
-
-        /** Calculates the preferred height. */
-        protected double getPrefHeightImpl(double aW)
-        {
-            double ph = _dataView.getPrefHeight();
-            if (_axisX.isVisible()) ph += _axisX.getPrefHeight();
-            return ph;
-        }
-
-        /** Actual method to layout children. */
-        protected void layoutImpl()
-        {
-            // Set chart area height first, since height can effect yaxis label width
-            double pw = getWidth(), ph = getHeight();
-            double ah = _axisX.isVisible()? _axisX.getPrefHeight() : 0;
-            _dataView.setHeight(ph - ah);
-
-            // Now set bounds of areay, xaxis and yaxis
-            double aw = _axisY.isVisible()? _axisY.getPrefWidth(ph - ah) : 0;
-            double cw = pw - aw, ch = ph - ah;
-            _dataView.setBounds(aw,0,cw,ch);
-            _axisX.setBounds(aw,ch,cw,ah);
-            _axisY.setBounds(0,0,aw,ch);
-        }
-    }
 }

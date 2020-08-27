@@ -55,7 +55,7 @@ public class DataViewPie extends DataView {
     /**
      * Returns the type.
      */
-    public ChartType getType()  { return ChartType.PIE; }
+    public ChartType getChartType()  { return ChartType.PIE; }
 
     /**
      * Sets the chart view.

@@ -26,7 +26,7 @@ public class DataViewLine extends DataView {
     /**
      * Returns the type.
      */
-    public ChartType getType()  { return ChartType.LINE; }
+    public ChartType getChartType()  { return ChartType.LINE; }
 
     /**
      * Returns the list of paths for each dataset.

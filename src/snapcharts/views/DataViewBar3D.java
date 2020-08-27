@@ -52,7 +52,7 @@ public class DataViewBar3D extends DataViewBar {
     /**
      * Returns the type.
      */
-    public ChartType getType()  { return ChartType.BAR_3D; }
+    public ChartType getChartType()  { return ChartType.BAR_3D; }
 
     /**
      * Returns the CameraView.

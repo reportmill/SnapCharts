@@ -34,7 +34,7 @@ public class DataViewBar extends DataView {
     /**
      * Returns the type.
      */
-    public ChartType getType()  { return ChartType.BAR; }
+    public ChartType getChartType()  { return ChartType.BAR; }
 
     /**
      * Returns the area.
