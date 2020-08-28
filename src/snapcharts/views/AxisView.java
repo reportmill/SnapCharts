@@ -1,40 +1,40 @@
 package snapcharts.views;
 import snap.gfx.Color;
-import snap.view.ParentView;
 import snap.view.StringView;
+import snapcharts.model.Axis;
+import snapcharts.model.AxisX;
 import snapcharts.model.Chart;
-
 import java.text.DecimalFormat;
 
 /**
  * A View to display an axis.
  */
-public class AxisView extends ParentView {
+public abstract class AxisView extends ChartPartView {
 
     // The DataView
-    protected DataView _dataView;
+    protected DataView  _dataView;
 
     // The Title view
-    protected StringView _titleView;
+    protected StringView  _titleView;
 
     // The grid line color
-    protected Color _gridLineColor = GRID_LINES_COLOR;
+    protected Color  _gridLineColor = GRID_LINES_COLOR;
 
     // The grid line
     protected double  _gridLineDashArray[];
 
     // Constants
-    protected static Color   AXIS_LABELS_COLOR = Color.GRAY;
-    protected static Color   GRID_LINES_COLOR = Color.get("#E6");
-    protected static Color           AXIS_LINES_COLOR = Color.LIGHTGRAY;
+    protected static Color  AXIS_LABELS_COLOR = Color.GRAY;
+    protected static Color  GRID_LINES_COLOR = Color.get("#E6");
+    protected static Color  AXIS_LINES_COLOR = Color.LIGHTGRAY;
 
     // A shared formatter
     private static DecimalFormat _fmt = new DecimalFormat("#.###");
 
     /**
-     * Returns the Chart.
+     * Returns the axis.
      */
-    public Chart getChart()  { return _dataView.getChart(); }
+    public abstract Axis getAxis();
 
     /**
      * Returns the grid line color.
@@ -64,6 +64,17 @@ public class AxisView extends ParentView {
         double dispX = _dataView.dataToViewX(dataX);
         double dx = _dataView.getX() - getX();
         return dispX - dx;
+    }
+
+    /**
+     * Called to reset view from Chart.
+     */
+    protected void resetView()
+    {
+        // Reset title
+        Axis axis = getAxis();
+        String title = axis.getTitle();
+        _titleView.setText(title);
     }
 
     /**

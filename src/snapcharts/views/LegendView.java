@@ -14,29 +14,12 @@ import snapcharts.model.DataSetList;
 /**
  * A view to display chart legend.
  */
-public class LegendView extends ColView {
+public class LegendView extends ChartPartView {
     
-    // The ChartView
-    private ChartView    _chartView;
-    
-    /**
-     * Returns the ChartView.
-     */
-    public ChartView getChartView()
-    {
-        if (_chartView!=null) return _chartView;
-        return _chartView = getParent(ChartView.class);
-    }
-
-    /**
-     * Returns the chart.
-     */
-    public Chart getChart()  { return getChartView().getChart(); }
-
     /**
      * Reloads legend contents.
      */
-    public void reloadContents()
+    public void resetView()
     {
         Chart chart = getChart();
         DataSetList dsetList = chart.getDataSetList();
@@ -85,5 +68,32 @@ public class LegendView extends ColView {
 
         // Redraw chart and reload legend
         chart.resetLater();
+    }
+
+    /**
+     * Override to use ColView layout.
+     */
+    @Override
+    protected double getPrefWidthImpl(double aH)
+    {
+        return ColView.getPrefWidth(this, aH);
+    }
+
+    /**
+     * Override to use ColView layout.
+     */
+    @Override
+    protected double getPrefHeightImpl(double aW)
+    {
+        return ColView.getPrefHeight(this, aW);
+    }
+
+    /**
+     * Override to use ColView layout.
+     */
+    @Override
+    protected void layoutImpl()
+    {
+        ColView.layout(this, false);
     }
 }

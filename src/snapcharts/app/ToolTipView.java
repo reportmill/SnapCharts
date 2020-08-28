@@ -50,7 +50,7 @@ public class ToolTipView extends ColView {
     public void setXYInChartView(Point aPnt)
     {
         // If no data point, just return
-        if(_chartView.getTargDataPoint()==null) return;
+        if (_chartView.getTargDataPoint()==null) return;
 
         // Get new point, set and clear animations
         double nx = aPnt.x - getWidth()/2;
@@ -64,7 +64,7 @@ public class ToolTipView extends ColView {
      */
     public void reloadContents()
     {
-        if(_reloadLater==null)
+        if (_reloadLater==null)
             getEnv().runLater(_reloadLater = _reloadRun);
     }
 
@@ -79,8 +79,10 @@ public class ToolTipView extends ColView {
         // Get DataPoint - if null - remove view
         Chart chart = _chartView.getChart();
         DataPoint dataPoint = _chartView.getTargDataPoint();
-        if(dataPoint==null) {
-            getAnimCleared(1000).setOpacity(0).setOnFinish(a -> _chartView.removeChild(this)).play(); return; }
+        if (dataPoint==null) {
+            getAnimCleared(1000).setOpacity(0).setOnFinish(a -> ViewUtils.removeChild(_chartView, this)).play();
+            return;
+        }
 
         // Get dataset and value
         DataSet dset = dataPoint.getDataSet();
@@ -135,8 +137,11 @@ public class ToolTipView extends ColView {
         double ny = pnt.y - getHeight() - 8;
 
         // If not onscreen, add and return
-        if(getParent()==null) {
-            setXY(nx, ny); _chartView.addChild(this); return; }
+        if (getParent()==null) {
+            setXY(nx, ny);
+            ViewUtils.addChild(_chartView, this);
+            return;
+        }
 
         // Otherwise animate move
         getAnimCleared(300).setX(nx).setY(ny).play();

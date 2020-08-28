@@ -15,16 +15,13 @@ import snapcharts.model.DataSetList;
 /**
  * A view to render a chart.
  */
-public class ChartView extends ColView {
+public class ChartView extends ChartPartView {
 
     // The Chart
     private Chart  _chart;
 
-    // The title
-    private StringView  _titleView;
-    
-    // The subtitle
-    private StringView  _subtitleView;
+    // The view to display chart parts at top of chart
+    private ChartViewTop  _chartTop;
 
     // The view to manage essential chart parts: DataView and AxisViews
     private ChartArea  _chartArea;
@@ -65,20 +62,12 @@ public class ChartView extends ColView {
         // Configure this view
         setPadding(10,10,10,10);
         setAlign(Pos.CENTER);
-        setSpacing(8);
         setGrowWidth(true);
         setFill(Color.WHITE);
 
-        // Create configure TitleView
-        _titleView = new StringView();
-        _titleView.setFont(Font.Arial14.getBold().deriveFont(20));
-        addChild(_titleView);
-
-        // Create configure SubtitleView
-        _subtitleView = new StringView();
-        _subtitleView.setTextFill(Color.GRAY);
-        _subtitleView.setFont(Font.Arial12.getBold());
-        addChild(_subtitleView);
+        // Create/add ChartTop
+        _chartTop = new ChartViewTop(this);
+        addChild(_chartTop);
 
         // Create RowView
         _rowView = new RowView();
@@ -109,6 +98,11 @@ public class ChartView extends ColView {
      * Returns the Chart.
      */
     public Chart getChart()  { return _chart; }
+
+    /**
+     * Returns the ChartView.
+     */
+    public ChartView getChartView()  { return this; }
 
     /**
      * Sets the Chart.
@@ -187,15 +181,8 @@ public class ChartView extends ColView {
         // Get info
         Chart chart = getChart();
 
-        // Reset Title
-        String title = chart.getTitle();
-        _titleView.setText(title);
-        _titleView.setVisible(title!=null && title.length()>0);
-
-        // Reset Subtitle
-        String subtitle = chart.getSubtitle();
-        _subtitleView.setText(subtitle);
-        _subtitleView.setVisible(subtitle!=null && subtitle.length()>0);
+        // Reset ChartTop
+        _chartTop.resetView();
 
         // Reset ShowLegend
         boolean showLegend = chart.isShowLegend();
@@ -206,7 +193,7 @@ public class ChartView extends ColView {
 
         // Reset Legend
         if (showLegend)
-            _legend.reloadContents();
+            _legend.resetView();
     }
 
     /**
@@ -290,5 +277,32 @@ public class ChartView extends ColView {
         if (src instanceof DataSet || src instanceof DataSetList) {
             getDataView().clearCache();
         }
+    }
+
+    /**
+     * Override to use ColView layout.
+     */
+    @Override
+    protected double getPrefWidthImpl(double aH)
+    {
+        return ColView.getPrefWidth(this, aH);
+    }
+
+    /**
+     * Override to use ColView layout.
+     */
+    @Override
+    protected double getPrefHeightImpl(double aW)
+    {
+        return ColView.getPrefHeight(this, aW);
+    }
+
+    /**
+     * Override to use ColView layout.
+     */
+    @Override
+    protected void layoutImpl()
+    {
+        ColView.layout(this, false);
     }
 }

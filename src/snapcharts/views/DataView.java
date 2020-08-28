@@ -1,6 +1,5 @@
 package snapcharts.views;
 import java.util.*;
-
 import snap.geom.Insets;
 import snap.geom.Point;
 import snap.geom.Shape;
@@ -13,7 +12,7 @@ import snapcharts.model.*;
 /**
  * A view to display the actual contents of a chart.
  */
-public abstract class DataView extends ParentView {
+public abstract class DataView extends ChartPartView {
     
     // The ChartView that owns the area
     protected ChartView  _chartView;
@@ -46,11 +45,6 @@ public abstract class DataView extends ParentView {
      * Sets the chart view.
      */
     protected void setChartView(ChartView aCV)  { _chartView = aCV; }
-
-    /**
-     * Returns the chart.
-     */
-    public Chart getChart()  { return _chartView.getChart(); }
 
     /**
      * Returns the X axis view.

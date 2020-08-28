@@ -11,9 +11,6 @@ import snapcharts.model.Intervals;
  */
 public class AxisViewY extends AxisView {
     
-    // The Title view
-    private StringView  _titleView;
-    
     // The Title view wrapper (to allow rotation)
     private WrapView  _titleViewBox;
     
@@ -79,9 +76,12 @@ public class AxisViewY extends AxisView {
      */
     protected void resetView()
     {
+        // Do basic axis update
+        super.resetView();
+
         // Reset title
-        String title = getAxis().getTitle();
-        _titleView.setText(title);
+        AxisY axis = getAxis();
+        String title = axis.getTitle();
         double titlePad = title!=null && title.length()>0 ? getTitleMargin() : 0;
         _titleViewBox.setPadding(0, titlePad, 0, 0);
     }
@@ -92,8 +92,11 @@ public class AxisViewY extends AxisView {
     protected void paintFront(Painter aPntr)
     {
         Insets ins = _dataView.getInsetsAll();
-        double w = getWidth(), aw = getLabelsOffset(), ax = w - aw;
-        paintAxis(aPntr, ax, ins.top, aw, getHeight() - ins.getHeight());
+        double viewW = getWidth();
+        double viewH = getHeight();
+        double axisW = getLabelsOffset();
+        double axisX = viewW - axisW;
+        paintAxis(aPntr, axisX, ins.top, axisW, viewH - ins.getHeight());
     }
 
     /**
@@ -118,15 +121,15 @@ public class AxisViewY extends AxisView {
         for (int i=0;i<lineCount;i++) {
 
             // Get line y
-            double ly = aY + aH/sectionCount*i;
+            double lineY = aY + aH/sectionCount*i;
 
             // Draw labels
             double lineVal = (intervalMax-i*intervalDelta);
             String str =  getLabelStringForValueAndDelta(lineVal, intervalDelta);
             Rect strBnds = aPntr.getStringBounds(str);
-            double x = aX + aW - strBnds.width - marginx;
-            double y = Math.round(ly + fontDesc);
-            aPntr.drawString(str, x, y);
+            double labelX = aX + aW - strBnds.width - marginx;
+            double labelY = Math.round(lineY + fontDesc);
+            aPntr.drawString(str, labelX, labelY);
         }
     }
 
@@ -135,10 +138,10 @@ public class AxisViewY extends AxisView {
      */
     protected double getPrefWidthImpl(double aH)
     {
-        double toff = getTitleOffset() - getTitleX();
-        double loff = getLabelsOffset();
-        double pw = Math.max(toff, loff);
-        return pw;
+        double titleOff = getTitleOffset() - getTitleX();
+        double labelsOff = getLabelsOffset();
+        double prefW = Math.max(titleOff, labelsOff);
+        return prefW;
     }
 
     /**
@@ -146,11 +149,12 @@ public class AxisViewY extends AxisView {
      */
     protected void layoutImpl()
     {
-        double w = getWidth(), h = getHeight();
-        double toff = getTitleOffset() - getTitleX();
-        double loff = getLabelsOffset(), tw = _titleViewBox.getPrefWidth();
-        double titleX = toff>loff ? 0 : loff - toff;
-        _titleViewBox.setBounds(titleX, getTitleY(), tw, h);
+        double viewH = getHeight();
+        double titleOff = getTitleOffset() - getTitleX();
+        double labelsOff = getLabelsOffset();
+        double titleW = _titleViewBox.getPrefWidth();
+        double titleX = titleOff>labelsOff ? 0 : labelsOff - titleOff;
+        _titleViewBox.setBounds(titleX, getTitleY(), titleW, viewH);
     }
 
     /**

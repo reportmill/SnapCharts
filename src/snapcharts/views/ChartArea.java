@@ -1,12 +1,11 @@
 package snapcharts.views;
-import snap.view.ParentView;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
 
 /**
  * A class to display essential chart content: DataView and AxisViews.
  */
-public class ChartArea extends ParentView {
+public class ChartArea extends ChartPartView {
 
     // The ChartView
     private ChartView  _chartView;
@@ -132,16 +131,20 @@ public class ChartArea extends ParentView {
      */
     protected void layoutImpl()
     {
-        // Set chart area height first, since height can effect yaxis label width
-        double pw = getWidth(), ph = getHeight();
-        double ah = _axisX.isVisible() ? _axisX.getPrefHeight() : 0;
-        _dataView.setHeight(ph - ah);
+        // Set DataView height first, since height can effect yaxis label width
+        double viewW = getWidth();
+        double viewH = getHeight();
+        double axisH = _axisX.isVisible() ? _axisX.getPrefHeight() : 0;
+        _dataView.setHeight(viewH - axisH);
 
-        // Now set bounds of areay, xaxis and yaxis
-        double aw = _axisY.isVisible()? _axisY.getPrefWidth(ph - ah) : 0;
-        double cw = pw - aw, ch = ph - ah;
-        _dataView.setBounds(aw,0,cw,ch);
-        _axisX.setBounds(aw, ch, cw, ah);
-        _axisY.setBounds(0,0, aw, ch);
+        // Now set bounds of DataView
+        double axisW = _axisY.isVisible() ? _axisY.getPrefWidth(viewH - axisH) : 0;
+        double dataW = viewW - axisW;
+        double dataH = viewH - axisH;
+        _dataView.setBounds(axisW,0, dataW, dataH);
+
+        // Set bounds of AxisX, AxisY
+        _axisX.setBounds(axisW, dataH, dataW, axisH);
+        _axisY.setBounds(0,0, axisW, dataH);
     }
 }

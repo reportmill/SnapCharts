@@ -42,11 +42,8 @@ public class AxisViewX extends AxisView {
      */
     protected void resetView()
     {
-        // Reset title
-        String title = getAxis().getTitle();
-        _titleView.setText(title);
-        //double titlePad = title!=null && title.length()>0 ? getTitleMargin() : 0;
-        //_titleView.setPadding(0, titlePad, 0, 0);
+        // Do basic axis update
+        super.resetView();
     }
 
     /**
@@ -104,8 +101,8 @@ public class AxisViewX extends AxisView {
             // Get label
             String str = getLabelStringForValueAndDelta(dataX, delta);
             Rect strBnds = aPntr.getStringBounds(str);
-            double x = dispX - Math.round(strBnds.getMidX());
-            aPntr.drawString(str, x, labelY);
+            double labelX = dispX - Math.round(strBnds.getMidX());
+            aPntr.drawString(str, labelX, labelY);
         }
     }
 
@@ -114,13 +111,14 @@ public class AxisViewX extends AxisView {
      */
     protected Rect getTickLabelsBounds()
     {
+        double viewW = getWidth();
         Font font = getFont();
-        double labelsHeight = Math.ceil(font.getLineHeight());
+        double labelsH = Math.ceil(font.getLineHeight());
         AxisX axis = getAxis();
         double yoff = axis.getLabelsY();
         double tickLen = axis.getTickLength();
-        double prefH = Math.max(labelsHeight + yoff, tickLen);
-        return new Rect(0, 0, getWidth(), prefH);
+        double prefH = Math.max(labelsH + yoff, tickLen);
+        return new Rect(0, 0, viewW, prefH);
     }
 
     /**
