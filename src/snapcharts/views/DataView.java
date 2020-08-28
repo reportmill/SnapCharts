@@ -55,12 +55,12 @@ public abstract class DataView extends ParentView {
     /**
      * Returns the X axis view.
      */
-    public AxisViewX getAxisX()  { return _chartView._axisX; }
+    public AxisViewX getAxisX()  { return _chartView.getAxisX(); }
 
     /**
      * Returns the Y axis view.
      */
-    public AxisViewY getAxisY()  { return _chartView._axisY; }
+    public AxisViewY getAxisY()  { return _chartView.getAxisY(); }
 
     /**
      * Returns the data set list.

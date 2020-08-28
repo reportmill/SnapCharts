@@ -1,7 +1,6 @@
 package snapcharts.views;
 import java.util.List;
 
-import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snapcharts.model.*;

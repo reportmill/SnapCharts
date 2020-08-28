@@ -6,8 +6,6 @@ import snap.view.*;
 import snapcharts.model.AxisY;
 import snapcharts.model.Intervals;
 
-import java.text.DecimalFormat;
-
 /**
  * A view to paint Chart Y Axis.
  */

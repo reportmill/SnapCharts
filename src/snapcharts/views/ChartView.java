@@ -8,7 +8,6 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.app.ToolTipView;
 import snapcharts.model.Chart;
-import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
@@ -26,23 +25,14 @@ public class ChartView extends ColView {
     
     // The subtitle
     private StringView  _subtitleView;
-    
-    // The DataView
-    private DataView  _dataView;
-    
-    // The XAxis
-    protected AxisViewX  _axisX;
-    
-    // The YAxis
-    protected AxisViewY  _axisY;
-    
+
+    // The view to manage essential chart parts: DataView and AxisViews
+    private ChartArea  _chartArea;
+
     // The Legend
     private LegendView  _legend;
     
-    // The view to hold DataView and X/Y axis views
-    private DataViewBox  _dataViewBox;
-    
-    // The view to hold DataViewBox and Legend
+    // The view to hold ChartArea and Legend
     private RowView  _rowView;
 
     // The ToolTipView
@@ -73,7 +63,10 @@ public class ChartView extends ColView {
         setChart(new Chart());
 
         // Configure this view
-        setPadding(10,10,10,10); setAlign(Pos.CENTER); setSpacing(8); setGrowWidth(true);
+        setPadding(10,10,10,10);
+        setAlign(Pos.CENTER);
+        setSpacing(8);
+        setGrowWidth(true);
         setFill(Color.WHITE);
 
         // Create configure TitleView
@@ -82,25 +75,22 @@ public class ChartView extends ColView {
         addChild(_titleView);
 
         // Create configure SubtitleView
-        _subtitleView = new StringView(); _subtitleView.setTextFill(Color.GRAY);
+        _subtitleView = new StringView();
+        _subtitleView.setTextFill(Color.GRAY);
         _subtitleView.setFont(Font.Arial12.getBold());
         addChild(_subtitleView);
 
         // Create RowView
-        _rowView = new RowView(); _rowView.setAlign(Pos.CENTER_LEFT); _rowView.setSpacing(8);
-        _rowView.setGrowWidth(true); _rowView.setGrowHeight(true);
+        _rowView = new RowView();
+        _rowView.setAlign(Pos.CENTER_LEFT);
+        _rowView.setSpacing(8);
+        _rowView.setGrowWidth(true);
+        _rowView.setGrowHeight(true);
         addChild(_rowView);
 
-        // Create XAxis and YAxis
-        _axisX = new AxisViewX();
-        _axisY = new AxisViewY();
-
-        // Create/add DataViewBox
-        _dataViewBox = new DataViewBox(this);
-        _rowView.addChild(_dataViewBox);
-
-        // Create/set DataView
-        setDataView(DataView.createDataViewForType(ChartType.LINE));
+        // Create/add ChartArea
+        _chartArea = new ChartArea(this);
+        _rowView.addChild(_chartArea);
 
         // Create/configure ChartLegend
         _legend = new LegendView();
@@ -153,44 +143,17 @@ public class ChartView extends ColView {
     /**
      * Returns the DataView.
      */
-    public DataView getDataView()  { return _dataView; }
-
-    /**
-     * Sets the DataView.
-     */
-    protected void setDataView(DataView aDataView)
-    {
-        if (_dataView !=null) _dataView.deactivate();
-
-        _dataView = aDataView;
-        _dataViewBox.setDataView(aDataView);
-        _dataView.setChartView(this);
-        _dataView.activate();
-    }
-
-    /**
-     * Sets the type.
-     */
-    public void setDataViewForType(ChartType aType)
-    {
-        // If already set, just return
-        if (aType==getDataView().getChartType()) return;
-
-        // Get DataView for type, set in ChartView and reload contents
-        DataView dataView = DataView.createDataViewForType(aType);
-        setDataView(dataView);
-        resetLater();
-    }
+    public DataView getDataView()  { return _chartArea.getDataView(); }
 
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _axisX; }
+    public AxisViewX getAxisX()  { return _chartArea.getAxisX(); }
 
     /**
      * Returns the Y Axis View.
      */
-    public AxisViewY getAxisY()  { return _axisY; }
+    public AxisViewY getAxisY()  { return _chartArea.getAxisY(); }
 
     /**
      * Returns the Legend.
@@ -224,9 +187,6 @@ public class ChartView extends ColView {
         // Get info
         Chart chart = getChart();
 
-        // Reset Type
-        setDataViewForType(chart.getType());
-
         // Reset Title
         String title = chart.getTitle();
         _titleView.setText(title);
@@ -241,23 +201,12 @@ public class ChartView extends ColView {
         boolean showLegend = chart.isShowLegend();
         setShowLegend(showLegend);
 
-        // Reset X Axis
-        getAxisX().resetView();
-
-        // Reset Y Axis
-        getAxisY().resetView();
+        // Reset ChartArea
+        _chartArea.resetView();
 
         // Reset Legend
         if (showLegend)
             _legend.reloadContents();
-
-        // Reset DataView
-        _dataView.reactivate();
-
-        // Trigger animate
-        _dataView.animate();
-        _axisY.repaint();
-        _axisX.repaint();
     }
 
     /**
@@ -314,11 +263,11 @@ public class ChartView extends ColView {
      */
     public Point dataPointInLocal(DataPoint aDP)
     {
-          DataView carea = _dataView;
+          DataView dataView = getDataView();
           double x = aDP.getX();
           double y = aDP.getY();
-          Point pnt = carea.dataToView(x, y);
-          return carea.localToParent(pnt.x, pnt.y, this);
+          Point pnt = dataView.dataToView(x, y);
+          return dataView.localToParent(pnt.x, pnt.y, this);
     }
 
     /**
@@ -342,5 +291,4 @@ public class ChartView extends ColView {
             getDataView().clearCache();
         }
     }
-
 }

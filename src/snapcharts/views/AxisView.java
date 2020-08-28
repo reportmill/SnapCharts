@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 public class AxisView extends ParentView {
 
     // The DataView
-    protected DataView  _dataView;
+    protected DataView _dataView;
 
     // The Title view
     protected StringView _titleView;
