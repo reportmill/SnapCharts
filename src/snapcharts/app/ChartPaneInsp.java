@@ -11,8 +11,8 @@ import snapcharts.apptools.ChartTypeTool;
  */
 public class ChartPaneInsp extends ViewOwner {
 
-    // The EditorPane
-    protected ChartPane _epane;
+    // The ChartPane
+    protected ChartPane _chartPane;
     
     // The Title label
     private Label  _titleLabel;
@@ -23,30 +23,27 @@ public class ChartPaneInsp extends ViewOwner {
     // The ColView that holds UI for child inspectors
     private ColView  _inspColView;
 
-    // The child inspector current installed in inspector panel
-    private ViewOwner  _childInspector;
-
     // The ChartTypeTool
     private ChartTypeTool _chartType;
     
     // The BasicPropsTool
     private ChartBasicTool _basicProps;
 
-    // The inspector for view general
-    //private ViewTool  _viewTool;
+    // The DataSet Inspector
+    private DataSetInsp  _dsetInsp;
 
     /**
      * Constructor.
      */
     public ChartPaneInsp(ChartPane anEP)
     {
-        _epane = anEP;
+        _chartPane = anEP;
     }
 
     /**
-     * Returns the editor pane.
+     * Returns the ChartPane.
      */
-    public ChartPane getEditorPane()  { return _epane; }
+    public ChartPane getEditorPane()  { return _chartPane; }
 
     /**
      * Initializes UI panel for the inspector.
@@ -73,18 +70,24 @@ public class ChartPaneInsp extends ViewOwner {
         // Get InspColView
         _inspColView = getView("InspColView", ColView.class);
 
-        // Get ChartTypeTool
-        _chartType = new ChartTypeTool(_epane);
-        _inspColView.addChild(_chartType.getUI());
-        Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types");//.setCollapsed(true);
+        // Only Add Chart stuff for ChartMode
+        boolean chartMode = !_chartPane._dataSetMode;
+        if (chartMode) {
 
-        // Get ChartBasicTool
-        _basicProps = new ChartBasicTool(_epane);
-        _inspColView.addChild(_basicProps.getUI());
-        Collapser.createCollapserAndLabel(_basicProps.getUI(), "Basic Properties");//.setCollapsed(true);
+            // Get ChartTypeTool
+            _chartType = new ChartTypeTool(_chartPane);
+            _inspColView.addChild(_chartType.getUI());
+            Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types");//.setCollapsed(true);
 
-        // Get ViewTool
-        //_viewTool = _epane._viewTool;
+            // Get ChartBasicTool
+            _basicProps = new ChartBasicTool(_chartPane);
+            _inspColView.addChild(_basicProps.getUI());
+            Collapser.createCollapserAndLabel(_basicProps.getUI(), "Chart Settings");//.setCollapsed(true);
+        }
+
+        // Add DataSet inspector
+        _dsetInsp = new DataSetInsp(_chartPane);
+        _inspColView.addChild(_dsetInsp.getUI());
     }
 
     /**
@@ -93,55 +96,19 @@ public class ChartPaneInsp extends ViewOwner {
     public void resetUI()
     {
         // Get editor (and just return if null) and tool for selected shapes
-        ChartPane epane = getEditorPane();
+        ChartPane chartPane = getEditorPane();
 
-        // If ViewGeneralButton is selected, instal inspector
-        //if (getViewBoolValue("ViewGeneralButton")) setInspector(_viewTool);
-
-        // Get the inspector (owner)
-        ViewOwner owner = getInspector();
-
-        // Get inspector title from owner and set
-        String title = "Inspector";
-        //if (owner==_gallery) title = "Gallery";
-        //else if (owner==_viewTool) title = "View Inspector";
-        //else if (owner==_stylerPane) title = "Style Inspector";
-        //else if (owner instanceof ViewTool) title = selView.getClass().getSimpleName() + " Inspector";
-        _titleLabel.setText(title);
-
-        // If owner non-null, tell it to reset
-        if (owner!=null)
-            owner.resetLater();
+        // Reset DataSetInsp
+        boolean isDataSetSelected = chartPane.getDataSet()!=null;
+        if (isDataSetSelected) {
+            _dsetInsp.getUI().setVisible(true);
+            _dsetInsp.resetLater();
+        }
+        else _dsetInsp.getUI().setVisible(false);
     }
 
     /**
      * Handles changes to the inspector UI controls.
      */
-    public void respondUI(ViewEvent anEvent)
-    {
-        // Handle ViewGeneralButton
-        //if (anEvent.equals("ViewGeneralButton")) setInspector(_viewTool);
-    }
-
-    /**
-     * Returns the inspector (owner) of the inspector pane.
-     */
-    protected ViewOwner getInspector()  { return _childInspector; }
-
-    /**
-     * Sets the inspector in the inspector pane.
-     */
-    protected void setInspector(ViewOwner anOwner)
-    {
-        // Set new inspector
-        _childInspector = anOwner;
-
-        // Get content and it grows height
-        View content = anOwner.getUI();
-        boolean contentGrowHeight = content.isGrowHeight();
-
-        // Set content and whether Inspector ScrollView sizes or scrolls content vertically
-        _inspScroll.setContent(content);
-        _inspScroll.setFillHeight(contentGrowHeight);
-    }
+    public void respondUI(ViewEvent anEvent)  { }
 }

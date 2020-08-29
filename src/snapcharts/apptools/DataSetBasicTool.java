@@ -3,7 +3,7 @@ package snapcharts.apptools;
 import snap.view.ComboBox;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
-import snapcharts.app.DataSetPane;
+import snapcharts.app.ChartPane;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
 
@@ -12,21 +12,21 @@ import snapcharts.model.DataType;
  */
 public class DataSetBasicTool extends ViewOwner {
 
-    // The DataSetPane
-    private DataSetPane  _dsetPane;
+    // The ChartPane
+    private ChartPane _chartPane;
 
     /**
      * Constructor.
      */
-    public DataSetBasicTool(DataSetPane aDSP)
+    public DataSetBasicTool(ChartPane aChartPane)
     {
-        _dsetPane = aDSP;
+        _chartPane = aChartPane;
     }
 
     /**
      * Returns the DataSet.
      */
-    public DataSet getDataSet()  { return _dsetPane.getDataSet(); }
+    public DataSet getDataSet()  { return _chartPane.getDataSet(); }
 
     /**
      * Init UI.
@@ -70,7 +70,7 @@ public class DataSetBasicTool extends ViewOwner {
         // Handle NameText
         if(anEvent.equals("NameText")) {
             dset.setName(anEvent.getStringValue());
-            _dsetPane.getDocPane().docItemNameChanged();
+            _chartPane.getDocPane().docItemNameChanged();
         }
     }
 }

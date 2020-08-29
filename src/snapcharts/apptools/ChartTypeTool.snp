@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ColView Padding="4,20,4,20" Spacing="4">
-  <RadioButton Name="LineChartButton" PrefWidth="80" PrefHeight="22" Padding="2" text="Line Chart" Selected="true" Group="bg0" />
-  <RadioButton Name="BarChartButton" PrefWidth="80" PrefHeight="22" Padding="2" text="Bar Chart" Group="bg0" />
-  <RadioButton Name="PieChartButton" PrefWidth="80" PrefHeight="22" Padding="2" text="Pie Chart" Group="bg0" />
-  <RadioButton Name="Bar3DChartButton" PrefWidth="90" PrefHeight="22" Padding="2" text="Bar Chart 3D" Group="bg0" />
-</ColView>
+<RowView Padding="4,30,10,30" Spacing="30">
+  <ColView Spacing="4">
+    <RadioButton Name="LineChartButton" PrefWidth="80" PrefHeight="22" Padding="2" text="Line Chart" Selected="true" Group="bg0" />
+    <RadioButton Name="BarChartButton" PrefWidth="80" PrefHeight="22" Padding="2" text="Bar Chart" Group="bg0" />
+  </ColView>
+  <ColView Spacing="4">
+    <RadioButton Name="PieChartButton" PrefWidth="80" PrefHeight="22" Padding="2" text="Pie Chart" Group="bg0" />
+    <RadioButton Name="Bar3DChartButton" PrefWidth="90" PrefHeight="22" Padding="2" text="Bar Chart 3D" Group="bg0" />
+  </ColView>
+</RowView>

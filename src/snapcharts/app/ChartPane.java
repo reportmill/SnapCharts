@@ -1,10 +1,12 @@
 package snapcharts.app;
-
-import snap.gfx.Font;
 import snap.gfx.ShadowEffect;
 import snap.view.*;
 import snapcharts.model.Chart;
+import snapcharts.model.ChartArchiver;
+import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
+import java.util.List;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -12,16 +14,19 @@ import snapcharts.views.ChartView;
 public class ChartPane extends DocItemPane {
     
     // The chartView
-    private ChartView _chartView;
+    private ChartView  _chartView;
     
     // The ChartBox
     private BoxView  _chartBox;
-    
-    // The DataPane to handle chart property editing
-    private DataPane  _dataPane;
 
+    // The TabView
+    private TabView  _tabView;
+    
     // The Inspector
-    private ChartPaneInsp _insp;
+    private ChartPaneInsp  _insp;
+
+    // Whether this ChartPane is in DataSet mode
+    protected boolean  _dataSetMode;
 
     /**
      * Returns the ChartView.
@@ -50,6 +55,34 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Returns the current DataSet.
+     */
+    public DataSet getDataSet()
+    {
+        int selIndex = _tabView!=null ? _tabView.getSelIndex() : -1;
+        DataSetList dataSetList = getChart().getDataSetList();
+        if (selIndex<0 || selIndex>=dataSetList.getDataSetCount())
+            return null;
+        return dataSetList.getDataSet(selIndex);
+    }
+
+    /**
+     * Sets the DataSet, with chart.
+     */
+    public void setDataSet(DataSet aDataSet)
+    {
+        _dataSetMode = true;
+        Chart chart = aDataSet.getChart();
+        Chart chart2 = new ChartArchiver().copy(chart);
+        DataSetList dataSetList = chart2.getDataSetList();
+        while (dataSetList.getDataSetCount()>0)
+            dataSetList.removeDataSet(0);
+        DataSet dset2 = new ChartArchiver().copy(aDataSet);
+        dataSetList.addDataSet(dset2);
+        setChart(chart2);
+    }
+
+    /**
      * Override to return the ChartView.
      */
     @Override
@@ -75,14 +108,22 @@ public class ChartPane extends DocItemPane {
         _chartBox.setContent(_chartView);
         _chartBox.setFill(ChartSetPane.BACK_FILL);
 
-        // Create DataPane
-        _dataPane = new DataPane(_chartView);
-        _dataPane.getUI().setPrefHeight(300);
-        _dataPane.getUI().setFont(Font.Arial13);
+        // Create TabView
+        _tabView = new TabView();
+        _tabView.setPrefHeight(300);
+
+        // If ChartPane is in DataSetMode, change some things
+        if (_dataSetMode) {
+            _tabView.setPrefHeight(-1);
+            _tabView.setGrowHeight(true);
+            _chartBox.setPrefHeight(400);
+            _chartBox.setGrowHeight(false);
+            _chartBox.setPadding(30, 60, 30, 60);
+        }
 
         // Configure TopColView
         ColView topColView = (ColView)topRowView.getChild("TopColView");
-        topColView.setChildren(_chartBox, _dataPane.getUI());
+        topColView.setChildren(_chartBox, _tabView);
         SplitView splitView = SplitView.makeSplitView(topColView);
         splitView.setDividerSpan(5);
 
@@ -95,10 +136,42 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Initialize showing.
+     */
+    @Override
+    protected void initShowing()
+    {
+        // Configure TabView with Chart.Datasets
+        DataSetList dataSetList = _chartView.getDataSetList();
+        List<DataSet> dsets = dataSetList.getDataSets();
+        for (DataSet dset : dsets) {
+            _tabView.addTab(dset.getName(), new Label(dset.getName()));
+        }
+    }
+
+    /**
+     * ResetUI.
+     */
+    @Override
+    protected void resetUI()
+    {
+        // Make sure TabView has DataSetPane UI view (not Label placeholder)
+        int selTabIndex = _tabView.getSelIndex();
+        if (selTabIndex>=0 && _tabView.getTabContent(selTabIndex) instanceof Label) {
+            DataSet dset = _chartView.getDataSetList().getDataSet(selTabIndex);
+            DataSetPane dsetPane = new DataSetPane();
+            dsetPane.setDataSet(dset);
+            _tabView.setTabContent(dsetPane.getUI(), selTabIndex);
+        }
+
+        // Reset inspector
+        _insp.resetLater();
+    }
+
+    /**
      * Respond to UI.
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        System.out.println("EditorPane.respondUI: " + anEvent);
     }
 }

@@ -1,6 +1,6 @@
 package snapcharts.model;
 
-import snapcharts.app.DataSetPane;
+import snapcharts.app.ChartPane;
 import snapcharts.app.DocItemPane;
 
 /**
@@ -50,7 +50,7 @@ public class DocItemDataSet extends DocItem {
     @Override
     protected DocItemPane createItemPane()
     {
-        DataSetPane pane = new DataSetPane();
+        ChartPane pane = new ChartPane();
         pane.setDataSet(getDataSet());
         return pane;
     }

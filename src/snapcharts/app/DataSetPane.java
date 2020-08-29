@@ -20,9 +20,6 @@ public class DataSetPane extends DocItemPane {
     // The SheetView
     private SheetView  _sheetView;
 
-    // The Inspector
-    private DataSetPaneInsp _insp;
-
     // Constants for actions
     private final String Cut_Action = "CutAction";
     private final String Paste_Action = "PasteAction";
@@ -98,8 +95,6 @@ public class DataSetPane extends DocItemPane {
 
         // Create/add InspectorPane
         RowView topRowView = getUI(RowView.class);
-        _insp = new DataSetPaneInsp(this);
-        topRowView.addChild(_insp.getUI());
 
         // Add PasteAction
         addKeyActionHandler(Cut_Action, "Shortcut+X");
@@ -131,9 +126,6 @@ public class DataSetPane extends DocItemPane {
 
         // Update PointCountLabel
         setViewValue("PointCountLabel", dset.getPointCount() + " Points");
-
-        // Reset Inspector
-        _insp.resetLater();
     }
 
     /**

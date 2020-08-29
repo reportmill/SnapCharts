@@ -1,7 +1,7 @@
 <RowView FillHeight="true">
   <ColView Name="TopColView" GrowWidth="true" FillWidth="true">
     <color value="#ededed" />
-    <BoxView Name="ChartBox" Padding="50" GrowHeight="true" FillWidth="true" FillHeight="true">
+    <BoxView Name="ChartBox" Padding="40" GrowHeight="true" FillWidth="true" FillHeight="true">
     </BoxView>
   </ColView>
 </RowView>

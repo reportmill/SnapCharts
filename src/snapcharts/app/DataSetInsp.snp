@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="3,0,0,0" PrefWidth="300" FillWidth="true">
+  <ColView Name="InspColView" FillWidth="true" />
+</ColView>
