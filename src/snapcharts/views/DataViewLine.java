@@ -99,6 +99,7 @@ public class DataViewLine extends DataView {
             // Get dataset and index (could be different if DataSetList has disabled sets)
             DataSet dset = dsets.get(i);
             int dsetIndex = dset.getIndex();
+            boolean showSymbol = dset.isShowSymbols();
 
             // Iterate over values
             for (int j=0;j<pointCount;j++) {
@@ -121,7 +122,8 @@ public class DataViewLine extends DataView {
                     aPntr.draw(marker);
                 }
                 aPntr.setColor(c);
-                aPntr.fill(marker);
+                if (showSymbol)
+                    aPntr.fill(marker);
             }
         }
 

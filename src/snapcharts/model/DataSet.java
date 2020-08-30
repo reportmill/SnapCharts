@@ -35,9 +35,13 @@ public class DataSet extends ChartPart {
     // Whether dataset is disabled
     private boolean  _disabled;
 
+    // Whether to show symbols
+    private boolean  _showSymbols;
+
     // Constants for properties
     public static final String Disabled_Prop = "Disabled";
-    public static final String Points_Prop = "Points";
+    public static final String Point_Prop = "Points";
+    public static final String ShowSymbols_Prop = "ShowSymbols";
 
     /**
      * Returns the chart.
@@ -133,7 +137,7 @@ public class DataSet extends ChartPart {
         aPoint._dset = this;
         aPoint._index = anIndex;
         _points.add(anIndex, aPoint);
-        firePropChange(Points_Prop, null, aPoint, anIndex);
+        firePropChange(Point_Prop, null, aPoint, anIndex);
 
         // If data type still unknown, clear to re-evaluate
         if (_dataType == DataType.UNKNOWN)
@@ -146,7 +150,7 @@ public class DataSet extends ChartPart {
     public DataPoint removePoint(int anIndex)
     {
         DataPoint dpnt = _points.remove(anIndex);
-        firePropChange(Points_Prop, dpnt, null, anIndex);
+        firePropChange(Point_Prop, dpnt, null, anIndex);
         return dpnt;
     }
 
@@ -365,6 +369,20 @@ public class DataSet extends ChartPart {
     }
 
     /**
+     * Returns whether to show symbols for this DataSet.
+     */
+    public boolean isShowSymbols()  { return _showSymbols; }
+
+    /**
+     * Sets whether to show symbols for this DataSet.
+     */
+    public void setShowSymbols(boolean aValue)
+    {
+        if (aValue==isShowSymbols()) return;
+        firePropChange(ShowSymbols_Prop, _showSymbols, _showSymbols = aValue);
+    }
+
+    /**
      * Returns whether this dataset is disabled.
      */
     public boolean isDisabled()  { return _disabled; }
@@ -503,6 +521,12 @@ public class DataSet extends ChartPart {
         DataType dataType = getDataType();
         e.add("DataType", dataType);
 
+        // Archive ShowSymbols, Disabled
+        if (isShowSymbols())
+            e.add(ShowSymbols_Prop, true);
+        if (isDisabled())
+            e.add(Disabled_Prop, true);
+
         // If XY, add DataX values
         if (dataType==DataType.XY) {
             String dataXStr = Arrays.toString(getDataX());
@@ -546,6 +570,10 @@ public class DataSet extends ChartPart {
         // Unarchive DataType
         String dataTypeStr = anElement.getAttributeValue("DataType");
         DataType dataType = DataType.valueOf(dataTypeStr);
+
+        // Unarchive ShowSymbols, Disabled
+        setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
+        setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
 
         // Get DataX
         double dataX[] = null;

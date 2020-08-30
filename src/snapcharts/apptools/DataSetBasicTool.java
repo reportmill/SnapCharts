@@ -56,7 +56,7 @@ public class DataSetBasicTool extends ViewOwner {
         setViewValue("LineWidthText", 1);
 
         // Reset ShowSymbolsCheckBox
-        //setViewValue("ShowSymbolsCheckBox", dset.isShowSymbols());
+        setViewValue("ShowSymbolsCheckBox", dset.isShowSymbols());
     }
 
     /**
@@ -72,5 +72,9 @@ public class DataSetBasicTool extends ViewOwner {
             dset.setName(anEvent.getStringValue());
             _chartPane.getDocPane().docItemNameChanged();
         }
+
+        // Handle ShowSymbolsCheckBox
+        if (anEvent.equals("ShowSymbolsCheckBox"))
+            dset.setShowSymbols(anEvent.getBoolValue());
     }
 }

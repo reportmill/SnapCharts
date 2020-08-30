@@ -18,7 +18,7 @@
     <ColorButton PrefWidth="32" PrefHeight="22" Title="Stroke" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowLegendCheckBox" text="Show Symbols" />
+    <CheckBox Name="ShowSymbolsCheckBox" text="Show Symbols" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
