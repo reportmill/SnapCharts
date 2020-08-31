@@ -44,6 +44,14 @@ public class DataSet extends ChartPart {
     public static final String ShowSymbols_Prop = "ShowSymbols";
 
     /**
+     * Constructor.
+     */
+    public DataSet()
+    {
+        super();
+    }
+
+    /**
      * Returns the chart.
      */
     @Override
