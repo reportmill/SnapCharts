@@ -3,11 +3,11 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import snap.gfx.GFXEnv;
-import snap.view.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -18,7 +18,7 @@ import java.util.TimeZone;
 /**
  * A class to allow a desktop app to send a chart to SnapCharts.
  */
-public class ChartClientMin extends ViewOwner {
+public class ChartClientMin {
 
     // The SnapChartURL
     private final int HTTP_PORT_LOCAL = 8008;
@@ -74,7 +74,8 @@ public class ChartClientMin extends ViewOwner {
             String cmd = _cmd + ' ' + urls;
             //Runtime.getRuntime().exec(cmd);
             //App.main(new String[] { App.APP_ARG_FETCH_CHART, urls});
-            GFXEnv.getEnv().openURL(urls);
+            try { Desktop.getDesktop().browse(new URI(urls)); }
+            catch(Throwable e) { System.err.println(e.getMessage()); }
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -111,41 +112,6 @@ public class ChartClientMin extends ViewOwner {
 
         // Open Doc
         openChartDoc("NewChart.simple");
-    }
-
-    /**
-     * Create UI.
-     */
-    @Override
-    protected View createUI()
-    {
-        ColView mainColView = new ColView();
-        mainColView.setPadding(20, 20, 20, 20);
-        mainColView.setSpacing(20);
-
-        Button button = new Button("Open Simple Sample");
-        button.setName("OpenSample");
-        mainColView.addChild(button);
-        return mainColView;
-    }
-
-    /**
-     * respondUI.
-     */
-    @Override
-    protected void respondUI(ViewEvent anEvent)
-    {
-        if (anEvent.equals("OpenSample"))
-            openSimpleSample();
-    }
-
-    /**
-     * Standard main.
-     */
-    public static void main(String args[])
-    {
-        ChartClientMin chartClient = new ChartClientMin();
-        chartClient.setWindowVisible(true);
     }
 
     /**

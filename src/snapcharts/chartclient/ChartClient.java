@@ -116,8 +116,8 @@ public class ChartClient extends ViewOwner {
     @Override
     protected void respondUI(ViewEvent anEvent)
     {
-        if (anEvent.equals("OpenSample"))
-            openSimpleSample();
+        if (anEvent.equals("OpenSample")) //openSimpleSample();
+            new ChartClientMin().openSimpleSample();
     }
 
     /**
@@ -125,8 +125,7 @@ public class ChartClient extends ViewOwner {
      */
     public static void main(String args[])
     {
-        //ChartClient chartClient = new ChartClient();
-        ChartClientMin chartClient = new ChartClientMin();
+        ChartClient chartClient = new ChartClient();
         chartClient.setWindowVisible(true);
     }
 }
