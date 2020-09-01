@@ -102,6 +102,15 @@ public class Doc extends DocItemGroup {
             return doc;
         }
 
+        // Handle simple file
+        if (ext.equals("simple")) {
+            String str = url.getText();
+            System.out.println("Got string: " + (str!=null ? str.length() : -1));
+            System.out.println("Strring: " + str);
+            Doc doc = new DocTextReader().getDocForString(str);
+            return doc;
+        }
+
         // Just return null
         return null;
     }

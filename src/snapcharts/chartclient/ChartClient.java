@@ -28,7 +28,7 @@ public class ChartClient extends ViewOwner {
     private String _args = "-classpath " + _classpath + " snapcharts.app.App " + App.APP_ARG_FETCH_CHART;
     private String _cmd = _java + ' ' + _args;
 
-    //
+    // The SimpleServer
     SimpleServer _server = new SimpleServer();
 
     /**
@@ -40,6 +40,7 @@ public class ChartClient extends ViewOwner {
         byte bytes[] = aChartDoc.getChartsFileXMLBytes();
         File file = FileUtils.getTempFile(aFileName);
         SnapUtils.writeBytes(bytes, file);
+        SnapUtils.writeBytes(bytes, "/tmp/test.charts");
 
         // Get URL
         boolean isLocal = false;
@@ -124,7 +125,8 @@ public class ChartClient extends ViewOwner {
      */
     public static void main(String args[])
     {
-        ChartClient chartClient = new ChartClient();
+        //ChartClient chartClient = new ChartClient();
+        ChartClientMin chartClient = new ChartClientMin();
         chartClient.setWindowVisible(true);
     }
 }
