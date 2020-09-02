@@ -8,6 +8,7 @@ import snap.viewx.RecentFiles;
 import snap.viewx.TextPane;
 import snap.web.WebFile;
 import snap.web.WebURL;
+import snapcharts.chartclient.ChartClient;
 import snapcharts.model.*;
 
 /**
@@ -188,6 +189,7 @@ public class DocPane extends ViewOwner {
         setDoc(doc);
 
         // If source is string, add to recent files menu
+        url = doc.getSourceURL();
         String urls = url!=null ? url.getString() : null;
         if(urls!=null)
             RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
@@ -391,8 +393,10 @@ public class DocPane extends ViewOwner {
         enableEvents(win, WinClose);
 
         // If TeaVM, go full window
-        if (SnapUtils.isTeaVM)
+        if (SnapUtils.isTeaVM) {
             getWindow().setMaximized(true);
+            getView("WebButton").setVisible(false);
+        }
     }
 
     /**
@@ -435,6 +439,11 @@ public class DocPane extends ViewOwner {
         if (anEvent.equals("AddButton")) {
             respondToNewAction();
             //getSelItemPane().sendEvent(New_Action);
+        }
+
+        // Handle WebButton
+        if (anEvent.equals("WebButton")) {
+            new ChartClient().openChartDoc("Untitled.charts", getDoc());
         }
     }
 
