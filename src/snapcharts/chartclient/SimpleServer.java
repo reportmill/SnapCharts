@@ -166,8 +166,8 @@ public class SimpleServer {
     void append(String aStr, boolean isErr)
     {
         if (isErr)
-            System.out.println(aStr);
-        else System.out.println(aStr);
+            System.out.print(aStr);
+        else System.out.print(aStr);
     }
 
     /**

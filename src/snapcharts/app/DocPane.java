@@ -425,6 +425,17 @@ public class DocPane extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle SaveButton
+        if (anEvent.equals("SaveButton")) save();
+        if (anEvent.equals("CutButton")) cut();
+        if (anEvent.equals("CopyButton")) copy();
+        if (anEvent.equals("PasteButton")) paste();
+
+        // Handle WebButton
+        if (anEvent.equals("WebButton")) {
+            new ChartClient().openChartDoc("Untitled.charts", getDoc());
+        }
+
         // Handle TreeView
         if (anEvent.equals(_treeView)) {
             DocItem docItem = _treeView.getSelItem();
@@ -439,11 +450,6 @@ public class DocPane extends ViewOwner {
         if (anEvent.equals("AddButton")) {
             respondToNewAction();
             //getSelItemPane().sendEvent(New_Action);
-        }
-
-        // Handle WebButton
-        if (anEvent.equals("WebButton")) {
-            new ChartClient().openChartDoc("Untitled.charts", getDoc());
         }
     }
 
