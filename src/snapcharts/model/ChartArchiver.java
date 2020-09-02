@@ -1,5 +1,7 @@
 package snapcharts.model;
 import snap.util.XMLArchiver;
+import snap.web.WebURL;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +24,11 @@ public class ChartArchiver extends XMLArchiver {
     public Doc getDocFromXMLSource(Object anObj)
     {
         Doc doc = (Doc)readFromXMLSource(anObj);
-        if (doc!=null)
-            doc.setSourceURL(getSourceURL());
+        if (doc!=null) {
+            WebURL url = getSourceURL();
+            if (url!=null && !url.getString().contains("localhost"))
+               doc.setSourceURL(getSourceURL());
+        }
         return doc;
     }
 

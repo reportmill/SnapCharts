@@ -537,7 +537,7 @@ public class DataSet extends ChartPart {
 
         // If XY, add DataX values
         if (dataType==DataType.XY) {
-            String dataXStr = Arrays.toString(getDataX());
+            String dataXStr = DataUtils.getStringForDoubleArray(getDataX());
             XMLElement dataX_XML = new XMLElement("DataX");
             dataX_XML.setValue(dataXStr);
             e.add(dataX_XML);
@@ -553,7 +553,7 @@ public class DataSet extends ChartPart {
 
         // If not Unknown, add DataY values
         if (dataType!=DataType.UNKNOWN) {
-            String dataYStr = Arrays.toString(getDataY());
+            String dataYStr = DataUtils.getStringForDoubleArray(getDataY());
             XMLElement dataY_XML = new XMLElement("DataY");
             dataY_XML.setValue(dataYStr);
             e.add(dataY_XML);

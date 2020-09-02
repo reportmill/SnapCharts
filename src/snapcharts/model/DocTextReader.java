@@ -1,7 +1,5 @@
 package snapcharts.model;
-import snapcharts.model.Chart;
-import snapcharts.model.DataSet;
-import snapcharts.model.Doc;
+import snap.util.SnapUtils;
 import java.util.Arrays;
 
 /**
@@ -73,6 +71,14 @@ public class DocTextReader {
                     _chart.setTitle(val);
                     break;
 
+                case "Chart.Subtitle":
+                    _chart.setSubtitle(val);
+                    break;
+
+                case "Chart.ShowLegend":
+                    _chart.setShowLegend(SnapUtils.boolValue(val));
+                    break;
+
                 case "Chart.AxisX.Title":
                     _chart.getAxisX().setTitle(val);
                     break;
@@ -85,6 +91,10 @@ public class DocTextReader {
                     _dset = new DataSet();
                     _dset.setName(val);
                     _chart.addDataSet(_dset);
+                    break;
+
+                case "DataSet.ShowSymbols":
+                    _dset.setShowSymbols(SnapUtils.boolValue(val));
                     break;
 
                 case "DataSet.DataX":
@@ -125,7 +135,7 @@ public class DocTextReader {
         for (String valStr : valStrs) {
             if (valStr.length() > 0) {
                 try {
-                    double val = Double.valueOf(valStr);
+                    double val = Double.parseDouble(valStr);
                     vals[count++] = val;
                 }
                 catch (Exception e)  { }

@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -105,14 +106,33 @@ public class ChartClientMin {
         }
         dataX = Arrays.copyOf(dataX, len);
         dataY = Arrays.copyOf(dataY, len);
-        String dataXStr = Arrays.toString(dataX);
-        String dataYStr = Arrays.toString(dataY);
+        String dataXStr = getStringForDoubleArray(dataX);
+        String dataYStr = getStringForDoubleArray(dataY);
         _chartBuffer.append("DataSet.DataX=").append(dataXStr).append('\n');
         _chartBuffer.append("DataSet.DataY=").append(dataYStr).append('\n');
 
         // Open Doc
         openChartDoc("NewChart.simple");
     }
+
+    /**
+     * Return string for double array.
+     */
+    public static String getStringForDoubleArray(double theValues[])
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i=0, iMax=theValues.length; ; i++) {
+            String str = _doubleFmt.format(theValues[i]);
+            sb.append(str);
+            if (i == iMax)
+                return sb.append(']').toString();
+            sb.append(", ");
+        }
+    }
+
+    // A formatter to format double without exponent
+    private static DecimalFormat _doubleFmt = new DecimalFormat("0.##############");
 
     /**
      * HTTPServerPane provides UI for managing an HTTP-Server for this project.

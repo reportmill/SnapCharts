@@ -434,6 +434,7 @@ public class DocPane extends ViewOwner {
         // Handle WebButton
         if (anEvent.equals("WebButton")) {
             new ChartClient().openChartDoc("Untitled.charts", getDoc());
+            //new ChartClient().openSimpleSample();
         }
 
         // Handle TreeView

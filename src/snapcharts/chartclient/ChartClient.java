@@ -8,6 +8,7 @@ import snapcharts.model.Chart;
 import snapcharts.model.DataSet;
 import snapcharts.model.Doc;
 import java.io.File;
+import java.text.DecimalFormat;
 
 /**
  * A class to allow a desktop app to send a chart to SnapCharts.
@@ -56,7 +57,7 @@ public class ChartClient extends ViewOwner {
         try {
             String cmd = _cmd + ' ' + urls;
             //Runtime.getRuntime().exec(cmd);
-            //App.main(new String[] { App.APP_ARG_FETCH_CHART, urls});
+            //App.main(new String[] { App.APP_ARG_FETCH_CHART, aFileName });
             GFXEnv.getEnv().openURL(urls);
         }
         catch (Exception e) {
@@ -119,6 +120,25 @@ public class ChartClient extends ViewOwner {
         if (anEvent.equals("OpenSample")) //openSimpleSample();
             new ChartClientMin().openSimpleSample();
     }
+
+    /**
+     * Return string for double array.
+     */
+    public static String getStringForDoubleArray(double theValues[])
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i=0, iMax=theValues.length; ; i++) {
+            String str = _doubleFmt.format(theValues[i]);
+            sb.append(str);
+            if (i == iMax)
+                return sb.append(']').toString();
+            sb.append(", ");
+        }
+    }
+
+    // A formatter to format double without exponent
+    private static DecimalFormat _doubleFmt = new DecimalFormat("0.##############");
 
     /**
      * Standard main.

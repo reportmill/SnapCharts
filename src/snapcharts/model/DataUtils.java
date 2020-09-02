@@ -1,10 +1,14 @@
 package snapcharts.model;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
  * Utilities for Data.
  */
 public class DataUtils {
+
+    // A formatter to format double without exponent
+    private static DecimalFormat _doubleFmt = new DecimalFormat("0.#########");
 
     /**
      * Returns cell data for string.
@@ -23,6 +27,22 @@ public class DataUtils {
         if (lineCount!=lines.length)
             cells = Arrays.copyOf(cells, lineCount);
         return cells;
+    }
+
+    /**
+     * Return string for double array.
+     */
+    public static String getStringForDoubleArray(double theValues[])
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i=0, iMax=theValues.length-1; ; i++) {
+            String str = _doubleFmt.format(theValues[i]);
+            sb.append(str);
+            if (i == iMax)
+                return sb.append(']').toString();
+            sb.append(", ");
+        }
     }
 
     /** Returns a String for an array of data values. */
