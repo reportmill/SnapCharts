@@ -28,6 +28,9 @@ public class ChartPane extends DocItemPane {
     // Whether this ChartPane is in DataSet mode
     protected boolean  _dataSetMode;
 
+    // The selection helper class
+    private ChartPaneSel  _selHpr;
+
     /**
      * Returns the ChartView.
      */
@@ -130,6 +133,9 @@ public class ChartPane extends DocItemPane {
         // Create/add InspectorPane
         _insp = new ChartPaneInsp(this);
         topRowView.addChild(_insp.getUI());
+
+        // Create configure ChartPaneSel
+        _selHpr = new ChartPaneSel(this);
 
         // Return TopRowView
         return topRowView;
