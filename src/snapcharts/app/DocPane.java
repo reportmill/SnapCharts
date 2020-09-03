@@ -8,7 +8,6 @@ import snap.viewx.RecentFiles;
 import snap.viewx.TextPane;
 import snap.web.WebFile;
 import snap.web.WebURL;
-import snapcharts.chartclient.ChartClient;
 import snapcharts.model.*;
 
 /**
@@ -433,8 +432,8 @@ public class DocPane extends ViewOwner {
 
         // Handle WebButton
         if (anEvent.equals("WebButton")) {
-            new ChartClient().openChartDoc("Untitled.charts", getDoc());
-            //new ChartClient().openSimpleSample();
+            new snapcharts.chartclient.ChartClient().openChartDoc("Untitled.charts", getDoc());
+            //new snapcharts.chartclient.ChartClient().openSimpleSample();
         }
 
         // Handle TreeView

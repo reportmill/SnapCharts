@@ -4,7 +4,6 @@ import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
 import snapcharts.apptools.ChartBasicTool;
-import snapcharts.apptools.ChartTypeTool;
 
 /**
  * A class to manage inspector.
@@ -23,9 +22,6 @@ public class ChartPaneInsp extends ViewOwner {
     // The ColView that holds UI for child inspectors
     private ColView  _inspColView;
 
-    // The ChartTypeTool
-    private ChartTypeTool _chartType;
-    
     // The BasicPropsTool
     private ChartBasicTool _basicProps;
 
@@ -73,11 +69,6 @@ public class ChartPaneInsp extends ViewOwner {
         // Only Add Chart stuff for ChartMode
         boolean chartMode = !_chartPane._dataSetMode;
         if (chartMode) {
-
-            // Get ChartTypeTool
-            _chartType = new ChartTypeTool(_chartPane);
-            _inspColView.addChild(_chartType.getUI());
-            Collapser.createCollapserAndLabel(_chartType.getUI(), "Chart Types");//.setCollapsed(true);
 
             // Get ChartBasicTool
             _basicProps = new ChartBasicTool(_chartPane);

@@ -44,7 +44,7 @@ public class DataSetBasicTool extends ViewOwner {
     protected void resetUI()
     {
         // Get DataSet
-        DataSet dset = getDataSet();
+        DataSet dset = getDataSet(); if (dset==null) return;
 
         // Reset NameText
         setViewValue("NameText", dset.getName());
@@ -65,7 +65,7 @@ public class DataSetBasicTool extends ViewOwner {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get DataSet
-        DataSet dset = getDataSet();
+        DataSet dset = getDataSet(); if (dset==null) return;
 
         // Handle NameText
         if(anEvent.equals("NameText")) {

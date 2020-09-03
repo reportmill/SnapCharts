@@ -12,7 +12,7 @@
     <Button Name="RedoButton" PrefWidth="22" PrefHeight="22" ToolTip="Redo" image="Edit_Redo.png" ShowArea="false" />
     <RowView PrefWidth="300" LeanX="RIGHT">
       <Button Name="WebButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Web" />
-      <Button Name="SamplesButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" text="Samples" />
+      <Button Name="SamplesButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Samples" />
     </RowView>
   </RowView>
   <SplitView Name="SplitView" GrowHeight="true">

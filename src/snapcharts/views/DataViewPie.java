@@ -58,11 +58,11 @@ public class DataViewPie extends DataView {
     public ChartType getChartType()  { return ChartType.PIE; }
 
     /**
-     * Sets the chart view.
+     * Sets the ChartArea.
      */
-    protected void setChartView(ChartView aCV)
+    protected void setChartArea(ChartArea aChartArea)
     {
-        super.setChartView(aCV);
+        super.setChartArea(aChartArea);
         _chartView.addPropChangeListener(pc -> selDataPointChanged(pc), ChartView.SelDataPoint_Prop);
     }
 

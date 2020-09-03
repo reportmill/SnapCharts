@@ -40,6 +40,12 @@ public class ChartArea extends ChartPartView {
     }
 
     /**
+     * Returns the ChartView.
+     */
+    @Override
+    public ChartView getChartView()  { return _chartView; }
+
+    /**
      * Returns the DataView.
      */
     public DataView getDataView()  { return _dataView; }
@@ -50,15 +56,17 @@ public class ChartArea extends ChartPartView {
     protected void setDataView(DataView aDataView)
     {
         // Remove old
-        if (_dataView !=null)
+        if (_dataView !=null) {
+            _dataView.deactivate();
             removeChild(_dataView);
+        }
 
         // Set/add new
         _dataView = aDataView;
         addChild(_dataView, 1);
 
         // Update Axes
-        _dataView.setChartView(_chartView);
+        _dataView.setChartArea(this);
         _axisY._dataView = _axisX._dataView = aDataView;
 
         _dataView.activate();

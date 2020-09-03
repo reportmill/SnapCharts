@@ -14,9 +14,12 @@ import snapcharts.model.*;
  */
 public abstract class DataView extends ChartPartView {
     
+    // The ChartArea that holds this DataView
+    protected ChartArea  _chartArea;
+    
     // The ChartView that owns the area
     protected ChartView  _chartView;
-    
+
     // The amount of the chart to show horizontally (0-1)
     private double  _reveal = 1;
     
@@ -42,19 +45,23 @@ public abstract class DataView extends ChartPartView {
     public abstract ChartType getChartType();
 
     /**
-     * Sets the chart view.
+     * Sets the ChartArea.
      */
-    protected void setChartView(ChartView aCV)  { _chartView = aCV; }
+    protected void setChartArea(ChartArea aChartArea)
+    {
+        _chartArea = aChartArea;
+        _chartView = _chartArea.getChartView();
+    }
 
     /**
      * Returns the X axis view.
      */
-    public AxisViewX getAxisX()  { return _chartView.getAxisX(); }
+    public AxisViewX getAxisX()  { return _chartArea.getAxisX(); }
 
     /**
      * Returns the Y axis view.
      */
-    public AxisViewY getAxisY()  { return _chartView.getAxisY(); }
+    public AxisViewY getAxisY()  { return _chartArea.getAxisY(); }
 
     /**
      * Returns the data set list.
@@ -190,7 +197,7 @@ public abstract class DataView extends ChartPartView {
         aPntr.setStroke(stroke);
 
         // Have YAxisView paint lines
-        if (_chartView.getAxisY().isVisible())
+        if (getAxisY().isVisible())
             paintAxisY(aPntr, 0, ins.top, pw, h);
 
         // Paint chart
@@ -278,6 +285,11 @@ public abstract class DataView extends ChartPartView {
         // Return DataPoint for closest dataset+index
         return dataPoint;
     }
+
+    /**
+     * Called to reset view from updated Chart.
+     */
+    protected void resetView()  { }
 
     /**
      * Called after a chart area is installed in chart view.

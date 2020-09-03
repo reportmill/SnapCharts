@@ -2,6 +2,7 @@ package snapcharts.apptools;
 
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
+import snapcharts.model.ChartType;
 import snapcharts.views.ChartView;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
@@ -37,9 +38,13 @@ public class ChartBasicTool extends ViewOwner {
         setViewValue("XAxisTitleText", chart.getAxisX().getTitle());
         setViewValue("YAxisTitleText", chart.getAxisY().getTitle());
 
-        // Reset ShowLegendCheckBox, PartialYAxisCheckBox
+        // Reset ShowLegendCheckBox
         setViewValue("ShowLegendCheckBox", chart.isShowLegend());
-        setViewValue("PartialYAxisCheckBox", chart.isShowPartialY());
+
+        // Reset LineChartButton, BarChartButton
+        ChartType type = chart.getType();
+        String typeName = type.getStringPlain() + "ChartButton";
+        setViewValue(typeName, true);
     }
 
     /**
@@ -62,8 +67,13 @@ public class ChartBasicTool extends ViewOwner {
         if(anEvent.equals("XAxisTitleText")) chart.getAxisX().setTitle(anEvent.getStringValue());
         if(anEvent.equals("YAxisTitleText")) chart.getAxisY().setTitle(anEvent.getStringValue());
 
-        // Handle ShowLegendCheckBox, PartialYAxisCheckBox
+        // Handle ShowLegendCheckBox
         if(anEvent.equals("ShowLegendCheckBox")) chart.setShowLegend(anEvent.getBoolValue());
-        if(anEvent.equals("PartialYAxisCheckBox")) chart.setShowPartialY(anEvent.getBoolValue());
+
+        // Handle BarChartButton, LineChartButton, PieChartButton
+        if(anEvent.equals("BarChartButton")) chart.setType(ChartType.BAR);
+        if(anEvent.equals("Bar3DChartButton")) chart.setType(ChartType.BAR_3D);
+        if(anEvent.equals("LineChartButton")) chart.setType(ChartType.LINE);
+        if(anEvent.equals("PieChartButton")) chart.setType(ChartType.PIE);
     }
 }
