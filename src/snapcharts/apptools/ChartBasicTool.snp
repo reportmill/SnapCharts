@@ -13,14 +13,6 @@
     <TextField Name="SubtitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="X-Axis Title:" />
-    <TextField Name="XAxisTitleText" GrowWidth="true" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <Label text="Y-Axis Title:" />
-    <TextField Name="YAxisTitleText" GrowWidth="true" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
   </RowView>
   <TitleView MinWidth="120" MinHeight="60" Padding="2" GrowWidth="true" Text="Chart Type">

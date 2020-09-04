@@ -177,6 +177,18 @@ public class Chart extends ChartPart {
     public AxisY getAxisY()  { return _axisY; }
 
     /**
+     * Returns the Axis for given type.
+     */
+    public Axis getAxisForType(AxisType anAxisType)
+    {
+        switch (anAxisType) {
+            case X: return getAxisX();
+            case Y: return getAxisY();
+            default: return null;
+        }
+    }
+
+    /**
      * Returns the DataSetList.
      */
     public DataSetList getDataSetList()  { return _dsetList; }

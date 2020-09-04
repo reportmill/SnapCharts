@@ -3,7 +3,11 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
+import snapcharts.apptools.AxisInsp;
 import snapcharts.apptools.ChartBasicTool;
+import snapcharts.apptools.ChartPartInsp;
+import snapcharts.apptools.DataSetInsp;
+import snapcharts.model.AxisType;
 
 /**
  * A class to manage inspector.
@@ -25,8 +29,14 @@ public class ChartPaneInsp extends ViewOwner {
     // The BasicPropsTool
     private ChartBasicTool _basicProps;
 
+    // The AxisInsp
+    private AxisInsp  _axisXInsp;
+
+    // The AxisInsp
+    private AxisInsp  _axisYInsp;
+
     // The DataSet Inspector
-    private DataSetInsp  _dsetInsp;
+    private DataSetInsp _dsetInsp;
 
     /**
      * Constructor.
@@ -70,15 +80,38 @@ public class ChartPaneInsp extends ViewOwner {
         boolean chartMode = !_chartPane._dataSetMode;
         if (chartMode) {
 
-            // Get ChartBasicTool
+            // Create/add ChartBasicTool
             _basicProps = new ChartBasicTool(_chartPane);
-            _inspColView.addChild(_basicProps.getUI());
-            Collapser.createCollapserAndLabel(_basicProps.getUI(), "Chart Settings");//.setCollapsed(true);
+            addInspector(_basicProps, true);
+
+            // Create/add AxisXInsp, AxisYInsp
+            _axisXInsp = new AxisInsp(_chartPane, AxisType.X);
+            addInspector(_axisXInsp, false);
+            _axisYInsp = new AxisInsp(_chartPane, AxisType.Y);
+            addInspector(_axisYInsp, false);
         }
 
         // Add DataSet inspector
         _dsetInsp = new DataSetInsp(_chartPane);
         _inspColView.addChild(_dsetInsp.getUI());
+    }
+
+    /**
+     * Adds an inspector.
+     */
+    private void addInspector(ChartPartInsp aChartPartInsp, boolean isShowing)
+    {
+        // Get info
+        String name = aChartPartInsp.getName();
+        View inspUI = aChartPartInsp.getUI();
+
+        // Add to inspector
+        _inspColView.addChild(inspUI);
+
+        // Add collaper and label
+        Collapser collapser = Collapser.createCollapserAndLabel(inspUI, name);
+        if (!isShowing)
+            collapser.setCollapsed(true);
     }
 
     /**

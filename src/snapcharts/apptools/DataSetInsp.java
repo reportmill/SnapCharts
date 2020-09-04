@@ -1,17 +1,16 @@
-package snapcharts.app;
+package snapcharts.apptools;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
+import snapcharts.app.ChartPane;
+import snapcharts.app.Collapser;
 import snapcharts.apptools.DataSetBasicTool;
 
 /**
  * A class to manage the inspector for ChartSetPane.
  */
-public class DataSetInsp extends ViewOwner {
-
-    // The ChartPane
-    protected ChartPane _chartPane;
+public class DataSetInsp extends ChartPartInsp {
 
     // The ColView that holds UI for child inspectors
     private ColView  _inspColView;
@@ -24,8 +23,14 @@ public class DataSetInsp extends ViewOwner {
      */
     public DataSetInsp(ChartPane aChartPane)
     {
-        _chartPane = aChartPane;
+        super(aChartPane);
     }
+
+    /**
+     * Returns the name.
+     */
+    @Override
+    public String getName()  { return "DataSet Settings"; }
 
     /**
      * Initializes UI panel for the inspector.

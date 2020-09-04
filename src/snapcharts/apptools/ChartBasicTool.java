@@ -1,27 +1,28 @@
 package snapcharts.apptools;
 
 import snap.view.ViewEvent;
-import snap.view.ViewOwner;
 import snapcharts.model.ChartType;
-import snapcharts.views.ChartView;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
 
 /**
  * A class to manage UI to edit a ChartView.
  */
-public class ChartBasicTool extends ViewOwner {
+public class ChartBasicTool extends ChartPartInsp {
     
-    // The ChartPane
-    private ChartPane  _chartPane;
-
     /**
      * Constructor.
      */
     public ChartBasicTool(ChartPane aCP)
     {
-        _chartPane = aCP;
+        super(aCP);
     }
+
+    /**
+     * Returns the name.
+     */
+    @Override
+    public String getName()  { return "Chart Settings"; }
 
     /**
      * Reset UI.
@@ -29,14 +30,12 @@ public class ChartBasicTool extends ViewOwner {
     protected void resetUI()
     {
         // Get Chart
-        Chart chart = _chartPane.getChart();
+        Chart chart = getChart();
 
-        // Reset NameText, TitleText, SubtitleText, XAxisTitleText, YAxisTitleText
+        // Reset NameText, TitleText, SubtitleText
         setViewValue("NameText", chart.getName());
         setViewValue("TitleText", chart.getTitle());
         setViewValue("SubtitleText", chart.getSubtitle());
-        setViewValue("XAxisTitleText", chart.getAxisX().getTitle());
-        setViewValue("YAxisTitleText", chart.getAxisY().getTitle());
 
         // Reset ShowLegendCheckBox
         setViewValue("ShowLegendCheckBox", chart.isShowLegend());
@@ -53,19 +52,17 @@ public class ChartBasicTool extends ViewOwner {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get Chart
-        Chart chart = _chartPane.getChart();
+        Chart chart = getChart();
 
         // Handle NameText
         if(anEvent.equals("NameText")) {
             chart.setName(anEvent.getStringValue());
-            _chartPane.getDocPane().docItemNameChanged();
+            getChartPane().getDocPane().docItemNameChanged();
         }
 
-        // Handle TitleText, SubtitleText, XAxisTitleText, YAxisTitleText
+        // Handle TitleText, SubtitleText
         if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
         if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
-        if(anEvent.equals("XAxisTitleText")) chart.getAxisX().setTitle(anEvent.getStringValue());
-        if(anEvent.equals("YAxisTitleText")) chart.getAxisY().setTitle(anEvent.getStringValue());
 
         // Handle ShowLegendCheckBox
         if(anEvent.equals("ShowLegendCheckBox")) chart.setShowLegend(anEvent.getBoolValue());
