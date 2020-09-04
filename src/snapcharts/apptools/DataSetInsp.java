@@ -3,6 +3,7 @@ package snapcharts.apptools;
 import snap.view.ComboBox;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
+import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
 
@@ -24,6 +25,12 @@ public class DataSetInsp extends ChartPartInsp {
      */
     @Override
     public String getName()  { return "DataSet Settings"; }
+
+    /**
+     * Returns the ChartPart.
+     */
+    @Override
+    public ChartPart getChartPart()  { return getDataSet(); }
 
     /**
      * Returns the DataSet.

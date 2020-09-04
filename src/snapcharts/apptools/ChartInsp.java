@@ -1,6 +1,7 @@
 package snapcharts.apptools;
 
 import snap.view.ViewEvent;
+import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
@@ -23,6 +24,12 @@ public class ChartInsp extends ChartPartInsp {
      */
     @Override
     public String getName()  { return "Chart Settings"; }
+
+    /**
+     * Returns the ChartPart.
+     */
+    @Override
+    public ChartPart getChartPart()  { return getChart(); }
 
     /**
      * Reset UI.

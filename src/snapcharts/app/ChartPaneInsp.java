@@ -35,6 +35,9 @@ public class ChartPaneInsp extends ViewOwner {
     // The AxisInsp
     private AxisInsp  _axisYInsp;
 
+    // The LegendInsp
+    private LegendInsp  _legendInsp;
+
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
 
@@ -98,6 +101,10 @@ public class ChartPaneInsp extends ViewOwner {
             // Create/add AxisYInsp
             _axisYInsp = new AxisInsp(_chartPane, AxisType.Y);
             addInspector(_axisYInsp, false);
+
+            // Create/add LegendInsp
+            _legendInsp = new LegendInsp(_chartPane);
+            addInspector(_legendInsp, false);
         }
 
         // Add DataSetInsp
@@ -105,7 +112,7 @@ public class ChartPaneInsp extends ViewOwner {
         addInspector(_dsetInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _dsetInsp };
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
         runLater(() -> chartPaneSelChanged());
@@ -124,6 +131,10 @@ public class ChartPaneInsp extends ViewOwner {
         Collapser collapser = aChartPartInsp.getCollapser();
         if (!isShowing)
             collapser.setCollapsed(true);
+
+        // Add listener to update ChartPartInsp.Sel when label is clicked
+        Label label = aChartPartInsp.getLabel();
+        label.addEventFilter(e -> runLater(() -> chartPartInspLabelMousePress(aChartPartInsp)), MousePress);
     }
 
     /**
@@ -156,8 +167,17 @@ public class ChartPaneInsp extends ViewOwner {
         if (aChartPart instanceof Header) return _headerInsp;
         if (aChartPart instanceof AxisX) return _axisXInsp;
         if (aChartPart instanceof AxisY) return _axisYInsp;
-        //if (aChartPart instanceof Legend) return _legendInsp;
+        if (aChartPart instanceof Legend) return _legendInsp;
         return _chartInsp;
+    }
+
+    /**
+     * Called when label gets mouse press.
+     */
+    public void chartPartInspLabelMousePress(ChartPartInsp anInsp)
+    {
+        ChartPart chartPart = anInsp.getChartPart();
+        _chartPane.getSel().setSelChartPart(chartPart);
     }
 
     /**

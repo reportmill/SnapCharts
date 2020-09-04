@@ -24,6 +24,12 @@ public class HeaderInsp extends ChartPartInsp {
     public String getName()  { return "Header Settings"; }
 
     /**
+     * Returns the ChartPart.
+     */
+    @Override
+    public ChartPart getChartPart()  { return getChart().getHeader(); }
+
+    /**
      * Reset UI.
      */
     protected void resetUI()

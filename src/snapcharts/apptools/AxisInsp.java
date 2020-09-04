@@ -50,6 +50,12 @@ public class AxisInsp extends ChartPartInsp {
     public AxisY getAxisY()  { return getChart().getAxisY(); }
 
     /**
+     * Returns the ChartPart.
+     */
+    @Override
+    public ChartPart getChartPart()  { return getAxis(); }
+
+    /**
      * Reset UI.
      */
     protected void resetUI()

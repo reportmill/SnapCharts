@@ -140,6 +140,11 @@ public class ChartView extends ChartPartView {
     public DataView getDataView()  { return _chartArea.getDataView(); }
 
     /**
+     * Returns the Header View.
+     */
+    public ChartViewTop getHeader()  { return _chartTop; }
+
+    /**
      * Returns the X Axis View.
      */
     public AxisViewX getAxisX()  { return _chartArea.getAxisX(); }

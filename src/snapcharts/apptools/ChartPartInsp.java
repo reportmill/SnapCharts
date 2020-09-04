@@ -1,4 +1,5 @@
 package snapcharts.apptools;
+import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.gfx.Border;
 import snap.gfx.Color;
@@ -10,6 +11,7 @@ import snap.view.ViewOwner;
 import snapcharts.app.ChartPane;
 import snapcharts.app.Collapser;
 import snapcharts.model.Chart;
+import snapcharts.model.ChartPart;
 
 /**
  * A ViewOwner subclass for ChartPart inspectors.
@@ -30,8 +32,8 @@ public abstract class ChartPartInsp extends ViewOwner {
 
     // Constants
     private static Color LABEL_FILL = new Color("#e0e0e4");
-    private static Color LABEL_FILL_SEL = new Color("#e0e8f4");
-    private static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1);
+    private static Color LABEL_FILL_SEL = new Color("#e0e6f0");
+    private static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1).copyForInsets(Insets.EMPTY);
 
     /**
      * Constructor.
@@ -55,6 +57,11 @@ public abstract class ChartPartInsp extends ViewOwner {
      * Returns the Chart.
      */
     public Chart getChart()  { return _chartPane.getChart(); }
+
+    /**
+     * Returns the ChartPart.
+     */
+    public abstract ChartPart getChartPart();
 
     /**
      * Returns the Collapser.
@@ -102,7 +109,7 @@ public abstract class ChartPartInsp extends ViewOwner {
     /**
      * Returns the label.
      */
-    private Label getLabel()
+    public Label getLabel()
     {
         if (_label!=null) return _label;
 
