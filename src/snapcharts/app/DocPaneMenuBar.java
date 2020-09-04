@@ -6,6 +6,7 @@ import snap.util.Undoer;
 import snap.view.MenuBar;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
+import snap.view.ViewTheme;
 
 /**
  * Menu bar for Editor pane.
@@ -121,12 +122,17 @@ public class DocPaneMenuBar extends ViewOwner {
 //        if (name.equals("GroupMenuItem")) EditorUtils.groupView(editor);
 //        if (name.equals("UngroupMenuItem")) EditorUtils.ungroupView(editor);
 //
-//        // Handle Tools menu items
-//        if (anEvent.equals("GalleryPaneMenuItem"))
-//            epane.getInspector().setVisibleForName(InspectorPane.GALLERY_PANE);
-//        if (anEvent.equals("ViewPaneMenuItem"))
-//            epane.getInspector().setVisibleForName(InspectorPane.VIEW_PANE);
-//        if (anEvent.equals("StylePaneMenuItem"))
-//            epane.getInspector().setVisibleForName(InspectorPane.STYLE_PANE);
+
+        // Handle Theme menus: StandardThemeMenuItem, LightThemeMenuItem, DarkThemeMenuItem, BlackAndWhiteThemeMenuItem
+        if (anEvent.equals("StandardThemeMenuItem"))
+            ViewTheme.setThemeForName("Standard");
+        if (anEvent.equals("StandardBlueThemeMenuItem"))
+            ViewTheme.setThemeForName("StandardBlue");
+        if (anEvent.equals("LightThemeMenuItem"))
+            ViewTheme.setThemeForName("Light");
+        if (anEvent.equals("DarkThemeMenuItem"))
+            ViewTheme.setThemeForName("Dark");
+        if (anEvent.equals("BlackAndWhiteThemeMenuItem"))
+            ViewTheme.setThemeForName("BlackAndWhite");
     }
 }
