@@ -8,12 +8,12 @@ import snapcharts.model.Chart;
 /**
  * A class to manage UI to edit a ChartView.
  */
-public class ChartBasicTool extends ChartPartInsp {
+public class ChartInsp extends ChartPartInsp {
     
     /**
      * Constructor.
      */
-    public ChartBasicTool(ChartPane aCP)
+    public ChartInsp(ChartPane aCP)
     {
         super(aCP);
     }
@@ -32,18 +32,16 @@ public class ChartBasicTool extends ChartPartInsp {
         // Get Chart
         Chart chart = getChart();
 
-        // Reset NameText, TitleText, SubtitleText
+        // Reset NameText
         setViewValue("NameText", chart.getName());
-        setViewValue("TitleText", chart.getTitle());
-        setViewValue("SubtitleText", chart.getSubtitle());
 
-        // Reset ShowLegendCheckBox
-        setViewValue("ShowLegendCheckBox", chart.isShowLegend());
-
-        // Reset LineChartButton, BarChartButton
+        // Reset ChartButtons
         ChartType type = chart.getType();
         String typeName = type.getStringPlain() + "ChartButton";
         setViewValue(typeName, true);
+
+        // Reset ShowLegendCheckBox
+        setViewValue("ShowLegendCheckBox", chart.isShowLegend());
     }
 
     /**
@@ -59,10 +57,6 @@ public class ChartBasicTool extends ChartPartInsp {
             chart.setName(anEvent.getStringValue());
             getChartPane().getDocPane().docItemNameChanged();
         }
-
-        // Handle TitleText, SubtitleText
-        if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
-        if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
 
         // Handle ShowLegendCheckBox
         if(anEvent.equals("ShowLegendCheckBox")) chart.setShowLegend(anEvent.getBoolValue());

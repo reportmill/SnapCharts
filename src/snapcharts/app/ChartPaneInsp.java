@@ -3,10 +3,7 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
-import snapcharts.apptools.AxisInsp;
-import snapcharts.apptools.ChartBasicTool;
-import snapcharts.apptools.ChartPartInsp;
-import snapcharts.apptools.DataSetInsp;
+import snapcharts.apptools.*;
 import snapcharts.model.AxisType;
 
 /**
@@ -26,8 +23,11 @@ public class ChartPaneInsp extends ViewOwner {
     // The ColView that holds UI for child inspectors
     private ColView  _inspColView;
 
-    // The BasicPropsTool
-    private ChartBasicTool _basicProps;
+    // The ChartInsp
+    private ChartInsp _chartInsp;
+
+    // The HeaderInsp
+    private HeaderInsp _headerInsp;
 
     // The AxisInsp
     private AxisInsp  _axisXInsp;
@@ -80,20 +80,26 @@ public class ChartPaneInsp extends ViewOwner {
         boolean chartMode = !_chartPane._dataSetMode;
         if (chartMode) {
 
-            // Create/add ChartBasicTool
-            _basicProps = new ChartBasicTool(_chartPane);
-            addInspector(_basicProps, true);
+            // Create/add ChartInsp
+            _chartInsp = new ChartInsp(_chartPane);
+            addInspector(_chartInsp, true);
 
-            // Create/add AxisXInsp, AxisYInsp
+            // Create/add HeaderInsp
+            _headerInsp = new HeaderInsp(_chartPane);
+            addInspector(_headerInsp, false);
+
+            // Create/add AxisXInsp
             _axisXInsp = new AxisInsp(_chartPane, AxisType.X);
             addInspector(_axisXInsp, false);
+
+            // Create/add AxisYInsp
             _axisYInsp = new AxisInsp(_chartPane, AxisType.Y);
             addInspector(_axisYInsp, false);
         }
 
-        // Add DataSet inspector
+        // Add DataSetInsp
         _dsetInsp = new DataSetInsp(_chartPane);
-        _inspColView.addChild(_dsetInsp.getUI());
+        addInspector(_dsetInsp, false);
     }
 
     /**

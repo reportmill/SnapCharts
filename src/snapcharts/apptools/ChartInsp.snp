@@ -4,17 +4,6 @@
     <Label text="Name:" />
     <TextField Name="NameText" GrowWidth="true" />
   </RowView>
-  <RowView Padding="4" Spacing="4">
-    <Label text="Title:" />
-    <TextField Name="TitleText" GrowWidth="true" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <Label text="Subtitle:" />
-    <TextField Name="SubtitleText" GrowWidth="true" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
-  </RowView>
   <TitleView MinWidth="120" MinHeight="60" Padding="2" GrowWidth="true" Text="Chart Type">
     <RowView Padding="4,15,5,15" GrowWidth="true" Spacing="30">
       <ColView Spacing="4">
@@ -27,4 +16,7 @@
       </ColView>
     </RowView>
   </TitleView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
+  </RowView>
 </ColView>

@@ -1,22 +1,15 @@
 package snapcharts.apptools;
-import snap.gfx.Color;
-import snap.gfx.Image;
-import snap.view.*;
-import snap.viewx.TextPane;
+
+import snap.view.ComboBox;
+import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.app.Collapser;
-import snapcharts.apptools.DataSetBasicTool;
+import snapcharts.model.DataSet;
+import snapcharts.model.DataType;
 
 /**
- * A class to manage the inspector for ChartSetPane.
+ * A class to manage UI to edit basic DataSet props.
  */
 public class DataSetInsp extends ChartPartInsp {
-
-    // The ColView that holds UI for child inspectors
-    private ColView  _inspColView;
-
-    // The DataSetBasicTool
-    private DataSetBasicTool  _dsetBasic;
 
     /**
      * Constructor.
@@ -33,34 +26,57 @@ public class DataSetInsp extends ChartPartInsp {
     public String getName()  { return "DataSet Settings"; }
 
     /**
-     * Initializes UI panel for the inspector.
+     * Returns the DataSet.
      */
-    public void initUI()
-    {
-        // Get InspColView
-        _inspColView = getView("InspColView", ColView.class);
+    public DataSet getDataSet()  { return _chartPane.getDataSet(); }
 
-        // Get ChartBasicTool
-        _dsetBasic = new DataSetBasicTool(_chartPane);
-        _inspColView.addChild(_dsetBasic.getUI());
-        Collapser.createCollapserAndLabel(_dsetBasic.getUI(), "DataSet Settings");
+    /**
+     * Init UI.
+     */
+    @Override
+    protected void initUI()
+    {
+        ComboBox<DataType> dataTypeComboBox = getView("DataTypeComboBox", ComboBox.class);
+        dataTypeComboBox.setItems(DataType.values());
     }
 
     /**
-     * Refreshes the inspector for the current editor selection.
+     * Reset UI.
      */
-    public void resetUI()
+    protected void resetUI()
     {
-        // Reset child inspectors
-        _dsetBasic.resetLater();
+        // Get DataSet
+        DataSet dset = getDataSet(); if (dset==null) return;
+
+        // Reset NameText
+        setViewValue("NameText", dset.getName());
+
+        // Reset DataTypeComboBox
+        setViewValue("DataTypeComboBox", dset.getDataType());
+
+        // Reset StrokeWidth
+        setViewValue("LineWidthText", 1);
+
+        // Reset ShowSymbolsCheckBox
+        setViewValue("ShowSymbolsCheckBox", dset.isShowSymbols());
     }
 
     /**
-     * Handles changes to the inspector UI controls.
+     * Respond to UI.
      */
-    public void respondUI(ViewEvent anEvent)
+    protected void respondUI(ViewEvent anEvent)
     {
-        // Handle ViewGeneralButton
-        //if (anEvent.equals("ViewGeneralButton")) setInspector(_viewTool);
+        // Get DataSet
+        DataSet dset = getDataSet(); if (dset==null) return;
+
+        // Handle NameText
+        if(anEvent.equals("NameText")) {
+            dset.setName(anEvent.getStringValue());
+            _chartPane.getDocPane().docItemNameChanged();
+        }
+
+        // Handle ShowSymbolsCheckBox
+        if (anEvent.equals("ShowSymbolsCheckBox"))
+            dset.setShowSymbols(anEvent.getBoolValue());
     }
 }
