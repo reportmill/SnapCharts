@@ -26,14 +26,20 @@ public class Chart extends ChartPart {
     // Whether to show partial Y axis intervals if min/max don't include zero
     private boolean  _showPartialY;
 
-    // The XAxis
-    private AxisX _axisX;
+    // The Header
+    private Header  _header;
 
-    // The YAxis
-    private AxisY _axisY;
+    // The X Axis
+    private AxisX  _axisX;
+
+    // The Y Axis
+    private AxisY  _axisY;
 
     // The DataSet
     private DataSetList _dsetList = new DataSetList(this);
+
+    // The Legend
+    private Legend  _legend;
 
     // The dataset colors
     private Color  _colors[] = COLORS;
@@ -69,15 +75,25 @@ public class Chart extends ChartPart {
         // Set chart
         _chart = this;
 
-        // Add X Axis
+        // Create/set Header
+        _header = new Header();
+        _header._chart = this;
+        _header.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Create/set X Axis
         _axisX = new AxisX();
         _axisX._chart = this;
         _axisX.addPropChangeListener(pc -> chartPartDidPropChange(pc));
 
-        // Add Y Axis
+        // Create/set Y Axis
         _axisY = new AxisY();
         _axisY._chart = this;
         _axisY.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Create/set Legend
+        _legend = new Legend();
+        _legend._chart = this;
+        _legend.addPropChangeListener(pc -> chartPartDidPropChange(pc));
 
         // Start listening to DataSet changes
         _dsetList.addPropChangeListener(pc -> dataSetDidPropChange(pc));
@@ -167,6 +183,11 @@ public class Chart extends ChartPart {
     }
 
     /**
+     * Returns the Header object.
+     */
+    public Header getHeader()  { return _header; }
+
+    /**
      * Returns the X axis object.
      */
     public AxisX getAxisX()  { return _axisX; }
@@ -187,6 +208,11 @@ public class Chart extends ChartPart {
             default: return null;
         }
     }
+
+    /**
+     * Returns the Legend object.
+     */
+    public Legend getLegend()  { return _legend; }
 
     /**
      * Returns the DataSetList.

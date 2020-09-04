@@ -4,7 +4,7 @@ import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
 import snapcharts.apptools.*;
-import snapcharts.model.AxisType;
+import snapcharts.model.*;
 
 /**
  * A class to manage inspector.
@@ -37,6 +37,9 @@ public class ChartPaneInsp extends ViewOwner {
 
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
+
+    // The array of ChartPartInsp
+    private ChartPartInsp  _allInspectors[];
 
     /**
      * Constructor.
@@ -82,7 +85,7 @@ public class ChartPaneInsp extends ViewOwner {
 
             // Create/add ChartInsp
             _chartInsp = new ChartInsp(_chartPane);
-            addInspector(_chartInsp, true);
+            addInspector(_chartInsp, false);
 
             // Create/add HeaderInsp
             _headerInsp = new HeaderInsp(_chartPane);
@@ -100,6 +103,12 @@ public class ChartPaneInsp extends ViewOwner {
         // Add DataSetInsp
         _dsetInsp = new DataSetInsp(_chartPane);
         addInspector(_dsetInsp, false);
+
+        // Set all inspectors
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _dsetInsp };
+        if (!chartMode)
+            _allInspectors = new ChartPartInsp[] { _dsetInsp };
+        runLater(() -> chartPaneSelChanged());
     }
 
     /**
@@ -107,15 +116,12 @@ public class ChartPaneInsp extends ViewOwner {
      */
     private void addInspector(ChartPartInsp aChartPartInsp, boolean isShowing)
     {
-        // Get info
-        String name = aChartPartInsp.getName();
+        // Get UI view and add to inspector
         View inspUI = aChartPartInsp.getUI();
-
-        // Add to inspector
         _inspColView.addChild(inspUI);
 
-        // Add collaper and label
-        Collapser collapser = Collapser.createCollapserAndLabel(inspUI, name);
+        // Trigger Collapser create
+        Collapser collapser = aChartPartInsp.getCollapser();
         if (!isShowing)
             collapser.setCollapsed(true);
     }
@@ -141,4 +147,30 @@ public class ChartPaneInsp extends ViewOwner {
      * Handles changes to the inspector UI controls.
      */
     public void respondUI(ViewEvent anEvent)  { }
+
+    /**
+     * Returns the inspector for given ChartPart.
+     */
+    public ChartPartInsp getChartPartInsp(ChartPart aChartPart)
+    {
+        if (aChartPart instanceof Header) return _headerInsp;
+        if (aChartPart instanceof AxisX) return _axisXInsp;
+        if (aChartPart instanceof AxisY) return _axisYInsp;
+        //if (aChartPart instanceof Legend) return _legendInsp;
+        return _chartInsp;
+    }
+
+    /**
+     * Called when the selection changes.
+     */
+    public void chartPaneSelChanged()
+    {
+        // Get SelPart and SelInsp
+        ChartPart selPart = _chartPane.getSel().getSelChartPart();
+        ChartPartInsp selPartInsp = getChartPartInsp(selPart);
+
+        // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
+        for (ChartPartInsp insp : _allInspectors)
+            insp.setSelected(insp==selPartInsp);
+    }
 }

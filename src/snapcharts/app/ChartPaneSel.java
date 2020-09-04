@@ -5,6 +5,8 @@ import snap.gfx.ShadowEffect;
 import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
+import snapcharts.model.Chart;
+import snapcharts.model.ChartPart;
 import snapcharts.views.*;
 
 /**
@@ -64,6 +66,27 @@ public class ChartPaneSel {
         // Repaint/reset
         _chartPane.resetLater();
         _chartView.repaint();
+
+        // Notify ChartPaneInsp
+        _chartPane._insp.chartPaneSelChanged();
+    }
+
+    /**
+     * Returns the selected part.
+     */
+    public ChartPart getSelChartPart()
+    {
+        Chart chart = _chartPane.getChart();
+        ChartPartView view = getSelView();
+        if (view instanceof ChartViewTop)
+            return chart.getHeader();
+        if (view instanceof AxisViewX)
+            return chart.getAxisX();
+        if (view instanceof AxisViewY)
+            return chart.getAxisY();
+        if (view instanceof LegendView)
+            return chart.getLegend();
+        return chart;
     }
 
     /**

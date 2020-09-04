@@ -23,7 +23,7 @@ public class ChartPane extends DocItemPane {
     private TabView  _tabView;
     
     // The Inspector
-    private ChartPaneInsp  _insp;
+    protected ChartPaneInsp  _insp;
 
     // Whether this ChartPane is in DataSet mode
     protected boolean  _dataSetMode;
@@ -84,6 +84,11 @@ public class ChartPane extends DocItemPane {
         dataSetList.addDataSet(dset2);
         setChart(chart2);
     }
+
+    /**
+     * Returns the ChartPaneSel.
+     */
+    public ChartPaneSel getSel()  { return _selHpr; }
 
     /**
      * Override to return the ChartView.
