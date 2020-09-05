@@ -34,12 +34,12 @@ public class HeaderInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get Chart
-        Chart chart = getChart();
+        // Get Header
+        Header header = getChart().getHeader();
 
         // Reset TitleText, SubtitleText
-        setViewValue("TitleText", chart.getTitle());
-        setViewValue("SubtitleText", chart.getSubtitle());
+        setViewValue("TitleText", header.getTitle());
+        setViewValue("SubtitleText", header.getSubtitle());
     }
 
     /**
@@ -47,11 +47,11 @@ public class HeaderInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get Chart
-        Chart chart = getChart();
+        // Get Header
+        Header header = getChart().getHeader();
 
         // Handle TitleText, SubtitleText
-        if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
-        if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
+        if(anEvent.equals("TitleText")) header.setTitle(anEvent.getStringValue());
+        if(anEvent.equals("SubtitleText")) header.setSubtitle(anEvent.getStringValue());
     }
 }

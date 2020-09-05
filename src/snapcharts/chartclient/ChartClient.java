@@ -77,7 +77,7 @@ public class ChartClient extends ViewOwner {
         // Create Chart
         Chart chart = new Chart();
         chart.setName("New Chart");
-        chart.setTitle("New Chart");
+        chart.getHeader().setTitle("New Chart");
         chart.getAxisY().setTitle("Y Axis");
         chart.getAxisX().setTitle("X Axis");
         doc.addChart(chart);

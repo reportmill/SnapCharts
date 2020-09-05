@@ -6,14 +6,15 @@ import snap.view.ColView;
 import snap.view.ParentView;
 import snap.view.StringView;
 import snapcharts.model.Chart;
+import snapcharts.model.Header;
 
 /**
- * A view to hold elements at top of ChartView.
+ * A view to hold header elements at top of ChartView.
  */
-public class ChartViewTop extends ChartPartView {
+public class HeaderView extends ChartPartView {
 
     // The title
-    private StringView _titleView;
+    private StringView  _titleView;
 
     // The subtitle
     private StringView  _subtitleView;
@@ -21,7 +22,7 @@ public class ChartViewTop extends ChartPartView {
     /**
      * Constructor.
      */
-    public ChartViewTop(ChartView aChartView)
+    public HeaderView(ChartView aChartView)
     {
         // Basic config
         setAlign(Pos.CENTER);
@@ -47,14 +48,15 @@ public class ChartViewTop extends ChartPartView {
     {
         // Get info
         Chart chart = getChart();
+        Header header = chart.getHeader();
 
         // Reset Title
-        String title = chart.getTitle();
+        String title = header.getTitle();
         _titleView.setText(title);
         _titleView.setVisible(title != null && title.length() > 0);
 
         // Reset Subtitle
-        String subtitle = chart.getSubtitle();
+        String subtitle = header.getSubtitle();
         _subtitleView.setText(subtitle);
         _subtitleView.setVisible(subtitle != null && subtitle.length() > 0);
     }

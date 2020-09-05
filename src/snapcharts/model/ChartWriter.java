@@ -99,7 +99,7 @@ public class ChartWriter {
     protected void writeTitle(Map aMap)
     {
         Map map = new HashMap();
-        String text = _chart.getTitle();
+        String text = _chart.getHeader().getTitle();
         if (text!=null) map.put("text", text);
 
         if (!map.isEmpty()) aMap.put("title", map);
@@ -112,7 +112,7 @@ public class ChartWriter {
     {
         Map map = new HashMap();
 
-        String text = _chart.getSubtitle();
+        String text = _chart.getHeader().getSubtitle();
         if (text!=null) map.put("text", text);
 
         if (!map.isEmpty()) aMap.put("subtitle", map);

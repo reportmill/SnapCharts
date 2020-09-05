@@ -102,7 +102,7 @@ public class ChartParser {
     {
         String text = aNode.getNodeString("text");
         if(text!=null)
-            _chart.setTitle(text);
+            _chart.getHeader().setTitle(text);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ChartParser {
     {
         String text = aNode.getNodeString("text");
         if(text!=null)
-            _chart.setSubtitle(text);
+            _chart.getHeader().setSubtitle(text);
     }
 
     /**

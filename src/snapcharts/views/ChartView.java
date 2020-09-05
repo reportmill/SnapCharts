@@ -21,7 +21,7 @@ public class ChartView extends ChartPartView {
     private Chart  _chart;
 
     // The view to display chart parts at top of chart
-    private ChartViewTop  _chartTop;
+    private HeaderView _chartTop;
 
     // The view to manage essential chart parts: DataView and AxisViews
     private ChartArea  _chartArea;
@@ -66,7 +66,7 @@ public class ChartView extends ChartPartView {
         setFill(Color.WHITE);
 
         // Create/add ChartTop
-        _chartTop = new ChartViewTop(this);
+        _chartTop = new HeaderView(this);
         addChild(_chartTop);
 
         // Create RowView
@@ -135,14 +135,9 @@ public class ChartView extends ChartPartView {
     public DataSetList getDataSetList()  { return getChart().getDataSetList(); }
 
     /**
-     * Returns the DataView.
-     */
-    public DataView getDataView()  { return _chartArea.getDataView(); }
-
-    /**
      * Returns the Header View.
      */
-    public ChartViewTop getHeader()  { return _chartTop; }
+    public HeaderView getHeader()  { return _chartTop; }
 
     /**
      * Returns the X Axis View.
@@ -153,6 +148,11 @@ public class ChartView extends ChartPartView {
      * Returns the Y Axis View.
      */
     public AxisViewY getAxisY()  { return _chartArea.getAxisY(); }
+
+    /**
+     * Returns the DataView.
+     */
+    public DataView getDataView()  { return _chartArea.getDataView(); }
 
     /**
      * Returns the Legend.

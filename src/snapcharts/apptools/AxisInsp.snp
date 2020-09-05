@@ -4,5 +4,23 @@
     <Label text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
-  <CheckBox Name="PartialYAxisCheckBox" text="Always Include Zero" />
+  <RowView Padding="4" Spacing="4">
+    <Label Name="AxisMinText" PrefWidth="50" text="Axis Min:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Padding="2" text="Data" Position="CENTER" />
+      <ToggleButton Padding="2" text="Value" Position="CENTER_RIGHT" />
+    </RowView>
+    <TextField Name="TitleText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label Name="AxisMinText" PrefWidth="50" text="Axis Max:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Padding="2" text="Data" Position="CENTER" />
+      <ToggleButton Padding="2" text="Value" Position="CENTER_RIGHT" />
+    </RowView>
+    <TextField Name="TitleText" GrowWidth="true" />
+  </RowView>
+  <CheckBox Name="ZeroRequiredCheckBox" Padding="4" text="Always Include Zero" />
 </ColView>

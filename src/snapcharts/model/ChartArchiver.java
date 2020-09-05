@@ -58,6 +58,8 @@ public class ChartArchiver extends XMLArchiver {
         cmap.put(Doc.class.getSimpleName(), Doc.class);
         cmap.put(DataSet.class.getSimpleName(), DataSet.class);
         cmap.put(DataSetList.class.getSimpleName(), DataSetList.class);
+        cmap.put(Header.class.getSimpleName(), Header.class);
+        cmap.put(Legend.class.getSimpleName(), Legend.class);
         return cmap;
     }
 }

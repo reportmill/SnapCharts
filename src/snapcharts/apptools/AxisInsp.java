@@ -1,6 +1,5 @@
 package snapcharts.apptools;
 import snap.view.ViewEvent;
-import snap.view.ViewOwner;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
 
@@ -66,8 +65,8 @@ public class AxisInsp extends ChartPartInsp {
         // Reset TitleText
         setViewValue("TitleText", axis.getTitle());
 
-        // Reset PartialYAxisCheckBox
-        //setViewValue("PartialYAxisCheckBox", chart.isShowPartialY());
+        // Reset ZeroRequiredCheckBox
+        setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
     }
 
     /**
@@ -82,7 +81,8 @@ public class AxisInsp extends ChartPartInsp {
         if (anEvent.equals("TitleText"))
             axis.setTitle(anEvent.getStringValue());
 
-        // Handle PartialYAxisCheckBox
-        //if(anEvent.equals("PartialYAxisCheckBox")) chart.setShowPartialY(anEvent.getBoolValue());
+        // Handle ZeroRequiredCheckBox
+        if (anEvent.equals("ZeroRequiredCheckBox"))
+            axis.setZeroRequired(anEvent.getBoolValue());
     }
 }

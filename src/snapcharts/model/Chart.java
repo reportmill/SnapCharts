@@ -14,12 +14,6 @@ public class Chart extends ChartPart {
     // The chart type
     private ChartType  _type = ChartType.LINE;
 
-    // The title
-    private String  _title;
-
-    // The subtitle
-    private String  _subtitle;
-
     // The Header
     private Header  _header;
 
@@ -46,8 +40,6 @@ public class Chart extends ChartPart {
 
     // Property constants
     public static final String Type_Prop = "Type";
-    public static final String Title_Prop = "Title";
-    public static final String Subtitle_Prop = "Subtitle";
     public static final String Colors_Prop = "Colors";
 
     // Colors
@@ -112,34 +104,6 @@ public class Chart extends ChartPart {
     {
         if (aType==getType()) return;
         firePropChange(Type_Prop, _type, _type = aType);
-    }
-
-    /**
-     * Returns the title.
-     */
-    public String getTitle()  { return _title; }
-
-    /**
-     * Sets the title.
-     */
-    public void setTitle(String aStr)
-    {
-        if (SnapUtils.equals(aStr, getTitle())) return;
-        firePropChange(Title_Prop, _title, _title = aStr);
-    }
-
-    /**
-     * Returns the subtitle.
-     */
-    public String getSubtitle()  { return _subtitle; }
-
-    /**
-     * Sets the subtitle.
-     */
-    public void setSubtitle(String aStr)
-    {
-        if (SnapUtils.equals(aStr, getSubtitle())) return;
-        firePropChange(Subtitle_Prop, _subtitle, _subtitle = aStr);
     }
 
     /**
@@ -289,12 +253,8 @@ public class Chart extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive Type, Title, Subtitle
+        // Archive Type
         e.add(Type_Prop, getType());
-        if (getTitle()!=null && getTitle().length()>0)
-            e.add(Title_Prop, getTitle());
-        if (getSubtitle()!=null && getSubtitle().length()>0)
-            e.add(Subtitle_Prop, getSubtitle());
 
         // Archive AxisX, AxisY
         XMLElement axisX_XML = anArchiver.toXML(_axisX);
@@ -322,10 +282,8 @@ public class Chart extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive Type, Title, Subtitle
+        // Unarchive Type
         setType(ChartType.get(anElement.getAttributeValue(Type_Prop)));
-        setTitle(anElement.getAttributeValue(Title_Prop));
-        setSubtitle(anElement.getAttributeValue(Subtitle_Prop));
 
         // Unarchive AxisX, AxisY
         XMLElement axisX_XML = anElement.get("AxisX");
@@ -345,7 +303,11 @@ public class Chart extends ChartPart {
         if (dsetListXML!=null)
             anArchiver.fromXML(dsetListXML, _dsetList, this);
 
-        // Legacy: Unarchive ShowLegend
+        // Legacy: Unarchive Title, Subtitle, ShowLegend
+        if (anElement.hasAttribute(Header.Title_Prop))
+            getHeader().setTitle(anElement.getAttributeValue(Header.Title_Prop));
+        if (anElement.hasAttribute(Header.Subtitle_Prop))
+            getHeader().setSubtitle(anElement.getAttributeValue(Header.Subtitle_Prop));
         if (anElement.hasAttribute(Legend.ShowLegend_Prop))
             getLegend().setShowLegend(anElement.getAttributeBoolValue(Legend.ShowLegend_Prop));
 

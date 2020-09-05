@@ -68,11 +68,11 @@ public class DocTextReader {
                     break;
 
                 case "Chart.Title":
-                    _chart.setTitle(val);
+                    _chart.getHeader().setTitle(val);
                     break;
 
                 case "Chart.Subtitle":
-                    _chart.setSubtitle(val);
+                    _chart.getHeader().setSubtitle(val);
                     break;
 
                 case "Chart.ShowLegend":

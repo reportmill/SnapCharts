@@ -77,7 +77,7 @@ public class ChartPaneSel {
     {
         Chart chart = _chartPane.getChart();
         ChartPartView view = getSelView();
-        if (view instanceof ChartViewTop)
+        if (view instanceof HeaderView)
             return chart.getHeader();
         if (view instanceof AxisViewX)
             return chart.getAxisX();
@@ -136,6 +136,6 @@ public class ChartPaneSel {
      */
     private boolean isSelectableView(View aView)
     {
-        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof ChartViewTop;
+        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView;
     }
 }
