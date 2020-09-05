@@ -445,6 +445,12 @@ public class DocPane extends ViewOwner {
             //new snapcharts.chartclient.ChartClient().openSimpleSample();
         }
 
+        // Handle InspectorButton
+        if (anEvent.equals("InspectorButton")) {
+            DocItemPane itemPane = getSelItemPane();
+            itemPane.setShowInspector(!itemPane.isShowInspector());
+        }
+
         // Handle TreeView
         if (anEvent.equals(_treeView)) {
             DocItem docItem = _treeView.getSelItem();

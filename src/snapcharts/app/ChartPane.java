@@ -40,6 +40,11 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Returns the inspector.
+     */
+    public ViewOwner getInspector()  { return _insp; }
+
+    /**
      * Returns the chart.
      */
     public Chart getChart()

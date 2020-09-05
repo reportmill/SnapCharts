@@ -4,6 +4,7 @@ import snap.util.ListUtils;
 import snap.util.PropChange;
 import snap.view.ColView;
 import snap.view.RowView;
+import snap.view.ViewOwner;
 import snapcharts.model.Chart;
 import snapcharts.model.DocItem;
 import snapcharts.model.DocItemChart;
@@ -53,6 +54,11 @@ public class ChartSetPane extends DocItemPane {
         _docItem = anItem;
         _docItem.addPropChangeListener(pc -> docItemDidPropChange(pc));
     }
+
+    /**
+     * Returns the inspector.
+     */
+    public ViewOwner getInspector()  { return _insp; }
 
     /**
      * Called when DocItem has prop change.
