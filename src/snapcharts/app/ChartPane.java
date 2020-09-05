@@ -184,5 +184,11 @@ public class ChartPane extends DocItemPane {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle TabView
+        if (anEvent.equals(_tabView)) {
+            int selIndex = _tabView.getSelIndex();
+            DataSet dset = _chartView.getDataSetList().getDataSet(selIndex);
+            getSel().setSelChartPart(dset);
+        }
     }
 }

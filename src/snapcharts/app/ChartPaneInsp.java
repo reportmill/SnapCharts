@@ -168,6 +168,7 @@ public class ChartPaneInsp extends ViewOwner {
         if (aChartPart instanceof AxisX) return _axisXInsp;
         if (aChartPart instanceof AxisY) return _axisYInsp;
         if (aChartPart instanceof Legend) return _legendInsp;
+        if (aChartPart instanceof DataSet) return _dsetInsp;
         return _chartInsp;
     }
 
