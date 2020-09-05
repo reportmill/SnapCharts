@@ -1,5 +1,7 @@
 package snapcharts.model;
+import snap.gfx.Image;
 import snap.util.*;
+import snap.view.ViewUtils;
 import snapcharts.app.DocItemPane;
 
 import java.util.ArrayList;
@@ -22,8 +24,16 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     // The child items
     private List<DocItem> _items = new ArrayList<>();
 
+    // The image to use as icon
+    private Image  _iconImage;
+
     // PropertyChangeSupport
     protected PropChangeSupport _pcs = PropChangeSupport.EMPTY;
+
+    // Constants for images
+    protected static Image ICON_PLAIN = Image.get(ViewUtils.class, "PlainFile.png");
+    protected static Image ICON_DATA = Image.get(ViewUtils.class, "TableFile.png");
+    protected static Image ICON_DOC = Image.get(DocItem.class, "TableFile.png");
 
     // Constants for properties
     public static final String Name_Prop = "Name";
@@ -156,6 +166,11 @@ public abstract class DocItem implements XMLArchiver.Archivable {
         if (par!=null)
             return par.addChartPart(aChartPart, this);
         return null;
+    }
+
+    protected Image createIconImage()
+    {
+        return Image.get(ViewUtils.class, "PlainFile.png");
     }
 
     /**

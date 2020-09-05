@@ -256,6 +256,10 @@ public class Chart extends ChartPart {
         // Archive Type
         e.add(Type_Prop, getType());
 
+        // Archive Header
+        XMLElement header_XML = anArchiver.toXML(_header);
+        e.add(header_XML);
+
         // Archive AxisX, AxisY
         XMLElement axisX_XML = anArchiver.toXML(_axisX);
         e.add(axisX_XML);
@@ -284,6 +288,11 @@ public class Chart extends ChartPart {
 
         // Unarchive Type
         setType(ChartType.get(anElement.getAttributeValue(Type_Prop)));
+
+        // Unarchive Header
+        XMLElement header_XML = anElement.get("Header");
+        if (header_XML!=null)
+            anArchiver.fromXML(header_XML, _header, this);
 
         // Unarchive AxisX, AxisY
         XMLElement axisX_XML = anElement.get("AxisX");

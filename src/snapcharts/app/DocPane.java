@@ -1,4 +1,6 @@
 package snapcharts.app;
+import snap.geom.Insets;
+import snap.geom.Pos;
 import snap.gfx.Image;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -383,6 +385,13 @@ public class DocPane extends ViewOwner {
         getView("UndoButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Undo.png"));
         getView("RedoButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Redo.png"));
 
+        // Adjust InspectorButton
+        Button inspBtn = getView("InspectorButton", Button.class);
+        inspBtn.setManaged(false);
+        inspBtn.setSize(30, 30);
+        inspBtn.setMargin(new Insets(0, 4, 0, 0));
+        inspBtn.setLean(Pos.CENTER_RIGHT);
+
         // Get/configure TreeView
         _treeView = getView("TreeView", TreeView.class);
         _treeView.setResolver(new ChartDocTreeResolver());
@@ -493,6 +502,12 @@ public class DocPane extends ViewOwner {
         }
     }
 
+    // Constants for images
+    private static Image ICON_PLAIN = Image.get(ViewUtils.class, "PlainFile.png");
+    private static Image ICON_DIR = Image.get(ViewUtils.class, "DirFile.png");
+    private static Image ICON_DATA = Image.get(ViewUtils.class, "TableFile.png");
+    private static Image ICON_CHART = Image.get(DocPane.class, "Chart.png");
+
     /**
      * A TreeResolver for Document Shapes.
      */
@@ -520,6 +535,15 @@ public class DocPane extends ViewOwner {
         public String getText(DocItem anItem)
         {
             return anItem.getName();
+        }
+
+        @Override
+        public Image getImage(DocItem anItem)
+        {
+            if (anItem instanceof DocItemChart) return ICON_CHART;
+            if (anItem instanceof DocItemDataSet) return ICON_DATA;
+            if (anItem instanceof DocItemGroup) return ICON_DIR;
+            return ICON_PLAIN;
         }
     }
 }
