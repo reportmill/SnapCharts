@@ -76,7 +76,7 @@ public class DocTextReader {
                     break;
 
                 case "Chart.ShowLegend":
-                    _chart.setShowLegend(SnapUtils.boolValue(val));
+                    _chart.getLegend().setShowLegend(SnapUtils.boolValue(val));
                     break;
 
                 case "Chart.AxisX.Title":

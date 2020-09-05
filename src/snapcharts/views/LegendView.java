@@ -6,10 +6,7 @@ import snap.geom.Transform;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.*;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.*;
 
 /**
  * A view to display chart legend.
@@ -21,8 +18,18 @@ public class LegendView extends ChartPartView {
      */
     public void resetView()
     {
+        // Get info
         Chart chart = getChart();
+        Legend legend = chart.getLegend();
         DataSetList dsetList = chart.getDataSetList();
+
+        // Handle visible
+        boolean showLegend = legend.isShowLegend();
+        setVisible(showLegend);
+        if (!showLegend)
+            return;
+
+        // Remove children
         removeChildren();
 
         for (int i = 0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);

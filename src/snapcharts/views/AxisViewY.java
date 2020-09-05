@@ -184,8 +184,8 @@ public class AxisViewY extends AxisView {
      */
     protected void processEvent(ViewEvent anEvent)
     {
-        // Handle MousePress
+        // Handle MousePress: Toggle AxisY.ZeroRequired
         if (anEvent.isMousePress())
-            getChart().setShowPartialY(!getChart().isShowPartialY());
+            getChart().getAxisY().setZeroRequired(!getChart().getAxisY().isZeroRequired());
     }
 }

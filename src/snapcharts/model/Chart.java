@@ -20,12 +20,6 @@ public class Chart extends ChartPart {
     // The subtitle
     private String  _subtitle;
 
-    // Whether legend is showing
-    private boolean  _showLegend;
-
-    // Whether to show partial Y axis intervals if min/max don't include zero
-    private boolean  _showPartialY;
-
     // The Header
     private Header  _header;
 
@@ -55,12 +49,6 @@ public class Chart extends ChartPart {
     public static final String Title_Prop = "Title";
     public static final String Subtitle_Prop = "Subtitle";
     public static final String Colors_Prop = "Colors";
-    public static final String ShowLegend_Prop = "ShowLegend";
-    public static final String ShowPartialY_Prop = "ShowPartialY_Prop";
-
-    // Constants
-    public static final String SelDataPoint_Prop = "SelDataPoint";
-    public static final String TargDataPoint_Prop = "TargDataPoint";
 
     // Colors
     static Color    COLORS[] = new Color[] { Color.get("#88B4E7"), Color.get("#434348"), Color.get("#A6EB8A"),
@@ -152,34 +140,6 @@ public class Chart extends ChartPart {
     {
         if (SnapUtils.equals(aStr, getSubtitle())) return;
         firePropChange(Subtitle_Prop, _subtitle, _subtitle = aStr);
-    }
-
-    /**
-     * Returns whether to show legend.
-     */
-    public boolean isShowLegend()  { return _showLegend; }
-
-    /**
-     * Sets whether to show legend.
-     */
-    public void setShowLegend(boolean aValue)
-    {
-        if (aValue==isShowLegend()) return;
-        firePropChange(ShowLegend_Prop, _showLegend, _showLegend=aValue);
-    }
-
-    /**
-     * Returns whether to show partial Y axis intervals if min/max don't include zero.
-     */
-    public boolean isShowPartialY()  { return _showPartialY; }
-
-    /**
-     * Returns whether to show partial Y axis intervals if min/max don't include zero.
-     */
-    public void setShowPartialY(boolean aValue)
-    {
-        if (aValue==_showPartialY) return;
-        firePropChange(ShowPartialY_Prop, _showPartialY, _showPartialY = aValue);
     }
 
     /**
@@ -336,15 +296,15 @@ public class Chart extends ChartPart {
         if (getSubtitle()!=null && getSubtitle().length()>0)
             e.add(Subtitle_Prop, getSubtitle());
 
-        // Archive ShowLegend, ShowPartialY
-        if (isShowLegend())
-            e.add(ShowLegend_Prop, isShowLegend());
-        if (isShowPartialY())
-            e.add(ShowPartialY_Prop, isShowPartialY());
-
         // Archive AxisX, AxisY
-        e.add(anArchiver.toXML(_axisX));
-        e.add(anArchiver.toXML(_axisY));
+        XMLElement axisX_XML = anArchiver.toXML(_axisX);
+        e.add(axisX_XML);
+        XMLElement axisY_XML = anArchiver.toXML(_axisY);
+        e.add(axisY_XML);
+
+        // Archive Legend
+        XMLElement legendXML = anArchiver.toXML(_legend);
+        e.add(legendXML);
 
         // Archive DataSetList
         e.add(anArchiver.toXML(_dsetList));
@@ -367,12 +327,6 @@ public class Chart extends ChartPart {
         setTitle(anElement.getAttributeValue(Title_Prop));
         setSubtitle(anElement.getAttributeValue(Subtitle_Prop));
 
-        // Unarchive ShowLegend, ShowPartialY
-        if (anElement.hasAttribute(ShowLegend_Prop))
-            setShowLegend(anElement.getAttributeBoolValue(ShowLegend_Prop));
-        if (anElement.hasAttribute(ShowPartialY_Prop))
-            setShowPartialY(anElement.getAttributeBoolValue(ShowPartialY_Prop));
-
         // Unarchive AxisX, AxisY
         XMLElement axisX_XML = anElement.get("AxisX");
         if (axisX_XML!=null)
@@ -381,10 +335,19 @@ public class Chart extends ChartPart {
         if (axisY_XML!=null)
             anArchiver.fromXML(axisY_XML, _axisY, this);
 
+        // Unarchive Legend
+        XMLElement legend_XML = anElement.get("Legend");
+        if (legend_XML!=null)
+            anArchiver.fromXML(legend_XML, _legend, this);
+
         // Unarchive DataSetList
         XMLElement dsetListXML = anElement.get("DataSetList");
         if (dsetListXML!=null)
             anArchiver.fromXML(dsetListXML, _dsetList, this);
+
+        // Legacy: Unarchive ShowLegend
+        if (anElement.hasAttribute(Legend.ShowLegend_Prop))
+            getLegend().setShowLegend(anElement.getAttributeBoolValue(Legend.ShowLegend_Prop));
 
         // Return this part
         return this;

@@ -46,9 +46,6 @@ public class ChartInsp extends ChartPartInsp {
         ChartType type = chart.getType();
         String typeName = type.getStringPlain() + "ChartButton";
         setViewValue(typeName, true);
-
-        // Reset ShowLegendCheckBox
-        setViewValue("ShowLegendCheckBox", chart.isShowLegend());
     }
 
     /**
@@ -64,9 +61,6 @@ public class ChartInsp extends ChartPartInsp {
             chart.setName(anEvent.getStringValue());
             getChartPane().getDocPane().docItemNameChanged();
         }
-
-        // Handle ShowLegendCheckBox
-        if(anEvent.equals("ShowLegendCheckBox")) chart.setShowLegend(anEvent.getBoolValue());
 
         // Handle BarChartButton, LineChartButton, PieChartButton
         if(anEvent.equals("BarChartButton")) chart.setType(ChartType.BAR);

@@ -33,6 +33,9 @@ public class Axis extends ChartPart {
     // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
     private double  _tickLength = 8;
 
+    // Whether Zero should always be included
+    private boolean  _zeroRequired;
+
     // The grid line color
     private Color  _gridLineColor = GRID_LINES_COLOR;
 
@@ -44,6 +47,7 @@ public class Axis extends ChartPart {
     public static final String Title_Prop = "Title";
     public static final String TitleAlign_Prop = "TitleAlign";
     public static final String TitleRotate_Prop = "TitleRotate";
+    public static final String ZeroRequired_Prop = "ZeroRequired";
 
     // Constants for default values
     static Color   AXIS_LABELS_COLOR = Color.GRAY;
@@ -179,6 +183,20 @@ public class Axis extends ChartPart {
     public void setTickLength(double aValue)  { _tickLength = aValue; }
 
     /**
+     * Returns whether Zero should always be included.
+     */
+    public boolean isZeroRequired()  { return _zeroRequired; }
+
+    /**
+     * Sets whether Zero should always be included.
+     */
+    public void setZeroRequired(boolean aValue)
+    {
+        if (aValue==isZeroRequired()) return;
+        firePropChange(ZeroRequired_Prop, _zeroRequired, _zeroRequired=aValue);
+    }
+
+    /**
      * Returns the grid line color.
      */
     public Color getGridLineColor()  { return _gridLineColor; }
@@ -215,6 +233,10 @@ public class Axis extends ChartPart {
         if (getTitleRotate()!=0)
             e.add(TitleRotate_Prop, getTitleRotate());
 
+        // Archive ZeroRequired
+        if (isZeroRequired())
+            e.add(ZeroRequired_Prop, true);
+
         // Return element
         return e;
     }
@@ -232,6 +254,9 @@ public class Axis extends ChartPart {
         setTitle(anElement.getAttributeValue(Title_Prop));
         setTitleAlign(Pos.get(anElement.getAttributeValue(TitleAlign_Prop, DEFAULT_TITLE_ALIGN.toString())));
         setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
+
+        // Unachive ZeroRequired
+        setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop, false));
 
         // Return this part
         return this;

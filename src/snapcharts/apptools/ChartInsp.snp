@@ -16,7 +16,4 @@
       </ColView>
     </RowView>
   </TitleView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
-  </RowView>
 </ColView>

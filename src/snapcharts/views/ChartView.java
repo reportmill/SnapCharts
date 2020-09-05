@@ -160,20 +160,6 @@ public class ChartView extends ChartPartView {
     public LegendView getLegend()  { return _legend; }
 
     /**
-     * Returns whether to show legend.
-     */
-    public boolean isShowLegend()  { return _legend.isVisible(); }
-
-    /**
-     * Sets whether to show legend.
-     */
-    public void setShowLegend(boolean aValue)
-    {
-        if (aValue==isShowLegend()) return;
-        _legend.setVisible(aValue);
-    }
-
-    /**
      * Returns the tool tip view.
      */
     public ToolTipView getToolTipView()  { return _toolTipView; }
@@ -183,22 +169,14 @@ public class ChartView extends ChartPartView {
      */
     protected void resetView()
     {
-        // Get info
-        Chart chart = getChart();
-
         // Reset ChartTop
         _chartTop.resetView();
-
-        // Reset ShowLegend
-        boolean showLegend = chart.isShowLegend();
-        setShowLegend(showLegend);
 
         // Reset ChartArea
         _chartArea.resetView();
 
         // Reset Legend
-        if (showLegend)
-            _legend.resetView();
+        _legend.resetView();
     }
 
     /**

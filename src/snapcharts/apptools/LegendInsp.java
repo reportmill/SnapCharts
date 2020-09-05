@@ -23,7 +23,7 @@ public class LegendInsp extends ChartPartInsp {
      * Returns the name.
      */
     @Override
-    public String getName()  { return "Header Settings"; }
+    public String getName()  { return "Legend Settings"; }
 
     /**
      * Returns the ChartPart.
@@ -39,9 +39,8 @@ public class LegendInsp extends ChartPartInsp {
         // Get Legend
         Legend legend = getChart().getLegend();
 
-        // Reset TitleText, SubtitleText
-        //setViewValue("TitleText", chart.getTitle());
-        //setViewValue("SubtitleText", chart.getSubtitle());
+        // Reset ShowLegendCheckBox
+        setViewValue("ShowLegendCheckBox", legend.isShowLegend());
     }
 
     /**
@@ -52,8 +51,7 @@ public class LegendInsp extends ChartPartInsp {
         // Get Legend
         Legend legend = getChart().getLegend();
 
-        // Handle TitleText, SubtitleText
-        //if(anEvent.equals("TitleText")) chart.setTitle(anEvent.getStringValue());
-        //if(anEvent.equals("SubtitleText")) chart.setSubtitle(anEvent.getStringValue());
+        // Handle ShowLegendCheckBox
+        if(anEvent.equals("ShowLegendCheckBox")) legend.setShowLegend(anEvent.getBoolValue());
     }
 }

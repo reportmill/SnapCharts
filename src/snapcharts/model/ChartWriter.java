@@ -354,7 +354,7 @@ public class ChartWriter {
         Map map = new HashMap();
 
         // Get enabled node
-        boolean enabled = _chart.isShowLegend();
+        boolean enabled = _chart.getLegend().isShowLegend();
         if (enabled) map.put("enabled", enabled);
 
         // Add map

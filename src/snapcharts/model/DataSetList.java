@@ -311,7 +311,9 @@ public class DataSetList extends ChartPart {
         double maxY = getMaxY();
 
         // If ShowPartialY, reset min or max
-        if (!_chart.isShowPartialY() && minY*maxY>0) {
+        AxisY axisY = _chart.getAxisY();
+        boolean zeroRequired = axisY.isZeroRequired();
+        if (zeroRequired && minY*maxY>0) {
             if (minY>0) minY = 0;
             else maxY = 0;
         }

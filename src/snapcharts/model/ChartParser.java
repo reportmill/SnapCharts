@@ -402,7 +402,7 @@ public class ChartParser {
         // Get enabled node
         JSONNode enabledNode = aNode.getNode("enabled");
         if(enabledNode!=null)
-            _chart.setShowLegend(enabledNode.getBoolean());
+            _chart.getLegend().setShowLegend(enabledNode.getBoolean());
     }
 
     /**

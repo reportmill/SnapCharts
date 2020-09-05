@@ -236,8 +236,9 @@ public class DataViewPie extends DataView {
         // Update parts
         _chartView.getAxisX().setVisible(false);
         _chartView.getAxisY().setVisible(false);
-        _showLegend = _chartView.isShowLegend();
-        _chartView.setShowLegend(dsetCount>1);
+        Legend legend = getChart().getLegend();
+        _showLegend = legend.isShowLegend();
+        legend.setShowLegend(dsetCount>1);
 
         // If multiple datasets, make sure only first is enabled
         if (dsetCount>1) {
@@ -252,9 +253,13 @@ public class DataViewPie extends DataView {
      */
     public void deactivate()
     {
+        // Reset AxisX.Visible, AxisY.Visible
         _chartView.getAxisX().setVisible(true);
         _chartView.getAxisY().setVisible(true);
-        _chartView.setShowLegend(_showLegend);
+
+        // Reset Legend.ShowLegend
+        Legend legend = getChart().getLegend();
+        legend.setShowLegend(_showLegend);
     }
 
     /**
