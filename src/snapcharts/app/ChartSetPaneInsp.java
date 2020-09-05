@@ -3,6 +3,7 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
+import snapcharts.apptools.ChartPartInsp;
 import snapcharts.apptools.ChartSetBasicTool;
 
 /**
@@ -69,8 +70,9 @@ public class ChartSetPaneInsp extends ViewOwner {
         // Get ChartSetBasicTool
         _csetBasic = new ChartSetBasicTool(_epane);
         _inspColView.addChild(_csetBasic.getUI());
-        Collapser.createCollapserAndLabel(_csetBasic.getUI(), "Page Properties"); //cpsr.setCollapsed(true);
-        //_inspColView.addPropChangeListener(pc -> { if (_inspColView.isShowing()) cpsr.setExpandedAnimated(true); });
+        Collapser c = Collapser.createCollapserAndLabel(_csetBasic.getUI(), "Page Properties");
+        c.getLabel().setFill(ChartPartInsp.LABEL_FILL_SEL);
+        c.getLabel().setBorder(ChartPartInsp.LABEL_BORDER_SEL);
     }
 
     /**

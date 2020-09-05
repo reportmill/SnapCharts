@@ -4,5 +4,5 @@
     <Label text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
-  <CheckBox Name="PartialYAxisCheckBox" text="Show Partial Y Axis" />
+  <CheckBox Name="PartialYAxisCheckBox" text="Always Include Zero" />
 </ColView>

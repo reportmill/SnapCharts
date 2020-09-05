@@ -31,9 +31,9 @@ public abstract class ChartPartInsp extends ViewOwner {
     private boolean  _selected;
 
     // Constants
-    private static Color LABEL_FILL = new Color("#e0e0e4");
-    private static Color LABEL_FILL_SEL = new Color("#e0e6f0");
-    private static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1).copyForInsets(Insets.EMPTY);
+    public static Color LABEL_FILL = new Color("#e0e0e4");
+    public static Color LABEL_FILL_SEL = new Color("#e0e6f0");
+    public static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1).copyForInsets(Insets.EMPTY);
 
     /**
      * Constructor.

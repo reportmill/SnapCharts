@@ -432,7 +432,7 @@ public class DocPane extends ViewOwner {
 
         // Handle WebButton
         if (anEvent.equals("WebButton")) {
-            new snapcharts.chartclient.ChartClient().openChartDoc("Untitled.charts", getDoc());
+            //new snapcharts.chartclient.ChartClient().openChartDoc("Untitled.charts", getDoc());
             //new snapcharts.chartclient.ChartClient().openSimpleSample();
         }
 
