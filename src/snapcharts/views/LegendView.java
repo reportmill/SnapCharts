@@ -32,25 +32,33 @@ public class LegendView extends ChartPartView {
         // Remove children
         removeChildren();
 
-        for (int i = 0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);
+        for (int i=0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);
 
             // Get marker Shape (if LineChart, add crossbar)
-            Shape shp = chart.getMarkerShape(i); shp = shp.copyFor(new Transform(6, 6));
+            Shape shp = chart.getMarkerShape(i);
+            shp = shp.copyFor(new Transform(6, 6));
             if (chart.getType() == ChartType.LINE) {
                 Shape shp1 = new Rect(2,9,16,2);
                 shp = Shape.add(shp, shp1);
             }
 
             // Create marker ShapeView
-            ShapeView shpView = new ShapeView(shp); shpView.setPrefSize(20,20);
+            ShapeView shpView = new ShapeView(shp);
+            shpView.setPrefSize(20,20);
 
             // Set color
             shpView.setFill(chart.getColor(i));
 
-            StringView sview = new StringView(); sview.setFont(Font.Arial12.deriveFont(13).getBold());
+            StringView sview = new StringView();
+            sview.setFont(Font.Arial12.deriveFont(13).getBold());
             sview.setText(dset.getName());
-            if (dset.isDisabled()) { shpView.setFill(Color.LIGHTGRAY); sview.setTextFill(Color.LIGHTGRAY); }
-            RowView row = new RowView(); row.addChild(shpView); row.addChild(sview);
+            if (dset.isDisabled()) {
+                shpView.setFill(Color.LIGHTGRAY);
+                sview.setTextFill(Color.LIGHTGRAY);
+            }
+            RowView row = new RowView();
+            row.addChild(shpView);
+            row.addChild(sview);
             addChild(row);
 
             // Register row to enable/disable

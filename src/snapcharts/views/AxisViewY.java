@@ -164,19 +164,21 @@ public class AxisViewY extends AxisView {
     {
         // Get intervals
         Intervals intervals = _dataView.getIntervalsY();
-        int lineCount = intervals.getCount(), sectionCount = lineCount - 1;
-        double intervalDelta = intervals.getDelta(), intervalMax = intervals.getMax();
+        int lineCount = intervals.getCount();
+        double intervalDelta = intervals.getDelta();
+        double intervalMax = intervals.getMax();
 
         // Get longest text
         String maxText = "";
-        for (int i=0;i<lineCount;i++) {
-            double lineVal = (intervalMax-i*intervalDelta);
-            String str =  getLabelStringForValueAndDelta(lineVal, intervalDelta);
+        for (int i=0; i<lineCount; i++) {
+            double lineVal = intervalMax - i*intervalDelta;
+            String str = getLabelStringForValueAndDelta(lineVal, intervalDelta);
             if (str.length()>maxText.length())
                 maxText = str;
         }
 
-        return Font.Arial12.getStringAdvance(maxText);
+        int textW = (int) Math.ceil(Font.Arial12.getStringAdvance(maxText));
+        return textW;
     }
 
     /**

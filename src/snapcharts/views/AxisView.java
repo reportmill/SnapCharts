@@ -18,15 +18,13 @@ public abstract class AxisView extends ChartPartView {
     protected StringView  _titleView;
 
     // The grid line color
-    protected Color  _gridLineColor = GRID_LINES_COLOR;
+    protected Color  _gridLineColor = DataView.GRID_LINES_COLOR;
 
     // The grid line
     protected double  _gridLineDashArray[];
 
     // Constants
-    protected static Color  AXIS_LABELS_COLOR = Color.GRAY;
-    protected static Color  GRID_LINES_COLOR = Color.get("#E6");
-    protected static Color  AXIS_LINES_COLOR = Color.LIGHTGRAY;
+    protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
 
     // A shared formatter
     private static DecimalFormat _fmt = new DecimalFormat("#.###");

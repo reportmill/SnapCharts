@@ -27,7 +27,10 @@ public abstract class DataView extends ChartPartView {
     public static String   Reveal_Prop = "Reveal";
 
     // Constants for defaults
-    private static Color  AXIS_LINES_COLOR = Color.LIGHTGRAY;
+    protected static Color  BORDER_COLOR = Color.GRAY;
+    protected static Color  GRID_LINES_COLOR = Color.get("#E6");
+    protected static Color  TICK_LINES_COLOR = Color.GRAY;
+    protected static Color  AXIS_LINES_COLOR = Color.DARKGRAY;
 
     /**
      * Creates a ChartArea.
@@ -43,6 +46,15 @@ public abstract class DataView extends ChartPartView {
      * Returns the ChartType.
      */
     public abstract ChartType getChartType();
+
+    /**
+     * Returns whether this is bar chart.
+     */
+    public boolean isChartTypeBar()
+    {
+        ChartType chartType = getChartType();
+        return chartType==ChartType.BAR || chartType==ChartType.BAR_3D;
+    }
 
     /**
      * Sets the ChartArea.
@@ -87,17 +99,13 @@ public abstract class DataView extends ChartPartView {
      */
     public Intervals getIntervalsX()
     {
-        // Get DataSetList and Width
+        // Get info
         DataSetList dsetList = getDataSetList();
         double width = getWidth() - getInsetsAll().getWidth();
-
-        // If Bar, reset width to -1 to use index as X
-        ChartType chartType = getChartType();
-        if (chartType==ChartType.BAR || chartType==ChartType.BAR_3D)
-            width = -1;
+        boolean isBar = isChartTypeBar();
 
         // Return intervals
-        return dsetList.getIntervalsX(width);
+        return dsetList.getIntervalsX(width, isBar);
     }
 
     /**
@@ -185,38 +193,65 @@ public abstract class DataView extends ChartPartView {
     {
         // Get insets and chart content width/height (minus insets)
         Insets ins = getInsetsAll();
-        double pw = getWidth(), ph = getHeight();
-        double w = pw - ins.getWidth();
-        double h = ph - ins.getHeight();
+        double viewW = getWidth();
+        double viewH = getHeight();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = viewW - ins.getWidth();
+        double areaH = viewH - ins.getHeight();
 
         // Set axis line color and stroke
-        aPntr.setColor(AXIS_LINES_COLOR);
         double lineWidth = 1;
         double dashes[] = getAxisY().getGridLineDashArray();
-        Stroke stroke = dashes==null && lineWidth==1? Stroke.Stroke1 : new Stroke(lineWidth, dashes, 0);
+        Stroke stroke = dashes==null && lineWidth==1 ? Stroke.Stroke1 : new Stroke(lineWidth, dashes, 0);
         aPntr.setStroke(stroke);
 
-        // Have YAxisView paint lines
+        // Paint grid lines
+        aPntr.setColor(GRID_LINES_COLOR);
         if (getAxisY().isVisible())
-            paintAxisY(aPntr, 0, ins.top, pw, h);
+            paintGridlines(aPntr, areaX, areaY, areaW, areaH);
+
+        // Paint Border
+        aPntr.setColor(BORDER_COLOR);
+        aPntr.drawRect(areaX, areaY, areaW, areaH);
+
+        // Paint Axis lines
+        aPntr.setColor(AXIS_LINES_COLOR);
+        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
+        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
 
         // Paint chart
-        paintChart(aPntr, ins.left, ins.top, w, h);
+        paintChart(aPntr, ins.left, ins.top, areaW, areaH);
     }
 
     /**
      * Paints chart axis lines.
      */
-    protected void paintAxisY(Painter aPntr, double aX, double aY, double aW, double aH)
+    protected void paintGridlines(Painter aPntr, double aX, double aY, double aW, double aH)
     {
-        // Get number of interval lines and interval height
-        int intervalCount = getIntervalsY().getCount();
-        double intervalLen = aH/(intervalCount-1);
+        //if (!isChartTypeBar()) {
+            double tickLenX = getAxisX().getAxis().getTickLength();
+            Intervals ivalsX = getIntervalsX();
+            for (int i=0, iMax=ivalsX.getCount(); i<iMax; i++) {
+                double dataX = ivalsX.getInterval(i);
+                double dispX = (int) Math.round(dataToViewX(dataX));
+                aPntr.setColor(GRID_LINES_COLOR);
+                aPntr.drawLine(dispX, aY, dispX, aH);
+                aPntr.setColor(TICK_LINES_COLOR);
+                aPntr.drawLine(dispX, aY + aH - tickLenX, dispX, aY + aH);
+            }
+        //}
 
-        // Draw y axis lines
-        for (int i=0;i<intervalCount;i++) {
-            double dispY = Math.round(aY + i*intervalLen);
-            aPntr.drawLine(0, dispY, aW, dispY);
+        // Draw gridlines lines Y
+        double tickLen = getAxisX().getAxis().getTickLength();
+        Intervals ivalsY = getIntervalsY();
+        for (int i=0, iMax=ivalsY.getCount(); i<iMax; i++) {
+            double dataY = ivalsY.getInterval(i);
+            double dispY = (int) Math.round(dataToViewY(dataY));
+            aPntr.setColor(GRID_LINES_COLOR);
+            aPntr.drawLine(aX, dispY, aW, dispY);
+            aPntr.setColor(TICK_LINES_COLOR);
+            aPntr.drawLine(aX, dispY, aX + tickLen, dispY);
         }
 
         aPntr.setStroke(Stroke.Stroke1);

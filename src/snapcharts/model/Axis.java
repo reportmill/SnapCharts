@@ -28,7 +28,7 @@ public class Axis extends ChartPart {
     private double  _titleX, _titleY;
 
     // Labels margin - distance of labels right edge to axis
-    private double  _labelsMargin = 15;
+    private double  _labelsMargin = 5;
 
     // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
     private double  _tickLength = 8;

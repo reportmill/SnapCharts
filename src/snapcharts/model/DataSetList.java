@@ -273,7 +273,7 @@ public class DataSetList extends ChartPart {
     /**
      * Returns the intervals for X axis.
      */
-    public Intervals getIntervalsX(double aWidth)
+    public Intervals getIntervalsX(double aWidth, boolean isBar)
     {
         // Get chart min value, max value and height
         double minX = getMinX();
@@ -281,9 +281,9 @@ public class DataSetList extends ChartPart {
 
         // If indexed data,
         DataType dataType = getDataSetCount()>0 ? getDataSet(0).getDataType() : null;
-        if (aWidth<0 || dataType==DataType.IY || dataType==DataType.CY) {
+        if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
             minX = 0;
-            maxX = getPointCount();
+            maxX = isBar ? getPointCount() : getPointCount() - 1;
             aWidth = -1;
         }
 

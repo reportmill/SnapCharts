@@ -79,7 +79,7 @@ public class AxisViewX extends AxisView {
         boolean isBar = _dataView.getChartType()==ChartType.BAR;
 
         // Set color/stroke for axis ticks
-        aPntr.setColor(AXIS_LINES_COLOR);
+        aPntr.setColor(AXIS_LABELS_COLOR);
         aPntr.setStroke(Stroke.Stroke1);
 
         // Iterate over intervals
@@ -88,7 +88,7 @@ public class AxisViewX extends AxisView {
             // Get X in data and display coords and draw tick line
             double dataX = intervals.getInterval(i);
             double dispX = Math.round(dataToViewX(dataX));
-            aPntr.drawLine(dispX, 0, dispX, tickLen);
+            //aPntr.drawLine(dispX, 0, dispX, tickLen);
 
             // If Bar, handle special: Shift labels to mid interval and skip last
             if (isBar) {
