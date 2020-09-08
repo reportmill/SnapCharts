@@ -5,6 +5,7 @@ import snap.util.Prefs;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.DialogBox;
+import snap.viewx.FilePanel;
 import snap.viewx.RecentFiles;
 import snap.web.WebFile;
 import snap.web.WebURL;
@@ -287,10 +288,6 @@ public class WelcomePanel extends ViewOwner {
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);
         hide();
-
-        // Add path to RecentFiles
-        String urls = dpane.getSourceURL().getString();
-        RecentFiles.addPath(DocPane.RECENT_FILES_ID, urls, 99);
     }
 
     /**
@@ -304,10 +301,6 @@ public class WelcomePanel extends ViewOwner {
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);
         hide();
-
-        // Add path to RecentFiles
-        String urls = dpane.getSourceURL().getString();
-        RecentFiles.addPath(DocPane.RECENT_FILES_ID, urls, 99);
     }
 
     /**
@@ -319,7 +312,9 @@ public class WelcomePanel extends ViewOwner {
         if (_recentFiles!=null) return _recentFiles;
 
         // Get DropBox
-        getDropBox();
+        DropBox dbox = getDropBox();
+        if (isCloud())
+            FilePanel.setSiteDefault(dbox);
 
         // Handle Local
         if (!isCloud()) {
@@ -347,7 +342,7 @@ public class WelcomePanel extends ViewOwner {
         // Get chart files
         DropBox dropBox = getDropBox();
         List<WebFile> files = dropBox.getRootDir().getFiles();
-        files = ListUtils.getFiltered(files, file -> "charts".equals(file.getType()));
+        files = ListUtils.getFiltered(files, file -> DocPane.CHARTS_FILE_EXT.equals(file.getType()));
 
         // Set files and trigger reload
         _recentFiles = files;

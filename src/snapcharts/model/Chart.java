@@ -189,9 +189,13 @@ public class Chart extends ChartPart {
      */
     public Shape getMarkerShape(int anIndex)
     {
+        // Get index in range (wrapped if needed)
+        Shape markerShapes[] = getMarkerShapes();
+        int index = anIndex % markerShapes.length;
+
         switch (getType()) {
-            case LINE: return getMarkerShapes()[anIndex];
-            default: return getMarkerShapes()[0];
+            case LINE: return markerShapes[index];
+            default: return markerShapes[0];
         }
     }
 

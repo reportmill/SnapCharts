@@ -37,6 +37,9 @@ public class DocPane extends ViewOwner {
 
     // Constants
     public static final String RECENT_FILES_ID = "RecentChartDocs";
+    public static final String CHARTS_FILE_EXT = "charts";
+    public static final String CHARTS_SIMPLE_FILE_EXT = "simple";
+
 
     // Constants for actions
     //public static final String New_Action = "NewAction";
@@ -173,7 +176,8 @@ public class DocPane extends ViewOwner {
     public DocPane showOpenPanel(View aView)
     {
         // Get path from open panel for supported file extensions
-        String path = FilePanel.showOpenPanel(aView, "Snap Charts File", "charts");
+        String extensions[] = { DocPane.CHARTS_FILE_EXT, DocPane.CHARTS_SIMPLE_FILE_EXT };
+        String path = FilePanel.showOpenPanel(aView, "Snap Charts File", extensions);
         return open(path);
     }
 
@@ -182,11 +186,13 @@ public class DocPane extends ViewOwner {
      */
     public DocPane open(Object aSource)
     {
-        // If source is already opened, return editor pane
+        // Get URL for source
         WebURL url = WebURL.getURL(aSource);
 
+        // Get doc for URL
         Doc doc = Doc.createDocFromSource(url);
 
+        // Set new doc
         setDoc(doc);
 
         // If source is string, add to recent files menu
@@ -205,9 +211,8 @@ public class DocPane extends ViewOwner {
     public void saveAs()
     {
         // Run save panel, set Document.Source to path and re-save (or just return if cancelled)
-        String exts[] = new String[] { "charts" };
+        String exts[] = new String[] { CHARTS_FILE_EXT };
         //String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
-
         WebFile file = FilePanel.showSavePanelWeb(getUI(), "Snap Charts file", exts); if (file==null) return;
 
         getDoc().setSourceURL(file.getURL());

@@ -35,7 +35,6 @@ public class DocTextReader {
      */
     public Doc getDocForString(String aStr)
     {
-        System.out.println(aStr);
         readString(aStr);
         return _doc;
     }
