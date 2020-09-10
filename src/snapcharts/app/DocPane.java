@@ -456,6 +456,11 @@ public class DocPane extends ViewOwner {
             itemPane.setShowInspector(!itemPane.isShowInspector());
         }
 
+        // Handle SamplesButton
+        if (anEvent.equals("SamplesButton")) {
+            new SamplesPane().showSamples(this);
+        }
+
         // Handle TreeView
         if (anEvent.equals(_treeView)) {
             DocItem docItem = _treeView.getSelItem();
