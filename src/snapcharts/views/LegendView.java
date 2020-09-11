@@ -35,7 +35,7 @@ public class LegendView extends ChartPartView {
         for (int i=0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);
 
             // Get marker Shape (if LineChart, add crossbar)
-            Shape shp = chart.getMarkerShape(i);
+            Shape shp = chart.getSymbolShape(i);
             shp = shp.copyFor(new Transform(6, 6));
             if (chart.getType() == ChartType.LINE) {
                 Shape shp1 = new Rect(2,9,16,2);

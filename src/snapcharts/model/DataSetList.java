@@ -1,5 +1,7 @@
 package snapcharts.model;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import snap.util.*;
 
@@ -69,12 +71,12 @@ public class DataSetList extends ChartPart {
 
         // If value larger than cound, create empty dataset
         while (aValue> getDataSetCount()) {
-            DataSet dset = addDataSetForNameAndValues((String)null, (Double)null);
+            DataSet dset = addDataSetForNameAndValues(null, (Double)null);
             dset.setPointCount(getPointCount());
         }
 
         // If value smaller than count, remove dataset
-        while (aValue< getDataSetCount())
+        while (aValue<getDataSetCount())
             removeDataSet(getDataSetCount()-1);
     }
 
@@ -128,7 +130,8 @@ public class DataSetList extends ChartPart {
     public int removeDataSet(DataSet aDataSet)
     {
         int index = _dsets.indexOf(aDataSet);
-        if (index>=0) removeDataSet(index);
+        if (index>=0)
+            removeDataSet(index);
         return index;
     }
 
@@ -139,6 +142,14 @@ public class DataSetList extends ChartPart {
     {
         _dsets.clear();
         clearCachedValues();
+    }
+
+    /**
+     * Returns a list of datasets for given filter predicate.
+     */
+    public List<DataSet> getDataSetsFiltered(Predicate<? super DataSet> aPredicate)
+    {
+        return getDataSets().stream().filter(aPredicate).collect(Collectors.toList());
     }
 
     /**
@@ -155,7 +166,7 @@ public class DataSetList extends ChartPart {
         // Iterate over datasets to get min of all
         double min = Float.MAX_VALUE;
         for (DataSet dset : getDataSets())
-            min = Math.min(min, dset.getX(0));
+            min = Math.min(min, dset.getMinX());
         return _minX = min;
     }
 
@@ -167,14 +178,13 @@ public class DataSetList extends ChartPart {
         // If value already cached, just return
         if (_maxX > -Float.MAX_VALUE) return _maxX;
 
-        // If no datasets, just set to 0
-        int pointCount = getPointCount();
-        if (pointCount==0) return _maxX = 5;
+        // If no datasets/points, just set to 5
+        if (getPointCount()==0) return _maxX = 5;
 
         // Iterate over datasets to get max of all
         double max = -Float.MAX_VALUE;
         for (DataSet dset : getDataSets())
-            max = Math.max(max, dset.getX(pointCount-1));
+            max = Math.max(max, dset.getMaxX());
         return _maxX = max;
     }
 
@@ -291,7 +301,7 @@ public class DataSetList extends ChartPart {
         if (_intervalsX!=null) {
             double seedMax = _intervalsX.getSeedValueMax();
             double seedMin = _intervalsX.getSeedValueMin();
-            double seedHeight = _intervalsX.getSeedHeight();
+            double seedHeight = _intervalsX.getAxisLength();
             if (MathUtils.equals(seedMax, maxX) && MathUtils.equals(seedMin, minX) && MathUtils.equals(seedHeight, aWidth))
                 return _intervalsX;
         }
@@ -322,7 +332,7 @@ public class DataSetList extends ChartPart {
         if (_intervalsY!=null) {
             double seedMax = _intervalsY.getSeedValueMax();
             double seedMin = _intervalsY.getSeedValueMin();
-            double seedHeight = _intervalsY.getSeedHeight();
+            double seedHeight = _intervalsY.getAxisLength();
             if (MathUtils.equals(seedMax, maxY) && MathUtils.equals(seedMin, minY) && MathUtils.equals(seedHeight, aHeight))
                 return _intervalsY;
         }

@@ -410,6 +410,30 @@ public class DataSet extends ChartPart {
     public boolean isEnabled()  { return !_disabled; }
 
     /**
+     * Returns the minimum X value in this dataset.
+     */
+    public double getMinX()
+    {
+        double min = Float.MAX_VALUE;
+        for (DataPoint dp : _points)
+            if (dp.getX()<min)
+                min = dp.getX();
+        return min;
+    }
+
+    /**
+     * Returns the maximum X value in this dataset.
+     */
+    public double getMaxX()
+    {
+        double max = -Float.MAX_VALUE;
+        for (DataPoint dp : _points)
+            if (dp.getX()>max)
+                max = dp.getX();
+        return max;
+    }
+
+    /**
      * Returns the minimum Y value in this dataset.
      */
     public double getMinY()

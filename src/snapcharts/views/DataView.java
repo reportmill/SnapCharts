@@ -124,9 +124,9 @@ public abstract class DataView extends ChartPartView {
     public Color getColor(int anIndex)  { return getChart().getColor(anIndex); }
 
     /**
-     * Returns the dataset shape at index.
+     * Returns the Symbol shape at index.
      */
-    public Shape getMarkerShape(int anIndex)  { return getChart().getMarkerShape(anIndex); }
+    public Shape getSymbolShape(int anIndex)  { return getChart().getSymbolShape(anIndex); }
 
     /**
      * Return the ratio of the chart to show horizontally.
@@ -167,10 +167,11 @@ public abstract class DataView extends ChartPartView {
     public double dataToViewX(double dataX)
     {
         Insets ins = getInsetsAll();
-        double dataMin = getIntervalsX().getMin();
-        double dataMax = getIntervalsX().getMax();
-        double width = getWidth() - ins.getWidth();
-        return ins.left + (dataX - dataMin)/(dataMax - dataMin)*width;
+        Intervals intervals = getIntervalsX();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double areaW = getWidth() - ins.getWidth();
+        return ins.left + (dataX - dataMin)/(dataMax - dataMin)*areaW;
     }
 
     /**
@@ -182,8 +183,8 @@ public abstract class DataView extends ChartPartView {
         Intervals intervals = getIntervalsY();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
-        double height = getHeight() - ins.getHeight();
-        return ins.top + height - (dataY - dataMin)/(dataMax - dataMin)*height;
+        double areaH = getHeight() - ins.getHeight();
+        return ins.top + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
     }
 
     /**

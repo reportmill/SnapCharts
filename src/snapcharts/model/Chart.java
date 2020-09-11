@@ -33,7 +33,7 @@ public class Chart extends ChartPart {
     private Color  _colors[] = COLORS;
 
     // The dataset shapes
-    private Shape _markerShapes[];
+    private Shape _symbolShapes[];
 
     // The object holding specific chart types
     private AreaTypes _areaTypes = new AreaTypes(this);
@@ -185,32 +185,32 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the dataset shape at index.
+     * Returns the symbol shape at index.
      */
-    public Shape getMarkerShape(int anIndex)
+    public Shape getSymbolShape(int anIndex)
     {
         // Get index in range (wrapped if needed)
-        Shape markerShapes[] = getMarkerShapes();
-        int index = anIndex % markerShapes.length;
+        Shape symbShapes[] = getSymbolShapes();
+        int index = anIndex % symbShapes.length;
 
         switch (getType()) {
-            case LINE: return markerShapes[index];
-            default: return markerShapes[0];
+            case LINE: return symbShapes[index];
+            default: return symbShapes[0];
         }
     }
 
     /**
-     * Returns the marker shapes.
+     * Returns the symbol shapes.
      */
-    public Shape[] getMarkerShapes()
+    public Shape[] getSymbolShapes()
     {
-        if (_markerShapes!=null) return _markerShapes;
+        if (_symbolShapes !=null) return _symbolShapes;
         Shape shp0 = new Ellipse(0,0,8,8);
         Shape shp1 = new Polygon(4,0,8,4,4,8,0,4);
         Shape shp2 = new Rect(0,0,8,8);
         Shape shp3 = new Polygon(4,0,8,8,0,8);
         Shape shp4 = new Polygon(0,0,8,0,4,8);
-        return _markerShapes = new Shape[] { shp0, shp1, shp2, shp3, shp4 };
+        return _symbolShapes = new Shape[] { shp0, shp1, shp2, shp3, shp4 };
     }
 
     /**
