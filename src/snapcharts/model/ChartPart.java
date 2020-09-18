@@ -1,7 +1,7 @@
 package snapcharts.model;
 import snap.util.*;
 
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Base class for parts of a chart: Axis, Area, Legend, etc.
@@ -17,8 +17,16 @@ public class ChartPart implements XMLArchiver.Archivable {
     // PropertyChangeSupport
     protected PropChangeSupport _pcs = PropChangeSupport.EMPTY;
 
+    // A map to hold prop keys for unique classes
+    private static Map<Class<? extends ChartPart>, String[]>  _classProps = new HashMap<>();
+
     // Constants for properties
     public static final String Name_Prop = "Name";
+
+    /**
+     * Constructor.
+     */
+    public ChartPart()  { }
 
     /**
      * Returns the Doc.
@@ -99,6 +107,60 @@ public class ChartPart implements XMLArchiver.Archivable {
     protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
 
     /**
+     * Returns the prop keys.
+     */
+    public String[] getPropKeysAll()
+    {
+        return getPropKeysAllForClass(getClass());
+    }
+
+    /**
+     * Returns the prop keys.
+     */
+    protected String[] getPropKeysLocal()
+    {
+        return new String[] {
+                Name_Prop
+        };
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case Name_Prop: return getName();
+            default: System.err.println("ChartPart.getPropValue: Unknown prop: " + aPropName); return null;
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+            default: System.err.println("ChartPart.setPropValue: Unknown prop: " + aPropName);
+        }
+    }
+
+    /**
+     * Returns the value for given key.
+     */
+    public Object getPropDefault(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case Name_Prop: return null;
+            default: System.err.println("ChartPart.getPropDefault: Unknown prop: " + aPropName); return null;
+        }
+    }
+
+    /**
      * Archival.
      */
     @Override
@@ -127,5 +189,36 @@ public class ChartPart implements XMLArchiver.Archivable {
 
         // Return this part
         return this;
+    }
+
+    /**
+     * Returns the prop keys.
+     */
+    public static String[] getPropKeysAllForClass(Class<? extends ChartPart> aClass)
+    {
+        // Get props from cache and just return if found
+        String props[] = _classProps.get(aClass);
+        if (props!=null)
+            return props;
+
+        // Create list and add super props to it
+        List<String> propsList = new ArrayList<>();
+        Class superClass = aClass.getSuperclass();
+        String superProps[] = ChartPart.class.isAssignableFrom(superClass) ? getPropKeysAllForClass(superClass) : null;
+        if (superProps!=null)
+            Collections.addAll(propsList, superProps);
+
+        // Add props for class
+        try {
+            ChartPart object = aClass.newInstance();
+            String classProps[] = object.getPropKeysLocal();
+            Collections.addAll(propsList, classProps);
+        }
+        catch (Exception e) { throw new RuntimeException("ChartPart.getPropKeysAllForClass failed: " + aClass); }
+
+        // Add props array to Class map and return
+        props = propsList.toArray(new String[0]);
+        _classProps.put(aClass, props);
+        return props;
     }
 }

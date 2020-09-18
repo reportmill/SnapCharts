@@ -1,9 +1,9 @@
 package snapcharts.views;
 import snap.gfx.Color;
+import snap.util.MathUtils;
 import snap.view.StringView;
-import snapcharts.model.Axis;
-import snapcharts.model.AxisX;
-import snapcharts.model.Chart;
+import snapcharts.model.*;
+
 import java.text.DecimalFormat;
 
 /**
@@ -17,6 +17,15 @@ public abstract class AxisView extends ChartPartView {
     // The Title view
     protected StringView  _titleView;
 
+    // The Axis min override
+    private double  _minOverride = UNSET_DOUBLE;
+
+    // The Axis max override
+    private double  _maxOverride = UNSET_DOUBLE;
+
+    // The intervals for axis
+    private Intervals _intervals;
+
     // The grid line color
     protected Color  _gridLineColor = DataView.GRID_LINES_COLOR;
 
@@ -25,6 +34,7 @@ public abstract class AxisView extends ChartPartView {
 
     // Constants
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
+    private static double UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
 
     // A shared formatter
     private static DecimalFormat _fmt = new DecimalFormat("#.###");
@@ -33,6 +43,168 @@ public abstract class AxisView extends ChartPartView {
      * Returns the axis.
      */
     public abstract Axis getAxis();
+
+    /**
+     * Returns the axis type.
+     */
+    public AxisType getAxisType()  { return getAxis().getType(); }
+
+    /**
+     * Returns the axis min.
+     */
+    public double getAxisMin()
+    {
+        // If explicitly set, just return
+        if (_minOverride!=UNSET_DOUBLE) return _minOverride;
+
+        // Get Axis
+        Axis axis = getAxis();
+        Axis.AxisBoundType boundType = axis.getMinBoundType();
+
+        // Get min
+        double min;
+        if (boundType== Axis.AxisBoundType.VALUE)
+            min = axis.getMinValue();
+        else {
+            DataSetList dsetList = getDataSetList();
+            min = dsetList.getMinForAxis(axis.getType());
+        }
+
+        // If ZeroRequired and min greater than zero, reset min
+        if (axis.isZeroRequired() && min>0)
+            min = 0;
+
+        // Return min
+        return min;
+    }
+
+    /**
+     * Sets the axis min (override).
+     */
+    public void setAxisMin(double aValue)
+    {
+        if (aValue==_minOverride) return;
+        _minOverride = aValue;
+        _intervals = null;
+    }
+
+    /**
+     * Returns the axis max.
+     */
+    public double getAxisMax()
+    {
+        // If explicitly set, just return
+        if (_maxOverride!=UNSET_DOUBLE) return _maxOverride;
+
+        // Get Axis
+        Axis axis = getAxis();
+        Axis.AxisBoundType boundType = axis.getMaxBoundType();
+
+        // Get max
+        double max;
+        if (boundType== Axis.AxisBoundType.VALUE)
+            max = axis.getMaxValue();
+        else {
+            DataSetList dsetList = getDataSetList();
+            max = dsetList.getMaxForAxis(axis.getType());
+        }
+
+        // If ZeroRequired and max less than zero, reset max
+        if (axis.isZeroRequired() && max<0)
+            max = 0;
+
+        // Return max
+        return max;
+    }
+
+    /**
+     * Sets the axis min (override).
+     */
+    public void setAxisMax(double aValue)
+    {
+        if (aValue==_maxOverride) return;
+        _maxOverride = aValue;
+        _intervals = null;
+    }
+
+    /**
+     * Returns the axis length.
+     */
+    public double getAxisLen()
+    {
+        switch (getAxisType()) {
+            case X: return _dataView.getWidth() - _dataView.getInsetsAll().getWidth();
+            case Y: return _dataView.getHeight() - _dataView.getInsetsAll().getHeight();
+            default: throw new RuntimeException("AxisView.getAxisLen: Unknown axis type: "+ getAxisType());
+        }
+    }
+
+    /**
+     * Returns the axis intervals for active datasets.
+     */
+    public Intervals getIntervals()
+    {
+        // If already set, just return
+        if (isIntervalsValid()) return _intervals;
+
+        // Create, set and return
+        _intervals = createIntervals();
+        return _intervals;
+    }
+
+    /**
+     * Creates the axis intervals for active datasets.
+     */
+    protected Intervals createIntervals()
+    {
+        // Special case, bar
+        if (getAxisType()==AxisType.X) {
+            boolean isBar = _dataView.isChartTypeBar();
+            DataSetList dsetList = getDataSetList();
+            DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
+            if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
+                int pointCount = dsetList.getPointCount();
+                int maxX = isBar ? pointCount : pointCount - 1;
+                return Intervals.getSimpleIntervals(0, maxX);
+            }
+        }
+
+        // Normal case
+        double min = getAxisMin();
+        double max = getAxisMax();
+        double len = getAxisLen();
+        return Intervals.getIntervalsForMinMaxLen(min, max, len);
+    }
+
+    /**
+     * Returns true if intervals are okay.
+     */
+    private boolean isIntervalsValid()
+    {
+        // If intervals not set, return false
+        if (_intervals==null)
+            return false;
+
+        // Special case, bar
+        if (getAxisType()==AxisType.X) {
+            boolean isBar = _dataView.isChartTypeBar();
+            DataSetList dsetList = getDataSetList();
+            DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
+            if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
+                int pointCount = dsetList.getPointCount();
+                double min = 0, seedMin = _intervals.getSeedValueMin();
+                double max = isBar ? pointCount : pointCount - 1, seedMax = _intervals.getSeedValueMax();
+                double len = max, seedLen = _intervals.getAxisLength();
+                return MathUtils.equals(min, seedMin) && MathUtils.equals(max, seedMax) && MathUtils.equals(len, seedLen);
+            }
+        }
+
+        // Normal case: Return true if min, max and AxisLen are the same
+        double min = getAxisMin(), seedMin = _intervals.getSeedValueMin();
+        double max = getAxisMax(), seedMax = _intervals.getSeedValueMax();
+        double len = getAxisLen(), seedLen = _intervals.getAxisLength();
+        return MathUtils.equals(min, seedMin) && MathUtils.equals(max, seedMax) && MathUtils.equals(len, seedLen);
+    }
 
     /**
      * Returns the grid line color.

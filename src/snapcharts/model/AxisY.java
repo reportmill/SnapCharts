@@ -5,4 +5,16 @@ package snapcharts.model;
  */
 public class AxisY extends Axis {
 
+    /**
+     * Constructor.
+     */
+    public AxisY()
+    {
+        super();
+    }
+
+    /**
+     * Returns the axis type.
+     */
+    public AxisType getType()  { return AxisType.Y; }
 }

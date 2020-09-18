@@ -16,12 +16,6 @@ public class DataSetList extends ChartPart {
     // The dataset start value
     private int _startValue = 0;
 
-    // The intervals for X axis
-    private Intervals _intervalsX;
-    
-    // The intervals for Y axis
-    private Intervals _intervalsY;
-
     // A DataSetList to hold subset of enabled datasets
     private DataSetList  _active;
     
@@ -225,6 +219,30 @@ public class DataSetList extends ChartPart {
     }
 
     /**
+     * Returns the min value for given axis.
+     */
+    public double getMinForAxis(AxisType anAxisType)
+    {
+        switch (anAxisType) {
+            case X: return getMinX();
+            case Y: return getMinY();
+            default: throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
+        }
+    }
+
+    /**
+     * Returns the max value for given axis.
+     */
+    public double getMaxForAxis(AxisType anAxisType)
+    {
+        switch (anAxisType) {
+            case X: return getMaxX();
+            case Y: return getMaxY();
+            default: throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
+        }
+    }
+
+    /**
      * Adds a new dataset for given name and values.
      */
     public DataSet addDataSetForNameAndValues(String aName, Double ... theVals)
@@ -281,68 +299,6 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the intervals for X axis.
-     */
-    public Intervals getIntervalsX(double aWidth, boolean isBar)
-    {
-        // Get chart min value, max value and height
-        double minX = getMinX();
-        double maxX = getMaxX();
-
-        // If indexed data,
-        DataType dataType = getDataSetCount()>0 ? getDataSet(0).getDataType() : null;
-        if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
-            minX = 0;
-            maxX = isBar ? getPointCount() : getPointCount() - 1;
-            aWidth = -1;
-        }
-
-        // If intervals are cached for current min, max and height, return them
-        if (_intervalsX!=null) {
-            double seedMax = _intervalsX.getSeedValueMax();
-            double seedMin = _intervalsX.getSeedValueMin();
-            double seedHeight = _intervalsX.getAxisLength();
-            if (MathUtils.equals(seedMax, maxX) && MathUtils.equals(seedMin, minX) && MathUtils.equals(seedHeight, aWidth))
-                return _intervalsX;
-        }
-
-        // Create new intervals and return
-        _intervalsX = new Intervals(minX, maxX, aWidth);
-        return _intervalsX;
-    }
-
-    /**
-     * Returns the intervals for Y axis.
-     */
-    public Intervals getIntervalsY(double aHeight)
-    {
-        // Get chart min value, max value and height
-        double minY = getMinY();
-        double maxY = getMaxY();
-
-        // If ShowPartialY, reset min or max
-        AxisY axisY = _chart.getAxisY();
-        boolean zeroRequired = axisY.isZeroRequired();
-        if (zeroRequired && minY*maxY>0) {
-            if (minY>0) minY = 0;
-            else maxY = 0;
-        }
-
-        // If intervals are cached for current min, max and height, return them
-        if (_intervalsY!=null) {
-            double seedMax = _intervalsY.getSeedValueMax();
-            double seedMin = _intervalsY.getSeedValueMin();
-            double seedHeight = _intervalsY.getAxisLength();
-            if (MathUtils.equals(seedMax, maxY) && MathUtils.equals(seedMin, minY) && MathUtils.equals(seedHeight, aHeight))
-                return _intervalsY;
-        }
-
-        // Create new intervals and return
-        _intervalsY = new Intervals(minY, maxY, aHeight);
-        return _intervalsY;
-    }
-
-    /**
      * Returns a DataSetList of active datasets.
      */
     public DataSetList getActiveList()
@@ -395,7 +351,6 @@ public class DataSetList extends ChartPart {
         _active = null;
         _minX = _minY = Float.MAX_VALUE;
         _maxX = _maxY = -Float.MAX_VALUE;
-        _intervalsX = _intervalsY = null;
     }
 
     /**

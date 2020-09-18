@@ -1,13 +1,14 @@
 package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
 /**
  * A class to represent a Chart Axis.
  */
-public class Axis extends ChartPart {
+public abstract class Axis extends ChartPart {
 
     // The Title
     private String _title;
@@ -33,6 +34,18 @@ public class Axis extends ChartPart {
     // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
     private double  _tickLength = 8;
 
+    // The Axis Min BoundType
+    private AxisBoundType  _minType = AxisBoundType.AUTO;
+
+    // The Axis Min BoundType
+    private AxisBoundType  _maxType = AxisBoundType.AUTO;
+
+    // The Axis Min Value (if MinBoundType is VALUE)
+    private double  _minValue = 0;
+
+    // The Axis Max Value (if MaxBoundType is VALUE)
+    private double  _maxValue = 0;
+
     // Whether Zero should always be included
     private boolean  _zeroRequired;
 
@@ -47,12 +60,48 @@ public class Axis extends ChartPart {
     public static final String Title_Prop = "Title";
     public static final String TitleAlign_Prop = "TitleAlign";
     public static final String TitleRotate_Prop = "TitleRotate";
+    public static final String MinBoundType_Prop = "MinBoundType";
+    public static final String MaxBoundType_Prop = "MaxBoundType";
+    public static final String MinValue_Prop = "MinValue";
+    public static final String MaxValue_Prop = "MaxValue";
     public static final String ZeroRequired_Prop = "ZeroRequired";
 
     // Constants for default values
     static Color   AXIS_LABELS_COLOR = Color.GRAY;
     static Color   GRID_LINES_COLOR = Color.get("#E6");
     static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
+
+    // A type for AxisBounds
+    public enum AxisBoundType {
+
+        /** Bound type for get pleasing value from data value. */
+        AUTO,
+
+        // Bound type for use exact data value. */
+        DATA,
+
+        // Bound type for user provided value
+        VALUE;
+
+        public static AxisBoundType get(String aValue)
+        {
+            try { return AxisBoundType.valueOf(aValue.toUpperCase()); }
+            catch (Exception e) { return AUTO; }
+        }
+    }
+
+    /**
+     * Constructor.
+     */
+    public Axis()
+    {
+        super();
+    }
+
+    /**
+     * Returns the axis type.
+     */
+    public abstract AxisType getType();
 
     /**
      * Returns the YAxis title.
@@ -183,6 +232,62 @@ public class Axis extends ChartPart {
     public void setTickLength(double aValue)  { _tickLength = aValue; }
 
     /**
+     * Returns the Axis Min BoundType.
+     */
+    public AxisBoundType getMinBoundType()  { return _minType; }
+
+    /**
+     * Sets the Axis Min BoundType.
+     */
+    public void setMinBoundType(AxisBoundType aBoundType)
+    {
+        if (aBoundType==_minType) return;
+        firePropChange(MinBoundType_Prop, _minType, _minType = aBoundType);
+    }
+
+    /**
+     * Returns the Axis Max BoundType.
+     */
+    public AxisBoundType getMaxBoundType()  { return _maxType; }
+
+    /**
+     * Sets the Axis Max BoundType.
+     */
+    public void setMaxBoundType(AxisBoundType aBoundType)
+    {
+        if (aBoundType==_maxType) return;
+        firePropChange(MaxBoundType_Prop, _maxType, _maxType = aBoundType);
+    }
+
+    /**
+     * Returns the Axis Min Value (if BoundType is VALUE).
+     */
+    public double getMinValue()  { return _minValue; }
+
+    /**
+     * Sets the Axis Min Value (if BoundType is VALUE).
+     */
+    public void setMinValue(double aValue)
+    {
+        if (aValue==_minValue) return;
+        firePropChange(MinValue_Prop, _minValue, _minValue = aValue);
+    }
+
+    /**
+     * Returns the Axis Max Value (if BoundType is VALUE).
+     */
+    public double getMaxValue()  { return _maxValue; }
+
+    /**
+     * Sets the Axis Max Value (if BoundType is VALUE).
+     */
+    public void setMaxValue(double aValue)
+    {
+        if (aValue==_maxValue) return;
+        firePropChange(MaxValue_Prop, _maxValue, _maxValue = aValue);
+    }
+
+    /**
      * Returns whether Zero should always be included.
      */
     public boolean isZeroRequired()  { return _zeroRequired; }
@@ -215,6 +320,65 @@ public class Axis extends ChartPart {
      * Returns the grid line dash array.
      */
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
+
+    /**
+     * Returns the prop value keys.
+     */
+    @Override
+    protected String[] getPropKeysLocal()
+    {
+        return new String[] {
+                MinBoundType_Prop, MaxBoundType_Prop,
+                MinValue_Prop, MaxValue_Prop
+        };
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case MinBoundType_Prop: return getMinBoundType();
+            case MaxBoundType_Prop: return getMaxBoundType();
+            case MinValue_Prop: return getMinValue();
+            case MaxValue_Prop: return getMaxValue();
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case MinBoundType_Prop: setMinBoundType(AxisBoundType.get(SnapUtils.stringValue(aValue))); break;
+            case MaxBoundType_Prop: setMaxBoundType(AxisBoundType.get(SnapUtils.stringValue(aValue))); break;
+            case MinValue_Prop: setMinValue(SnapUtils.doubleValue(aValue)); break;
+            case MaxValue_Prop: setMaxValue(SnapUtils.doubleValue(aValue)); break;
+        }
+    }
+
+    /**
+     * Returns the prop default value for given key.
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case MinBoundType_Prop: return AxisBoundType.AUTO;
+            case MaxBoundType_Prop: return AxisBoundType.AUTO;
+            case MinValue_Prop: return 0;
+            case MaxValue_Prop: return 5;
+            default: return super.getPropDefault(aPropName);
+        }
+    }
 
     /**
      * Archival.

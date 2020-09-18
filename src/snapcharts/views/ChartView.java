@@ -236,10 +236,6 @@ public class ChartView extends ChartPartView {
         // Update TargDataPoint
         DataPoint dataPoint = aPoint!=null ? getDataPointForXY(aPoint.x, aPoint.y) : null;
         setTargDataPoint(dataPoint);
-
-        // This is a hack
-        if (getDataView() instanceof DataViewPie)
-            _toolTipView.reloadContents();
     }
 
     /**

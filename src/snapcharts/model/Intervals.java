@@ -3,6 +3,8 @@
  */
 package snapcharts.model;
 
+import java.util.Arrays;
+
 /**
  * This class represent a set of equally spaced interval values for a given min and max value and an axis length.
  * The intervals cover the range and should grow in increments of 10%, 20%, 25%, 40%, 50% or 100% and guarantee
@@ -29,32 +31,50 @@ public class Intervals {
     private double  _intervals[];
 
     /**
+     * Constructor.
+     */
+    private Intervals()
+    {
+        super();
+    }
+
+    /**
      * Return well-chosen intervals given a min value, a max value and an axis length. For instance, (1,4) would return
      *    (1,2,3,4,5), while (17,242) would return (50,100,150,200,250). Useful for graphing.
      */
-    public Intervals(double minValue, double maxValue, double anAxisLen)
+    public static Intervals getIntervalsForMinMaxLen(double minValue, double maxValue, double anAxisLen)
     {
         // Set seed value ivars
-        _minVal = minValue;
-        _maxVal = maxValue;
-        _axisLen = anAxisLen;
-
-        if (_axisLen <0 && _minVal==(int)_minVal && _maxVal==(int)_maxVal) {
-            int min = (int)_minVal;
-            int max = (int)_maxVal;
-            int len = max - min + 1;
-            _intervals = new double[len];
-            for (int i=0; i<len; i++)
-                _intervals[i] = min + i;
-            _delta = 1;
-            _count = len;
-            return;
-        }
+        Intervals ivals = new Intervals();
+        ivals._minVal = minValue;
+        ivals._maxVal = maxValue;
+        ivals._axisLen = anAxisLen;
 
         // Calculate intervals and cache Delta, Count
-        _intervals = getIntervalsFor(minValue, maxValue, anAxisLen, 40);
-        _delta = _intervals[1] - _intervals[0];
-        _count = _intervals.length;
+        double vals[] = getIntervalsFor(minValue, maxValue, anAxisLen, 40);
+        ivals._intervals = vals;
+        ivals._delta = vals[1] - vals[0];
+        ivals._count = vals.length;
+        return ivals;
+    }
+
+    /**
+     * Return well-chosen intervals given a min value, a max value and an axis length. For instance, (1,4) would return
+     *    (1,2,3,4,5), while (17,242) would return (50,100,150,200,250). Useful for graphing.
+     */
+    public static Intervals getSimpleIntervals(int minValue, int maxValue)
+    {
+        Intervals ivals = new Intervals();
+        ivals._minVal = minValue;
+        ivals._maxVal = maxValue;
+        int len = maxValue - minValue + 1;
+        ivals._axisLen = len;
+        ivals._intervals = new double[len];
+        for (int i=0; i<len; i++)
+            ivals._intervals[i] = minValue + i;
+        ivals._delta = 1;
+        ivals._count = len;
+        return ivals;
     }
 
     /**
@@ -96,6 +116,17 @@ public class Intervals {
      * Returns the interval change as a double value.
      */
     public double getDelta()  { return _delta; }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        return "Intervals { MinVal=" + _minVal + ", MaxVal=" + _maxVal + ", AxisLen=" + _axisLen +
+            " Count=" + _count + ", Delta=" + _delta +
+            ", Intervals=" + Arrays.toString(_intervals) + '}';
+    }
 
     /**
      * Returns well-chosen intervals from given min value to max value for given axis length and minimum step length.

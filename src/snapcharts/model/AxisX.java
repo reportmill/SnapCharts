@@ -13,6 +13,19 @@ public class AxisX extends Axis {
     private double  _labelsX, _labelsY = 8;
 
     /**
+     * Constructor.
+     */
+    public AxisX()
+    {
+        super();
+    }
+
+    /**
+     * Returns the axis type.
+     */
+    public AxisType getType()  { return AxisType.X; }
+
+    /**
      * Returns the categories.
      */
     public List<String> getCategories()  { return _categories; }

@@ -22,7 +22,7 @@ public abstract class DataView extends ChartPartView {
 
     // The amount of the chart to show horizontally (0-1)
     private double  _reveal = 1;
-    
+
     // Constants for properties
     public static String   Reveal_Prop = "Reveal";
 
@@ -99,13 +99,7 @@ public abstract class DataView extends ChartPartView {
      */
     public Intervals getIntervalsX()
     {
-        // Get info
-        DataSetList dsetList = getDataSetList();
-        double width = getWidth() - getInsetsAll().getWidth();
-        boolean isBar = isChartTypeBar();
-
-        // Return intervals
-        return dsetList.getIntervalsX(width, isBar);
+        return getAxisX().getIntervals();
     }
 
     /**
@@ -113,9 +107,7 @@ public abstract class DataView extends ChartPartView {
      */
     public Intervals getIntervalsY()
     {
-        DataSetList dsetList = getDataSetList();
-        double height = getHeight() - getInsetsAll().getHeight();
-        return dsetList.getIntervalsY(height);
+        return getAxisY().getIntervals();
     }
 
     /**

@@ -4,6 +4,7 @@ import snap.gfx.Effect;
 import snap.gfx.ShadowEffect;
 import snap.view.ParentView;
 import snapcharts.model.Chart;
+import snapcharts.model.DataSetList;
 
 /**
  * A superclass for ChartView views.
@@ -50,6 +51,15 @@ public class ChartPartView extends ParentView {
     {
         ChartView chartView = getChartView();
         return chartView.getChart();
+    }
+
+    /**
+     * Returns the DataSetList.
+     */
+    public DataSetList getDataSetList()
+    {
+        Chart chart = getChart();
+        return chart!=null ? chart.getDataSetList() : null;
     }
 
     /**
