@@ -6,7 +6,6 @@ import snap.util.PropChange;
 import snap.util.PropChangeListener;
 import snap.util.SnapUtils;
 import snap.view.*;
-import snapcharts.app.ToolTipView;
 import snapcharts.model.Chart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
@@ -35,11 +34,20 @@ public class ChartView extends ChartPartView {
     // The ToolTipView
     private ToolTipView  _toolTipView;
 
-    // The selected and targeted (under mouse) data point
-    private DataPoint  _selPoint, _targPoint;
+    // The selected point
+    private DataPoint  _selPoint;
+
+    // The targeted (under mouse) point
+    private Point  _targPoint;
+
+    // The targeted data point
+    private DataPoint  _targDataPoint;
 
     // The runnable to trigger resetView() before layout/paint
-    private Runnable  _resetViewRun, _resetViewRunShared = () -> { resetView(); _resetViewRun = null; };
+    private Runnable  _resetViewRun;
+
+    // The runnable to trigger resetView() before layout/paint (permanent)
+    private Runnable  _resetViewRunShared = () -> { resetView(); _resetViewRun = null; };
 
     // The PropChangeListener
     private PropChangeListener  _pcl = pc -> chartDidPropChange();
@@ -49,8 +57,9 @@ public class ChartView extends ChartPartView {
 
     // Constants
     public static final String SelDataPoint_Prop = "SelDataPoint";
+    public static final String TargPoint_Prop = "TargPoint";
     public static final String TargDataPoint_Prop = "TargDataPoint";
-    
+
     /**
      * Creates a ChartView.
      */
@@ -160,11 +169,6 @@ public class ChartView extends ChartPartView {
     public LegendView getLegend()  { return _legend; }
 
     /**
-     * Returns the tool tip view.
-     */
-    public ToolTipView getToolTipView()  { return _toolTipView; }
-
-    /**
      * Called to reset view from Chart.
      */
     protected void resetView()
@@ -214,30 +218,78 @@ public class ChartView extends ChartPartView {
     }
 
     /**
+     * Returns the targeted display point (mouse over location).
+     */
+    public Point getTargPoint()  { return _targPoint; }
+
+    /**
+     * Sets the targeted display point (mouse over location).
+     */
+    public void setTargPoint(Point aPoint)
+    {
+        // If already set, just return
+        if (SnapUtils.equals(aPoint, _targPoint)) return;
+
+        // Set and firePropChange
+        firePropChange(TargPoint_Prop, _targPoint, _targPoint = aPoint);
+
+        // Update TargDataPoint
+        DataPoint dataPoint = aPoint!=null ? getTargDataPointForXY(aPoint.x, aPoint.y) : null;
+        setTargDataPoint(dataPoint);
+
+        // This is a hack
+        if (getDataView() instanceof DataViewPie)
+            _toolTipView.reloadContents();
+    }
+
+    /**
      * Returns the targeted data point.
      */
-    public DataPoint getTargDataPoint()  { return _targPoint; }
+    public DataPoint getTargDataPoint()  { return _targDataPoint; }
 
     /**
      * Sets the targeted data point.
      */
     public void setTargDataPoint(DataPoint aDP)
     {
-        if (SnapUtils.equals(aDP, _targPoint)) return;
-        firePropChange(TargDataPoint_Prop, _targPoint, _targPoint = aDP);
+        // If already set, just return
+        if (SnapUtils.equals(aDP, _targDataPoint)) return;
+
+        // Set and firePropChange
+        firePropChange(TargDataPoint_Prop, _targDataPoint, _targDataPoint = aDP);
+
+        // Notify ToolTipView
         _toolTipView.reloadContents();
     }
 
     /**
-     * Returns the given data point in local coords.
+     * Returns the targeted data point.
      */
-    public Point dataPointInLocal(DataPoint aDP)
+    public DataPoint getTargDataPointForXY(double aX, double aY)
     {
-          DataView dataView = getDataView();
-          double x = aDP.getX();
-          double y = aDP.getY();
-          Point pnt = dataView.dataToView(x, y);
-          return dataView.localToParent(pnt.x, pnt.y, this);
+        DataView dataView = getDataView();
+        Point pnt = dataView.parentToLocal(aX, aY, this);
+        return dataView.getDataPointForXY(pnt.x, pnt.y);
+    }
+
+    /**
+     * Returns the targeted data point.
+     */
+    public Point getTargDataPointXY()
+    {
+        // Get DataPoint
+        DataPoint dataPoint = getTargDataPoint(); if (dataPoint==null) return null;
+        double dataX = dataPoint.getX();
+        double dataY = dataPoint.getY();
+
+        // Get DataView - Handle Pie special - but really need to return center of wedge
+        DataView dataView = getDataView();
+        if (dataView instanceof DataViewPie)
+            return getTargPoint();
+
+        // Convert dataPoint XY to DataView and return
+        Point pnt = dataView.dataToView(dataX, dataY);
+        return dataView.localToParent(pnt.x, pnt.y, this);
     }
 
     /**

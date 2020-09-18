@@ -270,8 +270,8 @@ public abstract class DataView extends ChartPartView {
     {
         // Handle MouseMove
         if (anEvent.isMouseMove()) {
-            DataPoint dpnt = getDataPointForXY(anEvent.getX(), anEvent.getY());
-            _chartView.setTargDataPoint(dpnt);
+            Point pnt = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
+            _chartView.setTargPoint(pnt);
         }
 
         // Handle MouseClick
@@ -283,7 +283,7 @@ public abstract class DataView extends ChartPartView {
 
         // Handle MouseExit
         if (anEvent.isMouseExit())
-            _chartView.setTargDataPoint(null);
+            _chartView.setTargPoint(null);
     }
 
     /**

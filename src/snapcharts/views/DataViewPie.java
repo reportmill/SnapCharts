@@ -202,29 +202,6 @@ public class DataViewPie extends DataView {
     }
 
     /**
-     * Override to return current mouse point.
-     */
-    public Point dataToView(double aX, double aY)
-    {
-        return _lastMouseMovePoint;
-    }
-
-    /**
-     * Handle events.
-     */
-    protected void processEvent(ViewEvent anEvent)
-    {
-        // Handle MouseMove
-        if (anEvent.isMouseMove()) {
-            _lastMouseMovePoint = anEvent.getPoint();
-            _chartView.getToolTipView().setXYInChartArea(_lastMouseMovePoint);
-        }
-
-        // Do normal version
-        super.processEvent(anEvent);
-    }
-
-    /**
      * Override to hide x/y axis and legend.
      */
     public void activate()
