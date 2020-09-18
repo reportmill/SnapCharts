@@ -1,6 +1,7 @@
 package snapcharts.views;
 import java.util.List;
 
+import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snapcharts.model.*;
@@ -155,7 +156,7 @@ public class DataViewBar extends DataView {
      * Returns the data point best associated with given x/y (null if none).
      */
     @Override
-    protected DataPoint getDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForXY(double aX, double aY)
     {
         // Get sections array
         Section sections[] = getSections();
@@ -165,6 +166,29 @@ public class DataViewBar extends DataView {
             for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
                 if (bar.contains(aX,aY))
                     return bar.point;
+            }
+        }
+
+        // Return null since bar not found for point
+        return null;
+    }
+
+    /**
+     * Returns the given data point X/Y in this view coords.
+     */
+    public Point getDataPointXYLocal(DataPoint aDP)
+    {
+        // Get sections array
+        Section sections[] = getSections();
+
+        // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
+        for (int i=0;i<_pointCount;i++) { Section section = sections[i];
+            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
+                if (bar.point==aDP) {
+                    double dispX = Math.round(bar.x + bar.width/2);
+                    double dispY = Math.round(bar.y);
+                    return new Point(dispX, dispY);
+                }
             }
         }
 

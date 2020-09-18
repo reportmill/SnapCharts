@@ -234,7 +234,7 @@ public class ChartView extends ChartPartView {
         firePropChange(TargPoint_Prop, _targPoint, _targPoint = aPoint);
 
         // Update TargDataPoint
-        DataPoint dataPoint = aPoint!=null ? getTargDataPointForXY(aPoint.x, aPoint.y) : null;
+        DataPoint dataPoint = aPoint!=null ? getDataPointForXY(aPoint.x, aPoint.y) : null;
         setTargDataPoint(dataPoint);
 
         // This is a hack
@@ -263,9 +263,9 @@ public class ChartView extends ChartPartView {
     }
 
     /**
-     * Returns the targeted data point.
+     * Returns the data point for given X/Y.
      */
-    public DataPoint getTargDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForXY(double aX, double aY)
     {
         DataView dataView = getDataView();
         Point pnt = dataView.parentToLocal(aX, aY, this);
@@ -273,22 +273,12 @@ public class ChartView extends ChartPartView {
     }
 
     /**
-     * Returns the targeted data point.
+     * Returns the given data point X/Y in this view coords.
      */
-    public Point getTargDataPointXY()
+    public Point getDataPointXYLocal(DataPoint aDP)
     {
-        // Get DataPoint
-        DataPoint dataPoint = getTargDataPoint(); if (dataPoint==null) return null;
-        double dataX = dataPoint.getX();
-        double dataY = dataPoint.getY();
-
-        // Get DataView - Handle Pie special - but really need to return center of wedge
         DataView dataView = getDataView();
-        if (dataView instanceof DataViewPie)
-            return getTargPoint();
-
-        // Convert dataPoint XY to DataView and return
-        Point pnt = dataView.dataToView(dataX, dataY);
+        Point pnt = dataView.getDataPointXYLocal(aDP);
         return dataView.localToParent(pnt.x, pnt.y, this);
     }
 

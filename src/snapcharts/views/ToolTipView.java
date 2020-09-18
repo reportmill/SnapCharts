@@ -108,7 +108,7 @@ public class ToolTipView extends ColView {
         addChild(shpView, 0);
 
         // Colculate new location
-        Point targPoint = _chartView.getTargDataPointXY();
+        Point targPoint = _chartView.getDataPointXYLocal(dataPoint);
         double ttipX = targPoint.x - getWidth()/2;
         double ttipY = targPoint.y - getHeight() - 8;
 

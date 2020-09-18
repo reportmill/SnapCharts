@@ -184,9 +184,20 @@ public class DataViewPie extends DataView {
     }
 
     /**
+     * Returns the X/Y point for given angle/radius.
+     */
+    public Point polarDataToDisplay(double anAngle, double aRadius)
+    {
+        double angRad = Math.toRadians(anAngle);
+        double dispX = Math.round(getMidX() + aRadius*Math.cos(angRad));
+        double dispY = Math.round(getMidY() + aRadius*Math.sin(angRad));
+        return new Point(dispX, dispY);
+    }
+
+    /**
      * Returns the data point best associated with given x/y (null if none).
      */
-    protected DataPoint getDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForXY(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
         DataSetList dsetList = getDataSetListAll();
@@ -199,6 +210,20 @@ public class DataViewPie extends DataView {
 
         // Return null since no wedge contains point
         return null;
+    }
+
+    /**
+     * Returns the given data point X/Y in this view coords.
+     */
+    @Override
+    public Point getDataPointXYLocal(DataPoint aDP)
+    {
+        int ind = aDP.getIndex();
+        Wedge wedges[] = getWedges();
+        Wedge wedge = wedges[ind];
+        double angle = wedge.getAngleMid();
+        double radius = _pieR*3/4;
+        return polarDataToDisplay(angle, radius);
     }
 
     /**
@@ -431,13 +456,27 @@ public class DataViewPie extends DataView {
         public Point getLabelPoint(double anAngle)
         {
             _textAngle = anAngle;
-            double angRad = Math.toRadians(anAngle); Font font = getFont();
-            double px = _pieX + _pieR + (_pieR+LABEL_MARGIN)*Math.cos(angRad);
-            double py = _pieY + _pieR + (_pieR+LABEL_MARGIN)*Math.sin(angRad) + font.getAscent();
-            Rect bnds = _text!=null? font.getStringBounds(_text) : new Rect(); _tw = bnds.width; _th = bnds.height;
+            double radius = _pieR + LABEL_MARGIN;
+            double angRad = Math.toRadians(anAngle);
+            Font font = getFont();
+            double px = _pieX + _pieR + radius*Math.cos(angRad);
+            double py = _pieY + _pieR + radius*Math.sin(angRad) + font.getAscent();
+            Rect bnds = _text!=null ? font.getStringBounds(_text) : new Rect();
+            _tw = bnds.width;
+            _th = bnds.height;
             if (anAngle>90) px -= bnds.width;
-            px = Math.round(px); py = Math.round(py);
+            px = Math.round(px);
+            py = Math.round(py);
             return _textPoint = new Point(px, py);
+        }
+
+        /** Returns the X/Y point for given angle/radius. */
+        public Point polarDataToDisplay(double anAngle, double aRadius)
+        {
+            double angRad = Math.toRadians(anAngle);
+            double dispX = Math.round(getMidX() + aRadius*Math.cos(angRad));
+            double dispY = Math.round(getMidY() + aRadius*Math.sin(angRad));
+            return new Point(dispX, dispY);
         }
 
         /** Returns whether label rect intersects another wedge label rect. */
@@ -446,7 +485,8 @@ public class DataViewPie extends DataView {
             Font font = getFont();
             Rect bnds0 = new Rect(_textPoint.x, _textPoint.y - font.getAscent(), _tw, _th);
             Rect bnds1 = new Rect(aWedge._textPoint.x, aWedge._textPoint.y - font.getAscent(), aWedge._tw, aWedge._th);
-            bnds0.inset(-LABEL_PAD); bnds1.inset(-LABEL_PAD);
+            bnds0.inset(-LABEL_PAD);
+            bnds1.inset(-LABEL_PAD);
             return bnds0.intersects(bnds1);
         }
 

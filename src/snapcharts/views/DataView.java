@@ -289,7 +289,7 @@ public abstract class DataView extends ChartPartView {
     /**
      * Returns the data point best associated with given x/y (null if none).
      */
-    protected DataPoint getDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForXY(double aX, double aY)
     {
         // If point out of bounds, return null
         if (aX<0 || aX>getWidth() || aY<0 || aY>getWidth()) return null;
@@ -320,6 +320,14 @@ public abstract class DataView extends ChartPartView {
 
         // Return DataPoint for closest dataset+index
         return dataPoint;
+    }
+
+    /**
+     * Returns the given data point X/Y in this view coords.
+     */
+    public Point getDataPointXYLocal(DataPoint aDP)
+    {
+        return dataToView(aDP.getX(), aDP.getY());
     }
 
     /**
