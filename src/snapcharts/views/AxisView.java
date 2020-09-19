@@ -34,7 +34,7 @@ public abstract class AxisView extends ChartPartView {
 
     // Constants
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
-    private static double UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
+    public static double UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
 
     // A shared formatter
     private static DecimalFormat _fmt = new DecimalFormat("#.###");
@@ -86,6 +86,7 @@ public abstract class AxisView extends ChartPartView {
         if (aValue==_minOverride) return;
         _minOverride = aValue;
         _intervals = null;
+        getChartArea().repaint();
     }
 
     /**
@@ -125,6 +126,7 @@ public abstract class AxisView extends ChartPartView {
         if (aValue==_maxOverride) return;
         _maxOverride = aValue;
         _intervals = null;
+        getChartArea().repaint();
     }
 
     /**

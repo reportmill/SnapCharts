@@ -149,6 +149,11 @@ public class ChartView extends ChartPartView {
     public HeaderView getHeader()  { return _chartTop; }
 
     /**
+     * Returns the ChartArea.
+     */
+    public ChartArea getChartArea()  { return _chartArea; }
+
+    /**
      * Returns the X Axis View.
      */
     public AxisViewX getAxisX()  { return _chartArea.getAxisX(); }

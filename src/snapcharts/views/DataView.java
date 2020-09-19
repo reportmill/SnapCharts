@@ -162,8 +162,9 @@ public abstract class DataView extends ChartPartView {
         Intervals intervals = getIntervalsX();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
+        double axisX = ins.left;
         double areaW = getWidth() - ins.getWidth();
-        return ins.left + (dataX - dataMin)/(dataMax - dataMin)*areaW;
+        return axisX + (dataX - dataMin)/(dataMax - dataMin)*areaW;
     }
 
     /**
@@ -175,8 +176,23 @@ public abstract class DataView extends ChartPartView {
         Intervals intervals = getIntervalsY();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
+        double areaY = ins.top;
         double areaH = getHeight() - ins.getHeight();
-        return ins.top + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
+        return areaY + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
+    }
+
+    /**
+     * Converts a X coord from view coords to data coords.
+     */
+    public double viewToDataX(double dispX)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervalsX();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double dispMin = ins.left;
+        double dispMax = dispMin + getWidth() - ins.getWidth();
+        return dataMin + (dispX - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
     }
 
     /**

@@ -71,6 +71,15 @@ public class ChartPartView extends ParentView {
     }
 
     /**
+     * Returns the ChartArea.
+     */
+    public ChartArea getChartArea()
+    {
+        ChartView chartView = getChartView();
+        return chartView.getChartArea();
+    }
+
+    /**
      * Called to reset view from updated Chart.
      */
     protected void resetView()  { }

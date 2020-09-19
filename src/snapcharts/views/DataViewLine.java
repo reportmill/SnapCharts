@@ -10,7 +10,7 @@ import snapcharts.model.DataSetList;
 /**
  * A ChartArea subclass to display the contents of line chart.
  */
-public class DataViewLine extends DataView {
+public class DataViewLine extends DataViewPanZoom {
 
     // Constants for defaults
     protected static Stroke Stroke3 = new Stroke(3);
