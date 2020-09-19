@@ -30,19 +30,37 @@ public abstract class DataViewPanZoom extends DataView {
         AxisViewY axisY = getAxisY();
         _dragInfo.processEvent(anEvent);
 
+        // Handle MousePress: Store Axis min/max values at MousePress
         if (anEvent.isMousePress()) {
-            _pressDataMinX = axisX.getAxisMin();
-            _pressDataMaxX = axisX.getAxisMax();
-            _pressDataMinY = axisY.getAxisMin();
-            _pressDataMaxY = axisY.getAxisMax();
+            _pressDataMinX = axisX.getIntervals().getMin();
+            _pressDataMaxX = axisX.getIntervals().getMax();
+            _pressDataMinY = axisY.getIntervals().getMin();
+            _pressDataMaxY = axisY.getIntervals().getMax();
         }
 
+        // Handle MouseDrag: Adjust axis min/max
         if (anEvent.isMouseDrag()) {
-            double data1 = viewToDataX(_dragInfo.getPressX());
-            double data2 = viewToDataX(_dragInfo.getDragX());
-            getAxisX().setAxisMin(_pressDataMinX - (data2 - data1));
-            getAxisX().setAxisMax(_pressDataMaxX - (data2 - data1));
+
+            // Adjust X Axis Min/Max for mouse drag
+            double dataX1 = viewToDataX(_dragInfo.getPressX());
+            double dataX2 = viewToDataX(_dragInfo.getDragX());
+            double dispMinX = _pressDataMinX - (dataX2 - dataX1);
+            double dispMaxX = _pressDataMaxX - (dataX2 - dataX1);
+            axisX.setAxisMin(dispMinX);
+            axisX.setAxisMax(dispMaxX);
+
+            // Adjust Y Axis Min/Max for mouse drag
+            double dataY1 = viewToDataY(_dragInfo.getPressY());
+            double dataY2 = viewToDataY(_dragInfo.getDragY());
+            double dispMinY = _pressDataMinY - (dataY2 - dataY1);
+            double dispMaxY = _pressDataMaxY - (dataY2 - dataY1);
+            axisY.setAxisMin(dispMinY);
+            axisY.setAxisMax(dispMaxY);
+            getChartView().setTargPoint(null);
         }
+
+        // Do normal version
+        super.processEvent(anEvent);
     }
 
     /**
@@ -72,7 +90,11 @@ public abstract class DataViewPanZoom extends DataView {
 
         public double getPressX()  { return _press.getX(); }
 
+        public double getPressY()  { return _press.getY(); }
+
         public double getDragX()  { return _drag.getX(); }
+
+        public double getDragY()  { return _drag.getY(); }
 
         /**
          * Returns the offset X.

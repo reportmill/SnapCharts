@@ -196,6 +196,20 @@ public abstract class DataView extends ChartPartView {
     }
 
     /**
+     * Converts a Y coord from view coords to data coords.
+     */
+    public double viewToDataY(double dispY)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervalsY();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double dispMin = ins.top;
+        double dispMax = dispMin + getHeight() - ins.getHeight();
+        return dataMax - (dispY - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
+    }
+
+    /**
      * Paints chart axis lines.
      */
     protected void paintFront(Painter aPntr)
@@ -229,8 +243,13 @@ public abstract class DataView extends ChartPartView {
         aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
         aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
 
+        // Clip bounds
+        aPntr.save();
+        aPntr.clipRect(0, 0, viewW, viewH);
+
         // Paint chart
         paintChart(aPntr, ins.left, ins.top, areaW, areaH);
+        aPntr.restore();
     }
 
     /**

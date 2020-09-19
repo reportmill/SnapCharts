@@ -1,9 +1,7 @@
 package snapcharts.views;
 import snap.gfx.Color;
-import snap.util.MathUtils;
 import snap.view.StringView;
 import snapcharts.model.*;
-
 import java.text.DecimalFormat;
 
 /**
@@ -24,7 +22,7 @@ public abstract class AxisView extends ChartPartView {
     private double  _maxOverride = UNSET_DOUBLE;
 
     // The intervals for axis
-    private Intervals _intervals;
+    private Intervals  _intervals;
 
     // The grid line color
     protected Color  _gridLineColor = DataView.GRID_LINES_COLOR;
@@ -34,10 +32,10 @@ public abstract class AxisView extends ChartPartView {
 
     // Constants
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
-    public static double UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
+    public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
 
     // A shared formatter
-    private static DecimalFormat _fmt = new DecimalFormat("#.###");
+    private static DecimalFormat  _fmt = new DecimalFormat("#.###");
 
     /**
      * Returns the axis.
@@ -86,7 +84,7 @@ public abstract class AxisView extends ChartPartView {
         if (aValue==_minOverride) return;
         _minOverride = aValue;
         _intervals = null;
-        getChartArea().repaint();
+        getChartView().repaint();
     }
 
     /**
@@ -126,7 +124,7 @@ public abstract class AxisView extends ChartPartView {
         if (aValue==_maxOverride) return;
         _maxOverride = aValue;
         _intervals = null;
-        getChartArea().repaint();
+        getChartView().repaint();
     }
 
     /**
@@ -167,15 +165,18 @@ public abstract class AxisView extends ChartPartView {
             if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
                 int pointCount = dsetList.getPointCount();
                 int maxX = isBar ? pointCount : pointCount - 1;
-                return Intervals.getSimpleIntervals(0, maxX);
+                return Intervals.getIntervalsSimple(0, maxX);
             }
         }
 
         // Normal case
         double min = getAxisMin();
         double max = getAxisMax();
-        double len = getAxisLen();
-        return Intervals.getIntervalsForMinMaxLen(min, max, len);
+        double axisLen = getAxisLen();
+        double divLen = getAxisType()==AxisType.X ? 40 : 30;
+        boolean minFixed = _minOverride!=UNSET_DOUBLE;
+        boolean maxFixed = _maxOverride!=UNSET_DOUBLE;
+        return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
     }
 
     /**
@@ -194,18 +195,16 @@ public abstract class AxisView extends ChartPartView {
             DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
             if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
                 int pointCount = dsetList.getPointCount();
-                double min = 0, seedMin = _intervals.getSeedValueMin();
-                double max = isBar ? pointCount : pointCount - 1, seedMax = _intervals.getSeedValueMax();
-                double len = max, seedLen = _intervals.getAxisLength();
-                return MathUtils.equals(min, seedMin) && MathUtils.equals(max, seedMax) && MathUtils.equals(len, seedLen);
+                double max = isBar ? pointCount : pointCount - 1;
+                return _intervals.matchesMinMaxLen(0, max, max);
             }
         }
 
         // Normal case: Return true if min, max and AxisLen are the same
-        double min = getAxisMin(), seedMin = _intervals.getSeedValueMin();
-        double max = getAxisMax(), seedMax = _intervals.getSeedValueMax();
-        double len = getAxisLen(), seedLen = _intervals.getAxisLength();
-        return MathUtils.equals(min, seedMin) && MathUtils.equals(max, seedMax) && MathUtils.equals(len, seedLen);
+        double min = getAxisMin();
+        double max = getAxisMax();
+        double len = getAxisLen();
+        return _intervals.matchesMinMaxLen(min, max, len);
     }
 
     /**
@@ -229,13 +228,23 @@ public abstract class AxisView extends ChartPartView {
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
 
     /**
-     * Converts a point from dataset coords to view coords.
+     * Converts an X value from dataset coords to view coords.
      */
     public double dataToViewX(double dataX)
     {
         double dispX = _dataView.dataToViewX(dataX);
         double dx = _dataView.getX() - getX();
         return dispX - dx;
+    }
+
+    /**
+     * Converts a Y value from dataset coords to view coords.
+     */
+    public double dataToViewY(double dataY)
+    {
+        double dispY = _dataView.dataToViewY(dataY);
+        double dy = _dataView.getY() - getY();
+        return dispY - dy;
     }
 
     /**

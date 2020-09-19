@@ -107,28 +107,37 @@ public class AxisViewY extends AxisView {
         // Set font, color
         aPntr.setFont(Font.Arial12);
         aPntr.setColor(AXIS_LABELS_COLOR);
-        double fontDesc = Font.Arial12.getDescent();
 
         // Get intervals
         Intervals intervals = _dataView.getIntervalsY();
-        int lineCount = intervals.getCount();
-        int sectionCount = lineCount - 1;
-        double intervalDelta = intervals.getDelta();
-        double intervalMax = intervals.getMax();
+        int count = intervals.getCount();
+        double delta = intervals.getDelta();
         double marginx = getLabelsMargin();
 
-        // Draw axis
-        for (int i=0;i<lineCount;i++) {
+        // Set color/stroke for axis ticks
+        aPntr.setColor(AXIS_LABELS_COLOR);
+        aPntr.setStroke(Stroke.Stroke1);
 
-            // Get line y
-            double lineY = aY + aH/sectionCount*i;
+        // Iterate over intervals
+        for (int i=0; i<count; i++) {
 
-            // Draw labels
-            double lineVal = (intervalMax-i*intervalDelta);
-            String str =  getLabelStringForValueAndDelta(lineVal, intervalDelta);
+            // Get Y in data and display coords and draw tick line
+            double dataY = intervals.getInterval(i);
+            double dispY = Math.round(dataToViewY(dataY));
+
+            // If edge div too close to next div, skip
+            if (i==0 || i+1==count) {
+                double nextY = intervals.getInterval(i==0 ? 1 : count-2);
+                double delta2 = i==0 ? (nextY - dataY) : (dataY - nextY);
+                if (delta2<delta*.67)
+                    continue;
+            }
+
+            // Get label
+            String str = getLabelStringForValueAndDelta(dataY, delta);
             Rect strBnds = aPntr.getStringBounds(str);
             double labelX = aX + aW - strBnds.width - marginx;
-            double labelY = Math.round(lineY + fontDesc);
+            double labelY = dispY - Math.round(strBnds.getMidY());
             aPntr.drawString(str, labelX, labelY);
         }
     }
