@@ -51,7 +51,7 @@ public class ToolTipView extends ColView {
         Chart chart = _chartView.getChart();
         DataPoint dataPoint = _chartView.getTargDataPoint();
         if (dataPoint==null) {
-            getAnimCleared(1000).setOpacity(0).setOnFinish(a -> ViewUtils.removeChild(_chartView, this)).play();
+            hideWindow();
             return;
         }
 
@@ -112,14 +112,39 @@ public class ToolTipView extends ColView {
         double ttipX = targPoint.x - getWidth()/2;
         double ttipY = targPoint.y - getHeight() - 8;
 
+        // If outside DataView, just return
+        Point targPointInDataView = _chartView.getDataView().parentToLocal(targPoint.x, targPoint.y, _chartView);
+        if (!_chartView.getDataView().contains(targPointInDataView)) {
+            hideWindow();
+            return;
+        }
+
+        // Show window
+        showWindowAt(ttipX, ttipY);
+    }
+
+    /**
+     * Shows the window at given point in ChartView coords.
+     */
+    public void showWindowAt(double aX, double aY)
+    {
         // If not onscreen, add and return
         if (getParent()==null) {
-            setXY(ttipX, ttipY);
+            setXY(aX, aY);
             ViewUtils.addChild(_chartView, this);
             return;
         }
 
         // Otherwise animate move
-        getAnimCleared(300).setX(ttipX).setY(ttipY).play();
+        getAnimCleared(300).setX(aX).setY(aY).play();
+    }
+
+    /**
+     * Hides the window.
+     */
+    public void hideWindow()
+    {
+        if (getParent()==null) return;
+        getAnimCleared(500).setOpacity(0).setOnFinish(a -> ViewUtils.removeChild(_chartView, this)).play();
     }
 }
