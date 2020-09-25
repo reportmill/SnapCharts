@@ -105,7 +105,8 @@ public class AxisViewY extends AxisView {
     protected void paintAxis(Painter aPntr, double aX, double aY, double aW, double aH)
     {
         // Set font, color
-        aPntr.setFont(Font.Arial12);
+        Font font = Font.Arial12;
+        aPntr.setFont(font);
         aPntr.setColor(AXIS_LABELS_COLOR);
 
         // Get intervals
@@ -119,7 +120,6 @@ public class AxisViewY extends AxisView {
         aPntr.setStroke(Stroke.Stroke1);
 
         //
-        Font font = aPntr.getFont();
         double labelYShift = Math.round((font.getAscent() - font.getDescent())/2d);
 
         // Iterate over intervals
@@ -139,8 +139,8 @@ public class AxisViewY extends AxisView {
 
             // Get label
             String str = getLabelStringForValueAndDelta(dataY, delta);
-            Rect strBnds = aPntr.getStringBounds(str);
-            double labelX = aX + aW - strBnds.width - marginx;
+            double strW = font.getStringAdvance(str);
+            double labelX = aX + aW - strW - marginx;
             double labelY = dispY + labelYShift;
             aPntr.drawString(str, labelX, labelY);
         }

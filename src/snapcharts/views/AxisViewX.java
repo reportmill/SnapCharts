@@ -107,8 +107,8 @@ public class AxisViewX extends AxisView {
 
             // Get label
             String str = getLabelStringForValueAndDelta(dataX, delta);
-            Rect strBnds = aPntr.getStringBounds(str);
-            double labelX = dispX - Math.round(strBnds.getMidX());
+            double strW = font.getStringAdvance(str);
+            double labelX = dispX - Math.round(strW/2);
             aPntr.drawString(str, labelX, labelY);
         }
     }
