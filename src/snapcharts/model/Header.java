@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.gfx.Font;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -44,6 +45,19 @@ public class Header extends ChartPart {
     {
         if (SnapUtils.equals(aStr, getSubtitle())) return;
         firePropChange(Subtitle_Prop, _subtitle, _subtitle = aStr);
+    }
+
+    /**
+     * Returns the prop default value for given key.
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case Font_Prop: return Font.Arial12;
+            default: return super.getPropDefault(aPropName);
+        }
     }
 
     /**

@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 /**
  * A View to display an axis.
  */
-public abstract class AxisView extends ChartPartView {
+public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // The DataView
     protected DataView  _dataView;
@@ -36,6 +36,11 @@ public abstract class AxisView extends ChartPartView {
 
     // A shared formatter
     private static DecimalFormat  _fmt = new DecimalFormat("#.###");
+
+    /**
+     * Returns the ChartPart.
+     */
+    public T getChartPart()  { return (T) getAxis(); }
 
     /**
      * Returns the axis.
@@ -252,8 +257,13 @@ public abstract class AxisView extends ChartPartView {
      */
     protected void resetView()
     {
-        // Reset title
+        // Do normal version
+        super.resetView();
+
+        // Get Axis
         Axis axis = getAxis();
+
+        // Reset title
         String title = axis.getTitle();
         _titleView.setText(title);
     }

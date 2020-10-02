@@ -1,5 +1,6 @@
 package snapcharts.app;
 import snap.gfx.ShadowEffect;
+import snap.util.Undoer;
 import snap.view.*;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartArchiver;
@@ -30,6 +31,12 @@ public class ChartPane extends DocItemPane {
 
     // The selection helper class
     private ChartPaneSel  _selHpr;
+
+    // The ChartPart Styler
+    private ChartStyler  _styler = new ChartStyler(this);
+
+    // The undoer
+    private Undoer  _undoer;
 
     /**
      * Returns the ChartView.
@@ -89,6 +96,16 @@ public class ChartPane extends DocItemPane {
         dataSetList.addDataSet(dset2);
         setChart(chart2);
     }
+
+    /**
+     * Returns the ChartPartStyler.
+     */
+    public ChartStyler getStyler()  { return _styler; }
+
+    /**
+     * Returns the undoer.
+     */
+    public Undoer getUndoer()  { return _undoer; }
 
     /**
      * Returns the ChartPaneSel.

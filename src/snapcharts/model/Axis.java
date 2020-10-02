@@ -1,6 +1,7 @@
 package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
+import snap.gfx.Font;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -372,6 +373,7 @@ public abstract class Axis extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
+            case Font_Prop: return Font.Arial12;
             case MinBoundType_Prop: return AxisBoundType.AUTO;
             case MaxBoundType_Prop: return AxisBoundType.AUTO;
             case MinValue_Prop: return 0;

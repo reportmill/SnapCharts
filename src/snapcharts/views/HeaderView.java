@@ -11,7 +11,7 @@ import snapcharts.model.Header;
 /**
  * A view to hold header elements at top of ChartView.
  */
-public class HeaderView extends ChartPartView {
+public class HeaderView<T extends Header> extends ChartPartView<T> {
 
     // The title
     private StringView  _titleView;
@@ -42,10 +42,18 @@ public class HeaderView extends ChartPartView {
     }
 
     /**
+     * Returns the ChartPart.
+     */
+    public T getChartPart()  { return (T) getChart().getHeader(); }
+
+    /**
      * Called to reset view from Chart.
      */
     protected void resetView()
     {
+        // Do normal version
+        super.resetView();
+
         // Get info
         Chart chart = getChart();
         Header header = chart.getHeader();
@@ -54,6 +62,7 @@ public class HeaderView extends ChartPartView {
         String title = header.getTitle();
         _titleView.setText(title);
         _titleView.setVisible(title != null && title.length() > 0);
+        _titleView.setFont(header.getFont());
 
         // Reset Subtitle
         String subtitle = header.getSubtitle();

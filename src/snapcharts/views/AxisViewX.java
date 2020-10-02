@@ -9,7 +9,7 @@ import snapcharts.model.Intervals;
 /**
  * A view to paint Chart X Axis.
  */
-public class AxisViewX extends AxisView {
+public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
     // Constants
     private final int AXIS_TITLE_MARGIN = 8;

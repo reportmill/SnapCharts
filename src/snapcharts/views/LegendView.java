@@ -11,13 +11,21 @@ import snapcharts.model.*;
 /**
  * A view to display chart legend.
  */
-public class LegendView extends ChartPartView {
-    
+public class LegendView<T extends Legend> extends ChartPartView<T> {
+
+    /**
+     * Returns the ChartPart.
+     */
+    public T getChartPart()  { return (T) getChart().getLegend(); }
+
     /**
      * Reloads legend contents.
      */
     public void resetView()
     {
+        // Do normal version
+        super.resetView();
+
         // Get info
         Chart chart = getChart();
         Legend legend = chart.getLegend();

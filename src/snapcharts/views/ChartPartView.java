@@ -4,12 +4,13 @@ import snap.gfx.Effect;
 import snap.gfx.ShadowEffect;
 import snap.view.ParentView;
 import snapcharts.model.Chart;
+import snapcharts.model.ChartPart;
 import snapcharts.model.DataSetList;
 
 /**
  * A superclass for ChartView views.
  */
-public class ChartPartView extends ParentView {
+public abstract class ChartPartView<T extends ChartPart> extends ParentView {
 
     // Whether view is selected
     private boolean  _selected;
@@ -20,6 +21,11 @@ public class ChartPartView extends ParentView {
     // The FocusEffect
     private Color FOCUSED_COLOR = Color.get("#039ed3");
     private Effect FOCUSED_EFFECT = new ShadowEffect(5, FOCUSED_COLOR, 0, 0);
+
+    /**
+     * Returns the ChartPart.
+     */
+    public abstract T getChartPart();
 
     /**
      * Returns whether selected.
@@ -82,5 +88,15 @@ public class ChartPartView extends ParentView {
     /**
      * Called to reset view from updated Chart.
      */
-    protected void resetView()  { }
+    protected void resetView()
+    {
+        // Get Axis
+        ChartPart chartPart = getChartPart(); if (chartPart==null) return;
+
+        // Update basic props
+        setFont(chartPart.getFont());
+        setFill(chartPart.getFill());
+        setBorder(chartPart.getBorder());
+        setEffect(chartPart.getEffect());
+    }
 }

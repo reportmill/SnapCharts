@@ -12,7 +12,7 @@ import snapcharts.model.*;
 /**
  * A view to display the actual contents of a chart.
  */
-public abstract class DataView extends ChartPartView {
+public abstract class DataView<T extends ChartPart> extends ChartPartView<T> {
     
     // The ChartArea that holds this DataView
     protected ChartArea  _chartArea;
@@ -55,6 +55,11 @@ public abstract class DataView extends ChartPartView {
         ChartType chartType = getChartType();
         return chartType==ChartType.BAR || chartType==ChartType.BAR_3D;
     }
+
+    /**
+     * Returns the ChartPart.
+     */
+    public T getChartPart()  { return null; }
 
     /**
      * Sets the ChartArea.
@@ -360,7 +365,11 @@ public abstract class DataView extends ChartPartView {
     /**
      * Called to reset view from updated Chart.
      */
-    protected void resetView()  { }
+    protected void resetView()
+    {
+        // Do normal version
+        super.resetView();
+    }
 
     /**
      * Called after a chart area is installed in chart view.

@@ -14,7 +14,7 @@ import snapcharts.model.DataSetList;
 /**
  * A view to render a chart.
  */
-public class ChartView extends ChartPartView {
+public class ChartView<T extends Chart> extends ChartPartView<T> {
 
     // The Chart
     private Chart  _chart;
@@ -104,6 +104,11 @@ public class ChartView extends ChartPartView {
     }
 
     /**
+     * Returns the ChartPart.
+     */
+    public T getChartPart()  { return (T) getChart(); }
+
+    /**
      * Returns the Chart.
      */
     public Chart getChart()  { return _chart; }
@@ -178,6 +183,9 @@ public class ChartView extends ChartPartView {
      */
     protected void resetView()
     {
+        // Do normal version
+        super.resetView();
+
         // Reset ChartTop
         _chartTop.resetView();
 

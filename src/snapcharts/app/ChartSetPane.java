@@ -5,7 +5,6 @@ import snap.gfx.Image;
 import snap.gfx.Painter;
 import snap.util.ListUtils;
 import snap.util.PropChange;
-import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.Chart;
 import snapcharts.model.DocItem;
@@ -96,9 +95,20 @@ public class ChartSetPane extends DocItemPane {
 
         _selPageIndex = index;
 
-        PageView page = getPage(_selPageIndex);
+        PageView page = getSelPageView();
         _pageBox.setContent(page);
     }
+
+    /**
+     * Returns the selected page.
+     */
+    public PageView getSelPageView()  { return _selPageIndex>=0 ? getPage(_selPageIndex) : null; }
+
+    /**
+     * Override to return selected PageView.
+     */
+    @Override
+    public View getItemView()  { return getSelPageView(); }
 
     /**
      * Called when DocItem has prop change.

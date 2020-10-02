@@ -1,4 +1,5 @@
 package snapcharts.app;
+import rmdraw.editors.StylerPane;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
@@ -43,6 +44,9 @@ public class ChartPaneInsp extends ViewOwner {
 
     // The array of ChartPartInsp
     private ChartPartInsp  _allInspectors[];
+
+    // Get Styler
+    private StylerPane  _stylerPane;
 
     /**
      * Constructor.
@@ -115,7 +119,13 @@ public class ChartPaneInsp extends ViewOwner {
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
+
+        // Trigger initial open panel
         runLater(() -> chartPaneSelChanged());
+
+        // Set StylerPane
+        _stylerPane = new StylerPane(_chartPane.getStyler());
+        _inspColView.addChild(_stylerPane.getUI());
     }
 
     /**
@@ -152,6 +162,9 @@ public class ChartPaneInsp extends ViewOwner {
             _dsetInsp.resetLater();
         }
         else _dsetInsp.getUI().setVisible(false);
+
+        // Reset Styler
+        _stylerPane.resetLater();
     }
 
     /**

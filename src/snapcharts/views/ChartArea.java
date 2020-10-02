@@ -1,11 +1,12 @@
 package snapcharts.views;
 import snapcharts.model.Chart;
+import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
 
 /**
  * A class to display essential chart content: DataView and AxisViews.
  */
-public class ChartArea extends ChartPartView {
+public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
 
     // The ChartView
     private ChartView  _chartView;
@@ -38,6 +39,11 @@ public class ChartArea extends ChartPartView {
         // Create/set DataView
         setDataView(DataView.createDataViewForType(ChartType.LINE));
     }
+
+    /**
+     * Returns the ChartPart.
+     */
+    public T getChartPart()  { return null; }
 
     /**
      * Returns the ChartView.
@@ -87,6 +93,9 @@ public class ChartArea extends ChartPartView {
      */
     protected void resetView()
     {
+        // Do normal version
+        super.resetView();
+
         // Get info
         Chart chart = _chartView.getChart();
         ChartType chartType = chart.getType();

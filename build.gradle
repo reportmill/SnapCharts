@@ -16,7 +16,18 @@ repositories {
 }
 
 dependencies {
-    compile project(':SnapKit')
+
+    // If Local SnapKit project, use that, otherwise use latest SnapKit GitHub repo
+    if (findProject(':SnapKit') != null) { println 'Using local SnapKit project'
+        compile project(':SnapKit') }
+    else { println 'Using latest SnapKit GitHub repo'
+        implementation 'com.github.reportmill:SnapKit:master-SNAPSHOT'  }
+
+    // If Local RMDraw project, use that, otherwise use latest RMDraw GitHub repo
+    if (findProject(':RMDraw') != null) { println 'Using local RMDraw project'
+        compile project(':RMDraw') }
+    else { println 'Using latest RMDraw GitHub repo'
+        implementation 'com.github.reportmill:RMDraw:master-SNAPSHOT'  }
 }
 
 mainClassName = 'snap.charts.App'
