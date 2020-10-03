@@ -72,7 +72,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         setPadding(10,10,10,10);
         setAlign(Pos.CENTER);
         setGrowWidth(true);
-        setFill(Color.WHITE);
 
         // Create/add ChartTop
         _chartTop = new HeaderView(this);

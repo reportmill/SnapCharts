@@ -13,8 +13,9 @@ import snapcharts.model.DataSetList;
 public class DataViewLine extends DataViewPanZoom {
 
     // Constants for defaults
-    protected static Stroke Stroke3 = new Stroke(3);
-    protected static Stroke Stroke5 = new Stroke(5);
+    protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
     /**
      * Creates a ChartAreaLine.
@@ -90,7 +91,7 @@ public class DataViewLine extends DataViewPanZoom {
             Path path = paths.get(i);
             DataSet dset = dsets.get(i);
             aPntr.setColor(getColor(dset.getIndex()));
-            aPntr.setStroke(dset==selSet ? Stroke3 : Stroke.Stroke2);
+            aPntr.setStroke(dset==selSet ? Stroke3 : Stroke2);
             aPntr.draw(path);
         }
 

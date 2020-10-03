@@ -19,6 +19,9 @@ public class Header extends ChartPart {
     public static final String Title_Prop = "Title";
     public static final String Subtitle_Prop = "Subtitle";
 
+    // Constants for defaults
+    public static final Font DEFAULT_TITLE_FONT = Font.Arial14.getBold().deriveFont(24);
+
     /**
      * Returns the title.
      */
@@ -55,7 +58,7 @@ public class Header extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
-            case Font_Prop: return Font.Arial12;
+            case Font_Prop: return DEFAULT_TITLE_FONT;
             default: return super.getPropDefault(aPropName);
         }
     }

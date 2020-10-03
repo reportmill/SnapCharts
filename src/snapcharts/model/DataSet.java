@@ -264,7 +264,8 @@ public class DataSet extends ChartPart {
         double kval = dpnt.getX();
         if (kval==(int)kval)
             return String.valueOf((int)kval);
-        return String.valueOf(kval);
+        //return String.valueOf(kval);
+        return DataUtils.formatValue(kval);
     }
 
     /**

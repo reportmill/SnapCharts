@@ -45,8 +45,11 @@ public class ChartPaneInsp extends ViewOwner {
     // The array of ChartPartInsp
     private ChartPartInsp  _allInspectors[];
 
-    // Get Styler
+    // The StylerPane
     private StylerPane  _stylerPane;
+
+    // Get MiscInspector
+    private MiscInsp  _miscInsp;
 
     /**
      * Constructor.
@@ -123,9 +126,12 @@ public class ChartPaneInsp extends ViewOwner {
         // Trigger initial open panel
         runLater(() -> chartPaneSelChanged());
 
-        // Set StylerPane
+        // Create/set StylerPane
         _stylerPane = new StylerPane(_chartPane.getStyler());
-        _inspColView.addChild(_stylerPane.getUI());
+        //_inspColView.addChild(_stylerPane.getUI());
+
+        // Create/set MiscInsp
+        _miscInsp = new MiscInsp();
     }
 
     /**
@@ -164,13 +170,27 @@ public class ChartPaneInsp extends ViewOwner {
         else _dsetInsp.getUI().setVisible(false);
 
         // Reset Styler
-        _stylerPane.resetLater();
+        if (_stylerPane.isShowing())
+            _stylerPane.resetLater();
+
+        // Reset MiscInsp
+        if (_miscInsp.isShowing())
+            _miscInsp.resetLater();
     }
 
     /**
      * Handles changes to the inspector UI controls.
      */
-    public void respondUI(ViewEvent anEvent)  { }
+    public void respondUI(ViewEvent anEvent)
+    {
+        // Handle GeneralButton
+        if (anEvent.equals("GeneralButton"))
+            _inspScroll.setContent(_inspColView);
+        else if (anEvent.equals("StyleButton"))
+            _inspScroll.setContent(_stylerPane.getUI());
+        else if (anEvent.equals("MiscButton"))
+            _inspScroll.setContent(_miscInsp.getUI());
+    }
 
     /**
      * Returns the inspector for given ChartPart.

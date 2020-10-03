@@ -1,6 +1,7 @@
 package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
+import snap.gfx.Paint;
 import snap.util.*;
 
 /**
@@ -54,6 +55,9 @@ public class Chart extends ChartPart {
     {
         // Set chart
         _chart = this;
+
+        // Configure
+        setFill((Paint) getPropDefault(Fill_Prop));
 
         // Create/set Header
         _header = new Header();
@@ -247,6 +251,19 @@ public class Chart extends ChartPart {
      * Remove DeepChange listener.
      */
     public void removeDeepChangeListener(DeepChangeListener aPCL)  { _pcs.removeDeepChangeListener(aPCL); }
+
+    /**
+     * Returns the value for given key.
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+            case Fill_Prop: return Color.WHITE;
+            default: return super.getPropDefault(aPropName);
+        }
+    }
 
     /**
      * Archival.

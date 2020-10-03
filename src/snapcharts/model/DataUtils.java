@@ -1,6 +1,8 @@
 package snapcharts.model;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utilities for Data.
@@ -9,6 +11,9 @@ public class DataUtils {
 
     // A formatter to format double without exponent
     private static DecimalFormat _doubleFmt = new DecimalFormat("0.#########");
+
+    // Map of known formats
+    private static Map<Integer,DecimalFormat>  _knownFormats = new HashMap<>();
 
     /**
      * Returns cell data for string.
@@ -169,5 +174,55 @@ public class DataUtils {
     {
         char c = aStr.charAt(anIndex);
         return Character.isDigit(c) || c=='.' || c=='-';
+    }
+
+    public static String formatValue(double aValue)
+    {
+        DecimalFormat fmt = getFormatForValue(aValue);
+        return fmt.format(aValue);
+    }
+
+    /**
+     * Returns a formatter for significant digits.
+     */
+    public static DecimalFormat getFormatForValue(double aValue)
+    {
+        int sigDigits = getSigDigits(aValue);
+        DecimalFormat fmt = getFormatForSigDigits(sigDigits);
+        return fmt;
+    }
+
+    /**
+     * Returns a formatter for significant digits.
+     */
+    public static DecimalFormat getFormatForSigDigits(int aCount)
+    {
+        DecimalFormat fmt = _knownFormats.get(aCount);
+        if (fmt!=null) return fmt;
+
+        String format = "#.###";
+        for (int i=0; i<aCount; i++) format += '#';
+        fmt = new DecimalFormat(format);
+        _knownFormats.put(aCount, fmt);
+        return fmt;
+    }
+
+    /**
+     * Returns the number of significan digits for a number.
+     */
+    public static int getSigDigits(double aValue)
+    {
+
+        // 1 = 0
+        // 5 = 1
+        // .5 = 0
+        // .01 = 0
+        // .05 = -1
+        //int count = (int) Math.ceil(Math.log10(aValue));
+
+        int count = 0;
+        double val = Math.abs(aValue);
+        while (val<1) { count++; val*= 10; }
+        return count;
     }
 }

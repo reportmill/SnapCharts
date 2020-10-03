@@ -97,6 +97,9 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
         setFont(chartPart.getFont());
         setFill(chartPart.getFill());
         setBorder(chartPart.getBorder());
-        setEffect(chartPart.getEffect());
+
+        Effect eff = chartPart.getEffect();
+        if (eff!=null)
+            setEffect(eff);
     }
 }
