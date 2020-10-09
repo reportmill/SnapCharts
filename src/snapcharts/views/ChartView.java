@@ -1,6 +1,5 @@
 package snapcharts.views;
 import snap.geom.*;
-import snap.gfx.*;
 import snap.util.DeepChangeListener;
 import snap.util.PropChange;
 import snap.util.PropChangeListener;
@@ -255,7 +254,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public boolean isShowTargDataPoint()
     {
-        if (getTargPoint()==null)
+        if (getTargDataPoint()==null)
             return false;
         if (getDataView() instanceof DataViewPanZoom && ((DataViewPanZoom)getDataView()).isZoomSelectMode())
             return false;

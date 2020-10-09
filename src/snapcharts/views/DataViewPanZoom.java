@@ -142,7 +142,8 @@ public abstract class DataViewPanZoom extends DataView {
 
         // Handle Scroll
         else if (anEvent.isScroll()) {
-            scaleAxesMinMaxForDrag(anEvent);
+            if (isMouseDown()) return;
+            scaleAxesMinMaxForScroll(anEvent);
         }
 
         // Do normal version
@@ -180,7 +181,7 @@ public abstract class DataViewPanZoom extends DataView {
     /**
      * Sets X/Y Axis min/max values for mouse drag points.
      */
-    private void scaleAxesMinMaxForDrag(ViewEvent aScrollEvent)
+    private void scaleAxesMinMaxForScroll(ViewEvent aScrollEvent)
     {
         // Get scale: Assume + 1x per 100 points (1.5 inches). If scale down, limit to .5
         double scroll = aScrollEvent.getScrollY();
@@ -191,7 +192,7 @@ public abstract class DataViewPanZoom extends DataView {
         double dispY = aScrollEvent.getY();
 
         // Do scaleAxes
-        scaleAxesMinMaxForFactorAndViewXY(scale, scale, dispX, dispY, false);
+        scaleAxesMinMaxForFactorAboutViewXY(scale, scale, dispX, dispY, false);
     }
 
     /**
@@ -203,7 +204,7 @@ public abstract class DataViewPanZoom extends DataView {
     }
 
     /**
-     * Sets X/Y Axis min/max values for mouse drag points.
+     * Scales Axes min/max by factor (about axis center) and translates axis center to given X/Y.
      */
     public void scaleAxesMinMaxForFactorAndViewXY(double aScaleX, double aScaleY, double dispX, double dispY, boolean isAnimated)
     {
@@ -246,6 +247,45 @@ public abstract class DataViewPanZoom extends DataView {
         double min2 = (axisMin - axisMid) * aScale + axisMid + trans;
         double max2 = (axisMax - axisMid) * aScale + axisMid + trans;
         anAxisView.setAxisMinMax(min2, max2, isAnimated);
+    }
+
+    /**
+     * Scales Axes min/max by factor about given X/Y (in display coords).
+     */
+    public void scaleAxesMinMaxForFactorAboutViewXY(double aScaleX, double aScaleY, double dispX, double dispY, boolean isAnimated)
+    {
+        // Clear target point to remove mouse-over display
+        Point targPoint = getChartView().getTargPoint();
+
+        // Get Data X and scale Axis
+        double dataX = viewToDataX(dispX);
+        AxisView axisViewX = getAxisX();
+        scaleAxisMinMaxForFactorAboutDataCoord(axisViewX, aScaleX, dataX, isAnimated);
+
+        // Get Data Y and scale Axis
+        double dataY = viewToDataY(dispY);
+        AxisView axisViewY = getAxisY();
+        scaleAxisMinMaxForFactorAboutDataCoord(axisViewY, aScaleY, dataY, isAnimated);
+
+        // If animated, restore targPoint when done
+        if (isAnimated && targPoint!=null) {
+            axisViewY.getAnim(0).setOnFinish(() -> {
+                if (getChartView().getTargPoint() == null)
+                    getChartView().setTargPoint(targPoint);
+            });
+        }
+    }
+
+    /**
+     * Scales Axis min/max by factor about given data coord.
+     */
+    private void scaleAxisMinMaxForFactorAboutDataCoord(AxisView anAxisView, double aScale, double dataMid, boolean isAnimated)
+    {
+        double minX = anAxisView.getAxisMin();
+        double maxX = anAxisView.getAxisMax();
+        double minX2 = (minX - dataMid) * aScale + dataMid;
+        double maxX2 = (maxX - dataMid) * aScale + dataMid;
+        anAxisView.setAxisMinMax(minX2, maxX2, isAnimated);
     }
 
     /**
