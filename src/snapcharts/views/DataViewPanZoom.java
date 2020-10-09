@@ -1,5 +1,9 @@
 package snapcharts.views;
 import snap.geom.Point;
+import snap.geom.Rect;
+import snap.gfx.Color;
+import snap.gfx.Painter;
+import snap.gfx.Stroke;
 import snap.view.ViewEvent;
 
 /**
@@ -7,13 +11,23 @@ import snap.view.ViewEvent;
  */
 public abstract class DataViewPanZoom extends DataView {
 
+    // Whether view is in zoom select mode
+    private boolean  _zoomSelectMode;
+
+    // The current ZoomSelect rect
+    private Rect  _zoomSelectRect;
+
     // The DragInfo
     private DragInfo _dragInfo = new DragInfo();
 
+    // Cached info from last MousePress
     private double _pressDataMinX;
     private double _pressDataMaxX;
     private double _pressDataMinY;
     private double _pressDataMaxY;
+
+    // Constants
+    private static final Stroke ZOOM_RECT_STROKE = Stroke.StrokeDash1;
 
     /**
      * Constructor.
@@ -22,6 +36,39 @@ public abstract class DataViewPanZoom extends DataView {
     {
         super();
         enableEvents(MousePress, MouseDrag, MouseRelease, Scroll);
+    }
+
+    /**
+     * Returns whether view is in ZoomSelectMode.
+     */
+    public boolean isZoomSelectMode()  { return _zoomSelectMode; }
+
+    /**
+     * Sets whether view is in ZoomSelectMode.
+     */
+    public void setZoomSelectMode(boolean aValue)
+    {
+        // Set Mode
+        _zoomSelectMode = aValue;
+
+        // If turning off, clear ZoomSelectRect
+        if (!aValue) {
+            _zoomSelectRect = null;
+        }
+    }
+
+    /**
+     * Override to paint ZoomSelectRect, if ZoomSelectMode is set.
+     */
+    @Override
+    protected void paintAbove(Painter aPntr)
+    {
+        // Paint ZoomSelectMode ZoomSelectRect
+        if (isZoomSelectMode() && _zoomSelectRect!=null) {
+            aPntr.setColor(Color.BLACK);
+            aPntr.setStroke(ZOOM_RECT_STROKE);
+            aPntr.draw(_zoomSelectRect);
+        }
     }
 
     @Override
@@ -34,29 +81,63 @@ public abstract class DataViewPanZoom extends DataView {
         // Handle MousePress: Store Axis min/max values at MousePress
         if (anEvent.isMousePress()) {
 
-            // If double-click, reset
+            // If double-click, zoom in (or out, if modifier is down)
             if (anEvent.getClickCount()==2) {
-                boolean isAlt = anEvent.isShiftDown() || anEvent.isAltDown() || anEvent.isShortcutDown();
-                double scale = isAlt ? 2 : .5;
-                scaleAxesMinMaxForFactorAndViewXY(scale, anEvent.getX(), anEvent.getY(), true);
+                boolean isModDown = anEvent.isShiftDown() || anEvent.isAltDown() || anEvent.isShortcutDown();
+                double scale = isModDown ? 2 : .5;
+                scaleAxesMinMaxForFactorAndViewXY(scale, scale, anEvent.getX(), anEvent.getY(), true);
             }
+
+            // If triple-click, reset axes
             if (anEvent.getClickCount()==3)
                 resetAxesAnimated();
 
             // Store axes min/max values
-            _pressDataMinX = axisX.getIntervals().getMin();
-            _pressDataMaxX = axisX.getIntervals().getMax();
-            _pressDataMinY = axisY.getIntervals().getMin();
-            _pressDataMaxY = axisY.getIntervals().getMax();
+            _pressDataMinX = axisX.getAxisMin();
+            _pressDataMaxX = axisX.getAxisMax();
+            _pressDataMinY = axisY.getAxisMin();
+            _pressDataMaxY = axisY.getAxisMax();
+
+            // Handle ZoomSelectMode
+            if (isZoomSelectMode()) {
+                _zoomSelectRect = new Rect(anEvent.getX(), anEvent.getY(), 1, 1);
+            }
         }
 
         // Handle MouseDrag: Adjust axis min/max
         else if (anEvent.isMouseDrag()) {
-            double fromX = _dragInfo.getPressX();
-            double fromY = _dragInfo.getPressY();
-            double toX = _dragInfo.getDragX();
-            double toY = _dragInfo.getDragY();
-            shiftAxesMinMaxForDrag(fromX, fromY, toX, toY);
+
+            // Handle ZoomSelectMode
+            if (isZoomSelectMode()) {
+                Point p0 = new Point(_dragInfo.getPressX(), _dragInfo.getPressY());
+                _zoomSelectRect = Rect.get(p0, anEvent.getPoint());
+                repaint();
+            }
+
+            // Handle Shift axes
+            else {
+                double fromX = _dragInfo.getPressX();
+                double fromY = _dragInfo.getPressY();
+                double toX = _dragInfo.getDragX();
+                double toY = _dragInfo.getDragY();
+                shiftAxesMinMaxForDrag(fromX, fromY, toX, toY);
+            }
+        }
+
+        // Handle MouseRelease
+        else if (anEvent.isMouseRelease()) {
+
+            // Handle ZoomSelectMode
+            if (isZoomSelectMode()) {
+                if (_zoomSelectRect.getWidth()>4 && _zoomSelectRect.getHeight()>4)
+                    zoomAxesToRectAnimated(_zoomSelectRect);
+                setZoomSelectMode(false);
+                _zoomSelectRect = null;
+            }
+
+            // Handle click
+            else if (anEvent.isMouseClick())
+                getChartView().setTargPoint(anEvent.getPoint());
         }
 
         // Handle Scroll
@@ -110,7 +191,7 @@ public abstract class DataViewPanZoom extends DataView {
         double dispY = aScrollEvent.getY();
 
         // Do scaleAxes
-        scaleAxesMinMaxForFactorAndViewXY(scale, dispX, dispY, false);
+        scaleAxesMinMaxForFactorAndViewXY(scale, scale, dispX, dispY, false);
     }
 
     /**
@@ -118,44 +199,53 @@ public abstract class DataViewPanZoom extends DataView {
      */
     public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
     {
-        scaleAxesMinMaxForFactorAndViewXY(aScale, getWidth()/2, getHeight()/2, isAnimated);
+        scaleAxesMinMaxForFactorAndViewXY(aScale, aScale, getWidth()/2, getHeight()/2, isAnimated);
     }
 
     /**
      * Sets X/Y Axis min/max values for mouse drag points.
      */
-    public void scaleAxesMinMaxForFactorAndViewXY(double aScale, double dispX, double dispY, boolean isAnimated)
+    public void scaleAxesMinMaxForFactorAndViewXY(double aScaleX, double aScaleY, double dispX, double dispY, boolean isAnimated)
     {
         // Clear target point to remove mouse-over display
         Point targPoint = getChartView().getTargPoint();
 
-        // Get Data X/Y for given Display X/Y
+        // Get Data X and scale X Axis
         double dataX = viewToDataX(dispX);
+        AxisView axisViewX = getAxisX();
+        scaleAxisMinMaxForFactorAndDataMid(axisViewX, aScaleX, dataX, isAnimated);
+
+        // Get Data Y and scale Y Axis
         double dataY = viewToDataY(dispY);
-
-        // Scale
-        AxisView axisX = getAxisX();
-        double minX = axisX.getIntervals().getMin();
-        double maxX = axisX.getIntervals().getMax();
-        double minX2 = (minX - dataX)*aScale + dataX;
-        double maxX2 = (maxX - dataX)*aScale + dataX;
-        axisX.setAxisMinMax(minX2, maxX2, isAnimated);
-
-        // Scale
-        AxisView axisY = getAxisY();
-        double minY = axisY.getIntervals().getMin();
-        double maxY = axisY.getIntervals().getMax();
-        double minY2 = (minY - dataY)*aScale + dataY;
-        double maxY2 = (maxY - dataY)*aScale + dataY;
-        axisY.setAxisMinMax(minY2, maxY2, isAnimated);
+        AxisView axisViewY = getAxisY();
+        scaleAxisMinMaxForFactorAndDataMid(axisViewY, aScaleY, dataY, isAnimated);
 
         // If animated, restore targPoint when done
         if (isAnimated && targPoint!=null) {
-            axisX.getAnim(0).setOnFinish(() -> {
+            axisViewY.getAnim(0).setOnFinish(() -> {
                 if (getChartView().getTargPoint() == null)
                     getChartView().setTargPoint(targPoint);
             });
         }
+    }
+
+    /**
+     * Sets Axis min/max values for scale and center (in data coords).
+     */
+    private void scaleAxisMinMaxForFactorAndDataMid(AxisView anAxisView, double aScale, double dataMid, boolean isAnimated)
+    {
+        // Get Axis min/max/mid points
+        double axisMin = anAxisView.getAxisMin();
+        double axisMax = anAxisView.getAxisMax();
+        double axisMid = axisMin + (axisMax - axisMin) / 2;
+
+        // Get translation from axis mid point to given dataCoord
+        double trans = dataMid - axisMid;
+
+        // Convert min/max by translating axis mid to zero, applying scale, translating back plus offset of old/new mid
+        double min2 = (axisMin - axisMid) * aScale + axisMid + trans;
+        double max2 = (axisMax - axisMid) * aScale + axisMid + trans;
+        anAxisView.setAxisMinMax(min2, max2, isAnimated);
     }
 
     /**
@@ -174,6 +264,16 @@ public abstract class DataViewPanZoom extends DataView {
     {
         getAxisX().resetAxesAnimated();
         getAxisY().resetAxesAnimated();
+    }
+
+    /**
+     * Zoom axes to rect.
+     */
+    public void zoomAxesToRectAnimated(Rect aRect)
+    {
+        double scaleX = aRect.width / getWidth();
+        double scaleY = aRect.height / getHeight();
+        scaleAxesMinMaxForFactorAndViewXY(scaleX, scaleY, aRect.getMidX(), aRect.getMidY(), true);
     }
 
     /**

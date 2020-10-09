@@ -251,6 +251,18 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     }
 
     /**
+     * Returns whether to show TargDataPoint.
+     */
+    public boolean isShowTargDataPoint()
+    {
+        if (getTargPoint()==null)
+            return false;
+        if (getDataView() instanceof DataViewPanZoom && ((DataViewPanZoom)getDataView()).isZoomSelectMode())
+            return false;
+        return true;
+    }
+
+    /**
      * Returns the targeted data point.
      */
     public DataPoint getTargDataPoint()  { return _targDataPoint; }

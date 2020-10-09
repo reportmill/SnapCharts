@@ -50,6 +50,15 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Returns the DataView for class.
+     */
+    public <T extends DataView> T getDataView(Class<T> aClass)
+    {
+        DataView dataView = getChartView().getDataView();
+        return aClass==null || aClass.isInstance(dataView) ? (T)dataView : null;
+    }
+
+    /**
      * Returns the inspector.
      */
     public ViewOwner getInspector()  { return _insp; }
@@ -132,21 +141,6 @@ public class ChartPane extends DocItemPane {
         // Get ColView
         RowView topRowView = (RowView) super.createUI();
 
-        // Create ChartBox
-        //_chartBox = (BoxView) topRowView.getChild("ChartBox");
-        //_chartBox.setContent(_chartView);
-        //_chartBox.setFill(ChartSetPane.BACK_FILL);
-
-        // Create TabView
-        //_tabView = new TabView();
-        //_tabView.setPrefHeight(300);
-
-        // Configure TopColView
-        //ColView topColView = (ColView) topRowView.getChild("TopColView");
-        //topColView.setChildren(_chartBox, _tabView);
-        //SplitView splitView = SplitView.makeSplitView(topColView);
-        //splitView.setDividerSpan(5);
-
         // Create/add InspectorPane
         _insp = new ChartPaneInsp(this);
         topRowView.addChild(_insp.getUI());
@@ -169,6 +163,7 @@ public class ChartPane extends DocItemPane {
         // Create ChartView
         _chartView = new ChartView();
         _chartView.setEffect(new ShadowEffect());
+        _chartView.addEventFilter(e -> resetLater(), MouseRelease);
         _chartBox.setContent(_chartView);
 
         // Get/set TabView
@@ -207,6 +202,10 @@ public class ChartPane extends DocItemPane {
     @Override
     protected void resetUI()
     {
+        // Update ZoomSelectButton
+        DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+        setViewValue("ZoomSelectButton", dataView!=null && dataView.isZoomSelectMode());
+
         // Make sure TabView has DataSetPane UI view (not Label placeholder)
         int selTabIndex = _tabView.getSelIndex();
         if (selTabIndex>=0 && _tabView.getTabContent(selTabIndex) instanceof Label) {
@@ -225,21 +224,23 @@ public class ChartPane extends DocItemPane {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle ZoomSelectButton
+        if (anEvent.equals("ZoomSelectButton")) {
+            DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+            dataView.setZoomSelectMode(anEvent.getBoolValue());
+        }
+
         // Handle ZoomInButton, ZoomOutButton
         if (anEvent.equals("ZoomInButton") || anEvent.equals("ZoomOutButton")) {
-            ChartView chartView = getChartView();
-            DataView dataView = chartView.getDataView();
+            DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
             double scale = anEvent.equals("ZoomInButton") ? .5 : 2;
-            if (dataView instanceof DataViewPanZoom)
-                ((DataViewPanZoom)dataView).scaleAxesMinMaxForFactor(scale, true);
+            dataView.scaleAxesMinMaxForFactor(scale, true);
         }
 
         // Handle ResetButton
         if (anEvent.equals("ResetButton")) {
-            ChartView chartView = getChartView();
-            DataView dataView = chartView.getDataView();
-            if (dataView instanceof DataViewPanZoom)
-                ((DataViewPanZoom)dataView).resetAxesAnimated();
+            DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+            dataView.resetAxesAnimated();
         }
 
         // Handle TabView

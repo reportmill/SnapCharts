@@ -2,10 +2,10 @@
   <ColView Name="TopColView" GrowWidth="true" FillWidth="true">
     <color value="#ededed" />
     <RowView Name="ToolBar" Padding="5,15,5,5" Spacing="4">
-      <Button Name="ZoomButton" PrefWidth="24" PrefHeight="24" LeanX="RIGHT" ToolTip="Cut" image="/snap/viewx/pkg.images/Find.png" ShowArea="false" />
-      <Button Name="ZoomInButton" PrefWidth="24" PrefHeight="24" ToolTip="Copy" image="/snap/viewx/pkg.images/Add.png" ShowArea="false" />
-      <Button Name="ZoomOutButton" PrefWidth="24" PrefHeight="24" ToolTip="Paste" image="/snap/viewx/pkg.images/Remove.png" ShowArea="false" />
-      <Button Name="ResetButton" PrefWidth="24" PrefHeight="24" ToolTip="Paste" image="/snap/viewx/pkg.images/Home.png" ShowArea="false" />
+      <ToggleButton Name="ZoomSelectButton" PrefWidth="24" PrefHeight="24" LeanX="RIGHT" ToolTip="Zoom Select" image="/snap/viewx/pkg.images/Find.png" ShowArea="false" />
+      <Button Name="ZoomInButton" PrefWidth="24" PrefHeight="24" ToolTip="Zoom In" image="/snap/viewx/pkg.images/Add.png" ShowArea="false" />
+      <Button Name="ZoomOutButton" PrefWidth="24" PrefHeight="24" ToolTip="Zoom Out" image="/snap/viewx/pkg.images/Remove.png" ShowArea="false" />
+      <Button Name="ResetButton" PrefWidth="24" PrefHeight="24" ToolTip="Reset Axes" image="/snap/viewx/pkg.images/Home.png" ShowArea="false" />
     </RowView>
     <SplitView Vertical="true" DividerSpan="5">
       <EmptyBorder />

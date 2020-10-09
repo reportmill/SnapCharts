@@ -47,13 +47,15 @@ public class ToolTipView extends ColView {
         // Go ahead and repaint chartView
         _chartView.repaint();
 
-        // Get DataPoint - if null - remove view
-        Chart chart = _chartView.getChart();
-        DataPoint dataPoint = _chartView.getTargDataPoint();
-        if (dataPoint==null) {
+        // If not ChartView.ShowTargDataPoint, hide and return
+        if (!_chartView.isShowTargDataPoint()) {
             hideWindow();
             return;
         }
+
+        // Get DataPoint
+        Chart chart = _chartView.getChart();
+        DataPoint dataPoint = _chartView.getTargDataPoint();
 
         // Get dataset and value
         DataSet dset = dataPoint.getDataSet();
