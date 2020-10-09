@@ -7,7 +7,7 @@
       <Button Name="ZoomOutButton" PrefWidth="24" PrefHeight="24" ToolTip="Zoom Out" image="/snap/viewx/pkg.images/Remove.png" ShowArea="false" />
       <Button Name="ResetButton" PrefWidth="24" PrefHeight="24" ToolTip="Reset Axes" image="/snap/viewx/pkg.images/Home.png" ShowArea="false" />
     </RowView>
-    <SplitView Vertical="true" DividerSpan="5">
+    <SplitView Vertical="true" GrowHeight="true" DividerSpan="5">
       <EmptyBorder />
       <BoxView Name="ChartBox" Padding="40" GrowHeight="true" FillWidth="true" FillHeight="true">
       </BoxView>
