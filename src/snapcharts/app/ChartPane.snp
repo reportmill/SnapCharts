@@ -1,7 +1,17 @@
 <RowView FillHeight="true">
   <ColView Name="TopColView" GrowWidth="true" FillWidth="true">
     <color value="#ededed" />
-    <BoxView Name="ChartBox" Padding="40" GrowHeight="true" FillWidth="true" FillHeight="true">
-    </BoxView>
+    <RowView Name="ToolBar" Padding="5,15,5,5" Spacing="4">
+      <Button Name="ZoomButton" PrefWidth="24" PrefHeight="24" LeanX="RIGHT" ToolTip="Cut" image="/snap/viewx/pkg.images/Find.png" ShowArea="false" />
+      <Button Name="ZoomInButton" PrefWidth="24" PrefHeight="24" ToolTip="Copy" image="/snap/viewx/pkg.images/Add.png" ShowArea="false" />
+      <Button Name="ZoomOutButton" PrefWidth="24" PrefHeight="24" ToolTip="Paste" image="/snap/viewx/pkg.images/Remove.png" ShowArea="false" />
+      <Button Name="ResetButton" PrefWidth="24" PrefHeight="24" ToolTip="Paste" image="/snap/viewx/pkg.images/Home.png" ShowArea="false" />
+    </RowView>
+    <SplitView Vertical="true" DividerSpan="5">
+      <EmptyBorder />
+      <BoxView Name="ChartBox" Padding="40" GrowHeight="true" FillWidth="true" FillHeight="true">
+      </BoxView>
+      <TabView Name="TabView" PrefHeight="300" />
+    </SplitView>
   </ColView>
 </RowView>

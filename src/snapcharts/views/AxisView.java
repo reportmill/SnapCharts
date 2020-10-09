@@ -1,6 +1,10 @@
 package snapcharts.views;
+import snap.geom.Point;
 import snap.gfx.Color;
+import snap.util.SnapUtils;
 import snap.view.StringView;
+import snap.view.ViewAnim;
+import snap.view.ViewUtils;
 import snapcharts.model.*;
 import java.text.DecimalFormat;
 
@@ -30,6 +34,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // The grid line
     protected double  _gridLineDashArray[];
 
+    // Constants for Properties
+    public static final String AxisMin_Prop = "AxisMin";
+    public static final String AxisMax_Prop = "AxisMax";
+
     // Constants
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
     public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
@@ -57,6 +65,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public double getAxisMin()
     {
+        return getIntervals().getMin();
+    }
+
+    /**
+     * Returns the axis min.
+     */
+    protected double getAxisMinForIntervalCalc()
+    {
         // If explicitly set, just return
         if (_minOverride!=UNSET_DOUBLE) return _minOverride;
 
@@ -70,7 +86,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             min = axis.getMinValue();
         else {
             DataSetList dsetList = getDataSetList();
-            min = dsetList.getMinForAxis(axis.getType());
+            min = dsetList.getMinForAxis(getAxisType());
         }
 
         // If ZeroRequired and min greater than zero, reset min
@@ -89,13 +105,24 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aValue==_minOverride) return;
         _minOverride = aValue;
         _intervals = null;
+
+        // Repaint ChartView and clear ChartView.TargPoint
         getChartView().repaint();
+        getChartView().setTargPoint(null);
     }
 
     /**
      * Returns the axis max.
      */
     public double getAxisMax()
+    {
+        return getIntervals().getMax();
+    }
+
+    /**
+     * Returns the axis max.
+     */
+    protected double getAxisMaxForIntervalCalc()
     {
         // If explicitly set, just return
         if (_maxOverride!=UNSET_DOUBLE) return _maxOverride;
@@ -108,9 +135,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         double max;
         if (boundType== Axis.AxisBoundType.VALUE)
             max = axis.getMaxValue();
+
+        // Handle BoundType.Data
         else {
             DataSetList dsetList = getDataSetList();
-            max = dsetList.getMaxForAxis(axis.getType());
+            max = dsetList.getMaxForAxis(getAxisType());
         }
 
         // If ZeroRequired and max less than zero, reset max
@@ -129,7 +158,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aValue==_maxOverride) return;
         _maxOverride = aValue;
         _intervals = null;
+
+        // Repaint ChartView and clear ChartView.TargPoint
         getChartView().repaint();
+        getChartView().setTargPoint(null);
     }
 
     /**
@@ -175,8 +207,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         }
 
         // Normal case
-        double min = getAxisMin();
-        double max = getAxisMax();
+        double min = getAxisMinForIntervalCalc();
+        double max = getAxisMaxForIntervalCalc();
         double axisLen = getAxisLen();
         double divLen = getAxisType()==AxisType.X ? 40 : 30;
         boolean minFixed = _minOverride!=UNSET_DOUBLE;
@@ -206,8 +238,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         }
 
         // Normal case: Return true if min, max and AxisLen are the same
-        double min = getAxisMin();
-        double max = getAxisMax();
+        double min = getAxisMinForIntervalCalc();
+        double max = getAxisMaxForIntervalCalc();
         double len = getAxisLen();
         return _intervals.matchesMinMaxLen(min, max, len);
     }
@@ -250,6 +282,57 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         double dispY = _dataView.dataToViewY(dataY);
         double dy = _dataView.getY() - getY();
         return dispY - dy;
+    }
+
+    /**
+     * Resets Axes to original bounds.
+     */
+    public void resetAxes()
+    {
+        setAxisMin(UNSET_DOUBLE);
+        setAxisMax(UNSET_DOUBLE);
+    }
+
+    /**
+     * Resets Axes to original bounds.
+     */
+    public void resetAxesAnimated()
+    {
+        // Get min/max for start/end
+        double min0 = getAxisMin();
+        double max0 = getAxisMax();
+        setAxisMin(UNSET_DOUBLE);
+        setAxisMax(UNSET_DOUBLE);
+        double min1 = getAxisMin();
+        double max1 = getAxisMax();
+        setAxisMin(min0);
+        setAxisMax(max0);
+
+        // Get/configure animation
+        ViewAnim anim = getAnimCleared(600);
+        anim.setValue(AxisMin_Prop, min1);
+        anim.setValue(AxisMax_Prop, max1);
+        anim.setOnFinish(() -> ViewUtils.runLater(() -> resetAxes()));
+        anim.play();
+    }
+
+    /**
+     * Sets the axis Min/Max animated.
+     */
+    public void setAxisMinMax(double aMin, double aMax, boolean isAnimated)
+    {
+        if (isAnimated) {
+            Point targPoint = getChartView().getTargPoint();
+            ViewAnim anim = getAnimCleared(600);
+            anim.setValue(AxisMin_Prop, aMin);
+            anim.setValue(AxisMax_Prop, aMax);
+            anim.setOnFinish(() -> getChartView().setTargPoint(targPoint));
+            anim.play();
+        }
+        else {
+            setAxisMin(aMin);
+            setAxisMax(aMax);
+        }
     }
 
     /**
@@ -304,5 +387,31 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             return String.valueOf((int)aValue);
 
         return _fmt.format(aValue);
+    }
+
+    /**
+     * Override to add support for this view properties.
+     */
+    @Override
+    public Object getValue(String aPropName)
+    {
+        switch (aPropName) {
+            case AxisMin_Prop: return getAxisMin();
+            case AxisMax_Prop: return getAxisMax();
+            default: return super.getValue(aPropName);
+        }
+    }
+
+    /**
+     * Override to add support for this view properties.
+     */
+    @Override
+    public void setValue(String aPropName, Object aValue)
+    {
+        switch (aPropName) {
+            case AxisMin_Prop: setAxisMin(SnapUtils.doubleValue(aValue)); break;
+            case AxisMax_Prop: setAxisMax(SnapUtils.doubleValue(aValue)); break;
+            default: super.setValue(aPropName, aValue);
+        }
     }
 }

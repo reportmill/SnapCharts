@@ -7,6 +7,9 @@ import snapcharts.model.ChartArchiver;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
+import snapcharts.views.DataView;
+import snapcharts.views.DataViewPanZoom;
+
 import java.util.List;
 
 /**
@@ -127,20 +130,49 @@ public class ChartPane extends DocItemPane {
     protected View createUI()
     {
         // Get ColView
-        RowView topRowView = (RowView)super.createUI();
+        RowView topRowView = (RowView) super.createUI();
+
+        // Create ChartBox
+        //_chartBox = (BoxView) topRowView.getChild("ChartBox");
+        //_chartBox.setContent(_chartView);
+        //_chartBox.setFill(ChartSetPane.BACK_FILL);
+
+        // Create TabView
+        //_tabView = new TabView();
+        //_tabView.setPrefHeight(300);
+
+        // Configure TopColView
+        //ColView topColView = (ColView) topRowView.getChild("TopColView");
+        //topColView.setChildren(_chartBox, _tabView);
+        //SplitView splitView = SplitView.makeSplitView(topColView);
+        //splitView.setDividerSpan(5);
+
+        // Create/add InspectorPane
+        _insp = new ChartPaneInsp(this);
+        topRowView.addChild(_insp.getUI());
+
+        // Return TopRowView
+        return topRowView;
+    }
+
+    @Override
+    protected void initUI()
+    {
+        // Get/configure ToolBar
+        RowView toolBar = getView("ToolBar", RowView.class);
+        toolBar.setFill(ChartSetPane.BACK_FILL);
+
+        // Get/set/configure ChartBox
+        _chartBox = getView("ChartBox", BoxView.class);
+        _chartBox.setFill(ChartSetPane.BACK_FILL);
 
         // Create ChartView
         _chartView = new ChartView();
         _chartView.setEffect(new ShadowEffect());
-
-        // Create ChartBox
-        _chartBox = (BoxView)topRowView.getChild("ChartBox");
         _chartBox.setContent(_chartView);
-        _chartBox.setFill(ChartSetPane.BACK_FILL);
 
-        // Create TabView
-        _tabView = new TabView();
-        _tabView.setPrefHeight(300);
+        // Get/set TabView
+        _tabView = getView("TabView", TabView.class);
 
         // If ChartPane is in DataSetMode, change some things
         if (_dataSetMode) {
@@ -151,21 +183,8 @@ public class ChartPane extends DocItemPane {
             _chartBox.setPadding(30, 60, 30, 60);
         }
 
-        // Configure TopColView
-        ColView topColView = (ColView)topRowView.getChild("TopColView");
-        topColView.setChildren(_chartBox, _tabView);
-        SplitView splitView = SplitView.makeSplitView(topColView);
-        splitView.setDividerSpan(5);
-
-        // Create/add InspectorPane
-        _insp = new ChartPaneInsp(this);
-        topRowView.addChild(_insp.getUI());
-
         // Create configure ChartPaneSel
         _selHpr = new ChartPaneSel(this);
-
-        // Return TopRowView
-        return topRowView;
     }
 
     /**
@@ -206,6 +225,23 @@ public class ChartPane extends DocItemPane {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle ZoomInButton, ZoomOutButton
+        if (anEvent.equals("ZoomInButton") || anEvent.equals("ZoomOutButton")) {
+            ChartView chartView = getChartView();
+            DataView dataView = chartView.getDataView();
+            double scale = anEvent.equals("ZoomInButton") ? .5 : 2;
+            if (dataView instanceof DataViewPanZoom)
+                ((DataViewPanZoom)dataView).scaleAxesMinMaxForFactor(scale, true);
+        }
+
+        // Handle ResetButton
+        if (anEvent.equals("ResetButton")) {
+            ChartView chartView = getChartView();
+            DataView dataView = chartView.getDataView();
+            if (dataView instanceof DataViewPanZoom)
+                ((DataViewPanZoom)dataView).resetAxesAnimated();
+        }
+
         // Handle TabView
         if (anEvent.equals(_tabView)) {
             int selIndex = _tabView.getSelIndex();

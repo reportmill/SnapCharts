@@ -1,4 +1,5 @@
 package snapcharts.views;
+import snap.geom.Point;
 import snap.view.ViewEvent;
 
 /**
@@ -35,11 +36,12 @@ public abstract class DataViewPanZoom extends DataView {
 
             // If double-click, reset
             if (anEvent.getClickCount()==2) {
-                axisX.setAxisMin(AxisView.UNSET_DOUBLE);
-                axisX.setAxisMax(AxisView.UNSET_DOUBLE);
-                axisY.setAxisMin(AxisView.UNSET_DOUBLE);
-                axisY.setAxisMax(AxisView.UNSET_DOUBLE);
+                boolean isAlt = anEvent.isShiftDown() || anEvent.isAltDown() || anEvent.isShortcutDown();
+                double scale = isAlt ? 2 : .5;
+                scaleAxesMinMaxForFactorAndViewXY(scale, anEvent.getX(), anEvent.getY(), true);
             }
+            if (anEvent.getClickCount()==3)
+                resetAxesAnimated();
 
             // Store axes min/max values
             _pressDataMinX = axisX.getIntervals().getMin();
@@ -71,9 +73,6 @@ public abstract class DataViewPanZoom extends DataView {
      */
     private void shiftAxesMinMaxForDrag(double dispX0, double dispY0, double dispX1, double dispY1)
     {
-        // Clear target point to remove mouse-over display
-        getChartView().setTargPoint(null);
-
         // Calculate new X axis min/max for
         double dataX1 = viewToDataX(dispX0);
         double dataX2 = viewToDataX(dispX1);
@@ -102,16 +101,35 @@ public abstract class DataViewPanZoom extends DataView {
      */
     private void scaleAxesMinMaxForDrag(ViewEvent aScrollEvent)
     {
-        // Clear target point to remove mouse-over display
-        getChartView().setTargPoint(null);
-
         // Get scale: Assume + 1x per 100 points (1.5 inches). If scale down, limit to .5
         double scroll = aScrollEvent.getScrollY();
-        double scale = Math.max(1 + scroll/100, .5);
+        double scale = Math.max(1 + scroll / 100, .5);
 
         // Get Mouse X/Y
         double dispX = aScrollEvent.getX();
         double dispY = aScrollEvent.getY();
+
+        // Do scaleAxes
+        scaleAxesMinMaxForFactorAndViewXY(scale, dispX, dispY, false);
+    }
+
+    /**
+     * Sets X/Y Axis min/max values for mouse drag points.
+     */
+    public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
+    {
+        scaleAxesMinMaxForFactorAndViewXY(aScale, getWidth()/2, getHeight()/2, isAnimated);
+    }
+
+    /**
+     * Sets X/Y Axis min/max values for mouse drag points.
+     */
+    public void scaleAxesMinMaxForFactorAndViewXY(double aScale, double dispX, double dispY, boolean isAnimated)
+    {
+        // Clear target point to remove mouse-over display
+        Point targPoint = getChartView().getTargPoint();
+
+        // Get Data X/Y for given Display X/Y
         double dataX = viewToDataX(dispX);
         double dataY = viewToDataY(dispY);
 
@@ -119,19 +137,43 @@ public abstract class DataViewPanZoom extends DataView {
         AxisView axisX = getAxisX();
         double minX = axisX.getIntervals().getMin();
         double maxX = axisX.getIntervals().getMax();
-        double minX2 = (minX - dataX)*scale + dataX;
-        double maxX2 = (maxX - dataX)*scale + dataX;
-        axisX.setAxisMin(minX2);
-        axisX.setAxisMax(maxX2);
+        double minX2 = (minX - dataX)*aScale + dataX;
+        double maxX2 = (maxX - dataX)*aScale + dataX;
+        axisX.setAxisMinMax(minX2, maxX2, isAnimated);
 
         // Scale
         AxisView axisY = getAxisY();
         double minY = axisY.getIntervals().getMin();
         double maxY = axisY.getIntervals().getMax();
-        double minY2 = (minY - dataY)*scale + dataY;
-        double maxY2 = (maxY - dataY)*scale + dataY;
-        axisY.setAxisMin(minY2);
-        axisY.setAxisMax(maxY2);
+        double minY2 = (minY - dataY)*aScale + dataY;
+        double maxY2 = (maxY - dataY)*aScale + dataY;
+        axisY.setAxisMinMax(minY2, maxY2, isAnimated);
+
+        // If animated, restore targPoint when done
+        if (isAnimated && targPoint!=null) {
+            axisX.getAnim(0).setOnFinish(() -> {
+                if (getChartView().getTargPoint() == null)
+                    getChartView().setTargPoint(targPoint);
+            });
+        }
+    }
+
+    /**
+     * Resets Axes to original bounds.
+     */
+    public void resetAxes()
+    {
+        getAxisX().resetAxes();
+        getAxisY().resetAxes();
+    }
+
+    /**
+     * Resets Axes to original bounds.
+     */
+    public void resetAxesAnimated()
+    {
+        getAxisX().resetAxesAnimated();
+        getAxisY().resetAxesAnimated();
     }
 
     /**
