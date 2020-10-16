@@ -31,6 +31,7 @@ public abstract class DataView<T extends ChartPart> extends ChartPartView<T> {
     protected static Color  GRID_LINES_COLOR = Color.get("#E6");
     protected static Color  TICK_LINES_COLOR = Color.GRAY;
     protected static Color  AXIS_LINES_COLOR = Color.DARKGRAY;
+    protected static int REVEAL_TIME = 2000;
 
     /**
      * Creates a ChartArea.
@@ -145,8 +146,13 @@ public abstract class DataView<T extends ChartPart> extends ChartPartView<T> {
     public void animate()
     {
         setReveal(0);
-        getAnimCleared(1000).setValue(Reveal_Prop,1).setLinear().play();
+        getAnimCleared(getRevealTime()).setValue(Reveal_Prop,1).setLinear().play();
     }
+
+    /**
+     * Returns the time in milliseconds recommended for animation.
+     */
+    protected int getRevealTime()  { return REVEAL_TIME; }
 
     /**
      * Converts a point from dataset coords to view coords.

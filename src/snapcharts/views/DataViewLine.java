@@ -12,6 +12,9 @@ import snapcharts.model.DataSetList;
  */
 public class DataViewLine extends DataViewPanZoom {
 
+    // The TailShape
+    private Shape  _tailShape;
+
     // Constants for defaults
     protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
@@ -67,6 +70,15 @@ public class DataViewLine extends DataViewPanZoom {
         return paths;
     }
 
+    @Override
+    protected int getRevealTime()
+    {
+        List<Path> paths = getDataSetPaths(); if (paths.size()==0) return REVEAL_TIME;
+        double maxLen = 0; for (Path path : paths) maxLen = Math.max(maxLen, path.getArcLength());
+        double factor = Math.max(1, Math.min(maxLen / 500, 2.5));
+        return (int) Math.round(factor*REVEAL_TIME);
+    }
+
     /**
      * Paints chart.
      */
@@ -78,25 +90,49 @@ public class DataViewLine extends DataViewPanZoom {
 
         DataPoint selPoint = _chartView.getTargDataPoint();
         DataSet selSet = selPoint != null ? selPoint.getDataSet() : null;
-
-        // If reveal is not full (1) then clip
-        if (getReveal() < 1) {
-            aPntr.save();
-            aPntr.clipRect(0, 0, getWidth() * getReveal(), getHeight());
-        }
+        double reveal = getReveal();
 
         // Draw dataset paths
         List<Path> paths = getDataSetPaths();
         for (int i=0; i<paths.size(); i++) {
-            Path path = paths.get(i);
+
+            // Get path - if Reveal is active, get path spliced
+            Shape path = paths.get(i);
+            if (reveal<1)
+                path = new SplicerShape(path, 0, reveal);
+
+            // Set dataset color, stroke and paint
             DataSet dset = dsets.get(i);
-            aPntr.setColor(getColor(dset.getIndex()));
+            Color color = getColor(dset.getIndex());
+            aPntr.setColor(color);
             aPntr.setStroke(dset==selSet ? Stroke3 : Stroke2);
             aPntr.draw(path);
+
+            // If Reveal is active, paint end point
+            if (reveal<1) {
+                SplicerShape splicer = (SplicerShape) path;
+                Point tailPoint = splicer.getTailPoint();
+                double tailAngle = splicer.getTailAngle();
+                Shape tailShape = getTailShape();
+                Rect tailShapeBounds = tailShape.getBounds();
+                double tailShapeX = tailPoint.x - tailShapeBounds.getMidX();
+                double tailShapeY = tailPoint.y - tailShapeBounds.getMidY();
+                aPntr.save();
+                aPntr.rotateAround(tailAngle, tailPoint.x, tailPoint.y);
+                aPntr.translate(tailShapeX, tailShapeY);
+                aPntr.fill(tailShape);
+                aPntr.restore();
+            }
         }
 
         // Get DataSets that ShowSymbols
         List<DataSet> dsetsSymb = dataSetList.getDataSetsFiltered(dset -> dset.isShowSymbols());
+
+        // If reveal is not full (1) then clip
+        if (reveal < 1) {
+            aPntr.save();
+            aPntr.clipRect(0, 0, getWidth() * reveal, getHeight());
+        }
 
         // Draw dataset points
         for (DataSet dset : dsetsSymb) {
@@ -126,7 +162,7 @@ public class DataViewLine extends DataViewPanZoom {
         paintSelPoint(aPntr);
 
         // If reveal not full, resture gstate
-        if (getReveal() < 1) aPntr.restore();
+        if (reveal < 1) aPntr.restore();
     }
 
     /**
@@ -157,5 +193,21 @@ public class DataViewLine extends DataViewPanZoom {
         aPntr.setStroke(Stroke3);
         aPntr.setColor(color);
         aPntr.draw(symbol);
+    }
+
+    /**
+     * Returns the tail shape.
+     */
+    public Shape getTailShape()
+    {
+        if (_tailShape!=null) return _tailShape;
+
+        Path path = new Path();
+        path.moveTo(0, 0);
+        path.lineTo(16, 8);
+        path.lineTo(0, 16);
+        path.lineTo(5, 8);
+        path.close();
+        return _tailShape = path;
     }
 }
