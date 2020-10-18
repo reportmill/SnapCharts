@@ -39,11 +39,11 @@ public class Path3D extends Shape3D implements Cloneable {
     int             _nextPointIndex = -100;
     
     // Constants for path construction element types
-    public static final Seg MOVE_TO = Path.MoveTo;
-    public static final Seg LINE_TO = Path.LineTo;
-    public static final Seg QUAD_TO = Path.QuadTo;
-    public static final Seg CURVE_TO = Path.CubicTo;
-    public static final Seg CLOSE = Path.Close;
+    public static final Seg MOVE_TO = Seg.MoveTo;
+    public static final Seg LINE_TO = Seg.LineTo;
+    public static final Seg QUAD_TO = Seg.QuadTo;
+    public static final Seg CURVE_TO = Seg.CubicTo;
+    public static final Seg CLOSE = Seg.Close;
 
 /**
  * Creates a Path3D.
