@@ -124,7 +124,10 @@ public abstract class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the Symbol shape at index.
      */
-    public Shape getSymbolShape(int anIndex)  { return getChart().getSymbolShape(anIndex); }
+    public Shape getSymbolShape(int anIndex)
+    {
+        return getChart().getSymbolShape(anIndex);
+    }
 
     /**
      * Return the ratio of the chart to show horizontally.
@@ -451,7 +454,9 @@ public abstract class DataView<T extends ChartPart> extends ChartPartView<T> {
         {
             case BAR: return new DataViewBar();
             case BAR_3D: return new DataViewBar3D();
-            case LINE: return new DataViewLine();
+            case LINE: return new DataViewLine(DataViewLine.Subtype.Line);
+            case AREA: return new DataViewLine(DataViewLine.Subtype.Area);
+            case SCATTER: return new DataViewLine(DataViewLine.Subtype.Scatter);
             case PIE: return new DataViewPie();
             default: throw new RuntimeException("DataView.createDataViewForType: Unknown type: " + aType);
         }

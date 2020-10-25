@@ -117,6 +117,7 @@ public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
         _dataView.reactivate();
 
         // Trigger animate (after delay so size is set for first time)
+        _dataView.setReveal(0);
         ViewUtils.runLater(() -> _dataView.animate());
         _axisY.repaint();
         _axisX.repaint();
@@ -150,7 +151,7 @@ public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
     protected void layoutImpl()
     {
         // Set DataView height first, since height can effect yaxis label width
-        double viewW = getWidth();
+        double viewW = getWidth() - 10;
         double viewH = getHeight();
         double axisH = _axisX.isVisible() ? _axisX.getPrefHeight() : 0;
         _dataView.setHeight(viewH - axisH);

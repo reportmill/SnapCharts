@@ -8,7 +8,9 @@ public enum ChartType {
     BAR,
     BAR_3D,
     PIE,
-    LINE;
+    LINE,
+    AREA,
+    SCATTER;
 
 
     /**
@@ -22,6 +24,7 @@ public enum ChartType {
             case BAR_3D: return "Bar3D";
             case PIE: return "Pie";
             case LINE: return "Line";
+            case SCATTER: return "Scatter";
             default: break;
         }
 

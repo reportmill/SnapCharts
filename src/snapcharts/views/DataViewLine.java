@@ -13,22 +13,29 @@ import snapcharts.model.DataSetList;
  */
 public class DataViewLine extends DataViewPanZoom {
 
+    // The subtype
+    private Subtype  _subType = Subtype.Line;
+
     // The DataSet paths
     List<Path2D>  _dataSetPaths;
 
     // The TailShape
     private Shape  _tailShape;
 
+    // Constants for subtype
+    public enum Subtype { Line, Area, Scatter };
+
     // Constants for defaults
-    protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
-    protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke2 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke3 = new Stroke(4, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
     /**
      * Creates a ChartAreaLine.
      */
-    public DataViewLine()
+    public DataViewLine(Subtype aSubType)
     {
+        _subType = aSubType;
     }
 
     /**
@@ -36,6 +43,8 @@ public class DataViewLine extends DataViewPanZoom {
      */
     public ChartType getChartType()
     {
+        if (_subType==Subtype.Area) return ChartType.AREA;
+        if (_subType==Subtype.Scatter) return ChartType.SCATTER;
         return ChartType.LINE;
     }
 
@@ -72,6 +81,15 @@ public class DataViewLine extends DataViewPanZoom {
                     path.moveTo(dispXY.x, dispXY.y);
                 else path.lineTo(dispXY.x, dispXY.y);
             }
+
+            // If area, close path
+            if (_subType==Subtype.Area) {
+                path.lineTo(getWidth(), path.getPoint(getPointCount()-1).y);
+                path.lineTo(getWidth(), getHeight());
+                path.lineTo(0, getHeight());
+                path.lineTo(0, path.getPoint(0).y);
+                path.close();
+            }
         }
 
         // Return paths
@@ -84,6 +102,9 @@ public class DataViewLine extends DataViewPanZoom {
     @Override
     protected int getRevealTime()
     {
+        if (_subType!=Subtype.Line)
+            return REVEAL_TIME;
+
         // Get all paths
         List<Path2D> paths = getDataSetPaths(); if (paths.size()==0) return REVEAL_TIME;
 
@@ -108,24 +129,34 @@ public class DataViewLine extends DataViewPanZoom {
         DataSet selSet = selPoint != null ? selPoint.getDataSet() : null;
         double reveal = getReveal();
 
+        // If reveal is not full (1) then clip
+        if (reveal < 1 && _subType==Subtype.Area) {
+            aPntr.save();
+            aPntr.clipRect(0, 0, getWidth() * reveal, getHeight());
+        }
+
         // Draw dataset paths
         List<Path2D> paths = getDataSetPaths();
         for (int i=0; i<paths.size(); i++) {
 
             // Get path - if Reveal is active, get path spliced
             Shape path = paths.get(i);
-            if (reveal<1)
+            if (reveal<1 && _subType==Subtype.Line)
                 path = new SplicerShape(path, 0, reveal);
 
             // Set dataset color, stroke and paint
             DataSet dset = dsets.get(i);
             Color color = getColor(dset.getIndex());
+            if (_subType==Subtype.Area) color = color.blend(Color.CLEAR, .3);
             aPntr.setColor(color);
             aPntr.setStroke(dset==selSet ? Stroke3 : Stroke2);
-            aPntr.draw(path);
+            if (_subType==Subtype.Line)
+                aPntr.draw(path);
+            else if (_subType==Subtype.Area)
+                aPntr.fill(path);
 
             // If Reveal is active, paint end point
-            if (reveal<1) {
+            if (path instanceof SplicerShape) {
                 SplicerShape splicer = (SplicerShape) path;
                 Point tailPoint = splicer.getTailPoint();
                 double tailAngle = splicer.getTailAngle();
@@ -141,8 +172,13 @@ public class DataViewLine extends DataViewPanZoom {
             }
         }
 
+        // If reveal not full, resture gstate
+        if (reveal < 1 && _subType==Subtype.Area) aPntr.restore();
+
         // Get DataSets that ShowSymbols
         List<DataSet> dsetsSymb = dataSetList.getDataSetsFiltered(dset -> dset.isShowSymbols());
+        if (_subType==Subtype.Scatter)
+            dsetsSymb = dataSetList.getDataSets();
 
         // If reveal is not full (1) then clip
         if (reveal < 1) {
@@ -171,6 +207,12 @@ public class DataViewLine extends DataViewPanZoom {
                 Color color = getColor(dsetIndex);
                 aPntr.setColor(color);
                 aPntr.fill(symbol);
+                if (_subType==Subtype.Scatter) {
+                    aPntr.setStroke(Stroke.Stroke1);
+                    aPntr.setColor(color.darker().darker());
+                    aPntr.draw(symbol);
+                }
+
             }
         }
 
@@ -209,6 +251,17 @@ public class DataViewLine extends DataViewPanZoom {
         aPntr.setStroke(Stroke3);
         aPntr.setColor(color);
         aPntr.draw(symbol);
+    }
+
+    /**
+     * Override for Subtype.Scatter.
+     */
+    @Override
+    public Shape getSymbolShape(int anIndex)
+    {
+        if (_subType==Subtype.Scatter)
+            return new Ellipse(0,0,9,9);
+        return getChart().getSymbolShape(anIndex);
     }
 
     /**

@@ -57,15 +57,17 @@ public class ChartInsp extends ChartPartInsp {
         Chart chart = getChart();
 
         // Handle NameText
-        if(anEvent.equals("NameText")) {
+        if (anEvent.equals("NameText")) {
             chart.setName(anEvent.getStringValue());
             getChartPane().getDocPane().docItemNameChanged();
         }
 
         // Handle BarChartButton, LineChartButton, PieChartButton
-        if(anEvent.equals("BarChartButton")) chart.setType(ChartType.BAR);
-        if(anEvent.equals("Bar3DChartButton")) chart.setType(ChartType.BAR_3D);
-        if(anEvent.equals("LineChartButton")) chart.setType(ChartType.LINE);
-        if(anEvent.equals("PieChartButton")) chart.setType(ChartType.PIE);
+        if (anEvent.equals("LineChartButton")) chart.setType(ChartType.LINE);
+        if (anEvent.equals("AreaChartButton")) chart.setType(ChartType.AREA);
+        if (anEvent.equals("ScatterChartButton")) chart.setType(ChartType.SCATTER);
+        if (anEvent.equals("BarChartButton")) chart.setType(ChartType.BAR);
+        if (anEvent.equals("Bar3DChartButton")) chart.setType(ChartType.BAR_3D);
+        if (anEvent.equals("PieChartButton")) chart.setType(ChartType.PIE);
     }
 }
