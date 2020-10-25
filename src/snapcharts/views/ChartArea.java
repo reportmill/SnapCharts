@@ -1,4 +1,5 @@
 package snapcharts.views;
+import snap.view.ViewUtils;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
@@ -115,8 +116,8 @@ public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
         // Reset DataView
         _dataView.reactivate();
 
-        // Trigger animate
-        _dataView.animate();
+        // Trigger animate (after delay so size is set for first time)
+        ViewUtils.runLater(() -> _dataView.animate());
         _axisY.repaint();
         _axisX.repaint();
     }

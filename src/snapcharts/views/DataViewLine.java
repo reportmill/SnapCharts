@@ -2,6 +2,7 @@ package snapcharts.views;
 import java.util.*;
 import snap.geom.*;
 import snap.gfx.*;
+import snap.view.ViewAnim;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
@@ -11,6 +12,9 @@ import snapcharts.model.DataSetList;
  * A ChartArea subclass to display the contents of line chart.
  */
 public class DataViewLine extends DataViewPanZoom {
+
+    // The DataSet paths
+    List<Path2D>  _dataSetPaths;
 
     // The TailShape
     private Shape  _tailShape;
@@ -38,19 +42,23 @@ public class DataViewLine extends DataViewPanZoom {
     /**
      * Returns the list of paths for each dataset.
      */
-    public List<Path> getDataSetPaths()
+    public List<Path2D> getDataSetPaths()
     {
+        // If already set, just return
+        ViewAnim anim = getAnim(-1); if (anim==null || !anim.isPlaying()) _dataSetPaths = null;
+        if (_dataSetPaths!=null) return _dataSetPaths;
+
         // Get info
         DataSetList dataSetList = getDataSetList();
         List<DataSet> dsets = dataSetList.getDataSets();
-        List<Path> paths = new ArrayList<>();
+        List<Path2D> paths = new ArrayList<>();
 
         // Iterate over datasets
         for (DataSet dset : dsets) {
 
             // Create/add path for dataset
             int pointCount = dset.getPointCount();
-            Path path = new Path();
+            Path2D path = new Path2D();
             paths.add(path);
 
             // Iterate over data points
@@ -67,15 +75,23 @@ public class DataViewLine extends DataViewPanZoom {
         }
 
         // Return paths
-        return paths;
+        return _dataSetPaths = paths;
     }
 
+    /**
+     * Override to return RevealTime based on path length.
+     */
     @Override
     protected int getRevealTime()
     {
-        List<Path> paths = getDataSetPaths(); if (paths.size()==0) return REVEAL_TIME;
-        double maxLen = 0; for (Path path : paths) maxLen = Math.max(maxLen, path.getArcLength());
+        // Get all paths
+        List<Path2D> paths = getDataSetPaths(); if (paths.size()==0) return REVEAL_TIME;
+
+        // Calc factor to modify default time
+        double maxLen = 0; for (Path2D path : paths) maxLen = Math.max(maxLen, path.getArcLength());
         double factor = Math.max(1, Math.min(maxLen / 500, 2.5));
+
+        // Return default time times factor
         return (int) Math.round(factor*REVEAL_TIME);
     }
 
@@ -93,7 +109,7 @@ public class DataViewLine extends DataViewPanZoom {
         double reveal = getReveal();
 
         // Draw dataset paths
-        List<Path> paths = getDataSetPaths();
+        List<Path2D> paths = getDataSetPaths();
         for (int i=0; i<paths.size(); i++) {
 
             // Get path - if Reveal is active, get path spliced
@@ -202,12 +218,26 @@ public class DataViewLine extends DataViewPanZoom {
     {
         if (_tailShape!=null) return _tailShape;
 
-        Path path = new Path();
+        Path2D path = new Path2D();
         path.moveTo(0, 0);
-        path.lineTo(16, 8);
-        path.lineTo(0, 16);
-        path.lineTo(5, 8);
+        path.lineTo(16, 6);
+        path.lineTo(0, 12);
+        path.lineTo(5, 6);
         path.close();
         return _tailShape = path;
+    }
+
+    @Override
+    public void setWidth(double aValue)
+    {
+        super.setWidth(aValue);
+        _dataSetPaths = null;
+    }
+
+    @Override
+    public void setHeight(double aValue)
+    {
+        super.setHeight(aValue);
+        _dataSetPaths = null;
     }
 }
