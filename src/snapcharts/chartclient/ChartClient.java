@@ -17,7 +17,7 @@ public class ChartClient extends ViewOwner {
 
     // The SnapChartURL
     private final int HTTP_PORT_LOCAL = 8008;
-    private final String SNAPCHARTS_URL = "http://reportmill.com/snaptea/SnapCharts";
+    private final String SNAPCHARTS_URL = "https://reportmill.com/snaptea/SnapCharts";
     private final String SNAPCHARTS_URL_LOCAL = "http://localhost:8080";
 
     // Ivars for launching SnapCharts
