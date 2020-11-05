@@ -26,7 +26,7 @@ public class DataViewLine extends DataViewPanZoom {
     public enum Subtype { Line, Area, Scatter };
 
     // Constants for defaults
-    protected static Stroke Stroke2 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke2 = new Stroke(2.5, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke3 = new Stroke(4, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
@@ -110,7 +110,7 @@ public class DataViewLine extends DataViewPanZoom {
 
         // Calc factor to modify default time
         double maxLen = 0; for (Path2D path : paths) maxLen = Math.max(maxLen, path.getArcLength());
-        double factor = Math.max(1, Math.min(maxLen / 500, 2.5));
+        double factor = Math.max(1, Math.min(maxLen / 500, 2));
 
         // Return default time times factor
         return (int) Math.round(factor*REVEAL_TIME);
@@ -150,8 +150,12 @@ public class DataViewLine extends DataViewPanZoom {
             if (_subType==Subtype.Area) color = color.blend(Color.CLEAR, .3);
             aPntr.setColor(color);
             aPntr.setStroke(dset==selSet ? Stroke3 : Stroke2);
-            if (_subType==Subtype.Line)
+            if (_subType==Subtype.Line) {
+                aPntr.setColor(color.blend(Color.CLEAR, .98));
+                aPntr.draw(paths.get(i));
+                aPntr.setColor(color);
                 aPntr.draw(path);
+            }
             else if (_subType==Subtype.Area)
                 aPntr.fill(path);
 
