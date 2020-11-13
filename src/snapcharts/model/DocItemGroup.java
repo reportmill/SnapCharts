@@ -1,9 +1,6 @@
 package snapcharts.model;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.app.ChartSetPane;
-import snapcharts.app.DocItemPane;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,15 +103,9 @@ public class DocItemGroup extends DocItem {
     }
 
     /**
-     * Creates the ItemPane.
+     * Override to return true.
      */
-    @Override
-    protected DocItemPane createItemPane()
-    {
-        ChartSetPane pane = new ChartSetPane();
-        pane.setDocItem(this);
-        return pane;
-    }
+    public boolean isParent()  { return true; }
 
     /**
      * Archival.

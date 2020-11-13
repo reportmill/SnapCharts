@@ -1,13 +1,12 @@
 package snapcharts.app;
+import rmdraw.scene.SGDoc;
 import snap.geom.Insets;
 import snap.geom.Pos;
+import snap.gfx.Font;
 import snap.gfx.Image;
 import snap.util.SnapUtils;
 import snap.view.*;
-import snap.viewx.DialogBox;
-import snap.viewx.FilePanel;
-import snap.viewx.RecentFiles;
-import snap.viewx.TextPane;
+import snap.viewx.*;
 import snap.web.WebFile;
 import snap.web.WebURL;
 import snapcharts.model.*;
@@ -97,7 +96,7 @@ public class DocPane extends ViewOwner {
 
         // Remove old SelItem UI
         if (_selItem !=null) {
-            ViewOwner itemUI = _selItem.getItemPane();
+            ViewOwner itemUI = DocItemPane.getItemPane(_selItem);
             _splitView.removeItem(itemUI.getUI());
         }
 
@@ -106,7 +105,7 @@ public class DocPane extends ViewOwner {
 
         // Install new sel item UI
         if (_selItem !=null) {
-            DocItemPane itemPane = _selItem.getItemPane();
+            DocItemPane itemPane = DocItemPane.getItemPane(_selItem);
             itemPane.setDocPane(this);
             itemPane.getUI().setGrowWidth(true);
             _splitView.addItem(itemPane.getUI());
@@ -122,7 +121,7 @@ public class DocPane extends ViewOwner {
     public DocItemPane getSelItemPane()
     {
         DocItem selItem = getSelItem();
-        return selItem.getItemPane();
+        return DocItemPane.getItemPane(selItem);
     }
 
     /**
@@ -483,13 +482,31 @@ public class DocPane extends ViewOwner {
      */
     private void respondToNewAction()
     {
-        DialogBox dbox = new DialogBox("New Document Item");
-        dbox.setMessage("Select new item type:");
-        dbox.setOptions("New Chart", "New Dataset");
-        int resp = dbox.showOptionDialog(getUI(), "New Chart");
+        //DialogBox dbox = new DialogBox("New Document Item");
+        //dbox.setMessage("Select new item type:");
+        //dbox.setOptions("New Chart", "New Dataset");
+        //int resp = dbox.showOptionDialog(getUI(), "New Chart");
 
-        // Handle New Chart
-        if (resp==0) {
+        // Get new FormBuilder and configure
+        FormBuilder form = new FormBuilder();
+        form.setPadding(20, 5, 15, 5);
+        form.addLabel("Select new item type:           ").setFont(new Font("Arial", 24));
+        form.setSpacing(15);
+
+        // Define options, add and configure radio buttons
+        String NEW_CHART = "New Chart";
+        String NEW_DATASET = "New Dataset";
+        String NEW_REPORT = "New Report";
+        String[] options = { NEW_CHART, NEW_DATASET, NEW_REPORT };
+        for (String option : options)
+            form.addRadioButton("ItemType", option, option==options[0]);
+
+        // Run dialog panel (just return if null), select type and extension
+        if (!form.showPanel(getUI(), "New Document Item", DialogBox.infoImage)) return;
+        String selOption = form.getStringValue("ItemType");
+
+        // Handle NEW_CHART
+        if (selOption==NEW_CHART) {
 
             // Create new chart
             Chart chart = new Chart();
@@ -504,8 +521,8 @@ public class DocPane extends ViewOwner {
             setSelItem(newChartItem);
         }
 
-        // Handle Add new DataSet
-        else if (resp==1) {
+        // Handle NEW_DATASET
+        else if (selOption==NEW_DATASET) {
 
             // Create new dataset
             DataSet dset = new DataSet();
@@ -516,10 +533,19 @@ public class DocPane extends ViewOwner {
             DocItem newDataSetItem = selItem.addChartPart(dset, null);
             setSelItem(newDataSetItem);
         }
+
+        // Handle NEW_REPORT
+        else if (selOption==NEW_REPORT) {
+            SGDoc rptDoc = new SGDoc();
+            DocItem rptDocItem = new DocItemReport(rptDoc);
+            Doc doc = getDoc();
+            doc.addItem(rptDocItem);
+            setSelItem(rptDocItem);
+        }
     }
 
     // Constants for images
-    private static Image ICON_PLAIN = Image.get(ViewUtils.class, "PlainFile.png");
+    private static Image ICON_PLAIN = Image.get(DocPane.class, "PlainFile.png");
     private static Image ICON_DIR = Image.get(ViewUtils.class, "DirFile.png");
     private static Image ICON_DATA = Image.get(ViewUtils.class, "TableFile.png");
     private static Image ICON_CHART = Image.get(DocPane.class, "Chart.png");

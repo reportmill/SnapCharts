@@ -1,8 +1,5 @@
 package snapcharts.model;
-
 import snap.util.PropChange;
-import snapcharts.app.ChartPane;
-import snapcharts.app.DocItemPane;
 
 /**
  * A DocItem subclass to hold a chart.
@@ -36,23 +33,17 @@ public class DocItemChart extends DocItem {
     public Chart getChart()  { return _chart; }
 
     /**
+     * Override to return true.
+     */
+    public boolean isParent()  { return true; }
+
+    /**
      * Override to return Chart name.
      */
     @Override
     public String getName()
     {
         return getChart().getName();
-    }
-
-    /**
-     * Creates the ItemPane.
-     */
-    @Override
-    protected DocItemPane createItemPane()
-    {
-        ChartPane pane = new ChartPane();
-        pane.setChart(getChart());
-        return pane;
     }
 
     /**

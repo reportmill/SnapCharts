@@ -2,8 +2,6 @@ package snapcharts.model;
 import snap.gfx.Image;
 import snap.util.*;
 import snap.view.ViewUtils;
-import snapcharts.app.DocItemPane;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +15,6 @@ public abstract class DocItem implements XMLArchiver.Archivable {
 
     // The name
     private String  _name;
-
-    // The ItemPane for item
-    private DocItemPane _itemPane;
 
     // The child items
     private List<DocItem> _items = new ArrayList<>();
@@ -69,23 +64,9 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the item pane.
-     */
-    public DocItemPane getItemPane()
-    {
-        if (_itemPane!=null) return _itemPane;
-        return _itemPane = createItemPane();
-    }
-
-    /**
-     * Creates the ItemPane.
-     */
-    protected abstract DocItemPane createItemPane();
-
-    /**
      * Returns whether this item is a parent.
      */
-    public boolean isParent()  { return true; }
+    public boolean isParent()  { return false; }
 
     /**
      * Returns the parent item.
