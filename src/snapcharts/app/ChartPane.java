@@ -216,7 +216,7 @@ public class ChartPane extends DocItemPane {
 
         // Animate in
         toolsView.setTransX(-100);
-        toolsView.getAnim(700).setTransX(0).play();
+        toolsView.getAnimCleared(700).setTransX(0).play();
         toolsView.getAnim(0).setOnFinish(() -> ((ToggleButton)toolsView.getChildLast()).fire());
     }
 

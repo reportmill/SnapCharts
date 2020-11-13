@@ -536,10 +536,16 @@ public class DocPane extends ViewOwner {
 
         // Handle NEW_REPORT
         else if (selOption==NEW_REPORT) {
+
+            // Get sel index
+            DocItem item = getSelItem();
+            while (item!=null && item!=getDoc() && item.getParent()!=getDoc()) item = item.getParent();
+            int index = item==null || item==getDoc() ? 0 : (item.getIndex() + 1);
+
             SGDoc rptDoc = new SGDoc();
             DocItem rptDocItem = new DocItemReport(rptDoc);
             Doc doc = getDoc();
-            doc.addItem(rptDocItem);
+            doc.addItem(rptDocItem, index);
             setSelItem(rptDocItem);
         }
     }
