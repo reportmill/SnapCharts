@@ -1,4 +1,5 @@
 package snapcharts.app;
+import rmdraw.app.MarkupEditorPane;
 import snap.gfx.ShadowEffect;
 import snap.util.Undoer;
 import snap.view.*;
@@ -16,7 +17,10 @@ import java.util.List;
  * A class to manage charts/data in a ChartBook.
  */
 public class ChartPane extends DocItemPane {
-    
+
+    // A MarkupEditorPane to hold ChartView and allow markup
+    private MarkupEditorPane  _editorPane;
+
     // The chartView
     private ChartView  _chartView;
     
@@ -183,6 +187,40 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Installs EditorPane.
+     */
+    private void installEditorPane()
+    {
+        // Get toolbar
+        RowView toolBar = getView("ToolBar", RowView.class);
+        toolBar.removeChild(getView("EditButton"));
+        toolBar.setClipToBounds(true);
+
+        // Install EditorPane
+        SplitView splitView = (SplitView) _chartBox.getParent();
+        splitView.removeItem(_chartBox);
+        _editorPane = new MarkupEditorPane(_chartView);
+        _editorPane.getEditor().setFill(ChartSetPane.BACK_FILL);
+        _editorPane.getScrollView().setBorder(null);
+        View editPaneUI = _editorPane.getUI();
+        splitView.addItem(editPaneUI, 0);
+
+        // WTF
+        ViewUtils.setFocused(_editorPane.getEditor(), false);
+
+        // Install ToolBar
+        RowView toolsView = _editorPane.getTopToolBar().getToolsView();
+        toolBar.addChild(toolsView, 0);
+        for (View child : toolsView.getChildren())
+            ((ToggleButton)child).setShowArea(false);
+
+        // Animate in
+        toolsView.setTransX(-100);
+        toolsView.getAnim(700).setTransX(0).play();
+        toolsView.getAnim(0).setOnFinish(() -> ((ToggleButton)toolsView.getChildLast()).fire());
+    }
+
+    /**
      * Initialize showing.
      */
     @Override
@@ -249,5 +287,9 @@ public class ChartPane extends DocItemPane {
             DataSet dset = _chartView.getDataSetList().getDataSet(selIndex);
             getSel().setSelChartPart(dset);
         }
+
+        // Handle EditButton
+        if (anEvent.equals("EditButton"))
+            runLater(() -> installEditorPane());
     }
 }
