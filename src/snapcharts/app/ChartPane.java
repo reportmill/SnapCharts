@@ -1,4 +1,5 @@
 package snapcharts.app;
+import rmdraw.app.MarkupEditor;
 import rmdraw.app.MarkupEditorPane;
 import snap.gfx.ShadowEffect;
 import snap.util.Undoer;
@@ -19,7 +20,7 @@ import java.util.List;
 public class ChartPane extends DocItemPane {
 
     // A MarkupEditorPane to hold ChartView and allow markup
-    private MarkupEditorPane  _editorPane;
+    protected MarkupEditorPane  _editorPane;
 
     // The chartView
     private ChartView  _chartView;
@@ -196,20 +197,22 @@ public class ChartPane extends DocItemPane {
         toolBar.removeChild(getView("EditButton"));
         toolBar.setClipToBounds(true);
 
+        // Get EditorPane, Editor
+        _editorPane = new MarkupEditorPane(_chartView);
+        MarkupEditor editor = _editorPane.getEditor();
+        editor.setFill(ChartSetPane.BACK_FILL);
+        _editorPane.getScrollView().setBorder(null);
+
         // Install EditorPane
         SplitView splitView = (SplitView) _chartBox.getParent();
         splitView.removeItem(_chartBox);
-        _editorPane = new MarkupEditorPane(_chartView);
-        _editorPane.getEditor().setFill(ChartSetPane.BACK_FILL);
-        _editorPane.getScrollView().setBorder(null);
-        View editPaneUI = _editorPane.getUI();
-        splitView.addItem(editPaneUI, 0);
+        splitView.addItem(_editorPane.getUI(), 0);
 
         // WTF
-        ViewUtils.setFocused(_editorPane.getEditor(), false);
+        ViewUtils.setFocused(editor, false);
 
         // Install ToolBar
-        RowView toolsView = _editorPane.getTopToolBar().getToolsView();
+        RowView toolsView = _editorPane.getToolsView();
         toolBar.addChild(toolsView, 0);
         for (View child : toolsView.getChildren())
             ((ToggleButton)child).setShowArea(false);
@@ -217,7 +220,23 @@ public class ChartPane extends DocItemPane {
         // Animate in
         toolsView.setTransX(-100);
         toolsView.getAnimCleared(700).setTransX(0).play();
-        toolsView.getAnim(0).setOnFinish(() -> ((ToggleButton)toolsView.getChildLast()).fire());
+        toolsView.getAnim(0).setOnFinish(() -> installEditorPaneAnimDone());
+    }
+
+    private void installEditorPaneAnimDone()
+    {
+        RowView toolsView = _editorPane.getToolsView();
+        ((ToggleButton)toolsView.getChildLast()).fire();
+
+        MarkupEditor editor = _editorPane.getEditor();
+        editor.setNeedsInspector(false);
+        editor.addPropChangeListener(pc -> markupEditorNeedsInspectorChanged(), MarkupEditor.NeedsInspector_Prop);
+        editor.setNeedsInspector(true);
+    }
+
+    private void markupEditorNeedsInspectorChanged()
+    {
+        _insp.setMarkupInspectorVisible(_editorPane.getEditor().isNeedsInspector());
     }
 
     /**

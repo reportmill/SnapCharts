@@ -1,4 +1,5 @@
 package snapcharts.app;
+import rmdraw.app.InspectorPanel;
 import rmdraw.editors.StylerPane;
 import snap.gfx.Color;
 import snap.gfx.Image;
@@ -190,6 +191,23 @@ public class ChartPaneInsp extends ViewOwner {
             _inspScroll.setContent(_stylerPane.getUI());
         else if (anEvent.equals("MiscButton"))
             _inspScroll.setContent(_miscInsp.getUI());
+    }
+
+    /**
+     * Sets the MarkupInspector Visible.
+     */
+    public void setMarkupInspectorVisible(boolean aValue)
+    {
+        InspectorPanel insp = _chartPane._editorPane.getInspectorPanel();
+        ColView colView = getUI(ColView.class);
+
+        if (aValue) {
+            _inspScroll.setContent(insp.getUI());
+        }
+
+        else {
+            _inspScroll.setContent(_inspColView);
+        }
     }
 
     /**
