@@ -1,6 +1,9 @@
 package snapcharts.app;
 import rmdraw.app.MarkupEditor;
 import rmdraw.app.MarkupEditorPane;
+import snap.gfx.Border;
+import snap.gfx.Color;
+import snap.gfx.Effect;
 import snap.gfx.ShadowEffect;
 import snap.util.Undoer;
 import snap.view.*;
@@ -45,6 +48,18 @@ public class ChartPane extends DocItemPane {
 
     // The undoer
     private Undoer  _undoer;
+
+    // Constants
+    public static Border CHART_BORDER = Border.createLineBorder(Color.GRAY, 1);
+    public static Effect CHART_SHADOW = new ShadowEffect(12, Color.DARKGRAY, 0, 0).copySimple();
+
+    /**
+     * Constructor.
+     */
+    public ChartPane()
+    {
+        super();
+    }
 
     /**
      * Returns the ChartView.
@@ -167,7 +182,8 @@ public class ChartPane extends DocItemPane {
 
         // Create ChartView
         _chartView = new ChartView();
-        _chartView.setEffect(new ShadowEffect());
+        _chartView.setBorder(CHART_BORDER);
+        _chartView.setEffect(CHART_SHADOW);
         _chartView.addEventFilter(e -> resetLater(), MouseRelease);
         _chartBox.setContent(_chartView);
 

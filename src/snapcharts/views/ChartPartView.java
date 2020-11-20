@@ -1,4 +1,5 @@
 package snapcharts.views;
+import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Effect;
 import snap.gfx.ShadowEffect;
@@ -96,8 +97,13 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
         // Update basic props
         setFont(chartPart.getFont());
         setFill(chartPart.getFill());
-        setBorder(chartPart.getBorder());
 
+        // Update Border
+        Border border = chartPart.getBorder();
+        if (border!=null)
+            setBorder(border);
+
+        // Update effect
         Effect eff = chartPart.getEffect();
         if (eff!=null)
             setEffect(eff);

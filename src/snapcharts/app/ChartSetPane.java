@@ -44,7 +44,7 @@ public class ChartSetPane extends DocItemPane {
     private Runnable  _resetChartsRun, _resetChartsRunShared = () -> resetChartsImpl();
 
     // Constants
-    public static Color BACK_FILL = new Color(165, 179, 216).brighter();
+    public static Color BACK_FILL = new Color(226, 232, 246);
 
     /**
      * Returns the DocItem that this ChartSetPane displays.

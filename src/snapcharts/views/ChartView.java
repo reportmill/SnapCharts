@@ -1,5 +1,6 @@
 package snapcharts.views;
 import snap.geom.*;
+import snap.gfx.Border;
 import snap.util.DeepChangeListener;
 import snap.util.PropChange;
 import snap.util.PropChangeListener;
@@ -299,6 +300,14 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         DataView dataView = getDataView();
         Point pnt = dataView.getDataPointXYLocal(aDP);
         return dataView.localToParent(pnt.x, pnt.y, this);
+    }
+
+    /**
+     * Override to handle optional rounding radius.
+     */
+    public Shape getBoundsShape()
+    {
+        return new RoundRect(0,0, getWidth(), getHeight(), 8);
     }
 
     /**
