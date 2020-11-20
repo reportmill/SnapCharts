@@ -26,8 +26,8 @@ public class DataViewLine extends DataViewPanZoom {
     public enum Subtype { Line, Area, Scatter };
 
     // Constants for defaults
-    protected static Stroke Stroke2 = new Stroke(2.5, Stroke.Cap.Round, Stroke.Join.Round, 0);
-    protected static Stroke Stroke3 = new Stroke(4, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
+    protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
     /**
