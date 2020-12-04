@@ -1,10 +1,7 @@
 package snapcharts.views;
 import snap.geom.RoundRect;
 import snap.geom.Shape;
-import snap.gfx.Border;
-import snap.gfx.Color;
-import snap.gfx.Effect;
-import snap.gfx.ShadowEffect;
+import snap.gfx.*;
 import snap.view.ColView;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
@@ -19,6 +16,7 @@ public class PageView extends ColView {
     private List<Chart> _charts;
 
     // Constants
+    public static Paint PAGE_FILL = new Color(253, 253, 255);
     public static Border PAGE_BORDER = Border.createLineBorder(Color.GRAY, 1);
     public static Effect PAGE_SHADOW = new ShadowEffect(10, Color.DARKGRAY, 0, 0).copySimple();
 
@@ -30,7 +28,7 @@ public class PageView extends ColView {
         setPadding(36,36,36, 36);
         setSpacing(20);
         setVertical(true);
-        setFill(Color.WHITE);
+        setFill(PAGE_FILL);
         setBorder(PAGE_BORDER);
         setEffect(PAGE_SHADOW);
     }

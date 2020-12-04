@@ -31,6 +31,9 @@ public class ChartPane extends DocItemPane {
     // The ChartBox
     private BoxView  _chartBox;
 
+    // The SplitView
+    private SplitView  _splitView;
+
     // The TabView
     private TabView  _tabView;
     
@@ -154,6 +157,49 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Returns whether DataSetTabs are showing.
+     */
+    public boolean isShowDataSetTabs()
+    {
+        return _tabView.getParent()!=null;
+    }
+
+    /**
+     * Sets whether DataSetTabs are showing.
+     */
+    public void setShowDataSetTabs(boolean aValue)
+    {
+        if (aValue==isShowDataSetTabs()) return;
+        if (aValue)
+            showDataSetTabs();
+        else hideDataSetTabs();
+    }
+
+    /**
+     * Show dataset tabs.
+     */
+    public void showDataSetTabs()
+    {
+        // Add TabView
+        double chartHeight = _chartBox.getPrefHeight();
+        int minTabViewHeight = _dataSetMode ? 400 : 260;
+        double tabViewHeight = Math.max(_splitView.getHeight() - chartHeight, minTabViewHeight);
+        _splitView.addItemWithAnim(_tabView, tabViewHeight);
+
+        // Make TabView the primary grower if DataSetMode
+        _tabView.setGrowHeight(_dataSetMode);
+        _chartBox.setGrowHeight(!_dataSetMode);
+    }
+
+    /**
+     * Hides DataSet tabs.
+     */
+    public void hideDataSetTabs()
+    {
+        _splitView.removeItemWithAnim(_tabView);
+    }
+
+    /**
      * Create UI.
      */
     protected View createUI()
@@ -179,6 +225,7 @@ public class ChartPane extends DocItemPane {
         // Get/set/configure ChartBox
         _chartBox = getView("ChartBox", BoxView.class);
         _chartBox.setFill(ChartSetPane.BACK_FILL);
+        _chartBox.setCropHeight(true);
 
         // Create ChartView
         _chartView = new ChartView();
@@ -187,20 +234,22 @@ public class ChartPane extends DocItemPane {
         _chartView.addEventFilter(e -> resetLater(), MouseRelease);
         _chartBox.setContent(_chartView);
 
-        // Get/set TabView
-        _tabView = getView("TabView", TabView.class);
+        // Get SplitView
+        _splitView = getView("SplitView", SplitView.class);
 
-        // If ChartPane is in DataSetMode, change some things
-        if (_dataSetMode) {
-            _tabView.setPrefHeight(-1);
-            _tabView.setGrowHeight(true);
-            _chartBox.setPrefHeight(400);
-            _chartBox.setGrowHeight(false);
-            _chartBox.setPadding(30, 60, 30, 60);
-        }
+        // Get TabView and remove from SplitView (default mode)
+        _tabView = getView("TabView", TabView.class);
+        _splitView.removeItem(_tabView);
 
         // Create configure ChartPaneSel
         _selHpr = new ChartPaneSel(this);
+
+        // If ChartPane is in DataSetMode, change some things
+        if (_dataSetMode) {
+            //_tabView.setPrefHeight(-1); _tabView.setGrowHeight(true);
+            //_chartBox.setPrefHeight(400); _chartBox.setGrowHeight(false);
+            _chartBox.setPadding(30, 60, 30, 60);
+        }
     }
 
     /**
@@ -267,6 +316,10 @@ public class ChartPane extends DocItemPane {
         for (DataSet dset : dsets) {
             _tabView.addTab(dset.getName(), new Label(dset.getName()));
         }
+
+        // If DataSetMode, showDataSetTabs
+        if (_dataSetMode)
+            runLater(() -> showDataSetTabs());
     }
 
     /**
@@ -290,6 +343,10 @@ public class ChartPane extends DocItemPane {
 
         // Reset inspector
         _insp.resetLater();
+
+        // Update ShowDataSetTabs
+        if (!_dataSetMode)
+            setShowDataSetTabs(getSel().getSelChartPart() instanceof DataSet);
     }
 
     /**

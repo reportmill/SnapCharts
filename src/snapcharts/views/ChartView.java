@@ -55,10 +55,14 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     // The DeepChangeListener
     private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange(pc);
 
-    // Constants
+    // Constants for properties
     public static final String SelDataPoint_Prop = "SelDataPoint";
     public static final String TargPoint_Prop = "TargPoint";
     public static final String TargDataPoint_Prop = "TargDataPoint";
+
+    // Constants
+    private static final int CHART_WIDTH = 640;
+    private static final int CHART_HEIGHT = 480;
 
     /**
      * Creates a ChartView.
@@ -338,7 +342,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        return ColView.getPrefWidth(this, aH);
+        return 640;
     }
 
     /**
@@ -347,7 +351,8 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        return ColView.getPrefHeight(this, aW);
+        // Return proportional height for given width, to retain aspect ratio
+        return aW>0 ? Math.round(aW*CHART_HEIGHT/CHART_WIDTH) : CHART_HEIGHT;
     }
 
     /**
