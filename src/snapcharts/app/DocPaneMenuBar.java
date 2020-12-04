@@ -7,6 +7,7 @@ import snap.view.MenuBar;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snap.view.ViewTheme;
+import snap.viewx.DevPane;
 
 /**
  * Menu bar for Editor pane.
@@ -134,5 +135,9 @@ public class DocPaneMenuBar extends ViewOwner {
             ViewTheme.setThemeForName("Dark");
         if (anEvent.equals("BlackAndWhiteThemeMenuItem"))
             ViewTheme.setThemeForName("BlackAndWhite");
+
+        // Handle DevPaneMenuItem
+        if (anEvent.equals("DevPaneMenuItem"))
+            DevPane.setDevPaneShowing(getUI(), !DevPane.isDevPaneShowing(getUI()));
     }
 }
