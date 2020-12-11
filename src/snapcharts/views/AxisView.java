@@ -270,8 +270,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public double dataToViewX(double dataX)
     {
         double dispX = _dataView.dataToViewX(dataX);
-        double dx = _dataView.getX() - getX();
-        return dispX - dx;
+        //double dx = _dataView.getX() - getX();
+        return dispX; // - dx;
     }
 
     /**
@@ -280,8 +280,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public double dataToViewY(double dataY)
     {
         double dispY = _dataView.dataToViewY(dataY);
-        double dy = _dataView.getY() - getY();
-        return dispY - dy;
+        //double dy = _dataView.getY() - getY();
+        return dispY;// - dy;
     }
 
     /**

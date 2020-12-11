@@ -1,5 +1,6 @@
 package snapcharts.views;
 
+import snap.geom.Pos;
 import snap.geom.Rect;
 import snap.geom.Shape;
 import snap.geom.Transform;
@@ -17,6 +18,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
      * Returns the ChartPart.
      */
     public T getChartPart()  { return (T) getChart().getLegend(); }
+
+    /**
+     * Returns the position of the legend.
+     */
+    public Pos getPosition()  { return Pos.CENTER_RIGHT; }
 
     /**
      * Reloads legend contents.

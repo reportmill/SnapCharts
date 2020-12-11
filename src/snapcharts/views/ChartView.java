@@ -28,9 +28,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     // The Legend
     private LegendView  _legend;
     
-    // The view to hold ChartArea and Legend
-    private RowView  _rowView;
-
     // The ToolTipView
     private ToolTipView  _toolTipView;
 
@@ -42,6 +39,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
     // The targeted data point
     private DataPoint  _targDataPoint;
+
+    // A helper class for layout
+    private ChartViewLayout  _layout = new ChartViewLayout(this);
 
     // The runnable to trigger resetView() before layout/paint
     private Runnable  _resetViewRun;
@@ -73,29 +73,21 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         setChart(new Chart());
 
         // Configure this view
-        setPadding(10,10,10,10);
-        setAlign(Pos.CENTER);
         setGrowWidth(true);
 
         // Create/add ChartTop
         _chartTop = new HeaderView(this);
         addChild(_chartTop);
 
-        // Create RowView
-        _rowView = new RowView();
-        _rowView.setAlign(Pos.CENTER_LEFT);
-        _rowView.setSpacing(8);
-        _rowView.setGrowWidth(true);
-        _rowView.setGrowHeight(true);
-        addChild(_rowView);
+        // Create/configure ChartLegend
+        _legend = new LegendView();
+        addChild(_legend);
 
         // Create/add ChartArea
         _chartArea = new ChartArea(this);
-        _rowView.addChild(_chartArea);
-
-        // Create/configure ChartLegend
-        _legend = new LegendView();
-        _rowView.addChild(_legend);
+        addChild(_chartArea.getAxisX());
+        addChild(_chartArea.getAxisY());
+        addChild(_chartArea);
 
         // Create ToolTipView
         _toolTipView = new ToolTipView(this);
@@ -361,6 +353,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     @Override
     protected void layoutImpl()
     {
-        ColView.layout(this, false);
+        _layout.layoutChart();
     }
 }

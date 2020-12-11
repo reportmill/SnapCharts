@@ -26,16 +26,11 @@ public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
      */
     public ChartArea(ChartView aChartView)
     {
-        setGrowWidth(true);
-        setGrowHeight(true);
-
         _chartView = aChartView;
 
         // Create/add axes
         _axisX = new AxisViewX();
         _axisY = new AxisViewY();
-        addChild(_axisY);
-        addChild(_axisX);
 
         // Create/set DataView
         setDataView(DataView.createDataViewForType(ChartType.LINE));
@@ -70,7 +65,7 @@ public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
 
         // Set/add new
         _dataView = aDataView;
-        addChild(_dataView, 1);
+        addChild(_dataView);
 
         // Update Axes
         _dataView.setChartArea(this);
@@ -124,46 +119,12 @@ public class ChartArea<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
-     * Calculates the preferred width.
-     */
-    protected double getPrefWidthImpl(double aH)
-    {
-        double prefW = _dataView.getPrefWidth();
-        if (_axisY.isVisible())
-            prefW += _axisY.getPrefWidth();
-        return prefW;
-    }
-
-    /**
-     * Calculates the preferred height.
-     */
-    protected double getPrefHeightImpl(double aW)
-    {
-        double prefH = _dataView.getPrefHeight();
-        if (_axisX.isVisible())
-            prefH += _axisX.getPrefHeight();
-        return prefH;
-    }
-
-    /**
      * Actual method to layout children.
      */
     protected void layoutImpl()
     {
-        // Set DataView height first, since height can effect yaxis label width
-        double viewW = getWidth() - 10;
+        double viewW = getWidth();
         double viewH = getHeight();
-        double axisH = _axisX.isVisible() ? _axisX.getPrefHeight() : 0;
-        _dataView.setHeight(viewH - axisH);
-
-        // Now set bounds of DataView
-        double axisW = _axisY.isVisible() ? _axisY.getPrefWidth(viewH - axisH) : 0;
-        double dataW = viewW - axisW;
-        double dataH = viewH - axisH;
-        _dataView.setBounds(axisW,0, dataW, dataH);
-
-        // Set bounds of AxisX, AxisY
-        _axisX.setBounds(axisW, dataH, dataW, axisH);
-        _axisY.setBounds(0,0, axisW, dataH);
+        _dataView.setSize(viewW, viewH);
     }
 }
