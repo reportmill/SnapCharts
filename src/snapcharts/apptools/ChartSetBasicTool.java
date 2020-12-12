@@ -55,10 +55,22 @@ public class ChartSetBasicTool extends ViewOwner {
         if(anEvent.equals("LandscapeButton")) docItem.setPortrait(false);
 
         // Handle OneUpButton, TwoUpButton, ThreeUpButton, FourUpButton
-        if (anEvent.equals("OneUpButton")) docItem.setItemsPerPage(1);
-        if (anEvent.equals("TwoUpButton")) docItem.setItemsPerPage(2);
-        if (anEvent.equals("ThreeUpButton")) docItem.setItemsPerPage(3);
-        if (anEvent.equals("FourUpButton")) docItem.setItemsPerPage(4);
+        if (anEvent.equals("OneUpButton")) {
+            docItem.setItemsPerPage(1);
+            docItem.setPortrait(false);
+        }
+        if (anEvent.equals("TwoUpButton")) {
+            docItem.setItemsPerPage(2);
+            docItem.setPortrait(true);
+        }
+        if (anEvent.equals("ThreeUpButton")) {
+            docItem.setItemsPerPage(3);
+            docItem.setPortrait(true);
+        }
+        if (anEvent.equals("FourUpButton")) {
+            docItem.setItemsPerPage(4);
+            docItem.setPortrait(false);
+        }
 
     }
 }

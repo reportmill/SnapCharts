@@ -158,7 +158,7 @@ public class ChartSetPane extends DocItemPane {
         int plotsPerPage = docItem.getItemsPerPage();
 
         // Get the current page
-        PageView pageView = new PageView();
+        PageView pageView = new PageView(plotsPerPage);
         pageView.setVertical(docItem.isPortrait());
         _pageViews.add(pageView);
 
@@ -172,7 +172,7 @@ public class ChartSetPane extends DocItemPane {
 
             // Create/add PageView if needed
             if (pageView==null) {
-                pageView = new PageView();
+                pageView = new PageView(plotsPerPage);
                 pageView.setVertical(docItem.isPortrait());
                 _pageViews.add(pageView);
             }
