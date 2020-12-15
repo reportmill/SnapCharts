@@ -12,8 +12,8 @@ import snapcharts.model.ChartArchiver;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
-import snapcharts.views.DataView;
-import snapcharts.views.DataViewPanZoom;
+import snapcharts.views.DataArea;
+import snapcharts.views.DataAreaPanZoom;
 
 import java.util.List;
 
@@ -73,12 +73,12 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
-     * Returns the DataView for class.
+     * Returns the DataArea for class.
      */
-    public <T extends DataView> T getDataView(Class<T> aClass)
+    public <T extends DataArea> T getDataArea(Class<T> aClass)
     {
-        DataView dataView = getChartView().getDataView();
-        return aClass==null || aClass.isInstance(dataView) ? (T)dataView : null;
+        DataArea dataArea = getChartView().getDataArea();
+        return aClass==null || aClass.isInstance(dataArea) ? (T) dataArea : null;
     }
 
     /**
@@ -329,7 +329,7 @@ public class ChartPane extends DocItemPane {
     protected void resetUI()
     {
         // Update ZoomSelectButton
-        DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+        DataAreaPanZoom dataView = getDataArea(DataAreaPanZoom.class); if (dataView==null) return;
         setViewValue("ZoomSelectButton", dataView!=null && dataView.isZoomSelectMode());
 
         // Make sure TabView has DataSetPane UI view (not Label placeholder)
@@ -356,20 +356,20 @@ public class ChartPane extends DocItemPane {
     {
         // Handle ZoomSelectButton
         if (anEvent.equals("ZoomSelectButton")) {
-            DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+            DataAreaPanZoom dataView = getDataArea(DataAreaPanZoom.class); if (dataView==null) return;
             dataView.setZoomSelectMode(anEvent.getBoolValue());
         }
 
         // Handle ZoomInButton, ZoomOutButton
         if (anEvent.equals("ZoomInButton") || anEvent.equals("ZoomOutButton")) {
-            DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+            DataAreaPanZoom dataView = getDataArea(DataAreaPanZoom.class); if (dataView==null) return;
             double scale = anEvent.equals("ZoomInButton") ? .5 : 2;
             dataView.scaleAxesMinMaxForFactor(scale, true);
         }
 
         // Handle ResetButton
         if (anEvent.equals("ResetButton")) {
-            DataViewPanZoom dataView = getDataView(DataViewPanZoom.class); if (dataView==null) return;
+            DataAreaPanZoom dataView = getDataArea(DataAreaPanZoom.class); if (dataView==null) return;
             dataView.resetAxesAnimated();
         }
 

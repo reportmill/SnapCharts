@@ -9,9 +9,9 @@ import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 
 /**
- * A ChartArea subclass to display the contents of line chart.
+ * A DataArea subclass to display the contents of line chart.
  */
-public class DataViewLine extends DataViewPanZoom {
+public class DataAreaLine extends DataAreaPanZoom {
 
     // The subtype
     private Subtype  _subType = Subtype.Line;
@@ -31,9 +31,9 @@ public class DataViewLine extends DataViewPanZoom {
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
     /**
-     * Creates a ChartAreaLine.
+     * Constructor.
      */
-    public DataViewLine(Subtype aSubType)
+    public DataAreaLine(Subtype aSubType)
     {
         _subType = aSubType;
     }

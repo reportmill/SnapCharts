@@ -78,12 +78,12 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     }
 
     /**
-     * Returns the ChartArea.
+     * Returns the DataView.
      */
-    public ChartArea getChartArea()
+    public DataView getDataView()
     {
         ChartView chartView = getChartView();
-        return chartView.getChartArea();
+        return chartView.getDataView();
     }
 
     /**

@@ -7,9 +7,9 @@ import snap.gfx.*;
 import snapcharts.model.*;
 
 /**
- * A ChartArea subclass to display the contents of bar chart.
+ * A DataArea subclass to display the contents of bar chart.
  */
-public class DataViewBar extends DataView {
+public class DataAreaBar extends DataArea {
 
     // The Area
     private AreaBar  _area;
@@ -24,9 +24,9 @@ public class DataViewBar extends DataView {
     private Section  _sections[];
 
     /**
-     * Creates a ChartAreaBar.
+     * Constructor.
      */
-    public DataViewBar()
+    public DataAreaBar()
     {
         setPadding(5,0,0,0); // Add top so top axis line isn't on edge
     }
@@ -62,7 +62,7 @@ public class DataViewBar extends DataView {
         int pointCount = dsetList.getPointCount();
         if (_sections!=null && _sections.length==pointCount && _dsetCount ==dsetCount) return _sections;
 
-        // Get ChartAreaBar info
+        // Get DataAreaBar info
         AreaBar barArea = getArea();
         double groupPad = barArea.getGroupPadding();
         double barPad = barArea.getBarPadding();

@@ -1,6 +1,5 @@
 package snapcharts.views;
 import snap.geom.*;
-import snap.gfx.Border;
 import snap.util.DeepChangeListener;
 import snap.util.PropChange;
 import snap.util.PropChangeListener;
@@ -23,7 +22,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     private HeaderView _chartTop;
 
     // The view to manage essential chart parts: DataView and AxisViews
-    private ChartArea  _chartArea;
+    private DataView _dataView;
 
     // The Legend
     private LegendView  _legend;
@@ -83,11 +82,11 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         _legend = new LegendView();
         addChild(_legend);
 
-        // Create/add ChartArea
-        _chartArea = new ChartArea(this);
-        addChild(_chartArea.getAxisX());
-        addChild(_chartArea.getAxisY());
-        addChild(_chartArea);
+        // Create/add DataView
+        _dataView = new DataView(this);
+        addChild(_dataView.getAxisX());
+        addChild(_dataView.getAxisY());
+        addChild(_dataView);
 
         // Create ToolTipView
         _toolTipView = new ToolTipView(this);
@@ -149,24 +148,24 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public HeaderView getHeader()  { return _chartTop; }
 
     /**
-     * Returns the ChartArea.
+     * Returns the DataView.
      */
-    public ChartArea getChartArea()  { return _chartArea; }
+    public DataView getDataView()  { return _dataView; }
 
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _chartArea.getAxisX(); }
+    public AxisViewX getAxisX()  { return _dataView.getAxisX(); }
 
     /**
      * Returns the Y Axis View.
      */
-    public AxisViewY getAxisY()  { return _chartArea.getAxisY(); }
+    public AxisViewY getAxisY()  { return _dataView.getAxisY(); }
 
     /**
      * Returns the DataView.
      */
-    public DataView getDataView()  { return _chartArea.getDataView(); }
+    public DataArea getDataArea()  { return _dataView.getDataArea(); }
 
     /**
      * Returns the Legend.
@@ -184,8 +183,8 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // Reset ChartTop
         _chartTop.resetView();
 
-        // Reset ChartArea
-        _chartArea.resetView();
+        // Reset DataView
+        _dataView.resetView();
 
         // Reset Legend
         _legend.resetView();
@@ -253,7 +252,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     {
         if (getTargDataPoint()==null)
             return false;
-        if (getDataView() instanceof DataViewPanZoom && ((DataViewPanZoom)getDataView()).isZoomSelectMode())
+        if (getDataArea() instanceof DataAreaPanZoom && ((DataAreaPanZoom)getDataArea()).isZoomSelectMode())
             return false;
         return true;
     }
@@ -283,9 +282,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public DataPoint getDataPointForXY(double aX, double aY)
     {
-        DataView dataView = getDataView();
-        Point pnt = dataView.parentToLocal(aX, aY, this);
-        return dataView.getDataPointForXY(pnt.x, pnt.y);
+        DataArea dataArea = getDataArea();
+        Point pnt = dataArea.parentToLocal(aX, aY, this);
+        return dataArea.getDataPointForXY(pnt.x, pnt.y);
     }
 
     /**
@@ -293,9 +292,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public Point getDataPointXYLocal(DataPoint aDP)
     {
-        DataView dataView = getDataView();
-        Point pnt = dataView.getDataPointXYLocal(aDP);
-        return dataView.localToParent(pnt.x, pnt.y, this);
+        DataArea dataArea = getDataArea();
+        Point pnt = dataArea.getDataPointXYLocal(aDP);
+        return dataArea.localToParent(pnt.x, pnt.y, this);
     }
 
     /**
@@ -324,7 +323,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // If DataSet change, clear caches
         Object src = aPC.getSource();
         if (src instanceof DataSet || src instanceof DataSetList) {
-            getDataView().clearCache();
+            getDataArea().clearCache();
         }
     }
 

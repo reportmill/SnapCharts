@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // The DataView
-    protected DataView  _dataView;
+    protected DataArea _dataView;
 
     // The Title view
     protected StringView  _titleView;
@@ -29,7 +29,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     private Intervals  _intervals;
 
     // The grid line color
-    protected Color  _gridLineColor = DataView.GRID_LINES_COLOR;
+    protected Color  _gridLineColor = DataArea.GRID_LINES_COLOR;
 
     // The grid line
     protected double  _gridLineDashArray[];

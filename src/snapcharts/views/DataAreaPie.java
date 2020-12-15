@@ -4,13 +4,12 @@ import java.text.DecimalFormat;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.*;
-import snap.view.ViewEvent;
 import snapcharts.model.*;
 
 /**
- * A ChartArea subclass to display the contents of pie chart.
+ * A DataArea subclass to display the contents of pie chart.
  */
-public class DataViewPie extends DataView {
+public class DataAreaPie extends DataArea {
     
     // The cached wedges
     private Wedge  _wedges[];
@@ -44,9 +43,9 @@ public class DataViewPie extends DataView {
     private static double PAD_TOP = 30, PAD_BOTTOM = 20, PAD_BOTTOM_MAX = 40;
 
     /**
-     * Creates a ChartAreaPie.
+     * Constructor.
      */
-    public DataViewPie()
+    public DataAreaPie()
     {
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
         setFont(Font.Arial12.getBold());
@@ -58,11 +57,11 @@ public class DataViewPie extends DataView {
     public ChartType getChartType()  { return ChartType.PIE; }
 
     /**
-     * Sets the ChartArea.
+     * Sets the DataView.
      */
-    protected void setChartArea(ChartArea aChartArea)
+    protected void setDataView(DataView aDataView)
     {
-        super.setChartArea(aChartArea);
+        super.setDataView(aDataView);
         _chartView.addPropChangeListener(pc -> selDataPointChanged(pc), ChartView.SelDataPoint_Prop);
     }
 

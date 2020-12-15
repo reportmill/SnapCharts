@@ -26,7 +26,7 @@ public class ChartViewLayout {
     private ViewProxy<LegendView>  _legendProxy;
 
     // The DataArea proxy
-    private ViewProxy<ChartArea>  _dataAreaProxy;
+    private ViewProxy<DataView>  _dataAreaProxy;
 
     // The current inset for DataArea
     protected Insets _dataAreaInsets = new Insets(0, 0, 0, 0);
@@ -63,7 +63,7 @@ public class ChartViewLayout {
         _chartProxy.setChildren(ViewProxy.getProxies(_chartView.getChildren()));
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
-        _dataAreaProxy = _chartProxy.getChildForClass(ChartArea.class);
+        _dataAreaProxy = _chartProxy.getChildForClass(DataView.class);
     }
 
     /**

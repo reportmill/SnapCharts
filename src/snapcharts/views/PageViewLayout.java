@@ -44,7 +44,7 @@ public class PageViewLayout {
 
         // Set DataViews children in ChartView proxies
         for (ViewProxy<ChartView> chartProxy : _chartProxies) {
-            ChartArea dataView = chartProxy.getView().getChildForClass(ChartArea.class);
+            DataView dataView = chartProxy.getView().getChildForClass(DataView.class);
             ViewProxy dataViewProxy = ViewProxy.getProxy(dataView);
             dataViewProxy.setBounds(dataView.getX(), dataView.getY(), dataView.getWidth(), dataView.getHeight());
             chartProxy.setChildren(new ViewProxy[] { dataViewProxy });
@@ -330,8 +330,8 @@ public class PageViewLayout {
     // Conveniences for chart
     private Rect getDataAreaBounds(ViewProxy<ChartView> aChartProxy)
     {
-        ViewProxy<ChartArea> chartAreaProxy = aChartProxy.getChildForClass(ChartArea.class);
-        return chartAreaProxy;
+        ViewProxy<DataView> dataViewProxy = aChartProxy.getChildForClass(DataView.class);
+        return dataViewProxy;
     }
     private Rect getPrefDataAreaBounds(ViewProxy<ChartView> aChartProxy)
     {

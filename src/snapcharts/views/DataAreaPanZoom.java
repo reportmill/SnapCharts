@@ -7,9 +7,9 @@ import snap.gfx.Stroke;
 import snap.view.ViewEvent;
 
 /**
- * A DataView subclass that can pan zoom with mouse.
+ * A DataArea subclass that can pan zoom with mouse.
  */
-public abstract class DataViewPanZoom extends DataView {
+public abstract class DataAreaPanZoom extends DataArea {
 
     // Whether view is in zoom select mode
     private boolean  _zoomSelectMode;
@@ -32,7 +32,7 @@ public abstract class DataViewPanZoom extends DataView {
     /**
      * Constructor.
      */
-    public DataViewPanZoom()
+    public DataAreaPanZoom()
     {
         super();
         enableEvents(MousePress, MouseDrag, MouseRelease, Scroll);

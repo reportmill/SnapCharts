@@ -8,9 +8,9 @@ import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 
 /**
- * A ChartArea subclass to display the contents of bar chart.
+ * A DataArea subclass to display the contents of bar chart.
  */
-public class DataViewBar3D extends DataViewBar {
+public class DataAreaBar3D extends DataAreaBar {
     
     // The Camera
     protected CameraView _camView;
@@ -34,9 +34,9 @@ public class DataViewBar3D extends DataViewBar {
     private Path  _gridWithoutSep = new Path();
     
     /**
-     * Creates a ChartAreaBar.
+     * Constructor.
      */
-    public DataViewBar3D()
+    public DataAreaBar3D()
     {
         _camView = new CameraView() {
             protected void layoutImpl() { rebuildScene(); }
