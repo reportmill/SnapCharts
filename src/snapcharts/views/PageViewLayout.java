@@ -124,6 +124,9 @@ public class PageViewLayout {
 
         // Calculate unified data area height
         double pageAreaH = _pageProxy.getHeight() - _pageProxy.getInsetsAll().getHeight();
+        int realRowCount = getChartCount() / getColCount() + (getChartCount() % getColCount() != 0 ? 1 : 0);
+        if (realRowCount!=getRowCount())
+            pageAreaH = (int) Math.round(pageAreaH * realRowCount / rowCount);
         double totalDataAreaH = pageAreaH - totalMarginRowsH;
         int dataAreaH = (int) (totalDataAreaH / rowCount);
 

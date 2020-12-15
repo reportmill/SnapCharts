@@ -39,6 +39,8 @@ public class ChartSetBasicTool extends ViewOwner {
         setViewValue("TwoUpButton", docItem.getItemsPerPage()==2);
         setViewValue("ThreeUpButton", docItem.getItemsPerPage()==3);
         setViewValue("FourUpButton", docItem.getItemsPerPage()==4);
+        setViewValue("SixUpButton", docItem.getItemsPerPage()==6);
+        setViewValue("NineUpButton", docItem.getItemsPerPage()==9);
     }
 
     /**
@@ -69,6 +71,14 @@ public class ChartSetBasicTool extends ViewOwner {
         }
         if (anEvent.equals("FourUpButton")) {
             docItem.setItemsPerPage(4);
+            docItem.setPortrait(false);
+        }
+        if (anEvent.equals("SixUpButton")) {
+            docItem.setItemsPerPage(6);
+            docItem.setPortrait(true);
+        }
+        if (anEvent.equals("NineUpButton")) {
+            docItem.setItemsPerPage(9);
             docItem.setPortrait(false);
         }
 

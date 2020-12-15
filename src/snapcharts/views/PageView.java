@@ -41,6 +41,7 @@ public class PageView extends ParentView {
         setPadding(36,36,36, 36);
         setSpacing(20);
         setVertical(true);
+        setPrefSize(612, 792);
         setFill(PAGE_FILL);
         setBorder(PAGE_BORDER);
         setEffect(PAGE_SHADOW);
@@ -58,6 +59,8 @@ public class PageView extends ParentView {
             case 2: _rowCount = 2; _colCount = 1; break;
             case 3: _rowCount = 3; _colCount = 1; break;
             case 4: _rowCount = 2; _colCount = 2; break;
+            case 6: _rowCount = 3; _colCount = 2; break;
+            case 9: _rowCount = 3; _colCount = 3; break;
             default: throw new RuntimeException("PageView.init: Unsupported plot count");
         }
 
@@ -117,7 +120,13 @@ public class PageView extends ParentView {
     @Override
     public void setVertical(boolean aValue)
     {
+        if (aValue==isVertical()) return;
         super.setVertical(aValue);
+
+        // Swap row/col count
+        int rows = getRowCount();
+        _rowCount = getColCount();
+        _colCount = rows;
 
         if (aValue)
             setPrefSize(612, 792);
