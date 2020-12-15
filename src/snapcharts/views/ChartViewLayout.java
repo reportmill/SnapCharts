@@ -14,7 +14,7 @@ public class ChartViewLayout {
     private ChartView  _chartView;
 
     // The preferred DataArea bounds (optional)
-    private Rect  _prefDataAreaBounds;
+    protected Rect  _prefDataAreaBounds;
 
     // The layout proxy
     private ViewProxy<ChartView>  _chartProxy;
@@ -34,7 +34,7 @@ public class ChartViewLayout {
     // The resulting DataArea bounds
     protected Rect  _dataAreaBounds;
 
-    // The maximum size that a side can be as ratio of plot size ( 30% )
+    // The maximum size that a side can be as ratio of chart size ( 30% )
     private final double MAX_SIDE_RATIO = .3;
 
     // The default side padding size

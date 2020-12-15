@@ -61,8 +61,8 @@ public class PageView extends ParentView {
             default: throw new RuntimeException("PageView.init: Unsupported plot count");
         }
 
-        int shadowRad = aPlotCount >=4 ? 6 : aPlotCount >= 3 ? 8 : aPlotCount >= 2 ? 10 : 12;
-        _chartShadow = new ShadowEffect(shadowRad, Color.DARKGRAY, 0, 0).copySimple();
+        //int shadowRad = aPlotCount >=4 ? 6 : aPlotCount >= 3 ? 8 : aPlotCount >= 2 ? 10 : 12;
+        //_chartShadow = new ShadowEffect(shadowRad, Color.DARKGRAY, 0, 0).copySimple();
     }
 
     /**
@@ -98,8 +98,8 @@ public class PageView extends ParentView {
         ChartView chartView = new ChartView();
         chartView.setGrowWidth(true);
         chartView.setGrowHeight(true);
-        chartView.setBorder(ChartPane.CHART_BORDER);
-        chartView.setEffect(_chartShadow);
+        //chartView.setBorder(ChartPane.CHART_BORDER);
+        //chartView.setEffect(_chartShadow);
         chartView.setChart(aChart);
         addChild(chartView);
         _chartViews.add(chartView);

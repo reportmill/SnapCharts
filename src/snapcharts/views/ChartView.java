@@ -41,7 +41,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     private DataPoint  _targDataPoint;
 
     // A helper class for layout
-    private ChartViewLayout  _layout = new ChartViewLayout(this);
+    protected ChartViewLayout  _layout = new ChartViewLayout(this);
 
     // The runnable to trigger resetView() before layout/paint
     private Runnable  _resetViewRun;
