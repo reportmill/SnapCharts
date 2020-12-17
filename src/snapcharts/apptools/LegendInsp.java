@@ -1,8 +1,9 @@
 package snapcharts.apptools;
 
+import snap.geom.Pos;
+import snap.util.StringUtils;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Legend;
 
@@ -41,6 +42,11 @@ public class LegendInsp extends ChartPartInsp {
 
         // Reset ShowLegendCheckBox
         setViewValue("ShowLegendCheckBox", legend.isShowLegend());
+
+        // Reset AlignX buttons
+        Pos align = legend.getPosition();
+        setViewValue("Align" + align.ordinal(), true);
+
     }
 
     /**
@@ -51,7 +57,15 @@ public class LegendInsp extends ChartPartInsp {
         // Get Legend
         Legend legend = getChart().getLegend();
 
-        // Handle ShowLegendCheckBox
-        if(anEvent.equals("ShowLegendCheckBox")) legend.setShowLegend(anEvent.getBoolValue());
+        // If user hits anything, turn on legend (was Handle ShowLegendCheckBox)
+        legend.setShowLegend(anEvent.getBoolValue()); // if(anEvent.equals("ShowLegendCheckBox"))
+
+        // Handle AlignX
+        String name = anEvent.getName();
+        if (name.startsWith("Align")) {
+            int val = StringUtils.intValue(name);
+            Pos pos = Pos.values()[val];
+            legend.setPosition(pos);
+        }
     }
 }

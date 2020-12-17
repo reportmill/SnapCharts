@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <RowView Padding="4" Spacing="4">
+  <RowView Padding="4" Spacing="4" Align="CENTER">
     <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label text="Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" GrowWidth="true" Spacing="4">
+    <Label text="Position:" />
+    <ColView Margin="5">
+      <font name="Arial" size="10" />
+      <RowView GrowWidth="true">
+        <ToggleButton Name="Align0" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8598;" Position="TOP_LEFT" Group="tga" />
+        <ToggleButton Name="Align1" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8593;" Position="CENTER" Group="tga" />
+        <ToggleButton Name="Align2" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8599;" Position="TOP_RIGHT" Group="tga" />
+      </RowView>
+      <RowView GrowWidth="true">
+        <ToggleButton Name="Align3" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8592;" Position="CENTER" Group="tga" />
+        <ToggleButton Name="Align4" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8596;" Position="CENTER" Group="tga" />
+        <ToggleButton Name="Align5" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8594;" Position="CENTER" Group="tga" />
+      </RowView>
+      <RowView GrowWidth="true">
+        <ToggleButton Name="Align6" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8601;" Position="BOTTOM_LEFT" Group="tga" />
+        <ToggleButton Name="Align7" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8595;" Position="CENTER" Group="tga" />
+        <ToggleButton Name="Align8" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8600;" Position="BOTTOM_RIGHT" Group="tga" />
+      </RowView>
+    </ColView>
   </RowView>
 </ColView>

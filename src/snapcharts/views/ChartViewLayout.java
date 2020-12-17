@@ -74,14 +74,17 @@ public class ChartViewLayout {
         init();
 
         // Layout parts
-        layoutSideTop();
-        layoutSideBottom();
-        layoutSideLeft();
-        layoutSideRight();
+        layoutTopSide();
+        layoutBottomSide();
+        layoutLeftSide();
+        layoutRightSide();
 
-        // Set DataAreaBounds
-        _dataAreaBounds = _chartProxy.getBounds().clone();
-        _dataAreaBounds.inset(_dataAreaInsets);
+        // Set DataAreaBounds (either from PrefDataAreaBounds or from resulting layout insets)
+        _dataAreaBounds = _prefDataAreaBounds;
+        if (_dataAreaBounds==null) {
+            _dataAreaBounds = _chartProxy.getBounds().clone();
+            _dataAreaBounds.inset(_dataAreaInsets);
+        }
 
         // Set DataArea.Bounds
         _dataAreaProxy.setBounds(_dataAreaBounds);
@@ -100,12 +103,15 @@ public class ChartViewLayout {
 
         // Copy back to views
         _chartProxy.setBoundsInClient();
+
+        // Clear PrefDataAreaBounds
+        _prefDataAreaBounds = null;
     }
 
     /**
      * Layout of top views: Header, legend (if top), top axis (if polar?).
      */
-    protected void layoutSideTop()
+    protected void layoutTopSide()
     {
         // Get views and bounds above DataArea
         ViewProxy<?>[] sideViews = getViewsForSide(Side.TOP);
@@ -113,61 +119,68 @@ public class ChartViewLayout {
 
         // Create temp proxy for layout
         ViewProxy<?> sideProxy = new ViewProxy<>(_chartView);
-        sideProxy.setSize(sideBounds.width, sideBounds.height);
         sideProxy.setAlign(Pos.TOP_CENTER);
         sideProxy.setChildren(sideViews);
-        sideProxy.setInsets(new Insets(SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
         sideProxy.setSpacing(VIEW_SPACING);
+
+        // Set SideProxy.Insets, with special accommodation for AxisViewX (no inset)
+        ViewProxy<?> sideViewN = sideViews.length > 0 ? sideViews[sideViews.length-1] : null;
+        double insBottom = sideViewN!=null && sideViewN.getView() instanceof AxisView ? 0 : SIDE_MARGIN;
+        sideProxy.setInsets(new Insets(SIDE_MARGIN, SIDE_MARGIN, insBottom, SIDE_MARGIN));
+
+        // Get SideProxy.PrefHeight and configure SideProxy size
+        double prefHeight = ColView.getPrefHeightProxy(sideProxy, sideBounds.getWidth());
+        double sideHeight = Math.min(prefHeight, sideBounds.width);
+        sideProxy.setSize(sideBounds.width, sideHeight);
 
         // Layout ColView
         ColView.layoutProxy(sideProxy, true);
 
         // Update insets
-        ViewProxy<?> sideViewN = sideViews[sideViews.length-1];
-        double maxY = sideViewN.getMaxY() + VIEW_SPACING;
-        _dataAreaInsets.top = maxY - _chartProxy.getY();
+        _dataAreaInsets.top = sideHeight;
     }
 
     /**
      * Layout of bottom views: X Axis, legend (if bottom).
      */
-    protected void layoutSideBottom()
+    protected void layoutBottomSide()
     {
         // Get views and bounds below DataArea
         ViewProxy<?>[] sideViews = getViewsForSide(Side.BOTTOM);
         Rect sideBounds = getBoundsForSide(Side.BOTTOM);
-        ViewProxy sideView0 = sideViews.length > 0 ? sideViews[0] : null;
-        double sideView0Margin = sideView0!=null && sideView0.getView() instanceof AxisViewX ? 0 : SIDE_MARGIN;
-
-        // Make SideView0 shift down if needed
-        if (sideView0!=null)
-            sideView0.getView().setLeanY(VPos.BOTTOM);
 
         // Create temp proxy for layout
         ViewProxy<?> sideProxy = new ViewProxy<>(_chartView);
-        sideProxy.setSize(sideBounds.width, sideBounds.height);
         sideProxy.setAlign(Pos.BOTTOM_CENTER);
         sideProxy.setChildren(sideViews);
-        sideProxy.setInsets(new Insets(sideView0Margin, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
         sideProxy.setSpacing(VIEW_SPACING);
+
+        // Set SideProxy.Insets, with special accommodation for AxisViewX (no inset)
+        ViewProxy sideView0 = sideViews.length > 0 ? sideViews[0] : null;
+        double insTop = sideView0!=null && sideView0.getView() instanceof AxisViewX ? 0 : SIDE_MARGIN;
+        sideProxy.setInsets(new Insets(insTop, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
+
+        // Get SideProxy.PrefHeight and configure SideProxy size
+        double prefHeight = ColView.getPrefHeightProxy(sideProxy, sideBounds.getWidth());
+        double sideHeight = Math.min(prefHeight, sideBounds.width);
+        sideProxy.setSize(sideBounds.width, sideHeight);
 
         // Layout ColView
         ColView.layoutProxy(sideProxy, true);
 
         // Shift views to sideBounds origin y
+        double sideY = _chartProxy.getHeight() - Math.max(sideHeight, RIGHT_MARGIN_MIN);
         for (ViewProxy proxy : sideViews)
-            proxy.setY(proxy.getY() + sideBounds.y);
+            proxy.setY(proxy.getY() + sideY);
 
         // Update insets
-        double sideView0Y = sideView0!=null ? sideView0.getY() : 0;
-        if (sideView0!=null && !(sideView0.getView() instanceof AxisView)) sideView0Y -= VIEW_SPACING;
-        _dataAreaInsets.bottom = _chartProxy.getMaxY() - sideView0Y;
+        _dataAreaInsets.bottom = _chartProxy.getHeight() - sideY;
     }
 
     /**
      * Layout of left views: Legend (if left), Y/Y3 axis (when available).
      */
-    protected void layoutSideLeft()
+    protected void layoutLeftSide()
     {
         // Get views and bounds above DataArea
         ViewProxy<?>[] sideViews = getViewsForSide(Side.LEFT);
@@ -175,25 +188,38 @@ public class ChartViewLayout {
 
         // Create temp proxy for layout
         ViewProxy<?> sideProxy = new ViewProxy<>(_chartView);
-        sideProxy.setSize(sideBounds.width, sideBounds.height);
-        sideProxy.setAlign(Pos.CENTER_LEFT);
+        sideProxy.setAlign(Pos.CENTER_RIGHT);
         sideProxy.setChildren(sideViews);
-        sideProxy.setInsets(new Insets(SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
         sideProxy.setSpacing(VIEW_SPACING);
+
+        // Set SideProxy.Insets, with special accommodation for AxisViewY (no inset)
+        ViewProxy<?> sideViewN = sideViews.length > 0 ? sideViews[sideViews.length-1] : null;
+        double insRight = sideViewN!=null && sideViewN.getView() instanceof AxisView ? 0 : SIDE_MARGIN;
+        sideProxy.setInsets(new Insets(_dataAreaInsets.top, insRight, _dataAreaInsets.bottom, SIDE_MARGIN));
+
+        // Get SideProxy.PrefWidth and configure SideProxy size
+        double prefWidth = RowView.getPrefWidthProxy(sideProxy, -1);
+        double sideWidth = Math.min(prefWidth, sideBounds.width);
+        sideProxy.setSize(sideWidth, sideBounds.height);
 
         // Layout RowView
         RowView.layoutProxy(sideProxy, true);
 
+        // If PrefDataAreaBounds set and left side bounds needed was less than available, slide over
+        if (_prefDataAreaBounds!=null && sideWidth < sideBounds.width) {
+            double shift = sideBounds.width - sideWidth;
+            for (ViewProxy proxy : sideViews)
+                proxy.setX(proxy.getX() + shift);
+        }
+
         // Update insets
-        ViewProxy<?> topViewN = sideViews.length > 0 ? sideViews[sideViews.length-1] : null;
-        double maxX = topViewN.getMaxX() + VIEW_SPACING;
-        _dataAreaInsets.left = maxX - _chartProxy.getX();
+        _dataAreaInsets.left = sideWidth;
     }
 
     /**
      * Layout of right views: Y2/Y4 axis (when available), Legend (if right side).
      */
-    protected void layoutSideRight()
+    protected void layoutRightSide()
     {
         // Get views and bounds above DataArea
         ViewProxy<?>[] sideViews = getViewsForSide(Side.RIGHT);
@@ -201,23 +227,29 @@ public class ChartViewLayout {
 
         // Create temp proxy for layout
         ViewProxy<?> sideProxy = new ViewProxy<>(_chartView);
-        sideProxy.setSize(sideBounds.width, sideBounds.height);
         sideProxy.setAlign(Pos.CENTER_RIGHT);
         sideProxy.setChildren(sideViews);
-        sideProxy.setInsets(new Insets(SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
         sideProxy.setSpacing(VIEW_SPACING);
+
+        // Set SideProxy.Insets, with special accommodation for AxisViewY (no inset)
+        double insLeft = sideViews.length>0 && (sideViews[0].getView() instanceof AxisView) ? 0 : SIDE_MARGIN;
+        sideProxy.setInsets(new Insets(_dataAreaInsets.top, SIDE_MARGIN, _dataAreaInsets.bottom, insLeft));
+
+        // Get SideProxy.PrefWidth and configure SideProxy size
+        double prefWidth = RowView.getPrefWidthProxy(sideProxy, -1);
+        double sideWidth = Math.min(prefWidth, sideBounds.width);
+        sideProxy.setSize(sideWidth, sideBounds.height);
 
         // Layout RowView
         RowView.layoutProxy(sideProxy, true);
 
         // Shift views to sideBounds origin x
+        double sideX = _chartProxy.getWidth() - Math.max(sideWidth, RIGHT_MARGIN_MIN);
         for (ViewProxy proxy : sideViews)
-            proxy.setX(proxy.getX() + sideBounds.x);
+            proxy.setX(proxy.getX() + sideX);
 
         // Update insets
-        ViewProxy<?> sideView0 = sideViews.length > 0 ? sideViews[0] : null;
-        double maxX = sideView0!=null ? sideView0.getX() : _chartProxy.getMaxX();
-        _dataAreaInsets.right = Math.max(_chartProxy.getMaxX() - maxX, RIGHT_MARGIN_MIN);
+        _dataAreaInsets.right = _chartProxy.getWidth() - sideX;
     }
 
     /**
@@ -233,7 +265,7 @@ public class ChartViewLayout {
         // Get Legend if on given side.
         boolean hasLegend = _legendProxy.isVisible() && _legendProxy.getView().getPosition().getSide() == aSide;
         ViewProxy<?> legend = hasLegend ? _legendProxy : null;
-        if (hasLegend && _prefDataAreaBounds!=null) {
+        if (hasLegend) {
             legend.setGrowWidth(aSide==Side.LEFT || aSide==Side.RIGHT);
             legend.setGrowHeight(aSide==Side.TOP || aSide==Side.BOTTOM);
         }
@@ -309,17 +341,17 @@ public class ChartViewLayout {
         switch (aSide)
         {
             case TOP:
-                bounds.height = _prefDataAreaBounds.y - bounds.y;
+                bounds.height = _prefDataAreaBounds.y;
                 break;
             case BOTTOM:
-                bounds.height = bounds.getMaxY() - _prefDataAreaBounds.getMaxY();
+                bounds.height = bounds.height - _prefDataAreaBounds.getMaxY();
                 bounds.y = _prefDataAreaBounds.getMaxY();
                 break;
             case LEFT:
-                bounds.width = _prefDataAreaBounds.x - bounds.x;
+                bounds.width = _prefDataAreaBounds.x;
                 break;
             case RIGHT:
-                bounds.width = bounds.getMaxX() - _prefDataAreaBounds.getMaxX();
+                bounds.width = bounds.width - _prefDataAreaBounds.getMaxX();
                 bounds.x = _prefDataAreaBounds.getMaxX();
                 break;
             default: throw new RuntimeException("ChartViewLayout.getBoundsForSideFixed: Unknown side: " + aSide);

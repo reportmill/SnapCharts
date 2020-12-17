@@ -53,6 +53,10 @@ public class PageViewLayout {
 
         // Synchronize Chart DataViews
         synchChartDataViewSizes();
+
+        // Update Chart bounds from proxies (clear ChartProxy children so Chart bounds gets set)
+        for (ViewProxy chartProxy : _chartProxies)
+            chartProxy.setChildren(null);
         _pageProxy.setBoundsInClient();
     }
 
@@ -224,7 +228,7 @@ public class PageViewLayout {
                     else
                     {
                         ViewProxy<ChartView> nextChart = getChartForRowCol(i, j + 1); if (nextChart==null) break;
-                        double nextChartLeftMargin = getDataAreaBounds(nextChart).getX() - nextChart.getX();
+                        double nextChartLeftMargin = getDataAreaBounds(nextChart).getX();
                         double chartMaxX = dataAreaBounds.getMaxX() + marginColsW[j + 1] - nextChartLeftMargin;
                         double minDiffW = chartMaxX - chartProxy.getWidth();
                         chartDiffW = (chartDiffW + minDiffW) / 2;
@@ -300,7 +304,7 @@ public class PageViewLayout {
                     else
                     {
                         ViewProxy<ChartView> nextChart = getChartForRowCol(j + 1, i); if (nextChart==null) break;
-                        double nextChartTopMargin = getDataAreaBounds(nextChart).getY() - nextChart.getY();
+                        double nextChartTopMargin = getDataAreaBounds(nextChart).getY();
                         double chartMaxY = dataAreaBounds.getMaxY() + marginRowsH[j + 1] - nextChartTopMargin;
                         double minDiffH = chartMaxY - chartProxy.getHeight();
                         chartDiffH = (chartDiffH + minDiffH) / 2;
@@ -345,5 +349,6 @@ public class PageViewLayout {
     {
         ChartView chartView = aChartProxy.getView();
         chartView._layout._prefDataAreaBounds = aRect;
+        chartView.relayout();
     }
 }

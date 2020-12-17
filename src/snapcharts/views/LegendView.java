@@ -1,9 +1,6 @@
 package snapcharts.views;
 
-import snap.geom.Pos;
-import snap.geom.Rect;
-import snap.geom.Shape;
-import snap.geom.Transform;
+import snap.geom.*;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.*;
@@ -14,6 +11,21 @@ import snapcharts.model.*;
  */
 public class LegendView<T extends Legend> extends ChartPartView<T> {
 
+    // Constants
+    private static Insets DEFAULT_PADDING = new Insets(5, 5, 5, 5);
+    private static Font DEFAULT_ENTRY_FONT = Font.Arial12.deriveFont(13).getBold();
+
+    /**
+     * Constructor.
+     */
+    public LegendView()
+    {
+        super();
+
+        setPadding(DEFAULT_PADDING);
+        setAlign(Pos.CENTER_LEFT);
+    }
+
     /**
      * Returns the ChartPart.
      */
@@ -22,7 +34,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     /**
      * Returns the position of the legend.
      */
-    public Pos getPosition()  { return Pos.CENTER_RIGHT; }
+    public Pos getPosition()  { return getChartPart().getPosition(); }
 
     /**
      * Reloads legend contents.
@@ -37,6 +49,17 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         Legend legend = chart.getLegend();
         DataSetList dsetList = chart.getDataSetList();
 
+        // Handle Orientation
+        Pos pos = getPosition();
+        boolean isHor = pos==Pos.TOP_CENTER || pos==Pos.BOTTOM_CENTER;
+        setVertical(!isHor);
+        if (isHor)
+            setAlign(Pos.TOP_CENTER);
+        else {
+            setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
+        }
+
+
         // Handle visible
         boolean showLegend = legend.isShowLegend();
         setVisible(showLegend);
@@ -47,47 +70,54 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         removeChildren();
 
         for (int i=0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);
-
-            // Get marker Shape (if LineChart, add crossbar)
-            Shape shp = chart.getSymbolShape(i);
-            shp = shp.copyFor(new Transform(6, 6));
-            if (chart.getType() == ChartType.LINE) {
-                Shape shp1 = new Rect(2,9,16,2);
-                shp = Shape.add(shp, shp1);
-            }
-
-            // Create marker ShapeView
-            ShapeView shpView = new ShapeView(shp);
-            shpView.setPrefSize(20,20);
-
-            // Set color
-            shpView.setFill(chart.getColor(i));
-
-            StringView sview = new StringView();
-            sview.setFont(Font.Arial12.deriveFont(13).getBold());
-            sview.setText(dset.getName());
-            if (dset.isDisabled()) {
-                shpView.setFill(Color.LIGHTGRAY);
-                sview.setTextFill(Color.LIGHTGRAY);
-            }
-            RowView row = new RowView();
-            row.addChild(shpView);
-            row.addChild(sview);
-            addChild(row);
+            View entryView = createLegendEntry(chart, dset, i);
+            addChild(entryView);
 
             // Register row to enable/disable
-            row.addEventHandler(e -> rowWasClicked(row), MouseRelease);
+            entryView.addEventHandler(e -> entryWasClicked(entryView), MouseRelease);
             //shpView.setPickable(false); sview.setPickable(false);
         }
     }
 
     /**
+     * Creates a legend entry.
+     */
+    private View createLegendEntry(Chart aChart, DataSet aDataSet, int anIndex)
+    {
+        // Get marker Shape (if LineChart, add crossbar)
+        Shape shp = aChart.getSymbolShape(anIndex);
+        shp = shp.copyFor(new Transform(6, 6));
+        if (aChart.getType() == ChartType.LINE) {
+            Shape shp1 = new Rect(2,9,16,2);
+            shp = Shape.add(shp, shp1);
+        }
+
+        // Create marker ShapeView
+        ShapeView shpView = new ShapeView(shp);
+        shpView.setPrefSize(20,20);
+
+        // Set color
+        shpView.setFill(aChart.getColor(anIndex));
+
+        String text = aDataSet.getName();
+        Label label = new Label(text);
+        label.setFont(DEFAULT_ENTRY_FONT);
+        if (aDataSet.isDisabled()) {
+            shpView.setFill(Color.LIGHTGRAY);
+            label.setTextFill(Color.LIGHTGRAY);
+        }
+        label.setGraphic(shpView);
+        label.setClipToBounds(true);
+        return label;
+    }
+
+    /**
      * Called when legend row is clicked.
      */
-    void rowWasClicked(RowView aRow)
+    private void entryWasClicked(View anEntryView)
     {
         // Get row/dataset index
-        int index = ArrayUtils.indexOf(getChildren(), aRow);
+        int index = ArrayUtils.indexOf(getChildren(), anEntryView);
 
         // Get dataset and disable
         ChartView chart = getChartView();
@@ -105,6 +135,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
+        // If Position is Top/Bottom, layout as RowView
+        if (isHorizontal())
+            return RowView.getPrefWidth(this, aH);
+
+        // Otherwise Layout as ColView
         return ColView.getPrefWidth(this, aH);
     }
 
@@ -114,6 +149,16 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected double getPrefHeightImpl(double aW)
     {
+        // If Position is Top/Bottom, layout as RowView
+        if (isHorizontal()) {
+            double prefH = RowView.getPrefHeight(this, -1);
+            double prefW = RowView.getPrefWidth(this, -1);
+            if (aW > 0 && prefW > aW)
+                prefH *= 2;
+            return prefH;
+        }
+
+        // Otherwise Layout as ColView
         return ColView.getPrefHeight(this, aW);
     }
 
@@ -123,6 +168,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected void layoutImpl()
     {
-        ColView.layout(this, false);
+        // If Position is Top/Bottom, layout as RowView
+        if (isHorizontal())
+            RowView.layout(this, false);
+
+        // Otherwise Layout as ColView
+        else ColView.layout(this, true);
     }
 }
