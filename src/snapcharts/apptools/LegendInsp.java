@@ -45,6 +45,7 @@ public class LegendInsp extends ChartPartInsp {
 
         // Reset AlignX buttons
         Pos align = legend.getPosition();
+        if (!legend.isShowLegend()) align = Pos.CENTER;
         setViewValue("Align" + align.ordinal(), true);
 
     }
@@ -57,8 +58,10 @@ public class LegendInsp extends ChartPartInsp {
         // Get Legend
         Legend legend = getChart().getLegend();
 
-        // If user hits anything, turn on legend (was Handle ShowLegendCheckBox)
-        legend.setShowLegend(anEvent.getBoolValue()); // if(anEvent.equals("ShowLegendCheckBox"))
+        // Handle ShowLegendCheckBox: Just used to turn off. Any other UI interaction turns legend on
+        if(anEvent.equals("ShowLegendCheckBox") && !anEvent.getBoolValue())
+            legend.setShowLegend(false);
+        else legend.setShowLegend(true);
 
         // Handle AlignX
         String name = anEvent.getName();

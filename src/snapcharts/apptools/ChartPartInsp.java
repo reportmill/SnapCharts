@@ -31,8 +31,12 @@ public abstract class ChartPartInsp extends ViewOwner {
     private boolean  _selected;
 
     // Constants
+    public static Font LABEL_FONT = Font.Arial14;
+    public static Font LABEL_FONT_SEL = Font.Arial14.getBold();
     public static Color LABEL_FILL = new Color("#e0e0e4");
-    public static Color LABEL_FILL_SEL = new Color("#e0e6f0");
+    public static Color LABEL_FILL_SEL = new Color("#ececf0"); //"#e0e6f0"
+    public static Color LABEL_TEXT_FILL = Color.GRAY;
+    public static Color LABEL_TEXT_FILL_SEL = Color.DARKGRAY;
     public static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1).copyForInsets(Insets.EMPTY);
 
     /**
@@ -102,7 +106,9 @@ public abstract class ChartPartInsp extends ViewOwner {
         if (!aValue && collapser.isExpanded())
             collapser.setCollapsedAnimated(true);
 
+        getLabel().setFont(aValue ? LABEL_FONT_SEL : LABEL_FONT);
         getLabel().setFill(aValue ? LABEL_FILL_SEL : LABEL_FILL);
+        getLabel().setTextFill(aValue ? LABEL_TEXT_FILL_SEL : LABEL_TEXT_FILL);
         getLabel().setBorder(aValue ? LABEL_BORDER_SEL : null);
     }
 
@@ -116,10 +122,10 @@ public abstract class ChartPartInsp extends ViewOwner {
         String text = getName();
         Label label = new Label(text);
         label.setName(text + "Label");
+        label.setFont(LABEL_FONT);
         label.setFill(LABEL_FILL);
-        label.setFont(Font.Arial14);
+        label.setTextFill(LABEL_TEXT_FILL);
         label.getStringView().setGrowWidth(true);
-        label.setTextFill(Color.GRAY);
         label.setAlign(Pos.CENTER);
         label.setPadding(4,4,4,10);
         label.setMargin(4,8,4,8);
