@@ -3,7 +3,6 @@ import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.view.ColView;
-import snap.view.ParentView;
 import snap.view.StringView;
 import snapcharts.model.Chart;
 import snapcharts.model.Header;
@@ -22,12 +21,13 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     /**
      * Constructor.
      */
-    public HeaderView(ChartView aChartView)
+    public HeaderView()
     {
         // Basic config
         setAlign(Pos.CENTER);
         setSpacing(8);
         setMargin(0, 0, 8, 0);
+        setClipToBounds(true);
 
         // Create configure TitleView
         _titleView = new StringView();

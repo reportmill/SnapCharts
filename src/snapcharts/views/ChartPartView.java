@@ -24,6 +24,14 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     private Effect FOCUSED_EFFECT = new ShadowEffect(5, FOCUSED_COLOR, 0, 0);
 
     /**
+     * Constructor.
+     */
+    public ChartPartView()
+    {
+        super();
+    }
+
+    /**
      * Returns the ChartPart.
      */
     public abstract T getChartPart();

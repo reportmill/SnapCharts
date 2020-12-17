@@ -75,7 +75,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         setGrowWidth(true);
 
         // Create/add ChartTop
-        _chartTop = new HeaderView(this);
+        _chartTop = new HeaderView();
         addChild(_chartTop);
 
         // Create/configure ChartLegend

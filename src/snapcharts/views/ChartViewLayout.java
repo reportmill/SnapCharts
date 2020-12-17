@@ -14,7 +14,7 @@ public class ChartViewLayout {
     private ChartView  _chartView;
 
     // The preferred DataArea bounds (optional)
-    protected Rect  _prefDataAreaBounds;
+    protected Rect _prefDataViewBounds;
 
     // The layout proxy
     private ViewProxy<ChartView>  _chartProxy;
@@ -80,7 +80,7 @@ public class ChartViewLayout {
         layoutRightSide();
 
         // Set DataAreaBounds (either from PrefDataAreaBounds or from resulting layout insets)
-        _dataAreaBounds = _prefDataAreaBounds;
+        _dataAreaBounds = _prefDataViewBounds;
         if (_dataAreaBounds==null) {
             _dataAreaBounds = _chartProxy.getBounds().clone();
             _dataAreaBounds.inset(_dataAreaInsets);
@@ -105,7 +105,7 @@ public class ChartViewLayout {
         _chartProxy.setBoundsInClient();
 
         // Clear PrefDataAreaBounds
-        _prefDataAreaBounds = null;
+        _prefDataViewBounds = null;
     }
 
     /**
@@ -206,7 +206,7 @@ public class ChartViewLayout {
         RowView.layoutProxy(sideProxy, true);
 
         // If PrefDataAreaBounds set and left side bounds needed was less than available, slide over
-        if (_prefDataAreaBounds!=null && sideWidth < sideBounds.width) {
+        if (_prefDataViewBounds !=null && sideWidth < sideBounds.width) {
             double shift = sideBounds.width - sideWidth;
             for (ViewProxy proxy : sideViews)
                 proxy.setX(proxy.getX() + shift);
@@ -303,7 +303,7 @@ public class ChartViewLayout {
     protected Rect getBoundsForSide(Side aSide)
     {
         // If PrefDataAreaBounds set, return bounds for side using that
-        if (_prefDataAreaBounds!=null)
+        if (_prefDataViewBounds !=null)
             return getBoundsForSideFixed(aSide);
 
         // Return bounds for side (size is MAX_SIDE_RATIO of chart size)
@@ -341,18 +341,18 @@ public class ChartViewLayout {
         switch (aSide)
         {
             case TOP:
-                bounds.height = _prefDataAreaBounds.y;
+                bounds.height = _prefDataViewBounds.y;
                 break;
             case BOTTOM:
-                bounds.height = bounds.height - _prefDataAreaBounds.getMaxY();
-                bounds.y = _prefDataAreaBounds.getMaxY();
+                bounds.height = bounds.height - _prefDataViewBounds.getMaxY();
+                bounds.y = _prefDataViewBounds.getMaxY();
                 break;
             case LEFT:
-                bounds.width = _prefDataAreaBounds.x;
+                bounds.width = _prefDataViewBounds.x;
                 break;
             case RIGHT:
-                bounds.width = bounds.width - _prefDataAreaBounds.getMaxX();
-                bounds.x = _prefDataAreaBounds.getMaxX();
+                bounds.width = bounds.width - _prefDataViewBounds.getMaxX();
+                bounds.x = _prefDataViewBounds.getMaxX();
                 break;
             default: throw new RuntimeException("ChartViewLayout.getBoundsForSideFixed: Unknown side: " + aSide);
         }
