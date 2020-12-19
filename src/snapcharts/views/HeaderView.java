@@ -32,12 +32,14 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
         // Create configure TitleView
         _titleView = new StringView();
         _titleView.setFont(Font.Arial14.getBold().deriveFont(20));
+        _titleView.setShrinkToFit(true);
         addChild(_titleView);
 
         // Create configure SubtitleView
         _subtitleView = new StringView();
         _subtitleView.setTextFill(Color.GRAY);
         _subtitleView.setFont(Font.Arial12.getBold());
+        _subtitleView.setShrinkToFit(true);
         addChild(_subtitleView);
     }
 

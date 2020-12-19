@@ -43,9 +43,9 @@ public class WrapView extends ParentView {
     protected double getPrefWidthImpl(double aH)
     {
         Insets ins = getInsetsAll(); if (_content==null) return ins.getWidth();
-        double w = _content.getPrefWidth();
-        double h = _content.getPrefHeight();
-        Rect bnds = _content.localToParent(new Rect(0,0,w,h)).getBounds();
+        double childW = _content.getPrefWidth();
+        double childH = _content.getPrefHeight();
+        Rect bnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
         return bnds.width + ins.getWidth();
     }
 
@@ -55,9 +55,9 @@ public class WrapView extends ParentView {
     protected double getPrefHeightImpl(double aW)
     {
         Insets ins = getInsetsAll(); if (_content==null) return ins.getHeight();
-        double w = _content.getPrefWidth();
-        double h = _content.getPrefHeight();
-        Rect bnds = _content.localToParent(new Rect(0,0,w,h)).getBounds();
+        double childW = _content.getPrefWidth();
+        double childH = _content.getPrefHeight();
+        Rect bnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
         return bnds.height + ins.getHeight();
     }
 
@@ -67,26 +67,28 @@ public class WrapView extends ParentView {
     protected void layoutImpl()
     {
         // Get size of parent and content and set
-        double pw = getWidth(), ph = getHeight(); if (_content==null) return;
-        double cw = _content.getPrefWidth();
-        double ch = _content.getPrefHeight();
-        _content.setBounds(0, 0, cw, ch);
+        if (_content==null) return;
+        double viewW = getWidth();
+        double viewH = getHeight();
+        double childW = _content.getPrefWidth();
+        double childH = _content.getPrefHeight();
+        _content.setBounds(0, 0, childW, childH);
 
         // Get size of content in parent
-        Rect bnds = _content.localToParent(new Rect(0,0,cw,ch)).getBounds();
+        Rect bnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
 
         // Get location of content center based on parent align/insets and parent/content sizes
         Pos align = getAlign();
         Insets ins = getInsetsAll();
-        double ax = ViewUtils.getAlignX(align.getHPos());
-        double ay = ViewUtils.getAlignY(align.getVPos());
-        double x = ins.left + (pw - ins.getWidth() - bnds.width)*ax + bnds.width/2;
-        double y = ins.top + (ph - ins.getHeight() - bnds.height)*ay + bnds.height/2;
+        double alignX = ViewUtils.getAlignX(align.getHPos());
+        double alignY = ViewUtils.getAlignY(align.getVPos());
+        double childX = ins.left + (viewW - ins.getWidth() - bnds.width)*alignX + bnds.width/2;
+        double childY = ins.top + (viewH - ins.getHeight() - bnds.height)*alignY + bnds.height/2;
 
         // Get center point in content coords, translate to content origin and set content XY local
-        Point pnt = _content.parentToLocal(x,y);
-        pnt.x += _content.getTransX() - cw/2;
-        pnt.y += _content.getTransY() - ch/2;
+        Point pnt = _content.parentToLocal(childX,childY);
+        pnt.x += _content.getTransX() - childW/2;
+        pnt.y += _content.getTransY() - childH/2;
         _content.setXYLocal(pnt.x, pnt.y);
     }
 

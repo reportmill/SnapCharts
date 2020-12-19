@@ -1,6 +1,7 @@
 package snapcharts.views;
 import snap.geom.Point;
 import snap.gfx.Color;
+import snap.gfx.Font;
 import snap.util.SnapUtils;
 import snap.view.StringView;
 import snap.view.ViewAnim;
@@ -39,11 +40,28 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public static final String AxisMax_Prop = "AxisMax";
 
     // Constants
+    protected static Font AXIS_LABEL_FONT = Font.Arial12.getBold().deriveFont(13);
+    protected static Color AXIS_LABEL_TEXT_COLOR = Color.GRAY;
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
     public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
 
     // A shared formatter
     private static DecimalFormat  _fmt = new DecimalFormat("#.###");
+
+    /**
+     * Constructor.
+     */
+    public AxisView()
+    {
+        super();
+
+        // Create configure TitleView
+        _titleView = new StringView();
+        _titleView.setFont(AXIS_LABEL_FONT);
+        _titleView.setTextFill(AXIS_LABEL_TEXT_COLOR);
+        _titleView.setShrinkToFit(true);
+        addChild(_titleView);
+    }
 
     /**
      * Returns the ChartPart.

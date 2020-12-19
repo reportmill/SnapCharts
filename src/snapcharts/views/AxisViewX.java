@@ -19,14 +19,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     public AxisViewX()
     {
-        // Basic configure
+        super();
         setFont(Font.Arial12);
-
-        // Create configure TitleView
-        _titleView = new StringView();
-        _titleView.setTextFill(Color.GRAY);
-        _titleView.setFont(Font.Arial12.getBold().deriveFont(13));
-        addChild(_titleView);
     }
 
     /**

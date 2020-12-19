@@ -22,10 +22,7 @@ public class AxisViewY extends AxisView {
         enableEvents(MousePress);
 
         // Create configure TitleView
-        _titleView = new StringView();
-        _titleView.setTextFill(Color.GRAY);
         _titleView.setRotate(270);
-        _titleView.setFont(Font.Arial12.getBold().deriveFont(13));
         _titleViewBox = new WrapView(_titleView);
         addChild(_titleViewBox);
     }
