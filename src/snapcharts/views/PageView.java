@@ -86,9 +86,9 @@ public class PageView extends ParentView {
     public int getColCount()  { return _colCount; }
 
     /**
-     * Returns the page scale.
+     * Returns the chart scale.
      */
-    public double getPageScale()  { return _docItem.getChartScale(); }
+    public double getChartScale()  { return _docItem.getChartScale(); }
 
     /**
      * The number of plots.

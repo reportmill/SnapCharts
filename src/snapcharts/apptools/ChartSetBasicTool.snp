@@ -8,15 +8,15 @@
   </TitleView>
   <TitleView MinWidth="120" MinHeight="60" Text="Charts per Page">
     <RowView Padding="4" GrowWidth="true">
-      <ColView Padding="4" GrowHeight="true" Spacing="4">
+      <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
         <RadioButton Name="OneUpButton" PrefWidth="60" PrefHeight="22" text="One" Group="bg0" />
         <RadioButton Name="TwoUpButton" PrefWidth="60" PrefHeight="22" text="Two" Group="bg0" />
       </ColView>
-      <ColView Padding="4" GrowHeight="true" Spacing="4">
+      <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
         <RadioButton Name="ThreeUpButton" PrefWidth="60" PrefHeight="22" text="Three" Group="bg0" />
         <RadioButton Name="FourUpButton" PrefWidth="60" PrefHeight="22" text="Four" Group="bg0" />
       </ColView>
-      <ColView Padding="4" GrowHeight="true" Spacing="4">
+      <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
         <RadioButton Name="SixUpButton" PrefWidth="60" PrefHeight="22" text="Six" Group="bg0" />
         <RadioButton Name="NineUpButton" PrefWidth="60" PrefHeight="22" text="Nine" Group="bg0" />
       </ColView>

@@ -43,13 +43,11 @@ public class PageViewLayout {
         _areaW = _page.getWidth() - ins.getWidth();
         _areaH = _page.getHeight() - ins.getHeight();
 
-        // If PageScale not 1, apply it
-        double pageScale = _page.getPageScale();
-        if (pageScale != 1) {
-            //_areaX = Math.round(_areaX * pageScale);
-            //_areaY = Math.round(_areaY * pageScale);
-            _areaW = Math.round(_areaW * pageScale);
-            _areaH = Math.round(_areaH * pageScale);
+        // If ChartScale not 1, apply it
+        double chartScale = _page.getChartScale();
+        if (chartScale != 1) {
+            _areaW = Math.round(_areaW * chartScale);
+            _areaH = Math.round(_areaH * chartScale);
         }
 
         // Do simple layout of charts in grid
@@ -77,14 +75,14 @@ public class PageViewLayout {
             chartProxy.setChildren(null);
         _pageProxy.setBoundsInClient();
 
-        // If PageScale not 1, adjust Chart scales, bounds
-        if (pageScale != 1) {
-            double scaleDown = 1 / pageScale;
+        // If ChartScale not 1, adjust Chart scales and X/Y
+        if (chartScale != 1) {
+            double scaleBack = 1 / chartScale;
             for (ViewProxy<ChartView> chartProxy : _chartProxies) {
                 ChartView chartView = chartProxy.getView();
-                chartView.setScale(scaleDown);
-                double chartX = _areaX + (chartView.getX() - _areaX) * scaleDown - (chartView.getWidth() - chartView.getWidth() * scaleDown) / 2;
-                double chartY = _areaY + (chartView.getY() - _areaY) * scaleDown - (chartView.getHeight() - chartView.getHeight() * scaleDown) / 2;
+                chartView.setScale(scaleBack);
+                double chartX = _areaX + (chartProxy.x - _areaX) * scaleBack - chartProxy.width * (1 - scaleBack) / 2;
+                double chartY = _areaY + (chartProxy.y - _areaY) * scaleBack - chartProxy.height * (1 - scaleBack) / 2;
                 chartView.setXY(chartX, chartY);
             }
         }
