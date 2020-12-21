@@ -22,4 +22,20 @@
       </ColView>
     </RowView>
   </TitleView>
+  <TitleView MinWidth="120" MinHeight="60" Text="Chart Scale">
+    <ColView Padding="4" GrowHeight="true" Spacing="4">
+      <RowView Padding="4" GrowWidth="true" Spacing="4">
+        <RadioButton Name="ScaleLeastButton" GrowWidth="true" Group="toggle1" />
+        <RadioButton Name="ScaleLessButton" GrowWidth="true" Group="toggle1" />
+        <RadioButton Name="ScaleNoneButton" GrowWidth="true" Group="toggle1" />
+        <RadioButton Name="ScaleMoreButton" GrowWidth="true" Group="toggle1" />
+        <RadioButton Name="ScaleMostButton" />
+      </RowView>
+      <RowView Padding="4" GrowWidth="true" Spacing="4">
+        <Label GrowWidth="true" text="+Text" />
+        <Label GrowWidth="true" text="Natural" />
+        <Label text="+Data" />
+      </RowView>
+    </ColView>
+  </TitleView>
 </ColView>

@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.util.MathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import java.util.ArrayList;
@@ -15,9 +16,20 @@ public class DocItemGroup extends DocItem {
     // The number of items to show per page
     private int _itemsPerPage = 2;
 
+    // The relative scale of the charts to emphasize text vs data
+    private double _chartScale = CHART_SCALE_NATURAL;
+
     // Constants for properties
     public static final String ItemsPerPage_Prop = "ItemsPerPage";
     public static final String Portrait_Prop = "Portrait";
+    public static final String ChartScale_Prop = "ChartScale";
+
+    // Constants for ChartScale
+    public static final double CHART_SCALE_LARGEST_TEXT = .5;
+    public static final double CHART_SCALE_LARGER_TEXT = .75;
+    public static final double CHART_SCALE_NATURAL = 1;
+    public static final double CHART_SCALE_LARGER_DATA = 1.5;
+    public static final double CHART_SCALE_LARGEST_DATA = 2;
 
     /**
      * Returns whether pages are portrait.
@@ -45,6 +57,20 @@ public class DocItemGroup extends DocItem {
     {
         if (aValue==getItemsPerPage()) return;
         firePropChange(ItemsPerPage_Prop, _itemsPerPage, _itemsPerPage = aValue);
+    }
+
+    /**
+     * Returns the scale of charts to either emphasize text (.5 - <1), emphasize data (>1 - 1.5) or balanced (1).
+     */
+    public double getChartScale()  { return _chartScale; }
+
+    /**
+     * Sets the scale of charts to either emphasize text (.5 - <1), emphasize data (>1 - 1.5) or balanced (1).
+     */
+    public  void setChartScale(double aValue)
+    {
+        if (MathUtils.equals(aValue, getChartScale())) return;
+        firePropChange(ChartScale_Prop, _chartScale, _chartScale = aValue);
     }
 
     /**

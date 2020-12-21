@@ -15,6 +15,9 @@ public class PageViewLayout {
     // The page
     private ViewProxy<PageView>  _pageProxy;
 
+    // The page area bounds
+    private double  _areaX, _areaY, _areaW, _areaH;
+
     // The proxies for ChartViews
     private ViewProxy<ChartView>[] _chartProxies;
 
@@ -33,6 +36,21 @@ public class PageViewLayout {
     {
         _pageProxy = new ViewProxy<>(_page);
         _chartProxies = _pageProxy.getChildrenForClass(ChartView.class);
+
+        Insets ins = _page.getInsetsAll();
+        _areaX = ins.left;
+        _areaY = ins.top;
+        _areaW = _page.getWidth() - ins.getWidth();
+        _areaH = _page.getHeight() - ins.getHeight();
+
+        // If PageScale not 1, apply it
+        double pageScale = _page.getPageScale();
+        if (pageScale != 1) {
+            //_areaX = Math.round(_areaX * pageScale);
+            //_areaY = Math.round(_areaY * pageScale);
+            _areaW = Math.round(_areaW * pageScale);
+            _areaH = Math.round(_areaH * pageScale);
+        }
 
         // Do simple layout of charts in grid
         layoutChartsInGrid();
@@ -58,6 +76,18 @@ public class PageViewLayout {
         for (ViewProxy chartProxy : _chartProxies)
             chartProxy.setChildren(null);
         _pageProxy.setBoundsInClient();
+
+        // If PageScale not 1, adjust Chart scales, bounds
+        if (pageScale != 1) {
+            double scaleDown = 1 / pageScale;
+            for (ViewProxy<ChartView> chartProxy : _chartProxies) {
+                ChartView chartView = chartProxy.getView();
+                chartView.setScale(scaleDown);
+                double chartX = _areaX + (chartView.getX() - _areaX) * scaleDown - (chartView.getWidth() - chartView.getWidth() * scaleDown) / 2;
+                double chartY = _areaY + (chartView.getY() - _areaY) * scaleDown - (chartView.getHeight() - chartView.getHeight() * scaleDown) / 2;
+                chartView.setXY(chartX, chartY);
+            }
+        }
     }
 
     /**
@@ -65,25 +95,19 @@ public class PageViewLayout {
      */
     private void layoutChartsInGrid()
     {
-        Insets ins = _page.getInsetsAll();
-        double areaX = ins.left;
-        double areaY = ins.top;
-        double areaW = _page.getWidth() - ins.getWidth();
-        double areaH = _page.getHeight() - ins.getHeight();
-
         double spaceW = 0; //20
         double spaceH = 0; //20
 
         int rowCount = getRowCount();
         int colCount = getColCount();
-        double chartW = Math.round((areaW - spaceW * (colCount-1)) / colCount);
-        double chartH = Math.round((areaH - spaceH * (rowCount-1)) / rowCount);
+        double chartW = Math.round((_areaW - spaceW * (colCount-1)) / colCount);
+        double chartH = Math.round((_areaH - spaceH * (rowCount-1)) / rowCount);
 
         for (int i=0; i<rowCount; i++) {
             for (int j=0; j<colCount; j++) {
                 ViewProxy<ChartView> chart = getChartForRowCol(i, j); if (chart==null) break;
-                double chartX = areaX + (chartW + spaceW) * j;
-                double chartY = areaY + (chartH + spaceH) * i;
+                double chartX = _areaX + (chartW + spaceW) * j;
+                double chartY = _areaY + (chartH + spaceH) * i;
                 chart.setBounds(chartX, chartY, chartW, chartH);
             }
         }
@@ -108,8 +132,7 @@ public class PageViewLayout {
         }
 
         // Calculate unified data area width
-        double pageAreaW = _pageProxy.getWidth() - _pageProxy.getInsetsAll().getWidth();
-        double totalDataW = pageAreaW - totalMarginColsW;
+        double totalDataW = _areaW - totalMarginColsW;
         int dataW = (int) (totalDataW / colCount);
 
         // Set all charts to have new data area width and margin column widths
@@ -127,11 +150,10 @@ public class PageViewLayout {
         }
 
         // Calculate unified data area height
-        double pageAreaH = _pageProxy.getHeight() - _pageProxy.getInsetsAll().getHeight();
         int realRowCount = getChartCount() / getColCount() + (getChartCount() % getColCount() != 0 ? 1 : 0);
         if (realRowCount!=getRowCount())
-            pageAreaH = (int) Math.round(pageAreaH * realRowCount / rowCount);
-        double totalDataH = pageAreaH - totalMarginRowsH;
+            _areaH = (int) Math.round(_areaH * realRowCount / rowCount);
+        double totalDataH = _areaH - totalMarginRowsH;
         int dataH = (int) (totalDataH / rowCount);
 
         // Set all charts to have new data area height and margin column height

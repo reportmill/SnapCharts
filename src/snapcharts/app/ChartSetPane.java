@@ -121,10 +121,9 @@ public class ChartSetPane extends DocItemPane {
         // Handle Items
         if (propName==DocItem.Items_Prop)
             resetCharts();
-        if (propName==DocItemGroup.ItemsPerPage_Prop)
-            resetCharts();
-        if (propName==DocItemGroup.Portrait_Prop)
-            resetCharts();
+        if (propName==DocItemGroup.ItemsPerPage_Prop || propName==DocItemGroup.Portrait_Prop ||
+            propName==DocItemGroup.ChartScale_Prop)
+                resetCharts();
     }
 
     /**
@@ -158,8 +157,7 @@ public class ChartSetPane extends DocItemPane {
         int plotsPerPage = docItem.getItemsPerPage();
 
         // Get the current page
-        PageView pageView = new PageView(plotsPerPage);
-        pageView.setVertical(docItem.isPortrait());
+        PageView pageView = new PageView(docItem);
         _pageViews.add(pageView);
 
         // Get charts
@@ -172,8 +170,7 @@ public class ChartSetPane extends DocItemPane {
 
             // Create/add PageView if needed
             if (pageView==null) {
-                pageView = new PageView(plotsPerPage);
-                pageView.setVertical(docItem.isPortrait());
+                pageView = new PageView(docItem);
                 _pageViews.add(pageView);
             }
 
@@ -181,7 +178,7 @@ public class ChartSetPane extends DocItemPane {
             pageView.addChart(chart);
 
             // If next chart needs new page, clear
-            if ((i+1)%plotsPerPage==0)
+            if ((i+1) % plotsPerPage==0)
                 pageView = null;
         }
 

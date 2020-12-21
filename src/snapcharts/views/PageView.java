@@ -5,6 +5,8 @@ import snap.gfx.*;
 import snap.view.ParentView;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
+import snapcharts.model.DocItemGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,9 @@ import java.util.List;
  * A view to show a page of charts.
  */
 public class PageView extends ParentView {
+
+    // The DocItemGroup for this PageView
+    private DocItemGroup  _docItem;
 
     // The number of rows
     private int  _rowCount;
@@ -36,24 +41,23 @@ public class PageView extends ParentView {
     /**
      * Constructor.
      */
-    private PageView()
+    public PageView(DocItemGroup aDocItem)
     {
+        // Basic attributes
         setPadding(36,36,36, 36);
-        setSpacing(20);
         setVertical(true);
         setPrefSize(612, 792);
         setFill(PAGE_FILL);
         setBorder(PAGE_BORDER);
         setEffect(PAGE_SHADOW);
-    }
 
-    /**
-     * Constructor.
-     */
-    public PageView(int aPlotCount)
-    {
-        this();
-        switch (aPlotCount)
+        // If no DocItem, just return
+        if (aDocItem==null) return;
+
+        _docItem = aDocItem;
+        int chartCount = aDocItem.getItemsPerPage();
+
+        switch (chartCount)
         {
             case 1: _rowCount = _colCount = 1; break;
             case 2: _rowCount = 2; _colCount = 1; break;
@@ -64,18 +68,11 @@ public class PageView extends ParentView {
             default: throw new RuntimeException("PageView.init: Unsupported plot count");
         }
 
+        // Update orientation
+        setVertical(_docItem.isPortrait());
+
         //int shadowRad = aPlotCount >=4 ? 6 : aPlotCount >= 3 ? 8 : aPlotCount >= 2 ? 10 : 12;
         //_chartShadow = new ShadowEffect(shadowRad, Color.DARKGRAY, 0, 0).copySimple();
-    }
-
-    /**
-     * Constructor.
-     */
-    public PageView(int aRowCount, int aColCount)
-    {
-        this();
-        _rowCount = aRowCount;
-        _colCount = aColCount;
     }
 
     /**
@@ -87,6 +84,11 @@ public class PageView extends ParentView {
      * The number of columns.
      */
     public int getColCount()  { return _colCount; }
+
+    /**
+     * Returns the page scale.
+     */
+    public double getPageScale()  { return _docItem.getChartScale(); }
 
     /**
      * The number of plots.
@@ -115,7 +117,7 @@ public class PageView extends ParentView {
     }
 
     /**
-     *
+     * Override to flip row/col counts.
      */
     @Override
     public void setVertical(boolean aValue)
