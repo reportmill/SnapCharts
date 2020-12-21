@@ -103,17 +103,19 @@ public class DataAreaLine extends DataAreaPanZoom {
     protected int getRevealTime()
     {
         if (_subType!=Subtype.Line)
-            return REVEAL_TIME;
+            return DataView.DEFAULT_REVEAL_TIME;
 
         // Get all paths
-        List<Path2D> paths = getDataSetPaths(); if (paths.size()==0) return REVEAL_TIME;
+        List<Path2D> paths = getDataSetPaths(); if (paths.size()==0) return DataView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time
-        double maxLen = 0; for (Path2D path : paths) maxLen = Math.max(maxLen, path.getArcLength());
+        double maxLen = 0;
+        for (Path2D path : paths)
+            maxLen = Math.max(maxLen, path.getArcLength());
         double factor = Math.max(1, Math.min(maxLen / 500, 2));
 
         // Return default time times factor
-        return (int) Math.round(factor*REVEAL_TIME);
+        return (int) Math.round(factor * DataView.DEFAULT_REVEAL_TIME);
     }
 
     /**

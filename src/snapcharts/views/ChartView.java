@@ -26,7 +26,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
     // The Legend
     private LegendView  _legend;
-    
+
+    // The amount of the chart to show horizontally (0-1)
+    private double  _reveal = 1;
+
     // The ToolTipView
     private ToolTipView  _toolTipView;
 
@@ -55,6 +58,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange(pc);
 
     // Constants for properties
+    public static String   Reveal_Prop = "Reveal";
     public static final String SelDataPoint_Prop = "SelDataPoint";
     public static final String TargPoint_Prop = "TargPoint";
     public static final String TargDataPoint_Prop = "TargDataPoint";
@@ -188,6 +192,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Reset Legend
         _legend.resetView();
+
+        // Trigger animate (after delay so size is set for first time)
+        setReveal(0);
+        ViewUtils.runLater(() -> animate());
     }
 
     /**
@@ -295,6 +303,57 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         DataArea dataArea = getDataArea();
         Point pnt = dataArea.getDataPointXYLocal(aDP);
         return dataArea.localToParent(pnt.x, pnt.y, this);
+    }
+
+    /**
+     * Return the ratio of the chart to show horizontally.
+     */
+    public double getReveal()  { return _reveal; }
+
+    /**
+     * Sets the reation of the chart to show horizontally.
+     */
+    public void setReveal(double aValue)
+    {
+        _reveal = aValue;
+        _dataView.setReveal(aValue);
+        _dataView.repaint();
+    }
+
+    /**
+     * Returns the time in milliseconds recommended for animation.
+     */
+    protected int getRevealTime()
+    {
+        return _dataView.getRevealTime();
+    }
+
+    /**
+     * Registers for animation.
+     */
+    public void animate()
+    {
+        setReveal(0);
+        int revealTime = getRevealTime();
+        getAnimCleared(revealTime).setValue(Reveal_Prop,1).setLinear().play();
+    }
+
+    /**
+     * Returns the value for given key.
+     */
+    public Object getValue(String aPropName)
+    {
+        if (aPropName.equals(Reveal_Prop)) return getReveal();
+        return super.getValue(aPropName);
+    }
+
+    /**
+     * Sets the value for given key.
+     */
+    public void setValue(String aPropName, Object aValue)
+    {
+        if (aPropName.equals(Reveal_Prop)) setReveal(SnapUtils.doubleValue(aValue));
+        else super.setValue(aPropName, aValue);
     }
 
     /**

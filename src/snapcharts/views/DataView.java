@@ -1,8 +1,9 @@
 package snapcharts.views;
-import snap.view.ViewUtils;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class to display data (via DataArea).
@@ -13,13 +14,19 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     private ChartView  _chartView;
 
     // The DataView
-    private DataArea _dataArea;
+    private DataArea  _dataArea;
+
+    // The DataAreas
+    private List<DataArea>  _dataAreas = new ArrayList<>();
 
     // The X AxisView
     private AxisViewX  _axisX;
 
     // The Y AxisView
     private AxisViewY  _axisY;
+
+    // Constants
+    protected static int DEFAULT_REVEAL_TIME = 2000;
 
     /**
      * Constructor.
@@ -33,7 +40,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         _axisY = new AxisViewY();
 
         // Create/set DataView
-        setDataView(DataArea.createDataAreaForType(ChartType.LINE));
+        setDataArea(DataArea.createDataAreaForType(ChartType.LINE));
     }
 
     /**
@@ -53,18 +60,20 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     public DataArea getDataArea()  { return _dataArea; }
 
     /**
-     * Sets the DataView.
+     * Sets the DataArea.
      */
-    protected void setDataView(DataArea aDataArea)
+    protected void setDataArea(DataArea aDataArea)
     {
         // Remove old
         if (_dataArea !=null) {
             _dataArea.deactivate();
             removeChild(_dataArea);
+            _dataAreas.remove(_dataArea);
         }
 
         // Set/add new
         _dataArea = aDataArea;
+        _dataAreas.add(aDataArea);
         addChild(_dataArea);
 
         // Update Axes
@@ -75,6 +84,11 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the DataArea.
+     */
+    public List<DataArea> getDataAreas()  { return _dataAreas; }
+
+    /**
      * Returns the X Axis View.
      */
     public AxisViewX getAxisX()  { return _axisX; }
@@ -83,6 +97,34 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      * Returns the Y Axis View.
      */
     public AxisViewY getAxisY()  { return _axisY; }
+
+    /**
+     * Return the ratio of the chart to show horizontally.
+     */
+    public double getReveal()
+    {
+        return _chartView!=null ? _chartView.getReveal() : null;
+    }
+
+    /**
+     * Sets the reation of the chart to show horizontally.
+     */
+    public void setReveal(double aValue)
+    {
+        for (DataArea dataArea : getDataAreas())
+            dataArea.setReveal(aValue);
+    }
+
+    /**
+     * Returns the time in milliseconds recommended for animation.
+     */
+    protected int getRevealTime()
+    {
+        int revealTime = 0;
+        for (DataArea dataArea : getDataAreas())
+            revealTime = Math.max(revealTime, dataArea.getRevealTime());
+        return revealTime;
+    }
 
     /**
      * Called to reset view from Chart.
@@ -97,9 +139,9 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         ChartType chartType = chart.getType();
 
         // Update DataArea: Get DataArea for type and set in this DataView
-        if (_dataArea ==null || chartType!= getDataArea().getChartType()) {
+        if (_dataArea==null || chartType!= getDataArea().getChartType()) {
             DataArea dataArea = DataArea.createDataAreaForType(chartType);
-            setDataView(dataArea);
+            setDataArea(dataArea);
         }
 
         // Reset X Axis
@@ -110,12 +152,6 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
 
         // Reset DataView
         _dataArea.reactivate();
-
-        // Trigger animate (after delay so size is set for first time)
-        _dataArea.setReveal(0);
-        ViewUtils.runLater(() -> _dataArea.animate());
-        _axisY.repaint();
-        _axisX.repaint();
     }
 
     /**

@@ -4,7 +4,6 @@ import snap.geom.Insets;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.*;
-import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
@@ -20,18 +19,11 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     // The ChartView that owns the area
     protected ChartView  _chartView;
 
-    // The amount of the chart to show horizontally (0-1)
-    private double  _reveal = 1;
-
-    // Constants for properties
-    public static String   Reveal_Prop = "Reveal";
-
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
     protected static Color  GRID_LINES_COLOR = Color.get("#E6");
     protected static Color  TICK_LINES_COLOR = Color.GRAY;
     protected static Color  AXIS_LINES_COLOR = Color.DARKGRAY;
-    protected static int REVEAL_TIME = 2000;
 
     /**
      * Constructor.
@@ -130,32 +122,19 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
-     * Return the ratio of the chart to show horizontally.
+     * Return the ratio of the portion of chart to paint.
      */
-    public double getReveal()  { return _reveal; }
+    public double getReveal()  { return _dataView!=null ? _dataView.getReveal() : 1; }
 
     /**
-     * Sets the reation of the chart to show horizontally.
+     * Sets the ratio of the portion of chart to paint.
      */
-    public void setReveal(double aValue)
-    {
-        _reveal = aValue;
-        repaint();
-    }
-
-    /**
-     * Registers for animation.
-     */
-    public void animate()
-    {
-        setReveal(0);
-        getAnimCleared(getRevealTime()).setValue(Reveal_Prop,1).setLinear().play();
-    }
+    public void setReveal(double aValue)  { }
 
     /**
      * Returns the time in milliseconds recommended for animation.
      */
-    protected int getRevealTime()  { return REVEAL_TIME; }
+    protected int getRevealTime()  { return DataView.DEFAULT_REVEAL_TIME; }
 
     /**
      * Converts a point from dataset coords to view coords.
@@ -425,24 +404,6 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
         clearCache();
-    }
-
-    /**
-     * Returns the value for given key.
-     */
-    public Object getValue(String aPropName)
-    {
-        if (aPropName.equals(Reveal_Prop)) return getReveal();
-        return super.getValue(aPropName);
-    }
-
-    /**
-     * Sets the value for given key.
-     */
-    public void setValue(String aPropName, Object aValue)
-    {
-        if (aPropName.equals(Reveal_Prop)) setReveal(SnapUtils.doubleValue(aValue));
-        else super.setValue(aPropName, aValue);
     }
 
     /**

@@ -367,6 +367,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Reset title
         String title = axis.getTitle();
         _titleView.setText(title);
+
+        // Repaint ?
+        repaint();
     }
 
     /**

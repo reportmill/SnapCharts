@@ -85,8 +85,8 @@ public class ChartSetBasicTool extends ViewOwner {
         if (anEvent.equals("FourUpButton")) {
             docItem.setItemsPerPage(4);
             docItem.setPortrait(false);
-            if (docItem.getChartScale() < DocItemGroup.CHART_SCALE_LARGER_DATA)
-                docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGER_DATA);
+            if (docItem.getChartScale() < DocItemGroup.CHART_SCALE_LARGER_TEXT)
+                docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGER_TEXT);
         }
         if (anEvent.equals("SixUpButton")) {
             docItem.setItemsPerPage(6);

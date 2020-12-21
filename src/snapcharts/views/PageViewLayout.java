@@ -147,11 +147,17 @@ public class PageViewLayout {
             totalMarginRowsH += marginRowsH[i];
         }
 
+        // If not enough charts for row/cols, trim area W/H
+        double areaH2 = _areaH;
+        int chartCount = getChartCount();
+        int realRowCount = chartCount / colCount + (chartCount % colCount != 0 ? 1 : 0);
+        if (realRowCount!=rowCount) {
+            areaH2 = (int) Math.round(areaH2 * realRowCount / rowCount);
+            rowCount = realRowCount;
+        }
+
         // Calculate unified data area height
-        int realRowCount = getChartCount() / getColCount() + (getChartCount() % getColCount() != 0 ? 1 : 0);
-        if (realRowCount!=getRowCount())
-            _areaH = (int) Math.round(_areaH * realRowCount / rowCount);
-        double totalDataH = _areaH - totalMarginRowsH;
+        double totalDataH = areaH2 - totalMarginRowsH;
         int dataH = (int) (totalDataH / rowCount);
 
         // Set all charts to have new data area height and margin column height

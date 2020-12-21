@@ -408,16 +408,17 @@ public class DataAreaBar3D extends DataAreaBar {
     /**
      * Override to rebuild chart.
      */
-    public void setReveal(double aValue)  { super.setReveal(aValue); _camView.relayout(); }
-
-    /**
-     * Registers for animation.
-     */
-    public void animate()
+    public void setReveal(double aValue)
     {
-        super.animate();
-        _camView.setYaw(90); _camView.getAnimCleared(1000).setValue(CameraView.Yaw_Prop,26);
-        _camView.setPitch(0); _camView.getAnim(1000).setValue(CameraView.Pitch_Prop,10);
-        _camView.setOffsetZ(200); _camView.getAnim(1000).setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
+        super.setReveal(aValue);
+        _camView.relayout();
+        if (aValue==0) {
+            _camView.setYaw(90);
+            _camView.setPitch(0);
+            _camView.setOffsetZ(200);
+            _camView.getAnimCleared(1000).setValue(CameraView.Yaw_Prop,26);
+            _camView.getAnim(1000).setValue(CameraView.Pitch_Prop,10);
+            _camView.getAnim(1000).setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
+        }
     }
 }
