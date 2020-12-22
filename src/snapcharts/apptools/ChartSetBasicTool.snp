@@ -25,12 +25,12 @@
   <TitleView MinWidth="120" MinHeight="60" Text="Chart Scale">
     <ColView Padding="4" GrowHeight="true" Spacing="4">
       <RowView Padding="4" GrowWidth="true" Spacing="4">
-        <RadioButton Name="ChartScaleButton.5" GrowWidth="true" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton.75" GrowWidth="true" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton1" GrowWidth="true" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton1.33" GrowWidth="true" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton1.67" GrowWidth="true" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton2" Group="toggle1" />
+        <RadioButton Name="ChartScaleButton0.5" GrowWidth="true" ToolTip="50 %" Group="toggle1" />
+        <RadioButton Name="ChartScaleButton0.75" GrowWidth="true" ToolTip="75 %" Group="toggle1" />
+        <RadioButton Name="ChartScaleButton1" GrowWidth="true" ToolTip="100 %" Group="toggle1" />
+        <RadioButton Name="ChartScaleButton1.33" GrowWidth="true" ToolTip="133 %" Group="toggle1" />
+        <RadioButton Name="ChartScaleButton1.67" GrowWidth="true" ToolTip="167 %" Group="toggle1" />
+        <RadioButton Name="ChartScaleButton2" ToolTip="200 %" Group="toggle1" />
       </RowView>
       <RowView Padding="4" GrowWidth="true" Spacing="4">
         <Label PrefWidth="82" text="+Text" />

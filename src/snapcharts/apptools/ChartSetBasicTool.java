@@ -43,7 +43,7 @@ public class ChartSetBasicTool extends ViewOwner {
         setViewValue("SixUpButton", docItem.getItemsPerPage()==6);
         setViewValue("NineUpButton", docItem.getItemsPerPage()==9);
 
-        // Reset ChartScaleButtons (ChartScaleButton.5, .75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
+        // Reset ChartScaleButtons (ChartScaleButton0.5, 0.75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
         double chartScale = docItem.getChartScale();
         String chartScaleStr = "ChartScaleButton" + StringUtils.formatNum("#.##", chartScale);
         ToggleButton chartScaleButton = getView(chartScaleStr, ToggleButton.class);
@@ -51,9 +51,9 @@ public class ChartSetBasicTool extends ViewOwner {
             chartScaleButton.setSelected(true);
         else getToggleGroup("toggle1").setSelected(null);
 
-        // Disable ChartScaleButton.5, ChartScaleButton.75 if too many charts on page
-        setViewEnabled("ChartScaleButton.5", docItem.getItemsPerPage()<4);
-        setViewEnabled("ChartScaleButton.75", docItem.getItemsPerPage()<6);
+        // Disable ChartScaleButton0.5, ChartScaleButton.75 if too many charts on page
+        setViewEnabled("ChartScaleButton0.5", docItem.getItemsPerPage()<4);
+        setViewEnabled("ChartScaleButton0.75", docItem.getItemsPerPage()<6);
    }
 
     /**
