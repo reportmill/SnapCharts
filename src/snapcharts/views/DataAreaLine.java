@@ -11,7 +11,7 @@ import snapcharts.model.DataSetList;
 /**
  * A DataArea subclass to display the contents of line chart.
  */
-public class DataAreaLine extends DataAreaPanZoom {
+public class DataAreaLine extends DataArea {
 
     // The subtype
     private Subtype  _subType = Subtype.Line;
@@ -23,7 +23,7 @@ public class DataAreaLine extends DataAreaPanZoom {
     private Shape  _tailShape;
 
     // Constants for subtype
-    public enum Subtype { Line, Area, Scatter };
+    public enum Subtype { Line, Area, Scatter }
 
     // Constants for defaults
     protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);

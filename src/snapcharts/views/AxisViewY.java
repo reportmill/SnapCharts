@@ -69,6 +69,20 @@ public class AxisViewY extends AxisView {
     public double getLabelsMargin()  { return getAxis().getLabelsMargin(); }
 
     /**
+     * Converts a value from view coords to data coords.
+     */
+    public double viewToData(double dispY)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double dispMin = ins.top;
+        double dispMax = dispMin + getHeight() - ins.getHeight();
+        return dataMax - (dispY - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
+    }
+
+    /**
      * Called to reset view from Chart.
      */
     protected void resetView()

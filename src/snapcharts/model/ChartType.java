@@ -14,6 +14,11 @@ public enum ChartType {
 
 
     /**
+     * Returns whether type is XY type (not bar or pie).
+     */
+    public boolean isXYType()  { return this!=BAR && this!=BAR_3D && this!=PIE; }
+
+    /**
      * Returns the name in plain camel-case format.
      */
     public String getStringPlain()

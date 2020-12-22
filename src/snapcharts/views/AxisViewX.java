@@ -1,4 +1,5 @@
 package snapcharts.views;
+import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.StringView;
@@ -29,6 +30,20 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     public AxisX getAxis()
     {
         return getChart().getAxisX();
+    }
+
+    /**
+     * Converts a coord from view coords to data coords.
+     */
+    public double viewToData(double dispX)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double dispMin = ins.left;
+        double dispMax = dispMin + getWidth() - ins.getWidth();
+        return dataMin + (dispX - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
     }
 
     /**

@@ -1,4 +1,6 @@
 package snapcharts.views;
+import snap.gfx.Painter;
+import snap.view.ViewEvent;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
@@ -25,6 +27,9 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     // The Y AxisView
     private AxisViewY  _axisY;
 
+    // A helper class to handle Pan/Zoom
+    private DataViewPanZoom  _panZoomer;
+
     // Constants
     protected static int DEFAULT_REVEAL_TIME = 2000;
 
@@ -41,6 +46,10 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
 
         // Create/set DataView
         setDataArea(DataArea.createDataAreaForType(ChartType.LINE));
+
+        // Create/set PanZoomer
+        _panZoomer = new DataViewPanZoom(this);
+        enableEvents(MousePress, MouseDrag, MouseRelease, Scroll);
     }
 
     /**
@@ -127,6 +136,46 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
+     * Returns whether view is in ZoomSelectMode.
+     */
+    public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
+
+    /**
+     * Sets whether view is in ZoomSelectMode.
+     */
+    public void setZoomSelectMode(boolean aValue)
+    {
+        if (!getChart().getType().isXYType()) return;
+        _panZoomer.setZoomSelectMode(aValue);
+    }
+
+    /**
+     * Sets X/Y Axis min/max values for mouse drag points.
+     */
+    public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
+    {
+        _panZoomer.scaleAxesMinMaxForFactor(aScale, isAnimated);
+    }
+
+    /**
+     * Resets Axes to original bounds.
+     */
+    public void resetAxes()
+    {
+        getAxisX().resetAxes();
+        getAxisY().resetAxes();
+    }
+
+    /**
+     * Resets Axes to original bounds.
+     */
+    public void resetAxesAnimated()
+    {
+        getAxisX().resetAxesAnimated();
+        getAxisY().resetAxesAnimated();
+    }
+
+    /**
      * Called to reset view from Chart.
      */
     protected void resetView()
@@ -142,6 +191,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         if (_dataArea==null || chartType!= getDataArea().getChartType()) {
             DataArea dataArea = DataArea.createDataAreaForType(chartType);
             setDataArea(dataArea);
+            resetAxes();
         }
 
         // Reset X Axis
@@ -162,5 +212,27 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         double viewW = getWidth();
         double viewH = getHeight();
         _dataArea.setSize(viewW, viewH);
+    }
+
+    /**
+     * Override to forward to PanZoom.
+     */
+    @Override
+    protected void paintAbove(Painter aPntr)
+    {
+        _panZoomer.paintAbove(aPntr);
+    }
+
+    /**
+     * Override to forward to PanZoom.
+     */
+    protected void processEvent(ViewEvent anEvent)
+    {
+        // Forward to PanZoom
+        if (getChart().getType().isXYType())
+            _panZoomer.processEvent(anEvent);
+
+        // Do normal version
+        super.processEvent(anEvent);
     }
 }

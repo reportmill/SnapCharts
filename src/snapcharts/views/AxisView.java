@@ -283,6 +283,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
 
     /**
+     * Converts a value from view coords to data coords.
+     */
+    public abstract double viewToData(double dispX);
+
+    /**
      * Converts an X value from dataset coords to view coords.
      */
     public double dataToViewX(double dataX)

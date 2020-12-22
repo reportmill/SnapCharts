@@ -7,18 +7,21 @@ import snap.gfx.Stroke;
 import snap.view.ViewEvent;
 
 /**
- * A DataArea subclass that can pan zoom with mouse.
+ * A helper class to help DataView do Pan/Zoom.
  */
-public abstract class DataAreaPanZoom extends DataArea {
+public class DataViewPanZoom {
+
+    // The DataView
+    private DataView  _dataView;
 
     // Whether view is in zoom select mode
     private boolean  _zoomSelectMode;
 
     // The current ZoomSelect rect
-    private Rect  _zoomSelectRect;
+    private Rect _zoomSelectRect;
 
-    // The DragInfo
-    private DragInfo _dragInfo = new DragInfo();
+    // The last MousePress point
+    private Point  _pressPoint;
 
     // Cached info from last MousePress
     private double _pressDataMinX;
@@ -32,10 +35,9 @@ public abstract class DataAreaPanZoom extends DataArea {
     /**
      * Constructor.
      */
-    public DataAreaPanZoom()
+    public DataViewPanZoom(DataView aDataView)
     {
-        super();
-        enableEvents(MousePress, MouseDrag, MouseRelease, Scroll);
+        _dataView = aDataView;
     }
 
     /**
@@ -58,9 +60,17 @@ public abstract class DataAreaPanZoom extends DataArea {
     }
 
     /**
-     * Override to paint ZoomSelectRect, if ZoomSelectMode is set.
+     * Some conveniences.
      */
-    @Override
+    public ChartView getChartView()  { return _dataView.getChartView(); }
+    public AxisViewX getAxisX()  { return _dataView.getAxisX(); }
+    public AxisViewY getAxisY()  { return _dataView.getAxisY(); }
+    public double getWidth()  { return _dataView.getWidth(); }
+    public double getHeight()  { return _dataView.getHeight(); }
+
+    /**
+     * Paint ZoomSelectRect, if ZoomSelectMode is set.
+     */
     protected void paintAbove(Painter aPntr)
     {
         // Paint ZoomSelectMode ZoomSelectRect
@@ -71,15 +81,19 @@ public abstract class DataAreaPanZoom extends DataArea {
         }
     }
 
-    @Override
+    /**
+     * Handle ProcessEvent for DataView.
+     */
     protected void processEvent(ViewEvent anEvent)
     {
         AxisViewX axisX = getAxisX();
         AxisViewY axisY = getAxisY();
-        _dragInfo.processEvent(anEvent);
 
         // Handle MousePress: Store Axis min/max values at MousePress
         if (anEvent.isMousePress()) {
+
+            // Handle MousePress
+            _pressPoint = anEvent.getPoint();
 
             // If double-click, zoom in (or out, if modifier is down)
             if (anEvent.getClickCount()==2) {
@@ -90,7 +104,7 @@ public abstract class DataAreaPanZoom extends DataArea {
 
             // If triple-click, reset axes
             if (anEvent.getClickCount()==3)
-                resetAxesAnimated();
+                _dataView.resetAxesAnimated();
 
             // Store axes min/max values
             _pressDataMinX = axisX.getAxisMin();
@@ -109,17 +123,16 @@ public abstract class DataAreaPanZoom extends DataArea {
 
             // Handle ZoomSelectMode
             if (isZoomSelectMode()) {
-                Point p0 = new Point(_dragInfo.getPressX(), _dragInfo.getPressY());
-                _zoomSelectRect = Rect.get(p0, anEvent.getPoint());
-                repaint();
+                _zoomSelectRect = Rect.get(_pressPoint, anEvent.getPoint());
+                _dataView.repaint();
             }
 
             // Handle Shift axes
             else {
-                double fromX = _dragInfo.getPressX();
-                double fromY = _dragInfo.getPressY();
-                double toX = _dragInfo.getDragX();
-                double toY = _dragInfo.getDragY();
+                double fromX = _pressPoint.x;
+                double fromY = _pressPoint.y;
+                double toX = anEvent.getX();
+                double toY = anEvent.getY();
                 shiftAxesMinMaxForDrag(fromX, fromY, toX, toY);
             }
         }
@@ -142,12 +155,9 @@ public abstract class DataAreaPanZoom extends DataArea {
 
         // Handle Scroll
         else if (anEvent.isScroll()) {
-            if (isMouseDown()) return;
+            if (_dataView.isMouseDown()) return;
             scaleAxesMinMaxForScroll(anEvent);
         }
-
-        // Do normal version
-        super.processEvent(anEvent);
     }
 
     /**
@@ -156,24 +166,24 @@ public abstract class DataAreaPanZoom extends DataArea {
     private void shiftAxesMinMaxForDrag(double dispX0, double dispY0, double dispX1, double dispY1)
     {
         // Calculate new X axis min/max for
-        double dataX1 = viewToDataX(dispX0);
-        double dataX2 = viewToDataX(dispX1);
+        AxisViewX axisX = getAxisX();
+        double dataX1 = axisX.viewToData(dispX0);
+        double dataX2 = axisX.viewToData(dispX1);
         double dispMinX = _pressDataMinX - (dataX2 - dataX1);
         double dispMaxX = _pressDataMaxX - (dataX2 - dataX1);
 
         // Set new X Axis min/max
-        AxisViewX axisX = getAxisX();
         axisX.setAxisMin(dispMinX);
         axisX.setAxisMax(dispMaxX);
 
         // Adjust Y Axis Min/Max for mouse drag
-        double dataY1 = viewToDataY(dispY0);
-        double dataY2 = viewToDataY(dispY1);
+        AxisViewY axisY = getAxisY();
+        double dataY1 = axisY.viewToData(dispY0);
+        double dataY2 = axisY.viewToData(dispY1);
         double dispMinY = _pressDataMinY - (dataY2 - dataY1);
         double dispMaxY = _pressDataMaxY - (dataY2 - dataY1);
 
         // Set new Y Axis min/max
-        AxisViewY axisY = getAxisY();
         axisY.setAxisMin(dispMinY);
         axisY.setAxisMax(dispMaxY);
     }
@@ -212,18 +222,18 @@ public abstract class DataAreaPanZoom extends DataArea {
         Point targPoint = getChartView().getTargPoint();
 
         // Get Data X and scale X Axis
-        double dataX = viewToDataX(dispX);
-        AxisView axisViewX = getAxisX();
-        scaleAxisMinMaxForFactorAndDataMid(axisViewX, aScaleX, dataX, isAnimated);
+        AxisView axisX = getAxisX();
+        double dataX = axisX.viewToData(dispX);
+        scaleAxisMinMaxForFactorAndDataMid(axisX, aScaleX, dataX, isAnimated);
 
         // Get Data Y and scale Y Axis
-        double dataY = viewToDataY(dispY);
-        AxisView axisViewY = getAxisY();
-        scaleAxisMinMaxForFactorAndDataMid(axisViewY, aScaleY, dataY, isAnimated);
+        AxisView axisY = getAxisY();
+        double dataY = axisY.viewToData(dispY);
+        scaleAxisMinMaxForFactorAndDataMid(axisY, aScaleY, dataY, isAnimated);
 
         // If animated, restore targPoint when done
         if (isAnimated && targPoint!=null) {
-            axisViewY.getAnim(0).setOnFinish(() -> {
+            axisX.getAnim(0).setOnFinish(() -> {
                 if (getChartView().getTargPoint() == null)
                     getChartView().setTargPoint(targPoint);
             });
@@ -258,18 +268,18 @@ public abstract class DataAreaPanZoom extends DataArea {
         Point targPoint = getChartView().getTargPoint();
 
         // Get Data X and scale Axis
-        double dataX = viewToDataX(dispX);
-        AxisView axisViewX = getAxisX();
-        scaleAxisMinMaxForFactorAboutDataCoord(axisViewX, aScaleX, dataX, isAnimated);
+        AxisView axisX = getAxisX();
+        double dataX = axisX.viewToData(dispX);
+        scaleAxisMinMaxForFactorAboutDataCoord(axisX, aScaleX, dataX, isAnimated);
 
         // Get Data Y and scale Axis
-        double dataY = viewToDataY(dispY);
-        AxisView axisViewY = getAxisY();
-        scaleAxisMinMaxForFactorAboutDataCoord(axisViewY, aScaleY, dataY, isAnimated);
+        AxisView axisY = getAxisY();
+        double dataY = axisY.viewToData(dispY);
+        scaleAxisMinMaxForFactorAboutDataCoord(axisY, aScaleY, dataY, isAnimated);
 
         // If animated, restore targPoint when done
         if (isAnimated && targPoint!=null) {
-            axisViewY.getAnim(0).setOnFinish(() -> {
+            axisY.getAnim(0).setOnFinish(() -> {
                 if (getChartView().getTargPoint() == null)
                     getChartView().setTargPoint(targPoint);
             });
@@ -289,24 +299,6 @@ public abstract class DataAreaPanZoom extends DataArea {
     }
 
     /**
-     * Resets Axes to original bounds.
-     */
-    public void resetAxes()
-    {
-        getAxisX().resetAxes();
-        getAxisY().resetAxes();
-    }
-
-    /**
-     * Resets Axes to original bounds.
-     */
-    public void resetAxesAnimated()
-    {
-        getAxisX().resetAxesAnimated();
-        getAxisY().resetAxesAnimated();
-    }
-
-    /**
      * Zoom axes to rect.
      */
     public void zoomAxesToRectAnimated(Rect aRect)
@@ -314,55 +306,5 @@ public abstract class DataAreaPanZoom extends DataArea {
         double scaleX = aRect.width / getWidth();
         double scaleY = aRect.height / getHeight();
         scaleAxesMinMaxForFactorAndViewXY(scaleX, scaleY, aRect.getMidX(), aRect.getMidY(), true);
-    }
-
-    /**
-     * A class to manage drag info.
-     */
-    private static class DragInfo {
-
-        // The MousePress
-        private ViewEvent  _press;
-
-        // The Drag
-        private ViewEvent  _drag;
-
-        /**
-         * processEvent.
-         */
-        protected void processEvent(ViewEvent anEvent)
-        {
-            // Handle MousePress
-            if (anEvent.isMousePress())
-                _press = anEvent;
-
-            // Handle MouseDrag
-            else if (anEvent.isMouseDrag())
-                _drag = anEvent;
-        }
-
-        public double getPressX()  { return _press.getX(); }
-
-        public double getPressY()  { return _press.getY(); }
-
-        public double getDragX()  { return _drag.getX(); }
-
-        public double getDragY()  { return _drag.getY(); }
-
-        /**
-         * Returns the offset X.
-         */
-        public double getDX()
-        {
-            return _drag.getX() - _press.getX();
-        }
-
-        /**
-         * Returns the offset Y.
-         */
-        public double getDY()
-        {
-            return _drag.getY() - _press.getY();
-        }
     }
 }

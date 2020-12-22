@@ -260,7 +260,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     {
         if (getTargDataPoint()==null)
             return false;
-        if (getDataArea() instanceof DataAreaPanZoom && ((DataAreaPanZoom)getDataArea()).isZoomSelectMode())
+        if (getDataView().isZoomSelectMode())
             return false;
         return true;
     }
