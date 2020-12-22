@@ -1,6 +1,6 @@
 package snapcharts.apptools;
-
-import snap.util.MathUtils;
+import snap.util.StringUtils;
+import snap.view.ToggleButton;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartSetPane;
@@ -43,17 +43,17 @@ public class ChartSetBasicTool extends ViewOwner {
         setViewValue("SixUpButton", docItem.getItemsPerPage()==6);
         setViewValue("NineUpButton", docItem.getItemsPerPage()==9);
 
-        // Reset ScaleLeastButton, ScaleLessButton, ScaleNoneButton, ScaleMoreButton, ScaleMostButton
+        // Reset ChartScaleButtons (ChartScaleButton.5, .75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
         double chartScale = docItem.getChartScale();
-        setViewValue("ScaleLeastButton", MathUtils.equals(chartScale, DocItemGroup.CHART_SCALE_LARGEST_TEXT));
-        setViewValue("ScaleLessButton", MathUtils.equals(chartScale, DocItemGroup.CHART_SCALE_LARGER_TEXT));
-        setViewValue("ScaleNoneButton", MathUtils.equals(chartScale, DocItemGroup.CHART_SCALE_NATURAL));
-        setViewValue("ScaleMoreButton", MathUtils.equals(chartScale, DocItemGroup.CHART_SCALE_LARGER_DATA));
-        setViewValue("ScaleMostButton", MathUtils.equals(chartScale, DocItemGroup.CHART_SCALE_LARGEST_DATA));
+        String chartScaleStr = "ChartScaleButton" + StringUtils.formatNum("#.##", chartScale);
+        ToggleButton chartScaleButton = getView(chartScaleStr, ToggleButton.class);
+        if (chartScaleButton!=null)
+            chartScaleButton.setSelected(true);
+        else getToggleGroup("toggle1").setSelected(null);
 
-        // Disable ScaleLeastButton, ScaleLessButton if too many charts on page
-        setViewEnabled("ScaleLeastButton", docItem.getItemsPerPage()<4);
-        setViewEnabled("ScaleLessButton", docItem.getItemsPerPage()<6);
+        // Disable ChartScaleButton.5, ChartScaleButton.75 if too many charts on page
+        setViewEnabled("ChartScaleButton.5", docItem.getItemsPerPage()<4);
+        setViewEnabled("ChartScaleButton.75", docItem.getItemsPerPage()<6);
    }
 
     /**
@@ -101,16 +101,11 @@ public class ChartSetBasicTool extends ViewOwner {
                 docItem.setChartScale(DocItemGroup.CHART_SCALE_NATURAL);
         }
 
-        // Reset ScaleLeastButton, ScaleLessButton, ScaleNoneButton, ScaleMoreButton, ScaleMostButton
-        if (anEvent.equals("ScaleLeastButton"))
-            docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGEST_TEXT);
-        if (anEvent.equals("ScaleLessButton"))
-            docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGER_TEXT);
-        if (anEvent.equals("ScaleNoneButton"))
-            docItem.setChartScale(DocItemGroup.CHART_SCALE_NATURAL);
-        if (anEvent.equals("ScaleMoreButton"))
-            docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGER_DATA);
-        if (anEvent.equals("ScaleMostButton"))
-            docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGEST_DATA);
+        // Handle ChartScaleButtons (ChartScaleButton.5, .75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
+        String name = anEvent.getName();
+        if (name.startsWith("ChartScaleButton")) {
+            double chartScale = StringUtils.doubleValue(name);
+            docItem.setChartScale(chartScale);
+        }
     }
 }
