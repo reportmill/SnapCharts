@@ -103,8 +103,10 @@ public class DataViewPanZoom {
             }
 
             // If triple-click, reset axes
-            if (anEvent.getClickCount()==3)
-                _dataView.resetAxesAnimated();
+            if (anEvent.getClickCount()==3) {
+                ChartView chartView = getChartView();
+                chartView.getChartHelper().resetAxesAnimated();
+            }
 
             // Store axes min/max values
             _pressDataMinX = axisX.getAxisMin();

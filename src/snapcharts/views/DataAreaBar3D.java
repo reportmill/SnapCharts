@@ -4,7 +4,6 @@ import snap.geom.Rect;
 import snap.gfx.*;
 import snapcharts.model.Intervals;
 import snapcharts.gfx3d.*;
-import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 
 /**
@@ -48,11 +47,6 @@ public class DataAreaBar3D extends DataAreaBar {
         _camera.setYaw(26); _camera.setPitch(10); _camera.setDepth(100);
         _camera.setFocalLength(8*72); _camera.setAdjustZ(true);
     }
-
-    /**
-     * Returns the type.
-     */
-    public ChartType getChartType()  { return ChartType.BAR_3D; }
 
     /**
      * Returns the CameraView.
@@ -385,24 +379,6 @@ public class DataAreaBar3D extends DataAreaBar {
     void addGridLineSeparator(double X0, double Y0, double X1, double Y1)
     {
         _grid.moveTo(X0, Y0); _grid.lineTo(X1, Y1);
-    }
-
-    /**
-     * Override to hide x/y axis and legend.
-     */
-    public void activate()
-    {
-        _chartView.getAxisX().setVisible(false);
-        _chartView.getAxisY().setVisible(false);
-    }
-
-    /**
-     * Override to restore x/y axis and legend.
-     */
-    public void deactivate()
-    {
-        _chartView.getAxisX().setVisible(true);
-        _chartView.getAxisY().setVisible(true);
     }
 
     /**

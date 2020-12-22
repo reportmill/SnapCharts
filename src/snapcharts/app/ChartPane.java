@@ -360,8 +360,8 @@ public class ChartPane extends DocItemPane {
 
         // Handle ResetButton
         if (anEvent.equals("ResetButton")) {
-            DataView dataView = getDataView();
-            dataView.resetAxesAnimated();
+            ChartView chartView = getChartView();
+            chartView.getChartHelper().resetAxesAnimated();
         }
 
         // Handle TabView

@@ -28,13 +28,9 @@ public class DataAreaBar extends DataArea {
      */
     public DataAreaBar()
     {
-        setPadding(5,0,0,0); // Add top so top axis line isn't on edge
+        // Add top so top axis line isn't on edge
+        //setPadding(5,0,0,0);
     }
-
-    /**
-     * Returns the type.
-     */
-    public ChartType getChartType()  { return ChartType.BAR; }
 
     /**
      * Returns the area.

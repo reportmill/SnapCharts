@@ -85,7 +85,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double delta = intervals.getDelta();
 
         // Get whether this is Axis for Bar chart
-        boolean isBar = _dataView.getChartType()==ChartType.BAR;
+        boolean isBar = getChart().getType()==ChartType.BAR;
 
         // Set color/stroke for axis ticks
         aPntr.setColor(AXIS_LABELS_COLOR);

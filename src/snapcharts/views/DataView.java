@@ -1,11 +1,10 @@
 package snapcharts.views;
+import snap.geom.Insets;
+import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
-import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
-import snapcharts.model.ChartType;
-import java.util.ArrayList;
-import java.util.List;
+import snapcharts.model.Intervals;
 
 /**
  * A class to display data (via DataArea).
@@ -15,17 +14,8 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     // The ChartView
     private ChartView  _chartView;
 
-    // The DataView
-    private DataArea  _dataArea;
-
     // The DataAreas
-    private List<DataArea>  _dataAreas = new ArrayList<>();
-
-    // The X AxisView
-    private AxisViewX  _axisX;
-
-    // The Y AxisView
-    private AxisViewY  _axisY;
+    private DataArea[]  _dataAreas;
 
     // A helper class to handle Pan/Zoom
     private DataViewPanZoom  _panZoomer;
@@ -39,13 +29,6 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     public DataView(ChartView aChartView)
     {
         _chartView = aChartView;
-
-        // Create/add axes
-        _axisX = new AxisViewX();
-        _axisY = new AxisViewY();
-
-        // Create/set DataView
-        setDataArea(DataArea.createDataAreaForType(ChartType.LINE));
 
         // Create/set PanZoomer
         _panZoomer = new DataViewPanZoom(this);
@@ -66,53 +49,45 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the DataArea.
      */
-    public DataArea getDataArea()  { return _dataArea; }
+    public DataArea[] getDataAreas()  { return _dataAreas; }
 
     /**
      * Sets the DataArea.
      */
-    protected void setDataArea(DataArea aDataArea)
+    protected void setDataAreas(DataArea[] theDataAreas)
     {
         // Remove old
-        if (_dataArea !=null) {
-            _dataArea.deactivate();
-            removeChild(_dataArea);
-            _dataAreas.remove(_dataArea);
+        if (_dataAreas !=null) {
+            for (DataArea dataArea : _dataAreas)
+                removeChild(dataArea);
         }
 
-        // Set/add new
-        _dataArea = aDataArea;
-        _dataAreas.add(aDataArea);
-        addChild(_dataArea);
+        // Set new
+        _dataAreas = theDataAreas;
 
-        // Update Axes
-        _dataArea.setDataView(this);
-        _axisY._dataView = _axisX._dataView = aDataArea;
-
-        _dataArea.activate();
+        // Add DataAreas as children
+        for (DataArea dataArea : _dataAreas) {
+            addChild(dataArea);
+            dataArea.setDataView(this);
+        }
     }
-
-    /**
-     * Returns the DataArea.
-     */
-    public List<DataArea> getDataAreas()  { return _dataAreas; }
 
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _axisX; }
+    public AxisViewX getAxisX()  { return _chartView.getAxisX(); }
 
     /**
      * Returns the Y Axis View.
      */
-    public AxisViewY getAxisY()  { return _axisY; }
+    public AxisViewY getAxisY()  { return _chartView.getAxisY(); }
 
     /**
      * Return the ratio of the chart to show horizontally.
      */
     public double getReveal()
     {
-        return _chartView!=null ? _chartView.getReveal() : null;
+        return _chartView!=null ? _chartView.getReveal() : 1;
     }
 
     /**
@@ -136,6 +111,60 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the X axis intervals for active datasets.
+     */
+    public Intervals getIntervalsX()
+    {
+        return getAxisX().getIntervals();
+    }
+
+    /**
+     * Returns the Y axis intervals for active datasets.
+     */
+    public Intervals getIntervalsY()
+    {
+        return getAxisY().getIntervals();
+    }
+
+    /**
+     * Converts a point from dataset coords to view coords.
+     */
+    public Point dataToView(double dataX, double dataY)
+    {
+        double dispX = dataToViewX(dataX);
+        double dispY = dataToViewY(dataY);
+        return new Point(dispX, dispY);
+    }
+
+    /**
+     * Converts a X coord from data coords to view coords.
+     */
+    public double dataToViewX(double dataX)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervalsX();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double axisX = ins.left;
+        double areaW = getWidth() - ins.getWidth();
+        return axisX + (dataX - dataMin)/(dataMax - dataMin)*areaW;
+    }
+
+    /**
+     * Converts a X coord from data coords to view coords.
+     */
+    public double dataToViewY(double dataY)
+    {
+        Insets ins = getInsetsAll();
+        Intervals intervals = getIntervalsY();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double areaY = ins.top;
+        double areaH = getHeight() - ins.getHeight();
+        return areaY + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
+    }
+
+    /**
      * Returns whether view is in ZoomSelectMode.
      */
     public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
@@ -154,54 +183,8 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
     {
+        if (!getChart().getType().isXYType()) return;
         _panZoomer.scaleAxesMinMaxForFactor(aScale, isAnimated);
-    }
-
-    /**
-     * Resets Axes to original bounds.
-     */
-    public void resetAxes()
-    {
-        getAxisX().resetAxes();
-        getAxisY().resetAxes();
-    }
-
-    /**
-     * Resets Axes to original bounds.
-     */
-    public void resetAxesAnimated()
-    {
-        getAxisX().resetAxesAnimated();
-        getAxisY().resetAxesAnimated();
-    }
-
-    /**
-     * Called to reset view from Chart.
-     */
-    protected void resetView()
-    {
-        // Do normal version
-        super.resetView();
-
-        // Get info
-        Chart chart = _chartView.getChart();
-        ChartType chartType = chart.getType();
-
-        // Update DataArea: Get DataArea for type and set in this DataView
-        if (_dataArea==null || chartType!= getDataArea().getChartType()) {
-            DataArea dataArea = DataArea.createDataAreaForType(chartType);
-            setDataArea(dataArea);
-            resetAxes();
-        }
-
-        // Reset X Axis
-        _axisX.resetView();
-
-        // Reset Y Axis
-        _axisY.resetView();
-
-        // Reset DataView
-        _dataArea.reactivate();
     }
 
     /**
@@ -211,7 +194,8 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     {
         double viewW = getWidth();
         double viewH = getHeight();
-        _dataArea.setSize(viewW, viewH);
+        for (DataArea dataArea : getDataAreas())
+            dataArea.setSize(viewW, viewH);
     }
 
     /**

@@ -14,8 +14,11 @@ import java.text.DecimalFormat;
  */
 public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
+    // The ChartView
+    protected ChartView  _chartView;
+
     // The DataView
-    protected DataArea _dataView;
+    protected DataView  _dataView;
 
     // The Title view
     protected StringView  _titleView;
@@ -62,6 +65,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView.setShrinkToFit(true);
         addChild(_titleView);
     }
+
+    /**
+     * Returns the ChartView.
+     */
+    public ChartView getChartView()  { return _chartView; }
 
     /**
      * Returns the ChartPart.
@@ -214,7 +222,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         // Special case, bar
         if (getAxisType()==AxisType.X) {
-            boolean isBar = _dataView.isChartTypeBar();
+            boolean isBar = getChart().getType().isBarType();
             DataSetList dsetList = getDataSetList();
             DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
             if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
@@ -245,7 +253,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Special case, bar
         if (getAxisType()==AxisType.X) {
-            boolean isBar = _dataView.isChartTypeBar();
+            boolean isBar = getChart().getType().isBarType();
             DataSetList dsetList = getDataSetList();
             DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
             if (isBar || dataType==DataType.IY || dataType==DataType.CY) {

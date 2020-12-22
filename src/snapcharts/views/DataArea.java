@@ -36,20 +36,6 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the ChartType.
-     */
-    public abstract ChartType getChartType();
-
-    /**
-     * Returns whether this is bar chart.
-     */
-    public boolean isChartTypeBar()
-    {
-        ChartType chartType = getChartType();
-        return chartType==ChartType.BAR || chartType==ChartType.BAR_3D;
-    }
-
-    /**
      * Returns the ChartPart.
      */
     public T getChartPart()  { return null; }
@@ -93,22 +79,6 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the X axis intervals for active datasets.
-     */
-    public Intervals getIntervalsX()
-    {
-        return getAxisX().getIntervals();
-    }
-
-    /**
-     * Returns the Y axis intervals for active datasets.
-     */
-    public Intervals getIntervalsY()
-    {
-        return getAxisY().getIntervals();
-    }
-
-    /**
      * Returns the dataset color at index.
      */
     public Color getColor(int anIndex)  { return getChart().getColor(anIndex); }
@@ -137,70 +107,35 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     protected int getRevealTime()  { return DataView.DEFAULT_REVEAL_TIME; }
 
     /**
+     * Returns the X axis intervals for active datasets.
+     */
+    public Intervals getIntervalsX()
+    {
+        return getAxisX().getIntervals();
+    }
+
+    /**
+     * Returns the Y axis intervals for active datasets.
+     */
+    public Intervals getIntervalsY()
+    {
+        return getAxisY().getIntervals();
+    }
+
+    /**
      * Converts a point from dataset coords to view coords.
      */
-    public Point dataToView(double dataX, double dataY)
-    {
-        double dispX = dataToViewX(dataX);
-        double dispY = dataToViewY(dataY);
-        return new Point(dispX, dispY);
-    }
+    public Point dataToView(double dataX, double dataY)  { return _dataView.dataToView(dataX, dataY); }
 
     /**
      * Converts a X coord from data coords to view coords.
      */
-    public double dataToViewX(double dataX)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervalsX();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double axisX = ins.left;
-        double areaW = getWidth() - ins.getWidth();
-        return axisX + (dataX - dataMin)/(dataMax - dataMin)*areaW;
-    }
+    public double dataToViewX(double dataX)  { return _dataView.dataToViewX(dataX); }
 
     /**
      * Converts a X coord from data coords to view coords.
      */
-    public double dataToViewY(double dataY)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervalsY();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double areaY = ins.top;
-        double areaH = getHeight() - ins.getHeight();
-        return areaY + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
-    }
-
-    /**
-     * Converts a X coord from view coords to data coords.
-     */
-    public double viewToDataX(double dispX)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervalsX();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double dispMin = ins.left;
-        double dispMax = dispMin + getWidth() - ins.getWidth();
-        return dataMin + (dispX - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
-    }
-
-    /**
-     * Converts a Y coord from view coords to data coords.
-     */
-    public double viewToDataY(double dispY)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervalsY();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double dispMin = ins.top;
-        double dispMax = dispMin + getHeight() - ins.getHeight();
-        return dataMax - (dispY - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
-    }
+    public double dataToViewY(double dataY)  { return _dataView.dataToViewY(dataY); }
 
     /**
      * Paints chart axis lines.
@@ -216,19 +151,20 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
         double areaW = viewW - ins.getWidth();
         double areaH = viewH - ins.getHeight();
 
-        // Set axis line color and stroke
-        double lineWidth = 1;
-        double dashes[] = getAxisY().getGridLineDashArray();
-        Stroke stroke = dashes==null && lineWidth==1 ? Stroke.Stroke1 : new Stroke(lineWidth, dashes, 0);
-        aPntr.setStroke(stroke);
-
         // Paint grid lines
-        aPntr.setColor(GRID_LINES_COLOR);
-        if (getAxisY().isVisible())
+        AxisViewY axisY = getAxisY();
+        if (axisY!=null && axisY.isVisible()) {
+            aPntr.setColor(GRID_LINES_COLOR);
+            double dashes[] = axisY!=null ? axisY.getGridLineDashArray() : null;
+            double lineWidth = 1;
+            Stroke stroke = dashes==null && lineWidth==1 ? Stroke.Stroke1 : new Stroke(lineWidth, dashes, 0);
+            aPntr.setStroke(stroke);
             paintGridlines(aPntr, areaX, areaY, areaW, areaH);
+        }
 
         // Paint Border
         aPntr.setColor(BORDER_COLOR);
+        aPntr.setStroke(Stroke.Stroke1);
         aPntr.drawRect(areaX, areaY, areaW, areaH);
 
         // Paint Axis lines
@@ -250,21 +186,23 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
      */
     protected void paintGridlines(Painter aPntr, double aX, double aY, double aW, double aH)
     {
-        //if (!isChartTypeBar()) {
-            double tickLenX = getAxisX().getAxis().getTickLength();
-            Intervals ivalsX = getIntervalsX();
-            for (int i=0, iMax=ivalsX.getCount(); i<iMax; i++) {
-                double dataX = ivalsX.getInterval(i);
-                double dispX = (int) Math.round(dataToViewX(dataX));
-                aPntr.setColor(GRID_LINES_COLOR);
-                aPntr.drawLine(dispX, aY, dispX, aH);
-                aPntr.setColor(TICK_LINES_COLOR);
-                aPntr.drawLine(dispX, aY + aH - tickLenX, dispX, aY + aH);
-            }
-        //}
+        AxisViewX axisViewX = getAxisX();
+        AxisX axisX = axisViewX.getAxis();
+        double tickLenX = axisX.getTickLength();
+        Intervals ivalsX = getIntervalsX();
+        for (int i=0, iMax=ivalsX.getCount(); i<iMax; i++) {
+            double dataX = ivalsX.getInterval(i);
+            double dispX = (int) Math.round(dataToViewX(dataX));
+            aPntr.setColor(GRID_LINES_COLOR);
+            aPntr.drawLine(dispX, aY, dispX, aH);
+            aPntr.setColor(TICK_LINES_COLOR);
+            aPntr.drawLine(dispX, aY + aH - tickLenX, dispX, aY + aH);
+        }
 
         // Draw gridlines lines Y
-        double tickLen = getAxisX().getAxis().getTickLength();
+        AxisViewY axisViewY = getAxisY();
+        AxisY axisY = axisViewY.getAxis();
+        double tickLenY = axisY.getTickLength();
         Intervals ivalsY = getIntervalsY();
         for (int i=0, iMax=ivalsY.getCount(); i<iMax; i++) {
             double dataY = ivalsY.getInterval(i);
@@ -272,10 +210,8 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
             aPntr.setColor(GRID_LINES_COLOR);
             aPntr.drawLine(aX, dispY, aW, dispY);
             aPntr.setColor(TICK_LINES_COLOR);
-            aPntr.drawLine(aX, dispY, aX + tickLen, dispY);
+            aPntr.drawLine(aX, dispY, aX + tickLenY, dispY);
         }
-
-        aPntr.setStroke(Stroke.Stroke1);
     }
 
     /**
@@ -351,37 +287,6 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
-     * Called to reset view from updated Chart.
-     */
-    protected void resetView()
-    {
-        // Do normal version
-        super.resetView();
-    }
-
-    /**
-     * Called after a chart area is installed in chart view.
-     */
-    public void activate()
-    {
-        // Enable all datasets
-        DataSetList dataSetList = getDataSetListAll();
-        List<DataSet> dsets = dataSetList.getDataSets();
-        for (DataSet dset : dsets)
-            dset.setDisabled(false);
-    }
-
-    /**
-     * Called before a chart area is removed from a chart view.
-     */
-    public void deactivate()  { }
-
-    /**
-     * Called when chart is reloaded.
-     */
-    public void reactivate()  { }
-
-    /**
      * Call to clear any cached data.
      */
     protected void clearCache()  { }
@@ -404,22 +309,5 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
         clearCache();
-    }
-
-    /**
-     * Creates a DataView for given type.
-     */
-    public static DataArea createDataAreaForType(ChartType aType)
-    {
-        switch (aType)
-        {
-            case BAR: return new DataAreaBar();
-            case BAR_3D: return new DataAreaBar3D();
-            case LINE: return new DataAreaLine(DataAreaLine.Subtype.Line);
-            case AREA: return new DataAreaLine(DataAreaLine.Subtype.Area);
-            case SCATTER: return new DataAreaLine(DataAreaLine.Subtype.Scatter);
-            case PIE: return new DataAreaPie();
-            default: throw new RuntimeException("DataView.createDataViewForType: Unknown type: " + aType);
-        }
     }
 }

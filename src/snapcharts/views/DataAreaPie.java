@@ -20,16 +20,13 @@ public class DataAreaPie extends DataArea {
     // The pie radius and diameter
     private double  _pieR, _pieD;
     
-    // Whether legend was showing
-    private boolean  _showLegend;
-
     // The last MouseMove point
-    private Point _lastMouseMovePoint;
+    //private Point _lastMouseMovePoint;
 
     // Vars for animating SelDataPoint change
     private DataPoint  _selPointLast;
     private double  _selPointMorph = 1;
-    private boolean  _disableMorph;
+    public boolean  _disableMorph;
 
     // The format
     private static DecimalFormat _fmt = new DecimalFormat("#.# %");
@@ -50,11 +47,6 @@ public class DataAreaPie extends DataArea {
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
         setFont(Font.Arial12.getBold());
     }
-
-    /**
-     * Returns the type.
-     */
-    public ChartType getChartType()  { return ChartType.PIE; }
 
     /**
      * Sets the DataView.
@@ -226,59 +218,6 @@ public class DataAreaPie extends DataArea {
     }
 
     /**
-     * Override to hide x/y axis and legend.
-     */
-    public void activate()
-    {
-        // Get info
-        DataSetList dataSetList = getDataSetListAll();
-        int dsetCount = dataSetList.getDataSetCount();
-
-        // Update parts
-        _chartView.getAxisX().setVisible(false);
-        _chartView.getAxisY().setVisible(false);
-        Legend legend = getChart().getLegend();
-        _showLegend = legend.isShowLegend();
-        legend.setShowLegend(dsetCount>1);
-
-        // If multiple datasets, make sure only first is enabled
-        if (dsetCount>1) {
-            dataSetList.getDataSet(0).setDisabled(false);
-            for (int i=1; i<dsetCount; i++)
-                dataSetList.getDataSet(i).setDisabled(true);
-        }
-    }
-
-    /**
-     * Override to restore x/y axis and legend.
-     */
-    public void deactivate()
-    {
-        // Reset AxisX.Visible, AxisY.Visible
-        _chartView.getAxisX().setVisible(true);
-        _chartView.getAxisY().setVisible(true);
-
-        // Reset Legend.ShowLegend
-        Legend legend = getChart().getLegend();
-        legend.setShowLegend(_showLegend);
-    }
-
-    /**
-     * Override to select first data point.
-     */
-    public void reactivate()
-    {
-        DataSetList dset = getDataSetList(); if (dset.getDataSetCount()==0 || dset.getPointCount()==0) return;
-        DataPoint dp = dset.getDataSet(0).getPoint(0);
-        _disableMorph = true;
-        _chartView.setSelDataPoint(dp);
-        _disableMorph = false;
-
-        // Fix padding to accommodate bottom label, if needed
-        fixPaddingForBottomLabelIfNeeded();
-    }
-
-    /**
      * Clears the wedges cache.
      */
     protected void clearCache()  { _wedges = null; }
@@ -317,7 +256,7 @@ public class DataAreaPie extends DataArea {
     /**
      * Changes padding to have an extra 20 points on bottom if label needed there.
      * */
-    void fixPaddingForBottomLabelIfNeeded()
+    public void fixPaddingForBottomLabelIfNeeded()
     {
         double angles[] = getAngles();
         double start = -90;

@@ -18,6 +18,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     // The Chart
     private Chart  _chart;
 
+    // The ChartHelper
+    private ChartHelper  _chartHelper;
+
     // The view to display chart parts at top of chart
     private HeaderView _chartTop;
 
@@ -88,8 +91,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Create/add DataView
         _dataView = new DataView(this);
-        addChild(_dataView.getAxisX());
-        addChild(_dataView.getAxisY());
         addChild(_dataView);
 
         // Create ToolTipView
@@ -97,7 +98,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Set sample values
         //setTitle("Sample Growth by Sector, 2012-2018");
-        getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
+        //getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
         resetLater();
     }
 
@@ -107,14 +108,14 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public T getChartPart()  { return (T) getChart(); }
 
     /**
-     * Returns the Chart.
-     */
-    public Chart getChart()  { return _chart; }
-
-    /**
      * Returns the ChartView.
      */
     public ChartView getChartView()  { return this; }
+
+    /**
+     * Returns the Chart.
+     */
+    public Chart getChart()  { return _chart; }
 
     /**
      * Sets the Chart.
@@ -142,6 +143,44 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the ChartHelper.
+     */
+    public ChartHelper getChartHelper()  { return _chartHelper; }
+
+    /**
+     * Sets the ChartHelper.
+     */
+    protected void setChartHelper(ChartHelper aChartHelper)
+    {
+        // If already set, just return
+        if (aChartHelper == _chartHelper) return;
+
+        // Clean up old
+        if (_chartHelper != null) {
+
+            // Deactivate
+            _chartHelper.deactivate();
+
+            // Remove AxisViews
+            for (AxisView axisView : _chartHelper.getAxisViews())
+                removeChild(axisView);
+        }
+
+        // Set new
+        _chartHelper = aChartHelper;
+
+        // Add Axes
+        for (AxisView axisView : _chartHelper.getAxisViews())
+            addChild(axisView);
+
+        // Add DataAreas
+        _dataView.setDataAreas(_chartHelper.getDataAreas());
+
+        // Activate
+        _chartHelper.activate();
+    }
+
+    /**
      * Returns the dataset.
      */
     public DataSetList getDataSetList()  { return getChart().getDataSetList(); }
@@ -159,17 +198,17 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _dataView.getAxisX(); }
+    public AxisViewX getAxisX()  { return _chartHelper.getAxisX(); }
 
     /**
      * Returns the Y Axis View.
      */
-    public AxisViewY getAxisY()  { return _dataView.getAxisY(); }
+    public AxisViewY getAxisY()  { return _chartHelper.getAxisY(); }
 
     /**
      * Returns the DataView.
      */
-    public DataArea getDataArea()  { return _dataView.getDataArea(); }
+    public DataArea getDataArea()  { return _chartHelper.getDataAreas()[0]; }
 
     /**
      * Returns the Legend.
@@ -181,6 +220,13 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     protected void resetView()
     {
+        // Make sure if ChartHelper is right
+        ChartHelper chartHelper = getChartHelper();
+        if (chartHelper==null || getChart().getType() != chartHelper.getChartType()) {
+            chartHelper = ChartHelper.createChartHelper(this);
+            setChartHelper(chartHelper);
+        }
+
         // Do normal version
         super.resetView();
 
@@ -190,8 +236,15 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // Reset DataView
         _dataView.resetView();
 
+        // Reset Axes
+        for (AxisView axisView : chartHelper.getAxisViews())
+            axisView.resetView();
+
         // Reset Legend
         _legend.resetView();
+
+        // Reset ChartHelper
+        chartHelper.reactivate();
 
         // Trigger animate (after delay so size is set for first time)
         setReveal(0);
@@ -382,7 +435,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // If DataSet change, clear caches
         Object src = aPC.getSource();
         if (src instanceof DataSet || src instanceof DataSetList) {
-            getDataArea().clearCache();
+            getChartHelper().clearCache();
         }
     }
 
