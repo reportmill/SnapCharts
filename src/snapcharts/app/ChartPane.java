@@ -206,6 +206,9 @@ public class ChartPane extends DocItemPane {
         return topRowView;
     }
 
+    /**
+     * Initialize UI.
+     */
     @Override
     protected void initUI()
     {
@@ -231,6 +234,7 @@ public class ChartPane extends DocItemPane {
         // Get TabView and remove from SplitView (default mode)
         _tabView = getView("TabView", TabView.class);
         _splitView.removeItem(_tabView);
+        _tabView.setOwner(this);
 
         // Create configure ChartPaneSel
         _selHpr = new ChartPaneSel(this);
@@ -241,58 +245,6 @@ public class ChartPane extends DocItemPane {
             //_chartBox.setPrefHeight(400); _chartBox.setGrowHeight(false);
             _chartBox.setPadding(30, 60, 30, 60);
         }
-    }
-
-    /**
-     * Installs EditorPane.
-     */
-    private void installEditorPane()
-    {
-        // Get toolbar
-        RowView toolBar = getView("ToolBar", RowView.class);
-        toolBar.removeChild(getView("EditButton"));
-        toolBar.setClipToBounds(true);
-
-        // Get EditorPane, Editor
-        _editorPane = new MarkupEditorPane(_chartView);
-        MarkupEditor editor = _editorPane.getEditor();
-        editor.setFill(ChartSetPane.BACK_FILL);
-        _editorPane.getScrollView().setBorder(null);
-
-        // Install EditorPane
-        SplitView splitView = (SplitView) _chartBox.getParent();
-        splitView.removeItem(_chartBox);
-        splitView.addItem(_editorPane.getUI(), 0);
-
-        // WTF
-        ViewUtils.setFocused(editor, false);
-
-        // Install ToolBar
-        RowView toolsView = _editorPane.getToolsView();
-        toolBar.addChild(toolsView, 0);
-        for (View child : toolsView.getChildren())
-            ((ToggleButton)child).setShowArea(false);
-
-        // Animate in
-        toolsView.setTransX(-100);
-        toolsView.getAnimCleared(700).setTransX(0).play();
-        toolsView.getAnim(0).setOnFinish(() -> installEditorPaneAnimDone());
-    }
-
-    private void installEditorPaneAnimDone()
-    {
-        RowView toolsView = _editorPane.getToolsView();
-        ((ToggleButton)toolsView.getChildLast()).fire();
-
-        MarkupEditor editor = _editorPane.getEditor();
-        editor.setNeedsInspector(false);
-        editor.addPropChangeListener(pc -> markupEditorNeedsInspectorChanged(), MarkupEditor.NeedsInspector_Prop);
-        editor.setNeedsInspector(true);
-    }
-
-    private void markupEditorNeedsInspectorChanged()
-    {
-        _insp.setMarkupInspectorVisible(_editorPane.getEditor().isNeedsInspector());
     }
 
     /**
@@ -365,7 +317,7 @@ public class ChartPane extends DocItemPane {
         }
 
         // Handle TabView
-        if (anEvent.equals(_tabView)) {
+        if (anEvent.equals("TabView")) {
             int selIndex = _tabView.getSelIndex();
             DataSet dset = _chartView.getDataSetList().getDataSet(selIndex);
             getSel().setSelChartPart(dset);
@@ -374,5 +326,57 @@ public class ChartPane extends DocItemPane {
         // Handle EditButton
         if (anEvent.equals("EditButton"))
             runLater(() -> installEditorPane());
+    }
+
+    /**
+     * Installs EditorPane.
+     */
+    private void installEditorPane()
+    {
+        // Get toolbar
+        RowView toolBar = getView("ToolBar", RowView.class);
+        toolBar.removeChild(getView("EditButton"));
+        toolBar.setClipToBounds(true);
+
+        // Get EditorPane, Editor
+        _editorPane = new MarkupEditorPane(_chartView);
+        MarkupEditor editor = _editorPane.getEditor();
+        editor.setFill(ChartSetPane.BACK_FILL);
+        _editorPane.getScrollView().setBorder(null);
+
+        // Install EditorPane
+        SplitView splitView = (SplitView) _chartBox.getParent();
+        splitView.removeItem(_chartBox);
+        splitView.addItem(_editorPane.getUI(), 0);
+
+        // WTF
+        ViewUtils.setFocused(editor, false);
+
+        // Install ToolBar
+        RowView toolsView = _editorPane.getToolsView();
+        toolBar.addChild(toolsView, 0);
+        for (View child : toolsView.getChildren())
+            ((ToggleButton)child).setShowArea(false);
+
+        // Animate in
+        toolsView.setTransX(-100);
+        toolsView.getAnimCleared(700).setTransX(0).play();
+        toolsView.getAnim(0).setOnFinish(() -> installEditorPaneAnimDone());
+    }
+
+    private void installEditorPaneAnimDone()
+    {
+        RowView toolsView = _editorPane.getToolsView();
+        ((ToggleButton)toolsView.getChildLast()).fire();
+
+        MarkupEditor editor = _editorPane.getEditor();
+        editor.setNeedsInspector(false);
+        editor.addPropChangeListener(pc -> markupEditorNeedsInspectorChanged(), MarkupEditor.NeedsInspector_Prop);
+        editor.setNeedsInspector(true);
+    }
+
+    private void markupEditorNeedsInspectorChanged()
+    {
+        _insp.setMarkupInspectorVisible(_editorPane.getEditor().isNeedsInspector());
     }
 }
