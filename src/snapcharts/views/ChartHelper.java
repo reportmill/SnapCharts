@@ -44,6 +44,11 @@ public abstract class ChartHelper {
     }
 
     /**
+     * Returns the ChartView.
+     */
+    public ChartView getChartView()  { return _chartView; }
+
+    /**
      * Returns the Chart.
      */
     public Chart getChart()  { return _chartView.getChart(); }
@@ -202,9 +207,9 @@ public abstract class ChartHelper {
             case BAR: return new ChartHelperBar(aChartView);
             case BAR_3D: return new ChartHelperBar3D(aChartView);
             case PIE: return new ChartHelperPie(aChartView);
-            case LINE: return new ChartHelperLine(aChartView, ChartType.LINE);
-            case AREA: return new ChartHelperLine(aChartView, ChartType.AREA);
-            case SCATTER: return new ChartHelperLine(aChartView, ChartType.SCATTER);
+            case LINE: return new ChartHelperXY(aChartView, ChartType.LINE);
+            case AREA: return new ChartHelperXY(aChartView, ChartType.AREA);
+            case SCATTER: return new ChartHelperXY(aChartView, ChartType.SCATTER);
             default: throw new RuntimeException("ChartHelper.createChartHelper: Unknown type: " + chartType);
         }
     }

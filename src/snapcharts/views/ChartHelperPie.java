@@ -35,7 +35,7 @@ public class ChartHelperPie extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        return new DataArea[] { _dataArea = new DataAreaPie() };
+        return new DataArea[] { _dataArea = new DataAreaPie(this, null) };
     }
 
     /**

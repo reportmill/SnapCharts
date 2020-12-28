@@ -42,8 +42,9 @@ public class DataAreaPie extends DataArea {
     /**
      * Constructor.
      */
-    public DataAreaPie()
+    public DataAreaPie(ChartHelper aChartHelper, DataSet aDataSet)
     {
+        super(aChartHelper, aDataSet);
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
         setFont(Font.Arial12.getBold());
     }
@@ -54,7 +55,7 @@ public class DataAreaPie extends DataArea {
     protected void setDataView(DataView aDataView)
     {
         super.setDataView(aDataView);
-        _chartView.addPropChangeListener(pc -> selDataPointChanged(pc), ChartView.SelDataPoint_Prop);
+        getChartView().addPropChangeListener(pc -> selDataPointChanged(pc), ChartView.SelDataPoint_Prop);
     }
 
     /**
@@ -126,7 +127,7 @@ public class DataAreaPie extends DataArea {
     /**
      * Paints chart.
      */
-    protected void paintChart(Painter aPntr, double aX, double aY, double aW, double aH)
+    protected void paintChart(Painter aPntr)
     {
         // Get wedges and other paint info
         Wedge wedges[] = getWedges();
@@ -137,7 +138,8 @@ public class DataAreaPie extends DataArea {
         double selPointMorph = getSelDataPointMorph();
 
         // Set font
-        aPntr.setFont(getFont()); aPntr.setStroke(Stroke.Stroke1);
+        aPntr.setFont(getFont());
+        aPntr.setStroke(Stroke.Stroke1);
 
         // Iterate over wedges and paint wedge
         for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
@@ -152,7 +154,8 @@ public class DataAreaPie extends DataArea {
 
             // Paint arc
             Arc arc = wedge.getArc(i==selIndex, false, i==selIndexLast, reveal, selPointMorph);
-            aPntr.setColor(color); aPntr.fill(arc);
+            aPntr.setColor(color);
+            aPntr.fill(arc);
 
             // Paint connector and white border
             if (reveal>=1)
@@ -303,9 +306,9 @@ public class DataAreaPie extends DataArea {
     }
 
     /** Convenience methods to return ChartView SelDataPoint.Index, SelDataPointLast.Index & TargDataPoint.Index. */
-    int getSelPointIndex()  { DataPoint dp = _chartView.getSelDataPoint(); return dp!=null? dp.getIndex() : -1; }
+    int getSelPointIndex()  { DataPoint dp = getChartView().getSelDataPoint(); return dp!=null? dp.getIndex() : -1; }
     int getSelPointLastIndex()  { return _selPointLast!=null? _selPointLast.getIndex() : -1; }
-    int getTargPointIndex()  { DataPoint dp = _chartView.getTargDataPoint(); return dp!=null? dp.getIndex() : -1; }
+    int getTargPointIndex()  { DataPoint dp = getChartView().getTargDataPoint(); return dp!=null? dp.getIndex() : -1; }
 
     /**
      * Returns the value for given key.

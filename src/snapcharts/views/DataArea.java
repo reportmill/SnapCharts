@@ -1,42 +1,56 @@
 package snapcharts.views;
 import java.util.*;
-import snap.geom.Insets;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.*;
-import snap.view.*;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
 
 /**
  * A view to display the actual contents of a chart.
  */
-public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
-    
+public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
+
+    // The ChartHelper
+    private ChartHelper  _chartHelper;
+
+    // The ChartView that owns the area
+    private ChartView  _chartView;
+
     // The DataView that holds this DataArea
     protected DataView _dataView;
-    
-    // The ChartView that owns the area
-    protected ChartView  _chartView;
 
+    // The DataSet
+    private T  _dataSet;
+    
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
-    protected static Color  GRID_LINES_COLOR = Color.get("#E6");
-    protected static Color  TICK_LINES_COLOR = Color.GRAY;
-    protected static Color  AXIS_LINES_COLOR = Color.DARKGRAY;
+    protected static Color GRID_LINE_COLOR = Color.get("#E6");
+    protected static double GRID_LINE_WIDTH = 1;
+    protected static Color TICK_LINE_COLOR = Color.GRAY;
+    protected static Color AXIS_LINE_COLOR = Color.DARKGRAY;
 
     /**
      * Constructor.
      */
-    public DataArea()
+    public DataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
-        enableEvents(MouseMove, MouseRelease, MouseExit);
+        super();
+
+        // Set ivars
+        _chartHelper = aChartHelper;
+        _dataSet = (T) aDataSet;
     }
 
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return null; }
+    public T getChartPart()  { return _dataSet; }
+
+    /**
+     * Returns the DataSet.
+     */
+    public DataSet getDataSet()  { return _dataSet; }
 
     /**
      * Sets the DataView.
@@ -79,12 +93,12 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the dataset color at index.
      */
-    public Color getColor(int anIndex)  { return getChart().getColor(anIndex); }
+    public Color getDataColor(int anIndex)  { return getChart().getColor(anIndex); }
 
     /**
      * Returns the Symbol shape at index.
      */
-    public Shape getSymbolShape(int anIndex)
+    public Shape getDataSymbolShape(int anIndex)
     {
         return getChart().getSymbolShape(anIndex);
     }
@@ -132,104 +146,91 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
      */
     protected void paintFront(Painter aPntr)
     {
-        // Get insets and chart content width/height (minus insets)
-        Insets ins = getInsetsAll();
-        double viewW = getWidth();
-        double viewH = getHeight();
-        double areaX = ins.left;
-        double areaY = ins.top;
-        double areaW = viewW - ins.getWidth();
-        double areaH = viewH - ins.getHeight();
-
-        // Paint grid lines
-        AxisViewY axisY = getAxisY();
-        if (axisY!=null && axisY.isVisible()) {
-            aPntr.setColor(GRID_LINES_COLOR);
-            double dashes[] = axisY!=null ? axisY.getGridLineDashArray() : null;
-            double lineWidth = 1;
-            Stroke stroke = dashes==null && lineWidth==1 ? Stroke.Stroke1 : new Stroke(lineWidth, dashes, 0);
-            aPntr.setStroke(stroke);
-            paintGridlines(aPntr, areaX, areaY, areaW, areaH);
-        }
-
-        // Paint Border
-        aPntr.setColor(BORDER_COLOR);
-        aPntr.setStroke(Stroke.Stroke1);
-        aPntr.drawRect(areaX, areaY, areaW, areaH);
-
-        // Paint Axis lines
-        aPntr.setColor(AXIS_LINES_COLOR);
-        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
-        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
+        // Get area bounds
+        double areaW = getWidth();
+        double areaH = getHeight();
 
         // Clip bounds
         aPntr.save();
-        aPntr.clipRect(0, 0, viewW, viewH);
+        aPntr.clipRect(0, 0, areaW, areaH);
 
         // Paint chart
-        paintChart(aPntr, ins.left, ins.top, areaW, areaH);
+        paintChart(aPntr);
         aPntr.restore();
-    }
-
-    /**
-     * Paints chart axis lines.
-     */
-    protected void paintGridlines(Painter aPntr, double aX, double aY, double aW, double aH)
-    {
-        AxisViewX axisViewX = getAxisX();
-        AxisX axisX = axisViewX.getAxis();
-        double tickLenX = axisX.getTickLength();
-        Intervals ivalsX = axisViewX.getIntervals();
-        for (int i=0, iMax=ivalsX.getCount(); i<iMax; i++) {
-            double dataX = ivalsX.getInterval(i);
-            double dispX = (int) Math.round(dataToViewX(dataX));
-            aPntr.setColor(GRID_LINES_COLOR);
-            aPntr.drawLine(dispX, aY, dispX, aH);
-            aPntr.setColor(TICK_LINES_COLOR);
-            aPntr.drawLine(dispX, aY + aH - tickLenX, dispX, aY + aH);
-        }
-
-        // Draw gridlines lines Y
-        AxisViewY axisViewY = getAxisY();
-        AxisY axisY = axisViewY.getAxis();
-        double tickLenY = axisY.getTickLength();
-        Intervals ivalsY = getIntervalsY();
-        for (int i=0, iMax=ivalsY.getCount(); i<iMax; i++) {
-            double dataY = ivalsY.getInterval(i);
-            double dispY = (int) Math.round(dataToViewY(dataY));
-            aPntr.setColor(GRID_LINES_COLOR);
-            aPntr.drawLine(aX, dispY, aW, dispY);
-            aPntr.setColor(TICK_LINES_COLOR);
-            aPntr.drawLine(aX, dispY, aX + tickLenY, dispY);
-        }
     }
 
     /**
      * Paints chart content.
      */
-    protected void paintChart(Painter aPntr, double aX, double aY, double aW, double aH)  { }
+    protected void paintChart(Painter aPntr)  { }
 
     /**
-     * Handle events.
+     * Paints chart axis lines.
      */
-    protected void processEvent(ViewEvent anEvent)
+    public void paintGridlines(Painter aPntr)
     {
-        // Handle MouseMove
-        if (anEvent.isMouseMove()) {
-            Point pnt = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
-            _chartView.setTargPoint(pnt);
-        }
+        paintGridlinesX(aPntr);
+        paintGridlinesY(aPntr);
+    }
 
-        // Handle MouseClick
-        if (anEvent.isMouseClick()) {
-            DataPoint dpnt = getDataPointForXY(anEvent.getX(), anEvent.getY());
-            if (dpnt==_chartView.getSelDataPoint()) dpnt = null;
-            _chartView.setSelDataPoint(dpnt);
-        }
+    /**
+     * Paints chart X axis lines.
+     */
+    protected void paintGridlinesX(Painter aPntr)
+    {
+        // Get info
+        AxisViewX axisView = getAxisX(); if (axisView==null) return;
+        AxisX axis = axisView.getAxis();
 
-        // Handle MouseExit
-        if (anEvent.isMouseExit())
-            _chartView.setTargPoint(null);
+        // Set Grid Color/Stroke
+        aPntr.setColor(GRID_LINE_COLOR);
+        double dashes[] = axisView.getGridLineDashArray();
+        Stroke stroke = dashes==null ? Stroke.Stroke1 : new Stroke(GRID_LINE_WIDTH, dashes, 0);
+        aPntr.setStroke(stroke);
+
+        // Iterate over intervals and paint lines
+        double areaY = 0;
+        double areaH = getHeight();
+        double tickLen = axis.getTickLength();
+        Intervals ivals = axisView.getIntervals();
+        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
+            double dataX = ivals.getInterval(i);
+            double dispX = (int) Math.round(dataToViewX(dataX));
+            aPntr.setColor(GRID_LINE_COLOR);
+            aPntr.drawLine(dispX, areaY, dispX, areaH);
+            aPntr.setColor(TICK_LINE_COLOR);
+            aPntr.drawLine(dispX, areaY + areaH - tickLen, dispX, areaY + areaH);
+        }
+    }
+
+    /**
+     * Paints chart Y axis lines.
+     */
+    protected void paintGridlinesY(Painter aPntr)
+    {
+        // Get info
+        AxisViewY axisView = getAxisY(); if (axisView==null || !axisView.isVisible()) return;
+        AxisY axis = axisView.getAxis();
+
+        // Set Grid Color/Stroke
+        aPntr.setColor(GRID_LINE_COLOR);
+        double dashes[] = axisView.getGridLineDashArray();
+        Stroke stroke = dashes==null ? Stroke.Stroke1 : new Stroke(GRID_LINE_WIDTH, dashes, 0);
+        aPntr.setStroke(stroke);
+
+        // Iterate over intervals and paint lines
+        double areaX = 0;
+        double areaW = getWidth();
+        double tickLen = axis.getTickLength();
+        Intervals ivals = getIntervalsY();
+        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
+            double dataY = ivals.getInterval(i);
+            double dispY = (int) Math.round(dataToViewY(dataY));
+            aPntr.setColor(GRID_LINE_COLOR);
+            aPntr.drawLine(areaX, dispY, areaW, dispY);
+            aPntr.setColor(TICK_LINE_COLOR);
+            aPntr.drawLine(areaX, dispY, areaX + tickLen, dispY);
+        }
     }
 
     /**

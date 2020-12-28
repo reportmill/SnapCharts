@@ -26,8 +26,10 @@ public class DataAreaBar extends DataArea {
     /**
      * Constructor.
      */
-    public DataAreaBar()
+    public DataAreaBar(ChartHelper aChartHelper, DataSet aDataSet)
     {
+        super(aChartHelper, aDataSet);
+
         // Add top so top axis line isn't on edge
         //setPadding(5,0,0,0);
     }
@@ -99,7 +101,7 @@ public class DataAreaBar extends DataArea {
                 double dispY = dataToViewY(dataY);
 
                 // Draw bar
-                Color color = colorDataSets ? getColor(dset.getIndex()) : getColor(i);
+                Color color = colorDataSets ? getDataColor(dset.getIndex()) : getDataColor(i);
                 double barX = i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
                 double barHeight = viewHeight - dispY;
                 section.bars[j] = new Bar(dataPoint, barX, dispY, barWidth, barHeight, color);
@@ -113,19 +115,20 @@ public class DataAreaBar extends DataArea {
     /**
      * Paints chart.
      */
-    protected void paintChart(Painter aPntr, double aX, double aY, double aW, double aH)
+    protected void paintChart(Painter aPntr)
     {
         // Get selected point index (section index)
-        DataPoint dataPoint = _chartView.getTargDataPoint();
+        DataPoint dataPoint = getChartView().getTargDataPoint();
         int selIndex = dataPoint!=null ? dataPoint.getIndex() : -1;
 
-        double viewHeight = getHeight();
+        double viewW = getWidth();
+        double viewH = getHeight();
         Section sections[] = getSections();
 
         // If reveal is not full (1) then clip
         if (getReveal()<1) {
             aPntr.save();
-            aPntr.clipRect(0,getHeight()*(1-getReveal()), getWidth(),getHeight()*getReveal());
+            aPntr.clipRect(0,viewH*(1-getReveal()), viewW,viewH*getReveal());
         }
 
         // Iterate over sections
@@ -134,7 +137,7 @@ public class DataAreaBar extends DataArea {
             // If selected section, draw background
             if (i==selIndex) {
                 aPntr.setColor(Color.get("#4488FF09"));
-                aPntr.fillRect(i*section.width, 0, section.width, viewHeight);
+                aPntr.fillRect(i*section.width, 0, section.width, viewH);
             }
 
             // Iterate over datasets and draw bars

@@ -2,6 +2,8 @@ package snapcharts.views;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.*;
+import snapcharts.model.Chart;
+import snapcharts.model.DataSet;
 import snapcharts.model.Intervals;
 import snapcharts.gfx3d.*;
 import snapcharts.model.DataPoint;
@@ -35,8 +37,10 @@ public class DataAreaBar3D extends DataAreaBar {
     /**
      * Constructor.
      */
-    public DataAreaBar3D()
+    public DataAreaBar3D(ChartHelper aChartHelper, DataSet aDataSet)
     {
+        super(aChartHelper, aDataSet);
+
         _camView = new CameraView() {
             protected void layoutImpl() { rebuildScene(); }
         };
@@ -222,7 +226,7 @@ public class DataAreaBar3D extends DataAreaBar {
     protected void addBars()
     {
         // Get selected point index (section index)
-        DataPoint dataPoint = _chartView.getTargDataPoint();
+        DataPoint dataPoint = getChartView().getTargDataPoint();
         int selIndex = dataPoint!=null? dataPoint.getIndex() : -1;
 
         double cx = 0, cy = 0, cw = getWidth(), ch = getHeight();
@@ -269,7 +273,7 @@ public class DataAreaBar3D extends DataAreaBar {
     /**
      * Paints chart.
      */
-    protected void paintChart(Painter aPntr, double aX, double aY, double aW, double aH)  { }
+    protected void paintChart(Painter aPntr)  { }
 
     void rebuildGridLines()
     {

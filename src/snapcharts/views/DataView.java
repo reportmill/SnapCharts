@@ -2,8 +2,10 @@ package snapcharts.views;
 import snap.geom.Insets;
 import snap.geom.Point;
 import snap.gfx.Painter;
+import snap.gfx.Stroke;
 import snap.view.ViewEvent;
 import snapcharts.model.ChartPart;
+import snapcharts.model.DataPoint;
 import snapcharts.model.Intervals;
 
 /**
@@ -32,7 +34,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
 
         // Create/set PanZoomer
         _panZoomer = new DataViewPanZoom(this);
-        enableEvents(MousePress, MouseDrag, MouseRelease, Scroll);
+        enableEvents(MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
     }
 
     /**
@@ -165,6 +167,28 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the data point for given X/Y.
+     */
+    public DataPoint getDataPointForXY(double aX, double aY)
+    {
+        DataArea[] dataAreas = getDataAreas(); if (dataAreas.length==0) return null;
+        DataArea dataArea = dataAreas[0];
+        Point pnt = dataArea.parentToLocal(aX, aY, this);
+        return dataArea.getDataPointForXY(pnt.x, pnt.y);
+    }
+
+    /**
+     * Returns the given data point X/Y in this view coords.
+     */
+    public Point getDataPointXYLocal(DataPoint aDP)
+    {
+        DataArea[] dataAreas = getDataAreas(); if (dataAreas.length==0) return null;
+        DataArea dataArea = dataAreas[0];
+        Point pnt = dataArea.getDataPointXYLocal(aDP);
+        return dataArea.localToParent(pnt.x, pnt.y, this);
+    }
+
+    /**
      * Returns whether view is in ZoomSelectMode.
      */
     public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
@@ -199,6 +223,36 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
+     * Override to paint grid.
+     */
+    @Override
+    protected void paintFront(Painter aPntr)
+    {
+        // Make first DataArea paint gridlines
+        DataArea[] dataAreas = getDataAreas();
+        if (dataAreas.length>0) {
+            DataArea dataArea = dataAreas[0];
+            dataArea.paintGridlines(aPntr);
+        }
+
+        // Get view area
+        double areaX = 0;
+        double areaY = 0;
+        double areaW = getWidth();
+        double areaH = getHeight();
+
+        // Paint Border
+        aPntr.setColor(DataArea.BORDER_COLOR);
+        aPntr.setStroke(Stroke.Stroke1);
+        aPntr.drawRect(areaX, areaY, areaW, areaH);
+
+        // Paint Axis lines
+        aPntr.setColor(DataArea.AXIS_LINE_COLOR);
+        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
+        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
+    }
+
+    /**
      * Override to forward to PanZoom.
      */
     @Override
@@ -212,9 +266,27 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     protected void processEvent(ViewEvent anEvent)
     {
+        // Handle MouseMove: Set ChartView.TargPoint
+        if (anEvent.isMouseMove()) {
+            Point pnt = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
+            _chartView.setTargPoint(pnt);
+        }
+
+        // Handle MouseExit: Clear ChartView.TargPoint
+        else if (anEvent.isMouseExit())
+            _chartView.setTargPoint(null);
+
         // Forward to PanZoom
-        if (getChart().getType().isXYType())
+        else if (getChart().getType().isXYType())
             _panZoomer.processEvent(anEvent);
+
+        // Handle MouseClick
+        if (anEvent.isMouseClick() && anEvent.getClickCount()==1) {
+            DataPoint dpnt = getDataPointForXY(anEvent.getX(), anEvent.getY());
+            if (dpnt == _chartView.getSelDataPoint())
+                dpnt = null;
+            _chartView.setSelDataPoint(dpnt);
+        }
 
         // Do normal version
         super.processEvent(anEvent);

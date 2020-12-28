@@ -16,7 +16,7 @@ import snapcharts.model.DataSetList;
 public class ChartView<T extends Chart> extends ChartPartView<T> {
 
     // The Chart
-    private Chart  _chart;
+    private T  _chart;
 
     // The ChartHelper
     private ChartHelper  _chartHelper;
@@ -105,7 +105,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return (T) getChart(); }
+    public T getChartPart()  { return _chart; }
 
     /**
      * Returns the ChartView.
@@ -132,7 +132,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         }
 
         // Set Chart
-        _chart = aChart;
+        _chart = (T) aChart;
 
         // Start listening to new chart
         _chart.addPropChangeListener(_pcl);
@@ -204,11 +204,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      * Returns the Y Axis View.
      */
     public AxisViewY getAxisY()  { return _chartHelper.getAxisY(); }
-
-    /**
-     * Returns the DataView.
-     */
-    public DataArea getDataArea()  { return _chartHelper.getDataAreas()[0]; }
 
     /**
      * Returns the Legend.
@@ -343,9 +338,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public DataPoint getDataPointForXY(double aX, double aY)
     {
-        DataArea dataArea = getDataArea();
-        Point pnt = dataArea.parentToLocal(aX, aY, this);
-        return dataArea.getDataPointForXY(pnt.x, pnt.y);
+        DataView dataView = getDataView();
+        Point pnt = dataView.parentToLocal(aX, aY, this);
+        return dataView.getDataPointForXY(pnt.x, pnt.y);
     }
 
     /**
@@ -353,9 +348,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public Point getDataPointXYLocal(DataPoint aDP)
     {
-        DataArea dataArea = getDataArea();
-        Point pnt = dataArea.getDataPointXYLocal(aDP);
-        return dataArea.localToParent(pnt.x, pnt.y, this);
+        DataView dataView = getDataView();
+        Point pnt = dataView.getDataPointXYLocal(aDP);
+        return dataView.localToParent(pnt.x, pnt.y, this);
     }
 
     /**

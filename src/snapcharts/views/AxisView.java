@@ -33,7 +33,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     private Intervals  _intervals;
 
     // The grid line color
-    protected Color  _gridLineColor = DataArea.GRID_LINES_COLOR;
+    protected Color  _gridLineColor = DataArea.GRID_LINE_COLOR;
 
     // The grid line
     protected double  _gridLineDashArray[];

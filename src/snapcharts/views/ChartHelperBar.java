@@ -33,6 +33,6 @@ public class ChartHelperBar extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        return new DataArea[] { new DataAreaBar() };
+        return new DataArea[] { new DataAreaBar(this, null) };
     }
 }

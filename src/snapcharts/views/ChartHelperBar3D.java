@@ -37,6 +37,6 @@ public class ChartHelperBar3D extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        return new DataArea[] { new DataAreaBar3D() };
+        return new DataArea[] { new DataAreaBar3D(this, null) };
     }
 }
