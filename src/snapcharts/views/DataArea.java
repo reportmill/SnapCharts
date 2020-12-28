@@ -30,8 +30,6 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
      */
     public DataArea()
     {
-        setGrowWidth(true);
-        setPrefSize(600,350);
         enableEvents(MouseMove, MouseRelease, MouseExit);
     }
 
@@ -105,14 +103,6 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
      * Returns the time in milliseconds recommended for animation.
      */
     protected int getRevealTime()  { return DataView.DEFAULT_REVEAL_TIME; }
-
-    /**
-     * Returns the X axis intervals for active datasets.
-     */
-    public Intervals getIntervalsX()
-    {
-        return getAxisX().getIntervals();
-    }
 
     /**
      * Returns the Y axis intervals for active datasets.
@@ -189,7 +179,7 @@ public abstract class DataArea<T extends ChartPart> extends ChartPartView<T> {
         AxisViewX axisViewX = getAxisX();
         AxisX axisX = axisViewX.getAxis();
         double tickLenX = axisX.getTickLength();
-        Intervals ivalsX = getIntervalsX();
+        Intervals ivalsX = axisViewX.getIntervals();
         for (int i=0, iMax=ivalsX.getCount(); i<iMax; i++) {
             double dataX = ivalsX.getInterval(i);
             double dispX = (int) Math.round(dataToViewX(dataX));

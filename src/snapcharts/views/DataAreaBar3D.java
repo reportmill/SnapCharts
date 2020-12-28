@@ -54,34 +54,24 @@ public class DataAreaBar3D extends DataAreaBar {
     public CameraView getCameraView()  { return _camView; }
 
     /**
-     * Returns the number of intervals for this filled graph.
-     */
-    public int getIntervalCount()  { return getIntervalsY().getCount(); }
-
-    /**
-     * Returns the individual interval at a given index as a float value.
-     */
-    public Double getInterval(int anIndex)  { return getIntervalsY().getInterval(anIndex); }
-
-    /**
-     * Returns the last interval as a float value.
-     */
-    public Double getIntervalLast()  { return getInterval(getIntervalCount()-1); }
-
-    /**
      * Returns the number of suggested ticks between the intervals of the RPG'd graph.
      */
     public int getMinorTickCount()
     {
-        // Calcuate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
-        double heightPerTick = getHeight()/(getIntervalCount() - 1);
+        // Calculate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
+        int ivalCount = getIntervalsY().getCount();
+        double heightPerTick = getHeight()/(ivalCount - 1);
         return heightPerTick>=72? 4 : heightPerTick>=50? 3 : 1;
     }
 
-
+    /**
+     * Override to resize CamView.
+     */
     protected void layoutImpl()
     {
-        _camView.setSize(getWidth(), getHeight());
+        double viewW = getWidth();
+        double viewH = getHeight();
+        _camView.setSize(viewW, viewH);
     }
 
     /**
@@ -283,10 +273,11 @@ public class DataAreaBar3D extends DataAreaBar {
 
     void rebuildGridLines()
     {
-        Intervals intervals = getIntervalsY();
         _grid.clear(); _gridMinor.clear(); _gridWithoutSep.clear();
 
         // Get graph min interval and max interval
+        Intervals intervals = getIntervalsY();
+        int intervalCount = intervals.getCount();
         double minInterval = intervals.getMin();
         double maxInterval = intervals.getMax();
         double totalInterval = maxInterval - minInterval;
@@ -305,7 +296,7 @@ public class DataAreaBar3D extends DataAreaBar {
         double minorTickInterval = gridMax*intervalSize/totalInterval/(getMinorTickCount()+1);
 
         // Iterate over graph intervals
-        for (int i=0, iMax=getIntervalCount(); i<iMax - 1; i++) {
+        for (int i=0, iMax=intervalCount; i<iMax - 1; i++) {
 
             // Get interval ratio and line x & y
             double intervalRatio = i/(iMax - 1f);
