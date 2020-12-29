@@ -2,7 +2,6 @@ package snapcharts.model;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import snap.util.*;
 
 /**
@@ -12,7 +11,10 @@ public class DataSetList extends ChartPart {
 
     // The list of datasets
     private List <DataSet>  _dsets = new ArrayList<>();
-    
+
+    // The AxisTypes
+    private AxisType[]  _axisTypes;
+
     // The dataset start value
     private int _startValue = 0;
 
@@ -147,6 +149,26 @@ public class DataSetList extends ChartPart {
     }
 
     /**
+     * The AxisTypes currently in use.
+     */
+    public AxisType[] getAxisTypes()
+    {
+        // If already set, just return
+        if (_axisTypes!=null) return _axisTypes;
+
+        // Get set of unique axes
+        Set<AxisType> typesSet = new HashSet<>();
+        typesSet.add(AxisType.X);
+        for (DataSet dset : getDataSetList().getDataSets())
+            typesSet.add(dset.getAxisTypeY());
+
+        // Convert to array, sort, set and return
+        AxisType[] types = typesSet.toArray(new AxisType[0]);
+        Arrays.sort(types);
+        return _axisTypes = types;
+    }
+
+    /**
      * Returns the minimum X value for datasets.
      */
     public double getMinX()
@@ -185,7 +207,7 @@ public class DataSetList extends ChartPart {
     /**
      * Returns the minimum Y value for datasets.
      */
-    public double getMinY()
+    public double getMinY(AxisType anAxisTypeY)
     {
         // If value already cached, just return
         if (_minY < Float.MAX_VALUE) return _minY;
@@ -195,15 +217,17 @@ public class DataSetList extends ChartPart {
 
         // Iterate over datasets to get min of all
         double min = Float.MAX_VALUE;
-        for (DataSet dset : getDataSets())
-            min = Math.min(min, dset.getMinY());
+        for (DataSet dset : getDataSets()) {
+            if (dset.getAxisTypeY() == anAxisTypeY)
+                min = Math.min(min, dset.getMinY());
+        }
         return _minY = min;
     }
 
     /**
      * Returns the maximum Y value for datasets.
      */
-    public double getMaxY()
+    public double getMaxY(AxisType anAxisTypeY)
     {
         // If value already cached, just return
         if (_maxY > -Float.MAX_VALUE) return _maxY;
@@ -213,8 +237,10 @@ public class DataSetList extends ChartPart {
 
         // Iterate over datasets to get max of all
         double max = -Float.MAX_VALUE;
-        for (DataSet dset : getDataSets())
-            max = Math.max(max, dset.getMaxY());
+        for (DataSet dset : getDataSets()) {
+            if (dset.getAxisTypeY() == anAxisTypeY)
+                max = Math.max(max, dset.getMaxY());
+        }
         return _maxY = max;
     }
 
@@ -223,11 +249,16 @@ public class DataSetList extends ChartPart {
      */
     public double getMinForAxis(AxisType anAxisType)
     {
-        switch (anAxisType) {
-            case X: return getMinX();
-            case Y: return getMinY();
-            default: throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
-        }
+        // Handle X axis
+        if (anAxisType == AxisType.X)
+            return getMinX();
+
+        // Handle any Y axis
+        if (anAxisType.isAnyY())
+            return getMinY(anAxisType);
+
+        // Complain
+        throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
     }
 
     /**
@@ -235,11 +266,16 @@ public class DataSetList extends ChartPart {
      */
     public double getMaxForAxis(AxisType anAxisType)
     {
-        switch (anAxisType) {
-            case X: return getMaxX();
-            case Y: return getMaxY();
-            default: throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
-        }
+        // Handle X axis
+        if (anAxisType == AxisType.X)
+            return getMaxX();
+
+        // Handle any Y axis
+        if (anAxisType.isAnyY())
+            return getMaxY(anAxisType);
+
+        // Complain
+        throw new RuntimeException("DataSetList.getMaxForAxis: Unknown axis: " + anAxisType);
     }
 
     /**
@@ -351,6 +387,7 @@ public class DataSetList extends ChartPart {
         _active = null;
         _minX = _minY = Float.MAX_VALUE;
         _maxX = _maxY = -Float.MAX_VALUE;
+        _axisTypes = null;
     }
 
     /**

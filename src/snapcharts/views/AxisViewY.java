@@ -1,8 +1,8 @@
 package snapcharts.views;
 import snap.geom.Insets;
-import snap.geom.Rect;
 import snap.gfx.*;
 import snap.view.*;
+import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
 import snapcharts.model.Intervals;
 
@@ -13,12 +13,19 @@ public class AxisViewY extends AxisView {
     
     // The Title view wrapper (to allow rotation)
     private WrapView  _titleViewBox;
+
+    // The AxisType
+    private AxisType  _axisType;
     
     /**
-     * Creates the ChartYAxis.
+     * Constructor.
      */
-    public AxisViewY()
+    public AxisViewY(AxisType anAxisTypeY)
     {
+        super();
+
+        _axisType = anAxisTypeY;
+
         enableEvents(MousePress);
 
         // Create configure TitleView
@@ -28,11 +35,16 @@ public class AxisViewY extends AxisView {
     }
 
     /**
+     * Returns the AxisType.
+     */
+    public AxisType getType()  { return _axisType; }
+
+    /**
      * Returns the axis.
      */
     public AxisY getAxis()
     {
-        return getChart().getAxisY();
+        return (AxisY) getChart().getAxisForType(_axisType);
     }
 
     /**

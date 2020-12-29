@@ -78,25 +78,8 @@ public class ChartPaneSel {
      */
     public void setSelView(ChartPartView aView)
     {
-        ChartPart chartPart = getChartPartForView(aView);
+        ChartPart chartPart = aView.getChartPart();
         setSelChartPart(chartPart);
-    }
-
-    /**
-     * Returns the ChartPartView for given ChartPart.
-     */
-    private ChartPart getChartPartForView(ChartPartView aCPV)
-    {
-        Chart chart = _chartPane.getChart();
-        if (aCPV instanceof HeaderView)
-            return chart.getHeader();
-        if (aCPV instanceof AxisViewX)
-            return chart.getAxisX();
-        if (aCPV instanceof AxisViewY)
-            return chart.getAxisY();
-        if (aCPV instanceof LegendView)
-            return chart.getLegend();
-        return chart;
     }
 
     /**
@@ -107,13 +90,14 @@ public class ChartPaneSel {
         if (aChartPart instanceof Chart)
             return _chartView;
         else if (aChartPart instanceof Header)
-            return _chartView.getHeader();
-        else if (aChartPart instanceof AxisX)
-            return _chartView.getAxisX();
-        else if (aChartPart instanceof AxisY)
-            return _chartView.getAxisY();
+            return _chartView.getHeaderView();
+        else if (aChartPart instanceof Axis) {
+            Axis axis = (Axis) aChartPart;
+            AxisType axisType = axis.getType();
+            return _chartView.getChartHelper().getAxisView(axisType);
+        }
         else if (aChartPart instanceof Legend)
-            return _chartView.getLegend();
+            return _chartView.getLegendView();
         return null;
     }
 

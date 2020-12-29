@@ -1,5 +1,4 @@
 package snapcharts.views;
-import snapcharts.model.AxisType;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
@@ -26,14 +25,6 @@ public class ChartHelperXY extends ChartHelper {
      * Returns the type.
      */
     public ChartType getChartType()  { return _chartType; }
-
-    /**
-     * Returns the AxisTypes.
-     */
-    protected AxisType[] getAxisTypesImpl()
-    {
-        return new AxisType[] { AxisType.X, AxisType.Y };
-    }
 
     /**
      * Creates the DataAreas.

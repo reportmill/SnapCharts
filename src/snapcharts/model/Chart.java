@@ -4,6 +4,9 @@ import snap.gfx.Color;
 import snap.gfx.Paint;
 import snap.util.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A view to render a chart.
  */
@@ -23,6 +26,15 @@ public class Chart extends ChartPart {
 
     // The Y Axis
     private AxisY  _axisY;
+
+    // The Y2 Axis
+    private AxisY  _axisY2;
+
+    // The Y3 Axis
+    private AxisY  _axisY3;
+
+    // The Y4 Axis
+    private AxisY  _axisY4;
 
     // The DataSet
     private DataSetList _dsetList = new DataSetList(this);
@@ -70,9 +82,20 @@ public class Chart extends ChartPart {
         _axisX.addPropChangeListener(pc -> chartPartDidPropChange(pc));
 
         // Create/set Y Axis
-        _axisY = new AxisY();
-        _axisY._chart = this;
+        _axisY = new AxisY(this, AxisType.Y);
         _axisY.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Create/set Y2 Axis
+        _axisY2 = new AxisY(this, AxisType.Y2);
+        _axisY2.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Create/set Y3 Axis
+        _axisY3 = new AxisY(this, AxisType.Y3);
+        _axisY3.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Create/set Y Axis
+        _axisY4 = new AxisY(this, AxisType.Y4);
+        _axisY4.addPropChangeListener(pc -> chartPartDidPropChange(pc));
 
         // Create/set Legend
         _legend = new Legend();
@@ -126,6 +149,21 @@ public class Chart extends ChartPart {
     public AxisY getAxisY()  { return _axisY; }
 
     /**
+     * Returns the Y2 axis object.
+     */
+    public AxisY getAxisY2()  { return _axisY2; }
+
+    /**
+     * Returns the Y3 axis object.
+     */
+    public AxisY getAxisY3()  { return _axisY3; }
+
+    /**
+     * Returns the Y4 axis object.
+     */
+    public AxisY getAxisY4()  { return _axisY4; }
+
+    /**
      * Returns the Axis for given type.
      */
     public Axis getAxisForType(AxisType anAxisType)
@@ -133,6 +171,9 @@ public class Chart extends ChartPart {
         switch (anAxisType) {
             case X: return getAxisX();
             case Y: return getAxisY();
+            case Y2: return getAxisY2();
+            case Y3: return getAxisY3();
+            case Y4: return getAxisY4();
             default: return null;
         }
     }

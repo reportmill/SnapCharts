@@ -3,6 +3,7 @@ package snapcharts.apptools;
 import snap.view.ComboBox;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
+import snapcharts.model.AxisType;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
@@ -61,6 +62,12 @@ public class DataSetInsp extends ChartPartInsp {
         // Reset DataTypeComboBox
         setViewValue("DataTypeComboBox", dset.getDataType());
 
+        // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
+        setViewValue("YAxisButton", dset.getAxisTypeY() == AxisType.Y);
+        setViewValue("Y2AxisButton", dset.getAxisTypeY() == AxisType.Y2);
+        setViewValue("Y3AxisButton", dset.getAxisTypeY() == AxisType.Y3);
+        setViewValue("Y4AxisButton", dset.getAxisTypeY() == AxisType.Y4);
+
         // Reset StrokeWidth
         setViewValue("LineWidthText", 1);
 
@@ -77,10 +84,20 @@ public class DataSetInsp extends ChartPartInsp {
         DataSet dset = getDataSet(); if (dset==null) return;
 
         // Handle NameText
-        if(anEvent.equals("NameText")) {
+        if (anEvent.equals("NameText")) {
             dset.setName(anEvent.getStringValue());
             _chartPane.getDocPane().docItemNameChanged();
         }
+
+        // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
+        if (anEvent.equals("YAxisButton"))
+            dset.setAxisTypeY(AxisType.Y);
+        if (anEvent.equals("Y2AxisButton"))
+            dset.setAxisTypeY(AxisType.Y2);
+        if (anEvent.equals("Y3AxisButton"))
+            dset.setAxisTypeY(AxisType.Y3);
+        if (anEvent.equals("Y4AxisButton"))
+            dset.setAxisTypeY(AxisType.Y4);
 
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox"))

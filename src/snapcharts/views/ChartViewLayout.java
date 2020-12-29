@@ -286,15 +286,20 @@ public class ChartViewLayout {
      */
     public ViewProxy[] getAxesForSide(Side aSide)
     {
-        // Handle sides
-        switch (aSide)
-        {
-            case TOP: return new ViewProxy[0];
-            case BOTTOM: return new ViewProxy[] { _chartProxy.getChildForClass(AxisViewX.class) };
-            case LEFT: return new ViewProxy[] { _chartProxy.getChildForClass(AxisViewY.class) };
-            case RIGHT: return new ViewProxy[0];
-            default: throw new RuntimeException("ChartViewLayout.getAxesForSide: Unknown side: " + aSide);
-        }
+        // Handle Top
+        if (aSide == Side.TOP)
+            return new ViewProxy[0];
+
+        // Handle Bottom
+        if (aSide == Side.BOTTOM)
+            return new ViewProxy[] { _chartProxy.getChildForClass(AxisViewX.class) };
+
+        // Handle LEFT/RIGHT
+        ViewProxy<AxisViewY>[] axisViews = _chartProxy.getChildrenForClass(AxisViewY.class);
+        for (int i=0; i<axisViews.length; i++)
+            if (axisViews[i].getView().getAxis().getSide() != aSide)
+                axisViews[i] = null;
+        return getNonNullArray(axisViews);
     }
 
     /**

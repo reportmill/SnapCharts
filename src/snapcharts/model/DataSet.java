@@ -20,6 +20,15 @@ public class DataSet extends ChartPart {
     // The format of the data
     private DataType _dataType;
 
+    // The Y Axis type
+    private AxisType  _axisTypeY = AxisType.Y;
+
+    // Whether dataset is disabled
+    private boolean  _disabled;
+
+    // Whether to show symbols
+    private boolean  _showSymbols;
+
     // The values
     private List <DataPoint>  _points = new ArrayList<>();
     
@@ -32,16 +41,11 @@ public class DataSet extends ChartPart {
     // Cached total of Y
     private double  _total;
 
-    // Whether dataset is disabled
-    private boolean  _disabled;
-
-    // Whether to show symbols
-    private boolean  _showSymbols;
-
     // Constants for properties
     public static final String Disabled_Prop = "Disabled";
     public static final String Point_Prop = "Points";
     public static final String ShowSymbols_Prop = "ShowSymbols";
+    public static final String AxisTypeY_Prop = "AxisTypeY";
 
     /**
      * Constructor.
@@ -93,6 +97,55 @@ public class DataSet extends ChartPart {
         }
         return DataType.IY;
     }
+
+    /**
+     * Returns the Y axis type.
+     */
+    public AxisType getAxisTypeY()  { return _axisTypeY; }
+
+    /**
+     * Sets the Y axis type.
+     */
+    public void setAxisTypeY(AxisType anAxisType)
+    {
+        if (anAxisType==getAxisTypeY()) return;
+        if (anAxisType==null || !anAxisType.isAnyY())
+            throw new IllegalArgumentException("DataSet.setAxisTypeY: Unsupported AxisTypeY: " + anAxisType);
+        firePropChange(AxisTypeY_Prop, _axisTypeY, _axisTypeY = anAxisType);
+    }
+
+    /**
+     * Returns whether to show symbols for this DataSet.
+     */
+    public boolean isShowSymbols()  { return _showSymbols; }
+
+    /**
+     * Sets whether to show symbols for this DataSet.
+     */
+    public void setShowSymbols(boolean aValue)
+    {
+        if (aValue==isShowSymbols()) return;
+        firePropChange(ShowSymbols_Prop, _showSymbols, _showSymbols = aValue);
+    }
+
+    /**
+     * Returns whether this dataset is disabled.
+     */
+    public boolean isDisabled()  { return _disabled; }
+
+    /**
+     * Sets whether this dataset is disabled.
+     */
+    public void setDisabled(boolean aValue)
+    {
+        if (aValue==isDisabled()) return;
+        firePropChange(Disabled_Prop, _disabled, _disabled = aValue);
+    }
+
+    /**
+     * Returns whether this dataset is enabled.
+     */
+    public boolean isEnabled()  { return !_disabled; }
 
     /**
      * Returns the number of points.
@@ -376,39 +429,6 @@ public class DataSet extends ChartPart {
         for (int i=0;i<count;i++) ratios[i] = vals[i]/total;
         return _ratios = ratios;
     }
-
-    /**
-     * Returns whether to show symbols for this DataSet.
-     */
-    public boolean isShowSymbols()  { return _showSymbols; }
-
-    /**
-     * Sets whether to show symbols for this DataSet.
-     */
-    public void setShowSymbols(boolean aValue)
-    {
-        if (aValue==isShowSymbols()) return;
-        firePropChange(ShowSymbols_Prop, _showSymbols, _showSymbols = aValue);
-    }
-
-    /**
-     * Returns whether this dataset is disabled.
-     */
-    public boolean isDisabled()  { return _disabled; }
-
-    /**
-     * Sets whether this dataset is disabled.
-     */
-    public void setDisabled(boolean aValue)
-    {
-        if (aValue==isDisabled()) return;
-        firePropChange(Disabled_Prop, _disabled, _disabled = aValue);
-    }
-
-    /**
-     * Returns whether this dataset is enabled.
-     */
-    public boolean isEnabled()  { return !_disabled; }
 
     /**
      * Returns the minimum X value in this dataset.

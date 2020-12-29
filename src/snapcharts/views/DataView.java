@@ -16,6 +16,9 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     // The ChartView
     private ChartView  _chartView;
 
+    // The ChartHelper
+    private ChartHelper  _chartHelper;
+
     // The DataAreas
     private DataArea[]  _dataAreas;
 
@@ -58,6 +61,8 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     protected void setDataAreas(DataArea[] theDataAreas)
     {
+        _chartHelper = _chartView.getChartHelper();
+
         // Remove old
         if (_dataAreas !=null) {
             for (DataArea dataArea : _dataAreas)
@@ -77,12 +82,12 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _chartView.getAxisX(); }
+    public AxisViewX getAxisX()  { return _chartHelper.getAxisX(); }
 
     /**
      * Returns the Y Axis View.
      */
-    public AxisViewY getAxisY()  { return _chartView.getAxisY(); }
+    public AxisViewY getAxisY()  { return _chartHelper.getAxisY(); }
 
     /**
      * Return the ratio of the chart to show horizontally.

@@ -22,13 +22,13 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     private ChartHelper  _chartHelper;
 
     // The view to display chart parts at top of chart
-    private HeaderView _chartTop;
+    private HeaderView _headerView;
 
     // The view to manage essential chart parts: DataView and AxisViews
     private DataView _dataView;
 
     // The Legend
-    private LegendView  _legend;
+    private LegendView _legendView;
 
     // The amount of the chart to show horizontally (0-1)
     private double  _reveal = 1;
@@ -82,12 +82,12 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         setGrowWidth(true);
 
         // Create/add ChartTop
-        _chartTop = new HeaderView();
-        addChild(_chartTop);
+        _headerView = new HeaderView();
+        addChild(_headerView);
 
         // Create/configure ChartLegend
-        _legend = new LegendView();
-        addChild(_legend);
+        _legendView = new LegendView();
+        addChild(_legendView);
 
         // Create/add DataView
         _dataView = new DataView(this);
@@ -160,18 +160,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
             // Deactivate
             _chartHelper.deactivate();
-
-            // Remove AxisViews
-            for (AxisView axisView : _chartHelper.getAxisViews())
-                removeChild(axisView);
         }
 
         // Set new
         _chartHelper = aChartHelper;
-
-        // Add Axes
-        for (AxisView axisView : _chartHelper.getAxisViews())
-            addChild(axisView);
 
         // Add DataAreas
         _dataView.setDataAreas(_chartHelper.getDataAreas());
@@ -186,9 +178,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public DataSetList getDataSetList()  { return getChart().getDataSetList(); }
 
     /**
-     * Returns the Header View.
+     * Returns the HeaderView.
      */
-    public HeaderView getHeader()  { return _chartTop; }
+    public HeaderView getHeaderView()  { return _headerView; }
 
     /**
      * Returns the DataView.
@@ -196,19 +188,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public DataView getDataView()  { return _dataView; }
 
     /**
-     * Returns the X Axis View.
+     * Returns the LegendView.
      */
-    public AxisViewX getAxisX()  { return _chartHelper.getAxisX(); }
-
-    /**
-     * Returns the Y Axis View.
-     */
-    public AxisViewY getAxisY()  { return _chartHelper.getAxisY(); }
-
-    /**
-     * Returns the Legend.
-     */
-    public LegendView getLegend()  { return _legend; }
+    public LegendView getLegendView()  { return _legendView; }
 
     /**
      * Called to reset view from Chart.
@@ -226,20 +208,20 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         super.resetView();
 
         // Reset ChartTop
-        _chartTop.resetView();
+        _headerView.resetView();
 
         // Reset DataView
         _dataView.resetView();
 
+        // Reset Legend
+        _legendView.resetView();
+
+        // Reset ChartHelper
+        chartHelper.resetView();
+
         // Reset Axes
         for (AxisView axisView : chartHelper.getAxisViews())
             axisView.resetView();
-
-        // Reset Legend
-        _legend.resetView();
-
-        // Reset ChartHelper
-        chartHelper.reactivate();
 
         // Trigger animate (after delay so size is set for first time)
         setReveal(0);

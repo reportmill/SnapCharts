@@ -73,7 +73,7 @@ public class ChartHelperPie extends ChartHelper {
     /**
      * Override to select first data point.
      */
-    public void reactivate()
+    public void resetView()
     {
         DataSetList dset = _chartView.getDataSetList(); if (dset.getDataSetCount()==0 || dset.getPointCount()==0) return;
         DataPoint dp = dset.getDataSet(0).getPoint(0);

@@ -1,9 +1,11 @@
 package snapcharts.views;
 import snap.util.ArrayUtils;
+import snap.view.ViewUtils;
 import snapcharts.model.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A class to help customize ChartView for specific ChartType.
@@ -38,9 +40,8 @@ public abstract class ChartHelper {
     {
         _chartView = aChartView;
 
-        // Create AxisViews
-        for (AxisType axisType : getAxisTypes())
-            getAxisView(axisType);
+        // Init to empty array so views get added in resetView() + resetAxisViews()
+        _axisTypes = new AxisType[0];
     }
 
     /**
@@ -70,7 +71,10 @@ public abstract class ChartHelper {
     /**
      * Returns the AxisTypes.
      */
-    protected abstract AxisType[] getAxisTypesImpl();
+    protected AxisType[] getAxisTypesImpl()
+    {
+        return getChart().getDataSetList().getAxisTypes();
+    }
 
     /**
      * Returns the X Axis.
@@ -118,8 +122,15 @@ public abstract class ChartHelper {
      */
     public AxisView[] getAxisViews()
     {
+        // If already set, just return
         if (_axisViewsArray != null) return _axisViewsArray;
-        return _axisViewsArray = _axisViews.values().toArray(new AxisView[0]);
+
+        // Iterate over types to get cached AxisViews
+        AxisType[] types = getAxisTypes();
+        AxisView[] views = new AxisView[types.length];
+        for (int i=0; i< types.length; i++)
+            views[i] = getAxisView(types[i]);
+        return _axisViewsArray = views;
     }
 
     /**
@@ -129,8 +140,8 @@ public abstract class ChartHelper {
     {
         if (anAxisType == AxisType.X)
             return new AxisViewX();
-        if (anAxisType == AxisType.Y)
-            return new AxisViewY();
+        if (anAxisType.isAnyY())
+            return new AxisViewY(anAxisType);
         throw new RuntimeException("ChartHelper.createAxisView: Unknown type: " + anAxisType);
     }
 
@@ -139,8 +150,8 @@ public abstract class ChartHelper {
      */
     public void resetAxes()
     {
-        getAxisX().resetAxes();
-        getAxisY().resetAxes();
+        for (AxisView axisView : getAxisViews())
+            axisView.resetAxes();
     }
 
     /**
@@ -148,8 +159,8 @@ public abstract class ChartHelper {
      */
     public void resetAxesAnimated()
     {
-        getAxisX().resetAxesAnimated();
-        getAxisY().resetAxesAnimated();
+        for (AxisView axisView : getAxisViews())
+            axisView.resetAxesAnimated();
     }
 
     /**
@@ -186,7 +197,32 @@ public abstract class ChartHelper {
     /**
      * Called when chart is reloaded.
      */
-    public void reactivate()  { }
+    public void resetView()
+    {
+        // If AxisTypes have changed, resetAxisViews
+        if (!Objects.equals(getAxisTypes(), _chartView.getDataSetList().getAxisTypes()))
+            resetAxisViews();
+    }
+
+    /**
+     * Resets the axis views.
+     */
+    protected void resetAxisViews()
+    {
+        // Remove old axis views
+        for (AxisView axisView : getAxisViews())
+            ViewUtils.removeChild(_chartView, axisView);
+
+        // Reset cached values
+        _axisTypes = null;
+        _axisViewsArray = null;
+        _axisX = null;
+        _axisY = null;
+
+        // Add new axis views
+        for (AxisView axisView : getAxisViews())
+            ViewUtils.addChild(_chartView, axisView);
+    }
 
     /**
      * Call to clear any cached data.
