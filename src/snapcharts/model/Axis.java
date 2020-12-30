@@ -12,25 +12,13 @@ import snap.util.XMLElement;
 public abstract class Axis extends ChartPart {
 
     // The Title
-    private String _title;
+    private String  _title;
 
     // The title alignment
-    private Pos _titleAlign = DEFAULT_TITLE_ALIGN;
+    private Pos  _titleAlign = DEFAULT_TITLE_ALIGN;
 
     // The title rotation
-    private double _titleRot;
-
-    // Title offset - distance from title left edge to axis
-    private Double  _titleOffset;
-
-    // Title margin - distance of title right edge to labels
-    private double  _titleMargin = 10;
-
-    // Title x/y - additional offset for title
-    private double  _titleX, _titleY;
-
-    // Labels margin - distance of labels right edge to axis
-    private double  _labelsMargin = 5;
+    private double  _titleRot;
 
     // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
     private double  _tickLength = 8;
@@ -165,62 +153,6 @@ public abstract class Axis extends ChartPart {
         if (aValue==_titleRot) return;
         firePropChange(TitleRotate_Prop, _titleRot, _titleRot=aValue);
     }
-
-    /**
-     * Returns the distance from title left edge to axis.
-     */
-    public double getTitleOffset()
-    {
-        return _titleOffset!=null ? _titleOffset : 0;
-    }
-
-    /**
-     * Sets the distance from title left edge to axis.
-     */
-    public void setTitleOffset(double aValue)
-    {
-        _titleOffset = aValue>=0? aValue : null;
-    }
-
-    /**
-     * Returns the distance between the title and axis labels.
-     */
-    public double getTitleMargin()  { return _titleMargin; }
-
-    /**
-     * Sets the distance between the title and axis labels.
-     */
-    public void setTitleMargin(double aValue)  { _titleMargin = aValue; }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public double getTitleX()  { return _titleX; }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public void setTitleX(double aValue)  { _titleX = aValue; }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public double getTitleY()  { return _titleY; }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public void setTitleY(double aValue)  { _titleY = aValue; }
-
-    /**
-     * Returns the distance between axis labels left edge and axis.
-     */
-    //public double getLabelsOffset()  { return getMaxLabelWidth() + getLabelsMargin(); }
-
-    /**
-     * Returns the distance between axis labels right edge and the axis.
-     */
-    public double getLabelsMargin()  { return _labelsMargin; }
 
     /**
      * Returns the length of the vertical tick lines drawn from the X axis down twards it's labels and title.

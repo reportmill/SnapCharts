@@ -1,7 +1,6 @@
 package snapcharts.views;
 import snap.geom.Insets;
 import snap.gfx.*;
-import snap.view.*;
 import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
 import snapcharts.model.Intervals;
@@ -16,7 +15,12 @@ public class AxisViewY extends AxisView {
 
     // The AxisType
     private AxisType  _axisType;
-    
+
+    // Constants
+    private final int TITLE_MARGIN = 8;
+    private final int TICKS_MARGIN = 5;
+    private final int TITLE_TICKS_SPACING = 5;
+
     /**
      * Constructor.
      */
@@ -25,8 +29,6 @@ public class AxisViewY extends AxisView {
         super();
 
         _axisType = anAxisTypeY;
-
-        enableEvents(MousePress);
 
         // Create configure TitleView
         _titleView.setRotate(270);
@@ -56,42 +58,21 @@ public class AxisViewY extends AxisView {
     }
 
     /**
-     * Returns the distance between the title and axis labels.
-     */
-    public double getTitleMargin()  { return getAxis().getTitleMargin(); }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public double getTitleX()  { return getAxis().getTitleX(); }
-
-    /**
-     * Returns the additional offset of title.
-     */
-    public double getTitleY()  { return getAxis().getTitleY(); }
-
-    /**
      * Returns the distance between axis labels left edge and axis.
      */
-    public double getLabelsOffset()  { return getMaxLabelWidth() + getLabelsMargin(); }
-
-    /**
-     * Returns the distance between axis labels right edge and the axis.
-     */
-    public double getLabelsMargin()  { return getAxis().getLabelsMargin(); }
+    public double getLabelsOffset()  { return getTickLabelsMaxWidth() + TICKS_MARGIN; }
 
     /**
      * Converts a value from view coords to data coords.
      */
     public double viewToData(double dispY)
     {
-        Insets ins = getInsetsAll();
+        double areaY = 0;
+        double areaH = getHeight();
         Intervals intervals = getIntervals();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
-        double dispMin = ins.top;
-        double dispMax = dispMin + getHeight() - ins.getHeight();
-        return dataMax - (dispY - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
+        return dataMax - (dispY - areaY)/areaH*(dataMax - dataMin);
     }
 
     /**
@@ -105,7 +86,7 @@ public class AxisViewY extends AxisView {
         // Reset title
         AxisY axis = getAxis();
         String title = axis.getTitle();
-        double titlePad = title!=null && title.length()>0 ? getTitleMargin() : 0;
+        double titlePad = title!=null && title.length()>0 ? TITLE_MARGIN : 0;
         _titleViewBox.setPadding(0, titlePad, 0, 0);
     }
 
@@ -114,19 +95,11 @@ public class AxisViewY extends AxisView {
      */
     protected void paintFront(Painter aPntr)
     {
-        Insets ins = _dataView.getInsetsAll();
-        double viewW = getWidth();
-        double viewH = getHeight();
-        double axisW = getLabelsOffset();
-        double axisX = viewW - axisW;
-        paintAxis(aPntr, axisX, ins.top, axisW, viewH - ins.getHeight());
-    }
+        // Get area bounds
+        double areaX = 0;
+        double areaW = getWidth();
+        double areaMaxX = areaX + areaW;
 
-    /**
-     * Paints chart y axis.
-     */
-    protected void paintAxis(Painter aPntr, double aX, double aY, double aW, double aH)
-    {
         // Set font, color
         Font font = Font.Arial12;
         aPntr.setFont(font);
@@ -136,14 +109,13 @@ public class AxisViewY extends AxisView {
         Intervals intervals = getIntervals();
         int count = intervals.getCount();
         double delta = intervals.getDelta();
-        double marginx = getLabelsMargin();
 
         // Set color/stroke for axis ticks
         aPntr.setColor(AXIS_LABELS_COLOR);
         aPntr.setStroke(Stroke.Stroke1);
 
         //
-        double labelYShift = Math.round((font.getAscent() - font.getDescent())/2d);
+        double tickMidH = Math.round((font.getAscent() - font.getDescent())/2d);
 
         // Iterate over intervals
         for (int i=0; i<count; i++) {
@@ -160,12 +132,14 @@ public class AxisViewY extends AxisView {
                     continue;
             }
 
-            // Get label
+            // Get string and string width
             String str = getLabelStringForValueAndDelta(dataY, delta);
             double strW = font.getStringAdvance(str);
-            double labelX = aX + aW - strW - marginx;
-            double labelY = dispY + labelYShift;
-            aPntr.drawString(str, labelX, labelY);
+
+            // Get tick x/y and draw string
+            double tickX = areaMaxX - strW - TICKS_MARGIN;
+            double tickY = dispY + tickMidH;
+            aPntr.drawString(str, tickX, tickY);
         }
     }
 
@@ -174,10 +148,9 @@ public class AxisViewY extends AxisView {
      */
     protected double getPrefWidthImpl(double aH)
     {
-        double titleOff = getTitleOffset() - getTitleX();
-        double labelsOff = getLabelsOffset();
-        double prefW = Math.max(titleOff, labelsOff);
-        return prefW;
+        double titleW = _titleViewBox.getPrefWidth();
+        double ticksW = getTickLabelsMaxWidth();
+        return TICKS_MARGIN + titleW + TITLE_TICKS_SPACING + ticksW + TICKS_MARGIN;
     }
 
     /**
@@ -185,18 +158,15 @@ public class AxisViewY extends AxisView {
      */
     protected void layoutImpl()
     {
-        double viewH = getHeight();
-        double titleOff = getTitleOffset() - getTitleX();
-        double labelsOff = getLabelsOffset();
+        double areaH = getHeight();
         double titleW = _titleViewBox.getPrefWidth();
-        double titleX = titleOff>labelsOff ? 0 : labelsOff - titleOff;
-        _titleViewBox.setBounds(titleX, getTitleY(), titleW, viewH);
+        _titleViewBox.setBounds(TICKS_MARGIN, 0, titleW, areaH);
     }
 
     /**
      * Returns the max label width.
      */
-    protected double getMaxLabelWidth()
+    protected double getTickLabelsMaxWidth()
     {
         // Get intervals
         Intervals intervals = getIntervals();
@@ -215,15 +185,5 @@ public class AxisViewY extends AxisView {
 
         int textW = (int) Math.ceil(Font.Arial12.getStringAdvance(maxText));
         return textW;
-    }
-
-    /**
-     * Handle events.
-     */
-    protected void processEvent(ViewEvent anEvent)
-    {
-        // Handle MousePress: Toggle AxisY.ZeroRequired
-        if (anEvent.isMousePress())
-            getChart().getAxisY().setZeroRequired(!getChart().getAxisY().isZeroRequired());
     }
 }

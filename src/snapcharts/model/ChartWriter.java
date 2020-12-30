@@ -308,8 +308,8 @@ public class ChartWriter {
         if (rotation!=0) map.put("rotation", rotation);
 
         // Handle yaxis.title.offset
-        double offset = yaxis.getTitleOffset();
-        if (offset!=0) map.put("offset", offset);
+        //double offset = yaxis.getTitleOffset();
+        //if (offset!=0) map.put("offset", offset);
 
         // Handle yaxis.title.style
         writeYAxisTitleStyle(map);
@@ -319,12 +319,12 @@ public class ChartWriter {
         if (text!=null) map.put("text", text);
 
         // Handle yaxis.title.x
-        double x = yaxis.getTitleX();
-        if (x!=0) map.put("x", x);
+        //double x = yaxis.getTitleX();
+        //if (x!=0) map.put("x", x);
 
         // Handle yaxis.title.y
-        double y = yaxis.getTitleY();
-        if (y!=0) map.put("y", y);
+        //double y = yaxis.getTitleY();
+        //if (y!=0) map.put("y", y);
 
         // Add map
         if (!map.isEmpty()) aMap.put("title", map);

@@ -344,10 +344,10 @@ public class ChartParser {
                 } break;
 
                 // Handle yaxis.title.offset
-                case "offset": {
+                /*case "offset": {
                     double val = child.getNumber().doubleValue();
                     yaxis.setTitleOffset(val);
-                } break;
+                } break;*/
 
                 // Handle yaxis.title.style
                 case "style": parseYAxisTitleStyle(child); break;
@@ -359,16 +359,16 @@ public class ChartParser {
                 } break;
 
                 // Handle yaxis.title.x
-                case "x": {
+                /*case "x": {
                     double x = child.getNumber().doubleValue();
                     yaxis.setTitleX(x);
-                } break;
+                } break;*/
 
                 // Handle yaxis.title.y
-                case "y": {
+                /*case "y": {
                     double y = child.getNumber().doubleValue();
                     yaxis.setTitleY(y);
-                } break;
+                } break;*/
 
                 // Handle default (complain)
                 default: System.out.println("Unsupported node: yaxis.title." + key + " = " + child.getString());
