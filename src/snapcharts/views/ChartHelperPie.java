@@ -40,7 +40,7 @@ public class ChartHelperPie extends ChartHelper {
         if (dataSetList.getDataSetCount() == 0)
             return new DataArea[0];
         DataSet dset = dataSetList.getDataSet(0);
-        return new DataArea[] { _dataArea = new DataAreaPie(this, null) };
+        return new DataArea[] { _dataArea = new DataAreaPie(this, dset) };
     }
 
     /**

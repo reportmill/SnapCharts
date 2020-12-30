@@ -42,11 +42,13 @@ public class WrapView extends ParentView {
      */
     protected double getPrefWidthImpl(double aH)
     {
-        Insets ins = getInsetsAll(); if (_content==null) return ins.getWidth();
+        Insets ins = getInsetsAll();
+        if (_content==null) return ins.getWidth();
         double childW = _content.getPrefWidth();
         double childH = _content.getPrefHeight();
-        Rect bnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
-        return bnds.width + ins.getWidth();
+        Rect areaBnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
+        double areaW = Math.ceil(areaBnds.width);
+        return areaW + ins.getWidth();
     }
 
     /**
@@ -54,11 +56,13 @@ public class WrapView extends ParentView {
      */
     protected double getPrefHeightImpl(double aW)
     {
-        Insets ins = getInsetsAll(); if (_content==null) return ins.getHeight();
+        Insets ins = getInsetsAll();
+        if (_content==null) return ins.getHeight();
         double childW = _content.getPrefWidth();
         double childH = _content.getPrefHeight();
-        Rect bnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
-        return bnds.height + ins.getHeight();
+        Rect areaBnds = _content.localToParent(new Rect(0,0, childW, childH)).getBounds();
+        double areaH = Math.ceil(areaBnds.width);
+        return areaH + ins.getHeight();
     }
 
     /**

@@ -78,7 +78,7 @@ public class ChartPaneSel {
      */
     public void setSelView(ChartPartView aView)
     {
-        ChartPart chartPart = aView.getChartPart();
+        ChartPart chartPart = aView!=null ? aView.getChartPart() : _chartView.getChart();
         setSelChartPart(chartPart);
     }
 

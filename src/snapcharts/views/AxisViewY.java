@@ -1,12 +1,13 @@
 package snapcharts.views;
-import snap.geom.Insets;
-import snap.gfx.*;
+import snap.geom.Pos;
+import snap.geom.Side;
+import snap.text.StringBox;
 import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
 import snapcharts.model.Intervals;
 
 /**
- * A view to paint Chart Y Axis.
+ * An AxisView subclass for AxisY.
  */
 public class AxisViewY extends AxisView {
     
@@ -15,11 +16,6 @@ public class AxisViewY extends AxisView {
 
     // The AxisType
     private AxisType  _axisType;
-
-    // Constants
-    private final int TITLE_MARGIN = 8;
-    private final int TICKS_MARGIN = 5;
-    private final int TITLE_TICKS_SPACING = 5;
 
     /**
      * Constructor.
@@ -50,19 +46,6 @@ public class AxisViewY extends AxisView {
     }
 
     /**
-     * Returns the distance from title left edge to axis.
-     */
-    public double getTitleOffset()
-    {
-        return _titleViewBox.getPrefWidth() + getLabelsOffset();
-    }
-
-    /**
-     * Returns the distance between axis labels left edge and axis.
-     */
-    public double getLabelsOffset()  { return getTickLabelsMaxWidth() + TICKS_MARGIN; }
-
-    /**
      * Converts a value from view coords to data coords.
      */
     public double viewToData(double dispY)
@@ -76,48 +59,50 @@ public class AxisViewY extends AxisView {
     }
 
     /**
-     * Called to reset view from Chart.
+     * Calculates the preferred width.
      */
-    protected void resetView()
+    protected double getPrefWidthImpl(double aH)
     {
-        // Do basic axis update
-        super.resetView();
-
-        // Reset title
-        AxisY axis = getAxis();
-        String title = axis.getTitle();
-        double titlePad = title!=null && title.length()>0 ? TITLE_MARGIN : 0;
-        _titleViewBox.setPadding(0, titlePad, 0, 0);
+        double titleW = _titleViewBox.getPrefWidth();
+        double ticksW = getTickLabelsMaxWidth();
+        return AXIS_MARGIN + titleW + TITLE_TICKS_SPACING + ticksW + AXIS_MARGIN;
     }
 
     /**
-     * Paints chart y axis.
+     * Actual method to layout children.
      */
-    protected void paintFront(Painter aPntr)
+    protected void layoutImpl()
     {
         // Get area bounds
-        double areaX = 0;
-        double areaW = getWidth();
-        double areaMaxX = areaX + areaW;
+        double areaH = getHeight();
 
-        // Set font, color
-        Font font = Font.Arial12;
-        aPntr.setFont(font);
-        aPntr.setColor(AXIS_LABELS_COLOR);
+        // Set TitleView bounds
+        double titleX = AXIS_MARGIN;
+        double titleW = _titleViewBox.getPrefWidth();
+        _titleViewBox.setBounds(titleX, 0, titleW, areaH);
+    }
 
-        // Get intervals
+    /**
+     * Layout TickLabels.
+     */
+    protected void layoutTickLabels()
+    {
+        // Get tick labels X
+        double titleX = AXIS_MARGIN;
+        double titleW = _titleViewBox.getPrefWidth();
+        double ticksX = titleX + titleW + TITLE_TICKS_SPACING;
+        double ticksW = getTickLabelsMaxWidth();
+
+        // Get tick labels align
+        Pos ticksAlign = getAxis().getSide() == Side.LEFT ? Pos.TOP_RIGHT : Pos.TOP_LEFT;
+
+        // Get TickLabels and Intervals
+        StringBox[] tickLabels = getTickLabels();
         Intervals intervals = getIntervals();
         int count = intervals.getCount();
         double delta = intervals.getDelta();
 
-        // Set color/stroke for axis ticks
-        aPntr.setColor(AXIS_LABELS_COLOR);
-        aPntr.setStroke(Stroke.Stroke1);
-
-        //
-        double tickMidH = Math.round((font.getAscent() - font.getDescent())/2d);
-
-        // Iterate over intervals
+        // Iterate over tick labels and set location
         for (int i=0; i<count; i++) {
 
             // Get Y in data and display coords and draw tick line
@@ -126,41 +111,21 @@ public class AxisViewY extends AxisView {
 
             // If edge div too close to next div, skip
             if (i==0 || i+1==count) {
-                double nextY = intervals.getInterval(i==0 ? 1 : count-2);
+                double nextY = intervals.getInterval(i==0 ? 1 : count - 2);
                 double delta2 = i==0 ? (nextY - dataY) : (dataY - nextY);
-                if (delta2<delta*.67)
+                if (delta2<delta*.67) {
+                    tickLabels[i].setString("");
                     continue;
+                }
             }
 
-            // Get string and string width
-            String str = getLabelStringForValueAndDelta(dataY, delta);
-            double strW = font.getStringAdvance(str);
-
-            // Get tick x/y and draw string
-            double tickX = areaMaxX - strW - TICKS_MARGIN;
-            double tickY = dispY + tickMidH;
-            aPntr.drawString(str, tickX, tickY);
+            // Get/set TickLabel bounds
+            StringBox tickLabel = tickLabels[i];
+            double tickH = tickLabel.getStringHeight();
+            double tickY = dispY - Math.round(tickH / 2);
+            tickLabel.setAlign(ticksAlign);
+            tickLabel.setRect(ticksX, tickY, ticksW, tickH);
         }
-    }
-
-    /**
-     * Calculates the preferred width.
-     */
-    protected double getPrefWidthImpl(double aH)
-    {
-        double titleW = _titleViewBox.getPrefWidth();
-        double ticksW = getTickLabelsMaxWidth();
-        return TICKS_MARGIN + titleW + TITLE_TICKS_SPACING + ticksW + TICKS_MARGIN;
-    }
-
-    /**
-     * Actual method to layout children.
-     */
-    protected void layoutImpl()
-    {
-        double areaH = getHeight();
-        double titleW = _titleViewBox.getPrefWidth();
-        _titleViewBox.setBounds(TICKS_MARGIN, 0, titleW, areaH);
     }
 
     /**
@@ -168,22 +133,9 @@ public class AxisViewY extends AxisView {
      */
     protected double getTickLabelsMaxWidth()
     {
-        // Get intervals
-        Intervals intervals = getIntervals();
-        int lineCount = intervals.getCount();
-        double intervalDelta = intervals.getDelta();
-        double intervalMax = intervals.getMax();
-
-        // Get longest text
-        String maxText = "";
-        for (int i=0; i<lineCount; i++) {
-            double lineVal = intervalMax - i*intervalDelta;
-            String str = getLabelStringForValueAndDelta(lineVal, intervalDelta);
-            if (str.length()>maxText.length())
-                maxText = str;
-        }
-
-        int textW = (int) Math.ceil(Font.Arial12.getStringAdvance(maxText));
-        return textW;
+        double max = 0;
+        for (StringBox tickLabel : getTickLabels())
+            max = Math.max(max, tickLabel.getStringWidth());
+        return max;
     }
 }

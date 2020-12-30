@@ -44,6 +44,9 @@ public abstract class Axis extends ChartPart {
     // The grid line
     private double  _gridLineDashArray[];
 
+    // The Side this axis
+    private Side  _side;
+
     // Constants for properties
     public static final String Type_Prop = "Type";
     public static final String Title_Prop = "Title";
@@ -54,6 +57,7 @@ public abstract class Axis extends ChartPart {
     public static final String MinValue_Prop = "MinValue";
     public static final String MaxValue_Prop = "MaxValue";
     public static final String ZeroRequired_Prop = "ZeroRequired";
+    public static final String Side_Prop = "Side";
 
     // Constants for default values
     static Color   AXIS_LABELS_COLOR = Color.GRAY;
@@ -253,6 +257,41 @@ public abstract class Axis extends ChartPart {
      * Returns the grid line dash array.
      */
     public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
+
+
+    /**
+     * Returns the side this axis is shown on.
+     */
+    public Side getSide()
+    {
+        return _side!=null ? _side : getSideDefault();
+    }
+
+    /**
+     * Sets the side this axis is shown on.
+     */
+    public void setSide(Side aSide)
+    {
+        if (aSide==getSide()) return;
+        if (aSide==null || aSide.isHorizontal() != getSideDefault().isHorizontal())
+            throw new IllegalArgumentException("Axis.setSide: Can't set Axis side to " + aSide);
+        firePropChange(Side_Prop, _side, _side = aSide);
+    }
+
+    /**
+     * Returns the default side for this axis.
+     */
+    public Side getSideDefault()
+    {
+        switch (getType()) {
+            case X: return Side.TOP;
+            case Y: return Side.LEFT;
+            case Y2: return Side.RIGHT;
+            case Y3: return Side.LEFT;
+            case Y4: return Side.RIGHT;
+            default: throw new RuntimeException("Axis.getSide: Unknown AxisType: " + getType());
+        }
+    }
 
     /**
      * Returns the prop value keys.

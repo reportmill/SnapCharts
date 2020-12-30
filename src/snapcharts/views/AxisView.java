@@ -2,6 +2,9 @@ package snapcharts.views;
 import snap.geom.Point;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.gfx.Painter;
+import snap.gfx.Stroke;
+import snap.text.StringBox;
 import snap.util.SnapUtils;
 import snap.view.StringView;
 import snap.view.ViewAnim;
@@ -32,24 +35,30 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // The intervals for axis
     private Intervals  _intervals;
 
-    // The grid line color
-    protected Color  _gridLineColor = DataArea.GRID_LINE_COLOR;
-
-    // The grid line
-    protected double  _gridLineDashArray[];
+    // The tick labels as StringBoxes
+    private StringBox[]  _tickLabels;
 
     // Constants for Properties
     public static final String AxisMin_Prop = "AxisMin";
     public static final String AxisMax_Prop = "AxisMax";
 
-    // Constants
+    // Constants for layout
+    protected final int AXIS_MARGIN = 5;
+    protected final int TITLE_TICKS_SPACING = 8;
+
+    // Constants for painting
     protected static Font AXIS_LABEL_FONT = Font.Arial12.getBold().deriveFont(13);
     protected static Color AXIS_LABEL_TEXT_COLOR = Color.GRAY;
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
-    public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
 
-    // A shared formatter
-    private static DecimalFormat  _fmt = new DecimalFormat("#.###");
+    // Grid Constants
+    protected static Color GRID_COLOR = Color.get("#E6");
+    protected static Stroke GRID_STROKE = Stroke.Stroke1;
+    protected static Color TICK_LINE_COLOR = Color.GRAY;
+
+    // Other constants
+    public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
+    private static DecimalFormat TICKS_FORMAT = new DecimalFormat("#.###");
 
     /**
      * Constructor.
@@ -57,6 +66,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public AxisView()
     {
         super();
+
+        // Set font
+        setFont(Font.Arial12);
 
         // Create configure TitleView
         _titleView = new StringView();
@@ -191,6 +203,21 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the grid line color.
+     */
+    public Color getGridColor()  { return GRID_COLOR; }
+
+    /**
+     * Returns the grid line stroke.
+     */
+    public Stroke getGridStroke()
+    {
+        //double dashes[] = getAxis().getGridDashArray();
+        //Stroke stroke = dashes==null ? Stroke.Stroke1 : new Stroke(GRID_LINE_WIDTH, dashes, 0);
+        return GRID_STROKE;
+    }
+
+    /**
      * Returns the axis length.
      */
     public double getAxisLen()
@@ -211,6 +238,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Create, set and return
         _intervals = createIntervals();
+        _tickLabels = null;
         return _intervals;
     }
 
@@ -258,7 +286,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
                 int pointCount = dsetList.getPointCount();
                 double max = isBar ? pointCount : pointCount - 1;
-                return _intervals.matchesMinMaxLen(0, max, max);
+                return _intervals.matchesMinMaxLen(0, max, _intervals.getAxisLen());
             }
         }
 
@@ -270,24 +298,53 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the grid line color.
+     * Returns the array of tick label StringBoxes.
      */
-    public Color getGridLineColor()  { return _gridLineColor; }
+    protected StringBox[] getTickLabels()
+    {
+        // Call this to make sure intervals are up to date
+        getIntervals();
+
+        // If already set, just return
+        if (_tickLabels != null) return _tickLabels;
+
+        // Get Intervals info
+        Intervals intervals = getIntervals();
+        int count = intervals.getCount();
+        double delta = intervals.getDelta();
+
+        // Create array
+        StringBox[] sboxes = new StringBox[count];
+
+        // Iterate over intervals
+        for (int i = 0; i < count; i++) {
+            double dataX = intervals.getInterval(i);
+            String str = getLabelStringForValueAndDelta(dataX, delta);
+            StringBox sbox = sboxes[i] = new StringBox(str);
+            sbox.setFont(getFont());
+            sbox.setColor(AXIS_LABELS_COLOR);
+        }
+
+        // Set/return
+        _tickLabels = sboxes;
+        layoutTickLabels();
+        return _tickLabels;
+    }
 
     /**
-     * Returns the grid line color.
+     * Layout TickLabels.
      */
-    public void setGridLineColor(Color aColor)  { _gridLineColor = aColor; }
+    protected void layoutTickLabels()  { }
 
     /**
-     * Returns the grid line dash array.
+     * Paint axis.
      */
-    public double[] getGridLineDashArray()  { return _gridLineDashArray; }
-
-    /**
-     * Returns the grid line dash array.
-     */
-    public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
+    protected void paintFront(Painter aPntr)
+    {
+        StringBox tickLabels[] = getTickLabels();
+        for (StringBox sbox : tickLabels)
+            sbox.paint(aPntr);
+    }
 
     /**
      * Converts a value from view coords to data coords.
@@ -395,17 +452,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Reset title
         String title = axis.getTitle();
         _titleView.setText(title);
-
-        // Repaint ?
-        repaint();
-    }
-
-    /**
-     * Returns a formatted value.
-     */
-    protected String getLabelStringForValue(double aValue)
-    {
-        return getLabelStringForValueAndDelta(aValue, -1);
     }
 
     /**
@@ -435,7 +481,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aDelta==(int)aDelta)
             return String.valueOf((int)aValue);
 
-        return _fmt.format(aValue);
+        return TICKS_FORMAT.format(aValue);
     }
 
     /**

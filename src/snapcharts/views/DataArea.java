@@ -25,9 +25,6 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
-    protected static Color GRID_LINE_COLOR = Color.get("#E6");
-    protected static double GRID_LINE_WIDTH = 1;
-    protected static Color TICK_LINE_COLOR = Color.GRAY;
     protected static Color AXIS_LINE_COLOR = Color.DARKGRAY;
 
     /**
@@ -201,24 +198,24 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         // Get info
         AxisViewX axisView = getAxisViewX(); if (axisView==null) return;
         AxisX axis = axisView.getAxis();
+        Color gridColor = axisView.getGridColor();
+        Color tickLineColor = AxisView.TICK_LINE_COLOR;
+        double tickLen = axis.getTickLength();
 
         // Set Grid Color/Stroke
-        aPntr.setColor(GRID_LINE_COLOR);
-        double dashes[] = axisView.getGridLineDashArray();
-        Stroke stroke = dashes==null ? Stroke.Stroke1 : new Stroke(GRID_LINE_WIDTH, dashes, 0);
-        aPntr.setStroke(stroke);
+        aPntr.setColor(gridColor);
+        aPntr.setStroke(axisView.getGridStroke());
 
         // Iterate over intervals and paint lines
         double areaY = 0;
         double areaH = getHeight();
-        double tickLen = axis.getTickLength();
         Intervals ivals = axisView.getIntervals();
         for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
             double dataX = ivals.getInterval(i);
             double dispX = (int) Math.round(dataToViewX(dataX));
-            aPntr.setColor(GRID_LINE_COLOR);
+            aPntr.setColor(gridColor);
             aPntr.drawLine(dispX, areaY, dispX, areaH);
-            aPntr.setColor(TICK_LINE_COLOR);
+            aPntr.setColor(tickLineColor);
             aPntr.drawLine(dispX, areaY + areaH - tickLen, dispX, areaY + areaH);
         }
     }
@@ -231,24 +228,24 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         // Get info
         AxisViewY axisView = getAxisViewY(); if (axisView==null || !axisView.isVisible()) return;
         AxisY axis = axisView.getAxis();
+        Color gridColor = axisView.getGridColor();
+        Color tickLineColor = AxisView.TICK_LINE_COLOR;
+        double tickLen = axis.getTickLength();
 
         // Set Grid Color/Stroke
-        aPntr.setColor(GRID_LINE_COLOR);
-        double dashes[] = axisView.getGridLineDashArray();
-        Stroke stroke = dashes==null ? Stroke.Stroke1 : new Stroke(GRID_LINE_WIDTH, dashes, 0);
-        aPntr.setStroke(stroke);
+        aPntr.setColor(gridColor);
+        aPntr.setStroke(axisView.getGridStroke());
 
         // Iterate over intervals and paint lines
         double areaX = 0;
         double areaW = getWidth();
-        double tickLen = axis.getTickLength();
         Intervals ivals = getIntervalsY();
         for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
             double dataY = ivals.getInterval(i);
             double dispY = (int) Math.round(dataToViewY(dataY));
-            aPntr.setColor(GRID_LINE_COLOR);
+            aPntr.setColor(gridColor);
             aPntr.drawLine(areaX, dispY, areaW, dispY);
-            aPntr.setColor(TICK_LINE_COLOR);
+            aPntr.setColor(tickLineColor);
             aPntr.drawLine(areaX, dispY, areaX + tickLen, dispY);
         }
     }

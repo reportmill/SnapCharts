@@ -210,7 +210,8 @@ public abstract class ChartHelper {
     protected void resetAxisViews()
     {
         // Remove old axis views
-        for (AxisView axisView : getAxisViews())
+        AxisView[] oldAxisViews = _chartView.getChildrenForClass(AxisView.class);
+        for (AxisView axisView : oldAxisViews)
             ViewUtils.removeChild(_chartView, axisView);
 
         // Reset cached values

@@ -9,9 +9,6 @@ public class AxisX extends Axis {
     // The categories
     private List <String>  _categories;
 
-    // The x/y offset of labels
-    private double  _labelsX, _labelsY = 8;
-
     /**
      * Constructor.
      */
@@ -37,24 +34,4 @@ public class AxisX extends Axis {
     {
         _categories = theStrings;
     }
-
-    /**
-     * Returns the x of labels.
-     */
-    public double getLabelsX()  { return _labelsX; }
-
-    /**
-     * Sets the x of labels.
-     */
-    public void setLabelsX(double aValue)  { _labelsX = aValue; }
-
-    /**
-     * Returns the y offset of labels.
-     */
-    public double getLabelsY()  { return _labelsY; }
-
-    /**
-     * Returns the y offset of labels.
-     */
-    public void setLabelsY(double aValue)  { _labelsY = aValue; }
 }
