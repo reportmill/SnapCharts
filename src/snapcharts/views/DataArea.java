@@ -64,12 +64,19 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Returns the X axis view.
      */
-    public AxisViewX getAxisX()  { return _dataView.getAxisX(); }
+    public AxisViewX getAxisViewX()
+    {
+        return _chartHelper.getAxisViewX();
+    }
 
     /**
      * Returns the Y axis view.
      */
-    public AxisViewY getAxisY()  { return _dataView.getAxisY(); }
+    public AxisViewY getAxisViewY()
+    {
+        AxisType axisType = _dataSet.getAxisTypeY();
+        return (AxisViewY) _chartHelper.getAxisView(axisType);
+    }
 
     /**
      * Returns the data set list.
@@ -123,23 +130,36 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public Intervals getIntervalsY()
     {
-        return getAxisY().getIntervals();
+        return getAxisViewY().getIntervals();
     }
 
     /**
      * Converts a point from dataset coords to view coords.
      */
-    public Point dataToView(double dataX, double dataY)  { return _dataView.dataToView(dataX, dataY); }
+    public Point dataToView(double dataX, double dataY)
+    {
+        double dispX = dataToViewX(dataX);
+        double dispY = dataToViewY(dataY);
+        return new Point(dispX, dispY);
+    }
 
     /**
      * Converts a X coord from data coords to view coords.
      */
-    public double dataToViewX(double dataX)  { return _dataView.dataToViewX(dataX); }
+    public double dataToViewX(double dataX)
+    {
+        AxisView axisView = getAxisViewX();
+        return axisView.dataToViewX(dataX);
+    }
 
     /**
      * Converts a X coord from data coords to view coords.
      */
-    public double dataToViewY(double dataY)  { return _dataView.dataToViewY(dataY); }
+    public double dataToViewY(double dataY)
+    {
+        AxisView axisView = getAxisViewY();
+        return axisView.dataToViewY(dataY);
+    }
 
     /**
      * Paints chart axis lines.
@@ -179,7 +199,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     protected void paintGridlinesX(Painter aPntr)
     {
         // Get info
-        AxisViewX axisView = getAxisX(); if (axisView==null) return;
+        AxisViewX axisView = getAxisViewX(); if (axisView==null) return;
         AxisX axis = axisView.getAxis();
 
         // Set Grid Color/Stroke
@@ -209,7 +229,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     protected void paintGridlinesY(Painter aPntr)
     {
         // Get info
-        AxisViewY axisView = getAxisY(); if (axisView==null || !axisView.isVisible()) return;
+        AxisViewY axisView = getAxisViewY(); if (axisView==null || !axisView.isVisible()) return;
         AxisY axis = axisView.getAxis();
 
         // Set Grid Color/Stroke

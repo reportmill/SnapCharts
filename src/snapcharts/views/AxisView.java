@@ -195,11 +195,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public double getAxisLen()
     {
-        switch (getAxisType()) {
-            case X: return _dataView.getWidth() - _dataView.getInsetsAll().getWidth();
-            case Y: return _dataView.getHeight() - _dataView.getInsetsAll().getHeight();
-            default: throw new RuntimeException("AxisView.getAxisLen: Unknown axis type: "+ getAxisType());
-        }
+        if (this instanceof AxisViewX)
+            return getWidth();
+        return getHeight();
     }
 
     /**
@@ -208,7 +206,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public Intervals getIntervals()
     {
         // If already set, just return
-        if (isIntervalsValid()) return _intervals;
+        if (isIntervalsValid())
+            return _intervals;
 
         // Create, set and return
         _intervals = createIntervals();
@@ -296,13 +295,26 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public abstract double viewToData(double dispX);
 
     /**
+     * Converts an value from dataset coords to view coords.
+     */
+    public double dataToView(double dataXY)
+    {
+        if (this instanceof AxisViewX)
+            return dataToViewX(dataXY);
+        return dataToViewY(dataXY);
+    }
+
+    /**
      * Converts an X value from dataset coords to view coords.
      */
     public double dataToViewX(double dataX)
     {
-        double dispX = _dataView.dataToViewX(dataX);
-        //double dx = _dataView.getX() - getX();
-        return dispX; // - dx;
+        double axisX = 0;
+        double areaW = getWidth();
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        return axisX + (dataX - dataMin)/(dataMax - dataMin)*areaW;
     }
 
     /**
@@ -310,9 +322,12 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public double dataToViewY(double dataY)
     {
-        double dispY = _dataView.dataToViewY(dataY);
-        //double dy = _dataView.getY() - getY();
-        return dispY;// - dy;
+        double areaY = 0;
+        double areaH = getHeight();
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        return areaY + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
     }
 
     /**

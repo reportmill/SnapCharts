@@ -77,9 +77,9 @@ public abstract class ChartHelper {
     }
 
     /**
-     * Returns the X Axis.
+     * Returns the X AxisView.
      */
-    public AxisViewX getAxisX()
+    public AxisViewX getAxisViewX()
     {
         if (_axisX != null) return _axisX;
         return _axisX = (AxisViewX) getAxisView(AxisType.X);

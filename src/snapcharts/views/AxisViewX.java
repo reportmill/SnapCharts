@@ -2,7 +2,6 @@ package snapcharts.views;
 import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.gfx.*;
-import snap.view.StringView;
 import snapcharts.model.AxisX;
 import snapcharts.model.ChartType;
 import snapcharts.model.Intervals;
@@ -64,7 +63,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     }
 
     /**
-     * Paints chart x axis.
+     * Paint axis.
      */
     protected void paintAxis(Painter aPntr)
     {
@@ -80,7 +79,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double tickLen = axis.getTickLength();
 
         // Get Intervals info
-        Intervals intervals = _dataView.getIntervalsX();
+        Intervals intervals = getIntervals();
         int count = intervals.getCount();
         double delta = intervals.getDelta();
 

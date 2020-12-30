@@ -210,7 +210,7 @@ public class DataSetList extends ChartPart {
     public double getMinY(AxisType anAxisTypeY)
     {
         // If value already cached, just return
-        if (_minY < Float.MAX_VALUE) return _minY;
+        //if (_minY < Float.MAX_VALUE) return _minY;
 
         // If no datasets/points, just set to 0
         if (getPointCount()==0) return _minY = 0;
@@ -230,7 +230,7 @@ public class DataSetList extends ChartPart {
     public double getMaxY(AxisType anAxisTypeY)
     {
         // If value already cached, just return
-        if (_maxY > -Float.MAX_VALUE) return _maxY;
+        //if (_maxY > -Float.MAX_VALUE) return _maxY;
 
         // If no datasets, just set to 0
         if (getPointCount()==0) return _maxY = 5;

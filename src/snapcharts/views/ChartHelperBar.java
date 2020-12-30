@@ -1,6 +1,5 @@
 package snapcharts.views;
-import snapcharts.model.AxisType;
-import snapcharts.model.ChartType;
+import snapcharts.model.*;
 
 /**
  * A ChartHelper for ChartType BAR.
@@ -33,6 +32,11 @@ public class ChartHelperBar extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        return new DataArea[] { new DataAreaBar(this, null) };
+        Chart chart = getChart();
+        DataSetList dataSetList = chart.getDataSetList();
+        if (dataSetList.getDataSetCount() == 0)
+            return new DataArea[0];
+        DataSet dset = dataSetList.getDataSet(0);
+        return new DataArea[] { new DataAreaBar(this, dset) };
     }
 }

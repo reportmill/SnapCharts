@@ -133,7 +133,7 @@ public class AxisViewY extends AxisView {
         aPntr.setColor(AXIS_LABELS_COLOR);
 
         // Get intervals
-        Intervals intervals = _dataView.getIntervalsY();
+        Intervals intervals = getIntervals();
         int count = intervals.getCount();
         double delta = intervals.getDelta();
         double marginx = getLabelsMargin();
@@ -199,7 +199,7 @@ public class AxisViewY extends AxisView {
     protected double getMaxLabelWidth()
     {
         // Get intervals
-        Intervals intervals = _dataView.getIntervalsY();
+        Intervals intervals = getIntervals();
         int lineCount = intervals.getCount();
         double intervalDelta = intervals.getDelta();
         double intervalMax = intervals.getMax();

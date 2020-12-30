@@ -1,6 +1,5 @@
 package snapcharts.views;
-import snapcharts.model.AxisType;
-import snapcharts.model.ChartType;
+import snapcharts.model.*;
 
 /**
  * A ChartHelper for ChartType BAR_3D.
@@ -37,6 +36,11 @@ public class ChartHelperBar3D extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        return new DataArea[] { new DataAreaBar3D(this, null) };
+        Chart chart = getChart();
+        DataSetList dataSetList = chart.getDataSetList();
+        if (dataSetList.getDataSetCount() == 0)
+            return new DataArea[0];
+        DataSet dset = dataSetList.getDataSet(0);
+        return new DataArea[] { new DataAreaBar3D(this, dset) };
     }
 }

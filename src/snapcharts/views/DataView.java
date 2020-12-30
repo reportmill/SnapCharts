@@ -1,12 +1,10 @@
 package snapcharts.views;
-import snap.geom.Insets;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.view.ViewEvent;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
-import snapcharts.model.Intervals;
 
 /**
  * A class to display data (via DataArea).
@@ -82,7 +80,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _chartHelper.getAxisX(); }
+    public AxisViewX getAxisX()  { return _chartHelper.getAxisViewX(); }
 
     /**
      * Returns the Y Axis View.
@@ -115,60 +113,6 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         for (DataArea dataArea : getDataAreas())
             revealTime = Math.max(revealTime, dataArea.getRevealTime());
         return revealTime;
-    }
-
-    /**
-     * Returns the X axis intervals for active datasets.
-     */
-    public Intervals getIntervalsX()
-    {
-        return getAxisX().getIntervals();
-    }
-
-    /**
-     * Returns the Y axis intervals for active datasets.
-     */
-    public Intervals getIntervalsY()
-    {
-        return getAxisY().getIntervals();
-    }
-
-    /**
-     * Converts a point from dataset coords to view coords.
-     */
-    public Point dataToView(double dataX, double dataY)
-    {
-        double dispX = dataToViewX(dataX);
-        double dispY = dataToViewY(dataY);
-        return new Point(dispX, dispY);
-    }
-
-    /**
-     * Converts a X coord from data coords to view coords.
-     */
-    public double dataToViewX(double dataX)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervalsX();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double axisX = ins.left;
-        double areaW = getWidth() - ins.getWidth();
-        return axisX + (dataX - dataMin)/(dataMax - dataMin)*areaW;
-    }
-
-    /**
-     * Converts a X coord from data coords to view coords.
-     */
-    public double dataToViewY(double dataY)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervalsY();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double areaY = ins.top;
-        double areaH = getHeight() - ins.getHeight();
-        return areaY + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
     }
 
     /**
