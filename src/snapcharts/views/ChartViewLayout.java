@@ -296,9 +296,11 @@ public class ChartViewLayout {
 
         // Handle LEFT/RIGHT
         ViewProxy<AxisViewY>[] axisViews = _chartProxy.getChildrenForClass(AxisViewY.class);
-        for (int i=0; i<axisViews.length; i++)
-            if (axisViews[i].getView().getAxis().getSide() != aSide)
+        for (int i=0; i<axisViews.length; i++) {
+            ViewProxy<AxisViewY> axisView = axisViews[i];
+            if (axisView.getView().getAxis().getSide() != aSide || !axisView.getView().isVisible())
                 axisViews[i] = null;
+        }
         return getNonNullArray(axisViews);
     }
 

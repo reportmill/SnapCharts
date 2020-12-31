@@ -1,7 +1,6 @@
 package snapcharts.views;
 import snap.geom.Point;
 import snap.gfx.Painter;
-import snap.gfx.Stroke;
 import snap.view.ViewEvent;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
@@ -80,12 +79,12 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the X Axis View.
      */
-    public AxisViewX getAxisX()  { return _chartHelper.getAxisViewX(); }
+    public AxisViewX getAxisViewX()  { return _chartHelper.getAxisViewX(); }
 
     /**
      * Returns the Y Axis View.
      */
-    public AxisViewY getAxisY()  { return _chartHelper.getAxisY(); }
+    public AxisViewY getAxisViewY()  { return _chartHelper.getAxisViewY(); }
 
     /**
      * Return the ratio of the chart to show horizontally.
@@ -120,8 +119,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public DataPoint getDataPointForXY(double aX, double aY)
     {
-        DataArea[] dataAreas = getDataAreas(); if (dataAreas.length==0) return null;
-        DataArea dataArea = dataAreas[0];
+        DataArea dataArea = _chartHelper.getDataAreaForFirstAxisY(); if (dataArea==null) return null;
         Point pnt = dataArea.parentToLocal(aX, aY, this);
         return dataArea.getDataPointForXY(pnt.x, pnt.y);
     }
@@ -131,8 +129,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public Point getDataPointXYLocal(DataPoint aDP)
     {
-        DataArea[] dataAreas = getDataAreas(); if (dataAreas.length==0) return null;
-        DataArea dataArea = dataAreas[0];
+        DataArea dataArea = _chartHelper.getDataAreaForFirstAxisY(); if (dataArea==null) return null;
         Point pnt = dataArea.getDataPointXYLocal(aDP);
         return dataArea.localToParent(pnt.x, pnt.y, this);
     }
@@ -177,28 +174,12 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     @Override
     protected void paintFront(Painter aPntr)
     {
-        // Make first DataArea paint gridlines
-        DataArea[] dataAreas = getDataAreas();
-        if (dataAreas.length>0) {
-            DataArea dataArea = dataAreas[0];
+        // Make DataArea for lowest Y axis paint gridlines
+        DataArea dataArea = _chartHelper.getDataAreaForFirstAxisY();
+        if (dataArea != null) {
             dataArea.paintGridlines(aPntr);
+            dataArea.paintBorder(aPntr);
         }
-
-        // Get view area
-        double areaX = 0;
-        double areaY = 0;
-        double areaW = getWidth();
-        double areaH = getHeight();
-
-        // Paint Border
-        aPntr.setColor(DataArea.BORDER_COLOR);
-        aPntr.setStroke(Stroke.Stroke1);
-        aPntr.drawRect(areaX, areaY, areaW, areaH);
-
-        // Paint Axis lines
-        aPntr.setColor(DataArea.AXIS_LINE_COLOR);
-        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
-        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
     }
 
     /**

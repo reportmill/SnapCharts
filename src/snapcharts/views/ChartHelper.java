@@ -88,7 +88,7 @@ public abstract class ChartHelper {
     /**
      * Returns the Y Axis.
      */
-    public AxisViewY getAxisY()
+    public AxisViewY getAxisViewY()
     {
         if (_axisY != null) return _axisY;
         return _axisY = (AxisViewY) getAxisView(AxisType.Y);
@@ -176,6 +176,34 @@ public abstract class ChartHelper {
      * Creates the DataAreas.
      */
     protected abstract DataArea[] createDataAreas();
+
+    /**
+     * Returns the first DataArea for axis type.
+     */
+    public DataArea getDataAreaForFirstAxisY()
+    {
+        DataArea dataArea = getDataAreaForAxisTypeY(AxisType.Y);
+        if (dataArea!=null)
+            return dataArea;
+        AxisType axisTypes[] = { AxisType.Y2, AxisType.Y3, AxisType.Y4 };
+        for (AxisType axisType : axisTypes) {
+            dataArea = getDataAreaForAxisTypeY(axisType);
+            if (dataArea!=null)
+                return dataArea;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first DataArea for axis type.
+     */
+    public DataArea getDataAreaForAxisTypeY(AxisType anAxisType)
+    {
+        for (DataArea dataArea : getDataAreas())
+            if (dataArea.getAxisTypeY() == anAxisType)
+                return dataArea;
+        return null;
+    }
 
     /**
      * Called after a chart area is installed in chart view.

@@ -266,15 +266,32 @@ public class DataAreaBar3D extends DataAreaBar {
     }
 
     /**
-     * Paints chart axis lines.
+     * Override to suppress.
      */
+    @Override
     protected void paintFront(Painter aPntr) { }
 
     /**
-     * Paints chart.
+     * Override to suppress.
      */
+    @Override
     protected void paintChart(Painter aPntr)  { }
 
+    /**
+     * Override to suppress.
+     */
+    @Override
+    public void paintBorder(Painter aPntr)  { }
+
+    /**
+     * Override to suppress.
+     */
+    @Override
+    public void paintGridlines(Painter aPntr)  { }
+
+    /**
+     * Rebuild gridlines.
+     */
     void rebuildGridLines()
     {
         _grid.clear(); _gridMinor.clear(); _gridWithoutSep.clear();

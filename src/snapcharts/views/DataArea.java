@@ -50,6 +50,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     public DataSet getDataSet()  { return _dataSet; }
 
     /**
+     * Returns the DataSet AxisType.
+     */
+    public AxisType getAxisTypeY()
+    {
+        return _dataSet.getAxisTypeY();
+    }
+
+    /**
      * Sets the DataView.
      */
     protected void setDataView(DataView aDataView)
@@ -180,6 +188,28 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      * Paints chart content.
      */
     protected void paintChart(Painter aPntr)  { }
+
+    /**
+     * Paints chart axis lines.
+     */
+    public void paintBorder(Painter aPntr)
+    {
+        // Get view area
+        double areaX = 0;
+        double areaY = 0;
+        double areaW = getWidth();
+        double areaH = getHeight();
+
+        // Paint Border
+        aPntr.setColor(DataArea.BORDER_COLOR);
+        aPntr.setStroke(Stroke.Stroke1);
+        aPntr.drawRect(areaX, areaY, areaW, areaH);
+
+        // Paint Axis lines
+        aPntr.setColor(DataArea.AXIS_LINE_COLOR);
+        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
+        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
+    }
 
     /**
      * Paints chart axis lines.

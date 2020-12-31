@@ -178,6 +178,12 @@ public class DataAreaPie extends DataArea {
     }
 
     /**
+     * Override to suppress.
+     */
+    @Override
+    public void paintBorder(Painter aPntr)  { }
+
+    /**
      * Returns the X/Y point for given angle/radius.
      */
     public Point polarDataToDisplay(double anAngle, double aRadius)

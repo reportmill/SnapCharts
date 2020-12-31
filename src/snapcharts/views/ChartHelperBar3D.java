@@ -32,6 +32,16 @@ public class ChartHelperBar3D extends ChartHelper {
     }
 
     /**
+     * Creates an AxisView for given type.
+     */
+    protected AxisView createAxisView(AxisType anAxisType)
+    {
+        AxisView axisView = super.createAxisView(anAxisType);
+        axisView.setVisible(false);
+        return axisView;
+    }
+
+    /**
      * Creates the DataAreas.
      */
     protected DataArea[] createDataAreas()

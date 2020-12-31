@@ -63,8 +63,8 @@ public class DataViewPanZoom {
      * Some conveniences.
      */
     public ChartView getChartView()  { return _dataView.getChartView(); }
-    public AxisViewX getAxisX()  { return _dataView.getAxisX(); }
-    public AxisViewY getAxisY()  { return _dataView.getAxisY(); }
+    public AxisViewX getAxisX()  { return _dataView.getAxisViewX(); }
+    public AxisViewY getAxisY()  { return _dataView.getAxisViewY(); }
     public double getWidth()  { return _dataView.getWidth(); }
     public double getHeight()  { return _dataView.getHeight(); }
 

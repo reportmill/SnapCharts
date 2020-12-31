@@ -64,8 +64,9 @@ public class AxisViewY extends AxisView {
     protected double getPrefWidthImpl(double aH)
     {
         double titleW = _titleViewBox.getPrefWidth();
+        double spacing = titleW > 0 ? TITLE_TICKS_SPACING : 0;
         double ticksW = getTickLabelsMaxWidth();
-        return AXIS_MARGIN + titleW + TITLE_TICKS_SPACING + ticksW + AXIS_MARGIN;
+        return AXIS_MARGIN + titleW + spacing + ticksW + AXIS_MARGIN;
     }
 
     /**
@@ -76,9 +77,17 @@ public class AxisViewY extends AxisView {
         // Get area bounds
         double areaH = getHeight();
 
-        // Set TitleView bounds
+        // Get TitleView bounds
         double titleX = AXIS_MARGIN;
         double titleW = _titleViewBox.getPrefWidth();
+
+        // If on RIGHT, reset titleX
+        if (getAxis().getSide() == Side.RIGHT) {
+            double areaMaxX = getWidth();
+            titleX = areaMaxX - AXIS_MARGIN - titleW;
+        }
+
+        // Set TitleView bounds
         _titleViewBox.setBounds(titleX, 0, titleW, areaH);
     }
 
@@ -88,13 +97,18 @@ public class AxisViewY extends AxisView {
     protected void layoutTickLabels()
     {
         // Get tick labels X
-        double titleX = AXIS_MARGIN;
         double titleW = _titleViewBox.getPrefWidth();
-        double ticksX = titleX + titleW + TITLE_TICKS_SPACING;
+        double spacing = titleW > 0 ? TITLE_TICKS_SPACING : 0;
+        double ticksX = AXIS_MARGIN + titleW + spacing;
         double ticksW = getTickLabelsMaxWidth();
+        Pos ticksAlign = Pos.TOP_RIGHT;
 
-        // Get tick labels align
-        Pos ticksAlign = getAxis().getSide() == Side.LEFT ? Pos.TOP_RIGHT : Pos.TOP_LEFT;
+        // If on RIGHT, reset ticksX and align
+        Side side = getAxis().getSide();
+        if (side == Side.RIGHT) {
+            ticksX = AXIS_MARGIN;
+            ticksAlign = Pos.TOP_LEFT;
+        }
 
         // Get TickLabels and Intervals
         StringBox[] tickLabels = getTickLabels();
