@@ -100,14 +100,16 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
             // If Bar, handle special: Shift labels to mid interval and skip last
             if (isBar) {
-                if (i + 1 == count)
+                if (i + 1 == count) {
+                    tickLabels[i].setString("");
                     break;
+                }
                 dataX = dataX + delta / 2;
                 dispX = Math.round(dataToViewX(dataX));
             }
 
             // If edge div too close to next div, skip
-            if (i == 0 || i + 1 == count) {
+            else if (i == 0 || i + 1 == count) {
                 double nextX = intervals.getInterval(i == 0 ? 1 : count - 2);
                 double delta2 = i == 0 ? (nextX - dataX) : (dataX - nextX);
                 if (delta2 < delta * .67) {

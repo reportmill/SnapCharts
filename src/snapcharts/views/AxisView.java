@@ -142,7 +142,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         if (aValue==_minOverride) return;
         _minOverride = aValue;
-        _intervals = null;
+        clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint
         getChartView().repaint();
@@ -195,7 +195,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         if (aValue==_maxOverride) return;
         _maxOverride = aValue;
-        _intervals = null;
+        clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint
         getChartView().repaint();
@@ -286,15 +286,22 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
                 int pointCount = dsetList.getPointCount();
                 double max = isBar ? pointCount : pointCount - 1;
-                return _intervals.matchesMinMaxLen(0, max, _intervals.getAxisLen());
+                return _intervals.matchesMinMax(0, max);
             }
         }
 
-        // Normal case: Return true if min, max and AxisLen are the same
+        // Normal case: Return true if min/max are the same
         double min = getAxisMinForIntervalCalc();
         double max = getAxisMaxForIntervalCalc();
-        double len = getAxisLen();
-        return _intervals.matchesMinMaxLen(min, max, len);
+        return _intervals.matchesMinMax(min, max);
+    }
+
+    /**
+     * Clears the intervals when axis len changes or data min/max change.
+     */
+    private void clearIntervals()
+    {
+        _intervals = null;
     }
 
     /**
@@ -508,5 +515,29 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             case AxisMax_Prop: setAxisMax(SnapUtils.doubleValue(aValue)); break;
             default: super.setValue(aPropName, aValue);
         }
+    }
+
+    /**
+     * Override to clear intervals.
+     */
+    @Override
+    public void setWidth(double aValue)
+    {
+        if (aValue==getWidth()) return;
+        super.setWidth(aValue);
+        //if (isHorizontal())
+            clearIntervals();
+    }
+
+    /**
+     * Override to clear intervals.
+     */
+    @Override
+    public void setHeight(double aValue)
+    {
+        if (aValue == getHeight()) return;
+        super.setHeight(aValue);
+        //if (isVertical())
+            clearIntervals();
     }
 }

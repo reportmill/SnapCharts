@@ -23,6 +23,7 @@ public class AxisViewY extends AxisView {
     public AxisViewY(AxisType anAxisTypeY)
     {
         super();
+        setVertical(true);
 
         _axisType = anAxisTypeY;
 

@@ -20,9 +20,6 @@ public class Intervals {
     // The given max for intervals
     private double  _maxVal;
     
-    // The axis length for the intervals
-    private double  _axisLen;
-    
     // The change between intervals
     private double  _delta;
     
@@ -54,11 +51,6 @@ public class Intervals {
     public double getSeedMax()  { return _maxVal; }
 
     /**
-     * Returns the given axis length.
-     */
-    public double getAxisLen()  { return _axisLen; }
-
-    /**
      * Returns the number of intervals for this filled graph.
      */
     public int getCount()  { return _count; }
@@ -86,9 +78,9 @@ public class Intervals {
     /**
      * Returns whether given min/max/len match the seed values that this intervals was created with.
      */
-    public boolean matchesMinMaxLen(double aMin, double aMax, double aLen)
+    public boolean matchesMinMax(double aMin, double aMax)
     {
-        return MathUtils.equals(aMin, getSeedMin()) && MathUtils.equals(aMax, getSeedMax()) && MathUtils.equals(aLen, getAxisLen());
+        return MathUtils.equals(aMin, getSeedMin()) && MathUtils.equals(aMax, getSeedMax());
     }
 
     /**
@@ -97,7 +89,7 @@ public class Intervals {
     @Override
     public String toString()
     {
-        return "Intervals { MinVal=" + _minVal + ", MaxVal=" + _maxVal + ", AxisLen=" + _axisLen +
+        return "Intervals { MinVal=" + _minVal + ", MaxVal=" + _maxVal +
                 ", Count=" + _count + ", Delta=" + _delta + ", Divs=" + Arrays.toString(_divs) + " }";
     }
 
@@ -110,7 +102,6 @@ public class Intervals {
         ivals._minVal = aMin;
         ivals._maxVal = aMax;
         int len = aMax - aMin + 1;
-        ivals._axisLen = len;
         ivals._divs = new double[len];
         for (int i=0; i<len; i++) ivals._divs[i] = aMin + i;
         ivals._delta = 1;
@@ -128,7 +119,6 @@ public class Intervals {
         Intervals ivals = new Intervals();
         ivals._minVal = aMin;
         ivals._maxVal = aMax;
-        ivals._axisLen = axisLen;
 
         // Calculate intervals and cache Count
         double divs[] = getDivsFor(aMin, aMax, axisLen, divLen, minFixed, maxFixed);
