@@ -32,6 +32,14 @@ public class DocItemGroup extends DocItem {
     public static final double CHART_SCALE_LARGEST_DATA = 2;
 
     /**
+     * Constructor.
+     */
+    public DocItemGroup()
+    {
+        super();
+    }
+
+    /**
      * Returns whether pages are portrait.
      */
     public boolean isPortrait()  { return _portrait; }

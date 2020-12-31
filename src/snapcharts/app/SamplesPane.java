@@ -88,7 +88,7 @@ public class SamplesPane extends ViewOwner {
         scroll.setShowHBar(false); scroll.setShowVBar(true);
 
         // Create "Select template" label
-        Label selectLabel = new Label("Select a UI file:");
+        Label selectLabel = new Label("Select a Chart file:");
         selectLabel.setFont(Font.Arial16.deriveFont(20).getBold());
 
         // Create HeaderRow to hold SelectLabel
@@ -360,9 +360,14 @@ public class SamplesPane extends ViewOwner {
             Size size = ui.getPrefSize();
             ui.setSize(size);
 
+            // Add Shadow
+            ShadowEffect shadow = new ShadowEffect(10, Color.DARKGRAY, 0, 0).copySimple();
+            ui.setEffect(shadow);
+
             // Create box to hold/clip UI
             _clipBox = new BoxView(ui);
-            _clipBox.setSize(size);
+            _clipBox.setSize(size.width + 10, size.height + 10);
+            _clipBox.setPadding(0, 10, 10, 10);
             _clipBox.setManaged(false);
             _clipBox.setLeanX(HPos.CENTER);
             _clipBox.setClipToBounds(true);

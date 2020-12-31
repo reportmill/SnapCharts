@@ -287,6 +287,14 @@ public class DocPane extends ViewOwner {
     }
 
     /**
+     * Shows samples.
+     */
+    public void showSamples()
+    {
+        new SamplesPane().showSamples(this);
+    }
+
+    /**
      * Called when the app is about to exit to gracefully handle any open documents.
      */
     public void quit()  { App.quitApp(); }
@@ -456,9 +464,8 @@ public class DocPane extends ViewOwner {
         }
 
         // Handle SamplesButton
-        if (anEvent.equals("SamplesButton")) {
-            new SamplesPane().showSamples(this);
-        }
+        if (anEvent.equals("SamplesButton"))
+            showSamples();
 
         // Handle TreeView
         if (anEvent.equals(_treeView)) {

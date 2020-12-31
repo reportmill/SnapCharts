@@ -210,6 +210,10 @@ public class WelcomePanel extends ViewOwner {
         if (anEvent.equals("CloudButton"))
             handleCloudButton();
 
+        // Handle SamplesButton
+        if (anEvent.equals("SamplesButton"))
+            openSamples();
+
         // Handle EmailText
         if (anEvent.equals("EmailText")) {
             String email = anEvent.getStringValue().trim().toLowerCase();
@@ -265,6 +269,18 @@ public class WelcomePanel extends ViewOwner {
             setCloudEmail(email);
         }
         setCloud(true);
+    }
+
+    /**
+     * Opens the Samples.
+     */
+    protected void openSamples()
+    {
+        DocPane dpane = new DocPane().newDoc();
+        dpane.setWindowVisible(true);
+        hide();
+
+        runLaterDelayed(300, () -> dpane.showSamples());
     }
 
     /**

@@ -76,7 +76,7 @@ public class Intervals {
     public double getDelta()  { return _delta; }
 
     /**
-     * Returns whether given min/max/len match the seed values that this intervals was created with.
+     * Returns whether given min/max match the original values this intervals was created with.
      */
     public boolean matchesMinMax(double aMin, double aMax)
     {
