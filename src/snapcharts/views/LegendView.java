@@ -11,6 +11,12 @@ import snapcharts.model.*;
  */
 public class LegendView<T extends Legend> extends ChartPartView<T> {
 
+    // A ScaleBox to make sure Legend always fits
+    private ScaleBox  _scaleBox;
+
+    // The ChildView (ColView or RowView) to hold Legend Entries
+    private ChildView  _entryBox;
+
     // Constants
     private static Insets DEFAULT_PADDING = new Insets(5, 5, 5, 5);
     private static Font DEFAULT_ENTRY_FONT = Font.Arial12.deriveFont(13).getBold();
@@ -24,6 +30,10 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
 
         setPadding(DEFAULT_PADDING);
         setAlign(Pos.CENTER_LEFT);
+
+        _scaleBox = new ScaleBox();
+        _scaleBox.setKeepAspect(true);
+        addChild(_scaleBox);
     }
 
     /**
@@ -53,12 +63,14 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         Pos pos = getPosition();
         boolean isHor = pos==Pos.TOP_CENTER || pos==Pos.BOTTOM_CENTER;
         setVertical(!isHor);
-        if (isHor)
+        if (isHor) {
             setAlign(Pos.TOP_CENTER);
+            _scaleBox.setContent(_entryBox = new RowView());
+        }
         else {
             setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
+            _scaleBox.setContent(_entryBox = new ColView());
         }
-
 
         // Handle visible
         boolean showLegend = legend.isShowLegend();
@@ -67,11 +79,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
             return;
 
         // Remove children
-        removeChildren();
+        //removeChildren();
 
         for (int i=0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);
             View entryView = createLegendEntry(chart, dset, i);
-            addChild(entryView);
+            _entryBox.addChild(entryView);
 
             // Register row to enable/disable
             entryView.addEventHandler(e -> entryWasClicked(entryView), MouseRelease);
@@ -107,7 +119,6 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
             label.setTextFill(Color.LIGHTGRAY);
         }
         label.setGraphic(shpView);
-        label.setClipToBounds(true);
         return label;
     }
 
@@ -136,11 +147,12 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     protected double getPrefWidthImpl(double aH)
     {
         // If Position is Top/Bottom, layout as RowView
-        if (isHorizontal())
+        /*if (isHorizontal())
             return RowView.getPrefWidth(this, aH);
 
         // Otherwise Layout as ColView
-        return ColView.getPrefWidth(this, aH);
+        return ColView.getPrefWidth(this, aH);*/
+        return _scaleBox.getPrefWidth();
     }
 
     /**
@@ -150,7 +162,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     protected double getPrefHeightImpl(double aW)
     {
         // If Position is Top/Bottom, layout as RowView
-        if (isHorizontal()) {
+        /*if (isHorizontal()) {
             double prefH = RowView.getPrefHeight(this, -1);
             double prefW = RowView.getPrefWidth(this, -1);
             if (aW > 0 && prefW > aW)
@@ -159,7 +171,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         }
 
         // Otherwise Layout as ColView
-        return ColView.getPrefHeight(this, aW);
+        return ColView.getPrefHeight(this, aW);*/
+        return _scaleBox.getPrefHeight();
     }
 
     /**
@@ -168,11 +181,15 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected void layoutImpl()
     {
+        double areaW = getWidth();
+        double areaH = getHeight();
+        _scaleBox.setSize(areaW, areaH);
+
         // If Position is Top/Bottom, layout as RowView
-        if (isHorizontal())
-            RowView.layout(this, false);
+        //if (isHorizontal())
+        //    RowView.layout(this, false);
 
         // Otherwise Layout as ColView
-        else ColView.layout(this, true);
+        //else ColView.layout(this, true);
     }
 }
