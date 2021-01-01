@@ -580,6 +580,10 @@ public class DataSet extends ChartPart {
         if (isDisabled())
             e.add(Disabled_Prop, true);
 
+        // Archive AxisTypeY
+        if (getAxisTypeY() != AxisType.Y)
+            e.add(AxisTypeY_Prop, getAxisTypeY());
+
         // If XY, add DataX values
         if (dataType==DataType.XY) {
             String dataXStr = DataUtils.getStringForDoubleArray(getDataX());
@@ -627,6 +631,11 @@ public class DataSet extends ChartPart {
         // Unarchive ShowSymbols, Disabled
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
         setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
+
+        // Archive AxisTypeY
+        String axisTypeStr = anElement.getAttributeValue(AxisTypeY_Prop);
+        if (axisTypeStr != null)
+            setAxisTypeY(AxisType.valueOf(axisTypeStr));
 
         // Get DataX
         double dataX[] = null;

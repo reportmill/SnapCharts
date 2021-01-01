@@ -150,9 +150,13 @@ public class DocItemGroup extends DocItem {
         // Do normal version
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive Portrait, ItemsPerPage
-        if(!isPortrait()) e.add(Portrait_Prop, isPortrait());
-        if(getItemsPerPage()!=2) e.add(ItemsPerPage_Prop, getItemsPerPage());
+        // Archive Portrait, ItemsPerPage, ChartScale_Prop
+        if (!isPortrait())
+            e.add(Portrait_Prop, isPortrait());
+        if (getItemsPerPage() != 2)
+            e.add(ItemsPerPage_Prop, getItemsPerPage());
+        if (getChartScale() != 1)
+            e.add(ChartScale_Prop, getChartScale());
 
         // Archive charts
         XMLElement chartsXML = new XMLElement("Charts");
@@ -176,11 +180,13 @@ public class DocItemGroup extends DocItem {
         // Do normal version
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive Portrait, ItemsPerPage
+        // Unarchive Portrait, ItemsPerPage, ChartScale_Prop
         if(anElement.hasAttribute(Portrait_Prop))
             setPortrait(anElement.getAttributeBoolValue(Portrait_Prop));
         if(anElement.hasAttribute(ItemsPerPage_Prop))
             setItemsPerPage(anElement.getAttributeIntValue(ItemsPerPage_Prop));
+        if(anElement.hasAttribute(ChartScale_Prop))
+            setChartScale(anElement.getAttributeDoubleValue(ChartScale_Prop));
 
         // Unarchive charts
         XMLElement chartsXML = anElement.get("Charts");
