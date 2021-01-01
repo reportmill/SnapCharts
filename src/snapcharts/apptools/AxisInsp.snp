@@ -7,20 +7,20 @@
   <RowView Padding="4" Spacing="4">
     <Label Name="AxisMinText" PrefWidth="50" text="Axis Min:" />
     <RowView GrowWidth="true">
-      <ToggleButton Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Padding="2" text="Data" Position="CENTER" />
-      <ToggleButton Padding="2" text="Value" Position="CENTER_RIGHT" />
+      <ToggleButton Name="MinBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="MinBoundDataButton" Padding="2" text="Data" Position="CENTER" />
+      <ToggleButton Name="MinBoundValueButton" Padding="2" text="Value" Position="CENTER_RIGHT" />
     </RowView>
-    <TextField Name="TitleText" GrowWidth="true" />
+    <TextField Name="MinBoundText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label Name="AxisMinText" PrefWidth="50" text="Axis Max:" />
     <RowView GrowWidth="true">
-      <ToggleButton Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Padding="2" text="Data" Position="CENTER" />
-      <ToggleButton Padding="2" text="Value" Position="CENTER_RIGHT" />
+      <ToggleButton Name="MaxBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="MaxBoundDataButton" Padding="2" text="Data" Position="CENTER" />
+      <ToggleButton Name="MaxBoundValueButton" Padding="2" text="Value" Position="CENTER_RIGHT" />
     </RowView>
-    <TextField Name="TitleText" GrowWidth="true" />
+    <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
   <CheckBox Name="ZeroRequiredCheckBox" Padding="4" text="Always Include Zero" />
 </ColView>

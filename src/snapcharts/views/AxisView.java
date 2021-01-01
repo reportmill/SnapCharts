@@ -116,11 +116,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Get Axis
         Axis axis = getAxis();
-        Axis.AxisBoundType boundType = axis.getMinBoundType();
+        AxisBound boundType = axis.getMinBound();
 
         // Get min
         double min;
-        if (boundType== Axis.AxisBoundType.VALUE)
+        if (boundType== AxisBound.VALUE)
             min = axis.getMinValue();
         else {
             DataSetList dsetList = getDataSetList();
@@ -167,11 +167,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Get Axis
         Axis axis = getAxis();
-        Axis.AxisBoundType boundType = axis.getMaxBoundType();
+        AxisBound boundType = axis.getMaxBound();
 
         // Get max
         double max;
-        if (boundType== Axis.AxisBoundType.VALUE)
+        if (boundType== AxisBound.VALUE)
             max = axis.getMaxValue();
 
         // Handle BoundType.Data
@@ -264,8 +264,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         double max = getAxisMaxForIntervalCalc();
         double axisLen = getAxisLen();
         double divLen = getAxisType()==AxisType.X ? 40 : 30;
-        boolean minFixed = _minOverride!=UNSET_DOUBLE;
-        boolean maxFixed = _maxOverride!=UNSET_DOUBLE;
+        boolean minFixed = _minOverride!=UNSET_DOUBLE || getAxis().getMinBound() != AxisBound.AUTO;
+        boolean maxFixed = _maxOverride!=UNSET_DOUBLE || getAxis().getMaxBound() != AxisBound.AUTO;
         return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
     }
 
@@ -299,7 +299,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     /**
      * Clears the intervals when axis len changes or data min/max change.
      */
-    private void clearIntervals()
+    public void clearIntervals()
     {
         _intervals = null;
     }

@@ -260,6 +260,8 @@ public abstract class ChartHelper {
     {
         for (DataArea dataArea : getDataAreas())
             dataArea.clearCache();
+        for (AxisView axisView : getAxisViews())
+            axisView.clearIntervals();
     }
 
     /**

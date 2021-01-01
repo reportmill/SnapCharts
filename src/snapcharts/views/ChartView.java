@@ -5,10 +5,7 @@ import snap.util.PropChange;
 import snap.util.PropChangeListener;
 import snap.util.SnapUtils;
 import snap.view.*;
-import snapcharts.model.Chart;
-import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.*;
 
 /**
  * A view to render a chart.
@@ -411,7 +408,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // If DataSet change, clear caches
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList) {
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
             getChartHelper().clearCache();
         }
     }
