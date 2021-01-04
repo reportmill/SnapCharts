@@ -2,8 +2,8 @@
 <RowView FillHeight="true">
 <ColView GrowWidth="true" FillWidth="true">
   <ScrollView Name="ScrollView" GrowHeight="true">
-    <ScaleBox Name="PageBox" Align="TOP_CENTER" Padding="20" FillWidth="true" FillHeight="true">
-      <color value="#ffffff" />
+    <ScaleBox Align="TOP_CENTER" GrowWidth="true">
+      <ColView Name="PageBox" Align="TOP_CENTER" Padding="20" Spacing="20" FillWidth="true" />
     </ScaleBox>
   </ScrollView>
   <RowView PrefHeight="22" Padding="0,0,0,2">

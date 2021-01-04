@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <TitleView Text="Paper Orientation">
-    <ColView Padding="4" GrowHeight="true" Spacing="4">
-      <RadioButton Name="PortraitButton" PrefWidth="80" PrefHeight="22" text="Portrait" />
-      <RadioButton Name="LandscapeButton" PrefWidth="80" PrefHeight="22" text="Landscape" />
-    </ColView>
-  </TitleView>
+  <RowView Padding="4" GrowWidth="true" Spacing="4">
+    <TitleView GrowWidth="true" Text="Page Orientation">
+      <ColView Padding="4" GrowHeight="true" Spacing="4">
+        <RadioButton Name="PortraitButton" PrefWidth="80" PrefHeight="22" text="Portrait" />
+        <RadioButton Name="LandscapeButton" PrefWidth="80" PrefHeight="22" text="Landscape" />
+      </ColView>
+    </TitleView>
+    <TitleView GrowWidth="true" Text="Page Display">
+      <ColView Padding="4" GrowHeight="true" Spacing="4">
+        <RadioButton Name="SingleLayoutButton" PrefWidth="80" PrefHeight="22" text="Single" />
+        <RadioButton Name="ContinuousLayoutButton" PrefWidth="80" PrefHeight="22" text="Continuous" />
+      </ColView>
+    </TitleView>
+  </RowView>
   <TitleView MinWidth="120" MinHeight="60" Text="Charts per Page">
     <RowView Padding="4" GrowWidth="true">
       <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">

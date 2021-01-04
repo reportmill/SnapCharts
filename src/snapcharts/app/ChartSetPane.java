@@ -6,10 +6,7 @@ import snap.gfx.Painter;
 import snap.util.ListUtils;
 import snap.util.PropChange;
 import snap.view.*;
-import snapcharts.model.Chart;
-import snapcharts.model.DocItem;
-import snapcharts.model.DocItemChart;
-import snapcharts.model.DocItemGroup;
+import snapcharts.model.*;
 import snapcharts.views.PageView;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +23,7 @@ public class ChartSetPane extends DocItemPane {
     private List<Chart>  _charts = new ArrayList<>();
 
     // The view to hold PageView
-    private BoxView _pageBox;
+    private ColView  _pageBox;
 
     // The ScrollView that holds PageBox
     private ScrollView  _pageBoxScrollView;
@@ -95,8 +92,11 @@ public class ChartSetPane extends DocItemPane {
 
         _selPageIndex = index;
 
-        PageView page = getSelPageView();
-        _pageBox.setContent(page);
+        if (getDocItem().getPageDisplay() == PageDisplay.SINGLE) {
+            PageView page = getSelPageView();
+            _pageBox.removeChildren();
+            _pageBox.addChild(page);
+        }
     }
 
     /**
@@ -121,9 +121,12 @@ public class ChartSetPane extends DocItemPane {
         // Handle Items
         if (propName==DocItem.Items_Prop)
             resetCharts();
-        if (propName==DocItemGroup.ItemsPerPage_Prop || propName==DocItemGroup.Portrait_Prop ||
-            propName==DocItemGroup.ChartScale_Prop)
+        if (propName==DocItemGroup.Portrait_Prop || propName==DocItemGroup.PageDisplay_Prop ||
+            propName==DocItemGroup.ItemsPerPage_Prop || propName==DocItemGroup.ChartScale_Prop)
                 resetCharts();
+
+        // Reset UI
+        resetLater();
     }
 
     /**
@@ -146,8 +149,8 @@ public class ChartSetPane extends DocItemPane {
     private void resetChartsImpl()
     {
         _charts.clear();
-        _pageBox.setContent(null);
         _pageViews.clear();
+        _pageBox.removeChildren();
 
         // Get List of DocItemChart
         List<DocItemChart> chartDocItems = ListUtils.getFilteredForClass(_docItem.getItems(), DocItemChart.class);
@@ -156,9 +159,15 @@ public class ChartSetPane extends DocItemPane {
         DocItemGroup docItem = getDocItem();
         int plotsPerPage = docItem.getItemsPerPage();
 
+        // Configure PageBoxScrollView to FillHeight if PageDisplay.Single
+        PageDisplay pageDisplay = docItem.getPageDisplay();
+        _pageBoxScrollView.setFillHeight(pageDisplay == PageDisplay.SINGLE);
+
         // Get the current page
         PageView pageView = new PageView(docItem);
         _pageViews.add(pageView);
+        if (pageDisplay == PageDisplay.CONTINUOUS)
+            _pageBox.addChild(pageView);
 
         // Get charts
         for (int i=0; i<chartDocItems.size(); i++) {
@@ -172,6 +181,8 @@ public class ChartSetPane extends DocItemPane {
             if (pageView==null) {
                 pageView = new PageView(docItem);
                 _pageViews.add(pageView);
+                if (pageDisplay == PageDisplay.CONTINUOUS)
+                    _pageBox.addChild(pageView);
             }
 
             // Add to PageView
@@ -186,6 +197,8 @@ public class ChartSetPane extends DocItemPane {
         setSelPageIndex(0);
 
         _resetChartsRun = null;
+
+        resetLater();
     }
 
     /**
@@ -201,13 +214,18 @@ public class ChartSetPane extends DocItemPane {
         topRowView.addChild(_insp.getUI());
 
         // Get PageBox
-        _pageBox = getView("PageBox", BoxView.class);
-        _pageBox.setFill(BACK_FILL);
+        _pageBox = getView("PageBox", ColView.class);
+        _pageBox.getParent().setFill(BACK_FILL);
+
+        // Get ScaleBox and configure
+        ScaleBox scaleBox = (ScaleBox) _pageBox.getParent();
+        scaleBox.setVertical(true);
+        scaleBox.setKeepAspect(true);
 
         // Get PageBoxScrollView
         _pageBoxScrollView = getView("ScrollView", ScrollView.class);
         _pageBoxScrollView.setFillWidth(true);
-        _pageBoxScrollView.setFillHeight(true);
+        _pageBoxScrollView.setShowHBar(false);
 
         resetCharts();
 
@@ -250,7 +268,8 @@ public class ChartSetPane extends DocItemPane {
         setViewEnabled("PageForwardAllButton", getSelPageIndex()<getPageCount()-1);
 
         // Update PageNavBox.Visible
-        getView("PageNavBox").setVisible(getPageCount()>1);
+        PageDisplay pageDisplay = getDocItem().getPageDisplay();
+        getView("PageNavBox").setVisible(getPageCount()>1 && pageDisplay==PageDisplay.SINGLE);
     }
 
     /**

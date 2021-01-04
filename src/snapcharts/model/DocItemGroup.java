@@ -13,6 +13,9 @@ public class DocItemGroup extends DocItem {
     // Whether group pages should be portrait
     private boolean  _portrait = true;
 
+    // How pages should be displayed (Single, Continuous).
+    private PageDisplay  _pageDisplay = PageDisplay.SINGLE;
+
     // The number of items to show per page
     private int _itemsPerPage = 2;
 
@@ -20,8 +23,9 @@ public class DocItemGroup extends DocItem {
     private double _chartScale = CHART_SCALE_NATURAL;
 
     // Constants for properties
-    public static final String ItemsPerPage_Prop = "ItemsPerPage";
     public static final String Portrait_Prop = "Portrait";
+    public static final String PageDisplay_Prop = "PageDisplay";
+    public static final String ItemsPerPage_Prop = "ItemsPerPage";
     public static final String ChartScale_Prop = "ChartScale";
 
     // Constants for ChartScale
@@ -51,6 +55,20 @@ public class DocItemGroup extends DocItem {
     {
         if (aValue==isPortrait()) return;
         firePropChange(Portrait_Prop, _portrait, _portrait = aValue);
+    }
+
+    /**
+     * Returns how pages should be displayed (Single, Continuous).
+     */
+    public PageDisplay  getPageDisplay()  { return _pageDisplay; }
+
+    /**
+     * Sets how pages should be displayed (Single, Continuous).
+     */
+    public void setPageDisplay(PageDisplay aValue)
+    {
+        if (aValue == getPageDisplay()) return;
+        firePropChange(PageDisplay_Prop, _pageDisplay, _pageDisplay = aValue);
     }
 
     /**

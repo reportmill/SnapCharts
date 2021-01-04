@@ -5,6 +5,7 @@ import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartSetPane;
 import snapcharts.model.DocItemGroup;
+import snapcharts.model.PageDisplay;
 
 /**
  * A class to manage UI to edit a ChartSetPane.
@@ -12,14 +13,14 @@ import snapcharts.model.DocItemGroup;
 public class ChartSetBasicTool extends ViewOwner {
 
     // The DocPane
-    private ChartSetPane        _csPane;
+    private ChartSetPane _chartSetPane;
 
     /**
      * Constructor.
      */
     public ChartSetBasicTool(ChartSetPane aCSP)
     {
-        _csPane = aCSP;
+        _chartSetPane = aCSP;
     }
 
     /**
@@ -28,12 +29,16 @@ public class ChartSetBasicTool extends ViewOwner {
     protected void resetUI()
     {
         // Get doc
-        ChartSetPane csp = _csPane;
+        ChartSetPane csp = _chartSetPane;
         DocItemGroup docItem = csp.getDocItem();
 
         // Reset PortraitButton, LandscapeButton
         setViewValue("PortraitButton", docItem.isPortrait());
         setViewValue("LandscapeButton", !docItem.isPortrait());
+
+        // Reset SingleLayoutButton, ContinuousLayoutButton
+        setViewValue("SingleLayoutButton", docItem.getPageDisplay() == PageDisplay.SINGLE);
+        setViewValue("ContinuousLayoutButton", docItem.getPageDisplay() == PageDisplay.CONTINUOUS);
 
         // Reset OneUpButton, TwoUpButton, ThreeUpButton, FourUpButton
         setViewValue("OneUpButton", docItem.getItemsPerPage()==1);
@@ -62,12 +67,20 @@ public class ChartSetBasicTool extends ViewOwner {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get doc
-        ChartSetPane csp = _csPane;
+        ChartSetPane csp = _chartSetPane;
         DocItemGroup docItem = csp.getDocItem();
 
         // Handle PortraitButton, LandscapeButton
-        if(anEvent.equals("PortraitButton")) docItem.setPortrait(true);
-        if(anEvent.equals("LandscapeButton")) docItem.setPortrait(false);
+        if (anEvent.equals("PortraitButton"))
+            docItem.setPortrait(true);
+        if (anEvent.equals("LandscapeButton"))
+            docItem.setPortrait(false);
+
+        // Handle SingleLayoutButton, ContinuousLayoutButton
+        if(anEvent.equals("SingleLayoutButton"))
+            docItem.setPageDisplay(PageDisplay.SINGLE);
+        if(anEvent.equals("ContinuousLayoutButton"))
+            docItem.setPageDisplay(PageDisplay.CONTINUOUS);
 
         // Handle OneUpButton, TwoUpButton, ThreeUpButton, FourUpButton
         if (anEvent.equals("OneUpButton")) {
