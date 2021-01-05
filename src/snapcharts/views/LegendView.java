@@ -66,10 +66,12 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         if (isHor) {
             setAlign(Pos.TOP_CENTER);
             _scaleBox.setContent(_entryBox = new RowView());
+            _scaleBox.setAlign(Pos.CENTER);
         }
         else {
             setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
             _scaleBox.setContent(_entryBox = new ColView());
+            _scaleBox.setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
         }
 
         // Handle visible
@@ -128,7 +130,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     private void entryWasClicked(View anEntryView)
     {
         // Get row/dataset index
-        int index = ArrayUtils.indexOf(getChildren(), anEntryView);
+        ParentView parentView = anEntryView.getParent();
+        int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView);
 
         // Get dataset and disable
         ChartView chart = getChartView();
@@ -146,12 +149,6 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        // If Position is Top/Bottom, layout as RowView
-        /*if (isHorizontal())
-            return RowView.getPrefWidth(this, aH);
-
-        // Otherwise Layout as ColView
-        return ColView.getPrefWidth(this, aH);*/
         return _scaleBox.getPrefWidth();
     }
 
@@ -161,17 +158,6 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        // If Position is Top/Bottom, layout as RowView
-        /*if (isHorizontal()) {
-            double prefH = RowView.getPrefHeight(this, -1);
-            double prefW = RowView.getPrefWidth(this, -1);
-            if (aW > 0 && prefW > aW)
-                prefH *= 2;
-            return prefH;
-        }
-
-        // Otherwise Layout as ColView
-        return ColView.getPrefHeight(this, aW);*/
         return _scaleBox.getPrefHeight();
     }
 
@@ -184,12 +170,5 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         double areaW = getWidth();
         double areaH = getHeight();
         _scaleBox.setSize(areaW, areaH);
-
-        // If Position is Top/Bottom, layout as RowView
-        //if (isHorizontal())
-        //    RowView.layout(this, false);
-
-        // Otherwise Layout as ColView
-        //else ColView.layout(this, true);
     }
 }

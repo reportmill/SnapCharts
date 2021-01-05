@@ -238,9 +238,7 @@ public abstract class ChartHelper {
     protected void resetAxisViews()
     {
         // Remove old axis views
-        AxisView[] oldAxisViews = _chartView.getChildrenForClass(AxisView.class);
-        for (AxisView axisView : oldAxisViews)
-            ViewUtils.removeChild(_chartView, axisView);
+        removeAxisViews();
 
         // Reset cached values
         _axisTypes = null;
@@ -251,6 +249,17 @@ public abstract class ChartHelper {
         // Add new axis views
         for (AxisView axisView : getAxisViews())
             ViewUtils.addChild(_chartView, axisView);
+    }
+
+    /**
+     * Removes AxisViews.
+     */
+    protected void removeAxisViews()
+    {
+        // Remove old axis views
+        AxisView[] oldAxisViews = _chartView.getChildrenForClass(AxisView.class);
+        for (AxisView axisView : oldAxisViews)
+            ViewUtils.removeChild(_chartView, axisView);
     }
 
     /**

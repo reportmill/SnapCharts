@@ -157,6 +157,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
             // Deactivate
             _chartHelper.deactivate();
+            _chartHelper.removeAxisViews();
         }
 
         // Set new

@@ -57,6 +57,11 @@ public class AxisInsp extends ChartPartInsp {
         // Get axis
         Axis axis = getAxis();
 
+        // Get AxisView (just return if null)
+        AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
+        if (axisView == null)
+            return;
+
         // Reset TitleText
         setViewValue("TitleText", axis.getTitle());
 
@@ -72,7 +77,6 @@ public class AxisInsp extends ChartPartInsp {
         // Reset MinBoundText: Get the value to be shown and set value
         double minVal = axis.getMinValue();
         if (minBound == AxisBound.AUTO) {
-            AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
             minVal = axisView.getAxisMin();
         }
         else if (minBound == AxisBound.DATA)
@@ -88,7 +92,6 @@ public class AxisInsp extends ChartPartInsp {
         // Reset MaxBoundText: Get the value to be shown and set value
         double maxVal = axis.getMaxValue();
         if (maxBound == AxisBound.AUTO) {
-            AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
             maxVal = axisView.getAxisMax();
         }
         else if (maxBound == AxisBound.DATA)
@@ -103,6 +106,11 @@ public class AxisInsp extends ChartPartInsp {
     {
         // Get axis
         Axis axis = getAxis();
+
+        // Get AxisView (just return if null)
+        AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
+        if (axisView == null)
+            return;
 
         // Handle TitleText
         if (anEvent.equals("TitleText"))

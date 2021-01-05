@@ -3,6 +3,7 @@ import java.util.*;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.*;
+import snap.util.ArrayUtils;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
 
@@ -22,6 +23,9 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
     // The DataSet
     private T  _dataSet;
+
+    // The AxisType for Y axis (might get coerced down to Y if chart type doesn't support it)
+    private AxisType  _axisTypeY;
     
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
@@ -37,6 +41,11 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         // Set ivars
         _chartHelper = aChartHelper;
         _dataSet = (T) aDataSet;
+
+        // Get DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
+        _axisTypeY = _dataSet.getAxisTypeY();
+        if (_axisTypeY!= AxisType.Y && !ArrayUtils.contains(_chartHelper.getAxisTypes(), _axisTypeY))
+            _axisTypeY = AxisType.Y;
     }
 
     /**
@@ -52,10 +61,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Returns the DataSet AxisType.
      */
-    public AxisType getAxisTypeY()
-    {
-        return _dataSet.getAxisTypeY();
-    }
+    public AxisType getAxisTypeY()  { return _axisTypeY; }
 
     /**
      * Sets the DataView.
@@ -79,7 +85,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public AxisViewY getAxisViewY()
     {
-        AxisType axisType = _dataSet.getAxisTypeY();
+        AxisType axisType = getAxisTypeY();
         return (AxisViewY) _chartHelper.getAxisView(axisType);
     }
 
