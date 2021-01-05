@@ -50,8 +50,11 @@ public class ChartSetBasicTool extends ViewOwner {
 
         // Reset ChartScaleButtons (ChartScaleButton0.5, 0.75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
         double chartScale = docItem.getChartScale();
-        String chartScaleStr = "ChartScaleButton" + StringUtils.formatNum("#.##", chartScale);
-        ToggleButton chartScaleButton = getView(chartScaleStr, ToggleButton.class);
+        String chartScaleStr = StringUtils.formatNum("#.##", chartScale);
+        setViewText("ChartScaleTitleView", "Chart Scale - " + chartScaleStr + "x");
+        if (chartScaleStr.startsWith(".")) chartScaleStr = '0' + chartScaleStr; // TeaVM?
+        String chartScaleButtonStr = "ChartScaleButton" + chartScaleStr;
+        ToggleButton chartScaleButton = getView(chartScaleButtonStr, ToggleButton.class);
         if (chartScaleButton!=null)
             chartScaleButton.setSelected(true);
         else getToggleGroup("toggle1").setSelected(null);

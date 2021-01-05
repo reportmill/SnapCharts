@@ -30,7 +30,7 @@
       </ColView>
     </RowView>
   </TitleView>
-  <TitleView MinWidth="120" MinHeight="60" Text="Chart Scale">
+  <TitleView Name="ChartScaleTitleView" MinWidth="120" MinHeight="60" Text="Chart Scale">
     <ColView Padding="4" GrowHeight="true" Spacing="4">
       <RowView Padding="4" GrowWidth="true" Spacing="4">
         <RadioButton Name="ChartScaleButton0.5" GrowWidth="true" ToolTip="50 %" Group="toggle1" />

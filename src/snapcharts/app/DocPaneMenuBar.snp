@@ -35,10 +35,6 @@
     <MenuItem Name="SubscriptMenuItem" text="Subscript" />
   </Menu>
   <Menu Name="ToolsMenu" text="Tools">
-    <MenuItem Name="GalleryPaneMenuItem" text="Gallery..." />
-    <MenuItem Name="ViewPaneMenuItem" text="View Inspector..." key="meta shift C" />
-    <MenuItem Name="StylePaneMenuItem" text="Styler Inspector..." />
-    <MenuItem />
     <MenuItem Name="DevPaneMenuItem" text="Show Developer Tools" />
   </Menu>
 </MenuBar>

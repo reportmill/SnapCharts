@@ -6,7 +6,6 @@ import snap.util.Undoer;
 import snap.view.MenuBar;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
-import snap.view.ViewTheme;
 import snap.viewx.DevPane;
 
 /**
@@ -117,11 +116,6 @@ public class DocPaneMenuBar extends ViewOwner {
 //            editor.getStyler().setUnderlined(!editor.getStyler().isUnderlined());
 //        if (anEvent.equals("OutlineMenuItem"))
 //            editor.getStyler().setTextBorder(Border.blackBorder());
-//
-//        // Handle Shapes menu items (use name because anObj may come from popup menu)
-//        String name = anEvent.getName();
-//        if (name.equals("GroupMenuItem")) EditorUtils.groupView(editor);
-//        if (name.equals("UngroupMenuItem")) EditorUtils.ungroupView(editor);
 //
         // Handle DevPaneMenuItem
         if (anEvent.equals("DevPaneMenuItem"))
