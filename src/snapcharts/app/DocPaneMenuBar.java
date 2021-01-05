@@ -123,19 +123,6 @@ public class DocPaneMenuBar extends ViewOwner {
 //        if (name.equals("GroupMenuItem")) EditorUtils.groupView(editor);
 //        if (name.equals("UngroupMenuItem")) EditorUtils.ungroupView(editor);
 //
-
-        // Handle Theme menus: StandardThemeMenuItem, LightThemeMenuItem, DarkThemeMenuItem, BlackAndWhiteThemeMenuItem
-        if (anEvent.equals("StandardThemeMenuItem"))
-            ViewTheme.setThemeForName("Standard");
-        if (anEvent.equals("StandardBlueThemeMenuItem"))
-            ViewTheme.setThemeForName("StandardBlue");
-        if (anEvent.equals("LightThemeMenuItem"))
-            ViewTheme.setThemeForName("Light");
-        if (anEvent.equals("DarkThemeMenuItem"))
-            ViewTheme.setThemeForName("Dark");
-        if (anEvent.equals("BlackAndWhiteThemeMenuItem"))
-            ViewTheme.setThemeForName("BlackAndWhite");
-
         // Handle DevPaneMenuItem
         if (anEvent.equals("DevPaneMenuItem"))
             DevPane.setDevPaneShowing(getUI(), !DevPane.isDevPaneShowing(getUI()));
