@@ -35,10 +35,9 @@ public class ChartHelperPie extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        Chart chart = getChart();
-        DataSetList dataSetList = chart.getDataSetList().getActiveList();
+        DataSetList dataSetList = getDataSetList();
         if (dataSetList.getDataSetCount() == 0)
-            dataSetList = chart.getDataSetList();
+            dataSetList = getDataSetListAll();
         if (dataSetList.getDataSetCount() == 0)
             return new DataArea[0];
         DataSet dset = dataSetList.getDataSet(0);
@@ -51,7 +50,7 @@ public class ChartHelperPie extends ChartHelper {
     public void activate()
     {
         // Get info
-        DataSetList dataSetList = _chartView.getDataSetList();
+        DataSetList dataSetList = getDataSetListAll();
         int dsetCount = dataSetList.getDataSetCount();
 
         // Update parts
@@ -82,8 +81,9 @@ public class ChartHelperPie extends ChartHelper {
      */
     public void resetView()
     {
-        DataSetList dset = _chartView.getDataSetList(); if (dset.getDataSetCount()==0 || dset.getPointCount()==0) return;
-        DataPoint dp = dset.getDataSet(0).getPoint(0);
+        DataSetList dsetList = getDataSetList(); if (dsetList.getDataSetCount()==0) return;
+        DataSet dset = dsetList.getDataSet(0); if (dset.getPointCount()==0) return;
+        DataPoint dp = dset.getPoint(0);
         _dataArea._disableMorph = true;
         _chartView.setSelDataPoint(dp);
         _dataArea._disableMorph = false;

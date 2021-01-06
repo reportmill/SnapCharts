@@ -96,12 +96,21 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Returns the DataSetList.
+     */
+    private DataSetList getDataSetList()
+    {
+        Chart chart = getChart();
+        return chart.getDataSetList();
+    }
+
+    /**
      * Returns the current DataSet.
      */
     public DataSet getDataSet()
     {
         int selIndex = _tabView!=null ? _tabView.getSelIndex() : -1;
-        DataSetList dataSetList = getChart().getDataSetList();
+        DataSetList dataSetList = getDataSetList();
         if (selIndex<0 || selIndex>=dataSetList.getDataSetCount())
             return null;
         return dataSetList.getDataSet(selIndex);
@@ -254,7 +263,7 @@ public class ChartPane extends DocItemPane {
     protected void initShowing()
     {
         // Configure TabView with Chart.Datasets
-        DataSetList dataSetList = _chartView.getDataSetList();
+        DataSetList dataSetList = getDataSetList();
         List<DataSet> dsets = dataSetList.getDataSets();
         for (DataSet dset : dsets) {
             _tabView.addTab(dset.getName(), new Label(dset.getName()));
@@ -278,7 +287,7 @@ public class ChartPane extends DocItemPane {
         // Make sure TabView has DataSetPane UI view (not Label placeholder)
         int selTabIndex = _tabView.getSelIndex();
         if (selTabIndex>=0 && _tabView.getTabContent(selTabIndex) instanceof Label) {
-            DataSet dset = _chartView.getDataSetList().getDataSet(selTabIndex);
+            DataSet dset = getDataSetList().getDataSet(selTabIndex);
             DataSetPane dsetPane = new DataSetPane();
             dsetPane.setDataSet(dset);
             _tabView.setTabContent(dsetPane.getUI(), selTabIndex);
@@ -319,7 +328,7 @@ public class ChartPane extends DocItemPane {
         // Handle TabView
         if (anEvent.equals("TabView")) {
             int selIndex = _tabView.getSelIndex();
-            DataSet dset = _chartView.getDataSetList().getDataSet(selIndex);
+            DataSet dset = getDataSetList().getDataSet(selIndex);
             getSel().setSelChartPart(dset);
         }
 

@@ -15,6 +15,9 @@ public abstract class ChartHelper {
     // The ChartView
     protected ChartView  _chartView;
 
+    // The DataSetList
+    private DataSetList  _dataSetList;
+
     // The AxisTypes
     private AxisType[]  _axisTypes;
 
@@ -60,6 +63,25 @@ public abstract class ChartHelper {
     public abstract ChartType getChartType();
 
     /**
+     * Returns the DataSetList.
+     */
+    public DataSetList getDataSetListAll()
+    {
+        return getChart().getDataSetList();
+    }
+
+    /**
+     * Returns the DataSetList.
+     */
+    public DataSetList getDataSetList()
+    {
+        if (_dataSetList!=null) return _dataSetList;
+
+        _dataSetList = getDataSetListAll().getActiveList();
+        return _dataSetList;
+    }
+
+    /**
      * Returns the AxisTypes.
      */
     public AxisType[] getAxisTypes()
@@ -73,7 +95,7 @@ public abstract class ChartHelper {
      */
     protected AxisType[] getAxisTypesImpl()
     {
-        return getChart().getDataSetList().getAxisTypes();
+        return getDataSetList().getAxisTypes();
     }
 
     /**
@@ -110,6 +132,7 @@ public abstract class ChartHelper {
 
         // Create AxisView, init and add to map
         axis = createAxisView(anAxisType);
+        axis._chartHelper = this;
         axis._chartView = _chartView;
         axis._dataView = _chartView.getDataView();
         _axisViews.put(anAxisType, axis);
@@ -211,7 +234,7 @@ public abstract class ChartHelper {
     public void activate()
     {
         // Enable all datasets
-        DataSetList dataSetList = _chartView.getDataSetList();
+        DataSetList dataSetList = getDataSetListAll();
         List<DataSet> dsets = dataSetList.getDataSets();
         for (DataSet dset : dsets)
             dset.setDisabled(false);
@@ -228,7 +251,7 @@ public abstract class ChartHelper {
     public void resetView()
     {
         // If AxisTypes have changed, resetAxisViews
-        if (!Objects.equals(getAxisTypes(), _chartView.getDataSetList().getAxisTypes()))
+        if (!Objects.equals(getAxisTypes(), getDataSetList().getAxisTypes()))
             resetAxisViews();
     }
 
@@ -271,6 +294,7 @@ public abstract class ChartHelper {
             dataArea.clearCache();
         for (AxisView axisView : getAxisViews())
             axisView.clearIntervals();
+        _dataSetList = null;
     }
 
     /**

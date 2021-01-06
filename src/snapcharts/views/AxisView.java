@@ -17,6 +17,9 @@ import java.text.DecimalFormat;
  */
 public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
+    // The ChartHelper
+    protected ChartHelper  _chartHelper;
+
     // The ChartView
     protected ChartView  _chartView;
 
@@ -87,6 +90,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * Returns the ChartPart.
      */
     public T getChartPart()  { return (T) getAxis(); }
+
+    /**
+     * Returns the dataset.
+     */
+    public DataSetList getDataSetList()
+    {
+        return _chartHelper.getDataSetList();
+    }
 
     /**
      * Returns the axis.

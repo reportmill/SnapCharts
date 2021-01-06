@@ -94,8 +94,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public DataSetList getDataSetList()
     {
-        DataSetList dataSetList = _chartView.getDataSetList();
-        return dataSetList.getActiveList();
+        return _chartHelper.getDataSetList();
     }
 
     /**

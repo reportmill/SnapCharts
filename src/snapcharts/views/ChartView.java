@@ -173,7 +173,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     /**
      * Returns the dataset.
      */
-    public DataSetList getDataSetList()  { return getChart().getDataSetList(); }
+    public DataSetList getDataSetList()
+    {
+        return _chartHelper.getDataSetList();
+    }
 
     /**
      * Returns the HeaderView.

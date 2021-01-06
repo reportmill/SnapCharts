@@ -31,8 +31,7 @@ public class ChartHelperXY extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        ChartView chartView = getChartView();
-        DataSetList dataSetList = chartView.getDataSetList();
+        DataSetList dataSetList = getDataSetList();
         List<DataSet> dsets = dataSetList.getDataSets();
         int dsetCount = dsets.size();
 

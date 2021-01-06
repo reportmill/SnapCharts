@@ -221,6 +221,14 @@ public class DataSetList extends ChartPart {
             if (dset.getAxisTypeY() == anAxisTypeY)
                 min = Math.min(min, dset.getMinY());
         }
+
+        // Bogus
+        if (min == Float.MAX_VALUE) {
+            for (DataSet dset : getDataSets())
+                min = Math.min(min, dset.getMinY());
+        }
+
+        // Return
         return _minY = min;
     }
 
@@ -241,6 +249,14 @@ public class DataSetList extends ChartPart {
             if (dset.getAxisTypeY() == anAxisTypeY)
                 max = Math.max(max, dset.getMaxY());
         }
+
+        // Bogus
+        if (max == -Float.MAX_VALUE) {
+            for (DataSet dset : getDataSets())
+                max = Math.max(max, dset.getMaxY());
+        }
+
+        // Return
         return _maxY = max;
     }
 

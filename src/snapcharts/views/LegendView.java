@@ -83,7 +83,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         // Remove children
         //removeChildren();
 
-        for (int i=0; i<dsetList.getDataSetCount(); i++) { DataSet dset = dsetList.getDataSet(i);
+        for (int i=0; i<dsetList.getDataSetCount(); i++) {
+            DataSet dset = dsetList.getDataSet(i);
             View entryView = createLegendEntry(chart, dset, i);
             _entryBox.addChild(entryView);
 
@@ -134,13 +135,14 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView);
 
         // Get dataset and disable
-        ChartView chart = getChartView();
+        Chart chart = getChart();
         DataSetList dsetList = chart.getDataSetList();
         DataSet dset = dsetList.getDataSet(index);
         dset.setDisabled(!dset.isDisabled());
 
-        // Redraw chart and reload legend
-        chart.resetLater();
+        // Reset ChartView
+        ChartView chartView = getChartView();
+        chartView.resetLater();
     }
 
     /**
