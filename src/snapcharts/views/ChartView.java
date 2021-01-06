@@ -389,7 +389,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public Shape getBoundsShape()
     {
-        return new RoundRect(0,0, getWidth(), getHeight(), 8);
+        return new RoundRect(0,0, getWidth(), getHeight(), 4);
     }
 
     /**

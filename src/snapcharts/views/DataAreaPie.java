@@ -63,11 +63,8 @@ public class DataAreaPie extends DataArea {
      */
     public double[] getAngles()
     {
-        DataSetList dsetList = getDataSetList();
-        if (dsetList.getDataSetCount()==0)
-            dsetList = getDataSetListAll();
-        DataSet dset = dsetList.getDataSet(0);
-        int count = getPointCount();
+        DataSet dset = getDataSet();
+        int count = dset.getPointCount();
 
         // Get/set ratios, angles
         double ratios[] = dset.getRatiosYtoTotalY();
@@ -82,14 +79,12 @@ public class DataAreaPie extends DataArea {
      */
     protected Wedge[] getWedges()
     {
-        // If wedges cached, just return
-        if (_wedges!=null && _wedges.length==getPointCount()) return _wedges;
+        // Get info
+        DataSet dset = getDataSet();
+        int pointCount = dset.getPointCount();
 
-        // Get dataset and point count
-        DataSetList dsetList = getDataSetList();
-        if (dsetList.getDataSetCount()==0)
-            dsetList = getDataSetListAll();
-        DataSet dset = dsetList.getDataSet(0);
+        // If wedges cached, just return
+        if (_wedges!=null && _wedges.length==pointCount) return _wedges;
 
         // Get ratios and angles
         double ratios[] = dset.getRatiosYtoTotalY();
@@ -200,12 +195,12 @@ public class DataAreaPie extends DataArea {
     public DataPoint getDataPointForXY(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
-        DataSetList dsetList = getDataSetListAll();
+        DataSet dset = getDataSet();
         Wedge wedges[] = getWedges();
         for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
             Arc arc = wedge.getArc();
             if (arc.contains(aX, aY))
-                return dsetList.getDataSet(0).getPoint(i);
+                return dset.getPoint(i);
         }
 
         // Return null since no wedge contains point

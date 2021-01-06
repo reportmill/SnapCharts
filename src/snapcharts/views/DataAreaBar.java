@@ -53,7 +53,7 @@ public class DataAreaBar extends DataArea {
      */
     protected Section[] getSections()
     {
-        // If recacl not needed, just return
+        // If recalc not needed, just return
         DataSetList dsetList = getDataSetList();
         List<DataSet> dsets = dsetList.getDataSets();
         int dsetCount = dsetList.getDataSetCount();
@@ -69,7 +69,7 @@ public class DataAreaBar extends DataArea {
 
         // Get number of datasets, points and section width
         _dsetCount = dsetCount;
-        _pointCount = getPointCount();
+        _pointCount = pointCount;
         double sectionWidth = getWidth()/_pointCount;
 
         // Get group widths

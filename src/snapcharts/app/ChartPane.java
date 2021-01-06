@@ -243,7 +243,7 @@ public class ChartPane extends DocItemPane {
         if (_dataSetMode) {
             //_tabView.setPrefHeight(-1); _tabView.setGrowHeight(true);
             //_chartBox.setPrefHeight(400); _chartBox.setGrowHeight(false);
-            _chartBox.setPadding(30, 60, 30, 60);
+            _chartBox.setPadding(20, 20, 20, 20);
         }
     }
 

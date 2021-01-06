@@ -68,10 +68,12 @@ public class DataAreaXY extends DataArea {
         if (_chartType ==ChartType.AREA) {
             double areaW = getWidth();
             double areaH = getHeight();
-            path.lineTo(areaW, path.getPoint(getPointCount()-1).y);
+            Point point0 = path.getPoint(0);
+            Point pointLast = path.getPoint(pointCount-1);
+            path.lineTo(areaW, pointLast.y);
             path.lineTo(areaW, areaH);
             path.lineTo(0, areaH);
-            path.lineTo(0, path.getPoint(0).y);
+            path.lineTo(0, point0.y);
             path.close();
         }
 

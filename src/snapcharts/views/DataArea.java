@@ -90,22 +90,12 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the data set list.
-     */
-    public DataSetList getDataSetListAll()  { return _chartView.getDataSetList(); }
-
-    /**
      * Returns the DataSetList of active data sets.
      */
-    public DataSetList getDataSetList()  { return getDataSetListAll().getActiveList(); }
-
-    /**
-     * Returns number of points in datasets.
-     */
-    public int getPointCount()
+    public DataSetList getDataSetList()
     {
-        DataSetList dsetList = getDataSetList();
-        return dsetList.getPointCount();
+        DataSetList dataSetList = _chartView.getDataSetList();
+        return dataSetList.getActiveList();
     }
 
     /**

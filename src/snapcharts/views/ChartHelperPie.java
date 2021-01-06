@@ -36,7 +36,9 @@ public class ChartHelperPie extends ChartHelper {
     protected DataArea[] createDataAreas()
     {
         Chart chart = getChart();
-        DataSetList dataSetList = chart.getDataSetList();
+        DataSetList dataSetList = chart.getDataSetList().getActiveList();
+        if (dataSetList.getDataSetCount() == 0)
+            dataSetList = chart.getDataSetList();
         if (dataSetList.getDataSetCount() == 0)
             return new DataArea[0];
         DataSet dset = dataSetList.getDataSet(0);
