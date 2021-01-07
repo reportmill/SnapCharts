@@ -79,6 +79,17 @@ public class DataAreaBar3D extends DataAreaBar {
     }
 
     /**
+     * Override to properly size hidden Y Axis.
+     */
+    @Override
+    public AxisViewY getAxisViewY()
+    {
+        AxisViewY axisViewY = super.getAxisViewY();
+        axisViewY.setHeight(getHeight());
+        return axisViewY;
+    }
+
+    /**
      * Rebuilds the chart.
      */
     protected void rebuildScene()

@@ -60,7 +60,6 @@ public class ChartViewLayout {
     private void init()
     {
         _chartProxy = new ViewProxy<>(_chartView);
-        _chartProxy.setChildren(ViewProxy.getProxies(_chartView.getChildren()));
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _dataAreaProxy = _chartProxy.getChildForClass(DataView.class);
@@ -278,7 +277,7 @@ public class ChartViewLayout {
         ViewProxy axis2 = axes.length > 1 ? axes[1] : null;
 
         // Get Legend if on given side.
-        boolean hasLegend = _legendProxy.isVisible() && _legendProxy.getView().getPosition().getSide() == aSide;
+        boolean hasLegend = _legendProxy!=null && _legendProxy.getView().getPosition().getSide() == aSide;
         ViewProxy<?> legend = hasLegend ? _legendProxy : null;
         if (hasLegend) {
             legend.setGrowWidth(aSide==Side.LEFT || aSide==Side.RIGHT);
