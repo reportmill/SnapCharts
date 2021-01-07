@@ -2,6 +2,7 @@ package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
+import snapcharts.util.MinMax;
 import snapcharts.views.AxisView;
 
 /**
@@ -46,18 +47,12 @@ public class AxisInsp extends ChartPartInsp {
     public ChartPart getChartPart()  { return getAxis(); }
 
     /**
-     * Returns the AxisMin value to be shown in
-     */
-
-    /**
      * Reset UI.
      */
     protected void resetUI()
     {
-        // Get axis
+        // Get Axis, AxisView (just return if null)
         Axis axis = getAxis();
-
-        // Get AxisView (just return if null)
         AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
         if (axisView == null)
             return;
@@ -68,35 +63,20 @@ public class AxisInsp extends ChartPartInsp {
         // Reset ZeroRequiredCheckBox
         setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
 
-        // Reset MinBoundAutoButton, MinBoundDataButton, MinBoundValueButton
+        // Reset MinBoundAutoButton, MinBoundDataButton, MinBoundValueButton, MinBoundText
         AxisBound minBound = axis.getMinBound();
         setViewValue("MinBoundAutoButton", minBound == AxisBound.AUTO);
         setViewValue("MinBoundDataButton", minBound == AxisBound.DATA);
         setViewValue("MinBoundValueButton", minBound == AxisBound.VALUE);
+        MinMax minMax = axisView.getAxisMinMax();
+        setViewValue("MinBoundText", minMax.getMin());
 
-        // Reset MinBoundText: Get the value to be shown and set value
-        double minVal = axis.getMinValue();
-        if (minBound == AxisBound.AUTO) {
-            minVal = axisView.getAxisMin();
-        }
-        else if (minBound == AxisBound.DATA)
-            minVal = getChart().getDataSetList().getMinForAxis(axis.getType());
-        setViewValue("MinBoundText", minVal);
-
-        // Reset MaxBoundAutoButton, MaxBoundDataButton, MaxBoundValueButton
+        // Reset MaxBoundAutoButton, MaxBoundDataButton, MaxBoundValueButton, MaxBoundText
         AxisBound maxBound = axis.getMaxBound();
         setViewValue("MaxBoundAutoButton", maxBound == AxisBound.AUTO);
         setViewValue("MaxBoundDataButton", maxBound == AxisBound.DATA);
         setViewValue("MaxBoundValueButton", maxBound == AxisBound.VALUE);
-
-        // Reset MaxBoundText: Get the value to be shown and set value
-        double maxVal = axis.getMaxValue();
-        if (maxBound == AxisBound.AUTO) {
-            maxVal = axisView.getAxisMax();
-        }
-        else if (maxBound == AxisBound.DATA)
-            maxVal = getChart().getDataSetList().getMaxForAxis(axis.getType());
-        setViewValue("MaxBoundText", maxVal);
+        setViewValue("MaxBoundText", minMax.getMax());
     }
 
     /**
@@ -104,10 +84,8 @@ public class AxisInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get axis
+        // Get Axis, AxisView (just return if null)
         Axis axis = getAxis();
-
-        // Get AxisView (just return if null)
         AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
         if (axisView == null)
             return;

@@ -117,8 +117,24 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public MinMax getAxisMinMax()
     {
-        double min = getAxisMin();
-        double max = getAxisMax();
+        // Get min val for Axis MinBound
+        Axis axis = getAxis();
+        AxisBound minBound = axis.getMinBound();
+        double min = axis.getMinValue();
+        if (minBound == AxisBound.AUTO)
+            min = getAxisMin();
+        else if (minBound == AxisBound.DATA)
+            min = getDataSetList().getMinForAxis(axis.getType());
+
+        // Get max val for Axis MaxBound
+        AxisBound maxBound = axis.getMaxBound();
+        double max = axis.getMaxValue();
+        if (maxBound == AxisBound.AUTO)
+            max = getAxisMax();
+        else if (maxBound == AxisBound.DATA)
+            max = getDataSetList().getMaxForAxis(axis.getType());
+
+        // Return min/max
         return new MinMax(min, max);
     }
 
