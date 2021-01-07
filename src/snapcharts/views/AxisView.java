@@ -5,6 +5,7 @@ import snap.gfx.Font;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.text.StringBox;
+import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.StringView;
 import snap.view.ViewAnim;
@@ -529,6 +530,17 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Called when a ChartPart changes.
+     */
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+            clearIntervals();
+        }
+    }
+
+    /**
      * Override to clear intervals.
      */
     @Override
@@ -536,8 +548,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         if (aValue==getWidth()) return;
         super.setWidth(aValue);
-        //if (isHorizontal())
-            clearIntervals();
+        clearIntervals();
     }
 
     /**
@@ -548,7 +559,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         if (aValue == getHeight()) return;
         super.setHeight(aValue);
-        //if (isVertical())
-            clearIntervals();
+        clearIntervals();
     }
 }

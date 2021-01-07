@@ -220,10 +220,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // Reset ChartHelper
         chartHelper.resetView();
 
-        // Reset Axes
-        for (AxisView axisView : chartHelper.getAxisViews())
-            axisView.resetView();
-
         // Trigger animate (after delay so size is set for first time)
         setReveal(0);
         ViewUtils.runLater(() -> animate());
@@ -408,13 +404,11 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     protected void chartDidDeepChange(PropChange aPC)
     {
-        resetLater();
+        // Forward to ChartHelper
+        _chartHelper.chartPartDidChange(aPC);
 
-        // If DataSet change, clear caches
-        Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
-            getChartHelper().clearCache();
-        }
+        // Trigger reset
+        resetLater();
     }
 
     /**

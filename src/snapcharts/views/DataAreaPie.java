@@ -120,6 +120,14 @@ public class DataAreaPie extends DataArea {
     }
 
     /**
+     * Clears wedges when something changes.
+     */
+    private void clearWedges()
+    {
+        _wedges = null;
+    }
+
+    /**
      * Paints chart.
      */
     protected void paintChart(Painter aPntr)
@@ -222,9 +230,38 @@ public class DataAreaPie extends DataArea {
     }
 
     /**
-     * Clears the wedges cache.
+     * Called when a ChartPart changes.
      */
-    protected void clearCache()  { _wedges = null; }
+    @Override
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+            clearWedges();
+        }
+    }
+
+    /**
+     * Override to clear wedges.
+     */
+    @Override
+    public void setWidth(double aValue)
+    {
+        if (aValue==getWidth()) return;
+        super.setWidth(aValue);
+        clearWedges();
+    }
+
+    /**
+     * Override to clear wedges.
+     */
+    @Override
+    public void setHeight(double aValue)
+    {
+        if (aValue==getHeight()) return;
+        super.setHeight(aValue);
+        clearWedges();
+    }
 
     /**
      * Sets label points such that they don't overlap.

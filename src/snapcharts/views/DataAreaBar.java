@@ -4,6 +4,7 @@ import java.util.List;
 import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
+import snap.util.PropChange;
 import snapcharts.model.*;
 
 /**
@@ -42,11 +43,6 @@ public class DataAreaBar extends DataArea {
         if (_area!=null) return _area;
         return _area = getChart().getAreaTypes().getColumnChart();
     }
-
-    /**
-     * Call to clear section/bar cache.
-     */
-    protected void clearCache()  { _sections = null; }
 
     /**
      * Returns the cached section (and section bars) objects.
@@ -110,6 +106,14 @@ public class DataAreaBar extends DataArea {
 
         // Return sections
         return _sections = sections;
+    }
+
+    /**
+     * Clears the sections when needed (change of data, size)
+     */
+    private void clearSections()
+    {
+        _sections = null;
     }
 
     /**
@@ -193,6 +197,40 @@ public class DataAreaBar extends DataArea {
 
         // Return null since bar not found for point
         return null;
+    }
+
+    /**
+     * Called when a ChartPart changes.
+     */
+    @Override
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+            _sections = null;
+        }
+    }
+
+    /**
+     * Override to clear sections.
+     */
+    @Override
+    public void setWidth(double aValue)
+    {
+        if (aValue==getWidth()) return;
+        super.setWidth(aValue);
+        clearSections();
+    }
+
+    /**
+     * Override to clear sections.
+     */
+    @Override
+    public void setHeight(double aValue)
+    {
+        if (aValue==getHeight()) return;
+        super.setHeight(aValue);
+        clearSections();
     }
 
     /**

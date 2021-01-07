@@ -3,7 +3,7 @@ import java.util.*;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.*;
-import snap.util.ArrayUtils;
+import snap.util.PropChange;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
 
@@ -42,9 +42,9 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         _chartHelper = aChartHelper;
         _dataSet = (T) aDataSet;
 
-        // Get DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
+        // Get/set DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
         _axisTypeY = _dataSet.getAxisTypeY();
-        if (_axisTypeY!= AxisType.Y && !ArrayUtils.contains(_chartHelper.getAxisTypes(), _axisTypeY))
+        if (_axisTypeY != AxisType.Y && !_chartHelper.isAxisType(_axisTypeY))
             _axisTypeY = AxisType.Y;
     }
 
@@ -320,27 +320,18 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
-     * Call to clear any cached data.
+     * Called to reset view from updated Chart.
      */
-    protected void clearCache()  { }
-
-    /**
-     * Override to clear section/bar cache.
-     */
-    public void setWidth(double aValue)
+    protected void resetView()
     {
-        if (aValue==getWidth()) return;
-        super.setWidth(aValue);
-        clearCache();
+        // Get/set DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
+        _axisTypeY = _dataSet.getAxisTypeY();
+        if (_axisTypeY != AxisType.Y && !_chartHelper.isAxisType(_axisTypeY))
+            _axisTypeY = AxisType.Y;
     }
 
     /**
-     * Override to clear section/bar cache.
+     * Called when a ChartPart changes.
      */
-    public void setHeight(double aValue)
-    {
-        if (aValue==getHeight()) return;
-        super.setHeight(aValue);
-        clearCache();
-    }
+    protected void chartPartDidChange(PropChange aPC)  { }
 }

@@ -1,5 +1,6 @@
 package snapcharts.views;
 import snap.util.ArrayUtils;
+import snap.util.PropChange;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import java.util.HashMap;
@@ -96,6 +97,14 @@ public abstract class ChartHelper {
     protected AxisType[] getAxisTypesImpl()
     {
         return getDataSetList().getAxisTypes();
+    }
+
+    /**
+     * Returns whether given axis type exists in chart.
+     */
+    public boolean isAxisType(AxisType anAxisType)
+    {
+        return ArrayUtils.contains(getAxisTypes(), anAxisType);
     }
 
     /**
@@ -253,6 +262,14 @@ public abstract class ChartHelper {
         // If AxisTypes have changed, resetAxisViews
         if (!Objects.equals(getAxisTypes(), getDataSetList().getAxisTypes()))
             resetAxisViews();
+
+        // Reset Axes
+        for (AxisView axisView : getAxisViews())
+            axisView.resetView();
+
+        // Reset DataAreas
+        for (DataArea dataArea : getDataAreas())
+            dataArea.resetView();
     }
 
     /**
@@ -286,15 +303,23 @@ public abstract class ChartHelper {
     }
 
     /**
-     * Call to clear any cached data.
+     * Called when a ChartPart changes.
      */
-    public void clearCache()
+    protected void chartPartDidChange(PropChange aPC)
     {
+        // Forward to DataAreas
         for (DataArea dataArea : getDataAreas())
-            dataArea.clearCache();
+            dataArea.chartPartDidChange(aPC);
+
+        // Forward to AxisViews
         for (AxisView axisView : getAxisViews())
-            axisView.clearIntervals();
-        _dataSetList = null;
+            axisView.chartPartDidChange(aPC);
+
+        // Handle DataSet/DataSetList change
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList) {
+            _dataSetList = null;
+        }
     }
 
     /**

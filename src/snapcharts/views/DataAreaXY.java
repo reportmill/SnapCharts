@@ -1,7 +1,9 @@
 package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
+import snap.util.PropChange;
 import snap.view.ViewAnim;
+import snapcharts.model.Axis;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
@@ -79,6 +81,14 @@ public class DataAreaXY extends DataArea {
 
         // Return path
         return _dataPath = path;
+    }
+
+    /**
+     * Clears the DataPath.
+     */
+    private void clearDataPath()
+    {
+        _dataPath = null;
     }
 
     /**
@@ -250,8 +260,11 @@ public class DataAreaXY extends DataArea {
     @Override
     public Shape getDataSymbolShape(int anIndex)
     {
-        if (_chartType ==ChartType.SCATTER)
+        // If ChartType SCATTER, return Ellipes
+        if (_chartType == ChartType.SCATTER)
             return new Ellipse(0,0,9,9);
+
+        // Otherwise get DataSymbol for DataSet index
         return getChart().getSymbolShape(anIndex);
     }
 
@@ -260,8 +273,10 @@ public class DataAreaXY extends DataArea {
      */
     public Shape getTailShape()
     {
+        // If already set, just return
         if (_tailShape!=null) return _tailShape;
 
+        // Create/configure/set TailShape
         Path2D path = new Path2D();
         path.moveTo(0, 0);
         path.lineTo(16, 6);
@@ -271,12 +286,23 @@ public class DataAreaXY extends DataArea {
         return _tailShape = path;
     }
 
+    /**
+     * Called when a ChartPart changes.
+     */
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        Object src = aPC.getSource();
+        if (src==getDataSet() || src instanceof Axis) {
+            clearDataPath();
+        }
+    }
+
     @Override
     public void setWidth(double aValue)
     {
         if (aValue==getWidth()) return;
         super.setWidth(aValue);
-        _dataPath = null;
+        clearDataPath();
     }
 
     @Override
@@ -284,6 +310,6 @@ public class DataAreaXY extends DataArea {
     {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
-        _dataPath = null;
+        clearDataPath();
     }
 }
