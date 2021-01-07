@@ -53,4 +53,19 @@ public class ChartHelperBar3D extends ChartHelper {
         DataSet dset = dataSetList.getDataSet(0);
         return new DataArea[] { new DataAreaBar3D(this, dset) };
     }
+
+    /**
+     * Override for chart type.
+     */
+    public void resetView()
+    {
+        // Make sure all DataSet.AxisTypeY are just Y
+        DataSetList dsetList = getDataSetList();
+        if (dsetList.getDataSetCount() == 0) return;
+        for (DataSet dset : dsetList.getDataSets())
+            dset.setAxisTypeY(AxisType.Y);
+
+        // Do normal version
+        super.resetView();
+    }
 }

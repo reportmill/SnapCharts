@@ -11,6 +11,8 @@ import snap.view.StringView;
 import snap.view.ViewAnim;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
+import snapcharts.util.MinMax;
+
 import java.text.DecimalFormat;
 
 /**
@@ -109,6 +111,16 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * Returns the axis type.
      */
     public AxisType getAxisType()  { return getAxis().getType(); }
+
+    /**
+     * Returns the Axis MinMax.
+     */
+    public MinMax getAxisMinMax()
+    {
+        double min = getAxisMin();
+        double max = getAxisMax();
+        return new MinMax(min, max);
+    }
 
     /**
      * Returns the axis min.

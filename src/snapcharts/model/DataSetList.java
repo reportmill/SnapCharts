@@ -3,6 +3,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import snap.util.*;
+import snapcharts.util.MinMax;
 
 /**
  * A class to manage a list of DataSets.
@@ -10,28 +11,16 @@ import snap.util.*;
 public class DataSetList extends ChartPart {
 
     // The list of datasets
-    private List <DataSet>  _dsets = new ArrayList<>();
-
-    // The AxisTypes
-    private AxisType[]  _axisTypes;
+    private List<DataSet> _dsets = new ArrayList<>();
 
     // The dataset start value
     private int _startValue = 0;
 
-    // A DataSetList to hold subset of enabled datasets
-    private DataSetList  _active;
-    
-    // The cached min X value
-    private double _minX = Float.MAX_VALUE;
+    // The AxisTypes
+    private AxisType[] _axisTypes;
 
-    // The cached max X value
-    private double _maxX = -Float.MAX_VALUE;
-
-    // The cached min Y value
-    private double _minY = Float.MAX_VALUE;
-
-    // The cached max Y value
-    private double _maxY = -Float.MAX_VALUE;
+    // A map of MinMax values for axis types
+    private Map<AxisType,MinMax>  _minMaxs = new HashMap<>();
 
     // Constants for properties
     public static final String StartValue_Prop = "StartValue";
@@ -40,22 +29,34 @@ public class DataSetList extends ChartPart {
     /**
      * Creates a DataSet for given ChartView.
      */
-    public DataSetList(Chart aChart)  { _chart = aChart; }
+    public DataSetList(Chart aChart)
+    {
+        _chart = aChart;
+    }
 
     /**
      * Returns the list of datasets.
      */
-    public List <DataSet> getDataSets()  { return _dsets; }
+    public List<DataSet> getDataSets()
+    {
+        return _dsets;
+    }
 
     /**
      * Returns whether no datasets.
      */
-    public boolean isEmpty()  { return _dsets.isEmpty(); }
+    public boolean isEmpty()
+    {
+        return _dsets.isEmpty();
+    }
 
     /**
      * Returns the number of datasets.
      */
-    public int getDataSetCount()  { return _dsets.size(); }
+    public int getDataSetCount()
+    {
+        return _dsets.size();
+    }
 
     /**
      * Sets the number of datasets.
@@ -63,23 +64,26 @@ public class DataSetList extends ChartPart {
     public void setDataSetCount(int aValue)
     {
         // Ignore silly values
-        if (aValue<1 || aValue>20) return;
+        if (aValue < 1 || aValue > 20) return;
 
         // If value larger than cound, create empty dataset
-        while (aValue> getDataSetCount()) {
-            DataSet dset = addDataSetForNameAndValues(null, (Double)null);
+        while (aValue > getDataSetCount()) {
+            DataSet dset = addDataSetForNameAndValues(null, (Double) null);
             dset.setPointCount(getPointCount());
         }
 
         // If value smaller than count, remove dataset
-        while (aValue<getDataSetCount())
-            removeDataSet(getDataSetCount()-1);
+        while (aValue < getDataSetCount())
+            removeDataSet(getDataSetCount() - 1);
     }
 
     /**
      * Returns the individual dataset at given index.
      */
-    public DataSet getDataSet(int anIndex)  { return _dsets.get(anIndex); }
+    public DataSet getDataSet(int anIndex)
+    {
+        return _dsets.get(anIndex);
+    }
 
     /**
      * Adds a new dataset.
@@ -100,7 +104,7 @@ public class DataSetList extends ChartPart {
         aDataSet.addPropChangeListener(pc -> dataSetDidPropChange(pc));
 
         // Reset indexes
-        for (int i=0; i<_dsets.size(); i++)
+        for (int i = 0; i < _dsets.size(); i++)
             getDataSet(i)._index = i;
         clearCachedValues();
 
@@ -115,7 +119,7 @@ public class DataSetList extends ChartPart {
     {
         DataSet dset = _dsets.remove(anIndex);
         clearCachedValues();
-        if (dset!=null)
+        if (dset != null)
             firePropChange(DataSet_Prop, dset, null, anIndex);
         return dset;
     }
@@ -126,7 +130,7 @@ public class DataSetList extends ChartPart {
     public int removeDataSet(DataSet aDataSet)
     {
         int index = _dsets.indexOf(aDataSet);
-        if (index>=0)
+        if (index >= 0)
             removeDataSet(index);
         return index;
     }
@@ -136,8 +140,19 @@ public class DataSetList extends ChartPart {
      */
     public void clear()
     {
-        _dsets.clear();
+        while (getDataSetCount()!=0)
+            removeDataSet(getDataSetCount()-1);
         clearCachedValues();
+    }
+
+    /**
+     * Returns the number of datasets that are enabled.
+     */
+    public int getDataSetCountEnabled()
+    {
+        int count = 0;
+        for (DataSet dset : getDataSets()) if (dset.isEnabled()) count++;
+        return count;
     }
 
     /**
@@ -169,95 +184,56 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the minimum X value for datasets.
+     * Returns the MinMax for given axis.
      */
-    public double getMinX()
+    public MinMax getMinMaxForAxis(AxisType anAxisType)
     {
-        // If value already cached, just return
-        if (_minX < Float.MAX_VALUE) return _minX;
+        MinMax minMax = _minMaxs.get(anAxisType);
+        if (minMax!=null)
+            return minMax;
 
-        // If no datasets/points, just set to 0
-        if (getPointCount()==0) return _minX = 0;
-
-        // Iterate over datasets to get min of all
-        double min = Float.MAX_VALUE;
-        for (DataSet dset : getDataSets())
-            min = Math.min(min, dset.getMinX());
-        return _minX = min;
+        minMax = getMinMaxForAxisImpl(anAxisType);
+        _minMaxs.put(anAxisType, minMax);
+        return minMax;
     }
 
     /**
-     * Returns the maximum X value for datasets.
+     * Returns the MinMax for given axis.
      */
-    public double getMaxX()
+    private MinMax getMinMaxForAxisImpl(AxisType anAxisType)
     {
-        // If value already cached, just return
-        if (_maxX > -Float.MAX_VALUE) return _maxX;
+        // If empty, just return silly range
+        if (getDataSetCount()==0 || getPointCount()==0)
+            return new MinMax(0, 5);
 
-        // If no datasets/points, just set to 5
-        if (getPointCount()==0) return _maxX = 5;
-
-        // Iterate over datasets to get max of all
-        double max = -Float.MAX_VALUE;
-        for (DataSet dset : getDataSets())
-            max = Math.max(max, dset.getMaxX());
-        return _maxX = max;
-    }
-
-    /**
-     * Returns the minimum Y value for datasets.
-     */
-    public double getMinY(AxisType anAxisTypeY)
-    {
-        // If value already cached, just return
-        //if (_minY < Float.MAX_VALUE) return _minY;
-
-        // If no datasets/points, just set to 0
-        if (getPointCount()==0) return _minY = 0;
-
-        // Iterate over datasets to get min of all
-        double min = Float.MAX_VALUE;
-        for (DataSet dset : getDataSets()) {
-            if (dset.getAxisTypeY() == anAxisTypeY)
-                min = Math.min(min, dset.getMinY());
+        // Handle X
+        if (anAxisType == AxisType.X) {
+            double min = Double.MAX_VALUE;
+            double max = -Double.MAX_VALUE;
+            for (DataSet dset : getDataSets()) {
+                min = Math.min(min, dset.getMinX());
+                max = Math.max(max, dset.getMaxX());
+            }
+            return new MinMax(min, max);
         }
 
-        // Bogus
-        if (min == Float.MAX_VALUE) {
-            for (DataSet dset : getDataSets())
-                min = Math.min(min, dset.getMinY());
+        // Handle Y
+        if (anAxisType.isAnyY()) {
+            double min = Double.MAX_VALUE;
+            double max = -Double.MAX_VALUE;
+            for (DataSet dset : getDataSets()) {
+                if (anAxisType == dset.getAxisTypeY()) {
+                    min = Math.min(min, dset.getMinY());
+                    max = Math.max(max, dset.getMaxY());
+                }
+            }
+            if (min==Double.MAX_VALUE)
+                return new MinMax(0, 5);
+            return new MinMax(min, max);
         }
 
-        // Return
-        return _minY = min;
-    }
-
-    /**
-     * Returns the maximum Y value for datasets.
-     */
-    public double getMaxY(AxisType anAxisTypeY)
-    {
-        // If value already cached, just return
-        //if (_maxY > -Float.MAX_VALUE) return _maxY;
-
-        // If no datasets, just set to 0
-        if (getPointCount()==0) return _maxY = 5;
-
-        // Iterate over datasets to get max of all
-        double max = -Float.MAX_VALUE;
-        for (DataSet dset : getDataSets()) {
-            if (dset.getAxisTypeY() == anAxisTypeY)
-                max = Math.max(max, dset.getMaxY());
-        }
-
-        // Bogus
-        if (max == -Float.MAX_VALUE) {
-            for (DataSet dset : getDataSets())
-                max = Math.max(max, dset.getMaxY());
-        }
-
-        // Return
-        return _maxY = max;
+        // Complain
+        throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
     }
 
     /**
@@ -265,16 +241,7 @@ public class DataSetList extends ChartPart {
      */
     public double getMinForAxis(AxisType anAxisType)
     {
-        // Handle X axis
-        if (anAxisType == AxisType.X)
-            return getMinX();
-
-        // Handle any Y axis
-        if (anAxisType.isAnyY())
-            return getMinY(anAxisType);
-
-        // Complain
-        throw new RuntimeException("DataSetList.getMinForAxis: Unknown axis: " + anAxisType);
+        return getMinMaxForAxis(anAxisType).getMin();
     }
 
     /**
@@ -282,16 +249,7 @@ public class DataSetList extends ChartPart {
      */
     public double getMaxForAxis(AxisType anAxisType)
     {
-        // Handle X axis
-        if (anAxisType == AxisType.X)
-            return getMaxX();
-
-        // Handle any Y axis
-        if (anAxisType.isAnyY())
-            return getMaxY(anAxisType);
-
-        // Complain
-        throw new RuntimeException("DataSetList.getMaxForAxis: Unknown axis: " + anAxisType);
+        return getMinMaxForAxis(anAxisType).getMax();
     }
 
     /**
@@ -351,29 +309,6 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns a DataSetList of active datasets.
-     */
-    public DataSetList getActiveList()
-    {
-        // If already cached, just return it
-        if (_active!=null) return _active;
-
-        // If all datasets are enabled, return this dataset
-        int activeCount = 0; for (DataSet dset : _dsets) if (dset.isEnabled()) activeCount++;
-        if (activeCount==getDataSetCount())
-            return _active = this;
-
-        // Create new DataSetList and initialize with enabled sets
-        DataSetList active = new DataSetList(_chart);
-        active._dsets = new ArrayList(activeCount);
-        for (DataSet dset : _dsets)
-            if (dset.isEnabled())
-                active._dsets.add(dset);
-        active._startValue = _startValue;
-        return _active = active;
-    }
-
-    /**
      * Called when a DataSet changes a property.
      */
     private void dataSetDidPropChange(PropChange aPC)
@@ -400,10 +335,8 @@ public class DataSetList extends ChartPart {
      */
     private void clearCachedValues()
     {
-        _active = null;
-        _minX = _minY = Float.MAX_VALUE;
-        _maxX = _maxY = -Float.MAX_VALUE;
         _axisTypes = null;
+        _minMaxs.clear();
     }
 
     /**

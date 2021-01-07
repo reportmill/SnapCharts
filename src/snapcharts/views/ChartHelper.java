@@ -3,10 +3,8 @@ import snap.util.ArrayUtils;
 import snap.util.PropChange;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
  * A class to help customize ChartView for specific ChartType.
@@ -76,10 +74,32 @@ public abstract class ChartHelper {
      */
     public DataSetList getDataSetList()
     {
+        // If already set, just return
         if (_dataSetList!=null) return _dataSetList;
 
-        _dataSetList = getDataSetListAll().getActiveList();
-        return _dataSetList;
+        // Get DataSetList for DataSets that are enabled
+        return _dataSetList = getDataSetListImpl();
+    }
+
+    /**
+     * Returns a DataSetList of active datasets.
+     */
+    private DataSetList getDataSetListImpl()
+    {
+        // If all datasets are enabled, just return the existing DataSetList
+        DataSetList dataSetList = getDataSetListAll();
+        int activeCount = dataSetList.getDataSetCountEnabled();
+        if (activeCount == dataSetList.getDataSetCount())
+            return dataSetList;
+
+        // Create new DataSetList and initialize with enabled sets
+        DataSetList active = new DataSetList(getChart());
+        List<DataSet> dsets = dataSetList.getDataSets();
+        for (DataSet dset : dsets)
+            if (dset.isEnabled())
+                active.addDataSet(dset);
+        active.setStartValue(dataSetList.getStartValue());
+        return active;
     }
 
     /**
@@ -318,6 +338,8 @@ public abstract class ChartHelper {
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
         if (src instanceof DataSet || src instanceof DataSetList) {
+            if (_dataSetList!=null && _dataSetList!=getDataSetListAll())
+                _dataSetList.clear();
             _dataSetList = null;
         }
     }

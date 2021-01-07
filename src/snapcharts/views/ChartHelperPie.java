@@ -81,7 +81,15 @@ public class ChartHelperPie extends ChartHelper {
      */
     public void resetView()
     {
+        // Make sure all DataSet.AxisTypeY are just Y
         DataSetList dsetList = getDataSetList(); if (dsetList.getDataSetCount()==0) return;
+        for (DataSet dset : dsetList.getDataSets())
+            dset.setAxisTypeY(AxisType.Y);
+
+        // Do normal version
+        super.resetView();
+
+        // Update SelDataPoint
         DataSet dset = dsetList.getDataSet(0); if (dset.getPointCount()==0) return;
         DataPoint dp = dset.getPoint(0);
         _dataArea._disableMorph = true;

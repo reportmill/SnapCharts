@@ -5,6 +5,7 @@ import snap.gfx.Font;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
+import snapcharts.util.MinMax;
 
 /**
  * A class to represent a Chart Axis.
@@ -203,6 +204,16 @@ public abstract class Axis extends ChartPart {
     {
         if (aValue==_maxValue) return;
         firePropChange(MaxValue_Prop, _maxValue, _maxValue = aValue);
+    }
+
+    /**
+     * Returns the min/max value.
+     */
+    public MinMax getMinMax()
+    {
+        double min = getMinValue();
+        double max = getMaxValue();
+        return new MinMax(min, max);
     }
 
     /**
