@@ -12,7 +12,6 @@ import snap.view.ViewAnim;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
-
 import java.text.DecimalFormat;
 
 /**
@@ -147,41 +146,13 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the axis min.
-     */
-    protected double getAxisMinForIntervalCalc()
-    {
-        // If explicitly set, just return
-        if (_minOverride!=UNSET_DOUBLE) return _minOverride;
-
-        // Get Axis
-        Axis axis = getAxis();
-        AxisBound boundType = axis.getMinBound();
-
-        // Get min
-        double min;
-        if (boundType== AxisBound.VALUE)
-            min = axis.getMinValue();
-        else {
-            DataSetList dsetList = getDataSetList();
-            min = dsetList.getMinForAxis(getAxisType());
-        }
-
-        // If ZeroRequired and min greater than zero, reset min
-        if (axis.isZeroRequired() && min>0)
-            min = 0;
-
-        // Return min
-        return min;
-    }
-
-    /**
      * Sets the axis min (override).
      */
     public void setAxisMin(double aValue)
     {
         if (aValue==_minOverride) return;
         _minOverride = aValue;
+        System.out.println("Setting to: " + (aValue==UNSET_DOUBLE ? "unset" : aValue));
         clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint
@@ -198,6 +169,50 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Sets the axis min (override).
+     */
+    public void setAxisMax(double aValue)
+    {
+        if (aValue==_maxOverride) return;
+        _maxOverride = aValue;
+        _maxOverride = UNSET_DOUBLE;
+        clearIntervals();
+
+        // Repaint ChartView and clear ChartView.TargPoint
+        getChartView().repaint();
+        getChartView().setTargPoint(null);
+    }
+
+    /**
+     * Returns the axis min.
+     */
+    protected double getAxisMinForIntervalCalc()
+    {
+        // If explicitly set, just return
+        if (_minOverride!=UNSET_DOUBLE) return _minOverride;
+
+        // Get Axis, Axis.MinBound
+        Axis axis = getAxis();
+        AxisBound minBound = axis.getMinBound();
+
+        // Get min
+        double min;
+        if (minBound == AxisBound.VALUE)
+            min = axis.getMinValue();
+        else {
+            DataSetList dsetList = getDataSetList();
+            min = dsetList.getMinForAxis(getAxisType());
+        }
+
+        // If ZeroRequired and min greater than zero, reset min
+        if (axis.isZeroRequired() && min>0)
+            min = 0;
+
+        // Return min
+        return min;
+    }
+
+    /**
      * Returns the axis max.
      */
     protected double getAxisMaxForIntervalCalc()
@@ -205,13 +220,13 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If explicitly set, just return
         if (_maxOverride!=UNSET_DOUBLE) return _maxOverride;
 
-        // Get Axis
+        // Get Axis, Axis.MaxBound
         Axis axis = getAxis();
-        AxisBound boundType = axis.getMaxBound();
+        AxisBound maxBound = axis.getMaxBound();
 
         // Get max
         double max;
-        if (boundType== AxisBound.VALUE)
+        if (maxBound == AxisBound.VALUE)
             max = axis.getMaxValue();
 
         // Handle BoundType.Data
@@ -229,17 +244,12 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Sets the axis min (override).
+     * Returns whether axis is logarithmic.
      */
-    public void setAxisMax(double aValue)
+    public boolean isLog()
     {
-        if (aValue==_maxOverride) return;
-        _maxOverride = aValue;
-        clearIntervals();
-
-        // Repaint ChartView and clear ChartView.TargPoint
-        getChartView().repaint();
-        getChartView().setTargPoint(null);
+        Axis axis = getAxis();
+        return axis.isLog();
     }
 
     /**
@@ -273,12 +283,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public Intervals getIntervals()
     {
         // If already set, just return
-        if (isIntervalsValid())
-            return _intervals;
+        if (_intervals!=null) return _intervals;
 
         // Create, set and return
         _intervals = createIntervals();
-        _tickLabels = null;
         return _intervals;
     }
 
@@ -299,41 +307,22 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             }
         }
 
-        // Normal case
+        // Get axis min, max, display length
         double min = getAxisMinForIntervalCalc();
         double max = getAxisMaxForIntervalCalc();
         double axisLen = getAxisLen();
         double divLen = getAxisType()==AxisType.X ? 40 : 30;
+
+        // Get whether interval ends should be adjusted
         boolean minFixed = _minOverride!=UNSET_DOUBLE || getAxis().getMinBound() != AxisBound.AUTO;
         boolean maxFixed = _maxOverride!=UNSET_DOUBLE || getAxis().getMaxBound() != AxisBound.AUTO;
+
+        // Handle Log
+        if (isLog())
+            return Intervals.getIntervalsLog(min, max, false, maxFixed);
+
+        // Return intervals
         return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
-    }
-
-    /**
-     * Returns true if intervals are okay.
-     */
-    private boolean isIntervalsValid()
-    {
-        // If intervals not set, return false
-        if (_intervals==null)
-            return false;
-
-        // Special case, bar
-        if (getAxisType()==AxisType.X) {
-            boolean isBar = getChart().getType().isBarType();
-            DataSetList dsetList = getDataSetList();
-            DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
-            if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
-                int pointCount = dsetList.getPointCount();
-                double max = isBar ? pointCount : pointCount - 1;
-                return _intervals.matchesMinMax(0, max);
-            }
-        }
-
-        // Normal case: Return true if min/max are the same
-        double min = getAxisMinForIntervalCalc();
-        double max = getAxisMaxForIntervalCalc();
-        return _intervals.matchesMinMax(min, max);
     }
 
     /**
@@ -342,6 +331,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public void clearIntervals()
     {
         _intervals = null;
+        _tickLabels = null;
     }
 
     /**
@@ -394,44 +384,82 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Converts a value from view coords to data coords.
+     * Converts a value from axis data coords to display coords (allows for log axis support).
      */
-    public abstract double viewToData(double dispX);
+    public double axisDataToView(double axisDataXY)
+    {
+        // Basic convert from data to display
+        boolean isHor = isHorizontal();
+        double areaW = isHor ? getWidth() : getHeight();
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+        double dispVal = isHor ? (axisDataXY - dataMin) / (dataMax - dataMin) * areaW :
+                areaW - (axisDataXY - dataMin) / (dataMax - dataMin) * areaW;
+
+        // Return display val
+        return dispVal;
+    }
 
     /**
      * Converts an value from dataset coords to view coords.
      */
     public double dataToView(double dataXY)
     {
-        if (this instanceof AxisViewX)
-            return dataToViewX(dataXY);
-        return dataToViewY(dataXY);
-    }
-
-    /**
-     * Converts an X value from dataset coords to view coords.
-     */
-    public double dataToViewX(double dataX)
-    {
-        double axisX = 0;
-        double areaW = getWidth();
+        // Get data min/max (data coords)
         Intervals intervals = getIntervals();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
-        return axisX + (dataX - dataMin)/(dataMax - dataMin)*areaW;
+
+        // Handle log
+        if (isLog()) {
+            dataXY = log10(dataXY);
+            dataMin = log10(dataMin);
+            dataMax = log10(dataMax);
+        }
+
+        // Get display len (min is zero)
+        boolean isHor = isHorizontal();
+        double areaW = isHor ? getWidth() : getHeight();
+
+        // Convert data to display
+        double dispXY = isHor ? (dataXY - dataMin) / (dataMax - dataMin) * areaW :
+                areaW - (dataXY - dataMin) / (dataMax - dataMin) * areaW;
+
+        // Return display val
+        return dispXY;
     }
 
     /**
-     * Converts a Y value from dataset coords to view coords.
+     * Converts a value from view coords to data coords.
      */
-    public double dataToViewY(double dataY)
+    public double viewToData(double dispXY)
     {
-        double areaY = 0;
-        double areaH = getHeight();
+        // Get data min/max (data coords)
         Intervals intervals = getIntervals();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
-        return areaY + areaH - (dataY - dataMin)/(dataMax - dataMin)*areaH;
+
+        // Handle log
+        if (isLog()) {
+            dataMin = log10(dataMin);
+            dataMax = log10(dataMax);
+        }
+
+        // Get display len (min is zero)
+        boolean isHor = isHorizontal();
+        double areaW = isHor ? getWidth() : getHeight();
+
+        // Convert display to data
+        double dataXY = isHor ? dataMin + dispXY / areaW * (dataMax - dataMin) :
+                dataMax - dispXY / areaW * (dataMax - dataMin);
+
+        // Handle log
+        if (isLog())
+            dataXY = invLog10(dataXY);
+
+        // Return data val
+        return dataXY;
     }
 
     /**
@@ -486,26 +514,18 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Called to reset view from Chart.
-     */
-    protected void resetView()
-    {
-        // Do normal version
-        super.resetView();
-
-        // Get Axis
-        Axis axis = getAxis();
-
-        // Reset title
-        String title = axis.getTitle();
-        _titleView.setText(title);
-    }
-
-    /**
      * Returns a formatted value.
      */
     protected String getLabelStringForValueAndDelta(double aValue, double aDelta)
     {
+        // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
+        if (isLog()) {
+            String str = TICKS_FORMAT.format(aValue);
+            if (str.matches("1[0]*|0\\.[0]*1"))
+                return str;
+            return "";
+        }
+
         // Handle case where delta is in the billions
         if (aDelta>=1000000000) { //&& aDelta/1000000000==((int)aDelta)/1000000000) {
             int val = (int)Math.round(aValue/1000000000);
@@ -558,6 +578,53 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Called to reset view from Chart.
+     */
+    protected void resetView()
+    {
+        // Do normal version
+        super.resetView();
+
+        // Get Axis
+        Axis axis = getAxis();
+
+        // Reset title
+        String title = axis.getTitle();
+        _titleView.setText(title);
+
+        // Check/reset intervals
+        if (!isIntervalsValid())
+            clearIntervals();
+    }
+
+    /**
+     * Returns true if intervals are okay.
+     */
+    private boolean isIntervalsValid()
+    {
+        // If intervals not set, return false
+        if (_intervals==null)
+            return false;
+
+        // Special case, bar
+        if (getAxisType()==AxisType.X) {
+            boolean isBar = getChart().getType().isBarType();
+            DataSetList dsetList = getDataSetList();
+            DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
+            if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
+                int pointCount = dsetList.getPointCount();
+                double max = isBar ? pointCount : pointCount - 1;
+                return _intervals.matchesMinMax(0, max);
+            }
+        }
+
+        // Normal case: Return true if min/max are the same
+        double min = getAxisMinForIntervalCalc();
+        double max = getAxisMaxForIntervalCalc();
+        return _intervals.matchesMinMax(min, max);
+    }
+
+    /**
      * Called when a ChartPart changes.
      */
     protected void chartPartDidChange(PropChange aPC)
@@ -588,5 +655,23 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aValue == getHeight()) return;
         super.setHeight(aValue);
         clearIntervals();
+    }
+
+    /**
+     * Returns the log of given value.
+     */
+    private double log10(double aValue)
+    {
+        if (aValue<=0)
+            return 0;
+        return Math.log10(aValue);
+    }
+
+    /**
+     * Returns the inverse of log10.
+     */
+    public double invLog10(double aValue)
+    {
+        return Math.pow(10, aValue);
     }
 }

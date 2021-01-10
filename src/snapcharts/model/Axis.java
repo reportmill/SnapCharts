@@ -39,6 +39,9 @@ public abstract class Axis extends ChartPart {
     // Whether Zero should always be included
     private boolean  _zeroRequired;
 
+    // Whether axis is log10 based
+    private boolean  _log;
+
     // The grid line color
     private Color  _gridLineColor = GRID_LINES_COLOR;
 
@@ -58,6 +61,7 @@ public abstract class Axis extends ChartPart {
     public static final String MinValue_Prop = "MinValue";
     public static final String MaxValue_Prop = "MaxValue";
     public static final String ZeroRequired_Prop = "ZeroRequired";
+    public static final String Log_Prop = "Logarithmic";
     public static final String Side_Prop = "Side";
 
     // Constants for default values
@@ -231,6 +235,20 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns whether axis should be rendered in log10 terms.
+     */
+    public boolean isLog()  { return _log; }
+
+    /**
+     * Sets whether axis should be rendered in log10 terms.
+     */
+    public void setLog(boolean aValue)
+    {
+        if (aValue==isLog()) return;
+        firePropChange(Log_Prop, _log, _log = aValue);
+    }
+
+    /**
      * Returns the grid line color.
      */
     public Color getGridLineColor()  { return _gridLineColor; }
@@ -362,9 +380,11 @@ public abstract class Axis extends ChartPart {
         if (getTitleRotate()!=0)
             e.add(TitleRotate_Prop, getTitleRotate());
 
-        // Archive ZeroRequired
+        // Archive ZeroRequired, Log
         if (isZeroRequired())
             e.add(ZeroRequired_Prop, true);
+        if (isLog())
+            e.add(Log_Prop, true);
 
         // Return element
         return e;
@@ -385,7 +405,10 @@ public abstract class Axis extends ChartPart {
         setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
 
         // Unachive ZeroRequired
-        setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop, false));
+        if (anElement.hasAttribute(ZeroRequired_Prop))
+            setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop, false));
+        if (anElement.hasAttribute(Log_Prop))
+            setLog(anElement.getAttributeBoolValue(Log_Prop));
 
         // Return this part
         return this;

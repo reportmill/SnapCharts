@@ -47,19 +47,6 @@ public class AxisViewY extends AxisView {
     }
 
     /**
-     * Converts a value from view coords to data coords.
-     */
-    public double viewToData(double dispY)
-    {
-        double areaY = 0;
-        double areaH = getHeight();
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        return dataMax - (dispY - areaY)/areaH*(dataMax - dataMin);
-    }
-
-    /**
      * Calculates the preferred width.
      */
     protected double getPrefWidthImpl(double aH)
@@ -116,16 +103,17 @@ public class AxisViewY extends AxisView {
         Intervals intervals = getIntervals();
         int count = intervals.getCount();
         double delta = intervals.getDelta();
+        boolean log = isLog();
 
         // Iterate over tick labels and set location
         for (int i=0; i<count; i++) {
 
             // Get Y in data and display coords and draw tick line
             double dataY = intervals.getInterval(i);
-            double dispY = Math.round(dataToViewY(dataY));
+            double dispY = Math.round(dataToView(dataY));
 
             // If edge div too close to next div, skip
-            if (i==0 || i+1==count) {
+            if (!log && (i==0 || i+1==count)) {
                 double nextY = intervals.getInterval(i==0 ? 1 : count - 2);
                 double delta2 = i==0 ? (nextY - dataY) : (dataY - nextY);
                 if (delta2<delta*.67) {

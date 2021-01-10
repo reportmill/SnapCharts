@@ -76,6 +76,11 @@ public class Intervals {
     public double getDelta()  { return _delta; }
 
     /**
+     * Returns the divs.
+     */
+    public double[] getDivs()  { return _divs; }
+
+    /**
      * Returns whether given min/max match the original values this intervals was created with.
      */
     public boolean matchesMinMax(double aMin, double aMax)
@@ -107,6 +112,77 @@ public class Intervals {
         ivals._delta = 1;
         ivals._count = len;
         return ivals;
+    }
+
+    /**
+     * Return log 10 intervals for given max value.
+     */
+    public static Intervals getIntervalsLog(double aMin, double aMax, boolean minFixed, boolean maxFixed)
+    {
+        // Calculate total number of sections
+        double minFactor = minFactor(aMin);
+        double maxFactor = maxFactor(aMax);
+        int sectionCount = 0;
+        for (double exp=minFactor; MathUtils.lte(exp, maxFactor); exp*=10) sectionCount++;
+
+        // Calc max number of divs and create array
+        int maxDivCount = sectionCount * 9 + 1;
+        double[] divs = new double[maxDivCount];
+
+        // Init array to minExp
+        int divCount = 0;
+        divs[divCount++] = minFactor;
+
+        // Iterate from minExp to maxExp
+        for (double factor=minFactor; MathUtils.lt(factor, maxFactor); factor*=10) {
+            for (int j=1; j<=9; j++) {
+                double val = factor + factor * j;
+                divs[divCount++] = val;
+
+                // If max fixed and val passes max, stop
+                if (maxFixed && val >= aMax) {
+                    factor = maxFactor;
+                    break;
+                }
+            }
+        }
+
+        // Trim array to set values
+        divs = Arrays.copyOf(divs, divCount);
+
+        // Update ends
+        if (minFixed)
+            divs[0] = 0;
+        if (maxFixed)
+            divs[divCount - 1] = aMax;
+
+        Intervals ivals = new Intervals();
+        ivals._minVal = 0;
+        ivals._maxVal = aMax;
+        ivals._divs = divs;
+        ivals._delta = 1;
+        ivals._count = divs.length;
+        return ivals;
+    }
+
+    private static double minFactor(double aValue)
+    {
+        double factor = .1;
+        while (true) {
+            if (factor < aValue)
+                return factor;
+            factor *= 10;
+        }
+    }
+
+    private static double maxFactor(double aValue)
+    {
+        double factor = 1;
+        while (true) {
+            if (factor >= aValue)
+                return factor;
+            factor *= 10;
+        }
     }
 
     /**

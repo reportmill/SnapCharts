@@ -29,20 +29,6 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     }
 
     /**
-     * Converts a coord from view coords to data coords.
-     */
-    public double viewToData(double dispX)
-    {
-        Insets ins = getInsetsAll();
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double dispMin = ins.left;
-        double dispMax = dispMin + getWidth() - ins.getWidth();
-        return dataMin + (dispX - dispMin)/(dispMax - dispMin)*(dataMax - dataMin);
-    }
-
-    /**
      * Calculates the preferred width.
      */
     protected double getPrefWidthImpl(double aH)
@@ -87,6 +73,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         Intervals intervals = getIntervals();
         int count = intervals.getCount();
         double delta = intervals.getDelta();
+        boolean log = isLog();
 
         // Get whether this is Axis for Bar chart
         boolean isBar = getChart().getType()==ChartType.BAR;
@@ -96,7 +83,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
             // Get X in data and display coords and draw tick line
             double dataX = intervals.getInterval(i);
-            double dispX = Math.round(dataToViewX(dataX));
+            double dispX = Math.round(dataToView(dataX));
 
             // If Bar, handle special: Shift labels to mid interval and skip last
             if (isBar) {
@@ -105,11 +92,11 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
                     break;
                 }
                 dataX = dataX + delta / 2;
-                dispX = Math.round(dataToViewX(dataX));
+                dispX = Math.round(dataToView(dataX));
             }
 
             // If edge div too close to next div, skip
-            else if (i == 0 || i + 1 == count) {
+            else if (!log && (i == 0 || i + 1 == count)) {
                 double nextX = intervals.getInterval(i == 0 ? 1 : count - 2);
                 double delta2 = i == 0 ? (nextX - dataX) : (dataX - nextX);
                 if (delta2 < delta * .67) {

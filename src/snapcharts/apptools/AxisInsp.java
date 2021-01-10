@@ -60,8 +60,9 @@ public class AxisInsp extends ChartPartInsp {
         // Reset TitleText
         setViewValue("TitleText", axis.getTitle());
 
-        // Reset ZeroRequiredCheckBox
+        // Reset ZeroRequiredCheckBox, LogCheckBox
         setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
+        setViewValue("LogCheckBox", axis.isLog());
 
         // Reset MinBoundAutoButton, MinBoundDataButton, MinBoundValueButton, MinBoundText
         AxisBound minBound = axis.getMinBound();
@@ -124,8 +125,10 @@ public class AxisInsp extends ChartPartInsp {
             axis.setMaxValue(val);
         }
 
-        // Handle ZeroRequiredCheckBox
+        // Handle ZeroRequiredCheckBox, LogCheckBox
         if (anEvent.equals("ZeroRequiredCheckBox"))
             axis.setZeroRequired(anEvent.getBoolValue());
+        if (anEvent.equals("LogCheckBox"))
+            axis.setLog(anEvent.getBoolValue());
     }
 }

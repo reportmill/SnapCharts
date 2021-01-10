@@ -23,4 +23,5 @@
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
   <CheckBox Name="ZeroRequiredCheckBox" Padding="4" text="Always Include Zero" />
+  <CheckBox Name="LogCheckBox" Padding="4" text="Logarithmic" />
 </ColView>

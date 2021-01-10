@@ -149,7 +149,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     public double dataToViewX(double dataX)
     {
         AxisView axisView = getAxisViewX();
-        return axisView.dataToViewX(dataX);
+        return axisView.dataToView(dataX);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     public double dataToViewY(double dataY)
     {
         AxisView axisView = getAxisViewY();
-        return axisView.dataToViewY(dataY);
+        return axisView.dataToView(dataY);
     }
 
     /**
@@ -237,7 +237,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         Intervals ivals = axisView.getIntervals();
         for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
             double dataX = ivals.getInterval(i);
-            double dispX = (int) Math.round(dataToViewX(dataX));
+            double dispX = (int) Math.round(axisView.dataToView(dataX));
             aPntr.setColor(gridColor);
             aPntr.drawLine(dispX, areaY, dispX, areaH);
             aPntr.setColor(tickLineColor);
@@ -264,10 +264,10 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         // Iterate over intervals and paint lines
         double areaX = 0;
         double areaW = getWidth();
-        Intervals ivals = getIntervalsY();
+        Intervals ivals = axisView.getIntervals();
         for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
             double dataY = ivals.getInterval(i);
-            double dispY = (int) Math.round(dataToViewY(dataY));
+            double dispY = (int) Math.round(axisView.dataToView(dataY));
             aPntr.setColor(gridColor);
             aPntr.drawLine(areaX, dispY, areaW, dispY);
             aPntr.setColor(tickLineColor);
