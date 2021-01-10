@@ -332,6 +332,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         _intervals = null;
         _tickLabels = null;
+        repaint();
     }
 
     /**
