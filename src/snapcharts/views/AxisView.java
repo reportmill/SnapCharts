@@ -150,9 +150,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public void setAxisMin(double aValue)
     {
+        // If already set, just return
         if (aValue==_minOverride) return;
+
+        // Set value, clear intervals
         _minOverride = aValue;
-        System.out.println("Setting to: " + (aValue==UNSET_DOUBLE ? "unset" : aValue));
         clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint
@@ -173,9 +175,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public void setAxisMax(double aValue)
     {
+        // If already set, just return
         if (aValue==_maxOverride) return;
+
+        // Set value, clear intervals
         _maxOverride = aValue;
-        _maxOverride = UNSET_DOUBLE;
         clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint

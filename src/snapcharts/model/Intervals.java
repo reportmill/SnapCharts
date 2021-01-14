@@ -119,9 +119,13 @@ public class Intervals {
      */
     public static Intervals getIntervalsLog(double aMin, double aMax, boolean minFixed, boolean maxFixed)
     {
-        // Calculate total number of sections
+        // Get factors of 10 below min value and above max value
         double minFactor = minFactor(aMin);
         double maxFactor = maxFactor(aMax);
+        if (minFactor >= maxFactor) // Is this possible?
+            minFactor = maxFactor / 10;
+
+        // Calculate total number of sections
         int sectionCount = 0;
         for (double exp=minFactor; MathUtils.lte(exp, maxFactor); exp*=10) sectionCount++;
 
@@ -165,18 +169,26 @@ public class Intervals {
         return ivals;
     }
 
+    /**
+     * Return the factor of 10 below given value.
+     */
     private static double minFactor(double aValue)
     {
-        double factor = .1;
+        // Start at max factor and shrink by factor of 10
+        double factor = 10000;
         while (true) {
-            if (factor < aValue)
+            if (factor < aValue || factor<.1)
                 return factor;
-            factor *= 10;
+            factor /= 10;
         }
     }
 
+    /**
+     * Return the factor of 10 above given value.
+     */
     private static double maxFactor(double aValue)
     {
+        // Start at min factor and group by factor of 10
         double factor = 1;
         while (true) {
             if (factor >= aValue)
