@@ -77,6 +77,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
         // Get whether this is Axis for Bar chart
         boolean isBar = getChart().getType()==ChartType.BAR;
+        boolean isPolar = getChart().getType()==ChartType.POLAR;
+        double shiftX = isPolar ? getX() - getDataView().getX() : 0;
 
         // Iterate over tick labels and set location
         for (int i=0; i<count; i++) {
@@ -84,6 +86,9 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
             // Get X in data and display coords and draw tick line
             double dataX = intervals.getInterval(i);
             double dispX = Math.round(dataToView(dataX));
+
+            if (isPolar)
+                dispX -= shiftX;
 
             // If Bar, handle special: Shift labels to mid interval and skip last
             if (isBar) {

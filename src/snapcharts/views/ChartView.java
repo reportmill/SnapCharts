@@ -163,6 +163,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // Set new
         _chartHelper = aChartHelper;
 
+        // Set layout
+        _layout = _chartHelper.createLayout();
+
         // Add DataAreas
         _dataView.setDataAreas(_chartHelper.getDataAreas());
 

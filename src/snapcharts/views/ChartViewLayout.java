@@ -2,6 +2,7 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.view.ColView;
 import snap.view.RowView;
+import snap.view.View;
 import snap.view.ViewProxy;
 import java.util.Arrays;
 
@@ -11,7 +12,7 @@ import java.util.Arrays;
 public class ChartViewLayout {
 
     // The Chart that owns this layout
-    private ChartView  _chartView;
+    protected ChartView  _chartView;
 
     // The preferred DataArea bounds (optional)
     protected Rect _prefDataBounds;
@@ -300,6 +301,10 @@ public class ChartViewLayout {
      */
     public ViewProxy[] getAxesForSide(Side aSide)
     {
+        // Handle ChartHelperPolar
+        if (_chartView.getChartHelper() instanceof ChartHelperPolar)
+            return new ViewProxy[0];
+
         // Handle Top
         if (aSide == Side.TOP)
             return new ViewProxy[0];

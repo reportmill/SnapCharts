@@ -1,5 +1,6 @@
 package snapcharts.views;
 import snap.geom.Point;
+import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Painter;
@@ -30,6 +31,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // The Title view
     protected StringView  _titleView;
+
+    // Whether axis is radial
+    private boolean  _radial;
 
     // The Axis min override
     private double  _minOverride = UNSET_DOUBLE;
@@ -257,6 +261,19 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns whether axis is radial.
+     */
+    public boolean isRadial()  { return _radial; }
+
+    /**
+     * Sets whether axis is radial.
+     */
+    public void setRadial(boolean aValue)
+    {
+        _radial = aValue;
+    }
+
+    /**
      * Returns the grid line color.
      */
     public Color getGridColor()  { return GRID_COLOR; }
@@ -299,6 +316,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     protected Intervals createIntervals()
     {
+        // Special case, radial
+        if (isRadial() && getAxisType().isAnyY())
+            return _chartHelper.getAxisViewX().getIntervals();
+
         // Special case, bar
         if (getAxisType()==AxisType.X) {
             boolean isBar = getChart().getType().isBarType();
@@ -389,28 +410,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Converts a value from axis data coords to display coords (allows for log axis support).
-     */
-    public double axisDataToView(double axisDataXY)
-    {
-        // Basic convert from data to display
-        boolean isHor = isHorizontal();
-        double areaW = isHor ? getWidth() : getHeight();
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-        double dispVal = isHor ? (axisDataXY - dataMin) / (dataMax - dataMin) * areaW :
-                areaW - (axisDataXY - dataMin) / (dataMax - dataMin) * areaW;
-
-        // Return display val
-        return dispVal;
-    }
-
-    /**
      * Converts an value from dataset coords to view coords.
      */
     public double dataToView(double dataXY)
     {
+        // Handle radial special
+        if (_radial)
+            return dataToViewRad(dataXY);
+
         // Get data min/max (data coords)
         Intervals intervals = getIntervals();
         double dataMin = intervals.getMin();
@@ -440,6 +447,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public double viewToData(double dispXY)
     {
+        // Handle radial special
+        if (_radial)
+            return viewToDataRad(dispXY);
+
         // Get data min/max (data coords)
         Intervals intervals = getIntervals();
         double dataMin = intervals.getMin();
@@ -465,6 +476,80 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Return data val
         return dataXY;
+    }
+
+    /**
+     * Converts an value from dataset coords to view coords.
+     */
+    public double dataToViewRad(double dataXY)
+    {
+        // Get data min/max (data coords)
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+
+        // Handle log
+        if (isLog()) {
+            dataXY = log10(dataXY);
+            dataMin = log10(dataMin);
+            dataMax = log10(dataMax);
+        }
+
+        // Get display len (min is zero)
+        boolean isHor = isHorizontal();
+        Rect polarBounds = getPolarBounds();
+        double areaX = isHor ? polarBounds.getMidX() : polarBounds.y;
+        double areaW = isHor ? polarBounds.getWidth()/2 : polarBounds.getHeight()/2;
+
+        // Convert data to display
+        double dispXY = isHor ? areaX + (dataXY - dataMin) / (dataMax - dataMin) * areaW :
+                areaX + areaW - (dataXY - dataMin) / (dataMax - dataMin) * areaW;
+
+        // Return display val
+        return dispXY;
+    }
+
+    /**
+     * Converts a value from view coords to data coords.
+     */
+    public double viewToDataRad(double dispXY)
+    {
+        // Get data min/max (data coords)
+        Intervals intervals = getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+
+        // Handle log
+        if (isLog()) {
+            dataMin = log10(dataMin);
+            dataMax = log10(dataMax);
+        }
+
+        // Get display len (min is zero)
+        boolean isHor = isHorizontal();
+        Rect polarBounds = getPolarBounds();
+        double areaX = isHor ? polarBounds.getMidX() : polarBounds.y;
+        double areaW = isHor ? getWidth()/2 : getHeight()/2;
+
+        // Convert display to data
+        double dataXY = isHor ? dataMin + (dispXY - areaX) / areaW * (dataMax - dataMin) :
+                dataMax - (dispXY - areaX) / areaW * (dataMax - dataMin);
+
+        // Handle log
+        if (isLog())
+            dataXY = invLog10(dataXY);
+
+        // Return data val
+        return dataXY;
+    }
+
+    /**
+     * Returns the polar area bounds.
+     */
+    public Rect getPolarBounds()
+    {
+        ChartHelperPolar polarHelper = (ChartHelperPolar) _chartHelper;
+        return polarHelper.getPolarBounds();
     }
 
     /**

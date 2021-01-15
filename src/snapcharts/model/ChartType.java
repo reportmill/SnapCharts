@@ -5,12 +5,26 @@ package snapcharts.model;
  */
 public enum ChartType {
 
+    /** Bar chart */
     BAR,
+
+    /** Bar chart in 3D */
     BAR_3D,
+
+    /** Pie chart */
     PIE,
+
+    /** Line chart */
     LINE,
+
+    /** Area chart */
     AREA,
-    SCATTER;
+
+    /** Scatter chart */
+    SCATTER,
+
+    /** Polar chart */
+    POLAR;
 
 
     /**

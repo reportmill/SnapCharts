@@ -4,6 +4,7 @@ import snap.geom.Side;
 import snap.text.StringBox;
 import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
+import snapcharts.model.ChartType;
 import snapcharts.model.Intervals;
 
 /**
@@ -105,12 +106,19 @@ public class AxisViewY extends AxisView {
         double delta = intervals.getDelta();
         boolean log = isLog();
 
+        // Polar stuff
+        boolean isPolar = getChart().getType() == ChartType.POLAR;
+        double shiftY = isPolar ? getY() - getDataView().getY() : 0;
+
         // Iterate over tick labels and set location
         for (int i=0; i<count; i++) {
 
             // Get Y in data and display coords and draw tick line
             double dataY = intervals.getInterval(i);
             double dispY = Math.round(dataToView(dataY));
+
+            if (isPolar)
+                dispY -= shiftY;
 
             // If edge div too close to next div, skip
             if (!log && (i==0 || i+1==count)) {

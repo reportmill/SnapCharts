@@ -103,6 +103,14 @@ public abstract class ChartHelper {
     }
 
     /**
+     * Returns the layout for the chart.
+     */
+    public ChartViewLayout createLayout()
+    {
+        return new ChartViewLayout(_chartView);
+    }
+
+    /**
      * Returns the AxisTypes.
      */
     public AxisType[] getAxisTypes()
@@ -357,6 +365,7 @@ public abstract class ChartHelper {
             case LINE: return new ChartHelperXY(aChartView, ChartType.LINE);
             case AREA: return new ChartHelperXY(aChartView, ChartType.AREA);
             case SCATTER: return new ChartHelperXY(aChartView, ChartType.SCATTER);
+            case POLAR: return new ChartHelperPolar(aChartView);
             default: throw new RuntimeException("ChartHelper.createChartHelper: Unknown type: " + chartType);
         }
     }
