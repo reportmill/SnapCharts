@@ -4,10 +4,10 @@ import snap.geom.Path;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
-import snapcharts.gfx3d.Camera;
-import snapcharts.gfx3d.CameraView;
-import snapcharts.gfx3d.PathBox3D;
-import snapcharts.gfx3d.Scene3D;
+import snap.gfx3d.Camera;
+import snap.gfx3d.CameraView;
+import snap.gfx3d.PathBox3D;
+import snap.gfx3d.Scene3D;
 import snapcharts.model.DataSet;
 
 /**

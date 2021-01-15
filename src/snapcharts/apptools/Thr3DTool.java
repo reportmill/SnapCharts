@@ -3,9 +3,9 @@
  */
 package snapcharts.apptools;
 import snap.view.*;
-import snapcharts.gfx3d.Camera;
-import snapcharts.gfx3d.CameraView;
-import snapcharts.gfx3d.Trackball;
+import snap.gfx3d.Camera;
+import snap.gfx3d.CameraView;
+import snap.gfx3d.Trackball;
 import snapcharts.views.DataArea;
 import snapcharts.views.DataAreaBar3D;
 import snapcharts.views.ChartView;

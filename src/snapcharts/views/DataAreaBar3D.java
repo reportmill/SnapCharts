@@ -2,9 +2,9 @@ package snapcharts.views;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.*;
+import snap.gfx3d.*;
 import snapcharts.model.DataSet;
 import snapcharts.model.Intervals;
-import snapcharts.gfx3d.*;
 import snapcharts.model.DataPoint;
 
 /**
@@ -16,10 +16,10 @@ public class DataAreaBar3D extends DataAreaBar {
     protected CameraView  _camView;
     
     // The Camera
-    private Camera  _camera;
+    private Camera _camera;
     
     // The Scene
-    private Scene3D  _scene;
+    private Scene3D _scene;
     
     // Stuff
     private int  _layerCount = 1;
