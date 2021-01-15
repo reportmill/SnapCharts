@@ -13,7 +13,7 @@ import snapcharts.model.*;
 public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
     // The ChartHelper
-    private ChartHelper  _chartHelper;
+    protected ChartHelper  _chartHelper;
 
     // The ChartView that owns the area
     private ChartView  _chartView;

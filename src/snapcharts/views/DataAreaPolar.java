@@ -201,11 +201,6 @@ public class DataAreaPolar extends DataArea {
      */
     public Path2D getDataPath()
     {
-        // If not animating, clear path
-        ViewAnim anim = getAnim(-1);
-        if (anim==null || !anim.isPlaying())
-            _dataPath = null;
-
         // If already set, just return
         if (_dataPath !=null) return _dataPath;
 
@@ -251,23 +246,6 @@ public class DataAreaPolar extends DataArea {
     private void clearDataPath()
     {
         _dataPath = null;
-    }
-
-    /**
-     * Override to return RevealTime based on path length.
-     */
-    @Override
-    protected int getRevealTime()
-    {
-        if (true)
-            return super.getRevealTime();
-        // Calc factor to modify default time
-        Path2D path = getDataPath();
-        double maxLen =  path.getArcLength();
-        double factor = Math.max(1, Math.min(maxLen / 500, 2));
-
-        // Return default time times factor
-        return (int) Math.round(factor * DataView.DEFAULT_REVEAL_TIME);
     }
 
     /**
