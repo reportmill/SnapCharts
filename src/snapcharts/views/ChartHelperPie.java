@@ -10,7 +10,7 @@ public class ChartHelperPie extends ChartHelper {
     private boolean  _showLegend;
 
     // The DataArea
-    private DataAreaPie  _dataArea;
+    protected DataAreaPie  _dataArea;
 
     /**
      * Constructor.

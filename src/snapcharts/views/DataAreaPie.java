@@ -79,25 +79,26 @@ public class DataAreaPie extends DataArea {
      */
     protected Wedge[] getWedges()
     {
-        // Get info
-        DataSet dset = getDataSet();
-        int pointCount = dset.getPointCount();
-
         // If wedges cached, just return
-        if (_wedges!=null && _wedges.length==pointCount) return _wedges;
+        if (_wedges!=null) return _wedges;
 
         // Get ratios and angles
+        DataSet dset = getDataSet();
         double ratios[] = dset.getRatiosYtoTotalY();
         double angles[] = getAngles();
 
-        // Get chart size and insets and calculate pie radius, diameter and center x/y
-        double cw = getWidth();
-        double ch = getHeight();
+        // Get area bounds
         Insets ins = getInsetsAll();
-        _pieD = ch - ins.getHeight();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = getWidth() - ins.getWidth();
+        double areaH = getHeight() - ins.getHeight();
+
+        // Get chart size and insets and calculate pie radius, diameter and center x/y
+        _pieD = areaH;
         _pieR = _pieD/2;
-        _pieX = ins.left + Math.round((cw - ins.getWidth() - _pieD)/2);
-        _pieY = ins.top + Math.round((ch - ins.getHeight() - _pieD)/2);
+        _pieX = areaX + Math.round((areaW - _pieD)/2);
+        _pieY = areaY + Math.round((areaH - _pieD)/2);
 
         // Iterate over angles and create/configure wedges
         Wedge wedges[] = new Wedge[angles.length];
@@ -130,6 +131,7 @@ public class DataAreaPie extends DataArea {
     /**
      * Paints chart.
      */
+    @Override
     protected void paintChart(Painter aPntr)
     {
         // Get wedges and other paint info
@@ -145,7 +147,10 @@ public class DataAreaPie extends DataArea {
         aPntr.setStroke(Stroke.Stroke1);
 
         // Iterate over wedges and paint wedge
-        for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
+        for (int i=0; i<wedges.length; i++) {
+
+            // Get loop wedge and color
+            Wedge wedge = wedges[i];
             Color color = getChart().getColor(i);
 
             // If targeted, paint targ area
@@ -236,7 +241,7 @@ public class DataAreaPie extends DataArea {
     protected void chartPartDidChange(PropChange aPC)
     {
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+        if (src instanceof DataSet || src instanceof DataSetList) {
             clearWedges();
         }
     }
@@ -353,7 +358,8 @@ public class DataAreaPie extends DataArea {
      */
     public Object getValue(String aPropName)
     {
-        if (aPropName.equals(SelDataPointMorph_Prop)) return getSelDataPointMorph();
+        if (aPropName.equals(SelDataPointMorph_Prop))
+            return getSelDataPointMorph();
         return super.getValue(aPropName);
     }
 
@@ -362,14 +368,15 @@ public class DataAreaPie extends DataArea {
      */
     public void setValue(String aPropName, Object aValue)
     {
-        if (aPropName.equals(SelDataPointMorph_Prop)) setSelDataPointMorph(SnapUtils.doubleValue(aValue));
+        if (aPropName.equals(SelDataPointMorph_Prop))
+            setSelDataPointMorph(SnapUtils.doubleValue(aValue));
         else super.setValue(aPropName, aValue);
     }
 
     /**
      * A class to hold cached wedge data.
      */
-    private class Wedge {
+    protected class Wedge {
 
         // The start and sweep angles
         double _start, _angle, _textAngle;
@@ -378,43 +385,55 @@ public class DataAreaPie extends DataArea {
         String _text;
 
         // Cached Arc and label point
-        Arc    _arc; Point  _textPoint; double _tw, _th;
+        Arc    _arc; Point  _textPoint;
+        double _tw, _th;
         Shape _labelLine;
 
         /** Returns the basic arc. */
         public Arc getArc()
         {
-            return _arc!=null? _arc : (_arc = new Arc(_pieX, _pieY, _pieD, _pieD, getAngleStart(), _angle));
+            if (_arc!=null) return _arc;
+            return _arc = new Arc(_pieX, _pieY, _pieD, _pieD, getAngleStart(), _angle);
         }
 
         /** Returns the arc with given reveal or selection status. */
         public Arc getArc(boolean isSel, boolean isTarg, boolean isSelLast, double aReveal, double selMorph)
         {
             // If no reveal or selection, return normal arc
-            if (aReveal>=1 && !isSel && !isTarg && !isSelLast) return getArc();
+            if (aReveal>=1 && !isSel && !isTarg && !isSelLast)
+                return getArc();
 
             // Get arc start/sweep angles, x/y points and diameter
             double start = -90 + _start*aReveal, angle = _angle*aReveal;
             double px = _pieX, py = _pieY, diam = _pieD;
 
             // If targeted, increase diam by 20
-            if (isTarg) { diam += 20; px -= 10; py -= 10; }
+            if (isTarg) {
+                diam += 20;
+                px -= 10;
+                py -= 10;
+            }
 
             // If selected, move x/y by 10 points from center of wedge
             if (isSel) {
                 double ang2 = Math.toRadians(start + angle/2);
-                px += 10*selMorph*Math.cos(ang2); py += 10*selMorph*Math.sin(ang2);
+                px += 10*selMorph*Math.cos(ang2);
+                py += 10*selMorph*Math.sin(ang2);
             }
 
             // If selected, move x/y by 10 points from center of wedge
             else if (isSelLast) {
                 double ang2 = Math.toRadians(start + angle/2);
-                px += 10*(1-selMorph)*Math.cos(ang2); py += 10*(1-selMorph)*Math.sin(ang2);
+                px += 10*(1-selMorph)*Math.cos(ang2);
+                py += 10*(1-selMorph)*Math.sin(ang2);
             }
 
             // If reveal, modify diameter and move to new center
             if (aReveal<1) {
-                diam *= aReveal; px += _pieR*(1-aReveal); py += _pieR*(1-aReveal); }
+                diam *= aReveal;
+                px += _pieR*(1-aReveal);
+                py += _pieR*(1-aReveal);
+            }
 
             // Create arc and return
             return new Arc(px, py, diam, diam, start, angle);

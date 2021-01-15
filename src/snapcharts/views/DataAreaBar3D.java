@@ -2,7 +2,6 @@ package snapcharts.views;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.*;
-import snapcharts.model.Chart;
 import snapcharts.model.DataSet;
 import snapcharts.model.Intervals;
 import snapcharts.gfx3d.*;
@@ -14,13 +13,13 @@ import snapcharts.model.DataPoint;
 public class DataAreaBar3D extends DataAreaBar {
     
     // The Camera
-    protected CameraView _camView;
+    protected CameraView  _camView;
     
     // The Camera
-    private Camera _camera;
+    private Camera  _camera;
     
     // The Scene
-    private Scene3D _scene;
+    private Scene3D  _scene;
     
     // Stuff
     private int  _layerCount = 1;
@@ -66,16 +65,6 @@ public class DataAreaBar3D extends DataAreaBar {
         int ivalCount = getIntervalsY().getCount();
         double heightPerTick = getHeight()/(ivalCount - 1);
         return heightPerTick>=72? 4 : heightPerTick>=50? 3 : 1;
-    }
-
-    /**
-     * Override to resize CamView.
-     */
-    protected void layoutImpl()
-    {
-        double viewW = getWidth();
-        double viewH = getHeight();
-        _camView.setSize(viewW, viewH);
     }
 
     /**
@@ -265,14 +254,28 @@ public class DataAreaBar3D extends DataAreaBar {
     }
 
     /**
-     * Paints chart.
+     * Adds a 3d bar to scene.
      */
     protected void addBar(double aX, double aY, double aW, double aH, Color aColor)
     {
-        double reveal = getReveal(); if (reveal<1) { double nh = aH*reveal; aY += aH - nh; aH = nh; }
-        double depth = _camera.getDepth(), z0 = depth/2 - aW/2, z1 = depth/2 + aW/2;
+        // If reveal is set, modify Y/H
+        double reveal = getReveal();
+        if (reveal<1) {
+            double nh = aH*reveal;
+            aY += aH - nh;
+            aH = nh;
+        }
+
+        // Get depth, and Z values for back/front
+        double depth = _camera.getDepth();
+        double z0 = depth/2 - aW/2;
+        double z1 = depth/2 + aW/2;
+
+        // Create/configure bar path/path3d and add to scene
         Path path = new Path(new Rect(aX, aY, aW, aH));
-        PathBox3D bar = new PathBox3D(path, z0, z1, false); bar.setColor(aColor); bar.setStroke(Color.BLACK, 1);
+        PathBox3D bar = new PathBox3D(path, z0, z1, false);
+        bar.setColor(aColor);
+        bar.setStroke(Color.BLACK, 1);
         _scene.addShape(bar);
     }
 
@@ -419,5 +422,15 @@ public class DataAreaBar3D extends DataAreaBar {
             _camView.getAnim(1000).setValue(CameraView.Pitch_Prop,10);
             _camView.getAnim(1000).setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
         }
+    }
+
+    /**
+     * Override to resize CamView.
+     */
+    protected void layoutImpl()
+    {
+        double viewW = getWidth();
+        double viewH = getHeight();
+        _camView.setSize(viewW, viewH);
     }
 }
