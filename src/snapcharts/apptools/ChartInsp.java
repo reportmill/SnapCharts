@@ -71,13 +71,15 @@ public class ChartInsp extends ChartPartInsp {
             chart.setType(ChartType.SCATTER);
         if (anEvent.equals("BarChartButton"))
             chart.setType(ChartType.BAR);
-        if (anEvent.equals("Bar3DChartButton"))
-            chart.setType(ChartType.BAR_3D);
         if (anEvent.equals("PieChartButton"))
             chart.setType(ChartType.PIE);
-        if (anEvent.equals("Pie3DChartButton"))
-            chart.setType(ChartType.PIE_3D);
         if (anEvent.equals("PolarChartButton"))
             chart.setType(ChartType.POLAR);
+        if (anEvent.equals("Bar3DChartButton"))
+            chart.setType(ChartType.BAR_3D);
+        if (anEvent.equals("Pie3DChartButton"))
+            chart.setType(ChartType.PIE_3D);
+        if (anEvent.equals("Line3DChartButton"))
+            chart.setType(ChartType.LINE_3D);
     }
 }
