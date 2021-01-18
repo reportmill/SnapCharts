@@ -1,18 +1,20 @@
 package snapcharts.views;
 
 import snap.geom.Path;
+import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
-import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 import snapcharts.model.Intervals;
+import java.util.List;
 
 /**
  * A DataArea subclass to display the contents of bar chart.
  */
-public class DataAreaLine3D extends DataAreaBar {
+public class DataAreaLine3D extends DataArea {
 
     // The Camera
     protected CameraView  _camView;
@@ -22,9 +24,6 @@ public class DataAreaLine3D extends DataAreaBar {
 
     // The Scene
     private Scene3D _scene;
-
-    // Stuff
-    private int  _layerCount = 1;
 
     // Shapes for grid
     private Path _grid = new Path();
@@ -42,21 +41,23 @@ public class DataAreaLine3D extends DataAreaBar {
     {
         super(aChartHelper, aDataSet);
 
+        // Create/add CameraView
         _camView = new CameraView() {
             protected void layoutImpl() { rebuildScene(); }
         };
         addChild(_camView);
+
+        // Get/configure camera
         _camera = _camView.getCamera();
+        _camera.setYaw(26);
+        _camera.setPitch(10);
+        _camera.setDepth(300);
+        _camera.setFocalLength(8*72);
+        _camera.setAdjustZ(true);
+
+        // Get Sceme
         _scene = _camView.getScene();
-
-        _camera.setYaw(26); _camera.setPitch(10); _camera.setDepth(100);
-        _camera.setFocalLength(8*72); _camera.setAdjustZ(true);
     }
-
-    /**
-     * Returns the CameraView.
-     */
-    public CameraView getCameraView()  { return _camView; }
 
     /**
      * Returns the number of suggested ticks between the intervals of the RPG'd graph.
@@ -66,18 +67,7 @@ public class DataAreaLine3D extends DataAreaBar {
         // Calculate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
         int ivalCount = getIntervalsY().getCount();
         double heightPerTick = getHeight()/(ivalCount - 1);
-        return heightPerTick>=72? 4 : heightPerTick>=50? 3 : 1;
-    }
-
-    /**
-     * Override to properly size hidden Y Axis.
-     */
-    @Override
-    public AxisViewY getAxisViewY()
-    {
-        AxisViewY axisViewY = super.getAxisViewY();
-        axisViewY.setHeight(getHeight());
-        return axisViewY;
+        return heightPerTick>=72 ? 4 : heightPerTick>=50 ? 3 : 1;
     }
 
     /**
@@ -85,200 +75,192 @@ public class DataAreaLine3D extends DataAreaBar {
      */
     protected void rebuildScene()
     {
+        // Rebuild 2D gridlines
         rebuildGridLines();
-        boolean vertical = true;
-
-        // Get whether to draw fast
-        boolean fullRender = true; // !isValueAdjusting()
 
         // Remove all existing children
-        //_camView.removeChildren();
         _scene.removeShapes();
 
         // Get standard width, height, depth
-        double width = getWidth(), height = getHeight(), depth = _camera.getDepth();
-
-        // Get depth of layers
-        double layerDepth = depth/_layerCount;
-
-        // Calculate bar depth
-        //double barDepth = layerDepth/(1 + _graph.getBars().getBarGap());
-
-        // Constrain bar depth to bar width
-        //barDepth = Math.min(barDepth, _barWidth);
-
-        // If pseudo3d, depth should be layer depth
-        //if (isPseudo3D())
-        //    barDepth = layerDepth;
-
-        // Calcuate bar min/max
-        //double barMin = (layerDepth-barDepth)/2;
-        //double barMax = layerDepth - barMin;
-
-        // Iterate over bars and add each bar shape at bar layer
-        //for (int i=0, iMax=_bars.size(); i<iMax; i++) { Bar bar = _bars.get(i);
-        //addShapesForRMShape(bar.barShape, barMin + bar.layer*layerDepth, barMax + bar.layer*layerDepth, false); }
+        double width = getWidth();
+        double height = getHeight();
+        double depth = _camera.getDepth();
 
         // Calculate whether back plane should be shifted to the front. Back normal = { 0, 0,-1 }.
         boolean shiftBack = _camera.isFacingAway(_scene.localToCameraForVector(0, 0, -1));
-        double backZ = shiftBack? 0 : depth;
+        double backZ = shiftBack ? 0 : depth;
 
         // Create back plane shape
         Path3D back = new Path3D(); back.setOpacity(.8f);
         back.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
         back.setStroke(Color.BLACK, 1); //if (_backStroke!=null) back.setStroke(_backStroke.getColor(),_backStroke.getWidth());
-        back.moveTo(0, 0, backZ); back.lineTo(0, height, backZ);
-        back.lineTo(width, height, backZ); back.lineTo(width, 0, backZ); back.close();
-        if (!shiftBack) back.reverse();
+        back.moveTo(0, 0, backZ);
+        back.lineTo(0, height, backZ);
+        back.lineTo(width, height, backZ);
+        back.lineTo(width, 0, backZ);
+        back.close();
+        if (!shiftBack)
+            back.reverse();
         _scene.addShape(back);
 
         // Add Grid to back
-        Path3D grid = new Path3D(_grid, backZ); grid.setStroke(Color.BLACK, 1);
+        Path3D grid = new Path3D(_grid, backZ);
+        grid.setStroke(Color.BLACK, 1);
         back.addLayer(grid);
 
         // Add GridMinor to back
-        Path3D gridMinor = new Path3D(_gridMinor, backZ); gridMinor.setStrokeColor(Color.LIGHTGRAY);
+        Path3D gridMinor = new Path3D(_gridMinor, backZ);
+        gridMinor.setStrokeColor(Color.LIGHTGRAY);
         back.addLayer(gridMinor);
 
         // Calculate whether side plane should be shifted to the right. Side normal = { 1, 0, 0 }.
-        boolean shiftSide = vertical && !_camera.isPseudo3D() && _camera.isFacingAway(_scene.localToCameraForVector(1,0,0));
-        double sideX = shiftSide? width : 0;
+        boolean shiftSide = !_camera.isPseudo3D() && _camera.isFacingAway(_scene.localToCameraForVector(1,0,0));
+        double sideX = shiftSide ? width : 0;
 
         // Create side path shape
-        Path3D side = new Path3D(); side.setColor(Color.LIGHTGRAY); side.setStroke(Color.BLACK, 1); side.setOpacity(.8f);
-        side.moveTo(sideX, 0, 0); side.lineTo(sideX, height, 0);
-        side.lineTo(sideX, height, depth); side.lineTo(sideX, 0, depth); side.close();
+        Path3D side = new Path3D();
+        side.setColor(Color.LIGHTGRAY);
+        side.setStroke(Color.BLACK, 1);
+        side.setOpacity(.8f);
+        side.moveTo(sideX, 0, 0);
+        side.lineTo(sideX, height, 0);
+        side.lineTo(sideX, height, depth);
+        side.lineTo(sideX, 0, depth);
+        side.close();
 
         // For horizonatal bar charts, make sure the side panel always points towards the camera
         boolean sideFacingAway = _camera.isFacingAway(_scene.localToCamera(side));
-        if (sideFacingAway) side.reverse();
+        if (sideFacingAway)
+            side.reverse();
         _scene.addShape(side);
 
         // Create floor path shape
-        Path3D floor = new Path3D(); floor.setColor(Color.LIGHTGRAY); floor.setStroke(Color.BLACK, 1); floor.setOpacity(.8f);
-        floor.moveTo(0, height + .5, 0); floor.lineTo(width, height + .5, 0);
-        floor.lineTo(width, height + .5, depth); floor.lineTo(0, height + .5, depth); floor.close();
+        Path3D floor = new Path3D();
+        floor.setColor(Color.LIGHTGRAY);
+        floor.setStroke(Color.BLACK, 1);
+        floor.setOpacity(.8f);
+        floor.moveTo(0, height + .5, 0);
+        floor.lineTo(width, height + .5, 0);
+        floor.lineTo(width, height + .5, depth);
+        floor.lineTo(0, height + .5, depth);
+        floor.close();
         boolean floorFacingAway = _camera.isFacingAway(_scene.localToCamera(floor));
-        if (floorFacingAway) floor.reverse();
+        if (floorFacingAway)
+            floor.reverse();
         _scene.addShape(floor);
 
         // Determine whether side grid should be added to graph side or floor
-        Path3D sideGridBuddy = vertical? side : floor;
-        Rect gridWithoutSepBnds = _gridWithoutSep.getBounds(), gridMinorBnds = _gridMinor.getBounds();
-        Rect gridRect = vertical? new Rect(0, gridWithoutSepBnds.y, depth, gridWithoutSepBnds.height) :
-            new Rect(gridWithoutSepBnds.x, 0, gridWithoutSepBnds.width, depth);
-        Rect gridMinorRect = vertical? new Rect(0, gridMinorBnds.y, depth, gridMinorBnds.height) :
-            new Rect(gridMinorBnds.x, 0, gridMinorBnds.width, depth);
-        Transform3D gridTrans = vertical? new Transform3D().rotateY(-90).translate(sideX, 0, 0) :
-            new Transform3D().rotateX(90).translate(0, height, 0);
+        Path3D sideGridBuddy = side;
+        Rect gridWithoutSepBnds = _gridWithoutSep.getBounds();
+        Rect gridMinorBnds = _gridMinor.getBounds();
+        Rect gridRect = new Rect(0, gridWithoutSepBnds.y, depth, gridWithoutSepBnds.height);
+        Rect gridMinorRect = new Rect(0, gridMinorBnds.y, depth, gridMinorBnds.height);
+        Transform3D gridTrans = new Transform3D().rotateY(-90).translate(sideX, 0, 0);
 
         // Configure grid
         Path sideGridPath = _gridWithoutSep.copyFor(gridRect);
-        Path3D sideGrid = new Path3D(sideGridPath, 0); sideGrid.transform(gridTrans); sideGrid.setStroke(Color.BLACK, 1);
+        Path3D sideGrid = new Path3D(sideGridPath, 0);
+        sideGrid.transform(gridTrans);
+        sideGrid.setStroke(Color.BLACK, 1);
         sideGridBuddy.addLayer(sideGrid);
 
         // Add GridMinor to side3d
         Path sideGridPathMinor = _gridMinor.copyFor(gridMinorRect);
-        Path3D sideGridMinor = new Path3D(sideGridPathMinor, 0); sideGridMinor.transform(gridTrans);
+        Path3D sideGridMinor = new Path3D(sideGridPathMinor, 0);
+        sideGridMinor.transform(gridTrans);
         sideGridMinor.setStroke(Color.LIGHTGRAY,1);
         sideGridBuddy.addLayer(sideGridMinor);
         sideGridBuddy.setColor(Color.WHITE); //if (_backFill!=null) sideGridBuddy.setColor(_backFill.getColor());
         sideGridBuddy.setStroke(Color.BLACK, 1); //if (_backStroke!=null) sideGridBuddy.setStroke(_backStroke.getColor(), _backStroke.getWidth());
 
-        // If no pseudo 3d, add axis and bar labels as 3d shapes
-        /*if (!_camera.isPseudo3D()) {
-
-            // Create axis label shapes
-            for (int i=0, iMax=_axisLabels.size(); i<iMax && fullRender; i++)
-                addShapesForRMShape(_axisLabels.get(i), -.1f, -.1f, false);
-
-            // Create bar label shapes
-            for (int i=0, iMax=_barLabels.size(); i<iMax && fullRender; i++) {
-
-                // Get current loop bar label and bar label type
-                RMShape barLabel = _barLabels.get(i);
-
-                // Handle outside labels
-                if (_barLabelPositions.get(i)==RMGraphPartSeries.LabelPos.Above ||
-                    _barLabelPositions.get(i)==RMGraphPartSeries.LabelPos.Below)
-                    addShapesForRMShape(barLabel, depth/2, depth/2, false);
-
-                // Handle inside
-                else addShapesForRMShape(barLabel, (depth - _barWidth)/2 - 5, (depth - _barWidth)/2 - 5, false);
-            }
-        }*/
-
-        // If Pseudo3d, add bar labels
-        /*if (_camera.isPseudo3D()) {
-
-            // Create axis label shapes
-            for (int i=0, iMax=_axisLabels.size(); i<iMax && fullRender; i++)
-                addChild(_axisLabels.get(i));
-
-            // Create bar label shapes
-            for (int i=0, iMax=_barLabels.size(); i<iMax && fullRender; i++)
-                addChild(_barLabels.get(i));
-        }*/
-        addBars();
+        // Add Line3D shapes
+        addLine3Ds();
     }
 
     /**
-     * Paints chart.
+     * Adds the Line3D shapes.
      */
-    protected void addBars()
+    protected void addLine3Ds()
     {
-        // Get selected point index (section index)
-        DataPoint dataPoint = getChartView().getTargDataPoint();
-        int selIndex = dataPoint!=null? dataPoint.getIndex() : -1;
+        // Get info
+        DataSetList dataSetList = getDataSetList();
+        List<DataSet> dataSets = dataSetList.getDataSets();
+        int dataSetCount = dataSets.size();
 
-        double cx = 0, cy = 0, cw = getWidth(), ch = getHeight();
-        Section sections[] = getSections();
-
-        // If reveal is not full (1) then clip
-        //if (getReveal()<1) {
-        //    aPntr.save(); aPntr.clipRect(0,getHeight()*(1-getReveal()),getWidth(),getHeight()*getReveal()); }
-
-        // Iterate over sections
-        for (int i=0;i<_pointCount;i++) { Section section = sections[i];
-
-            // If selected section, draw background
-            //if (i==selIndex) {
-            //    aPntr.setColor(Color.get("#4488FF09")); aPntr.fillRect(cx + i*section.width, cy, section.width, ch); }
-
-            // Iterate over datasets and draw bars
-            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
-                addBar(bar.x, bar.y, bar.width, bar.height - .5, bar.color);
-            }
+        // Iterate over datasets and add Line3D shape for each
+        for (int i=0; i<dataSetCount; i++) {
+            DataSet dset = dataSets.get(i);
+            addLine3D(dset, i, dataSetCount);
         }
-
-        // If reveal not full, resture gstate
-        //if (getReveal()<1) aPntr.restore();
     }
 
     /**
-     * Adds a 3d bar to scene.
+     * Adds the Line3D shape for DataSet.
      */
-    protected void addBar(double aX, double aY, double aW, double aH, Color aColor)
+    protected void addLine3D(DataSet dset, int anIndex, int aCount)
     {
-        // If reveal is set, modify Y/H
-        double reveal = getReveal();
-        if (reveal<1) {
-            double nh = aH*reveal;
-            aY += aH - nh;
-            aH = nh;
-        }
+        // Create 2d path
+        Path path = createDataPath(dset);
+        Color dataStrokeColor = getDataColor(anIndex);
+        Color dataFillColor = dataStrokeColor.brighter().brighter();
 
         // Get depth, and Z values for back/front
-        double depth = _camera.getDepth();
-        double z0 = depth/2 - aW/2;
-        double z1 = depth/2 + aW/2;
+        double sectionDepth = _camera.getDepth() / aCount;
+        double lineZ = sectionDepth * (anIndex + .5);
 
         // Create/configure bar path/path3d and add to scene
-        Path path = new Path(new Rect(aX, aY, aW, aH));
-        PathBox3D bar = new PathBox3D(path, z0, z1, false);
-        bar.setColor(aColor);
-        bar.setStroke(Color.BLACK, 1);
+        PathBox3D bar = new PathBox3D(path, lineZ, lineZ, false);
+        bar.setColor(dataFillColor);
+        bar.setStroke(dataStrokeColor, 1);
         _scene.addShape(bar);
+    }
+
+    /**
+     * Returns Path2D for painting dataset.
+     */
+    protected Path createDataPath(DataSet dset)
+    {
+        // Create/add path for dataset
+        int pointCount = dset.getPointCount();
+        Path path = new Path();
+
+        // Get area bounds
+        double areaX = .1;
+        double areaY = .1;
+        double areaW = getWidth();
+        double areaH = getHeight();
+        double areaMaxX = areaW - .1;
+        double areaMaxY = areaH - .1;
+
+        // Iterate over data points, get in display coords and add path line segment
+        for (int j=0; j<pointCount; j++) {
+
+            // Get data point in display coords
+            double dataX = dset.getX(j);
+            double dataY = dset.getY(j);
+            Point dispXY = dataToView(dataX, dataY);
+
+            // Clamp to area/axis bounds
+            dispXY.x = Math.max(areaX, Math.min(dispXY.x, areaMaxX));
+            dispXY.y = Math.max(areaY, Math.min(dispXY.y, areaMaxY));
+
+            // Add to path
+            if (j == 0)
+                path.moveTo(dispXY.x, dispXY.y);
+            else path.lineTo(dispXY.x, dispXY.y);
+        }
+
+        // Close path
+        Point point0 = path.getPoint(0);
+        Point pointLast = path.getPoint(pointCount-1);
+        path.lineTo(areaW, pointLast.y);
+        path.lineTo(areaW, areaH);
+        path.lineTo(0, areaH);
+        path.lineTo(0, point0.y);
+        path.close();
+
+        // Return path
+        return path;
     }
 
     /**
@@ -310,103 +292,82 @@ public class DataAreaLine3D extends DataAreaBar {
      */
     void rebuildGridLines()
     {
-        _grid.clear(); _gridMinor.clear(); _gridWithoutSep.clear();
-
-        // Get graph min interval and max interval
-        Intervals intervals = getIntervalsY();
-        int intervalCount = intervals.getCount();
-        double minInterval = intervals.getMin();
-        double maxInterval = intervals.getMax();
-        double totalInterval = maxInterval - minInterval;
-        boolean vertical = true;
+        _grid.clear();
+        _gridMinor.clear();
+        _gridWithoutSep.clear();
 
         // Get graph bounds
-        Rect bounds = getBoundsLocal();
+        double areaX = 0;
+        double areaY = 0;
+        double areaW = getWidth();
+        double areaH = getHeight();
 
-        // Get grid line width/height
-        double lineW = vertical? bounds.width : 0;
-        double lineH = vertical? 0 : bounds.height;
+        // Get graph min interval and max interval
+        Intervals intervalsY = getIntervalsY();
+        int countY = intervalsY.getCount();
+        double minY = intervalsY.getMin();
+        double maxY = intervalsY.getMax();
+        double rangeY = maxY - minY;
 
         // Get grid max
-        double gridMax = vertical? bounds.height : bounds.width;
-        double intervalSize = intervals.getInterval(1) - minInterval;
-        double minorTickInterval = gridMax*intervalSize/totalInterval/(getMinorTickCount()+1);
+        double gridMax = areaH;
+        int minorTickCountY = getMinorTickCount();
+        double majorDeltaY = intervalsY.getInterval(1) - minY;
+        double minorDeltaY = gridMax * majorDeltaY / rangeY / (minorTickCountY+1);
 
         // Iterate over graph intervals
-        for (int i=0, iMax=intervalCount; i<iMax - 1; i++) {
+        for (int i=0, iMax=countY; i<iMax - 1; i++) {
 
             // Get interval ratio and line x & y
             double intervalRatio = i/(iMax - 1f);
-            double lineX = vertical? bounds.x : bounds.x + bounds.width*intervalRatio;
-            double lineY = vertical? bounds.y + bounds.height*intervalRatio : bounds.y;
+            double lineY = areaY + areaH * intervalRatio;
 
             // DrawMajorAxis
             if (i>0) {
-                addGridLineMajor(lineX, lineY, lineX + lineW, lineY + lineH); //line.setFrame(lineX, lineY, lineW, lineH);
+                addGridLineMajor(areaX, lineY, areaX + areaW, lineY);
             }
-
-            // If not drawing minor axis, just continue
-            //if (!_graph.getValueAxis().getShowMinorGrid()) continue;
 
             // Draw minor axis
-            for (int j=0; j<getMinorTickCount(); j++) {
-                double minorLineX = vertical? bounds.x : lineX + (j+1)*minorTickInterval;
-                double minorLineY = vertical? lineY + (j+1)*minorTickInterval : bounds.y;
-                addGridLineMinor(minorLineX, minorLineY, minorLineX + lineW, minorLineY + lineH);
-            }
+            /*for (int j=0; j<minorTickCountY; j++) {
+                double minorLineY = lineY + (j+1) * minorDeltaY;
+                addGridLineMinor(areaX, minorLineY, areaX + areaW, minorLineY);
+            }*/
         }
 
-        // Get whether zero axis line was added
-        /*boolean zeroAxisLineAdded = false;
-        if (_graph.getValueAxis().getShowMajorGrid())
-            for (int i=0, iMax=getIntervalCount(); i<iMax; i++)
-                zeroAxisLineAdded = zeroAxisLineAdded || MathUtils.equalsZero(getInterval(i));*/
+        // Get graph min interval and max interval
+        AxisViewX axisViewX = getAxisViewX();
+        Intervals intervalsX = axisViewX.getIntervals();
+        int countX = intervalsX.getCount();
 
-        // If zero axis line not added, add it (happens when there are pos & neg values)
-        /*if (!zeroAxisLineAdded) {
-            RMLineShape line = new RMLineShape();
-            double intervalRatio = minInterval/totalInterval;
-            double lineX = isVertical()? 0 : -bounds.width*intervalRatio;
-            double lineY = isVertical()? bounds.height + bounds.height*intervalRatio : 0;
-            line.setFrame(lineX, lineY, lineW, lineH);
-            _barShape.addGridLineMajor(line);
-        }*/
-
-        // If drawGroupSeparator, add separator line for each section, perpendicular to grid
-        boolean getLabelAxis_getShowGridLines = true;
-        if (getLabelAxis_getShowGridLines) {
-
-            // Get SeriesCount, SeriesItemCount and SectionCount
-            //int seriesCount = getSeriesCount(), seriesItemCount = seriesCount>0? getSeries(0).getPointCount() : 0;
-            //int sectionCount = _meshed? seriesItemCount : seriesCount;
-            int sectionCount = getSections().length;
-
-            // Iterate over series
-            for (int i=1, iMax=sectionCount; i<iMax; i++) {
-                double lineX = vertical? bounds.x + bounds.width*i/iMax : bounds.x;
-                double lineY = vertical? bounds.y : bounds.y + bounds.height*i/iMax;
-                addGridLineSeparator(lineX, lineY, lineX + (vertical? 0:bounds.width), lineY + (vertical? bounds.height:0));
-            }
+        // Iterate over graph intervals
+        for (int i=0; i<countX; i++) {
+            double dataX = intervalsX.getInterval(i);
+            double dispX = axisViewX.dataToView(dataX);
+            addGridLineSeparator(dispX, areaY, dispX, areaY + areaH);
         }
     }
 
     /** Adds a major grid line to the graph view. */
     void addGridLineMajor(double X0, double Y0, double X1, double Y1)
     {
-        _grid.moveTo(X0, Y0); _grid.lineTo(X1, Y1);
-        _gridWithoutSep.moveTo(X0, Y0); _gridWithoutSep.lineTo(X1, Y1);
+        _grid.moveTo(X0, Y0);
+        _grid.lineTo(X1, Y1);
+        _gridWithoutSep.moveTo(X0, Y0);
+        _gridWithoutSep.lineTo(X1, Y1);
     }
 
     /** Adds a minor grid line to the graph view. */
     void addGridLineMinor(double X0, double Y0, double X1, double Y1)
     {
-        _gridMinor.moveTo(X0, Y0); _gridMinor.lineTo(X1, Y1);
+        _gridMinor.moveTo(X0, Y0);
+        _gridMinor.lineTo(X1, Y1);
     }
 
     /** Adds a grid line separator to the graph view. */
     void addGridLineSeparator(double X0, double Y0, double X1, double Y1)
     {
-        _grid.moveTo(X0, Y0); _grid.lineTo(X1, Y1);
+        _grid.moveTo(X0, Y0);
+        _grid.lineTo(X1, Y1);
     }
 
     /**
@@ -434,5 +395,27 @@ public class DataAreaLine3D extends DataAreaBar {
         double viewW = getWidth();
         double viewH = getHeight();
         _camView.setSize(viewW, viewH);
+    }
+
+    /**
+     * Override to properly size hidden Y Axis.
+     */
+    @Override
+    public AxisViewY getAxisViewY()
+    {
+        AxisViewY axisViewY = super.getAxisViewY();
+        axisViewY.setHeight(getHeight());
+        return axisViewY;
+    }
+
+    /**
+     * Override to properly size hidden X Axis.
+     */
+    @Override
+    public AxisViewX getAxisViewX()
+    {
+        AxisViewX axisViewX = super.getAxisViewX();
+        axisViewX.setWidth(getWidth());
+        return axisViewX;
     }
 }

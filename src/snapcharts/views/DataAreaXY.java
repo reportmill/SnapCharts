@@ -43,14 +43,25 @@ public class DataAreaXY extends DataArea {
     {
         // If not animating, clear path
         ViewAnim anim = getAnim(-1);
-        if (anim==null || !anim.isPlaying())
+        if (anim == null || !anim.isPlaying())
             _dataPath = null;
 
         // If already set, just return
-        if (_dataPath !=null) return _dataPath;
+        if (_dataPath != null) return _dataPath;
 
-        // Create/add path for dataset
+        // Create path for dataSet, set/return
         DataSet dset = getDataSet();
+        boolean isAreaChart = _chartType == ChartType.AREA;
+        Path2D path2D = createDataPath(dset, isAreaChart);
+        return _dataPath = path2D;
+    }
+
+    /**
+     * Returns Path2D for painting dataset.
+     */
+    protected Path2D createDataPath(DataSet dset, boolean isArea)
+    {
+        // Create/add path for dataset
         int pointCount = dset.getPointCount();
         Path2D path = new Path2D();
 
@@ -67,7 +78,7 @@ public class DataAreaXY extends DataArea {
         }
 
         // If area, close path
-        if (_chartType ==ChartType.AREA) {
+        if (isArea) {
             double areaW = getWidth();
             double areaH = getHeight();
             Point point0 = path.getPoint(0);
@@ -80,7 +91,7 @@ public class DataAreaXY extends DataArea {
         }
 
         // Return path
-        return _dataPath = path;
+        return path;
     }
 
     /**

@@ -35,7 +35,10 @@ public enum ChartType {
     /**
      * Returns whether type is XY type (not bar or pie).
      */
-    public boolean isXYType()  { return this!=BAR && this!=BAR_3D && this!=PIE; }
+    public boolean isXYType()
+    {
+        return this==LINE || this==AREA || this==SCATTER;
+    }
 
     /**
      * Returns whether type is Bar type (not BAR or BAR_3D).
