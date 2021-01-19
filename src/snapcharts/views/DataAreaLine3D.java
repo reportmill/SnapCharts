@@ -202,7 +202,7 @@ public class DataAreaLine3D extends DataArea {
         // Create 2d path
         Path path = createDataPath(dset);
         Color dataStrokeColor = getDataColor(anIndex);
-        Color dataFillColor = dataStrokeColor.brighter().brighter();
+        Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front
         double sectionDepth = _camera.getDepth() / aCount;
@@ -344,6 +344,23 @@ public class DataAreaLine3D extends DataArea {
             double dataX = intervalsX.getInterval(i);
             double dispX = axisViewX.dataToView(dataX);
             addGridLineSeparator(dispX, areaY, dispX, areaY + areaH);
+        }
+
+        // Get info
+        DataSetList dataSetList = getDataSetList();
+        List<DataSet> dataSets = dataSetList.getDataSets();
+        int dataSetCount = dataSets.size();
+
+        // Iterate over datasets and add separator for side
+        if (dataSetCount>1) {
+            double sectionDepth = getWidth() / dataSetCount;
+            for (int i = 1; i < dataSetCount; i++) {
+                DataSet dset = dataSets.get(i);
+                addLine3D(dset, i, dataSetCount);
+                double lineZ2 = sectionDepth * i;
+                _gridWithoutSep.moveTo(lineZ2, 0);
+                _gridWithoutSep.lineTo(lineZ2, getHeight());
+            }
         }
     }
 
