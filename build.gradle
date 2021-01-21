@@ -13,6 +13,9 @@ java {
 }
 
 repositories {
+
+    // Jitpack makes builds from GitHub repos
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
