@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.geom.Pos;
 import snap.util.SnapUtils;
 import java.util.Arrays;
 
@@ -54,6 +55,19 @@ public class DocTextReader {
             String key = keyVal[0];
             String val = keyVal[1];
 
+            // Handle Axis
+            if (key.startsWith("Axis")) {
+                readAxisKeyVal(key, val);
+                continue;
+            }
+
+            // Handle Legend
+            if (key.startsWith("Legend")) {
+                readLegendKeyVal(key, val);
+                continue;
+            }
+
+            // Other keys
             switch (key) {
 
                 case "Doc.Name":
@@ -107,7 +121,68 @@ public class DocTextReader {
                     for (int i=0; i<len; i++)
                         _dset.addPointXY(_dataX[i], _dataY[i]);
                     break;
+
+                case "DataSet.AxisY":
+                    AxisType axisTypeY = AxisType.valueOf(val);
+                    _dset.setAxisTypeY(axisTypeY);
+                    break;
             }
+        }
+    }
+
+    /**
+     * Reads an axis key/val pair.
+     */
+    private void readAxisKeyVal(String aKey, String aVal)
+    {
+        // Get axis and axis key
+        int dotInd = aKey.indexOf('.');
+        String axisStr = aKey.substring(0, dotInd);
+        String axisKey = aKey.substring(dotInd+1);
+        String axisTypeStr = axisStr.substring("Axis".length());
+        AxisType axisType = AxisType.valueOf(axisTypeStr);
+        Axis axis = _chart.getAxisForType(axisType);
+
+        // Handle AxisKey
+        switch (axisKey) {
+
+            // Handle Title
+            case "Title":
+                axis.setTitle(aVal);
+                break;
+
+            // Handle Log
+            case "Log":
+                axis.setLog(SnapUtils.boolValue(aVal));
+                break;
+
+            // Handle unknown
+            default: System.err.println("DocTextReader.readAxisKeyVal: Unknown axis key: " + axisKey);
+        }
+    }
+
+    /**
+     * Reads an legend key/val pair.
+     */
+    private void readLegendKeyVal(String aKey, String aVal)
+    {
+        // Get legend key and legend
+        String legendKey = aKey.substring("Legend.".length());
+        Legend legend = _chart.getLegend();
+
+        legend.setShowLegend(true);
+
+        // Handle LegendKey
+        switch (legendKey)
+        {
+            // Handle Position
+            case "Position":
+                Pos pos = Pos.valueOf(aVal);
+                legend.setPosition(pos);
+                break;
+
+            // Handle unknown
+            default: System.err.println("DocTextReader.readLegendKeyVal: Unknown legend key: " + legendKey);
         }
     }
 
