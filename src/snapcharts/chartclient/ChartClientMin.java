@@ -24,7 +24,7 @@ public class ChartClientMin {
     // The SnapChartURL
     private final int HTTP_PORT_LOCAL = 8008;
     private final String SNAPCHARTS_URL = "http://reportmill.com/snaptea/SnapCharts";
-    private final String SNAPCHARTS_URL_LOCAL = "http://localhost:8080";
+    private final String SNAPCHARTS_URL_LOCAL = "https://localhost:8080";
 
     // Ivars for launching SnapCharts
     private String _java = "/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/bin/java";

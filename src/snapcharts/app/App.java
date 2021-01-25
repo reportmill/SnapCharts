@@ -22,7 +22,7 @@ public class App {
         //ViewUtils.runLater(() -> docPane.loadSampleDoc());
 
         if (args.length>1 && args[0].equals(APP_ARG_FETCH_CHART)) {
-            String urls = "http://localhost:8008/" + args[1];
+            String urls = "https://localhost:8008/" + args[1];
             DocPane dpane = new DocPane().open(urls);
             dpane.setWindowVisible(true);
             return;
