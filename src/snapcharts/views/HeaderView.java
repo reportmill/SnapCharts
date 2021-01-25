@@ -27,8 +27,8 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     private ColView  _colView;
 
     // Constants
-    private final Font DEFAULT_TITLE_FONT = Font.Arial14.getBold().deriveFont(20);
-    private final Font DEFAULT_SUBTITLE_FONT = Font.Arial12.getBold();
+    private final Font DEFAULT_TITLE_FONT = Header.DEFAULT_TITLE_FONT;
+    private final Font DEFAULT_SUBTITLE_FONT = Font.Arial12;
     private final Color DEFAULT_SUBTITLE_COLOR = Color.GRAY;
 
     /**
@@ -45,6 +45,7 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
         // Create ScaleBox, ColView
         _colView = new ColView();
         _colView.setAlign(Pos.TOP_CENTER);
+        _colView.setSpacing(2);
         _scaleBox = new ScaleBox(_colView);
         _scaleBox.setKeepAspect(true);
         _scaleBox.setAlign(Pos.BOTTOM_CENTER);

@@ -11,6 +11,9 @@ public class DocTextReader {
     // The Doc
     private Doc  _doc;
 
+    // The current item group
+    private DocItemGroup  _itemGroup;
+
     // The current chart
     private Chart  _chart;
 
@@ -29,6 +32,7 @@ public class DocTextReader {
     public DocTextReader()
     {
         _doc = new Doc();
+        _itemGroup = _doc;
     }
 
     /**
@@ -45,13 +49,17 @@ public class DocTextReader {
      */
     public void readString(String aStr)
     {
+        // Get string lines
         String lines[] = aStr.split("\n");
 
+        // Iterate over lines
         for (String line : lines) {
 
+            // Get line split around '=' sign
             String keyVal[] = line.split("=");
             if (keyVal.length<2) continue;
 
+            // Get key, val
             String key = keyVal[0];
             String val = keyVal[1];
 
@@ -74,10 +82,21 @@ public class DocTextReader {
                     _doc.setName(val);
                     break;
 
+                case "Group.Name":
+                    _itemGroup = new DocItemGroup();
+                    _itemGroup.setName(val);
+                    _doc.addItem(_itemGroup);
+                    break;
+
+                case "Group.ItemsPerPage":
+                    int itemsPerPage = SnapUtils.intValue(val);
+                    _itemGroup.setItemsPerPage(itemsPerPage);
+                    break;
+
                 case "Chart.Name":
                     _chart = new Chart();
                     _chart.setName(val);
-                    _doc.addChart(_chart);
+                    _itemGroup.addChart(_chart);
                     break;
 
                 case "Chart.Title":

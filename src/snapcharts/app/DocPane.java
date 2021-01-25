@@ -2,6 +2,7 @@ package snapcharts.app;
 import rmdraw.scene.SGDoc;
 import snap.geom.Insets;
 import snap.geom.Pos;
+import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Image;
 import snap.util.SnapUtils;
@@ -407,6 +408,8 @@ public class DocPane extends ViewOwner {
         // Get/configure TreeView
         _treeView = getView("TreeView", TreeView.class);
         _treeView.setResolver(new ChartDocTreeResolver());
+        _treeView.setRowHeight(25);
+        _treeView.getCol(0).setAltPaint(new Color("#FBFBFC"));
 
         // Configure window
         WindowView win = getWindow();
@@ -426,7 +429,7 @@ public class DocPane extends ViewOwner {
     protected void resetUI()
     {
         _treeView.setItems(getDoc());
-        _treeView.expandAll();
+        _treeView.expandItem(getDoc());  //_treeView.expandAll();
         _treeView.setSelItem(getSelItem());
 
         // If title has changed, update window title
@@ -562,6 +565,7 @@ public class DocPane extends ViewOwner {
     private static Image ICON_DIR = Image.get(ViewUtils.class, "DirFile.png");
     private static Image ICON_DATA = Image.get(ViewUtils.class, "TableFile.png");
     private static Image ICON_CHART = Image.get(DocPane.class, "Chart.png");
+    private static Image ICON_GROUP = Image.get(DocPane.class, "Group2.png");
 
     /**
      * A TreeResolver for Document Shapes.
@@ -595,9 +599,10 @@ public class DocPane extends ViewOwner {
         @Override
         public Image getImage(DocItem anItem)
         {
+            if (anItem instanceof Doc) return ICON_DIR;
             if (anItem instanceof DocItemChart) return ICON_CHART;
             if (anItem instanceof DocItemDataSet) return ICON_DATA;
-            if (anItem instanceof DocItemGroup) return ICON_DIR;
+            if (anItem instanceof DocItemGroup) return ICON_GROUP;
             return ICON_PLAIN;
         }
     }

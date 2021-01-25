@@ -20,7 +20,7 @@ public class Header extends ChartPart {
     public static final String Subtitle_Prop = "Subtitle";
 
     // Constants for defaults
-    public static final Font DEFAULT_TITLE_FONT = Font.Arial14.getBold().deriveFont(24);
+    public static final Font DEFAULT_TITLE_FONT = Font.Arial14.getBold();
 
     /**
      * Returns the title.

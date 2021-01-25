@@ -135,6 +135,24 @@ public class ChartSetPane extends DocItemPane {
     public List<Chart> getCharts()  { return _charts; }
 
     /**
+     * Returns the chart items.
+     */
+    private List<DocItemChart> getChartDocItems()
+    {
+        List<DocItemChart> chartItems = new ArrayList<>();
+        for (DocItem docItem : _docItem.getItems()) {
+            if (docItem instanceof DocItemGroup) {
+                for (DocItem ditem : ((DocItemGroup)docItem).getItems())
+                    if (ditem instanceof DocItemChart)
+                        chartItems.add((DocItemChart) ditem);
+            }
+            else if (docItem instanceof DocItemChart)
+                chartItems.add((DocItemChart) docItem);
+        }
+        return chartItems;
+    }
+
+    /**
      * Resets the charts.
      */
     private void resetCharts()
@@ -153,7 +171,7 @@ public class ChartSetPane extends DocItemPane {
         _pageBox.removeChildren();
 
         // Get List of DocItemChart
-        List<DocItemChart> chartDocItems = ListUtils.getFilteredForClass(_docItem.getItems(), DocItemChart.class);
+        List<DocItemChart> chartDocItems = getChartDocItems();
 
         // Get number of plots per page
         DocItemGroup docItem = getDocItem();

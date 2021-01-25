@@ -157,10 +157,10 @@ public class DataAreaXY extends DataArea {
 
         // If ChartType.LINE, draw path
         if (_chartType ==ChartType.LINE) {
-            aPntr.setColor(color.blend(Color.CLEAR, .98));
+            //aPntr.setColor(color.blend(Color.CLEAR, .98)); aPntr.draw(path); aPntr.setColor(color);
+            aPntr.setStrokePure(true);
             aPntr.draw(path);
-            aPntr.setColor(color);
-            aPntr.draw(path);
+            aPntr.setStrokePure(false);
         }
 
         // If ChartType.AREA, fill path, too
