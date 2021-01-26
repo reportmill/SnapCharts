@@ -72,6 +72,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public ChartView()
     {
+        // Install bogus ChartHelper
+        _chartHelper = new ChartHelperEmpty(this);
+
         // Create new chart
         setChart(new Chart());
 
