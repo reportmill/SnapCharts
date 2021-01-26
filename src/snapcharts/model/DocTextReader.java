@@ -175,6 +175,32 @@ public class DocTextReader {
                 axis.setLog(SnapUtils.boolValue(aVal));
                 break;
 
+            // Handle MinBound
+            case "MinBound":
+                AxisBound minBound = AxisBound.valueOf(aVal);
+                axis.setMinBound(minBound);
+                break;
+
+            // Handle MaxBound
+            case "MaxBound":
+                AxisBound maxBound = AxisBound.valueOf(aVal);
+                axis.setMaxBound(maxBound);
+                break;
+
+            // Handle MinValue
+            case "MinValue":
+                double minVal = SnapUtils.doubleValue(aVal);
+                axis.setMinBound(AxisBound.VALUE);
+                axis.setMinValue(minVal);
+                break;
+
+            // Handle MaxValue
+            case "MaxValue":
+                double maxVal = SnapUtils.doubleValue(aVal);
+                axis.setMaxBound(AxisBound.VALUE);
+                axis.setMaxValue(maxVal);
+                break;
+
             // Handle unknown
             default: System.err.println("DocTextReader.readAxisKeyVal: Unknown axis key: " + axisKey);
         }
