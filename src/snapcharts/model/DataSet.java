@@ -17,9 +17,6 @@ public class DataSet extends ChartPart {
     // The index in data set
     protected int  _index;
 
-    // The format of the data
-    private DataType _dataType;
-
     // The Y Axis type
     private AxisType  _axisTypeY = AxisType.Y;
 
@@ -29,17 +26,8 @@ public class DataSet extends ChartPart {
     // Whether to show symbols
     private boolean  _showSymbols;
 
-    // The values
-    private List <DataPoint>  _points = new ArrayList<>();
-    
-    // Cached array of Y values
-    private double  _dataY[];
-
-    // Cached array of ratios
-    private double  _ratios[];
-
-    // Cached total of Y
-    private double  _total;
+    // The RawData
+    private RawData  _rawData = new RawDataAsPoints();
 
     // Constants for properties
     public static final String Disabled_Prop = "Disabled";
@@ -76,26 +64,7 @@ public class DataSet extends ChartPart {
      */
     public DataType getDataType()
     {
-        if (_dataType!=null) return _dataType;
-
-        return _dataType = guessDataType();
-    }
-
-    /**
-     * Tries to guess the data type.
-     */
-    private DataType guessDataType()
-    {
-        if (getPointCount()==0)
-            return DataType.UNKNOWN;
-
-        for (DataPoint pnt : _points) {
-            if (pnt.getC()!=null)
-                return DataType.CY;
-            if (pnt.getValueX()!=null)
-                return DataType.XY;
-        }
-        return DataType.IY;
+        return _rawData.getDataType();
     }
 
     /**
@@ -150,59 +119,35 @@ public class DataSet extends ChartPart {
     /**
      * Returns the number of points.
      */
-    public int getPointCount()  { return _points.size(); }
+    public int getPointCount()
+    {
+        return _rawData.getPointCount();
+    }
 
     /**
      * Sets the number of points.
      */
     public void setPointCount(int aValue)
     {
-        // If silly value, just return
-        if (aValue<1 || aValue>1000) return;
-
-        // If not enough points, add
-        while (aValue>getPointCount())
-            addPointXY(null, null);
-
-        // If too many points, remove
-        while (aValue<getPointCount())
-            removePoint(getPointCount()-1);
+        _rawData.setPointCount(aValue);
     }
-
-    /**
-     * Returns the data points list.
-     */
-    public List <DataPoint> getPoints()  { return _points; }
 
     /**
      * Returns the data point at given index.
      */
     public DataPoint getPoint(int anIndex)
     {
-        return anIndex<getPointCount()? _points.get(anIndex) : null;
+        return new DataPoint(this, anIndex);
     }
 
     /**
-     * Adds a point.
-     */
-    public void addPoint(DataPoint aPoint)
-    {
-        addPoint(aPoint, getPointCount());
-    }
-
-    /**
-     * Adds a point.
+     * Adds a point for given components at given index.
      */
     public void addPoint(DataPoint aPoint, int anIndex)
     {
-        aPoint._dset = this;
-        aPoint._index = anIndex;
-        _points.add(anIndex, aPoint);
-        firePropChange(Point_Prop, null, aPoint, anIndex);
-
-        // If data type still unknown, clear to re-evaluate
-        if (_dataType == DataType.UNKNOWN)
-            _dataType = null;
+        _rawData.addPoint(aPoint, anIndex);
+        firePropChange(Point_Prop, aPoint, null, anIndex);
+        pointsDidChange();
     }
 
     /**
@@ -210,18 +155,19 @@ public class DataSet extends ChartPart {
      */
     public DataPoint removePoint(int anIndex)
     {
-        DataPoint dpnt = _points.remove(anIndex);
+        DataPoint dpnt = _rawData.removePoint(anIndex);
         firePropChange(Point_Prop, dpnt, null, anIndex);
+        pointsDidChange();
         return dpnt;
     }
 
     /**
-     * Sets point at given index to new point.
+     * Clears all points.
      */
-    public void setPoint(DataPoint aPoint, int anIndex)
+    public void clearPoints()
     {
-        removePoint(anIndex);
-        addPoint(aPoint, anIndex);
+        _rawData.clearPoints();
+        pointsDidChange();
     }
 
     /**
@@ -229,17 +175,17 @@ public class DataSet extends ChartPart {
      */
     public void addPointXY(Double aX, Double aY)
     {
-        DataPoint dpnt = new DataPoint(aX, aY);
-        addPoint(dpnt);
+        DataPoint dpnt = new DataPoint(aX, aY, null, null);
+        addPoint(dpnt, getPointCount());
     }
 
     /**
      * Adds a point for a string and value.
      */
-    public void addPointCY(String aStr, Double aValue)
+    public void addPointCY(String aStr, Double aY)
     {
-        DataPoint dpnt = new DataPoint(aStr, aValue);
-        addPoint(dpnt);
+        DataPoint dpnt = new DataPoint(null, aY, null, aStr);
+        addPoint(dpnt, getPointCount());
     }
 
     /**
@@ -247,8 +193,7 @@ public class DataSet extends ChartPart {
      */
     public double getX(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex);
-        return dp!=null ? dp.getX() : 0;
+        return _rawData.getX(anIndex);
     }
 
     /**
@@ -256,8 +201,15 @@ public class DataSet extends ChartPart {
      */
     public double getY(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex);
-        return dp!=null ? dp.getY() : 0;
+        return _rawData.getY(anIndex);
+    }
+
+    /**
+     * Returns the Z value at given index.
+     */
+    public double getZ(int anIndex)
+    {
+        return _rawData.getZ(anIndex);
     }
 
     /**
@@ -265,26 +217,67 @@ public class DataSet extends ChartPart {
      */
     public String getC(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex);
-        return dp!=null ? dp.getC() : null;
+        return _rawData.getC(anIndex);
     }
 
     /**
-     * Returns the value at given index.
+     * Sets the C value at given index.
+     */
+    public void setValueC(String aValue, int anIndex)
+    {
+        _rawData.setC(aValue, anIndex);
+        pointsDidChange();
+    }
+
+    /**
+     * Returns the X value at given index (null if not set).
      */
     public Double getValueX(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex);
-        return dp!=null ? dp.getValueX() : null;
+        return _rawData.getValueX(anIndex);
     }
 
     /**
-     * Returns the value at given index.
+     * Sets the X value at given index.
+     */
+    public void setValueX(Double aValue, int anIndex)
+    {
+        _rawData.setValueX(aValue, anIndex);
+        pointsDidChange();
+    }
+
+    /**
+     * Returns the Y value at given index (null if not set).
      */
     public Double getValueY(int anIndex)
     {
-        DataPoint dp = getPoint(anIndex);
-        return dp!=null ? dp.getValueY() : null;
+        return _rawData.getValueY(anIndex);
+    }
+
+    /**
+     * Sets the Y value at given index.
+     */
+    public void setValueY(Double aValue, int anIndex)
+    {
+        _rawData.setValueY(aValue, anIndex);
+        pointsDidChange();
+    }
+
+    /**
+     * Returns the Z value at given index (null if not set).
+     */
+    public Double getValueZ(int anIndex)
+    {
+        return _rawData.getValueZ(anIndex);
+    }
+
+    /**
+     * Sets the Z value at given index.
+     */
+    public void setValueZ(Double aValue, int anIndex)
+    {
+        _rawData.setValueZ(aValue, anIndex);
+        pointsDidChange();
     }
 
     /**
@@ -292,13 +285,8 @@ public class DataSet extends ChartPart {
      */
     public String getString(int anIndex)
     {
-        // Get DataPoint
-        DataPoint dpnt = getPoint(anIndex);
-        if (dpnt==null)
-            return null;
-
         // If point string is set, just return it
-        String str = dpnt.getC();
+        String str = getC(anIndex);
         if(str!=null)
             return str;
 
@@ -314,60 +302,10 @@ public class DataSet extends ChartPart {
             return String.valueOf(startValue + anIndex);
 
         // Otherwise return x val (as int, if whole number)
-        double kval = dpnt.getX();
-        if (kval==(int)kval)
-            return String.valueOf((int)kval);
-        //return String.valueOf(kval);
-        return DataUtils.formatValue(kval);
-    }
-
-    /**
-     * Sets the X value at given index.
-     */
-    public void setValueX(Double aValue, int anIndex)
-    {
-        // Make sure we have enough points
-        if (anIndex>=getPointCount()) setPointCount(anIndex+1);
-
-        // Get old point, copy for new value, swap old point for new
-        DataPoint pnt = getPoint(anIndex).copyForX(aValue);
-        setPoint(pnt, anIndex);
-    }
-
-    /**
-     * Sets the Y value at given index.
-     */
-    public void setValueY(Double aValue, int anIndex)
-    {
-        // Make sure we have enough points
-        if (anIndex>=getPointCount()) setPointCount(anIndex+1);
-
-        // Get old point, copy for new value, swap old point for new
-        DataPoint pnt = getPoint(anIndex).copyForY(aValue);
-        setPoint(pnt, anIndex);
-    }
-
-    /**
-     * Sets the C value at given index.
-     */
-    public void setValueC(String aValue, int anIndex)
-    {
-        // Make sure we have enough points
-        if (anIndex>=getPointCount()) setPointCount(anIndex+1);
-
-        // Get old point, copy for new value, swap old point for new
-        DataPoint pnt = getPoint(anIndex).copyForC(aValue);
-        setPoint(pnt, anIndex);
-    }
-
-    /**
-     * Sets the values.
-     */
-    public void setValues(Double ... theVals)
-    {
-        _points.clear();
-        for (Double val : theVals)
-            addPointXY(null, val);
+        double val = getX(anIndex);
+        if (val==(int)val)
+            return String.valueOf((int)val);
+        return DataUtils.formatValue(val);
     }
 
     /**
@@ -375,10 +313,7 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataX()
     {
-        int count = getPointCount();
-        double vals[] = new double[count];
-        for (int i=0;i<count;i++) { double v = getX(i); vals[i] = v; }
-        return vals;
+        return _rawData.getDataX();
     }
 
     /**
@@ -386,11 +321,15 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataY()
     {
-        if (_dataY !=null) return _dataY;
-        int count = getPointCount(); _total = 0;
-        double vals[] = new double[count];
-        for (int i=0;i<count;i++) { double v = getY(i); vals[i] = v; _total += v; }
-        return _dataY = vals;
+        return _rawData.getDataY();
+    }
+
+    /**
+     * Returns an array of dataset Z values.
+     */
+    public double[] getDataZ()
+    {
+        return _rawData.getDataZ();
     }
 
     /**
@@ -398,36 +337,7 @@ public class DataSet extends ChartPart {
      */
     public String[] getDataC()
     {
-        int count = getPointCount();
-        String vals[] = new String[count];
-        for (int i=0;i<count;i++) { String v = getC(i); vals[i] = v; }
-        return vals;
-    }
-
-    /**
-     * Returns the total of all values.
-     */
-    public double getTotalY()
-    {
-        if (_dataY ==null) getDataY();
-        return _total;
-    }
-
-    /**
-     * Returns an array of dataset ratios.
-     */
-    public double[] getRatiosYtoTotalY()
-    {
-        // If value cached, just return
-        if (_ratios!=null) return _ratios;
-
-        // Calculate rations and return
-        double vals[] = getDataY();
-        double total = getTotalY();
-        int count = vals.length;
-        double ratios[] = new double[count];
-        for (int i=0;i<count;i++) ratios[i] = vals[i]/total;
-        return _ratios = ratios;
+        return _rawData.getDataC();
     }
 
     /**
@@ -435,11 +345,7 @@ public class DataSet extends ChartPart {
      */
     public double getMinX()
     {
-        double min = Float.MAX_VALUE;
-        for (DataPoint dp : _points)
-            if (dp.getX()<min)
-                min = dp.getX();
-        return min;
+        return _rawData.getMinX();
     }
 
     /**
@@ -447,11 +353,7 @@ public class DataSet extends ChartPart {
      */
     public double getMaxX()
     {
-        double max = -Float.MAX_VALUE;
-        for (DataPoint dp : _points)
-            if (dp.getX()>max)
-                max = dp.getX();
-        return max;
+        return _rawData.getMaxX();
     }
 
     /**
@@ -459,11 +361,7 @@ public class DataSet extends ChartPart {
      */
     public double getMinY()
     {
-        double min = Float.MAX_VALUE;
-        for (DataPoint dp : _points)
-            if (dp.getY()<min)
-                min = dp.getY();
-        return min;
+        return _rawData.getMinY();
     }
 
     /**
@@ -471,11 +369,23 @@ public class DataSet extends ChartPart {
      */
     public double getMaxY()
     {
-        double max = -Float.MAX_VALUE;
-        for (DataPoint dp : _points)
-            if (dp.getY()>max)
-                max = dp.getY();
-        return max;
+        return _rawData.getMaxY();
+    }
+
+    /**
+     * Returns the minimum Z value in this dataset.
+     */
+    public double getMinZ()
+    {
+        return _rawData.getMinZ();
+    }
+
+    /**
+     * Returns the maximum Z value in this dataset.
+     */
+    public double getMaxZ()
+    {
+        return _rawData.getMaxZ();
     }
 
     /**
@@ -485,10 +395,7 @@ public class DataSet extends ChartPart {
     {
         if (getName()!=null && getName().length()>0)
             return false;
-        for (DataPoint dp : getPoints())
-            if (dp.getValueY()!=null)
-                return false;
-        return true;
+        return _rawData.isClear();
     }
 
     /**
@@ -560,6 +467,11 @@ public class DataSet extends ChartPart {
             }
         }
     }
+
+    /**
+     * Called when a points are added, removed or modified.
+     */
+    protected void pointsDidChange()  { }
 
     /**
      * Archival.

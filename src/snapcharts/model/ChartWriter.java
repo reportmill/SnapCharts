@@ -455,24 +455,29 @@ public class ChartWriter {
     /**
      * Write series data node.
      */
-    protected void writeSeriesData(Map aMap, DataSet aSeries)
+    protected void writeSeriesData(Map aMap, DataSet aDataSet)
     {
         // Create list
         List list = new ArrayList();
         boolean rich = false;
 
         // Iterate over points
-        for (DataPoint dpnt : aSeries.getPoints()) {
+        for (int i=0, iMax=aDataSet.getPointCount(); i<iMax; i++) {
 
             // Create map
             Map map = new HashMap();
 
             // Handle name
-            String name = dpnt.getC();
-            if (name!=null) { map.put("name", name); rich = true; }
+            String name = aDataSet.getC(i);
+            if (name!=null) {
+                map.put("name", name);
+                rich = true;
+            }
 
             // Handle y
-            if (dpnt.getValueY()!=null) map.put("y", dpnt.getY());
+            Double valY = aDataSet.getValueY(i);
+            if (valY != null)
+                map.put("y", valY);
 
             // Add map
             if (!map.isEmpty()) list.add(map);

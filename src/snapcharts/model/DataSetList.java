@@ -257,10 +257,14 @@ public class DataSetList extends ChartPart {
      */
     public DataSet addDataSetForNameAndValues(String aName, Double ... theVals)
     {
+        // Create new DataSet, set Name and add Y values
         DataSet dset = new DataSet();
         dset.setName(aName);
+        for (Double val : theVals)
+            dset.addPointXY(null, val);
+
+        // Add DataSet and return
         addDataSet(dset);
-        dset.setValues(theVals);
         return dset;
     }
 

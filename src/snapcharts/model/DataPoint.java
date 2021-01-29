@@ -11,24 +11,28 @@ public class DataPoint {
     // The index of point in data set
     protected int  _index;
 
-    // The data point x value
-    protected Double  _x;
-    
-    // The data point y value
-    protected Double  _y;
+    // The X/Y/Z, if cached
+    private Double  _x, _y, _z;
 
-    // The data point text value
-    protected String  _c;
+    // The C, if cached
+    private String  _c;
 
     /**
-     * Constructor for XY.
+     * Constructor for dataset point at index.
      */
-    public DataPoint(Double aX, Double aY)  { _x = aX; _y = aY; }
+    public DataPoint(DataSet aDataSet, int anIndex)
+    {
+        _dset = aDataSet;
+        _index = anIndex;
+    }
 
     /**
-     * Constructor for CY.
+     * Constructor for cached values.
      */
-    public DataPoint(String aStr, Double aY)  { _c = aStr; _y = aY; }
+    public DataPoint(Double aX, Double aY, Double aZ, String aC)
+    {
+        _x = aX; _y = aY; _z = aZ; _c = aC;
+    }
 
     /**
      * Returns the DataSet.
@@ -43,53 +47,82 @@ public class DataPoint {
     /**
      * Returns the X value.
      */
-    public double getX()  { return _x!=null ? _x : _index; }
+    public double getX()
+    {
+        if (_x!=null)
+            return _x;
+        return _dset!=null ? _dset.getX(_index) : 0;
+    }
 
     /**
      * Returns the Y value.
      */
-    public double getY()  { return _y!=null ? _y : 0; }
+    public double getY()
+    {
+        if (_y!=null)
+            return _y;
+        return _dset!=null ? _dset.getY(_index) : 0;
+    }
+
+    /**
+     * Returns the Z value.
+     */
+    public double getZ()
+    {
+        if (_z!=null)
+            return _z;
+        return _dset!=null ? _dset.getZ(_index) : 0;
+    }
 
     /**
      * Returns the name.
      */
-    public String getC()  { return _c; }
+    public String getC()
+    {
+        if (_c!=null || _dset==null)
+            return _c;
+        return _dset.getC(_index);
+    }
 
     /**
      * Returns X as a Double.
      */
-    public Double getValueX()  { return _x; }
+    public Double getValueX()
+    {
+        if (_x!=null || _dset==null)
+            return _x;
+        return _dset.getValueX(_index);
+    }
 
     /**
      * Returns Y as a Double.
      */
-    public Double getValueY()  { return _y; }
-
-    /**
-     * Copies this point with new X value.
-     */
-    public DataPoint copyForX(Double aX)
+    public Double getValueY()
     {
-        DataPoint copy = new DataPoint(aX, _y); copy._c = _c;
-        return copy;
+        if (_y!=null || _dset==null)
+            return _y;
+        return _dset.getValueY(_index);
     }
 
     /**
-     * Copies this point with new Y value.
+     * Returns Z as a Double.
      */
-    public DataPoint copyForY(Double aY)
+    public Double getValueZ()
     {
-        DataPoint copy = new DataPoint(_x, aY); copy._c = _c;
-        return copy;
+        if (_z!=null || _dset==null)
+            return _z;
+        return _dset.getValueZ(_index);
     }
 
     /**
-     * Copies this point with new C value.
+     * Caches values.
      */
-    public DataPoint copyForC(String aStr)
+    public void cacheValues()
     {
-        DataPoint copy = new DataPoint(_x, _y); copy._c = aStr;
-        return copy;
+        _x = getValueX();
+        _y = getValueY();
+        _z = getValueZ();
+        _c = getC();
     }
 
     /**
@@ -98,6 +131,6 @@ public class DataPoint {
     public boolean equals(Object anObj)
     {
         DataPoint other = anObj instanceof DataPoint ? (DataPoint)anObj : null; if (other==null) return false;
-        return other._dset == _dset && other._index==_index;
+        return other._dset==_dset && other._index==_index;
     }
 }

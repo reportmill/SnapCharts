@@ -67,7 +67,7 @@ public class DataAreaPie extends DataArea {
         int count = dset.getPointCount();
 
         // Get/set ratios, angles
-        double ratios[] = dset.getRatiosYtoTotalY();
+        double ratios[] = getRatiosYtoTotalY(dset);
         double angles[] = new double[count];
         for (int i=0;i<count;i++)
             angles[i] = Math.round(ratios[i]*360);
@@ -84,7 +84,7 @@ public class DataAreaPie extends DataArea {
 
         // Get ratios and angles
         DataSet dset = getDataSet();
-        double ratios[] = dset.getRatiosYtoTotalY();
+        double ratios[] = getRatiosYtoTotalY(dset);
         double angles[] = getAngles();
 
         // Get area bounds
@@ -371,6 +371,30 @@ public class DataAreaPie extends DataArea {
         if (aPropName.equals(SelDataPointMorph_Prop))
             setSelDataPointMorph(SnapUtils.doubleValue(aValue));
         else super.setValue(aPropName, aValue);
+    }
+
+    /**
+     * Returns an array of dataset ratios.
+     */
+    private static double[] getRatiosYtoTotalY(DataSet aDataSet)
+    {
+        double total = getTotalY(aDataSet);
+        int count = aDataSet.getPointCount();
+        double ratios[] = new double[count];
+        for (int i=0;i<count;i++) ratios[i] = aDataSet.getY(i)/total;
+        return ratios;
+    }
+
+    /**
+     * Returns the total of all values.
+     */
+    private static double getTotalY(DataSet aDataSet)
+    {
+        double total = 0;
+        int count = aDataSet.getPointCount();
+        for (int i=0; i<count; i++)
+            total += aDataSet.getY(i);
+        return total;
     }
 
     /**
