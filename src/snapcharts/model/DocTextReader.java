@@ -20,11 +20,11 @@ public class DocTextReader {
     // The current DataSet
     private DataSet _dset;
 
-    // The X values
-    private double _dataX[];
+    // Staged data arrays X/Y/Z
+    private double[]  _dataX, _dataY, _dataZ;
 
-    // The Y values
-    private double _dataY[];
+    // Staged data array for C (text)
+    private String[]  _dataC;
 
     /**
      * Constructor.
@@ -62,6 +62,12 @@ public class DocTextReader {
             // Get key, val
             String key = keyVal[0];
             String val = keyVal[1];
+
+            // If dataset data is staged, but key not data, apply staged data to current dataset
+            boolean isDataStaged = _dataX!=null || _dataY!=null || _dataZ!=null || _dataC!=null;
+            if (isDataStaged && !key.startsWith("DataSet.Data")) {
+                applyStagedData();
+            }
 
             // Handle Axis
             if (key.startsWith("Axis")) {
@@ -135,10 +141,14 @@ public class DocTextReader {
 
                 case "DataSet.DataY":
                     _dataY = getDoubleArrayForString(val);
+                    break;
 
-                    int len = Math.min(_dataX.length, _dataY.length);
-                    for (int i=0; i<len; i++)
-                        _dset.addPointXY(_dataX[i], _dataY[i]);
+                case "DataSet.DataZ":
+                    _dataZ = getDoubleArrayForString(val);
+                    break;
+
+                case "DataSet.DataC":
+                    _dataC = getStringArrayForString(val);
                     break;
 
                 case "DataSet.AxisY":
@@ -232,6 +242,44 @@ public class DocTextReader {
     }
 
     /**
+     * Applies previously staged data to current dataset.
+     */
+    private void applyStagedData()
+    {
+        // Get data type of staged data
+        DataType dataType = DataType.getDataType(_dataX!=null, _dataY!=null, _dataZ!=null, _dataC!=null);
+
+        // If no DataSet or DataType, complain and return
+        if (_dset==null || dataType==DataType.UNKNOWN) {
+            System.err.println("DocTextReader.applyStagedData: No DataSet or unknown type: " + dataType);
+            _dset = null; _dataX = _dataY = _dataZ = null; _dataC = null;
+            return;
+        }
+
+        // Set DataType
+        _dset.setDataType(dataType);
+
+        // Get min length of staged data
+        int xlen = _dataX!=null ? _dataX.length : 0;
+        int ylen = _dataY!=null ? _dataY.length : 0;
+        int zlen = _dataZ!=null ? _dataZ.length : 0;
+        int clen = _dataC!=null ? _dataC.length : 0;
+        int len = Math.min(xlen, Math.min(ylen, Math.min(zlen, clen)));
+
+        // Iterate over data arrays and add to DataSet
+        for (int i=0; i<len; i++) {
+            Double valX = _dataX!=null ? _dataX[i] : null;
+            Double valY = _dataY!=null ? _dataY[i] : null;
+            Double valZ = _dataZ!=null ? _dataZ[i] : null;
+            String valC = _dataC!=null ? _dataC[i] : null;
+            _dset.addPointXYZC(valX, valY, valZ, valC);
+        }
+
+        // Clear staged data
+        _dataX = _dataY = _dataZ = null; _dataC = null;
+    }
+
+    /**
      * Returns an array of double values for given comma separated string.
      */
     public static double[] getDoubleArrayForString(String aStr)
@@ -265,6 +313,15 @@ public class DocTextReader {
         return count<len ? Arrays.copyOf(vals, count) : vals;
     }
 
+    /**
+     * Returns an array of String for given comma separated string.
+     */
+    public static String[] getStringArrayForString(String aStr)
+    {
+        String str = aStr.trim();
+        String valStrs[] = str.split("\\s*,\\s*");
+        return valStrs;
+    }
 
     /**
      * Returns whether char at given index in given string is number char.

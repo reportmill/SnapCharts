@@ -260,8 +260,9 @@ public class DataSetList extends ChartPart {
         // Create new DataSet, set Name and add Y values
         DataSet dset = new DataSet();
         dset.setName(aName);
+        dset.setDataType(DataType.IY);
         for (Double val : theVals)
-            dset.addPointXY(null, val);
+            dset.addPointXYZC(null, val, null, null);
 
         // Add DataSet and return
         addDataSet(dset);

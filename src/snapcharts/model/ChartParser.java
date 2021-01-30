@@ -526,6 +526,10 @@ public class ChartParser {
         // Complain if not array
         if(!aNode.isArray()) { System.err.println("ChartParser.series.data: Series.data is not array"); return; }
 
+        // Declare booleans to track datatype
+        boolean hasY = false;
+        boolean hasC = false;
+
         // Iterate over array
         for(int i=0;i<aNode.getNodeCount();i++) { JSONNode dataNode = aNode.getNode(i);
 
@@ -538,10 +542,16 @@ public class ChartParser {
                     switch(key.toLowerCase()) {
 
                         // Handle name
-                        case "name": name = child.getString(); break;
+                        case "name":
+                            name = child.getString();
+                            hasC = true;
+                            break;
 
                         // Handle y
-                        case "y": val = SnapUtils.doubleValue(child.getNumber()); break;
+                        case "y":
+                            val = SnapUtils.doubleValue(child.getNumber());
+                            hasY = true;
+                            break;
 
                         // Handle default (complain)
                         default: System.out.println("Unsupported node: series[]." + key + " = " + child.getString());
@@ -549,15 +559,21 @@ public class ChartParser {
                 }
 
                 // Add point
-                aDataSet.addPointCY(name, val);
+                aDataSet.addPointXYZC(null, val, null, name);
             }
 
             // Handle Node is number
             else {
                 Number value = dataNode.getNumber();
-                if(value!=null)
-                    aDataSet.addPointXY(null, value.doubleValue());
+                if(value!=null) {
+                    aDataSet.addPointXYZC(null, value.doubleValue(), null, null);
+                    hasY = true;
+                }
             }
+
+            // Set DataType
+            DataType dataType = DataType.getDataType(false, hasY, false, hasC);
+            aDataSet.setDataType(dataType);
         }
     }
 

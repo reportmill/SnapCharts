@@ -68,6 +68,14 @@ public class DataSet extends ChartPart {
     }
 
     /**
+     * Sets the DataType.
+     */
+    public void setDataType(DataType aDataType)
+    {
+        _rawData.setDataType(aDataType);
+    }
+
+    /**
      * Returns the Y axis type.
      */
     public AxisType getAxisTypeY()  { return _axisTypeY; }
@@ -171,20 +179,11 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Adds a point for X and Y values.
+     * Adds a point for X/Y/Z/C values.
      */
-    public void addPointXY(Double aX, Double aY)
+    public void addPointXYZC(Double aX, Double aY, Double aZ, String aC)
     {
-        DataPoint dpnt = new DataPoint(aX, aY, null, null);
-        addPoint(dpnt, getPointCount());
-    }
-
-    /**
-     * Adds a point for a string and value.
-     */
-    public void addPointCY(String aStr, Double aY)
-    {
-        DataPoint dpnt = new DataPoint(null, aY, null, aStr);
+        DataPoint dpnt = new DataPoint(aX, aY, aZ, aC);
         addPoint(dpnt, getPointCount());
     }
 
@@ -444,20 +443,20 @@ public class DataSet extends ChartPart {
 
                 case IY: {
                     double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    addPointCY(null, y);
+                    addPointXYZC(null, y, null, null);
                     break;
                 }
 
                 case XY: {
                     double x = valX != null ? SnapUtils.doubleValue(valX) : 0;
                     double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    addPointXY(x, y);
+                    addPointXYZC(x, y, null, null);
                     break;
                 }
 
                 case CY: {
                     double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    addPointCY(valX, y);
+                    addPointXYZC(null, y, null, valX);
                     break;
                 }
 
@@ -576,21 +575,21 @@ public class DataSet extends ChartPart {
         // Handle IY
         if (dataType==DataType.IY && dataY!=null) {
             for (double v : dataY)
-                addPointCY(null, v);
+                addPointXYZC(null, v, null, null);
         }
 
         // Handle XY
         else if (dataType==DataType.XY && dataX!=null && dataY!=null) {
             int len = Math.min(dataX.length, dataY.length);
             for (int i=0; i<len; i++)
-                addPointXY(dataX[i], dataY[i]);
+                addPointXYZC(dataX[i], dataY[i], null, null);
         }
 
         // Handle CY
         else if (dataType==DataType.CY && dataC!=null && dataY!=null) {
             int len = Math.min(dataC.length, dataY.length);
             for (int i=0; i<len; i++)
-                addPointCY(dataC[i], dataY[i]);
+                addPointXYZC(null, dataY[i], null, dataC[i]);
         }
 
         // Complain

@@ -5,6 +5,9 @@ package snapcharts.model;
  */
 public abstract class RawData {
 
+    // The format of the data
+    private DataType _dataType;
+
     // Cached arrays of X/Y/Z data
     private double[] _dataX, _dataY, _dataZ;
 
@@ -20,7 +23,15 @@ public abstract class RawData {
     /**
      * Returns the DataType.
      */
-    public abstract DataType getDataType();
+    public DataType getDataType()  { return _dataType; }
+
+    /**
+     * Sets the DataType.
+     */
+    public void setDataType(DataType aDataType)
+    {
+        _dataType = aDataType;
+    }
 
     /**
      * Returns the number of points.

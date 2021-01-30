@@ -7,42 +7,8 @@ import java.util.List;
  */
 public class RawDataAsPoints extends RawData {
 
-    // The format of the data
-    private DataType _dataType;
-
     // The values
-    private List<RawPoint> _points = new ArrayList<>();
-
-    /**
-     * Returns the DataType.
-     */
-    public DataType getDataType()
-    {
-        if (_dataType!=null) return _dataType;
-
-        return _dataType = guessDataType();
-    }
-
-    /**
-     * Tries to guess the data type.
-     */
-    private DataType guessDataType()
-    {
-        // If no data, just return
-        if (getPointCount()==0)
-            return DataType.UNKNOWN;
-
-        // Iterate over data
-        for (RawPoint pnt : _points) {
-            if (pnt.getC()!=null)
-                return DataType.CY;
-            if (pnt.getValueX()!=null)
-                return DataType.XY;
-        }
-
-        // Return default
-        return DataType.IY;
-    }
+    private List<RawPoint>  _points = new ArrayList<>();
 
     /**
      * Returns the number of points.
@@ -89,14 +55,12 @@ public class RawDataAsPoints extends RawData {
      */
     public void addPoint(RawPoint aPoint, int anIndex)
     {
+        // Add point
         aPoint._rawData = this;
         aPoint._index = anIndex;
         _points.add(anIndex, aPoint);
 
-        // If data type still unknown, clear to re-evaluate
-        if (_dataType == DataType.UNKNOWN)
-            _dataType = null;
-
+        // Notify pointsDidChange
         pointsDidChange();
     }
 

@@ -6,6 +6,7 @@ import snap.view.*;
 import snapcharts.app.App;
 import snapcharts.model.Chart;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataType;
 import snapcharts.model.Doc;
 import java.io.File;
 import java.text.DecimalFormat;
@@ -85,10 +86,11 @@ public class ChartClient extends ViewOwner {
         // Create DataSet
         DataSet dataSet = new DataSet();
         dataSet.setName("Sample Data");
+        dataSet.setDataType(DataType.XY);
 
         // Add some data
         for (double x=0; x<2*Math.PI; x+=Math.PI/100)
-            dataSet.addPointXY(x, Math.sin(x));
+            dataSet.addPointXYZC(x, Math.sin(x), null, null);
         chart.addDataSet(dataSet);
 
         // Open Doc
