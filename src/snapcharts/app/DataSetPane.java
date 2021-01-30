@@ -60,14 +60,19 @@ public class DataSetPane extends DocItemPane {
      */
     private void paste(Clipboard cb)
     {
+        // Get string (just return if not there)
+        String str = cb.hasString() ? cb.getString() : null; if (str==null) return;
 
-        if (cb.hasString()) {
-            String str = cb.getString();
-            String cells[][] = DataUtils.getCellData(str);
-            if (cells != null)
-                getDataSet().replaceData(cells, _sheetView.getSel());
-            resetLater();
+        // Get cells
+        String cells[][] = DataUtils.getCellData(str);
+        if (cells != null) {
+            DataSet dset = getDataSet();
+            ListSel sel = _sheetView.getSel();
+            DataUtils.replaceDataSetDataForSelection(dset, sel, cells);
         }
+
+        // Reset
+        resetLater();
     }
 
     /**
@@ -75,9 +80,17 @@ public class DataSetPane extends DocItemPane {
      */
     private void delete()
     {
-        ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
+        // Just return if editing
         if (_sheetView.getEditingCell()!=null) return;
-        getDataSet().deleteData(sel);
+
+        // Get selection (just return if empty)
+        ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
+
+        // Get DataSet
+        DataSet dset = getDataSet();
+        DataUtils.deleteDataSetDataForSelection(dset, sel);
+
+        // Reset selection
         _sheetView.setSelIndex(sel.getMin()-1);
     }
 
