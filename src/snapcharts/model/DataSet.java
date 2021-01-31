@@ -1,9 +1,6 @@
 package snapcharts.model;
-import snap.util.ListSel;
-import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-
 import java.util.*;
 
 /**
@@ -30,6 +27,7 @@ public class DataSet extends ChartPart {
     private RawData  _rawData = new RawDataAsPoints();
 
     // Constants for properties
+    public static final String DataType_Prop = "DataType";
     public static final String Disabled_Prop = "Disabled";
     public static final String Point_Prop = "Points";
     public static final String ShowSymbols_Prop = "ShowSymbols";
@@ -72,7 +70,10 @@ public class DataSet extends ChartPart {
      */
     public void setDataType(DataType aDataType)
     {
+        if (aDataType==getDataType()) return;
+        DataType old = getDataType();
         _rawData.setDataType(aDataType);
+        firePropChange(DataType_Prop, old, aDataType);
     }
 
     /**
@@ -413,7 +414,7 @@ public class DataSet extends ChartPart {
 
         // Archive DataType
         DataType dataType = getDataType();
-        e.add("DataType", dataType);
+        e.add(DataType_Prop, dataType);
 
         // Archive ShowSymbols, Disabled
         if (isShowSymbols())
@@ -425,32 +426,29 @@ public class DataSet extends ChartPart {
         if (getAxisTypeY() != AxisType.Y)
             e.add(AxisTypeY_Prop, getAxisTypeY());
 
-        // If XY, add DataX values
-        if (dataType==DataType.XY) {
-            String dataXStr = DataUtils.getStringForDoubleArray(getDataX());
-            XMLElement dataX_XML = new XMLElement("DataX");
-            dataX_XML.setValue(dataXStr);
-            e.add(dataX_XML);
+        // If DataType has X, add DataX values
+        if (dataType.hasChannel(DataChan.X)) {
+            String dataStr = DataUtils.getStringForDoubleArray(getDataX());
+            e.add(new XMLElement("DataX", dataStr));
         }
 
-        // If CY, add DataC values
-        if (dataType==DataType.CY) {
-            String dataCStr = Arrays.toString(getDataC());
-            XMLElement dataC_XML = new XMLElement("DataC");
-            dataC_XML.setValue(dataCStr);
-            e.add(dataC_XML);
+        // If DataType has Y, add DataY values
+        if (dataType.hasChannel(DataChan.Y)) {
+            String dataStr = DataUtils.getStringForDoubleArray(getDataY());
+            e.add(new XMLElement("DataY", dataStr));
         }
 
-        // If not Unknown, add DataY values
-        if (dataType!=DataType.UNKNOWN) {
-            String dataYStr = DataUtils.getStringForDoubleArray(getDataY());
-            XMLElement dataY_XML = new XMLElement("DataY");
-            dataY_XML.setValue(dataYStr);
-            e.add(dataY_XML);
+        // If DataType has Z, add DataZ values
+        if (dataType.hasChannel(DataChan.Z)) {
+            String dataStr = DataUtils.getStringForDoubleArray(getDataZ());
+            e.add(new XMLElement("DataZ", dataStr));
         }
 
-        // Complain
-        else System.err.println("DataSet.toXML: Unknown DataType: " + dataType);
+        // If DataType has C, add DataC values
+        if (dataType.hasChannel(DataChan.C)) {
+            String dataStr = Arrays.toString(getDataC());
+            e.add(new XMLElement("DataC", dataStr));
+        }
 
         // Return element
         return e;
@@ -466,8 +464,9 @@ public class DataSet extends ChartPart {
         super.fromXML(anArchiver, anElement);
 
         // Unarchive DataType
-        String dataTypeStr = anElement.getAttributeValue("DataType");
+        String dataTypeStr = anElement.getAttributeValue(DataType_Prop);
         DataType dataType = DataType.valueOf(dataTypeStr);
+        setDataType(dataType);
 
         // Unarchive ShowSymbols, Disabled
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
@@ -494,6 +493,14 @@ public class DataSet extends ChartPart {
             dataY = DataUtils.getDoubleArrayForString(dataYStr);
         }
 
+        // Get DataZ
+        double dataZ[] = null;
+        XMLElement dataZ_XML = anElement.get("DataZ");
+        if (dataZ_XML!=null) {
+            String dataZStr = dataZ_XML.getValue();
+            dataZ = DataUtils.getDoubleArrayForString(dataZStr);
+        }
+
         // Get DataC
         String dataC[] = null;
         XMLElement dataC_XML = anElement.get("DataC");
@@ -502,28 +509,8 @@ public class DataSet extends ChartPart {
             dataC = DataUtils.getStringArrayForString(dataCStr);
         }
 
-        // Handle IY
-        if (dataType==DataType.IY && dataY!=null) {
-            for (double v : dataY)
-                addPointXYZC(null, v, null, null);
-        }
-
-        // Handle XY
-        else if (dataType==DataType.XY && dataX!=null && dataY!=null) {
-            int len = Math.min(dataX.length, dataY.length);
-            for (int i=0; i<len; i++)
-                addPointXYZC(dataX[i], dataY[i], null, null);
-        }
-
-        // Handle CY
-        else if (dataType==DataType.CY && dataC!=null && dataY!=null) {
-            int len = Math.min(dataC.length, dataY.length);
-            for (int i=0; i<len; i++)
-                addPointXYZC(null, dataY[i], null, dataC[i]);
-        }
-
-        // Complain
-        else System.err.println("DataSet.toXML: Unknown DataType: " + dataType);
+        // Add Data points
+        DataUtils.addDataSetPoints(this, dataX, dataY, dataZ, dataC);
 
         // Return this part
         return this;

@@ -19,6 +19,28 @@ public class DataUtils {
     private static Map<Integer,DecimalFormat>  _knownFormats = new HashMap<>();
 
     /**
+     * Adds data points to given DataSet for given data arrays.
+     */
+    public static void addDataSetPoints(DataSet aDataSet, double[] dataX, double[] dataY, double[] dataZ, String[] dataC)
+    {
+        // Get min length of staged data
+        int xlen = dataX!=null ? dataX.length : Integer.MAX_VALUE;
+        int ylen = dataY!=null ? dataY.length : Integer.MAX_VALUE;
+        int zlen = dataZ!=null ? dataZ.length : Integer.MAX_VALUE;
+        int clen = dataC!=null ? dataC.length : Integer.MAX_VALUE;
+        int len = Math.min(xlen, Math.min(ylen, Math.min(zlen, clen)));
+
+        // Iterate over data arrays and add to DataSet
+        for (int i=0; i<len; i++) {
+            Double valX = dataX!=null ? dataX[i] : null;
+            Double valY = dataY!=null ? dataY[i] : null;
+            Double valZ = dataZ!=null ? dataZ[i] : null;
+            String valC = dataC!=null ? dataC[i] : null;
+            aDataSet.addPointXYZC(valX, valY, valZ, valC);
+        }
+    }
+
+    /**
      * Deletes data for given DataSet and selection.
      */
     public static void deleteDataSetDataForSelection(DataSet aDataSet, ListSel aSel)

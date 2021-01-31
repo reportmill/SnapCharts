@@ -259,21 +259,8 @@ public class DocTextReader {
         // Set DataType
         _dset.setDataType(dataType);
 
-        // Get min length of staged data
-        int xlen = _dataX!=null ? _dataX.length : 0;
-        int ylen = _dataY!=null ? _dataY.length : 0;
-        int zlen = _dataZ!=null ? _dataZ.length : 0;
-        int clen = _dataC!=null ? _dataC.length : 0;
-        int len = Math.min(xlen, Math.min(ylen, Math.min(zlen, clen)));
-
-        // Iterate over data arrays and add to DataSet
-        for (int i=0; i<len; i++) {
-            Double valX = _dataX!=null ? _dataX[i] : null;
-            Double valY = _dataY!=null ? _dataY[i] : null;
-            Double valZ = _dataZ!=null ? _dataZ[i] : null;
-            String valC = _dataC!=null ? _dataC[i] : null;
-            _dset.addPointXYZC(valX, valY, valZ, valC);
-        }
+        // Add points
+        DataUtils.addDataSetPoints(_dset, _dataX, _dataY, _dataZ, _dataC);
 
         // Clear staged data
         _dataX = _dataY = _dataZ = null; _dataC = null;

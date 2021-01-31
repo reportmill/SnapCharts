@@ -89,6 +89,12 @@ public class DataSetInsp extends ChartPartInsp {
             _chartPane.getDocPane().docItemNameChanged();
         }
 
+        // Handle DataTypeCombo
+        if (anEvent.equals("DataTypeComboBox")) {
+            DataType dataType = (DataType) getViewSelItem("DataTypeComboBox");
+            dset.setDataType(dataType);
+        }
+
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
         if (anEvent.equals("YAxisButton"))
             dset.setAxisTypeY(AxisType.Y);
