@@ -23,6 +23,9 @@ public enum ChartType {
     /** Polar chart */
     POLAR,
 
+    /** Contour chart */
+    CONTOUR,
+
     /** 3D Bar chart */
     BAR_3D,
 

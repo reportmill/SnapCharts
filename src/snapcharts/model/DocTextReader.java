@@ -157,6 +157,12 @@ public class DocTextReader {
                     break;
             }
         }
+
+        // Apply last data
+        boolean isDataStaged = _dataX!=null || _dataY!=null || _dataZ!=null || _dataC!=null;
+        if (isDataStaged) {
+            applyStagedData();
+        }
     }
 
     /**

@@ -5,27 +5,23 @@ import snapcharts.model.DataSetList;
 import java.util.List;
 
 /**
- * A ChartHelper for common XY ChartTypes: LINE, AREA, SCATTER.
+ * A ChartHelper for common Contour types.
  */
-public class ChartHelperXY extends ChartHelper {
-
-    // The ChartType
-    private ChartType  _chartType;
+public class ChartHelperContour extends ChartHelper {
 
     /**
      * Constructor.
      */
-    public ChartHelperXY(ChartView aChartView, ChartType aChartType)
+    protected ChartHelperContour(ChartView aChartView)
     {
         super(aChartView);
-        _chartType = aChartType;
     }
 
     /**
-     * Returns the type.
+     * Returns the ChartType.
      */
     @Override
-    public ChartType getChartType()  { return _chartType; }
+    public ChartType getChartType()  { return ChartType.CONTOUR; }
 
     /**
      * Creates the DataAreas.
@@ -40,7 +36,7 @@ public class ChartHelperXY extends ChartHelper {
         DataArea[] dataAreas = new DataArea[dsetCount];
         for (int i=0; i<dsetCount; i++) {
             DataSet dset = dsets.get(i);
-            dataAreas[i] = new DataAreaXY(this, dset);
+            dataAreas[i] = new DataAreaContour(this, dset);
         }
 
         return dataAreas;

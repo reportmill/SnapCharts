@@ -10,6 +10,7 @@
         <RadioButton Name="LineChartButton" PrefWidth="80" PrefHeight="22" text="Line" Selected="true" Group="bg0" />
         <RadioButton Name="AreaChartButton" PrefWidth="80" PrefHeight="22" text="Area" Group="bg0" />
         <RadioButton Name="ScatterChartButton" PrefWidth="80" PrefHeight="22" text="Scatter" Group="bg0" />
+        <RadioButton Name="ContourChartButton" PrefWidth="80" PrefHeight="22" text="Contour" Group="bg0" />
       </ColView>
       <ColView Spacing="4">
         <RadioButton Name="BarChartButton" PrefWidth="80" PrefHeight="22" text="Bar" Group="bg0" />

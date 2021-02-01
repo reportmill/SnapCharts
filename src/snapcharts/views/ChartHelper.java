@@ -365,6 +365,7 @@ public abstract class ChartHelper {
             case AREA: return new ChartHelperXY(aChartView, ChartType.AREA);
             case SCATTER: return new ChartHelperXY(aChartView, ChartType.SCATTER);
             case POLAR: return new ChartHelperPolar(aChartView);
+            case CONTOUR: return new ChartHelperContour(aChartView);
             case BAR_3D: return new ChartHelperBar3D(aChartView);
             case PIE_3D: return new ChartHelperPie3D(aChartView);
             case LINE_3D: return new ChartHelperLine3D(aChartView);
