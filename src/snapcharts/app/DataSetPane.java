@@ -5,6 +5,7 @@ import snap.util.ListSel;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.model.DataChan;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
 import snapcharts.model.DataUtils;
@@ -37,6 +38,9 @@ public class DataSetPane extends DocItemPane {
     public void setDataSet(DataSet aDS)
     {
         _dset = aDS;
+
+        // Start listening to changes
+        _dset.addPropChangeListener(pc -> dataSetDidChange(pc));
     }
 
     /**
@@ -106,9 +110,6 @@ public class DataSetPane extends DocItemPane {
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
         setFirstFocus(_sheetView);
 
-        // Create/add InspectorPane
-        RowView topRowView = getUI(RowView.class);
-
         // Add PasteAction
         addKeyActionHandler(Cut_Action, "Shortcut+X");
         addKeyActionHandler(Paste_Action, "Shortcut+V");
@@ -131,14 +132,19 @@ public class DataSetPane extends DocItemPane {
      */
     protected void resetUI()
     {
+        // Get DataSet info
         DataSet dset = getDataSet();
+        DataType dataType = dset.getDataType();
 
         // Set TableView row & col count
-        _sheetView.setMinRowCount(dset.getPointCount()+1);
-        _sheetView.setMinColCount(2);
+        int pointCount = dset.getPointCount();
+        int rowCount = pointCount + 1;
+        int colCount = dataType.getChannelCount();
+        _sheetView.setMinRowCount(rowCount);
+        _sheetView.setMinColCount(colCount);
 
         // Update PointCountLabel
-        setViewValue("PointCountLabel", dset.getPointCount() + " Points");
+        setViewValue("PointCountLabel", pointCount + " Points");
     }
 
     /**
@@ -165,56 +171,56 @@ public class DataSetPane extends DocItemPane {
     /**
      * Configures a table column headers.
      */
-    void configureColumn(TableCol aCol)
+    private void configureColumn(TableCol aCol)
     {
-        int col = aCol.getColIndex();
+        // Get DataSet info
+        DataSet dset = getDataSet();
+        DataType dtype = dset.getDataType();
 
-        // Handle first column: Set header to "DataSet Name" (left aligned) with adjustable width
-        if (col==0) {
-            DataSet dset = getDataSet();
-            DataType dtype = dset!=null ? dset.getDataType() : DataType.UNKNOWN;
-            String str = dtype==DataType.IY ? "Index" : dtype==DataType.CY ? "C" : "X";
-            Label hdr = aCol.getHeader();
-            hdr.setText(str);
-            aCol.setPrefWidth(80);
-        }
-        else if (col==1) {
-            Label hdr = aCol.getHeader();
-            hdr.setText("Y");
-            aCol.setPrefWidth(80);
-        }
+        // Get column and DataChan
+        int col = aCol.getColIndex();
+        DataChan dchan = col<dtype.getChannelCount() ? dtype.getChannel(col) : null;
+
+        // Get HeaderText string
+        String headerText = "";
+        if (dchan==DataChan.I)
+            headerText = "Index";
+        else if (dchan!=null)
+            headerText = dchan.toString();
+
+        // Set Column.Header.Text and PrefWidth
+        Label header = aCol.getHeader();
+        header.setText(headerText);
+        aCol.setPrefWidth(80);
     }
 
     /**
      * Configures a table cell.
      */
-    void configureCell(ListCell aCell)
+    private void configureCell(ListCell aCell)
     {
-        // Make sure empty cells are minimum size
-        aCell.getStringView().setMinSize(40, Math.ceil(aCell.getFont().getLineHeight()));
-
-        // Get dataset count and point count
+        // Get DataSet info
         DataSet dset = getDataSet();
+        DataType dataType = dset.getDataType();
+        int chanCount = dataType.getChannelCount();
         int pointCount = dset.getPointCount();
-        int colCount = 2;
+
+        // Set Cell.MinSize
+        int minCellHeight = (int) Math.ceil(aCell.getFont().getLineHeight());
+        aCell.getStringView().setMinSize(40, minCellHeight);
 
         // Get dataset count, point count, row and column
         int row = aCell.getRow();
         int col = aCell.getCol();
-        if (row>=pointCount || col>=colCount) {
+        if (row>=pointCount || col>=chanCount) {
             aCell.setText("");
             return;
         }
 
-        // Get cell value
-        Object val;
-        if (col==0)
-            val = dset.getString(row);
-        else val = dset.getValueY(row);
-
-        // Get cell text and set
-        String text = SnapUtils.stringValue(val);
-        aCell.setText(text);
+        // Get/set Cell value/text
+        Object val = dset.getValueForChannelIndex(col, row);
+        String valStr = SnapUtils.stringValue(val);
+        aCell.setText(valStr);
         aCell.setAlign(HPos.RIGHT);
     }
 
@@ -223,38 +229,20 @@ public class DataSetPane extends DocItemPane {
      */
     private void editingCellChanged(PropChange aPC)
     {
+        // Get DataSet info
+        DataSet dset = getDataSet();
+
         // If cell that stopped editing (just return if null)
-        ListCell cell = (ListCell)aPC.getOldValue(); if (cell==null) return;
+        ListCell cell = (ListCell) aPC.getOldValue(); if (cell == null) return;
 
         // Get row/col and make sure there are dataset/points to cover it
         String text = cell.getText();
         int row = cell.getRow();
         int col = cell.getCol();
-        expandDataSet(row, col);
+        expandDataSetSize(row);
 
-        // Get dataset
-        DataSet dset = getDataSet();
-
-        // Handle Col 0
-        if (col==0) {
-            if (dset.getDataType() == DataType.XY) {
-                Double newVal = text != null && text.length() > 0 ? SnapUtils.doubleValue(text) : null;
-                dset.setValueX(newVal, row);
-            }
-            else if (dset.getDataType() == DataType.CY) {
-                dset.setValueC(text, row);
-            }
-            else {
-                System.err.println("DataSetPane: cellEditEnd: Unknown data type: " + dset.getDataType());
-                ViewUtils.beep();
-            }
-        }
-
-        // Handle Col 1
-        else if (col==1) {
-            Double newVal = text!=null && text.length()>0 ? SnapUtils.doubleValue(text) : null;
-            dset.setValueY(newVal, row);
-        }
+        // Set value
+        dset.setValueForChannelIndex(text, col, row);
 
         // Update row and trim DataSet in case dataset/points were cleared
         _sheetView.updateItems(cell.getItem());
@@ -263,24 +251,38 @@ public class DataSetPane extends DocItemPane {
     }
 
     /**
-     * Updates DataSetList DataSet count and Point count to include given row/col.
+     * Make sure dataset is at least given size.
      */
-    void expandDataSet(int aRow, int aCol)
+    private void expandDataSetSize(int aSize)
     {
         DataSet dset = getDataSet();
-        if (aRow>=dset.getPointCount())
-            dset.setPointCount(aRow+1);
+        if (aSize >= dset.getPointCount())
+            dset.setPointCount(aSize + 1);
     }
 
     /**
      * Removes empty dataset and slices.
      */
-    void trimDataSet()
+    private void trimDataSet()
     {
         // While last slice is empty, remove it
         DataSet dset = getDataSet();
         int pc = dset.getPointCount();
         while (pc>1 && dset.getPoint(pc-1).getValueY()==null)
             dset.setPointCount(--pc);
+    }
+
+    /**
+     * Called when DataSet has prop change.
+     */
+    private void dataSetDidChange(PropChange aPC)
+    {
+        String propName = aPC.getPropName();
+
+        // Handle DataSet.DataType change
+        if (propName == DataSet.DataType_Prop) {
+            _sheetView.setMinColCount(0);
+            resetLater();
+        }
     }
 }

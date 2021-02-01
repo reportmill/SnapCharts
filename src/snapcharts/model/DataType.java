@@ -41,7 +41,7 @@ public enum DataType {
             case 'Z': return DataChan.Z;
             case 'C': return DataChan.C;
             case 'I': return DataChan.I;
-            default: System.err.println("DataType.getChannel: Unknown char: " + c); return null;
+            default: throw new RuntimeException("DataType.getChannel: Unknown char: " + c);
         }
     }
 
