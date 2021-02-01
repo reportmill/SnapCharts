@@ -32,8 +32,16 @@ public class DataAreaXY extends DataArea {
      */
     public DataAreaXY(ChartHelper aChartHelper, DataSet aDataSet)
     {
+        this(aChartHelper, aDataSet, aChartHelper.getChartType());
+    }
+
+    /**
+     * Constructor.
+     */
+    public DataAreaXY(ChartHelper aChartHelper, DataSet aDataSet, ChartType aChartType)
+    {
         super(aChartHelper, aDataSet);
-        _chartType = aChartHelper.getChartType();
+        _chartType = aChartType;
     }
 
     /**
