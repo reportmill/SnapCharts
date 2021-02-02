@@ -15,7 +15,6 @@ public class Triangulate {
     static private final int INCOMPLETE = 2;
 
     // Shared resources
-    private final IntArray quicksortStack = new IntArray();
     private final IntArray triangles = new IntArray();
     private final IntArray edges = new IntArray();
     private final BooleanArray complete = new BooleanArray();
@@ -23,23 +22,22 @@ public class Triangulate {
 
     /**
      * Triangulates the given point cloud to a list of triangle indices that make up the Delaunay triangulation.
-     * @param points x,y pairs describing points. Duplicate points will result in undefined behavior.
-     * @param sorted If false, the points will be sorted by the x coordinate, which is required by the triangulation algorithm.
-     * @return triples of indexes into the points that describe the triangles in clockwise order. Note the returned array is reused
-     *         for later calls to the same method.
+     * @param points x,y pairs describing points. Duplicate points will result in undefined behavior. Points must
+     *      be sorted by the x coordinate.
+     * @return triples of indexes into the points that describe the triangles in clockwise order. Note the returned
+     *      array is reused for later calls to the same method.
      */
-    public int[] computeTriangles(float[] points, boolean sorted)
+    public int[] computeTriangles(float[] points)
     {
         int offset = 0; // was param
         int count = points.length; // was param
         int end = offset + count;
 
-        if (!sorted)
-            quicksortPairs(points, offset, end - 1);
-
         // Determine bounds for super triangle.
-        float xmin = points[0], ymin = points[1];
-        float xmax = xmin, ymax = ymin;
+        float xmin = points[0];
+        float ymin = points[1];
+        float xmax = xmin;
+        float ymax = ymin;
         for (int i = offset + 2; i < end; i++) {
             float value = points[i];
             if (value < xmin) xmin = value;
@@ -175,10 +173,13 @@ public class Triangulate {
         return Arrays.copyOf(triangles.items, triangles.size);
     }
 
-    /** Returns INSIDE if point xp,yp is inside the circumcircle made up of the points x1,y1, x2,y2, x3,y3. Returns COMPLETE if xp
+    /**
+     * Returns INSIDE if point xp,yp is inside the circumcircle made up of the points x1,y1, x2,y2, x3,y3. Returns COMPLETE if xp
      * is to the right of the entire circumcircle. Otherwise returns INCOMPLETE. Note: a point on the circumcircle edge is
-     * considered inside. */
-    private int circumCircle (float xp, float yp, float x1, float y1, float x2, float y2, float x3, float y3) {
+     * considered inside.
+     */
+    private int circumCircle (float xp, float yp, float x1, float y1, float x2, float y2, float x3, float y3)
+    {
         float xc, yc;
         float y1y2 = Math.abs(y1 - y2);
         float y2y3 = Math.abs(y2 - y3);
@@ -189,14 +190,16 @@ public class Triangulate {
             float my2 = (y2 + y3) / 2f;
             xc = (x2 + x1) / 2f;
             yc = m2 * (xc - mx2) + my2;
-        } else {
+        }
+        else {
             float m1 = -(x2 - x1) / (y2 - y1);
             float mx1 = (x1 + x2) / 2f;
             float my1 = (y1 + y2) / 2f;
             if (y2y3 < EPSILON) {
                 xc = (x3 + x2) / 2f;
                 yc = m1 * (xc - mx1) + my1;
-            } else {
+            }
+            else {
                 float m2 = -(x3 - x2) / (y3 - y2);
                 float mx2 = (x2 + x3) / 2f;
                 float my2 = (y2 + y3) / 2f;
@@ -212,128 +215,9 @@ public class Triangulate {
         dx = xp - xc;
         dx *= dx;
         dy = yp - yc;
-        if (dx + dy * dy - rsqr <= EPSILON) return INSIDE;
+        if (dx + dy * dy - rsqr <= EPSILON)
+            return INSIDE;
         return xp > xc && dx > rsqr ? COMPLETE : INCOMPLETE;
-    }
-
-    /**
-     * Sorts x,y pairs of values by the x value.
-     * @param lower Start x index.
-     * @param upper End x index.
-     */
-    private void quicksortPairs (float[] values, int lower, int upper)
-    {
-        IntArray stack = quicksortStack;
-        stack.add(lower);
-        stack.add(upper - 1);
-        while (stack.size > 0) {
-            upper = stack.pop();
-            lower = stack.pop();
-            if (upper <= lower) continue;
-            int i = quicksortPartition(values, lower, upper);
-            if (i - lower > upper - i) {
-                stack.add(lower);
-                stack.add(i - 2);
-            }
-            stack.add(i + 2);
-            stack.add(upper);
-            if (upper - i >= i - lower) {
-                stack.add(lower);
-                stack.add(i - 2);
-            }
-        }
-    }
-
-    private int quicksortPartition (final float[] values, int lower, int upper)
-    {
-        float value = values[lower];
-        int up = upper;
-        int down = lower;
-        float temp;
-        while (down < up) {
-            while (values[down] <= value && down < up)
-                down = down + 2;
-            while (values[up] > value)
-                up = up - 2;
-            if (down < up) {
-                temp = values[down];
-                values[down] = values[up];
-                values[up] = temp;
-
-                temp = values[down + 1];
-                values[down + 1] = values[up + 1];
-                values[up + 1] = temp;
-            }
-        }
-        values[lower] = values[up];
-        values[up] = value;
-
-        temp = values[lower + 1];
-        values[lower + 1] = values[up + 1];
-        values[up + 1] = temp;
-        return up;
-    }
-
-    /**
-     * IntArray.
-     */
-    private static class IntArray {
-
-        // The values
-        public int[]  items;
-
-        // The number of items
-        public int  size;
-
-        /**
-         * Constructor.
-         */
-        public IntArray()
-        {
-            int aSize = 16;
-            items = new int[aSize];
-            size = aSize;
-        }
-
-        /**
-         * Add.
-         */
-        public void add(int aValue)
-        {
-            ensureCapacity(size + 1);
-            items[size++] = aValue;
-        }
-
-        /**
-         * Remove.
-         */
-        public void removeIndex(int anIndex)
-        {
-            System.arraycopy(items, anIndex+1, items, anIndex, size - anIndex - 1);
-            size--;
-        }
-
-        /**
-         * Pop.
-         */
-        public int pop()
-        {
-            return items[--size];
-        }
-
-        /**
-         * Ensure capacity.
-         */
-        public void ensureCapacity(int aSize)
-        {
-            if (aSize > items.length)
-                items = Arrays.copyOf(items, aSize);
-        }
-
-        /**
-         * Clear.
-         */
-        public void clear()  { size = 0; }
     }
 
     /**
@@ -341,7 +225,7 @@ public class Triangulate {
      */
     private static class BooleanArray {
 
-        // The values
+        // The items
         public boolean[] items;
 
         // The number of items

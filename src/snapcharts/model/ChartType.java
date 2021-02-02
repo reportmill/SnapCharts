@@ -40,7 +40,7 @@ public enum ChartType {
      */
     public boolean isXYType()
     {
-        return this==LINE || this==AREA || this==SCATTER;
+        return this==LINE || this==AREA || this==SCATTER || this==CONTOUR;
     }
 
     /**

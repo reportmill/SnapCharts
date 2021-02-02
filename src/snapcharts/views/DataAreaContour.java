@@ -1,13 +1,14 @@
 package snapcharts.views;
-import snap.geom.Ellipse;
-import snap.geom.Pos;
-import snap.geom.Shape;
+import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.text.StringBox;
+import snap.util.PropChange;
+import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
+import snapcharts.util.ContourMaker;
 import snapcharts.util.Triangulate;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,6 +17,9 @@ import java.util.Comparator;
  * A DataArea subclass to display ChartType CONTOUR.
  */
 public class DataAreaContour extends DataArea {
+
+    // The Contours
+    private Shape[]  _contours;
 
     // Point indexes in ascending order
     private int[]  _pointIndexesSorted;
@@ -32,11 +36,88 @@ public class DataAreaContour extends DataArea {
     }
 
     /**
+     * Returns the number of contours.
+     */
+    public int getContourCount()  { return 16; }
+
+    /**
+     * Returns the contour level at index.
+     */
+    public double getContourValue(int anIndex)
+    {
+        DataSet dset = getDataSet();
+        double zmin = dset.getMinZ();
+        double zmax = dset.getMaxZ();
+        int count = getContourCount();
+        double delta = (zmax - zmin) / count;
+        return zmin + delta * anIndex;
+    }
+
+    /**
      * Returns the contour shapes array.
      */
     public Shape[] getContours()
     {
-        return new Shape[0];
+        if (_contours!=null) return _contours;
+
+        DataSet dset = getDataSet();
+        AxisView axisX = getAxisViewX();
+        AxisView axisY = getAxisViewY();
+
+        int[] triangleVertextArray = getTriangleVertextArray();
+        int triangleCount = triangleVertextArray.length / 3;
+        ContourMaker.Triangle[] triangles = new ContourMaker.Triangle[triangleCount];
+        for (int i=0; i<triangleCount; i++) {
+            int ind0 = triangleVertextArray[i*3];
+            int ind1 = triangleVertextArray[i*3 + 1];
+            int ind2 = triangleVertextArray[i*3 + 2];
+            triangles[i] = new ContourMaker.Triangle(ind0, ind1, ind2);
+        }
+
+        int count = getContourCount();
+        Shape[] contours = new Shape[count];
+        for (int i=0; i<count; i++) {
+
+            //if (i>2) { contours[i] = new Path2D(); continue; }
+
+            double valZ = getContourValue(i);
+            Shape contour = new ContourMaker().find_contours(dset, triangles, valZ);
+
+            Path2D path = new Path2D();
+            double[] pnts = new double[6];
+            PathIter piter = contour.getPathIter(null);
+            while (piter.hasNext()) {
+                Seg seg = piter.getNext(pnts);
+                switch (seg) {
+                    case MoveTo:
+                        double mx = axisX.dataToView(pnts[0]);
+                        double my = axisY.dataToView(pnts[1]);
+                        path.moveTo(mx, my);
+                        break;
+                    case LineTo:
+                        double lx = axisX.dataToView(pnts[0]);
+                        double ly = axisY.dataToView(pnts[1]);
+                        path.lineTo(lx, ly);
+                        break;
+                    case Close:
+                        path.close();
+                        break;
+                    default: System.err.println("Can't happen: " + seg);
+                }
+            }
+            contours[i] = path;
+        }
+
+        // Set/return
+        return _contours = contours;
+    }
+
+    /**
+     * Clears the Contours.
+     */
+    private void clearContours()
+    {
+        _contours = null;
     }
 
     /**
@@ -52,7 +133,7 @@ public class DataAreaContour extends DataArea {
         float[] points = getPointsForTriangulator();
 
         // Compute triangles, set and return
-        int[] tva = new Triangulate().computeTriangles(points, true);
+        int[] tva = new Triangulate().computeTriangles(points);
 
         // Fix indexes to be for points, not triangulator array indexes
         for (int i=0; i<tva.length; i++)
@@ -122,11 +203,42 @@ public class DataAreaContour extends DataArea {
     @Override
     protected void paintChart(Painter aPntr)
     {
+        paintMesh(aPntr);
+
+        paintContour(aPntr);
+    }
+
+    /**
+     * Paints chart content.
+     */
+    protected void paintContour(Painter aPntr)
+    {
+        Shape[] contours = getContours();
+        int count = contours.length;
+
+        for (int i=0; i<count; i++) {
+            double ratio = i / (double) count;
+            Color color = Color.BLUE.blend(Color.RED, ratio);
+            aPntr.setColor(color);
+            Shape contour = contours[i];
+
+            aPntr.fill(contour);
+            aPntr.setColor(Color.BLACK);
+            aPntr.draw(contour);
+        }
+    }
+
+    /**
+     * Paints chart content.
+     */
+    protected void paintMesh(Painter aPntr)
+    {
         StringBox sbox = new StringBox("Contour Chart");
         sbox.setFont(Font.Arial16);
         sbox.setAlign(Pos.CENTER);
         sbox.setRect(0, 0, getWidth(), getHeight());
         sbox.paint(aPntr);
+        sbox.setFont(Font.Arial12);
 
         DataSet dset = getDataSet();
         int[] triangles = getTriangleVertextArray();
@@ -174,10 +286,42 @@ public class DataAreaContour extends DataArea {
             ellipse.setXY(dispX3 - 2, dispY3 - 2);
             aPntr.fill(ellipse);
 
-            //sbox = new StringBox(String.valueOf(i));
-            //sbox.setFont(Font.Arial12);
-            //sbox.setCenteredXY(dispX1, dispY1 - 10);
-            //sbox.paint(aPntr);
+            sbox.setString(String.valueOf(i));
+            sbox.setCenteredXY(dispX1, dispY1 - 10);
+            sbox.paint(aPntr);
+            sbox.setString(String.valueOf(i+1));
+            sbox.setCenteredXY(dispX2, dispY2 - 10);
+            sbox.paint(aPntr);
+            sbox.setString(String.valueOf(i+2));
+            sbox.setCenteredXY(dispX3, dispY3 - 10);
+            sbox.paint(aPntr);
         }
+    }
+
+    /**
+     * Called when a ChartPart changes.
+     */
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        Object src = aPC.getSource();
+        if (src==getDataSet() || src instanceof Axis) {
+            clearContours();
+        }
+    }
+
+    @Override
+    public void setWidth(double aValue)
+    {
+        if (aValue==getWidth()) return;
+        super.setWidth(aValue);
+        clearContours();
+    }
+
+    @Override
+    public void setHeight(double aValue)
+    {
+        if (aValue==getHeight()) return;
+        super.setHeight(aValue);
+        clearContours();
     }
 }
