@@ -8,7 +8,6 @@ import snap.text.StringBox;
 import snap.util.PropChange;
 import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
-import snapcharts.util.ContourMaker;
 import snapcharts.util.Mesh;
 import snapcharts.util.Triangulate;
 import java.util.Arrays;
@@ -66,14 +65,6 @@ public class DataAreaContour extends DataArea {
         AxisView axisY = getAxisViewY();
 
         int[] triangleVertextArray = getTriangleVertextArray();
-        int triangleCount = triangleVertextArray.length / 3;
-        ContourMaker.Triangle[] triangles = new ContourMaker.Triangle[triangleCount];
-        for (int i=0; i<triangleCount; i++) {
-            int ind0 = triangleVertextArray[i*3];
-            int ind1 = triangleVertextArray[i*3 + 1];
-            int ind2 = triangleVertextArray[i*3 + 2];
-            triangles[i] = new ContourMaker.Triangle(ind0, ind1, ind2);
-        }
 
         Mesh mesh = new Mesh(dset, triangleVertextArray);
         int count = getContourCount();
@@ -82,7 +73,6 @@ public class DataAreaContour extends DataArea {
         for (int i=0; i<count; i++) {
 
             double valZ = getContourValue(i);
-            //Shape contour = new ContourMaker().find_contours(dset, triangles, valZ);
             Shape contour = mesh.getContourShape(valZ);
 
             Path2D path = new Path2D();
