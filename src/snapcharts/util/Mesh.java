@@ -162,14 +162,14 @@ public class Mesh {
                 aboveInd = edgeN.v1==aboveInd ? edgeN.v2 : edgeN.v1;
 
                 // Sanity check: There can't possibly be more path points than there are dataset points
-                if (points.size() > _dset.getPointCount()) {
+                if (points.size() > _dset.getPointCount()*2) {
                     System.err.println("Mesh.getPointsForOneSubpathForIsolines: Compute error (too many points)");
                     return points;
                 }
             }
 
             // Sanity check: There can't possibly be more path points than there are dataset points
-            if (points.size() > _dset.getPointCount()) {
+            if (points.size() > _dset.getPointCount()*2) {
                 System.err.println("Mesh.getPointsForOneSubpathForIsolines: Compute error (too many points)");
                 return points;
             }

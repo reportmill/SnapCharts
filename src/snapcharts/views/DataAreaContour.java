@@ -1,10 +1,6 @@
 package snapcharts.views;
 import snap.geom.*;
-import snap.gfx.Color;
-import snap.gfx.Font;
-import snap.gfx.Painter;
-import snap.gfx.Stroke;
-import snap.text.StringBox;
+import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
@@ -17,6 +13,9 @@ import java.util.Comparator;
  * A DataArea subclass to display ChartType CONTOUR.
  */
 public class DataAreaContour extends DataArea {
+
+    // The array of colors
+    private Color[]  _colors;
 
     // The Contours
     private Shape[]  _contours;
@@ -38,7 +37,7 @@ public class DataAreaContour extends DataArea {
     /**
      * Returns the number of contours.
      */
-    public int getContourCount()  { return 4; }
+    public int getContourCount()  { return 16; }
 
     /**
      * Returns the contour level at index.
@@ -51,6 +50,51 @@ public class DataAreaContour extends DataArea {
         int count = getContourCount();
         double delta = (zmax - zmin) / count;
         return zmin + delta * anIndex;
+    }
+
+    /**
+     * Returns the contour color at given index.
+     */
+    public Color getContourColor(int anIndex)
+    {
+        Color[] colors = getContourColors();
+        return colors[anIndex];
+    }
+
+    /**
+     * Returns the colors.
+     */
+    public Color[] getContourColors()
+    {
+        // If colors already set, just return
+        if (_colors!=null) return _colors;
+
+        // Listen to axisView changes: HERE?!? - YOU'VE GOT TO BE JOKING!!!
+        for (AxisView axisView : _chartHelper.getAxisViews())
+            axisView.addPropChangeListener(pc -> clearContours());
+
+        // Create Gradient
+        double[] offsets = { 0, .25, .5, .75, 1 };
+        Color[] gcols = { Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.RED };
+        GradientPaint paint = new GradientPaint(0, GradientPaint.getStops(offsets, gcols));
+
+        // Expand to rect
+        int count = getContourCount();
+        paint = paint.copyForRect(new Rect(0, 0, count, 1));
+
+        // Create image and fill with gradient
+        Image img = Image.getImageForSizeAndScale(count, 1, false, 1);
+        Painter pntr = img.getPainter();
+        pntr.setPaint(paint);
+        pntr.fillRect(0, 0, count, 1);
+
+        // Get colors for each step
+        Color[] colors = new Color[count];
+        for (int i=0; i<count; i++)
+            colors[i] = new Color(img.getRGB(i, 0));
+
+        // Return colors
+        return _colors = colors;
     }
 
     /**
@@ -207,15 +251,22 @@ public class DataAreaContour extends DataArea {
     {
         Shape[] contours = getContours();
         int count = contours.length;
+        Color lineColor = new Color(.5, .25);
+        aPntr.setStroke(Stroke.Stroke1);
 
+        // Iterate over contours and paint
         for (int i=0; i<count; i++) {
-            double ratio = i / (double) count;
-            Color color = Color.BLUE.blend(Color.RED, ratio);
-            aPntr.setColor(color);
-            Shape contour = contours[i];
 
+            // Get/set color
+            Color color = getContourColor(i);
+            aPntr.setColor(color);
+
+            // Get/fill contour
+            Shape contour = contours[i];
             aPntr.fill(contour);
-            aPntr.setColor(Color.BLACK);
+
+            // Paint contour line
+            aPntr.setColor(lineColor);
             aPntr.draw(contour);
         }
     }
@@ -225,13 +276,6 @@ public class DataAreaContour extends DataArea {
      */
     protected void paintMesh(Painter aPntr)
     {
-        StringBox sbox = new StringBox("Contour Chart");
-        sbox.setFont(Font.Arial16);
-        sbox.setAlign(Pos.CENTER);
-        sbox.setRect(0, 0, getWidth(), getHeight());
-        sbox.paint(aPntr);
-        sbox.setFont(Font.Arial12);
-
         DataSet dset = getDataSet();
         int[] triangles = getTriangleVertextArray();
 
@@ -277,16 +321,6 @@ public class DataAreaContour extends DataArea {
             aPntr.fill(ellipse);
             ellipse.setXY(dispX3 - 2, dispY3 - 2);
             aPntr.fill(ellipse);
-
-            sbox.setString(String.valueOf(i));
-            sbox.setCenteredXY(dispX1, dispY1 - 10);
-            sbox.paint(aPntr);
-            sbox.setString(String.valueOf(i+1));
-            sbox.setCenteredXY(dispX2, dispY2 - 10);
-            sbox.paint(aPntr);
-            sbox.setString(String.valueOf(i+2));
-            sbox.setCenteredXY(dispX3, dispY3 - 10);
-            sbox.paint(aPntr);
         }
     }
 

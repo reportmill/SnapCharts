@@ -157,8 +157,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If already set, just return
         if (aValue==_minOverride) return;
 
-        // Set value, clear intervals
-        _minOverride = aValue;
+        // Set value, firePropChange, clear intervals
+        firePropChange(AxisMin_Prop, _minOverride, _minOverride = aValue);
         clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint
@@ -183,7 +183,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aValue==_maxOverride) return;
 
         // Set value, clear intervals
-        _maxOverride = aValue;
+        firePropChange(AxisMax_Prop, _maxOverride, _maxOverride = aValue);
         clearIntervals();
 
         // Repaint ChartView and clear ChartView.TargPoint
