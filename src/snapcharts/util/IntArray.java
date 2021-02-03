@@ -54,4 +54,14 @@ public class IntArray {
      * Clear.
      */
     public void clear()  { size = 0; }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        String itemsStr = items.length<20 ? Arrays.toString(items) : Arrays.toString(Arrays.copyOf(items,20)) + " ...";
+        return "IntArray { items=" + itemsStr + ", size=" + size + " }";
+    }
 }
