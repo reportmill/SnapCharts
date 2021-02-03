@@ -9,6 +9,7 @@ import snap.util.PropChange;
 import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
 import snapcharts.util.ContourMaker;
+import snapcharts.util.Mesh;
 import snapcharts.util.Triangulate;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,7 +39,7 @@ public class DataAreaContour extends DataArea {
     /**
      * Returns the number of contours.
      */
-    public int getContourCount()  { return 16; }
+    public int getContourCount()  { return 4; }
 
     /**
      * Returns the contour level at index.
@@ -74,14 +75,15 @@ public class DataAreaContour extends DataArea {
             triangles[i] = new ContourMaker.Triangle(ind0, ind1, ind2);
         }
 
+        Mesh mesh = new Mesh(dset, triangleVertextArray);
         int count = getContourCount();
         Shape[] contours = new Shape[count];
+
         for (int i=0; i<count; i++) {
 
-            //if (i>2) { contours[i] = new Path2D(); continue; }
-
             double valZ = getContourValue(i);
-            Shape contour = new ContourMaker().find_contours(dset, triangles, valZ);
+            //Shape contour = new ContourMaker().find_contours(dset, triangles, valZ);
+            Shape contour = mesh.getContourShape(valZ);
 
             Path2D path = new Path2D();
             double[] pnts = new double[6];
