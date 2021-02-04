@@ -5,7 +5,6 @@ import snap.util.PropChange;
 import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
 import snapcharts.util.Mesh;
-import snapcharts.util.Triangulate;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -17,14 +16,11 @@ public class DataAreaContour extends DataArea {
     // The array of colors
     private Color[]  _colors;
 
+    // The Mesh
+    private Mesh  _mesh;
+
     // The Contours
     private Shape[]  _contours;
-
-    // Point indexes in ascending order
-    private int[]  _pointIndexesSorted;
-
-    // The Triangle vertex array
-    private int[]  _triangleVertexArray;
 
     /**
      * Constructor.
@@ -74,8 +70,8 @@ public class DataAreaContour extends DataArea {
             axisView.addPropChangeListener(pc -> clearContours());
 
         // Create Gradient
-        double[] offsets = { 0, .25, .5, .75, 1 };
-        Color[] gcols = { Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.RED };
+        double[] offsets = { 0, .25, .45, .65, 1 };
+        Color[] gcols = { Color.BLUE, Color.CYAN, new Color(98, 213, 63), Color.ORANGE, Color.RED };
         GradientPaint paint = new GradientPaint(0, GradientPaint.getStops(offsets, gcols));
 
         // Expand to rect
@@ -98,19 +94,25 @@ public class DataAreaContour extends DataArea {
     }
 
     /**
+     * Returns the mesh.
+     */
+    private Mesh getMesh()
+    {
+        if (_mesh != null) return _mesh;
+        return _mesh = new Mesh(getDataSet());
+    }
+
+    /**
      * Returns the contour shapes array.
      */
     public Shape[] getContours()
     {
         if (_contours!=null) return _contours;
 
-        DataSet dset = getDataSet();
         AxisView axisX = getAxisViewX();
         AxisView axisY = getAxisViewY();
 
-        int[] triangleVertextArray = getTriangleVertextArray();
-
-        Mesh mesh = new Mesh(dset, triangleVertextArray);
+        Mesh mesh = getMesh();
         int count = getContourCount();
         Shape[] contours = new Shape[count];
 
@@ -154,51 +156,7 @@ public class DataAreaContour extends DataArea {
     private void clearContours()
     {
         _contours = null;
-    }
-
-    /**
-     * Returns the array of triplets for triangle vertexes.
-     * Each entry is an index into the PointIndexesSorted array.
-     */
-    public int[] getTriangleVertextArray()
-    {
-        // If already set, just return
-        if (_triangleVertexArray!=null) return _triangleVertexArray;
-
-        // Get Points sorted by X
-        float[] points = getPointsForTriangulator();
-
-        // Compute triangles, set and return
-        int[] tva = new Triangulate().computeTriangles(points);
-
-        // Fix indexes to be for points, not triangulator array indexes
-        for (int i=0; i<tva.length; i++)
-            tva[i] = tva[i] / 2;
-
-        // Set and return
-        return _triangleVertexArray = tva;
-    }
-
-    /**
-     * Returns the points for the triangulator.
-     */
-    private float[] getPointsForTriangulator()
-    {
-        // Get DataSet, pointCount and array of point indexes sorted by X (ascending)
-        DataSet dset = getDataSet();
-        int pointCount = dset.getPointCount();
-        int[] indexes = getPointIndexesSorted();
-
-        // Create points array and load from sorted indexes
-        float[] points = new float[pointCount*2];
-        for (int i=0; i<pointCount; i++) {
-            int index = indexes[i];
-            points[i * 2] = (float) dset.getX(index);
-            points[i * 2 + 1] = (float) dset.getY(index);
-        }
-
-        // Return points
-        return points;
+        repaint();
     }
 
     /**
@@ -206,9 +164,6 @@ public class DataAreaContour extends DataArea {
      */
     public int[] getPointIndexesSorted()
     {
-        // If already set, just return
-        if (_pointIndexesSorted!=null) return _pointIndexesSorted;
-
         // Get Integer indexes of points sorted by X
         DataSet dset = getDataSet();
         int pointCount = dset.getPointCount();
@@ -220,7 +175,7 @@ public class DataAreaContour extends DataArea {
         // Convert to int[], set and return
         int[] intArray = new int[pointCount];
         for (int i=0; i<pointCount; i++) intArray[i] = indexes[i];
-        return _pointIndexesSorted = intArray;
+        return intArray;
     }
 
     /**
@@ -239,9 +194,9 @@ public class DataAreaContour extends DataArea {
     @Override
     protected void paintChart(Painter aPntr)
     {
-        paintMesh(aPntr);
-
         paintContour(aPntr);
+
+        paintMesh(aPntr);
     }
 
     /**
@@ -277,19 +232,21 @@ public class DataAreaContour extends DataArea {
     protected void paintMesh(Painter aPntr)
     {
         DataSet dset = getDataSet();
-        int[] triangles = getTriangleVertextArray();
+        Mesh.Triangle[] triangles = _mesh.getTriangles();
+
+        Color meshColor = new Color(0d, 0, 0, .1);
 
         AxisView axisX = getAxisViewX();
         AxisView axisY = getAxisViewY();
 
-        Ellipse ellipse = new Ellipse(0, 0, 4, 4);
+        //Ellipse ellipse = new Ellipse(0, 0, 4, 4);
 
-        for (int i=0; i<triangles.length; i+=3) {
+        for (Mesh.Triangle triangle : triangles) {
 
             // Get index of triangle vertices
-            int index1 = triangles[i];
-            int index2 = triangles[i+1];
-            int index3 = triangles[i+2];
+            int index1 = triangle.v1;
+            int index2 = triangle.v2;
+            int index3 = triangle.v3;
 
             // Get points of triangle vertices in data coords
             double dataX1 = dset.getX(index1);
@@ -307,20 +264,17 @@ public class DataAreaContour extends DataArea {
             double dispX3 = axisX.dataToView(dataX3);
             double dispY3 = axisY.dataToView(dataY3);
 
-            aPntr.setColor(Color.RED);
+            aPntr.setColor(meshColor);
             aPntr.setStroke(Stroke.Stroke1);
 
             aPntr.drawLine(dispX1, dispY1, dispX2, dispY2);
             aPntr.drawLine(dispX2, dispY2, dispX3, dispY3);
             aPntr.drawLine(dispX3, dispY3, dispX1, dispY1);
 
-            aPntr.setColor(Color.DARKGRAY);
-            ellipse.setXY(dispX1 - 2, dispY1 - 2);
-            aPntr.fill(ellipse);
-            ellipse.setXY(dispX2 - 2, dispY2 - 2);
-            aPntr.fill(ellipse);
-            ellipse.setXY(dispX3 - 2, dispY3 - 2);
-            aPntr.fill(ellipse);
+            /*aPntr.setColor(Color.DARKGRAY);
+            ellipse.setXY(dispX1 - 2, dispY1 - 2); aPntr.fill(ellipse);
+            ellipse.setXY(dispX2 - 2, dispY2 - 2); aPntr.fill(ellipse);
+            ellipse.setXY(dispX3 - 2, dispY3 - 2); aPntr.fill(ellipse);*/
         }
     }
 
@@ -332,6 +286,7 @@ public class DataAreaContour extends DataArea {
         Object src = aPC.getSource();
         if (src==getDataSet() || src instanceof Axis) {
             clearContours();
+            _mesh = null;
         }
     }
 

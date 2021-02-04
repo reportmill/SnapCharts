@@ -62,24 +62,24 @@ public class ToolTipView extends ColView {
         // Remove children and reset opacity, padding and spacing
         removeChildren();
         setOpacity(1);
-        setPadding(7,7,15,7);
+        setPadding(5,5,10,5);
 
         // Create RowView: BulletView
         Color color = chart.getColor(dset.getIndex());
-        ShapeView bulletView = new ShapeView(new Ellipse(0,0,5,5));
-        bulletView.setFill(color);
+        //ShapeView bulletView = new ShapeView(new Ellipse(0,0,5,5));
+        //bulletView.setFill(color);
 
         // Create RowView: NameLabel, ValLabel
-        StringView nameLabel = new StringView();
-        nameLabel.setFont(Font.Arial12);
-        nameLabel.setText(dset.getName() + ":");
+        //StringView nameLabel = new StringView();
+        //nameLabel.setFont(Font.Arial12);
+        //nameLabel.setText(dset.getName() + ":");
 
         // Create RowView and add BulletView, NameLabel and ValLabel
-        RowView rview = new RowView();
-        rview.setSpacing(5);
-        rview.setMargin(0, 0, 3, 0);
-        rview.setChildren(bulletView, nameLabel);
-        addChild(rview);
+        //RowView rview = new RowView();
+        //rview.setSpacing(5);
+        //rview.setMargin(0, 0, 3, 0);
+        //rview.setChildren(bulletView, nameLabel);
+        //addChild(rview);
 
         // Add children
         int chanCount = dset.getDataType().getChannelCount();
