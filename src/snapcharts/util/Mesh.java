@@ -25,8 +25,11 @@ public class Mesh {
     // Extra points used for trianglulation 'super-triangle'
     private Point[] _superPoints = new Point[4];
 
-    // The Mesh path
+    // The path through all the mesh edges
     private Shape  _meshPath;
+
+    // The path around the mesh perimeter
+    private Shape  _hullPath;
 
     // A constant for circumcircle tolerance
     private static final float EPSILON = 0.000001f;
@@ -262,6 +265,52 @@ public class Mesh {
 
         // Set return
         return _meshPath = path;
+    }
+
+
+    /**
+     * Returns the path of the hull surrounding mesh.
+     */
+    public Shape getHullPath()
+    {
+        // If already set, just return
+        if (_hullPath != null) return _hullPath;
+
+        // Create path add first point
+        Path2D path = new Path2D();
+        Edge edge0 = getEdge(0, 1);
+        double p0x = getX(0);
+        double p0y = getY(0);
+        path.moveTo(p0x, p0y);
+
+        // Iterate over perimeter edges
+        Edge nextEdge = edge0;
+        int nextIndex = edge0.v2;
+        do {
+
+            // Add point for next index
+            double nextX = getX(nextIndex);
+            double nextY = getY(nextIndex);
+            path.lineTo(nextX, nextY);
+
+            // Get next perimeter edge
+            nextEdge = getNextPerimeterEdge(nextEdge, nextIndex);
+
+            // Sanity checks (why not - better safe than sorry)
+            if (nextEdge==null) {
+                System.err.println("Mesh.getHullPath: No next perimeter edge?"); return path; }
+            if (path.getPointCount() > getPointCount()) {
+                System.err.println("Mesh.getHullPath: Too many points (can't happen?)"); return path; }
+
+            // Otherwise update nextIndex
+            nextIndex = nextEdge.v1==nextIndex ? nextEdge.v2 : nextEdge.v1;
+
+        // Stop when next edge is original edge
+        } while (nextEdge != edge0);
+
+        // Close path, set and return
+        path.close();
+        return _hullPath = path;
     }
 
     /*

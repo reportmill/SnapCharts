@@ -42,10 +42,12 @@ public class ContourMaker {
         // Get line segments
         List<Isoline> isolines = getIsolines(valZ);
 
-        // Create path (just return if no segments)
+        // If no isolones, return path around mesh
+        if (isolines.size()==0)
+            return getMesh().getHullPath();
+
+        // Create path
         Path2D path = new Path2D();
-        if (isolines.size() == 0)
-            return path;
 
         // Add subpaths from isolines until done
         while (isolines.size() != 0) {
@@ -93,7 +95,7 @@ public class ContourMaker {
                 nextIso = getIsolineForEdge(theIsolines, edgeN);
             }
 
-            // Expand back
+            // Expand back - do I need this?
             Isoline prevIso = getIsolineForEdge(theIsolines, edge0);
             while (prevIso != null) {
                 points.add(0, edge0 == prevIso.edge1 ? prevIso.point2 : prevIso.point1);

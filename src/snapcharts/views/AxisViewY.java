@@ -144,8 +144,9 @@ public class AxisViewY extends AxisView {
      */
     protected double getTickLabelsMaxWidth()
     {
+        StringBox[] tickLabels = getTickLabels();
         double max = 0;
-        for (StringBox tickLabel : getTickLabels())
+        for (StringBox tickLabel : tickLabels)
             max = Math.max(max, tickLabel.getStringWidth());
         return max;
     }

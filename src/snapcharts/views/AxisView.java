@@ -365,9 +365,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     protected StringBox[] getTickLabels()
     {
-        // Call this to make sure intervals are up to date
-        getIntervals();
-
         // If already set, just return
         if (_tickLabels != null) return _tickLabels;
 
