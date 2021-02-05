@@ -83,8 +83,9 @@ public class ChartHelperPie extends ChartHelper {
     {
         // Make sure all DataSet.AxisTypeY are just Y
         DataSetList dsetList = getDataSetList(); if (dsetList.getDataSetCount()==0) return;
-        for (DataSet dset : dsetList.getDataSets())
+        for (DataSet dset : dsetList.getDataSets().toArray(new DataSet[0]))
             dset.setAxisTypeY(AxisType.Y);
+        dsetList = getDataSetList();
 
         // Do normal version
         super.resetView();

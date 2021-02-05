@@ -70,11 +70,21 @@ public class AxisViewY extends AxisView {
         double titleX = AXIS_MARGIN;
         double titleW = _titleViewBox.getPrefWidth();
 
+        // Get TickLabels X
+        double spacing = titleW > 0 ? TITLE_TICKS_SPACING : 0;
+        double ticksX = AXIS_MARGIN + titleW + spacing;
+
         // If on RIGHT, reset titleX
         if (getAxis().getSide() == Side.RIGHT) {
             double areaMaxX = getWidth();
             titleX = areaMaxX - AXIS_MARGIN - titleW;
+            ticksX = AXIS_MARGIN;
         }
+
+        // Update TickLabels X
+        StringBox[] tickLabels = getTickLabels();
+        for (StringBox tickLabel : tickLabels)
+            tickLabel.setX(ticksX);
 
         // Set TitleView bounds
         _titleViewBox.setBounds(titleX, 0, titleW, areaH);
@@ -148,6 +158,11 @@ public class AxisViewY extends AxisView {
         double max = 0;
         for (StringBox tickLabel : tickLabels)
             max = Math.max(max, tickLabel.getStringWidth());
+
+        // Use bogus thing
+        int bogus = (int) Math.ceil(getFont().getStringAdvance("-0.000"));
+        max = Math.max(max, bogus);
+
         return max;
     }
 }

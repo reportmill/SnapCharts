@@ -33,11 +33,11 @@ public class ChartHelperContour extends ChartHelper {
         List<DataSet> dsets = dataSetList.getDataSets();
         int dsetCount = dsets.size();
 
-        DataArea[] dataAreas = new DataArea[dsetCount*2];
+        DataArea[] dataAreas = new DataArea[dsetCount]; // *2
         for (int i=0; i<dsetCount; i++) {
             DataSet dset = dsets.get(i);
-            dataAreas[i*2] = new DataAreaXY(this, dset, ChartType.LINE);
-            dataAreas[i*2+1] = new DataAreaContour(this, dset);
+            //dataAreas[i*2] = new DataAreaXY(this, dset, ChartType.LINE);
+            dataAreas[i] = new DataAreaContour(this, dset); // i*2+1
         }
 
         return dataAreas;
