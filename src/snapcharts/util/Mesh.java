@@ -476,8 +476,14 @@ public class Mesh {
         double x2, y2;
         double x3, y3;
 
-        // Whether this circle is no longer in play
-        private boolean _complete;
+        // Center point
+        private double centerX, centerY;
+
+        // Radius
+        private double radiusSqr;
+
+        // Whether circle is too small
+        private boolean _isTooSmall;
 
         /**
          * Constructor.
@@ -490,6 +496,57 @@ public class Mesh {
             y2 = getY(v2);
             x3 = getX(v3);
             y3 = getY(v3);
+            calcCenterAndRadius();
+        }
+
+        /**
+         * Calculate center X/Y and radius.
+         */
+        private void calcCenterAndRadius()
+        {
+            // Get diff
+            double y1y2 = Math.abs(y1 - y2);
+            double y2y3 = Math.abs(y2 - y3);
+
+            // Handle very small triangle height
+            if (y1y2 < EPSILON) {
+
+                if (y2y3 < EPSILON) {
+                    _isTooSmall = true;
+                    return;
+                }
+
+                double m2 = -(x3 - x2) / (y3 - y2);
+                double mx2 = (x2 + x3) / 2;
+                double my2 = (y2 + y3) / 2;
+                centerX = (x2 + x1) / 2;
+                centerY = m2 * (centerX - mx2) + my2;
+            }
+
+            // Handle reasonable triangle height
+            else {
+                double m1 = -(x2 - x1) / (y2 - y1);
+                double mx1 = (x1 + x2) / 2;
+                double my1 = (y1 + y2) / 2;
+
+                if (y2y3 < EPSILON) {
+                    centerX = (x3 + x2) / 2;
+                    centerY = m1 * (centerX - mx1) + my1;
+                }
+
+                else {
+                    double m2 = -(x3 - x2) / (y3 - y2);
+                    double mx2 = (x2 + x3) / 2;
+                    double my2 = (y2 + y3) / 2;
+                    centerX = (m1 * mx1 - m2 * mx2 + my2 - my1) / (m1 - m2);
+                    centerY = m1 * (centerX - mx1) + my1;
+                }
+            }
+
+            // Now with Center X/Y, calc radius squared from one of perimeter points
+            double dx = x2 - centerX;
+            double dy = y2 - centerY;
+            radiusSqr = dx * dx + dy * dy;
         }
 
         /**
@@ -497,58 +554,22 @@ public class Mesh {
          */
         public boolean containsVertexPoint(int vertIndex)
         {
-            // If
-            if (_complete)
+            // If too small, just bail
+            if (_isTooSmall)
                 return false;
 
-            double xp = getX(vertIndex);
-            double yp = getY(vertIndex);
+            // Get X/Y for vertex index point, X/Y offset from circle center, and offset squares
+            double px = getX(vertIndex);
+            double py = getY(vertIndex);
+            double dx = px - centerX;
+            double dy = py - centerY;
+            double dxSqr = dx * dx;
+            double dySqr = dy * dy;
 
-            double xc, yc;
-            double y1y2 = Math.abs(y1 - y2);
-            double y2y3 = Math.abs(y2 - y3);
-
-            if (y1y2 < EPSILON) {
-                if (y2y3 < EPSILON)
-                    return false; //INCOMPLETE;
-                double m2 = -(x3 - x2) / (y3 - y2);
-                double mx2 = (x2 + x3) / 2f;
-                double my2 = (y2 + y3) / 2f;
-                xc = (x2 + x1) / 2f;
-                yc = m2 * (xc - mx2) + my2;
-            }
-
-            else {
-                double m1 = -(x2 - x1) / (y2 - y1);
-                double mx1 = (x1 + x2) / 2f;
-                double my1 = (y1 + y2) / 2f;
-
-                if (y2y3 < EPSILON) {
-                    xc = (x3 + x2) / 2f;
-                    yc = m1 * (xc - mx1) + my1;
-                }
-
-                else {
-                    double m2 = -(x3 - x2) / (y3 - y2);
-                    double mx2 = (x2 + x3) / 2f;
-                    double my2 = (y2 + y3) / 2f;
-                    xc = (m1 * mx1 - m2 * mx2 + my2 - my1) / (m1 - m2);
-                    yc = m1 * (xc - mx1) + my1;
-                }
-            }
-
-            double dx = x2 - xc;
-            double dy = y2 - yc;
-            double rsqr = dx * dx + dy * dy;
-
-            dx = xp - xc;
-            dx *= dx;
-            dy = yp - yc;
-            if (dx + dy * dy - rsqr <= EPSILON)
-                return true; //INSIDE;
-
-            //_complete = xp > xc && dx > rsqr;
-            return false; //xp > xc && dx > rsqr ? COMPLETE : INCOMPLETE;
+            // If sum of offsets (sides) less than radius (hypotenuse), return true
+            if (dxSqr + dySqr - radiusSqr <= EPSILON)
+                return true;
+            return false;
         }
     }
 }
