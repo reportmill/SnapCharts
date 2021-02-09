@@ -4,9 +4,6 @@ import snap.gfx.Color;
 import snap.gfx.Paint;
 import snap.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A view to render a chart.
  */
@@ -35,6 +32,9 @@ public class Chart extends ChartPart {
 
     // The Y4 Axis
     private AxisY  _axisY4;
+
+    // The Z Axis
+    private AxisZ _axisZ;
 
     // The DataSet
     private DataSetList _dsetList = new DataSetList(this);
@@ -96,6 +96,10 @@ public class Chart extends ChartPart {
         // Create/set Y Axis
         _axisY4 = new AxisY(this, AxisType.Y4);
         _axisY4.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
+        // Create/set Z Axis
+        _axisZ = new AxisZ(this);
+        _axisZ.addPropChangeListener(pc -> chartPartDidPropChange(pc));
 
         // Create/set Legend
         _legend = new Legend();
@@ -164,6 +168,11 @@ public class Chart extends ChartPart {
     public AxisY getAxisY4()  { return _axisY4; }
 
     /**
+     * Returns the Z axis object.
+     */
+    public AxisZ getAxisZ()  { return _axisZ; }
+
+    /**
      * Returns the Axis for given type.
      */
     public Axis getAxisForType(AxisType anAxisType)
@@ -174,6 +183,7 @@ public class Chart extends ChartPart {
             case Y2: return getAxisY2();
             case Y3: return getAxisY3();
             case Y4: return getAxisY4();
+            case Z: return getAxisZ();
             default: return null;
         }
     }

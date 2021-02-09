@@ -11,8 +11,8 @@ import snapcharts.util.ContourMaker;
  */
 public class DataAreaContour extends DataArea {
 
-    // The array of colors
-    private Color[]  _colors;
+    // The Contour helper
+    private ChartHelperContour  _contourHelper;
 
     // The ContourMaker
     private ContourMaker  _contourMaker;
@@ -32,24 +32,24 @@ public class DataAreaContour extends DataArea {
     public DataAreaContour(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super(aChartHelper, aDataSet);
+
+        _contourHelper = (ChartHelperContour) aChartHelper;
     }
 
     /**
      * Returns the number of contours.
      */
-    public int getContourCount()  { return 16; }
+    public int getContourCount()
+    {
+        return _contourHelper.getContourCount();
+    }
 
     /**
      * Returns the contour level at index.
      */
     public double getContourValue(int anIndex)
     {
-        DataSet dset = getDataSet();
-        double zmin = dset.getMinZ();
-        double zmax = dset.getMaxZ();
-        int count = getContourCount();
-        double delta = (zmax - zmin) / count;
-        return zmin + delta * anIndex;
+        return _contourHelper.getContourValue(anIndex);
     }
 
     /**
@@ -57,44 +57,7 @@ public class DataAreaContour extends DataArea {
      */
     public Color getContourColor(int anIndex)
     {
-        Color[] colors = getContourColors();
-        return colors[anIndex];
-    }
-
-    /**
-     * Returns the colors.
-     */
-    public Color[] getContourColors()
-    {
-        // If colors already set, just return
-        if (_colors!=null) return _colors;
-
-        // Listen to axisView changes: HERE?!? - YOU'VE GOT TO BE JOKING!!!
-        for (AxisView axisView : _chartHelper.getAxisViews())
-            axisView.addPropChangeListener(pc -> clearContours());
-
-        // Create Gradient
-        double[] offsets = { 0, .25, .45, .65, 1 };
-        Color[] gcols = { Color.BLUE, Color.CYAN, new Color(98, 213, 63), Color.ORANGE, Color.RED };
-        GradientPaint paint = new GradientPaint(0, GradientPaint.getStops(offsets, gcols));
-
-        // Expand to rect
-        int count = getContourCount();
-        paint = paint.copyForRect(new Rect(0, 0, count, 1));
-
-        // Create image and fill with gradient
-        Image img = Image.getImageForSizeAndScale(count, 1, false, 1);
-        Painter pntr = img.getPainter();
-        pntr.setPaint(paint);
-        pntr.fillRect(0, 0, count, 1);
-
-        // Get colors for each step
-        Color[] colors = new Color[count];
-        for (int i=0; i<count; i++)
-            colors[i] = new Color(img.getRGB(i, 0));
-
-        // Return colors
-        return _colors = colors;
+        return _contourHelper.getContourColor(anIndex);
     }
 
     /**
@@ -187,7 +150,7 @@ public class DataAreaContour extends DataArea {
     /**
      * Clears the Contours.
      */
-    private void clearContours()
+    public void clearContours()
     {
         _contours = null;
         _meshPath = null;

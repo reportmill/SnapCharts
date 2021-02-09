@@ -6,7 +6,8 @@ public enum AxisType {
     Y,
     Y2,
     Y3,
-    Y4;
+    Y4,
+    Z;
 
     /**
      * Returns whether AxisType is Y type.

@@ -2,7 +2,6 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.view.ColView;
 import snap.view.RowView;
-import snap.view.View;
 import snap.view.ViewProxy;
 import java.util.Arrays;
 
@@ -25,6 +24,9 @@ public class ChartViewLayout {
 
     // The legend proxy
     private ViewProxy<LegendView>  _legendProxy;
+
+    // The contour proxy
+    private ViewProxy<ContourAxisView>  _contourProxy;
 
     // The DataArea proxy
     private ViewProxy<DataView>  _dataAreaProxy;
@@ -63,6 +65,7 @@ public class ChartViewLayout {
         _chartProxy = new ViewProxy<>(_chartView);
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
+        _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);
         _dataAreaProxy = _chartProxy.getChildForClass(DataView.class);
     }
 
@@ -285,13 +288,17 @@ public class ChartViewLayout {
             legend.setGrowHeight(aSide==Side.TOP || aSide==Side.BOTTOM);
         }
 
+        // Get Contour if on given side.
+        boolean hasContour = _contourProxy!=null && _contourProxy.isVisible() && aSide == Side.RIGHT;
+        ViewProxy<?> contour = hasContour ? _contourProxy : null;
+
         // Handle sides
         switch (aSide)
         {
             case TOP: return getNonNullArray(_headerProxy, legend);
             case BOTTOM: return getNonNullArray(axis1, legend);
             case LEFT: return getNonNullArray(legend, axis1, axis2);
-            case RIGHT: return getNonNullArray(axis1, axis2, legend);
+            case RIGHT: return getNonNullArray(axis1, axis2, legend, contour);
             default: throw new RuntimeException("ChartViewLayout.getViewsForSide: Unknown side: " + aSide);
         }
     }

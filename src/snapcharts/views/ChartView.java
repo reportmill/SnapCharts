@@ -27,6 +27,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     // The Legend
     private LegendView _legendView;
 
+    // The view that shows contour scale
+    private ContourAxisView _contourView;
+
     // The amount of the chart to show horizontally (0-1)
     private double  _reveal = 1;
 
@@ -81,13 +84,17 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // Configure this view
         setGrowWidth(true);
 
-        // Create/add ChartTop
+        // Create/add HeaderView
         _headerView = new HeaderView();
         addChild(_headerView);
 
-        // Create/configure ChartLegend
+        // Create/configure LegendView
         _legendView = new LegendView();
         addChild(_legendView);
+
+        // Create/configure ContourView
+        _contourView = new ContourAxisView();
+        addChild(_contourView);
 
         // Create/add DataView
         _dataView = new DataView(this);
@@ -200,6 +207,11 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public LegendView getLegendView()  { return _legendView; }
 
     /**
+     * Returns the ContourView.
+     */
+    public ContourAxisView getContourView()  { return _contourView; }
+
+    /**
      * Called to reset view from Chart.
      */
     protected void resetView()
@@ -222,6 +234,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Reset Legend
         _legendView.resetView();
+
+        // Reset Contour
+        _contourView.resetView();
 
         // Reset ChartHelper
         chartHelper.resetView();
