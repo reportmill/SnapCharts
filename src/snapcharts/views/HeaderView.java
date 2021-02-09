@@ -40,12 +40,13 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
         setAlign(Pos.CENTER);
         setSpacing(8);
         setMargin(0, 0, 8, 0);
-        setClipToBounds(true);
 
-        // Create ScaleBox, ColView
+        // Create ColView to hold TitleView, SubtitleView
         _colView = new ColView();
         _colView.setAlign(Pos.TOP_CENTER);
         _colView.setSpacing(2);
+
+        // Create ScaleBox to hold ColView and shrink if needed
         _scaleBox = new ScaleBox(_colView);
         _scaleBox.setKeepAspect(true);
         _scaleBox.setAlign(Pos.BOTTOM_CENTER);
