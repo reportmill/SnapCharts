@@ -8,6 +8,7 @@ import snap.gfx.Stroke;
 import snap.text.StringBox;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
+import snap.util.StringUtils;
 import snap.view.StringView;
 import snap.view.ViewAnim;
 import snap.view.ViewUtils;
@@ -46,6 +47,12 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // The tick labels as StringBoxes
     private StringBox[]  _tickLabels;
+
+    // The current length of longest tick label string
+    private int  _longSampleLen;
+
+    // Runnable to trigger check if default tick format has changed
+    private Runnable  _checkForRelayout, CHECK_FOR_RELAYOUT = () -> checkForTickFormatChange();
 
     // Constants for Properties
     public static final String AxisMin_Prop = "AxisMin";
@@ -358,6 +365,31 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _intervals = null;
         _tickLabels = null;
         repaint();
+
+        // Register to call checkForTickFormatChange()
+        if (_checkForRelayout == null)
+            getUpdater().runBeforeUpdate(_checkForRelayout = CHECK_FOR_RELAYOUT);
+    }
+
+    /**
+     * Called when intervals change to see if default tick label format has changed (which triggers full chart relayout).
+     */
+    private void checkForTickFormatChange()
+    {
+        // Get new longest tick label sample string and its length
+        String longSample = getAutoFormatPatternForTickLabelsAndLongSample()[1];
+        int longSampleLen = longSample.length();
+
+        // If length has changed, relayout chart
+        if (longSampleLen != _longSampleLen) {
+            relayoutParent();
+            _longSampleLen = longSampleLen;
+            //if (getAxisType()==AxisType.Y)
+            //    System.out.println("PatternChange: " + getAutoFormatPatternForTickLabelsAndLongSample()[0] + ", " + longSample);
+        }
+
+        // Reset runnable trigger
+        _checkForRelayout = null;
     }
 
     /**
@@ -371,7 +403,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Get Intervals info
         Intervals intervals = getIntervals();
         int count = intervals.getCount();
-        double delta = intervals.getDelta();
+
+        // Get format
+        String formatStr = getAutoFormatPatternForTickLabelsAndLongSample()[0];
+        DecimalFormat format = StringUtils.getDecimalFormat(formatStr);
 
         // Create array
         StringBox[] sboxes = new StringBox[count];
@@ -379,7 +414,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Iterate over intervals
         for (int i = 0; i < count; i++) {
             double dataX = intervals.getInterval(i);
-            String str = getLabelStringForValueAndDelta(dataX, delta);
+            String str = format.format(dataX); //getLabelStringForValueAndDelta(dataX, delta);
             StringBox sbox = sboxes[i] = new StringBox(str);
             sbox.setFont(getFont());
             sbox.setColor(AXIS_LABELS_COLOR);
@@ -395,6 +430,63 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * Layout TickLabels.
      */
     protected void layoutTickLabels()  { }
+
+    /**
+     * Returns the max label width.
+     */
+    protected double getTickLabelsMaxWidth()
+    {
+        String tickStr = getAutoFormatPatternForTickLabelsAndLongSample()[1];
+        int tickW = (int) Math.ceil(getFont().getStringAdvance(tickStr));
+        return tickW;
+    }
+
+    /**
+     * Returns the suggested format pattern.
+     */
+    private String[] getAutoFormatPatternForTickLabelsAndLongSample()
+    {
+        // Get max value
+        double axisMin = getAxisMinForIntervalCalc();
+        double axisMax = getAxisMaxForIntervalCalc();
+
+        // Get ideal intervals, interval delta and its number of whole digits
+        Intervals ivals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, false, false);
+        double delta = ivals.getDelta();
+        int wholeDigitCount = getWholeDigitCount(delta);
+
+        // Handle anything above 10 (since intervals will be factor 10 and ends factor of 1)
+        String pattern;
+        if (wholeDigitCount >= 2) {
+            pattern = "#";
+        }
+
+        // Handle anything straddling whole/fractional boundary
+        else if (wholeDigitCount > 0) {
+            pattern = "#.#";
+        }
+
+        // Handle fractions
+        else {
+            int fractDigitCount = getFractionDigitCount(delta) + 1;
+            String str = "#.#";
+            for (int i = 1; i < fractDigitCount; i++) str += '#';
+            pattern = str;
+        }
+
+        String pattern0 = pattern.replace('#', '0');
+        DecimalFormat format = StringUtils.getDecimalFormat(pattern0);
+        String longSample = format.format(ivals.getMin());
+        for (int i=1; i<ivals.getCount(); i++) {
+            double ival = ivals.getInterval(i);
+            String str = format.format(ival);
+            if (str.length() > longSample.length())
+                longSample = str;
+        }
+
+        // Return pattern and sample
+        return new String[] { pattern, longSample };
+    }
 
     /**
      * Paint axis.
@@ -678,37 +770,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Reset title
         String title = axis.getTitle();
         _titleView.setText(title);
-
-        // Check/reset intervals
-        if (!isIntervalsValid())
-            clearIntervals();
-    }
-
-    /**
-     * Returns true if intervals are okay.
-     */
-    private boolean isIntervalsValid()
-    {
-        // If intervals not set, return false
-        if (_intervals==null)
-            return false;
-
-        // Special case, bar
-        if (getAxisType()==AxisType.X) {
-            boolean isBar = getChart().getType().isBarType();
-            DataSetList dsetList = getDataSetList();
-            DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
-            if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
-                int pointCount = dsetList.getPointCount();
-                double max = isBar ? pointCount : pointCount - 1;
-                return _intervals.matchesMinMax(0, max);
-            }
-        }
-
-        // Normal case: Return true if min/max are the same
-        double min = getAxisMinForIntervalCalc();
-        double max = getAxisMaxForIntervalCalc();
-        return _intervals.matchesMinMax(min, max);
     }
 
     /**
@@ -760,5 +821,26 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public double invLog10(double aValue)
     {
         return Math.pow(10, aValue);
+    }
+
+    /**
+     * Return the number of digits before decimal point in given value.
+     */
+    private int getWholeDigitCount(double aValue)
+    {
+        if (aValue<1)
+            return 0;
+        double log10 = Math.log10(aValue);
+        return (int) Math.floor(log10) + 1;
+    }
+
+    /**
+     * Return the number of digits after decimal point in given value.
+     */
+    private int getFractionDigitCount(double aValue)
+    {
+        if (aValue >= 1) return 0;
+        double log10 = Math.log10(aValue);
+        return (int) Math.ceil(Math.abs(log10));
     }
 }

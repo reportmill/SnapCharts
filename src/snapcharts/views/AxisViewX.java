@@ -1,5 +1,4 @@
 package snapcharts.views;
-import snap.geom.Insets;
 import snap.gfx.*;
 import snap.text.StringBox;
 import snapcharts.model.AxisX;
@@ -41,7 +40,13 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     protected double getPrefHeightImpl(double aW)
     {
-        double ticksH = getTickLabels()[0].getStringHeight();
+        // Get ticks height
+        Font font = getFont();
+        int ascent = (int) Math.ceil(font.getAscent());
+        int descent = (int) Math.ceil(font.getDescent());
+        double ticksH = ascent + descent;
+
+        // Get TitleView height
         double titleH = _titleView.getPrefHeight();
         return AXIS_MARGIN + ticksH + TITLE_TICKS_SPACING + titleH + AXIS_MARGIN;
     }
@@ -54,8 +59,13 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // Get area bounds
         double areaW = getWidth();
 
+        // Get ticks height
+        Font font = getFont();
+        int ascent = (int) Math.ceil(font.getAscent());
+        int descent = (int) Math.ceil(font.getDescent());
+        double ticksH = ascent + descent;
+
         // Set TitleView bounds
-        double ticksH = getTickLabels()[0].getStringHeight();
         double titleW = _titleView.getPrefWidth();
         double titleH = _titleView.getPrefHeight();
         double titleX = Math.round((areaW - titleW)/2);

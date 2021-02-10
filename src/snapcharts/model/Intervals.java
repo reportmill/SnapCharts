@@ -81,14 +81,6 @@ public class Intervals {
     public double[] getDivs()  { return _divs; }
 
     /**
-     * Returns whether given min/max match the original values this intervals was created with.
-     */
-    public boolean matchesMinMax(double aMin, double aMax)
-    {
-        return MathUtils.equals(aMin, getSeedMin()) && MathUtils.equals(aMax, getSeedMax());
-    }
-
-    /**
      * Standard toString implementation.
      */
     @Override
@@ -214,6 +206,14 @@ public class Intervals {
         ivals._divs = divs;
         ivals._count = count;
 
+        // Bogus - get rid of this when you figure it out
+        if (count < 2) {
+            getDivsFor(aMin, aMax, axisLen, divLen, minFixed, maxFixed);
+            System.err.println("Intervals: getIntevalsForMinMaxLen: How can this happen?");
+            ivals._divs = divs = new double[] { aMin, aMax };
+            ivals._count = count = divs.length;
+        }
+
         // Cache delta: If plenty of divs, use difference of second set, otherwise use max of first/last sets
         ivals._delta = count>=4 ? divs[2] - divs[1] : Math.max(divs[1] - divs[0], divs[count-1] - divs[count-2]);
 
@@ -228,9 +228,12 @@ public class Intervals {
     private static double[] getDivsFor(double aMin, double aMax, double axisLen, double divLen, boolean minFixed, boolean maxFixed)
     {
         // Fix some edge cases
-        if (aMin>0 && aMin<1 && MathUtils.equals(aMin/(aMax - aMin), 0)) aMin = 0;
-        if (Double.isInfinite(aMin)) aMin = -Double.MIN_VALUE;
-        if (Double.isInfinite(aMax)) aMax = Double.MAX_VALUE;
+        if (aMin>0 && aMin<1 && MathUtils.equals(aMin/(aMax - aMin), 0))
+            aMin = 0;
+        if (Double.isInfinite(aMin))
+            aMin = -Double.MIN_VALUE;
+        if (Double.isInfinite(aMax))
+            aMax = Double.MAX_VALUE;
 
         // Find largest factor of 10 that is below range (must be a better way to do this)
         if (aMin==aMax) aMax++;

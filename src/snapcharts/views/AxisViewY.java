@@ -148,21 +148,4 @@ public class AxisViewY extends AxisView {
             tickLabel.setRect(ticksX, tickY, ticksW, tickH);
         }
     }
-
-    /**
-     * Returns the max label width.
-     */
-    protected double getTickLabelsMaxWidth()
-    {
-        StringBox[] tickLabels = getTickLabels();
-        double max = 0;
-        for (StringBox tickLabel : tickLabels)
-            max = Math.max(max, tickLabel.getStringWidth());
-
-        // Use bogus thing
-        int bogus = (int) Math.ceil(getFont().getStringAdvance("-0.000"));
-        max = Math.max(max, bogus);
-
-        return max;
-    }
 }
