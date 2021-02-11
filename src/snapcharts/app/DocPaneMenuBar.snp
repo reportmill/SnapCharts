@@ -35,6 +35,7 @@
     <MenuItem Name="SubscriptMenuItem" text="Subscript" />
   </Menu>
   <Menu Name="ToolsMenu" text="Tools">
+    <MenuItem Name="PlotlyMenuItem" text="Open in Plotly" />
     <MenuItem Name="DevPaneMenuItem" text="Show Developer Tools" />
   </Menu>
 </MenuBar>

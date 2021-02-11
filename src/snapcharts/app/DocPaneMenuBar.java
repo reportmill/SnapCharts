@@ -117,7 +117,9 @@ public class DocPaneMenuBar extends ViewOwner {
 //        if (anEvent.equals("OutlineMenuItem"))
 //            editor.getStyler().setTextBorder(Border.blackBorder());
 //
-        // Handle DevPaneMenuItem
+        // Handle PlotlyMenuItem, DevPaneMenuItem
+        if (anEvent.equals("PlotlyMenuItem"))
+            docPane.openInPlotly();
         if (anEvent.equals("DevPaneMenuItem"))
             DevPane.setDevPaneShowing(getUI(), !DevPane.isDevPaneShowing(getUI()));
     }

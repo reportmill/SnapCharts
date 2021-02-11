@@ -10,6 +10,7 @@ import snap.view.*;
 import snap.viewx.*;
 import snap.web.WebFile;
 import snap.web.WebURL;
+import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.model.*;
 
 /**
@@ -335,6 +336,37 @@ public class DocPane extends ViewOwner {
     public void selectAll()  { getCopyPaster().selectAll(); }
 
     /**
+     * Opens current selection in Plotly.
+     */
+    public void openInPlotly()
+    {
+        // Get first non-group item
+        DocItem docItem = getSelItem();
+        while (docItem instanceof DocItemGroup) {
+            DocItemGroup groupDocItem = (DocItemGroup) docItem;
+            docItem = groupDocItem.getItem(0);
+        }
+
+        // If chart item, open in plotly
+        if (docItem instanceof DocItemChart) {
+            DocItemChart chartDocItem = (DocItemChart) docItem;
+            Chart chart = chartDocItem.getChart();
+            new OpenInPlotly().openInPlotly(chart);
+        }
+
+        // If first time, Add "Plotly" button in case they want to do it again
+        if (getView("PlotlyButton") == null) {
+            Button samplesButton = getView("SamplesButton", Button.class);
+            Button plotlyButton = new ViewArchiver().copy(samplesButton);
+            plotlyButton.setName("PlotlyButton");
+            plotlyButton.setText("Plotly");
+            samplesButton.setMargin(new Insets(0, 8, 0, 0));
+            ViewUtils.addChild(samplesButton.getParent(), plotlyButton, samplesButton.indexInParent()+1);
+            plotlyButton.addEventHandler(e -> openInPlotly(), Action);
+        }
+    }
+
+    /**
      * Called when a DocItem changes name.
      */
     public void docItemNameChanged()
@@ -467,8 +499,11 @@ public class DocPane extends ViewOwner {
         }
 
         // Handle SamplesButton
-        if (anEvent.equals("SamplesButton"))
-            showSamples();
+        if (anEvent.equals("SamplesButton")) {
+            if (anEvent.isAltDown())
+                openInPlotly();
+            else showSamples();
+        }
 
         // Handle TreeView
         if (anEvent.equals(_treeView)) {
