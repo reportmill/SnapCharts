@@ -1,4 +1,5 @@
 package snapcharts.appmisc;
+import snap.geom.Side;
 import snap.util.FileUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
@@ -108,8 +109,15 @@ public class OpenInPlotly {
         // Write Chart layout declaration
         writeChartLayout(aChart);
 
+        // Add 'Edit chart' link
+        _sb.append("var config = {\n");
+        _sb.append("  showLink: true,\n");
+        _sb.append("  scrollZoom: true,\n");
+        _sb.append("  plotlyServerURL: 'https://chart-studio.plotly.com'\n");
+        _sb.append("};\n\n");
+
         // Write Plotly invocation: Plotly.newPlot('myDiv', data);
-        _sb.append("Plotly.newPlot('chartDiv").append(anIndex).append("', data, layout);\n\n");
+        _sb.append("Plotly.newPlot('chartDiv").append(anIndex).append("', data, layout, config);\n\n");
 
         // Write script close
         _sb.append("</script>\n");
@@ -123,18 +131,54 @@ public class OpenInPlotly {
         // Create layoutJS JSON node
         JSONNode layoutJS = new JSONNode();
 
+        // Create title JSON node
+        JSONNode titleJS = new JSONNode();
+        layoutJS.addKeyValue("title", titleJS);
+
         // Get title/subtitle and add to layoutJS
         String title = aChart.getHeader().getTitle();
         String subtitle = aChart.getHeader().getSubtitle();
         if (subtitle!=null && subtitle.length()>0)
             title = title + "<br>" + subtitle;
-        layoutJS.addKeyValue("title", title);
+        titleJS.addKeyValue("text", title);
+
+        // Write the axis layout
+        AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
+        for (AxisType axisType : axisTypes)
+            writeChartAxisLayout(aChart, axisType, layoutJS);
 
         // Write layout
         _sb.append("var layout").append(" = ");
         String layoutStr = layoutJS.toString();
         _sb.append(layoutStr);
         _sb.append(";\n\n");
+    }
+
+    /**
+     * Writes chart layout declaration.
+     */
+    private void writeChartAxisLayout(Chart aChart, AxisType anAxisType, JSONNode layoutJS)
+    {
+        Axis axis = aChart.getAxisForType(anAxisType);
+
+        String axisName = getAxisName(anAxisType);
+        JSONNode axisJS = new JSONNode();
+
+        // Always showline
+        axisJS.addKeyValue("showline", true);
+
+        // Set Y on particular side
+        if (anAxisType.isAnyY() && axis.getSide() != Side.LEFT) {
+            axisJS.addKeyValue("side", axis.getSide().toString().toLowerCase());
+        }
+
+        // Add log support
+        if (axis.isLog())
+            axisJS.addKeyValue("type", "log");
+
+        if (axisJS.getNodeCount() > 0) {
+            layoutJS.addKeyValue(axisName, axisJS);
+        }
     }
 
     /**
@@ -176,11 +220,19 @@ public class OpenInPlotly {
 
         // If ChartType.CONTOUR, add: colorscale: 'Jet'
         if (_chart.getType() == ChartType.CONTOUR) {
+
+            // colorscale
             traceJS.addKeyValue("colorscale", "Jet");
+
+            // line { smoothing : 0 }
             JSONNode lineJS = new JSONNode("line", null);
             lineJS.addKeyValue("smoothing", "0");
             traceJS.addKeyValue("line", lineJS);
-            traceJS.addKeyValue("autocontour", "false");
+
+            // Add:
+            traceJS.addKeyValue("autocontour", false);
+            traceJS.addKeyValue("ncontours", "16");
+
             JSONNode contourJS = new JSONNode("contours", null);
             contourJS.addKeyValue("start", aDataSet.getMinZ());
             contourJS.addKeyValue("end", aDataSet.getMaxZ());
@@ -222,13 +274,30 @@ public class OpenInPlotly {
         }
 
         // If not Y axis
-        //if (aDataSet.getAxisTypeY() != AxisType.Y)
-        //    traceJS.addKeyValue("yaxis", aDataSet.getAxisTypeY().toString().toLowerCase());
+        if (aDataSet.getAxisTypeY() != AxisType.Y)
+            traceJS.addKeyValue("yaxis", aDataSet.getAxisTypeY().toString().toLowerCase());
 
         // Write trace
         _sb.append("var trace").append(anIndex).append(" = ");
         String traceString = traceJS.toString();
         _sb.append(traceString);
         _sb.append(";\n\n");
+    }
+
+    /**
+     * Returns the axis name.
+     */
+    private String getAxisName(AxisType anAxisType)
+    {
+        switch (anAxisType)
+        {
+            case X: return "xaxis";
+            case Y: return "yaxis";
+            case Y2: return "yaxis2";
+            case Y3: return "yaxis3";
+            case Y4: return "yaxis4";
+            case Z: return "zaxis";
+            default: throw new RuntimeException("OpenInPlotly.getAxisName: Unknown axis: " + anAxisType);
+        }
     }
 }
