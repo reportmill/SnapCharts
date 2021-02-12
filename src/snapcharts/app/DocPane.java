@@ -12,6 +12,9 @@ import snap.web.WebFile;
 import snap.web.WebURL;
 import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.model.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -342,17 +345,19 @@ public class DocPane extends ViewOwner {
     {
         // Get first non-group item
         DocItem docItem = getSelItem();
-        while (docItem instanceof DocItemGroup) {
+        List<Chart> charts = new ArrayList<>();
+        if (docItem instanceof DocItemGroup) {
             DocItemGroup groupDocItem = (DocItemGroup) docItem;
-            docItem = groupDocItem.getItem(0);
+            charts = groupDocItem.getCharts();
         }
 
         // If chart item, open in plotly
-        if (docItem instanceof DocItemChart) {
+        else if (docItem instanceof DocItemChart) {
             DocItemChart chartDocItem = (DocItemChart) docItem;
-            Chart chart = chartDocItem.getChart();
-            new OpenInPlotly().openInPlotly(chart);
+            charts = Arrays.asList(chartDocItem.getChart());
         }
+
+        new OpenInPlotly().openInPlotly(charts);
 
         // If first time, Add "Plotly" button in case they want to do it again
         if (getView("PlotlyButton") == null) {
