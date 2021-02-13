@@ -81,6 +81,16 @@ public class AxisViewTickFormat {
      */
     public String format(double aValue)
     {
+        DecimalFormat fmt = getFormat();
+        double delta = _axisView.getIntervals().getDelta();
+        return format(aValue, fmt, delta);
+    }
+
+    /**
+     * Returns a formatted value.
+     */
+    public String format(double aValue, DecimalFormat aFormat, double aDelta)
+    {
         // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
         if (_axisView.isLog()) {
             String str = TICKS_FORMAT.format(aValue);
@@ -89,26 +99,40 @@ public class AxisViewTickFormat {
             return "";
         }
 
-        DecimalFormat format = getFormat();
-        return format.format(aValue);
+        // If large delta, format with exponent
+        if (aDelta>=1000)
+            return getFormatWithExponent(aValue, aDelta);
 
-//        // Handle case where delta is in the billions
-//        if (aDelta>=1000000000) { //&& aDelta/1000000000==((int)aDelta)/1000000000) {
-//            int val = (int)Math.round(aValue/1000000000);
-//            return val + "b";
-//        }
-//
-//        // Handle case where delta is in the millions
-//        if (aDelta>=1000000) { //&& aDelta/1000000==((int)aDelta)/1000000) {
-//            int val = (int)Math.round(aValue/1000000);
-//            return val + "m";
-//        }
-//
-//        // Handle case where delta is integer
-//        if (aDelta==(int)aDelta)
-//            return String.valueOf((int)aValue);
-//
-//        return TICKS_FORMAT.format(aValue);
+        // Return formatted value
+        return aFormat.format(aValue);
+    }
+
+    /**
+     * Does format with exponents.
+     */
+    private String getFormatWithExponent(double aValue, double aDelta)
+    {
+        // Handle case where delta is in the trillions
+        if (aDelta>=1000000000000L) {
+            int val = (int)Math.round(aValue/1000000000000L);
+            return val + "T";
+        }
+
+        // Handle case where delta is in the billions
+        if (aDelta>=1000000000) {
+            int val = (int)Math.round(aValue/1000000000);
+            return val + "B";
+        }
+
+        // Handle case where delta is in the millions
+        if (aDelta>=1000000) {
+            int val = (int)Math.round(aValue/1000000);
+            return val + "M";
+        }
+
+        // Handle case where delta is in the thousands
+        int val = (int)Math.round(aValue/1000);
+        return val + "k";
     }
 
     /**
@@ -159,8 +183,8 @@ public class AxisViewTickFormat {
 
         // Get format, format min/max inset by delta/3 (to get repeating .33) and get longer string
         DecimalFormat format = StringUtils.getDecimalFormat(pattern);
-        String minSample = format.format(ivals.getMin() + delta/3);
-        String maxSample = format.format(ivals.getMax() - delta/3);
+        String minSample = format(ivals.getMin() + delta/3, format, delta);
+        String maxSample = format(ivals.getMax() - delta/3, format, delta);
         String longSample = minSample.length()>maxSample.length() ? minSample : maxSample;
 
         // Return pattern and long sample in array

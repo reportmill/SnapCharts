@@ -164,8 +164,10 @@ public class OpenInPlotly {
         String axisName = getAxisName(anAxisType);
         JSONNode axisJS = new JSONNode();
 
-        // Always showline
+        // Add showline, ticks, mirror (whether axis should showline on opposite side)
         axisJS.addKeyValue("showline", true);
+        axisJS.addKeyValue("ticks", "inside");
+        axisJS.addKeyValue("mirror", true);
 
         // Set Y on particular side
         if (anAxisType.isAnyY() && axis.getSide() != Side.LEFT) {
