@@ -11,17 +11,29 @@ chart desginer can be opened to edit the chart in the browser or on the desktop.
 # Java and JavaScript
 SnapCharts is written in Java and is compiled to run on the desktop with the JVM and compiled to JavaScript to run in the browser.
 
+# Build and run from source
+
+    prompt> git clone https://github.com/reportmill/SnapCharts
+    prompt> cd SnapCharts
+    prompt> ./gradlew build
+    prompt> ./gradlew run 
+
 # Package Structure
+
+## Overview
+
+SnapCharts is basically a Model-View-Controller (MVC) app, with each part in an individual package:
+
+    - Model: snapcharts.model pkg
+    - View: snapcharts.view pkg
+    - Controller: snapcharts.app pkg
 
 ## SnapCharts 'Model' package
 
-This package holds classes to:
+This package holds classes to represent (1) a chart and its component parts, (2) data and datasets and (3) supporting
+constants and types.
 
-    - Describe a chart and its components
-    - Describe and represent datasets
-    - Describe chart types and constants
-
-### Chart Components (and properties)
+### SnapCharts.model Chart classes
 
     - Chart: Type
     - Header: Title, Subtitle
@@ -29,14 +41,14 @@ This package holds classes to:
     - Legend: Showing, Position, ...
     - ChartPart: Abstract superclass of all parts of a chart
     
-### Data
+### SnapCharts.model Data classes
  
     - DataSet: Has type
     - DataSetList: Holds a list of DataSets
     - Intervals: Calculates and describes equally spaced divisions for a min/max
     - RawData: Simple representation of raw data
     
-### Types and Constants
+### SnapCharts.model Supporting Types and Constants
 
     - ChartType: LINE, AREA, SCATTER, BAR, PIE, POLAR, CONTOUR, LINE_3D, BAR_3D, PIE_3D
     - AxisType: X, Y, Y2, Y3, Y4, Z
@@ -47,7 +59,7 @@ This package holds classes to:
     
 ## SnapCharts 'Views' package
 
-This package holds View subclasses for ChartParts
+This package holds View subclasses for ChartParts.
 
     - ChartView: Top level chart view, encapsulates Chart
     - HeaderView: Display chart header, encapsulates Header

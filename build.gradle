@@ -33,4 +33,4 @@ dependencies {
         implementation 'com.github.reportmill:RMDraw:master-SNAPSHOT'  }
 }
 
-mainClassName = 'snap.charts.App'
+mainClassName = 'snapcharts.app.App'
