@@ -9,7 +9,7 @@ import snapcharts.appmisc.SheetView;
 import snapcharts.model.DataChan;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
-import snapcharts.model.DataUtils;
+import snapcharts.util.DataUtils;
 
 /**
  * A ViewOwner to handle display of whole ChartDoc.

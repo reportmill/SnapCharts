@@ -1,8 +1,10 @@
-package snapcharts.model;
+package snapcharts.doc;
 import java.util.*;
 import snap.gfx.Color;
 import snap.geom.VPos;
 import snap.util.*;
+import snapcharts.model.*;
+import snapcharts.util.MapWriter;
 
 /**
  * A class to load chart parameters from JSON.

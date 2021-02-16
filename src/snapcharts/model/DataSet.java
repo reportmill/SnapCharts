@@ -2,6 +2,8 @@ package snapcharts.model;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
+import snapcharts.util.DataUtils;
+
 import java.util.*;
 
 /**

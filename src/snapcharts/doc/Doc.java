@@ -93,7 +93,7 @@ public class Doc extends DocItemGroup {
 
         // Handle json file
         if (ext.equals("json")) {
-            ChartParser parser = new ChartParser();
+            ChartReader parser = new ChartReader();
             Doc doc = parser.getDocForSource(url);
 
             DocItemChart chartDocItem = doc.getItemCount()>0 ? (DocItemChart) doc.getItem(0) : null;

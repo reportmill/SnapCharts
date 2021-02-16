@@ -10,7 +10,7 @@ import snapcharts.model.*;
 /**
  * A class to load chart parameters from JSON.
  */
-public class ChartParser {
+public class ChartReader {
     
     // The chart
     private Chart _chart;
@@ -18,7 +18,7 @@ public class ChartParser {
     /**
      * Create ChartParser for given ChartView.
      */
-    public ChartParser()  { }
+    public ChartReader()  { }
 
     /**
      * Returns a chart for Source.

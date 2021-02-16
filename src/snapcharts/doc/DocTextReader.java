@@ -2,6 +2,7 @@ package snapcharts.doc;
 import snap.geom.Pos;
 import snap.util.SnapUtils;
 import snapcharts.model.*;
+import snapcharts.util.DataUtils;
 
 import java.util.Arrays;
 

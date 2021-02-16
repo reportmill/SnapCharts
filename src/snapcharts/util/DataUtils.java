@@ -1,6 +1,8 @@
-package snapcharts.model;
+package snapcharts.util;
 import snap.util.ListSel;
 import snap.util.SnapUtils;
+import snapcharts.model.DataSet;
+import snapcharts.model.DataType;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;

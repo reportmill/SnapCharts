@@ -1,4 +1,4 @@
-package snapcharts.model;
+package snapcharts.util;
 import java.text.DecimalFormat;
 import java.util.*;
 import snap.gfx.Color;
