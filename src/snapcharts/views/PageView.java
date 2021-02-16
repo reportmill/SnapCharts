@@ -5,7 +5,7 @@ import snap.gfx.*;
 import snap.view.ParentView;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
-import snapcharts.model.DocItemGroup;
+import snapcharts.doc.DocItemGroup;
 
 import java.util.ArrayList;
 import java.util.List;

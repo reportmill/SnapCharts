@@ -11,6 +11,8 @@ import snap.viewx.*;
 import snap.web.WebFile;
 import snap.web.WebURL;
 import snapcharts.appmisc.OpenInPlotly;
+import snapcharts.appmisc.SamplesPane;
+import snapcharts.doc.*;
 import snapcharts.model.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -493,8 +495,8 @@ public class DocPane extends ViewOwner {
 
         // Handle WebButton
         if (anEvent.equals("WebButton")) {
-            //new snapcharts.chartclient.ChartClient().openChartDoc("Untitled.charts", getDoc());
-            //new snapcharts.chartclient.ChartClient().openSimpleSample();
+            //new snapcharts.appmisc.ChartClient().openChartDoc("Untitled.charts", getDoc());
+            //new snapcharts.appmisc.ChartClient().openSimpleSample();
         }
 
         // Handle InspectorButton

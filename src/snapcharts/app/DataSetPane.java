@@ -5,6 +5,7 @@ import snap.util.ListSel;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.appmisc.SheetView;
 import snapcharts.model.DataChan;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
@@ -19,7 +20,7 @@ public class DataSetPane extends DocItemPane {
     private DataSet  _dset;
 
     // The SheetView
-    private SheetView  _sheetView;
+    private SheetView _sheetView;
 
     // Constants for actions
     private final String Cut_Action = "CutAction";

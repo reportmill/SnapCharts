@@ -4,6 +4,7 @@ import java.util.List;
 import snap.geom.HPos;
 import snap.util.*;
 import snap.view.*;
+import snapcharts.appmisc.SheetView;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;
@@ -17,7 +18,7 @@ public class DataPane extends ViewOwner {
     private ChartView  _chartView;
     
     // The SheetView
-    private SheetView  _sheetView;
+    private SheetView _sheetView;
 
     // A Cell Action event listener to handle cell text changes
     //EventListener           _cellEditLsnr;

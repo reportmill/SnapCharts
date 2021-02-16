@@ -2,9 +2,9 @@ package snapcharts.app;
 import snap.gfx.Image;
 import snap.util.XMLElement;
 import snap.view.*;
-import snapcharts.model.ChartArchiver;
+import snapcharts.doc.ChartArchiver;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DocItem;
+import snapcharts.doc.DocItem;
 
 /**
  * A CopyPaster implementation for Editor.

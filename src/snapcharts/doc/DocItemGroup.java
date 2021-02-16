@@ -1,7 +1,12 @@
-package snapcharts.model;
+package snapcharts.doc;
 import snap.util.MathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
+import snapcharts.model.Chart;
+import snapcharts.model.ChartPart;
+import snapcharts.model.DataSet;
+import snapcharts.model.PageDisplay;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +19,7 @@ public class DocItemGroup extends DocItem {
     private boolean  _portrait = true;
 
     // How pages should be displayed (Single, Continuous).
-    private PageDisplay  _pageDisplay = PageDisplay.SINGLE;
+    private PageDisplay _pageDisplay = PageDisplay.SINGLE;
 
     // The number of items to show per page
     private int _itemsPerPage = 2;

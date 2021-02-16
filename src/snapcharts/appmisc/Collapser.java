@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.appmisc;
 
 import snap.geom.Polygon;
 import snap.geom.Pos;

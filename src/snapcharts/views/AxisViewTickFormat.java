@@ -1,6 +1,7 @@
 package snapcharts.views;
 import snap.gfx.Font;
 import snap.util.StringUtils;
+import snap.view.ViewUpdater;
 import snapcharts.model.Intervals;
 import java.text.DecimalFormat;
 
@@ -196,8 +197,11 @@ public class AxisViewTickFormat {
      */
     public void checkForFormatChange()
     {
-        if (_checkForRelayout == null && _formatPattern != null)
-            _axisView.getUpdater().runBeforeUpdate(_checkForRelayout = CHECK_FOR_RELAYOUT);
+        if (_checkForRelayout == null && _formatPattern != null) {
+            ViewUpdater updater = _axisView.getUpdater();
+            if (updater != null)
+                updater.runBeforeUpdate(_checkForRelayout = CHECK_FOR_RELAYOUT);
+        }
     }
 
     /**

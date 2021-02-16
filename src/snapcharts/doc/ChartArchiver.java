@@ -1,6 +1,8 @@
-package snapcharts.model;
+package snapcharts.doc;
 import snap.util.XMLArchiver;
 import snap.web.WebURL;
+import snapcharts.doc.Doc;
+import snapcharts.model.*;
 
 import java.util.HashMap;
 import java.util.Map;

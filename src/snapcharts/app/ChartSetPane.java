@@ -3,9 +3,11 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.gfx.Painter;
-import snap.util.ListUtils;
 import snap.util.PropChange;
 import snap.view.*;
+import snapcharts.doc.DocItem;
+import snapcharts.doc.DocItemChart;
+import snapcharts.doc.DocItemGroup;
 import snapcharts.model.*;
 import snapcharts.views.PageView;
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.List;
 public class ChartSetPane extends DocItemPane {
 
     // The DocItem that this class displays
-    private DocItemGroup  _docItem;
+    private DocItemGroup _docItem;
 
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();
@@ -119,7 +121,7 @@ public class ChartSetPane extends DocItemPane {
         String propName = aPC.getPropName();
 
         // Handle Items
-        if (propName==DocItem.Items_Prop)
+        if (propName== DocItem.Items_Prop)
             resetCharts();
         if (propName==DocItemGroup.Portrait_Prop || propName==DocItemGroup.PageDisplay_Prop ||
             propName==DocItemGroup.ItemsPerPage_Prop || propName==DocItemGroup.ChartScale_Prop)

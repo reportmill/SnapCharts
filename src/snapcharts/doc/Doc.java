@@ -1,8 +1,9 @@
-package snapcharts.model;
+package snapcharts.doc;
 import snap.util.FilePathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snap.web.WebURL;
+import snapcharts.model.Chart;
 
 /**
  * A class to hold multiple chart objects.

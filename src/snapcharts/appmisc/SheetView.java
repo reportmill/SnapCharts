@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.appmisc;
 import java.util.*;
 import java.util.function.Consumer;
 

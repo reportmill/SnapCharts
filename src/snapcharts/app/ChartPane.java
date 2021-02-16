@@ -8,7 +8,7 @@ import snap.gfx.ShadowEffect;
 import snap.util.Undoer;
 import snap.view.*;
 import snapcharts.model.Chart;
-import snapcharts.model.ChartArchiver;
+import snapcharts.doc.ChartArchiver;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.views.ChartView;

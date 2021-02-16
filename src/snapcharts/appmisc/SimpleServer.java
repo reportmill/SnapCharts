@@ -1,4 +1,4 @@
-package snapcharts.chartclient;
+package snapcharts.appmisc;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;

@@ -1,4 +1,4 @@
-package snapcharts.app;
+package snapcharts.appmisc;
 
 import snap.geom.HPos;
 import snap.geom.Pos;
@@ -10,6 +10,7 @@ import snap.view.*;
 import snap.viewx.DialogBox;
 import snap.web.WebResponse;
 import snap.web.WebURL;
+import snapcharts.app.DocPane;
 
 import java.util.ArrayList;
 import java.util.List;

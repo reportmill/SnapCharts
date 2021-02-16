@@ -1,9 +1,6 @@
 package snapcharts.app;
-
 import snap.util.JSONNode;
-import snap.viewx.FilePanel;
 import snap.web.*;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;

@@ -2,6 +2,7 @@ package snapcharts.app;
 import rmdraw.scene.SGDoc;
 import snap.view.View;
 import snap.view.ViewOwner;
+import snapcharts.doc.*;
 import snapcharts.model.*;
 
 import java.util.HashMap;

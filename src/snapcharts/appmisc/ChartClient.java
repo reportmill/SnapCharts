@@ -1,4 +1,4 @@
-package snapcharts.chartclient;
+package snapcharts.appmisc;
 import snap.gfx.GFXEnv;
 import snap.util.FileUtils;
 import snap.util.SnapUtils;
@@ -7,7 +7,7 @@ import snapcharts.app.App;
 import snapcharts.model.Chart;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
-import snapcharts.model.Doc;
+import snapcharts.doc.Doc;
 import java.io.File;
 import java.text.DecimalFormat;
 

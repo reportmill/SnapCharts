@@ -1,6 +1,8 @@
-package snapcharts.model;
+package snapcharts.doc;
 import snap.geom.Pos;
 import snap.util.SnapUtils;
+import snapcharts.model.*;
+
 import java.util.Arrays;
 
 /**
@@ -15,7 +17,7 @@ public class DocTextReader {
     private DocItemGroup  _itemGroup;
 
     // The current chart
-    private Chart  _chart;
+    private Chart _chart;
 
     // The current DataSet
     private DataSet _dset;

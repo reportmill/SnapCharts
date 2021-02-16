@@ -1,7 +1,9 @@
-package snapcharts.model;
+package snapcharts.doc;
 import snap.gfx.Image;
 import snap.util.*;
 import snap.view.ViewUtils;
+import snapcharts.model.ChartPart;
+
 import java.util.ArrayList;
 import java.util.List;
 

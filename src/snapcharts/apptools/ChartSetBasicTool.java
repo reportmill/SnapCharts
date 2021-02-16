@@ -4,7 +4,7 @@ import snap.view.ToggleButton;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartSetPane;
-import snapcharts.model.DocItemGroup;
+import snapcharts.doc.DocItemGroup;
 import snapcharts.model.PageDisplay;
 
 /**

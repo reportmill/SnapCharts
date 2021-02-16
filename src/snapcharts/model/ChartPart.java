@@ -4,6 +4,7 @@ import snap.gfx.Effect;
 import snap.gfx.Font;
 import snap.gfx.Paint;
 import snap.util.*;
+import snapcharts.doc.Doc;
 
 import java.util.*;
 

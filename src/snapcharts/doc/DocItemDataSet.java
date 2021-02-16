@@ -1,4 +1,7 @@
-package snapcharts.model;
+package snapcharts.doc;
+
+import snapcharts.model.ChartPart;
+import snapcharts.model.DataSet;
 
 /**
  * A DocItem subclass to hold a chart.
@@ -6,7 +9,7 @@ package snapcharts.model;
 public class DocItemDataSet extends DocItem {
 
     // The DataSet
-    private DataSet  _dset;
+    private DataSet _dset;
 
     /**
      * Constructor.

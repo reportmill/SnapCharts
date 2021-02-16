@@ -9,6 +9,6 @@
     <Button Name="ClearButton" Padding="2" LeanX="RIGHT" text="Clear" />
   </RowView>
   <RowView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
-    <TableView Name="SheetView" MinWidth="380" MinHeight="80" GrowWidth="true" GrowHeight="true" Class="snapcharts.app.SheetView" />
+    <TableView Name="SheetView" MinWidth="380" MinHeight="80" GrowWidth="true" GrowHeight="true" Class="snapcharts.appmisc.SheetView" />
   </RowView>
 </ColView>

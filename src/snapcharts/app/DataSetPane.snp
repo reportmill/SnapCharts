@@ -6,7 +6,7 @@
       <Label Name="PointCountLabel" LeanX="RIGHT" text="Points" />
     </RowView>
     <RowView Padding="4" GrowHeight="true" Spacing="4">
-      <TableView Name="SheetView" GrowWidth="true" GrowHeight="true" Class="snapcharts.app.SheetView" />
+      <TableView Name="SheetView" GrowWidth="true" GrowHeight="true" Class="snapcharts.appmisc.SheetView" />
     </RowView>
   </ColView>
 </RowView>

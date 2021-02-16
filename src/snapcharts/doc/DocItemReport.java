@@ -1,5 +1,6 @@
-package snapcharts.model;
+package snapcharts.doc;
 import rmdraw.scene.SGDoc;
+import snapcharts.model.ChartPart;
 
 /**
  * A DocItem subclass to hold a chart.

@@ -1,5 +1,9 @@
-package snapcharts.model;
+package snapcharts.doc;
 import snap.util.PropChange;
+import snapcharts.model.Chart;
+import snapcharts.model.ChartPart;
+import snapcharts.model.DataSet;
+import snapcharts.model.DataSetList;
 
 /**
  * A DocItem subclass to hold a chart.
@@ -7,7 +11,7 @@ import snap.util.PropChange;
 public class DocItemChart extends DocItem {
 
     // The Chart
-    private Chart  _chart;
+    private Chart _chart;
 
     /**
      * Constructor.

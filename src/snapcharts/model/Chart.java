@@ -3,6 +3,7 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Paint;
 import snap.util.*;
+import snapcharts.doc.Doc;
 
 /**
  * A view to render a chart.

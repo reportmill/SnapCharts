@@ -3,6 +3,7 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
+import snapcharts.appmisc.Collapser;
 import snapcharts.apptools.ChartPartInsp;
 import snapcharts.apptools.ChartSetBasicTool;
 

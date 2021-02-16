@@ -1,9 +1,11 @@
-package snapcharts.model;
+package snapcharts.doc;
 import java.util.*;
 import snap.gfx.Color;
 import snap.geom.VPos;
 import snap.util.*;
 import snap.web.WebURL;
+import snapcharts.doc.Doc;
+import snapcharts.model.*;
 
 /**
  * A class to load chart parameters from JSON.

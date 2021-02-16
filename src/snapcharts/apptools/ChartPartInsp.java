@@ -9,7 +9,7 @@ import snap.view.View;
 import snap.view.ViewHost;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartPane;
-import snapcharts.app.Collapser;
+import snapcharts.appmisc.Collapser;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 
