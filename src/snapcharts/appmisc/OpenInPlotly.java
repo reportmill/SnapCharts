@@ -4,6 +4,8 @@ import snap.util.FileUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
 import snapcharts.model.*;
+
+import java.io.File;
 import java.util.List;
 
 /**
@@ -11,8 +13,8 @@ import java.util.List;
  */
 public class OpenInPlotly {
 
-    // The string builder
-    private StringBuilder  _sb = new StringBuilder();
+    // The string buffer
+    private StringBuffer  _sb = new StringBuffer();
 
     // The current chart
     private Chart  _chart;
@@ -25,16 +27,8 @@ public class OpenInPlotly {
         // Generate HTML
         String htmlStr = getHtmlFileString(theCharts);
 
-        //File file = FileUtils.getTempFile("Plotly.html");
-        //File file = new File("/tmp/Plotly.html");
-        //try { FileUtils.writeBytes(file, htmlStr.getBytes()); }
-        //catch (Exception e) { throw new RuntimeException(e); }
-        //GFXEnv.getEnv().openURL(file);
-
-        // Simple open file (I know this works in TeaVM)
-        String file = SnapUtils.getTempDir() + "Plotly.html";
-        SnapUtils.writeBytes(htmlStr.getBytes(), file);
-        FileUtils.openFile(file);
+        // Open HTML string in browser
+        openHTMLStringInBrowser("Plotly.html", htmlStr);
     }
 
     /**
@@ -301,5 +295,37 @@ public class OpenInPlotly {
             case Z: return "zaxis";
             default: throw new RuntimeException("OpenInPlotly.getAxisName: Unknown axis: " + anAxisType);
         }
+    }
+
+    /**
+     * Writes current text to file.
+     */
+    private void openHTMLStringInBrowser(String aName, String aStr)
+    {
+        //File file = FileUtils.getTempFile("Plotly.html");
+        //File file = new File("/tmp/Plotly.html");
+        //try { FileUtils.writeBytes(file, htmlStr.getBytes()); }
+        //catch (Exception e) { throw new RuntimeException(e); }
+        //GFXEnv.getEnv().openURL(file);
+
+        // Get filename and file
+        String filename = SnapUtils.getTempDir() + aName;
+        File file = FileUtils.getFile(filename);
+
+        // TeaVM seems to sometimes use remnants of old file?
+        if (SnapUtils.isTeaVM) {
+            try { file.delete(); }
+            catch (Exception e) { System.err.println("OpenInPlotly.writeToFile: Error deleting file"); }
+        }
+
+        // Get bytes
+        byte[] bytes = aStr.getBytes();
+
+        // Write bytes to file
+        try { FileUtils.writeBytes(file, bytes); }
+        catch(Exception e) { throw new RuntimeException(e); }
+
+        // Open file
+        FileUtils.openFile(file);
     }
 }

@@ -362,15 +362,22 @@ public class DocPane extends ViewOwner {
         new OpenInPlotly().openInPlotly(charts);
 
         // If first time, Add "Plotly" button in case they want to do it again
-        if (getView("PlotlyButton") == null) {
-            Button samplesButton = getView("SamplesButton", Button.class);
-            Button plotlyButton = new ViewArchiver().copy(samplesButton);
-            plotlyButton.setName("PlotlyButton");
-            plotlyButton.setText("Plotly");
-            samplesButton.setMargin(new Insets(0, 8, 0, 0));
-            ViewUtils.addChild(samplesButton.getParent(), plotlyButton, samplesButton.indexInParent()+1);
-            plotlyButton.addEventHandler(e -> openInPlotly(), Action);
-        }
+        if (getView("PlotlyButton") == null)
+            addPlotlyButton();
+    }
+
+    /**
+     * Adds the plotly button to the toolbar.
+     */
+    private void addPlotlyButton()
+    {
+        Button samplesButton = getView("SamplesButton", Button.class);
+        Button plotlyButton = new ViewArchiver().copy(samplesButton);
+        plotlyButton.setName("PlotlyButton");
+        plotlyButton.setText("Plotly");
+        samplesButton.setMargin(new Insets(0, 8, 0, 0));
+        ViewUtils.addChild(samplesButton.getParent(), plotlyButton, samplesButton.indexInParent()+1);
+        plotlyButton.addEventHandler(e -> openInPlotly(), Action);
     }
 
     /**
@@ -459,6 +466,9 @@ public class DocPane extends ViewOwner {
             getWindow().setMaximized(true);
             getView("WebButton").setVisible(false);
         }
+
+        // Add the plotly button
+        addPlotlyButton();
     }
 
     /**
