@@ -4,6 +4,7 @@ import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
+import snapcharts.model.Intervals;
 import snapcharts.util.ContourMaker;
 
 /**
@@ -185,6 +186,31 @@ public class DataAreaContour extends DataArea {
         Shape dataPath = getContourMaker().getMesh().getMeshPath();
         Shape meshPath = dataContourToView(dataPath);
         return _meshPath = meshPath;
+    }
+
+    /**
+     * Returns the data to view transform.
+     */
+    public Transform getDataToView()
+    {
+        // Get axis bounds
+        Intervals ivalsX = getAxisViewX().getIntervals();
+        Intervals ivalsY = getAxisViewY().getIntervals();
+        double minX = ivalsX.getMin();
+        double minY = ivalsY.getMin();
+        double maxX = ivalsX.getMax();
+        double maxY = ivalsY.getMax();
+        Rect dataBnds = new Rect(minX, minY, maxX - minX, maxY - minY);
+
+        // Get view bounds
+        double areaX = 0;
+        double areaY = 0;
+        double areaW = getWidth();
+        double areaH = getHeight();
+        Rect viewBnds = new Rect(areaX, areaY, areaW, areaH);
+
+        // Return transform from axis bounds to view bounds
+        return Transform.getTrans(dataBnds, viewBnds);
     }
 
     /**

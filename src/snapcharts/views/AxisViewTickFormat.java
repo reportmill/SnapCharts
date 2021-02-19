@@ -1,6 +1,6 @@
 package snapcharts.views;
 import snap.gfx.Font;
-import snap.util.StringUtils;
+import snap.util.FormatUtils;
 import snap.view.ViewUpdater;
 import snapcharts.model.Intervals;
 import java.text.DecimalFormat;
@@ -62,7 +62,7 @@ public class AxisViewTickFormat {
     public DecimalFormat getFormat()
     {
         if (_format == null)
-            _format = StringUtils.getDecimalFormat(getFormatPattern());
+            _format = FormatUtils.getDecimalFormat(getFormatPattern());
         return _format;
     }
 
@@ -183,7 +183,7 @@ public class AxisViewTickFormat {
         pattern = pattern.replace('#', '0');
 
         // Get format, format min/max inset by delta/3 (to get repeating .33) and get longer string
-        DecimalFormat format = StringUtils.getDecimalFormat(pattern);
+        DecimalFormat format = FormatUtils.getDecimalFormat(pattern);
         String minSample = format(ivals.getMin() + delta/3, format, delta);
         String maxSample = format(ivals.getMax() - delta/3, format, delta);
         String longSample = minSample.length()>maxSample.length() ? minSample : maxSample;

@@ -417,17 +417,17 @@ public class Mesh {
         public Point getPointAlongEdgeForZ(double valZ)
         {
             // Get Z val for edge vertices and calc ratio
-            double e1zval = getZ(v1);
-            double e2zval = getZ(v2);
-            double how_far = ((valZ - e2zval) / (e1zval - e2zval));
+            double v1z = getZ(v1);
+            double v2z = getZ(v2);
+            double how_far = ((valZ - v2z) / (v1z - v2z));
 
             // Get X/Y values for edge vertexes and interpolate X/Y value for valZ
-            double e1xval = getX(v1);
-            double e1yval = getY(v1);
-            double e2xval = getX(v2);
-            double e2yval = getY(v2);
-            double dataX = how_far * e1xval + (1 - how_far) * e2xval;
-            double dataY = how_far * e1yval + (1 - how_far) * e2yval;
+            double v1x = getX(v1);
+            double v1y = getY(v1);
+            double v2x = getX(v2);
+            double v2y = getY(v2);
+            double dataX = how_far * v1x + (1 - how_far) * v2x;
+            double dataY = how_far * v1y + (1 - how_far) * v2y;
             return new Point(dataX, dataY);
         }
 

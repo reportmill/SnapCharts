@@ -2,7 +2,7 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
-import snap.util.StringUtils;
+import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.model.*;
 
@@ -110,7 +110,7 @@ public class ContourAxisView<T extends AxisZ> extends ChartPartView<T> {
      */
     private View createContourEntry(double aVal)
     {
-        String valStr = StringUtils.formatNum("#.##", aVal);
+        String valStr = FormatUtils.formatNum("#.##", aVal);
         Label label = new Label(valStr);
         label.setFont(getFont());
         label.setAlign(Pos.TOP_LEFT);
