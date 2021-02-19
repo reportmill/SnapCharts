@@ -202,7 +202,7 @@ public class ContourMaker {
             // Fill above/below arrays with triangle verteces above/below value
             above.clear(); below.clear();
             for (int v : triangle.vertices) {
-                if (getZ(v) < valZ)
+                if (getZ(v) <= valZ)
                     below.add(v);
                 else above.add(v);
             }

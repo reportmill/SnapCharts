@@ -43,6 +43,34 @@ public class DataUtils {
     }
 
     /**
+     * Adds data points to given DataSet for given data arrays.
+     */
+    public static void addDataSetPointsXYZZ(DataSet aDataSet, double[] dataX, double[] dataY, double[] dataZZ)
+    {
+        // Get rows and cols
+        int colCount = dataX.length;
+        int rowCount = dataY.length;
+
+        // If insufficient Z, complain and pad with zero
+        int pointCount = colCount * rowCount;
+        if (pointCount>dataZZ.length) {
+            System.err.println("DataUtils.addDataSetPointsXYZZ: Insufficient number of Z values");
+            dataZZ = Arrays.copyOf(dataZZ, pointCount);
+        }
+
+        // Iterate over rows/cols and add points
+        for (int row=0; row<rowCount; row++) {
+            for (int col=0; col<colCount; col++) {
+                double xval = dataX[col];
+                double yval = dataY[row];
+                int zind = row * colCount + col;
+                double zval = dataZZ[zind];
+                aDataSet.addPointXYZC(xval, yval, zval, null);
+            }
+        }
+    }
+
+    /**
      * Deletes data for given DataSet and selection.
      */
     public static void deleteDataSetDataForSelection(DataSet aDataSet, ListSel aSel)

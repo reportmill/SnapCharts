@@ -4,11 +4,12 @@ import snap.gfx.Color;
 import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
+import snap.util.PropChange;
 import snapcharts.model.AxisType;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
-import java.text.DecimalFormat;
+import snapcharts.util.MinMax;
 import java.util.List;
 
 /**
@@ -16,11 +17,11 @@ import java.util.List;
  */
 public class ChartHelperContour extends ChartHelper {
 
+    // The contour range values (min/max) for each contour level
+    private MinMax[]  _contourRanges;
+
     // The array of colors
     private Color[]  _colors;
-
-    // Format
-    private static DecimalFormat _fmt = new DecimalFormat("#.##");
 
     /**
      * Constructor.
@@ -42,25 +43,40 @@ public class ChartHelperContour extends ChartHelper {
     public int getContourCount()  { return 16; }
 
     /**
-     * Returns the contour level at index.
+     * Returns the contour range for given contour index.
      */
-    public double getContourValue(int anIndex)
+    public MinMax getContourRange(int anIndex)
     {
-        DataSet dset = getDataSetList().getDataSet(0);
-        double zmin = dset.getMinZ();
-        double zmax = dset.getMaxZ();
-        int count = getContourCount();
-        double delta = (zmax - zmin) / count;
-        return zmin + delta * anIndex;
+        return getContourRanges()[anIndex];
     }
 
     /**
-     * Returns the contour level label at index.
+     * Returns the contour ranges.
      */
-    public String getContourLabel(int anIndex)
+    public MinMax[] getContourRanges()
     {
-        double val = getContourValue(anIndex);
-        return _fmt.format(val);
+        // If already set, just return
+        if (_contourRanges != null) return _contourRanges;
+
+        // Get contour data min/max
+        DataSet dset = getDataSetList().getDataSet(0);
+        double zmin = dset.getMinZ();
+        double zmax = dset.getMaxZ();
+
+        // Get contour count and delta
+        int count = getContourCount();
+        double delta = (zmax - zmin) / count;
+
+        // Iterate over contour levels and create/set MinMax for each
+        MinMax[] ranges = new MinMax[count];
+        for (int i=0; i<count; i++) {
+            double min = zmin + delta * i;
+            double max = zmin + delta * (i + 1);
+            ranges[i] = new MinMax(min, max);
+        }
+
+        // Set/return
+        return _contourRanges = ranges;
     }
 
     /**
@@ -159,5 +175,20 @@ public class ChartHelperContour extends ChartHelper {
     public ContourAxisView getContourView()
     {
         return _chartView.getContourView();
+    }
+
+    /**
+     * Called when a ChartPart changes.
+     */
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        // Do normal version
+        super.chartPartDidChange(aPC);
+
+        // Handle DataSet/DataSetList change
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList) {
+            _contourRanges = null;
+        }
     }
 }

@@ -153,10 +153,20 @@ public class OpenInPlotly {
      */
     private void writeChartAxisLayout(Chart aChart, AxisType anAxisType, JSONNode layoutJS)
     {
+        // Get axis and axis name
         Axis axis = aChart.getAxisForType(anAxisType);
-
         String axisName = getAxisName(anAxisType);
+
+        // Create axis JSONNode
         JSONNode axisJS = new JSONNode();
+
+        // Set title
+        String title = axis.getTitle();
+        if (title !=null && title.length() > 0) {
+            JSONNode titleJS = new JSONNode();
+            titleJS.addKeyValue("text", title);
+            axisJS.addKeyValue("title", titleJS);
+        }
 
         // Add showline, ticks, mirror (whether axis should showline on opposite side)
         axisJS.addKeyValue("showline", true);
@@ -164,8 +174,20 @@ public class OpenInPlotly {
         axisJS.addKeyValue("mirror", true);
 
         // Set Y on particular side
-        if (anAxisType.isAnyY() && axis.getSide() != Side.LEFT) {
+        if (anAxisType.isAnyY() && anAxisType!=AxisType.Y) {
             axisJS.addKeyValue("side", axis.getSide().toString().toLowerCase());
+            axisJS.addKeyValue("overlaying", "y");
+            if (anAxisType == AxisType.Y2) {
+                axisJS.addKeyValue("anchor", "x");
+            }
+            if (anAxisType == AxisType.Y3) {
+                axisJS.addKeyValue("anchor", "free");
+                axisJS.addKeyValue("position", .15);
+            }
+            if (anAxisType == AxisType.Y4) {
+                axisJS.addKeyValue("anchor", "free");
+                axisJS.addKeyValue("position", .85);
+            }
         }
 
         // Add log support

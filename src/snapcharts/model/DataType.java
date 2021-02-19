@@ -17,6 +17,9 @@ public enum DataType {
     /** XYZ data */
     XYZ,
 
+    /** XYZZ data - X/Y are row/col values, Z is matrix of values */
+    XYZZ,
+
     /** Unknown */
     UNKNOWN;
 
@@ -57,8 +60,10 @@ public enum DataType {
     /**
      * Returns a DataType given data arrays.
      */
-    public static DataType getDataType(boolean hasX, boolean hasY, boolean hasZ, boolean hasC)
+    public static DataType getDataType(boolean hasX, boolean hasY, boolean hasZ, boolean hasZZ, boolean hasC)
     {
+        if (hasX && hasY && hasZZ)
+            return XYZZ;
         if (hasX && hasY && hasZ)
             return XYZ;
         if (hasX && hasY)

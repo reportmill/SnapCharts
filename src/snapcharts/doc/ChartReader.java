@@ -574,7 +574,7 @@ public class ChartReader {
             }
 
             // Set DataType
-            DataType dataType = DataType.getDataType(false, hasY, false, hasC);
+            DataType dataType = DataType.getDataType(false, hasY, false, false, hasC);
             aDataSet.setDataType(dataType);
         }
     }

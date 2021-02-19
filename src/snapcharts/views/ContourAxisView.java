@@ -2,6 +2,7 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
+import snap.util.StringUtils;
 import snap.view.*;
 import snapcharts.model.*;
 
@@ -73,30 +74,47 @@ public class ContourAxisView<T extends AxisZ> extends ChartPartView<T> {
         // Do normal version
         super.resetView();
 
+        // Reset axis labels
+        resetAxisLabels();
+    }
+
+    /**
+     * Rebuilds the axis labels.
+     */
+    private void resetAxisLabels()
+    {
         // Get info
+        Chart chart = getChart();
         DataSetList dsetList = chart.getDataSetList();
-        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
 
         // Remove children
         _entryBox.removeChildren();
 
-        int labelCount = getContourCount() + 1;
-        for (int i=0; i<labelCount; i++) {
-            View entryView = createContourEntry(chart, dset, i);
+        // Iterate over ContourRanges and add label for each min val
+        int contourCount = getContourCount();
+        for (int i=0; i<contourCount; i++) {
+            double val = _contourHelper.getContourRange(i).getMin();
+            View entryView = createContourEntry(val);
             _entryBox.addChild(entryView);
         }
+
+        // Add final label using final contour max val
+        double lastVal = _contourHelper.getContourRange(contourCount-1).getMax();
+        View entryView = createContourEntry(lastVal);
+        entryView.setGrowHeight(false);
+        _entryBox.addChild(entryView);
     }
 
     /**
      * Creates a Contour entry.
      */
-    private View createContourEntry(Chart aChart, DataSet aDataSet, int anIndex)
+    private View createContourEntry(double aVal)
     {
-        String text = _contourHelper.getContourLabel(anIndex);
-        Label label = new Label(text);
+        String valStr = StringUtils.formatNum("#.##", aVal);
+        Label label = new Label(valStr);
         label.setFont(getFont());
         label.setAlign(Pos.TOP_LEFT);
-        label.setGrowHeight(anIndex < getContourCount());
+        label.setGrowHeight(true);
         return label;
     }
 

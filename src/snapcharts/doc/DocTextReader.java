@@ -24,7 +24,7 @@ public class DocTextReader {
     private DataSet _dset;
 
     // Staged data arrays X/Y/Z
-    private double[]  _dataX, _dataY, _dataZ;
+    private double[]  _dataX, _dataY, _dataZ, _dataZZ;
 
     // Staged data array for C (text)
     private String[]  _dataC;
@@ -67,7 +67,7 @@ public class DocTextReader {
             String val = keyVal[1];
 
             // If dataset data is staged, but key not data, apply staged data to current dataset
-            boolean isDataStaged = _dataX!=null || _dataY!=null || _dataZ!=null || _dataC!=null;
+            boolean isDataStaged = isStagedData();
             if (isDataStaged && !key.startsWith("DataSet.Data")) {
                 applyStagedData();
             }
@@ -106,6 +106,11 @@ public class DocTextReader {
                     _chart = new Chart();
                     _chart.setName(val);
                     _itemGroup.addChart(_chart);
+                    break;
+
+                case "Chart.Type":
+                    ChartType chartType = ChartType.valueOf(val.toUpperCase());
+                    _chart.setType(chartType);
                     break;
 
                 case "Chart.Title":
@@ -150,6 +155,10 @@ public class DocTextReader {
                     _dataZ = getDoubleArrayForString(val);
                     break;
 
+                case "DataSet.DataZZ":
+                    _dataZZ = getDoubleArrayForString(val);
+                    break;
+
                 case "DataSet.DataC":
                     _dataC = getStringArrayForString(val);
                     break;
@@ -162,7 +171,7 @@ public class DocTextReader {
         }
 
         // Apply last data
-        boolean isDataStaged = _dataX!=null || _dataY!=null || _dataZ!=null || _dataC!=null;
+        boolean isDataStaged = isStagedData();
         if (isDataStaged) {
             applyStagedData();
         }
@@ -253,26 +262,38 @@ public class DocTextReader {
     /**
      * Applies previously staged data to current dataset.
      */
+    private boolean isStagedData()
+    {
+        return _dataX!=null || _dataY!=null || _dataZ!=null || _dataZZ!=null || _dataC!=null;
+    }
+
+    /**
+     * Applies previously staged data to current dataset.
+     */
     private void applyStagedData()
     {
         // Get data type of staged data
-        DataType dataType = DataType.getDataType(_dataX!=null, _dataY!=null, _dataZ!=null, _dataC!=null);
+        DataType dataType = DataType.getDataType(_dataX!=null, _dataY!=null, _dataZ!=null, _dataZZ!=null, _dataC!=null);
 
         // If no DataSet or DataType, complain and return
         if (_dset==null || dataType==DataType.UNKNOWN) {
             System.err.println("DocTextReader.applyStagedData: No DataSet or unknown type: " + dataType);
-            _dset = null; _dataX = _dataY = _dataZ = null; _dataC = null;
+            _dset = null; _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;
             return;
         }
 
         // Set DataType
         _dset.setDataType(dataType);
 
-        // Add points
-        DataUtils.addDataSetPoints(_dset, _dataX, _dataY, _dataZ, _dataC);
+        // Add points XYZZ
+        if (dataType == DataType.XYZZ)
+            DataUtils.addDataSetPointsXYZZ(_dset, _dataX, _dataY, _dataZZ);
+
+        // Add points other
+        else DataUtils.addDataSetPoints(_dset, _dataX, _dataY, _dataZ, _dataC);
 
         // Clear staged data
-        _dataX = _dataY = _dataZ = null; _dataC = null;
+        _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;
     }
 
     /**

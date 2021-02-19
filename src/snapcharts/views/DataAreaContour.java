@@ -45,22 +45,6 @@ public class DataAreaContour extends DataArea {
     }
 
     /**
-     * Returns the contour level at index.
-     */
-    public double getContourValue(int anIndex)
-    {
-        return _contourHelper.getContourValue(anIndex);
-    }
-
-    /**
-     * Returns the contour color at given index.
-     */
-    public Color getContourColor(int anIndex)
-    {
-        return _contourHelper.getContourColor(anIndex);
-    }
-
-    /**
      * Returns the contour shapes array.
      */
     public Shape[] getContours()
@@ -98,7 +82,7 @@ public class DataAreaContour extends DataArea {
 
         // Iterate for contour count and create/set contour data shape
         for (int i=0; i<count; i++) {
-            double valZ = getContourValue(i);
+            double valZ = _contourHelper.getContourRange(i).getMax();
             contours[i] = contourMaker.getContourShape(valZ);
         }
 
@@ -193,7 +177,7 @@ public class DataAreaContour extends DataArea {
         for (int i=0; i<count; i++) {
 
             // Get/set color
-            Color color = getContourColor(i);
+            Color color = _contourHelper.getContourColor(i);
             aPntr.setColor(color);
 
             // Get/fill contour
