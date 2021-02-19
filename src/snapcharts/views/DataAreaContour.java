@@ -221,7 +221,7 @@ public class DataAreaContour extends DataArea {
     {
         paintContour(aPntr);
 
-        paintMesh(aPntr);
+        //paintMesh(aPntr);
     }
 
     /**

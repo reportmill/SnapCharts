@@ -29,6 +29,7 @@ public enum DataType {
     public int getChannelCount()
     {
         if (this==UNKNOWN) return 0;
+        if (this==XYZZ) return 3;
         return toString().length();
     }
 

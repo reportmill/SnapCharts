@@ -26,6 +26,12 @@ public class DataSet extends ChartPart {
     // Whether to show symbols
     private boolean  _showSymbols;
 
+    // The number of rows
+    private int  _rowCount;
+
+    // The number of columns
+    private int  _colCount;
+
     // The RawData
     private RawData  _rawData = new RawDataAsPoints();
 
@@ -127,6 +133,26 @@ public class DataSet extends ChartPart {
      * Returns whether this dataset is enabled.
      */
     public boolean isEnabled()  { return !_disabled; }
+
+    /**
+     * Returns the number of rows.
+     */
+    public int getRowCount()  { return _rowCount; }
+
+    /**
+     * Sets the number of rows.
+     */
+    public void setRowCount(int aValue)  { _rowCount = aValue; }
+
+    /**
+     * Returns the number of columns.
+     */
+    public int getColCount()  { return _colCount; }
+
+    /**
+     * Sets the number of columns.
+     */
+    public void setColCount(int aValue)  { _colCount = aValue; }
 
     /**
      * Returns the number of points.

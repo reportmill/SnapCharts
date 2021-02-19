@@ -2,10 +2,8 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.view.*;
-import snapcharts.model.Chart;
-import snapcharts.model.DataChan;
-import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
+import snapcharts.model.*;
+
 import java.text.DecimalFormat;
 
 /**
@@ -66,20 +64,16 @@ public class ToolTipView extends ColView {
 
         // Create RowView: BulletView
         Color color = chart.getColor(dset.getIndex());
-        //ShapeView bulletView = new ShapeView(new Ellipse(0,0,5,5));
-        //bulletView.setFill(color);
 
-        // Create RowView: NameLabel, ValLabel
-        //StringView nameLabel = new StringView();
-        //nameLabel.setFont(Font.Arial12);
-        //nameLabel.setText(dset.getName() + ":");
-
-        // Create RowView and add BulletView, NameLabel and ValLabel
-        //RowView rview = new RowView();
-        //rview.setSpacing(5);
-        //rview.setMargin(0, 0, 3, 0);
-        //rview.setChildren(bulletView, nameLabel);
-        //addChild(rview);
+        // If alt down, add index
+        int pointIndex = dataPoint.getIndex();
+        if (ViewUtils.isAltDown()) {
+            if (dset.getDataType() == DataType.XYZZ) {
+                addChild(createToolTipEntry("Row: " + dataPoint.getRowIndex()));
+                addChild(createToolTipEntry("Col: " + dataPoint.getColIndex()));
+            }
+            addChild(createToolTipEntry("Index: " + pointIndex));
+        }
 
         // Add children
         int chanCount = dset.getDataType().getChannelCount();
@@ -87,16 +81,13 @@ public class ToolTipView extends ColView {
 
             // Get text
             DataChan chan = dset.getDataType().getChannel(i);
-            Object val = dset.getValueForChannel(chan, dataPoint.getIndex());
+            Object val = dset.getValueForChannel(chan, pointIndex);
             String valStr = val instanceof String ? (String) val : _fmt.format(val);
             String text = chan.toString() + ": " + valStr;
 
-            // Create label
-            StringView valLabel = new StringView();
-            valLabel.setMargin(0, 0, 0, 5);
-            valLabel.setFont(Font.Arial11.getBold());
-            valLabel.setText(text);
-            addChild(valLabel);
+            // Create label and add
+            View entryView = createToolTipEntry(text);
+            addChild(entryView);
         }
 
         // Calculate and set new size, keeping same center
@@ -136,6 +127,18 @@ public class ToolTipView extends ColView {
 
         // Show window
         showWindowAt(ttipX, ttipY);
+    }
+
+    /**
+     * Creates a label for given text.
+     */
+    private View createToolTipEntry(String aStr)
+    {
+        StringView valLabel = new StringView();
+        valLabel.setMargin(0, 0, 0, 5);
+        valLabel.setFont(Font.Arial11.getBold());
+        valLabel.setText(aStr);
+        return valLabel;
     }
 
     /**

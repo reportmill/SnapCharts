@@ -51,6 +51,10 @@ public class DataUtils {
         int colCount = dataX.length;
         int rowCount = dataY.length;
 
+        // Set in dataset
+        aDataSet.setColCount(colCount);
+        aDataSet.setRowCount(rowCount);
+
         // If insufficient Z, complain and pad with zero
         int pointCount = colCount * rowCount;
         if (pointCount>dataZZ.length) {

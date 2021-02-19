@@ -115,6 +115,30 @@ public class DataPoint {
     }
 
     /**
+     * Returns the column index.
+     */
+    public int getColIndex()
+    {
+        if (_dset.getDataType() != DataType.XYZZ)
+            return 0;
+        int index = getIndex();
+        int colCount = _dset.getColCount(); if (colCount == 0) return index;
+        return index % colCount;
+    }
+
+    /**
+     * Returns the row index.
+     */
+    public int getRowIndex()
+    {
+        int index = getIndex();
+        if (_dset.getDataType() != DataType.XYZZ)
+            return index;
+        int colCount = _dset.getColCount(); if (colCount == 0) return index;
+        return index / colCount;
+    }
+
+    /**
      * Caches values.
      */
     public void cacheValues()
