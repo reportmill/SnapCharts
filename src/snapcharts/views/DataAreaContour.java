@@ -26,6 +26,9 @@ public class DataAreaContour extends DataArea {
     // The mesh path
     private Shape  _meshPath;
 
+    // The contour paint order
+    private int[]  _paintOrder;
+
     /**
      * Constructor.
      */
@@ -82,7 +85,7 @@ public class DataAreaContour extends DataArea {
 
         // Iterate for contour count and create/set contour data shape
         for (int i=0; i<count; i++) {
-            double valZ = _contourHelper.getContourRange(i).getMax();
+            double valZ = _contourHelper.getContourRange(i).getMin();
             contours[i] = contourMaker.getContourShape(valZ);
         }
 
@@ -142,6 +145,38 @@ public class DataAreaContour extends DataArea {
     }
 
     /**
+     * Returns the contour paint order.
+     */
+    public int[] getContourPaintOrder()
+    {
+        // If already set, just return
+        if (_paintOrder != null) return _paintOrder;
+
+        // Find index of largest contour
+        double maxArea = 0;
+        int maxIndex = 0;
+        int count = getContourCount();
+        for (int i=0; i<count; i++) {
+            Rect bnds = getDataContours()[i].getBounds();
+            double area = bnds.width * bnds.height;
+            if (area > maxArea) {
+                maxIndex = i;
+                maxArea = area;
+            }
+        }
+
+        // Add index from Max contour to low val, then index from max to high val
+        int[] paintOrder = new int[count];
+        for (int i=0; i<count; i++) {
+            int index = i <= maxIndex ? maxIndex - i : i;
+            paintOrder[i] = index;
+        }
+
+        // Set/return
+        return _paintOrder = paintOrder;
+    }
+
+    /**
      * Returns the mesh path.
      */
     private Shape getMeshPath()
@@ -173,15 +208,27 @@ public class DataAreaContour extends DataArea {
         Color lineColor = new Color(.5, .25);
         aPntr.setStroke(Stroke.Stroke1);
 
+        // Get paint order and just paint hull for first/largest
+        int[] paintOrder = getContourPaintOrder();
+        int largestContourIndex = paintOrder[0];
+        Color largestColor = _contourHelper.getContourColor(largestContourIndex);
+        aPntr.setColor(largestColor);
+        Shape hull = getContourMaker().getMesh().getHullPath();
+        Shape hull2 = dataContourToView(hull);
+        aPntr.fill(hull2);
+
         // Iterate over contours and paint
-        for (int i=0; i<count; i++) {
+        for (int i=1; i<count; i++) {
+
+            // Get index of contour
+            int index = paintOrder[i];
 
             // Get/set color
-            Color color = _contourHelper.getContourColor(i);
+            Color color = _contourHelper.getContourColor(index);
             aPntr.setColor(color);
 
             // Get/fill contour
-            Shape contour = contours[i];
+            Shape contour = contours[index];
             aPntr.fill(contour);
 
             // Paint contour line

@@ -97,16 +97,18 @@ public class ChartHelperContour extends ChartHelper {
         if (_colors!=null) return _colors;
 
         // Create Gradient
-        double[] offsets = { 0, .05, .25, .45, .65, .90, 1 };
-        Color[] gcols = {
-                new Color(1, 0, 96),
-                Color.BLUE,
-                Color.CYAN,
-                new Color(98, 213, 63),
-                Color.ORANGE,
-                new Color(210, 44, 31),
-                new Color(183, 37, 25)
+        String[] chex = {
+            "071E91", "163BA4", "2E6BB9", "469CD0",
+            "5DCAE6", "75FBFD", "82FCC3", "A2FC8E",
+            "CEFE64", "FFFF54", "F5C142", "ED8732",
+            "E85127", "E63222", "AD2317", "75140C"
         };
+        Color[] gcols = new Color[chex.length];
+        for (int i=0; i<chex.length; i++) gcols[i] = new Color("#" + chex[i]);
+        double[] offsets = new double[chex.length];
+        for (int i=0; i<chex.length; i++) offsets[i] = 1d/(chex.length-1) * i;
+        offsets[chex.length-1] = 1;
+
         GradientPaint paint = new GradientPaint(0, GradientPaint.getStops(offsets, gcols));
 
         // Expand to rect
