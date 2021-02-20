@@ -9,7 +9,6 @@ import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
 import snapcharts.doc.Doc;
 import java.io.File;
-import java.text.DecimalFormat;
 
 /**
  * A class to allow a desktop app to send a chart to SnapCharts.
@@ -34,9 +33,9 @@ public class ChartClient extends ViewOwner {
     SimpleServer _server = new SimpleServer();
 
     /**
-     * Open Chart.
+     * Open Chart in browser.
      */
-    public void openChartDoc(String aFileName, Doc aChartDoc)
+    public void openChartDocInBrowser(Doc aChartDoc, String aFileName, boolean doLocal)
     {
         // Get bytes for file
         byte bytes[] = aChartDoc.getChartsFileXMLBytes();
@@ -45,8 +44,7 @@ public class ChartClient extends ViewOwner {
         SnapUtils.writeBytes(bytes, "/tmp/test.charts");
 
         // Get URL
-        boolean isLocal = false;
-        String snapChartsURL = isLocal ? SNAPCHARTS_URL_LOCAL : SNAPCHARTS_URL;
+        String snapChartsURL = doLocal ? SNAPCHARTS_URL_LOCAL : SNAPCHARTS_URL;
         String urls = snapChartsURL + "?fetch=" + aFileName;
 
         // Configure and start simple server
@@ -94,7 +92,8 @@ public class ChartClient extends ViewOwner {
         chart.addDataSet(dataSet);
 
         // Open Doc
-        openChartDoc("NewChart." + Doc.CHARTS_FILE_EXTENSION, doc);
+        String filename = "NewChart." + Doc.CHARTS_FILE_EXTENSION;
+        openChartDocInBrowser(doc, filename, false);
     }
 
     /**
@@ -122,25 +121,6 @@ public class ChartClient extends ViewOwner {
         if (anEvent.equals("OpenSample")) //openSimpleSample();
             new ChartClientMin().openSimpleSample();
     }
-
-    /**
-     * Return string for double array.
-     */
-    public static String getStringForDoubleArray(double theValues[])
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        for (int i=0, iMax=theValues.length; ; i++) {
-            String str = _doubleFmt.format(theValues[i]);
-            sb.append(str);
-            if (i == iMax)
-                return sb.append(']').toString();
-            sb.append(", ");
-        }
-    }
-
-    // A formatter to format double without exponent
-    private static DecimalFormat _doubleFmt = new DecimalFormat("0.##############");
 
     /**
      * Standard main.

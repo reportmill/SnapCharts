@@ -504,10 +504,8 @@ public class DocPane extends ViewOwner {
         if (anEvent.equals("PasteButton")) paste();
 
         // Handle WebButton
-        if (anEvent.equals("WebButton")) {
-            //new snapcharts.appmisc.ChartClient().openChartDoc("Untitled.charts", getDoc());
-            //new snapcharts.appmisc.ChartClient().openSimpleSample();
-        }
+        if (anEvent.equals("WebButton"))
+            AppEnv.getEnv().openChartsDocInBrowser(getDoc());
 
         // Handle InspectorButton
         if (anEvent.equals("InspectorButton")) {
