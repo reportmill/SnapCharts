@@ -514,11 +514,8 @@ public class DocPane extends ViewOwner {
         }
 
         // Handle SamplesButton
-        if (anEvent.equals("SamplesButton")) {
-            if (anEvent.isAltDown())
-                openInPlotly();
-            else showSamples();
-        }
+        if (anEvent.equals("SamplesButton"))
+            showSamples();
 
         // Handle TreeView
         if (anEvent.equals(_treeView)) {

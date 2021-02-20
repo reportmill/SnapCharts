@@ -3,6 +3,8 @@ import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataType;
+
 import java.util.*;
 
 /**
@@ -50,6 +52,10 @@ public class Mesh {
     {
         // If already set, just return
         if (_triangles != null) return _triangles;
+
+        // If DataType is XYZZ, do simple matrix to triangles
+        if (_dset.getDataType() == DataType.XYZZ)
+            return _triangles = getTrianglesXYZZ();
 
         // Get vertices
         int[] vertices = getPointIndexes();
@@ -267,7 +273,6 @@ public class Mesh {
         return _meshPath = path;
     }
 
-
     /**
      * Returns the path of the hull surrounding mesh.
      */
@@ -311,6 +316,36 @@ public class Mesh {
         // Close path, set and return
         path.close();
         return _hullPath = path;
+    }
+
+    /**
+     * Returns the triangles from XYZZ matrix by simply building them.
+     */
+    private Triangle[] getTrianglesXYZZ()
+    {
+        // Get dataset row/col counts
+        int colCount = _dset.getColCount();
+        int rowCount = _dset.getRowCount();
+
+        // Create triangles array (2 triangles for every grid square)
+        int triangleCount = (colCount - 1) * (rowCount - 1) * 2;
+        Triangle[] triangles = new Triangle[triangleCount];
+        int tc = 0;
+
+        // Iterate over rows, cols (just 1 short of ends)
+        for (int row=0, rowMax=rowCount-1; row<rowMax; row++) {
+            for (int col=0, colMax=colCount-1; col<colMax; col++) {
+                int indexRow1 = row * colCount + col;
+                int indexRow2 = indexRow1 + colCount;
+                Triangle triangle1 = new Triangle(indexRow1, indexRow1 + 1, indexRow2 + 1);
+                Triangle triangle2 = new Triangle(indexRow2 + 1, indexRow2, indexRow1);
+                triangles[tc++] = triangle1;
+                triangles[tc++] = triangle2;
+            }
+        }
+
+        // Return triangles
+        return triangles;
     }
 
     /*

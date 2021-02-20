@@ -482,6 +482,31 @@ public class DataSet extends ChartPart {
     }
 
     /**
+     * Returns the dataX values for ZZ.
+     */
+    private double[] getDataXforZZ()
+    {
+        int colCount = getColCount();
+        double[] dataX = getDataX();
+        return Arrays.copyOf(dataX, colCount);
+    }
+
+    /**
+     * Returns the dataY values for ZZ.
+     */
+    private double[] getDataYforZZ()
+    {
+        int rowCount = getRowCount();
+        int colCount = getColCount();
+        double[] dataY = new double[rowCount];
+        for (int i=0; i<rowCount; i++) {
+            int index = i *colCount;
+            dataY[i] = getY(index);
+        }
+        return dataY;
+    }
+
+    /**
      * Returns whether this dataset is clear (no name and no values).
      */
     public boolean isClear()
@@ -521,13 +546,15 @@ public class DataSet extends ChartPart {
 
         // If DataType has X, add DataX values
         if (dataType.hasChannel(DataChan.X)) {
-            String dataStr = DataUtils.getStringForDoubleArray(getDataX());
+            double[] dataX = dataType!=DataType.XYZZ ? getDataX() : getDataXforZZ();
+            String dataStr = DataUtils.getStringForDoubleArray(dataX);
             e.add(new XMLElement("DataX", dataStr));
         }
 
         // If DataType has Y, add DataY values
         if (dataType.hasChannel(DataChan.Y)) {
-            String dataStr = DataUtils.getStringForDoubleArray(getDataY());
+            double[] dataY = dataType!=DataType.XYZZ ? getDataY() : getDataYforZZ();
+            String dataStr = DataUtils.getStringForDoubleArray(dataY);
             e.add(new XMLElement("DataY", dataStr));
         }
 
@@ -603,7 +630,9 @@ public class DataSet extends ChartPart {
         }
 
         // Add Data points
-        DataUtils.addDataSetPoints(this, dataX, dataY, dataZ, dataC);
+        if (dataType == DataType.XYZZ)
+            DataUtils.addDataSetPointsXYZZ(this, dataX, dataY, dataZ);
+        else DataUtils.addDataSetPoints(this, dataX, dataY, dataZ, dataC);
 
         // Return this part
         return this;
