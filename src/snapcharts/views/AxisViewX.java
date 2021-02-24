@@ -103,7 +103,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
             // If Bar, handle special: Shift labels to mid interval and skip last
             if (isBar) {
                 if (i + 1 == count) {
-                    tickLabels[i].setString("");
+                    if (i < tickLabels.length)
+                        tickLabels[i].setString("");
                     break;
                 }
                 dataX = dataX + delta / 2;

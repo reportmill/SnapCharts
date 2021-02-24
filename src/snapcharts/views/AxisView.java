@@ -13,7 +13,6 @@ import snap.view.ViewAnim;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
-import java.text.DecimalFormat;
 
 /**
  * A View to display an axis.
@@ -375,6 +374,27 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         // If already set, just return
         if (_tickLabels != null) return _tickLabels;
+
+        // Special case, bar
+        if (getAxisType()==AxisType.X) {
+            boolean isBar = getChart().getType().isBarType();
+            DataSetList dsetList = getDataSetList();
+            DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
+            DataType dataType = dset != null ? dset.getDataType() : null;
+            if (dataType==DataType.CY) { //isBar || dataType==DataType.IY || dataType==DataType.CY
+                int pointCount = dsetList.getPointCount();
+                StringBox[] sboxes = new StringBox[pointCount];
+                for (int i = 0; i < pointCount; i++) {
+                    String str = dset.getC(i);
+                    StringBox sbox = sboxes[i] = new StringBox(str);
+                    sbox.setFont(getFont());
+                    sbox.setColor(AXIS_LABELS_COLOR);
+                }
+                _tickLabels = sboxes;
+                layoutTickLabels();
+                return _tickLabels;
+            }
+        }
 
         // Get Intervals info
         Intervals intervals = getIntervals();
