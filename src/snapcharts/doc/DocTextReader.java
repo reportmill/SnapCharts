@@ -336,6 +336,8 @@ public class DocTextReader {
     public static String[] getStringArrayForString(String aStr)
     {
         String str = aStr.trim();
+        if (str.startsWith("[")) str = str.substring(1);
+        if (str.endsWith("]")) str = str.substring(0, str.length() - 1);
         String valStrs[] = str.split("\\s*,\\s*");
         return valStrs;
     }
