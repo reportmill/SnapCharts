@@ -175,7 +175,7 @@ public class ChartPart implements XMLArchiver.Archivable {
      */
     public void addPropChangeListener(PropChangeListener aPCL)
     {
-        if(_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
+        if (_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
         _pcs.addPropChangeListener(aPCL);
     }
 
@@ -189,7 +189,7 @@ public class ChartPart implements XMLArchiver.Archivable {
      */
     protected void firePropChange(String aProp, Object oldVal, Object newVal)
     {
-        if(!_pcs.hasListener(aProp)) return;
+        if (!_pcs.hasListener(aProp)) return;
         firePropChange(new PropChange(this, aProp, oldVal, newVal));
     }
 
@@ -198,7 +198,7 @@ public class ChartPart implements XMLArchiver.Archivable {
      */
     protected void firePropChange(String aProp, Object oldVal, Object newVal, int anIndex)
     {
-        if(!_pcs.hasListener(aProp)) return;
+        if (!_pcs.hasListener(aProp)) return;
         firePropChange(new PropChange(this, aProp, oldVal, newVal, anIndex));
     }
 
@@ -273,7 +273,7 @@ public class ChartPart implements XMLArchiver.Archivable {
         XMLElement e = new XMLElement(cname);
 
         // Archive name
-        if(getName()!=null && getName().length()>0) e.add(Name_Prop, getName());
+        if (getName()!=null && getName().length()>0) e.add(Name_Prop, getName());
 
         // Return element
         return e;
@@ -286,7 +286,7 @@ public class ChartPart implements XMLArchiver.Archivable {
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
         // Unarchive Name
-        if(anElement.hasAttribute(Name_Prop))
+        if (anElement.hasAttribute(Name_Prop))
             setName(anElement.getAttributeValue(Name_Prop));
 
         // Return this part

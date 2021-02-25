@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
+  <RowView Padding="4" Spacing="4">
+    <Label text="Levels:" />
+    <TextField Name="LevelsText" PrefWidth="44" Align="CENTER" />
+    <Button Name="LevelsButton4" PrefWidth="20" Padding="2" text="4" ShowArea="false" />
+    <Button Name="LevelsButton8" PrefWidth="20" Padding="2" text="8" ShowArea="false" />
+    <Button Name="LevelsButton16" PrefWidth="20" Padding="2" text="16" ShowArea="false" />
+    <Button Name="LevelsButton32" PrefWidth="20" Padding="2" text="32" ShowArea="false" />
+    <Button Name="LevelsButton64" PrefWidth="20" Padding="2" text="64" ShowArea="false" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowMeshCheckBox" text="Show Mesh" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowLinesCheckBox" text="Show Lines" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ReverseScaleCheckBox" text="Reverse Scale" />
+  </RowView>
+</ColView>

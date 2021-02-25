@@ -4,7 +4,6 @@ import snap.gfx.Color;
 import snap.geom.VPos;
 import snap.util.*;
 import snap.web.WebURL;
-import snapcharts.doc.Doc;
 import snapcharts.model.*;
 
 /**
@@ -434,7 +433,7 @@ public class ChartReader {
     protected void parsePlotOptionsColumn(JSONNode aNode)
     {
         // Get column chart
-        AreaBar colChart = _chart.getAreaTypes().getColumnChart();
+        BarProps colChart = _chart.getTypeHelper().getBarProps();
 
         // Iterate over nodes
         for(JSONNode child : aNode.getNodes()) { String key = child.getKey();

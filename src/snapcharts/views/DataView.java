@@ -2,6 +2,7 @@ package snapcharts.views;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
+import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
 
@@ -40,7 +41,11 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return null; }
+    public T getChartPart()
+    {
+        Chart chart = getChart();
+        return (T) chart.getTypeProps();
+    }
 
     /**
      * Returns the ChartView.

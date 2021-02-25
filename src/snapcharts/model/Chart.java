@@ -49,8 +49,8 @@ public class Chart extends ChartPart {
     // The dataset shapes
     private Shape _symbolShapes[];
 
-    // The object holding specific chart types
-    private AreaTypes _areaTypes = new AreaTypes(this);
+    // The object holding specific chart type properties
+    private ChartTypeHpr _chartTypeHpr = new ChartTypeHpr(this);
 
     // Property constants
     public static final String Type_Prop = "Type";
@@ -270,9 +270,14 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the AreaTypes object.
+     * Returns the ChartTypeHelper that provides/manages ChartTypeProps.
      */
-    public AreaTypes getAreaTypes()  { return _areaTypes; }
+    public ChartTypeHpr getTypeHelper()  { return _chartTypeHpr; }
+
+    /**
+     * Returns the ChartTypeProps that provides/manages ChartTypeProps.
+     */
+    public ChartTypeProps getTypeProps()  { return _chartTypeHpr.getTypeProps(); }
 
     /**
      * Called when chart part has prop change.

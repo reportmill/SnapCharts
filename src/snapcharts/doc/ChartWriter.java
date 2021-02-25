@@ -390,7 +390,7 @@ public class ChartWriter {
         Map map = new HashMap();
 
         // Get column chart
-        AreaBar colChart = _chart.getAreaTypes().getColumnChart();
+        BarProps colChart = _chart.getTypeHelper().getBarProps();
 
         // Handle colorByPoint
         boolean colorByPoint = colChart.isColorValues();

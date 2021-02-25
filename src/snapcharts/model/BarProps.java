@@ -1,9 +1,9 @@
 package snapcharts.model;
 
 /**
- * A chart Area subclass for Bar charts.
+ * A ChartTypeProps subclass for Bar chart properties.
  */
-public class AreaBar extends Area {
+public class BarProps extends ChartTypeProps {
 
     // The ratio of a section used to pad a group of bars
     double             _groupPad = .2;

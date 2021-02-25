@@ -13,7 +13,7 @@ import snapcharts.model.*;
 public class DataAreaBar extends DataArea {
 
     // The Area
-    private AreaBar  _area;
+    private BarProps _barProps;
 
     // The number of datasets to display
     protected int  _dsetCount;
@@ -38,10 +38,10 @@ public class DataAreaBar extends DataArea {
     /**
      * Returns the area.
      */
-    public AreaBar getArea()
+    public BarProps getBarProps()
     {
-        if (_area!=null) return _area;
-        return _area = getChart().getAreaTypes().getColumnChart();
+        if (_barProps != null) return _barProps;
+        return _barProps = getChart().getTypeHelper().getBarProps();
     }
 
     /**
@@ -57,7 +57,7 @@ public class DataAreaBar extends DataArea {
         if (_sections!=null && _sections.length==pointCount && _dsetCount ==dsetCount) return _sections;
 
         // Get DataAreaBar info
-        AreaBar barArea = getArea();
+        BarProps barArea = getBarProps();
         double groupPad = barArea.getGroupPadding();
         double barPad = barArea.getBarPadding();
         double viewHeight = getHeight();

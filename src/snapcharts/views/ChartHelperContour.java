@@ -5,10 +5,7 @@ import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
 import snap.util.PropChange;
-import snapcharts.model.AxisType;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import java.util.List;
 
@@ -16,6 +13,9 @@ import java.util.List;
  * A ChartHelper for common Contour types.
  */
 public class ChartHelperContour extends ChartHelper {
+
+    // The number of contour levels
+    private int  _levelsCount;
 
     // The contour range values (min/max) for each contour level
     private MinMax[]  _contourRanges;
@@ -40,7 +40,13 @@ public class ChartHelperContour extends ChartHelper {
     /**
      * Returns the number of contours.
      */
-    public int getContourCount()  { return 16; }
+    public int getContourCount()
+    {
+        if (_levelsCount > 0) return _levelsCount;
+        Chart chart = getChart();
+        ContourProps contourProps = chart.getTypeHelper().getContourProps();
+        return _levelsCount = contourProps.getLevelCount();
+    }
 
     /**
      * Returns the contour range for given contour index.
@@ -189,8 +195,10 @@ public class ChartHelperContour extends ChartHelper {
 
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList) {
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof ChartTypeProps) {
+            _levelsCount = 0;
             _contourRanges = null;
+            _colors = null;
         }
     }
 }

@@ -41,6 +41,9 @@ public class ChartPaneInsp extends ViewOwner {
     // The LegendInsp
     private LegendInsp  _legendInsp;
 
+    // The TypePropsInsp
+    private TypePropsInsp  _typePropsInsp;
+
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
 
@@ -114,6 +117,10 @@ public class ChartPaneInsp extends ViewOwner {
             // Create/add LegendInsp
             _legendInsp = new LegendInsp(_chartPane);
             addInspector(_legendInsp, false);
+
+            // Create/add TypePropsInsp
+            _typePropsInsp = new TypePropsInsp(_chartPane);
+            addInspector(_typePropsInsp, false);
         }
 
         // Add DataSetInsp
@@ -121,7 +128,7 @@ public class ChartPaneInsp extends ViewOwner {
         addInspector(_dsetInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _dsetInsp };
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _typePropsInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
 
@@ -220,6 +227,7 @@ public class ChartPaneInsp extends ViewOwner {
         if (aChartPart instanceof AxisX) return _axisXInsp;
         if (aChartPart instanceof AxisY) return _axisYInsp;
         if (aChartPart instanceof Legend) return _legendInsp;
+        if (aChartPart instanceof ChartTypeProps) return _typePropsInsp;
         if (aChartPart instanceof DataSet) return _dsetInsp;
         return _chartInsp;
     }
@@ -245,5 +253,8 @@ public class ChartPaneInsp extends ViewOwner {
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors)
             insp.setSelected(insp==selPartInsp);
+
+        if (selPartInsp != null)
+            selPartInsp.resetLater();
     }
 }

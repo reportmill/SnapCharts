@@ -1,7 +1,6 @@
 package snapcharts.doc;
 import snap.util.XMLArchiver;
 import snap.web.WebURL;
-import snapcharts.doc.Doc;
 import snapcharts.model.*;
 
 import java.util.HashMap;
@@ -51,7 +50,7 @@ public class ChartArchiver extends XMLArchiver {
         Map cmap = new HashMap();
 
         // Add classes
-        cmap.put(Area.class.getSimpleName(), Area.class);
+        cmap.put(ChartTypeProps.class.getSimpleName(), ChartTypeProps.class);
         cmap.put(Axis.class.getSimpleName(), Axis.class);
         cmap.put(AxisX.class.getSimpleName(), AxisX.class);
         cmap.put(AxisY.class.getSimpleName(), AxisY.class);

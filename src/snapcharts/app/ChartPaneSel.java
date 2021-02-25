@@ -43,11 +43,11 @@ public class ChartPaneSel {
     public void setSelChartPart(ChartPart aChartPart)
     {
         // If already set, just return
-        if (aChartPart==_selPart) return;
+        if (aChartPart == _selPart) return;
 
         // Clear last SelView.Selected
         ChartPartView selViewOld = getSelView();
-        if (selViewOld!=null)
+        if (selViewOld != null)
             selViewOld.setSelected(false);
 
         // Set new part
@@ -55,7 +55,7 @@ public class ChartPaneSel {
 
         // Set new SelView.Selected
         ChartPartView selViewNew = getSelView();
-        if (selViewNew!=null)
+        if (selViewNew != null)
             selViewNew.setSelected(true);
 
         // Reset
@@ -89,15 +89,17 @@ public class ChartPaneSel {
     {
         if (aChartPart instanceof Chart)
             return _chartView;
-        else if (aChartPart instanceof Header)
+        if (aChartPart instanceof Header)
             return _chartView.getHeaderView();
-        else if (aChartPart instanceof Axis) {
+        if (aChartPart instanceof Axis) {
             Axis axis = (Axis) aChartPart;
             AxisType axisType = axis.getType();
             return _chartView.getChartHelper().getAxisView(axisType);
         }
-        else if (aChartPart instanceof Legend)
+        if (aChartPart instanceof Legend)
             return _chartView.getLegendView();
+        if (aChartPart instanceof ChartTypeProps)
+            return _chartView.getDataView();
         return null;
     }
 
@@ -129,6 +131,6 @@ public class ChartPaneSel {
      */
     private boolean isSelectableView(View aView)
     {
-        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView;
+        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView || aView instanceof DataView;
     }
 }

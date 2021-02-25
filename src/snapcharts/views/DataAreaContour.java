@@ -3,6 +3,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.Axis;
+import snapcharts.model.ChartTypeProps;
 import snapcharts.model.DataSet;
 import snapcharts.model.Intervals;
 import snapcharts.util.ContourMaker;
@@ -221,7 +222,9 @@ public class DataAreaContour extends DataArea {
     {
         paintContour(aPntr);
 
-        //paintMesh(aPntr);
+        boolean showMesh = getChart().getTypeHelper().getContourProps().isShowMesh();
+        if (showMesh)
+            paintMesh(aPntr);
     }
 
     /**
@@ -280,9 +283,11 @@ public class DataAreaContour extends DataArea {
     protected void chartPartDidChange(PropChange aPC)
     {
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis) {
+        if (src==getDataSet() || src instanceof Axis || src instanceof ChartTypeProps) {
             clearContours();
             _contourMaker = null;
+            _dataContours = null;
+            _paintOrder = null;
         }
     }
 
