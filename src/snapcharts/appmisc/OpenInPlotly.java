@@ -1,6 +1,7 @@
 package snapcharts.appmisc;
 import snap.geom.Side;
 import snap.util.FileUtils;
+import snap.util.FormatUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
 import snapcharts.model.*;
@@ -173,6 +174,13 @@ public class OpenInPlotly {
         axisJS.addKeyValue("ticks", "inside");
         axisJS.addKeyValue("mirror", true);
 
+        // If X Axis, see if we need to add domain entry
+        if (anAxisType == AxisType.X) {
+            JSONNode domain = getXAxisDomain(aChart);
+            if (domain != null)
+                axisJS.addKeyValue("domain", domain);
+        }
+
         // Set Y on particular side
         if (anAxisType.isAnyY() && anAxisType!=AxisType.Y) {
             axisJS.addKeyValue("side", axis.getSide().toString().toLowerCase());
@@ -181,12 +189,20 @@ public class OpenInPlotly {
                 axisJS.addKeyValue("anchor", "x");
             }
             if (anAxisType == AxisType.Y3) {
-                axisJS.addKeyValue("anchor", "free");
-                axisJS.addKeyValue("position", .15);
+                double position = getYAxisPosition(aChart, anAxisType);
+                if (position > 0 && position < 1) {
+                    axisJS.addKeyValue("anchor", "free");
+                    axisJS.addKeyValue("position", .15);
+                }
+                else axisJS.addKeyValue("anchor", "x");
             }
             if (anAxisType == AxisType.Y4) {
-                axisJS.addKeyValue("anchor", "free");
-                axisJS.addKeyValue("position", .85);
+                double position = getYAxisPosition(aChart, anAxisType);
+                if (position > 0 && position < 1) {
+                    axisJS.addKeyValue("anchor", "free");
+                    axisJS.addKeyValue("position", .85);
+                }
+                else axisJS.addKeyValue("anchor", "x");
             }
         }
 
@@ -320,14 +336,56 @@ public class OpenInPlotly {
     }
 
     /**
+     * Returns the suggested domain for a chart - which is a start/end values
+     */
+    private JSONNode getXAxisDomain(Chart aChart)
+    {
+        AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
+        if (axisTypes.length <= 2)
+            return null;
+        int left = 0, right = 0;
+        for (AxisType axisType : axisTypes) {
+            Axis axis = aChart.getAxisForType(axisType);
+            if (axis.getSide() == Side.LEFT) left ++;
+            if (axis.getSide() == Side.RIGHT) right ++;
+        }
+
+        double start = left==2 ? .3 : 0;
+        double end = right==2 ? .7 : 1;
+        JSONNode node = new JSONNode();
+        node.addValue(start);
+        node.addValue(end);
+        return node; //"[" + FormatUtils.formatNum("#.#", start) + ", " + FormatUtils.formatNum("#.#", end) + "]";
+    }
+
+    /**
+     * Returns the suggested Y axis position for a chart - which is a start/end values
+     */
+    private double getYAxisPosition(Chart aChart, AxisType anAxisType)
+    {
+        AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
+        Side side = aChart.getAxisForType(anAxisType).getSide();
+        int count = 0;
+        for (AxisType axisType : axisTypes) {
+            if (axisType == anAxisType)
+                break;
+            if (aChart.getAxisForType(axisType).getSide() == side)
+                count++;
+        }
+        if (side == Side.RIGHT)
+            return 1 - count * .15;
+        return count * .15;
+    }
+
+    /**
      * Writes current text to file.
      */
     private void openHTMLStringInBrowser(String aName, String aStr)
     {
         //File file = FileUtils.getTempFile("Plotly.html");
-        //File file = new File("/tmp/Plotly.html");
-        //try { FileUtils.writeBytes(file, htmlStr.getBytes()); }
-        //catch (Exception e) { throw new RuntimeException(e); }
+        File file2 = new File("/tmp/Plotly.html");
+        try { FileUtils.writeBytes(file2, aStr.getBytes()); }
+        catch (Exception e) { throw new RuntimeException(e); }
         //GFXEnv.getEnv().openURL(file);
 
         // Get filename and file

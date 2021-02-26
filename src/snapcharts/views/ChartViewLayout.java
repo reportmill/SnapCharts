@@ -297,7 +297,7 @@ public class ChartViewLayout {
         {
             case TOP: return getNonNullArray(_headerProxy, legend);
             case BOTTOM: return getNonNullArray(axis1, legend);
-            case LEFT: return getNonNullArray(legend, axis1, axis2);
+            case LEFT: return getNonNullArray(legend, axis2, axis1);
             case RIGHT: return getNonNullArray(axis1, axis2, legend, contour);
             default: throw new RuntimeException("ChartViewLayout.getViewsForSide: Unknown side: " + aSide);
         }

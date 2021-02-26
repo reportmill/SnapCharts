@@ -226,4 +226,14 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         // Do normal version
         super.processEvent(anEvent);
     }
+
+    /**
+     * Override to not set focus effect.
+     */
+    @Override
+    public void setSelected(boolean aValue)
+    {
+        super.setSelected(aValue);
+        setEffect(null);
+    }
 }

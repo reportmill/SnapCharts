@@ -38,7 +38,12 @@ public class AxisInsp extends ChartPartInsp {
     /**
      * Returns the axis.
      */
-    public Axis getAxis()  { return getChart().getAxisForType(_axisType); }
+    public Axis getAxis()
+    {
+        ChartPart chartPart = getChartPane().getSel().getSelChartPart();
+        Axis axis = chartPart instanceof Axis ? (Axis) chartPart : getChart().getAxisForType(_axisType);
+        return axis;
+    }
 
     /**
      * Returns the ChartPart.
@@ -57,7 +62,8 @@ public class AxisInsp extends ChartPartInsp {
         if (axisView == null)
             return;
 
-        // Reset TitleText
+        // Reset AxisTypeLabel, TitleText
+        setViewValue("AxisTypeLabel", axis.getType().toString());
         setViewValue("TitleText", axis.getTitle());
 
         // Reset ZeroRequiredCheckBox, LogCheckBox
