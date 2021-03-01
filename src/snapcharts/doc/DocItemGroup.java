@@ -91,6 +91,35 @@ public class DocItemGroup extends DocItem {
     }
 
     /**
+     * Sets the number of items to show per page, adjusting Portrait/ChartScale if it will help.
+     */
+    public void setItemsPerPageAndMore(int aValue)
+    {
+        setItemsPerPage(aValue);
+        switch (aValue) {
+            case 1: setPortrait(false); break;
+            case 2: setPortrait(true); break;
+            case 3: setPortrait(true); break;
+            case 4:
+                setPortrait(false);
+                if (getChartScale() < DocItemGroup.CHART_SCALE_LARGER_TEXT)
+                    setChartScale(DocItemGroup.CHART_SCALE_LARGER_TEXT);
+                break;
+            case 6:
+                setPortrait(true);
+                if (getChartScale() < DocItemGroup.CHART_SCALE_NATURAL)
+                    setChartScale(DocItemGroup.CHART_SCALE_NATURAL);
+                break;
+            case 9:
+                setPortrait(false);
+                if (getChartScale() < DocItemGroup.CHART_SCALE_NATURAL)
+                    setChartScale(DocItemGroup.CHART_SCALE_NATURAL);
+                break;
+            default: break;
+        }
+    }
+
+    /**
      * Returns the scale of charts to either emphasize text (.5 - <1), emphasize data (>1 - 1.5) or balanced (1).
      */
     public double getChartScale()  { return _chartScale; }

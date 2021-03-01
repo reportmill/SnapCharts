@@ -87,36 +87,18 @@ public class ChartSetBasicTool extends ViewOwner {
             docItem.setPageDisplay(PageDisplay.CONTINUOUS);
 
         // Handle OneUpButton, TwoUpButton, ThreeUpButton, FourUpButton
-        if (anEvent.equals("OneUpButton")) {
-            docItem.setItemsPerPage(1);
-            docItem.setPortrait(false);
-        }
-        if (anEvent.equals("TwoUpButton")) {
-            docItem.setItemsPerPage(2);
-            docItem.setPortrait(true);
-        }
-        if (anEvent.equals("ThreeUpButton")) {
-            docItem.setItemsPerPage(3);
-            docItem.setPortrait(true);
-        }
-        if (anEvent.equals("FourUpButton")) {
-            docItem.setItemsPerPage(4);
-            docItem.setPortrait(false);
-            if (docItem.getChartScale() < DocItemGroup.CHART_SCALE_LARGER_TEXT)
-                docItem.setChartScale(DocItemGroup.CHART_SCALE_LARGER_TEXT);
-        }
-        if (anEvent.equals("SixUpButton")) {
-            docItem.setItemsPerPage(6);
-            docItem.setPortrait(true);
-            if (docItem.getChartScale() < DocItemGroup.CHART_SCALE_NATURAL)
-                docItem.setChartScale(DocItemGroup.CHART_SCALE_NATURAL);
-        }
-        if (anEvent.equals("NineUpButton")) {
-            docItem.setItemsPerPage(9);
-            docItem.setPortrait(false);
-            if (docItem.getChartScale() < DocItemGroup.CHART_SCALE_NATURAL)
-                docItem.setChartScale(DocItemGroup.CHART_SCALE_NATURAL);
-        }
+        if (anEvent.equals("OneUpButton"))
+            docItem.setItemsPerPageAndMore(1);
+        if (anEvent.equals("TwoUpButton"))
+            docItem.setItemsPerPageAndMore(2);
+        if (anEvent.equals("ThreeUpButton"))
+            docItem.setItemsPerPageAndMore(3);
+        if (anEvent.equals("FourUpButton"))
+            docItem.setItemsPerPageAndMore(4);
+        if (anEvent.equals("SixUpButton"))
+            docItem.setItemsPerPageAndMore(6);
+        if (anEvent.equals("NineUpButton"))
+            docItem.setItemsPerPageAndMore(9);
 
         // Handle ChartScaleButtons (ChartScaleButton.5, .75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
         String name = anEvent.getName();

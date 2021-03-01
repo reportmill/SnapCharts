@@ -23,6 +23,7 @@ public class DataAreaXY extends DataArea {
     private Shape  _tailShape;
 
     // Constants for defaults
+    protected static Stroke Stroke1 = new Stroke(1, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
@@ -161,7 +162,7 @@ public class DataAreaXY extends DataArea {
         if (_chartType ==ChartType.AREA)
             color = color.blend(Color.CLEAR, .3);
         aPntr.setColor(color);
-        aPntr.setStroke(isSelected ? Stroke3 : Stroke2);
+        aPntr.setStroke(isSelected ? Stroke2 : Stroke1);
 
         // If ChartType.LINE, draw path
         if (_chartType ==ChartType.LINE) {

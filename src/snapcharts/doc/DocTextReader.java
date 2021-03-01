@@ -99,7 +99,7 @@ public class DocTextReader {
 
                 case "Group.ItemsPerPage":
                     int itemsPerPage = SnapUtils.intValue(val);
-                    _itemGroup.setItemsPerPage(itemsPerPage);
+                    _itemGroup.setItemsPerPageAndMore(itemsPerPage);
                     break;
 
                 case "Chart.Name":
@@ -109,7 +109,9 @@ public class DocTextReader {
                     break;
 
                 case "Chart.Type":
-                    ChartType chartType = ChartType.valueOf(val.toUpperCase());
+                    ChartType chartType = ChartType.LINE;
+                    try { chartType = ChartType.valueOf(val.toUpperCase()); }
+                    catch (Exception e) { System.err.println("DocTextReader: Unsupported chart type: " + val); }
                     _chart.setType(chartType);
                     break;
 
