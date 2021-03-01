@@ -383,9 +383,9 @@ public class OpenInPlotly {
     private void openHTMLStringInBrowser(String aName, String aStr)
     {
         //File file = FileUtils.getTempFile("Plotly.html");
-        File file2 = new File("/tmp/Plotly.html");
-        try { FileUtils.writeBytes(file2, aStr.getBytes()); }
-        catch (Exception e) { throw new RuntimeException(e); }
+        //File file2 = new File("/tmp/Plotly.html");
+        //try { FileUtils.writeBytes(file2, aStr.getBytes()); }
+        //catch (Exception e) { throw new RuntimeException(e); }
         //GFXEnv.getEnv().openURL(file);
 
         // Get filename and file

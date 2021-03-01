@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <RowView Padding="4" Spacing="6">
-    <Label text="Axis Type:" />
-    <Label Name="AxisTypeLabel" PrefHeight="20" text="AxisType" />
-  </RowView>
   <RowView Padding="4" Spacing="4">
     <Label text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />

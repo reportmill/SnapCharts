@@ -1,7 +1,9 @@
 package snapcharts.apptools;
 import snap.view.ColView;
+import snap.view.Label;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
+import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
 import snapcharts.model.ChartTypeProps;
@@ -32,7 +34,13 @@ public class TypePropsInsp extends ChartPartInsp {
      * Returns the name.
      */
     @Override
-    public String getName()  { return "ChartType Settings"; }
+    public String getName()
+    {
+        if (!_chartPane.isUISet()) return "ChartType Settings";
+        Chart chart = getChart();
+        ChartType chartType = chart.getType();
+        return chartType.getStringPlain() + " Settings";
+    }
 
     /**
      * Returns the ChartPart.
@@ -106,6 +114,11 @@ public class TypePropsInsp extends ChartPartInsp {
 
         if (chartTypeInsp != null)
             chartTypeInsp.resetLater();
+
+        // Update title
+        String title = chartTypeInsp != null ? chartTypeInsp.getName() : getName();
+        Label label = getCollapser().getLabel();
+        label.setText(title);
     }
 
     /**

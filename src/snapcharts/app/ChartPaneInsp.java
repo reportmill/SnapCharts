@@ -144,6 +144,16 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
+     * Override to trigger update of TypePropsInsp.
+     */
+    @Override
+    protected void initShowing()
+    {
+        if (_typePropsInsp != null)
+            _typePropsInsp.resetLater();
+    }
+
+    /**
      * Adds an inspector.
      */
     private void addInspector(ChartPartInsp aChartPartInsp, boolean isShowing)

@@ -1,4 +1,5 @@
 package snapcharts.apptools;
+import snap.view.Label;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
@@ -61,6 +62,11 @@ public class AxisInsp extends ChartPartInsp {
         AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
         if (axisView == null)
             return;
+
+        // Reset Collapser.Text
+        String title = axis.getType().toString() + " Axis Settings";
+        Label label = getCollapser().getLabel();
+        label.setText(title);
 
         // Reset AxisTypeLabel, TitleText
         setViewValue("AxisTypeLabel", axis.getType().toString());
@@ -136,5 +142,19 @@ public class AxisInsp extends ChartPartInsp {
             axis.setZeroRequired(anEvent.getBoolValue());
         if (anEvent.equals("LogCheckBox"))
             axis.setLog(anEvent.getBoolValue());
+    }
+
+    /**
+     * Override to reset inspector label to generic "Y Axis Settings"
+     */
+    @Override
+    public void setSelected(boolean aValue)
+    {
+        if (aValue == isSelected()) return;
+        super.setSelected(aValue);
+        if (!aValue && _axisType.isAnyY()) {
+            Label label = getCollapser().getLabel();
+            label.setText("Y Axis Settings");
+        }
     }
 }
