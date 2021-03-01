@@ -4,7 +4,6 @@ import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.view.ColView;
-import snap.view.ScaleBox;
 import snap.view.StringView;
 import snapcharts.model.Chart;
 import snapcharts.model.Header;
@@ -19,9 +18,6 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
 
     // The subtitle
     private StringView  _subtitleView;
-
-    // The ScaleBox in case header doesn't fit
-    private ScaleBox  _scaleBox;
 
     // The ColView to hold children in ScaleBox
     private ColView  _colView;
@@ -43,24 +39,21 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
 
         // Create ColView to hold TitleView, SubtitleView
         _colView = new ColView();
-        _colView.setAlign(Pos.TOP_CENTER);
+        _colView.setAlign(Pos.BOTTOM_CENTER);
         _colView.setSpacing(2);
-
-        // Create ScaleBox to hold ColView and shrink if needed
-        _scaleBox = new ScaleBox(_colView);
-        _scaleBox.setKeepAspect(true);
-        _scaleBox.setAlign(Pos.BOTTOM_CENTER);
-        addChild(_scaleBox);
+        addChild(_colView);
 
         // Create configure TitleView
         _titleView = new StringView();
         _titleView.setFont(DEFAULT_TITLE_FONT);
+        _titleView.setShrinkToFit(true);
         _colView.addChild(_titleView);
 
         // Create configure SubtitleView
         _subtitleView = new StringView();
         _subtitleView.setFont(DEFAULT_SUBTITLE_FONT);
         _subtitleView.setTextFill(DEFAULT_SUBTITLE_COLOR);
+        _subtitleView.setShrinkToFit(true);
         _colView.addChild(_subtitleView);
     }
 
@@ -99,8 +92,9 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        //return ColView.getPrefWidth(this, aH);
-        return _scaleBox.getPrefWidth(aH);
+        Insets ins = getInsetsAll();
+        double prefW = _colView.getPrefWidth(aH);
+        return prefW + ins.getWidth();
     }
 
     /**
@@ -109,8 +103,9 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        //return ColView.getPrefHeight(this, aW);
-        return _scaleBox.getPrefHeight(aW);
+        Insets ins = getInsetsAll();
+        double prefH = _colView.getPrefHeight(aW);
+        return prefH + ins.getHeight();
     }
 
     /**
@@ -119,12 +114,11 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     @Override
     protected void layoutImpl()
     {
-        //ColView.layout(this, false);
         Insets ins = getInsetsAll();
         double areaX = ins.left;
         double areaY = ins.top;
         double areaW = getWidth() - ins.getWidth();
         double areaH = getHeight() - ins.getHeight();
-        _scaleBox.setBounds(areaX, areaY, areaW, areaH);
+        _colView.setBounds(areaX, areaY, areaW, areaH);
     }
 }
