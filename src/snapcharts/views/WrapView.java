@@ -74,7 +74,7 @@ public class WrapView extends ParentView {
         if (_content==null) return;
         double viewW = getWidth();
         double viewH = getHeight();
-        double childW = _content.getPrefWidth();
+        double childW = Math.min(_content.getPrefWidth(), Math.max(viewW, viewH)); // This is me being stupid/lazy
         double childH = _content.getPrefHeight();
         _content.setBounds(0, 0, childW, childH);
 

@@ -66,7 +66,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double ticksH = ascent + descent;
 
         // Set TitleView bounds
-        double titleW = _titleView.getPrefWidth();
+        double titleW = Math.min(_titleView.getPrefWidth(), areaW);
         double titleH = _titleView.getPrefHeight();
         double titleX = Math.round((areaW - titleW)/2);
         double titleY = AXIS_MARGIN + ticksH + TITLE_TICKS_SPACING;
