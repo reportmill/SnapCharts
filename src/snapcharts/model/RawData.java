@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snapcharts.util.MinMax;
 
 /**
  * This is the cover class for holding the raw data.
@@ -17,8 +18,8 @@ public abstract class RawData {
     // Cached array of polar Theta/Radial data
     private double[]  _dataT, _dataR;
 
-    // Min values for X/Y/Z
-    private Double  _minX, _maxX, _minY, _maxY, _minZ, _maxZ;
+    // Min/Max values for X/Y/Z
+    private MinMax  _minMaxX, _minMaxY, _minMaxZ, _minMaxT, _minMaxR;
 
     /**
      * Returns the DataType.
@@ -291,77 +292,91 @@ public abstract class RawData {
     /**
      * Returns the minimum X value in this dataset.
      */
-    public double getMinX()
-    {
-        if (_minX != null) return _minX;
-        return _minX = getMin(DataChan.X);
-    }
+    public double getMinX()  { return getMinMaxX().getMin(); }
 
     /**
      * Returns the maximum X value in this dataset.
      */
-    public double getMaxX()
-    {
-        if (_maxX != null) return _maxX;
-        return _maxX = getMax(DataChan.X);
-    }
+    public double getMaxX()  { return getMinMaxX().getMax(); }
 
     /**
      * Returns the minimum Y value in this dataset.
      */
-    public double getMinY()
-    {
-        if (_minY != null) return _minY;
-        return _minY = getMin(DataChan.Y);
-    }
+    public double getMinY()  { return getMinMaxY().getMin(); }
 
     /**
      * Returns the maximum Y value in this dataset.
      */
-    public double getMaxY()
-    {
-        if (_maxY != null) return _maxY;
-        return _maxY = getMax(DataChan.Y);
-    }
+    public double getMaxY()  { return getMinMaxY().getMax(); }
 
     /**
      * Returns the minimum Z value in this dataset.
      */
-    public double getMinZ()
-    {
-        if (_minZ != null) return _minZ;
-        return _minZ = getMin(DataChan.Z);
-    }
+    public double getMinZ()  { return getMinMaxZ().getMin(); }
 
     /**
      * Returns the maximum Z value in this dataset.
      */
-    public double getMaxZ()
+    public double getMaxZ()  { return getMinMaxZ().getMax(); }
+
+    /**
+     * Returns the MinMax of X in this dataset.
+     */
+    public MinMax getMinMaxX()
     {
-        if (_maxZ != null) return _maxZ;
-        return _maxZ = getMax(DataChan.Z);
+        if (_minMaxX != null) return _minMaxX;
+        return _minMaxX = getMinMax(DataChan.X);
+    }
+
+    /**
+     * Returns the MinMax of Y in this dataset.
+     */
+    public MinMax getMinMaxY()
+    {
+        if (_minMaxY != null) return _minMaxY;
+        return _minMaxY = getMinMax(DataChan.Y);
+    }
+
+    /**
+     * Returns the MinMax of Z in this dataset.
+     */
+    public MinMax getMinMaxZ()
+    {
+        if (_minMaxZ != null) return _minMaxZ;
+        return _minMaxZ = getMinMax(DataChan.Z);
+    }
+
+    /**
+     * Returns the MinMax of Theta in this dataset.
+     */
+    public MinMax getMinMaxT()
+    {
+        if (_minMaxT != null) return _minMaxT;
+        return _minMaxT = getMinMax(DataChan.T);
+    }
+
+    /**
+     * Returns the MinMax of Radius in this dataset.
+     */
+    public MinMax getMinMaxR()
+    {
+        if (_minMaxR != null) return _minMaxR;
+        return _minMaxR = getMinMax(DataChan.R);
     }
 
     /**
      * Returns the minimum X value in this dataset.
      */
-    private double getMin(DataChan aChan)
+    private MinMax getMinMax(DataChan aChan)
     {
         double[] dataVals = getDataArrayForChannel(aChan);
         double min = Float.MAX_VALUE;
-        for (int i=0, iMax=getPointCount(); i<iMax; i++) min = Math.min(min, dataVals[i]);
-        return min;
-    }
-
-    /**
-     * Returns the maximum X value in this dataset.
-     */
-    private double getMax(DataChan aChan)
-    {
-        double[] dataVals = getDataArrayForChannel(aChan);
         double max = -Float.MAX_VALUE;
-        for (int i=0, iMax=getPointCount(); i<iMax; i++) max = Math.max(max, dataVals[i]);
-        return max;
+        for (int i=0, iMax=getPointCount(); i<iMax; i++) {
+            min = Math.min(min, dataVals[i]);
+            max = Math.max(max, dataVals[i]);
+        }
+        return new MinMax(min, max);
     }
 
     /**
@@ -371,9 +386,7 @@ public abstract class RawData {
     {
         _dataX = _dataY = _dataZ = null;
         _dataC = null;
-        _minX = _maxX = null;
-        _minY = _maxY = null;
-        _minZ = _maxZ = null;
+        _minMaxX = _minMaxY = _minMaxZ = _minMaxT = _minMaxR = null;
     }
 
     /**

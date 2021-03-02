@@ -402,6 +402,11 @@ public class DataSet extends ChartPart {
     }
 
     /**
+     * Returns the raw data.
+     */
+    public RawData getRawData()  { return _rawData; }
+
+    /**
      * Returns an array of dataset X values.
      */
     public double[] getDataX()

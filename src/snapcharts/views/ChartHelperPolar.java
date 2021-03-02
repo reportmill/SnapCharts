@@ -186,12 +186,14 @@ public class ChartHelperPolar extends ChartHelper {
         if (dataSetList.getDataSetCount()==0 || dataSetList.getPointCount()==0)
             return new MinMax(0, 5);
 
-        // Handle X
+        // Get Radius MinMax for all datasets
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
         for (DataSet dset : dataSetList.getDataSets()) {
-            min = Math.min(min, dset.getMinY());
-            max = Math.max(max, dset.getMaxY());
+            RawData rawData = dset.getRawData();
+            MinMax minMax = rawData.getMinMaxR();
+            min = Math.min(min, minMax.getMin());
+            max = Math.max(max, minMax.getMax());
         }
 
         // Check Axis.ZeroRequired
