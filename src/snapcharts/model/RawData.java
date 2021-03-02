@@ -14,11 +14,11 @@ public abstract class RawData {
     // Cached array of C data
     private String[] _dataC;
 
+    // Cached array of polar Theta/Radial data
+    private double[]  _dataT, _dataR;
+
     // Min values for X/Y/Z
     private Double  _minX, _maxX, _minY, _maxY, _minZ, _maxZ;
-
-    // Constants for channels
-    private enum Channel { X, Y, Z, C }
 
     /**
      * Returns the DataType.
@@ -67,6 +67,24 @@ public abstract class RawData {
      * Sets the C value at given index.
      */
     public abstract void setC(String aValue, int anIndex);
+
+    /**
+     * Returns the Theta value at given index.
+     */
+    public double getT(int anIndex)
+    {
+        double[] dataT = getDataT();
+        return dataT[anIndex];
+    }
+
+    /**
+     * Returns the radius value at given index.
+     */
+    public double getR(int anIndex)
+    {
+        double[] dataR = getDataR();
+        return dataR[anIndex];
+    }
 
     /**
      * Returns the X value at given index (null if not set).
@@ -155,6 +173,39 @@ public abstract class RawData {
     }
 
     /**
+     * Returns an array of dataset Theta values.
+     */
+    public double[] getDataT()
+    {
+        if (_dataT != null) return _dataT;
+        return _dataT = getDataTImpl();
+    }
+
+    /**
+     * Returns an array of dataset Radius values.
+     */
+    public double[] getDataR()
+    {
+        if (_dataR != null) return _dataR;
+        return _dataR = getDataRImpl();
+    }
+
+    /**
+     * Returns the data array for given channel.
+     */
+    public double[] getDataArrayForChannel(DataChan aChannel)
+    {
+        switch (aChannel) {
+            case X: return getDataX();
+            case Y: return getDataY();
+            case Z: return getDataZ();
+            case T: return getDataT();
+            case R: return getDataR();
+            default: throw new RuntimeException("RawData.getDataArrayForChannel: Invalid channel: " + aChannel);
+        }
+    }
+
+    /**
      * Returns an array of dataset X values.
      */
     protected double[] getDataXImpl()
@@ -199,12 +250,51 @@ public abstract class RawData {
     }
 
     /**
+     * Returns an array of dataset theta values.
+     */
+    protected double[] getDataTImpl()
+    {
+        // If Polar, just use X channel values
+        if (getDataType().isPolar())
+            return getDataX();
+
+        // Otherwise, get DataX array and create dataT array
+        double[] dataX = getDataX();
+        int count = dataX.length;
+        double dataT[] = new double[count];
+
+        // Get min/max X to scale to polar
+        double minX = getMinX();
+        double maxX = getMaxX();
+        double maxAngle = -2 * Math.PI; // 360 degrees
+        double shiftAngle = Math.PI / 2;
+
+        // Iterate over X values and convert to 0 - 360 scale
+        for (int i=0;i<count;i++) {
+            double valX = dataX[i];
+            double valTheta = (valX - minX) / (maxX - minX) * maxAngle + shiftAngle;
+            dataT[i] = valTheta;
+        }
+
+        // Return values
+        return dataT;
+    }
+
+    /**
+     * Returns an array of dataset radius values.
+     */
+    protected double[] getDataRImpl()
+    {
+        return getDataY();
+    }
+
+    /**
      * Returns the minimum X value in this dataset.
      */
     public double getMinX()
     {
         if (_minX != null) return _minX;
-        return _minX = getMin(Channel.X);
+        return _minX = getMin(DataChan.X);
     }
 
     /**
@@ -213,7 +303,7 @@ public abstract class RawData {
     public double getMaxX()
     {
         if (_maxX != null) return _maxX;
-        return _maxX = getMax(Channel.X);
+        return _maxX = getMax(DataChan.X);
     }
 
     /**
@@ -222,7 +312,7 @@ public abstract class RawData {
     public double getMinY()
     {
         if (_minY != null) return _minY;
-        return _minY = getMin(Channel.Y);
+        return _minY = getMin(DataChan.Y);
     }
 
     /**
@@ -231,7 +321,7 @@ public abstract class RawData {
     public double getMaxY()
     {
         if (_maxY != null) return _maxY;
-        return _maxY = getMax(Channel.Y);
+        return _maxY = getMax(DataChan.Y);
     }
 
     /**
@@ -240,7 +330,7 @@ public abstract class RawData {
     public double getMinZ()
     {
         if (_minZ != null) return _minZ;
-        return _minZ = getMin(Channel.Z);
+        return _minZ = getMin(DataChan.Z);
     }
 
     /**
@@ -249,34 +339,28 @@ public abstract class RawData {
     public double getMaxZ()
     {
         if (_maxZ != null) return _maxZ;
-        return _maxZ = getMax(Channel.Z);
+        return _maxZ = getMax(DataChan.Z);
     }
 
     /**
      * Returns the minimum X value in this dataset.
      */
-    private double getMin(Channel aChan)
+    private double getMin(DataChan aChan)
     {
+        double[] dataVals = getDataArrayForChannel(aChan);
         double min = Float.MAX_VALUE;
-        switch (aChan) {
-            case X: for (int i=0, iMax=getPointCount(); i<iMax; i++) min = Math.min(min, getX(i)); break;
-            case Y: for (int i=0, iMax=getPointCount(); i<iMax; i++) min = Math.min(min, getY(i)); break;
-            case Z: for (int i=0, iMax=getPointCount(); i<iMax; i++) min = Math.min(min, getZ(i)); break;
-        }
+        for (int i=0, iMax=getPointCount(); i<iMax; i++) min = Math.min(min, dataVals[i]);
         return min;
     }
 
     /**
      * Returns the maximum X value in this dataset.
      */
-    private double getMax(Channel aChan)
+    private double getMax(DataChan aChan)
     {
+        double[] dataVals = getDataArrayForChannel(aChan);
         double max = -Float.MAX_VALUE;
-        switch (aChan) {
-            case X: for (int i=0, iMax=getPointCount(); i<iMax; i++) max = Math.max(max, getX(i)); break;
-            case Y: for (int i=0, iMax=getPointCount(); i<iMax; i++) max = Math.max(max, getY(i)); break;
-            case Z: for (int i=0, iMax=getPointCount(); i<iMax; i++) max = Math.max(max, getZ(i)); break;
-        }
+        for (int i=0, iMax=getPointCount(); i<iMax; i++) max = Math.max(max, dataVals[i]);
         return max;
     }
 

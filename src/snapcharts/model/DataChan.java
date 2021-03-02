@@ -18,7 +18,13 @@ public enum DataChan {
     C,
 
     /** Index channel. */
-    I;
+    I,
+
+    /** Theta channel. */
+    T,
+
+    /** Radius channel. */
+    R;
 
     /**
      * Return the char.

@@ -434,6 +434,22 @@ public class DataSet extends ChartPart {
     }
 
     /**
+     * Returns an array of dataset theta values.
+     */
+    public double[] getDataT()
+    {
+        return _rawData.getDataT();
+    }
+
+    /**
+     * Returns an array of dataset radius values.
+     */
+    public double[] getDataR()
+    {
+        return _rawData.getDataR();
+    }
+
+    /**
      * Returns the minimum X value in this dataset.
      */
     public double getMinX()
