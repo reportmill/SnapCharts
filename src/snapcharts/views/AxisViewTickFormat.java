@@ -152,8 +152,9 @@ public class AxisViewTickFormat {
     private String[] getAutoFormatPatternForTickLabelsAndLongSample()
     {
         // Get max value
-        double axisMin = _axisView.getAxisMinForIntervalCalc();
-        double axisMax = _axisView.getAxisMaxForIntervalCalc();
+        ChartHelper chartHelper = _axisView._chartHelper;
+        double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
+        double axisMax = chartHelper.getAxisMaxForIntervalCalc(_axisView);
 
         // Get ideal intervals, interval delta and its number of whole digits
         Intervals ivals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, false, false);

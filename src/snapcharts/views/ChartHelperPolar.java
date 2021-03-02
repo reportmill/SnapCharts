@@ -1,7 +1,9 @@
 package snapcharts.views;
 
 import snap.geom.Rect;
+import snap.util.PropChange;
 import snapcharts.model.*;
+import snapcharts.util.MinMax;
 
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class ChartHelperPolar extends ChartHelper {
 
     // The first polar area
     private DataAreaPolar  _polarDataArea;
+
+    // The MinMax for Chart Radius data
+    private MinMax  _radiusMinMax;
 
     /**
      * Constructor.
@@ -69,12 +74,38 @@ public class ChartHelperPolar extends ChartHelper {
      */
     protected Intervals createIntervals(AxisView axisView)
     {
-        // If Y Axis, substitute X axis
+        // If Y Axis, substitute X axis intervals
         if (axisView.getAxisType().isAnyY())
-            axisView = getAxisViewX();
+            return getAxisViewX().getIntervals();
 
         // Do normal version
         return super.createIntervals(axisView);
+    }
+
+    /**
+     * Override for polar.
+     */
+    public double getAxisMinForIntervalCalc(AxisView axisView)
+    {
+        // If explicitly set, just return
+        if (axisView._minOverride != AxisView.UNSET_DOUBLE)
+            return axisView._minOverride;
+
+        // Return Min for radius
+        return getMinMaxForRadius().getMin();
+    }
+
+    /**
+     * Returns the axis max.
+     */
+    public double getAxisMaxForIntervalCalc(AxisView axisView)
+    {
+        // If explicitly set, just return
+        if (axisView._maxOverride != AxisView.UNSET_DOUBLE)
+            return axisView._maxOverride;
+
+        // Return Min for radius
+        return getMinMaxForRadius().getMax();
     }
 
     /**
@@ -140,5 +171,52 @@ public class ChartHelperPolar extends ChartHelper {
 
         // Return data val
         return dataXY;
+    }
+
+    /**
+     * Returns the MinMax for radius.
+     */
+    private MinMax getMinMaxForRadius()
+    {
+        // If already set, just return
+        if (_radiusMinMax != null) return _radiusMinMax;
+
+        // Get DataSetList (if empty, just return silly range)
+        DataSetList dataSetList = getDataSetList();
+        if (dataSetList.getDataSetCount()==0 || dataSetList.getPointCount()==0)
+            return new MinMax(0, 5);
+
+        // Handle X
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        for (DataSet dset : dataSetList.getDataSets()) {
+            min = Math.min(min, dset.getMinY());
+            max = Math.max(max, dset.getMaxY());
+        }
+
+        // Check Axis.ZeroRequired
+        AxisView axisViewX = getAxisViewX();
+        Axis axisX = axisViewX.getAxis();
+        if (axisX.isZeroRequired()) {
+            if (min > 0) min = 0;
+            if (max < 0) max = 0;
+        }
+
+        // Set/return min/max
+        return _radiusMinMax = new MinMax(min, max);
+    }
+
+    /**
+     * Called when a ChartPart changes.
+     */
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        super.chartPartDidChange(aPC);
+
+        // Handle DataSet/DataSetList change
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList) {
+            _radiusMinMax = null;
+        }
     }
 }

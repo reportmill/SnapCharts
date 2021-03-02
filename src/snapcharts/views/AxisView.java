@@ -192,66 +192,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the axis min.
-     */
-    protected double getAxisMinForIntervalCalc()
-    {
-        // If explicitly set, just return
-        if (_minOverride!=UNSET_DOUBLE) return _minOverride;
-
-        // Get Axis, Axis.MinBound
-        Axis axis = getAxis();
-        AxisBound minBound = axis.getMinBound();
-
-        // Get min
-        double min;
-        if (minBound == AxisBound.VALUE)
-            min = axis.getMinValue();
-        else {
-            DataSetList dsetList = getDataSetList();
-            min = dsetList.getMinForAxis(getAxisType());
-        }
-
-        // If ZeroRequired and min greater than zero, reset min
-        if (axis.isZeroRequired() && min>0)
-            min = 0;
-
-        // Return min
-        return min;
-    }
-
-    /**
-     * Returns the axis max.
-     */
-    protected double getAxisMaxForIntervalCalc()
-    {
-        // If explicitly set, just return
-        if (_maxOverride!=UNSET_DOUBLE) return _maxOverride;
-
-        // Get Axis, Axis.MaxBound
-        Axis axis = getAxis();
-        AxisBound maxBound = axis.getMaxBound();
-
-        // Get max
-        double max;
-        if (maxBound == AxisBound.VALUE)
-            max = axis.getMaxValue();
-
-        // Handle BoundType.Data
-        else {
-            DataSetList dsetList = getDataSetList();
-            max = dsetList.getMaxForAxis(getAxisType());
-        }
-
-        // If ZeroRequired and max less than zero, reset max
-        if (axis.isZeroRequired() && max<0)
-            max = 0;
-
-        // Return max
-        return max;
-    }
-
-    /**
      * Returns whether axis is logarithmic.
      */
     public boolean isLog()

@@ -285,8 +285,8 @@ public abstract class ChartHelper {
         }
 
         // Get axis min, max, display length
-        double min = axisView.getAxisMinForIntervalCalc();
-        double max = axisView.getAxisMaxForIntervalCalc();
+        double min = getAxisMinForIntervalCalc(axisView);
+        double max = getAxisMaxForIntervalCalc(axisView);
         double axisLen = axisView.getAxisLen();
         double divLen = axisType == AxisType.X ? 40 : 30;
 
@@ -312,6 +312,36 @@ public abstract class ChartHelper {
         int pointCount = dsetList.getPointCount();
         int maxX = isBar ? pointCount : pointCount - 1;
         return Intervals.getIntervalsSimple(0, maxX);
+    }
+
+    /**
+     * Returns the axis min.
+     */
+    public double getAxisMinForIntervalCalc(AxisView axisView)
+    {
+        // If explicitly set, just return
+        if (axisView._minOverride != AxisView.UNSET_DOUBLE)
+            return axisView._minOverride;
+
+        // Get Min based on Axis.MinBound and Axis.ZeroRequired
+        Axis axis = axisView.getAxis();
+        double min = axis.getMinValueForBoundAndZeroRequired();
+        return min;
+    }
+
+    /**
+     * Returns the axis max.
+     */
+    public double getAxisMaxForIntervalCalc(AxisView axisView)
+    {
+        // If explicitly set, just return
+        if (axisView._maxOverride != AxisView.UNSET_DOUBLE)
+            return axisView._maxOverride;
+
+        // Get Max based on Axis.MaxBound and Axis.ZeroRequired
+        Axis axis = axisView.getAxis();
+        double max = axis.getMaxValueForBoundAndZeroRequired();
+        return max;
     }
 
     /**

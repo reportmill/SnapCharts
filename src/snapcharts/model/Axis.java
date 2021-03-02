@@ -221,6 +221,52 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns the Axis Min value based on MinBound (either AxisBound.[VALUE | DATA]) and ZeroRequired.
+     */
+    public double getMinValueForBoundAndZeroRequired()
+    {
+        // Get Min based on whether Axis.MinBound is AxisBound.VALUE or AxisBound.DATA
+        AxisBound minBound = getMinBound();
+        double min;
+        if (minBound == AxisBound.VALUE)
+            min = getMinValue();
+        else {
+            DataSetList dsetList = getDataSetList();
+            min = dsetList.getMinForAxis(getType());
+        }
+
+        // If ZeroRequired and min greater than zero, reset min
+        if (isZeroRequired() && min>0)
+            min = 0;
+
+        // Return min
+        return min;
+    }
+
+    /**
+     * Returns the Axis Max value based on MaxBound (either AxisBound.[VALUE | DATA]) and ZeroRequired.
+     */
+    public double getMaxValueForBoundAndZeroRequired()
+    {
+        // Get Max based on whether Axis.MaxBound is AxisBound.VALUE or AxisBound.DATA
+        AxisBound maxBound = getMaxBound();
+        double max;
+        if (maxBound == AxisBound.VALUE)
+            max = getMaxValue();
+        else {
+            DataSetList dsetList = getDataSetList();
+            max = dsetList.getMaxForAxis(getType());
+        }
+
+        // If ZeroRequired and max less than zero, reset max
+        if (isZeroRequired() && max<0)
+            max = 0;
+
+        // Return max
+        return max;
+    }
+
+    /**
      * Returns whether Zero should always be included.
      */
     public boolean isZeroRequired()  { return _zeroRequired; }

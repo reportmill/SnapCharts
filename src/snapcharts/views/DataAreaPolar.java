@@ -212,8 +212,8 @@ public class DataAreaPolar extends DataArea {
 
         // Get AxisView Y
         AxisViewY axisViewY = getAxisViewY();
-        double minY = axisViewY.getAxisMinForIntervalCalc();
-        double maxY = axisViewY.getAxisMaxForIntervalCalc();
+        double minY = _chartHelper.getAxisMinForIntervalCalc(axisViewY);
+        double maxY = _chartHelper.getAxisMaxForIntervalCalc(axisViewY);
 
         // Create/add path for dataset
         DataSet dset = getDataSet();
