@@ -148,8 +148,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public double dataToViewX(double dataX)
     {
-        AxisView axisView = getAxisViewX();
-        return axisView.dataToView(dataX);
+        return _chartHelper.dataToView(AxisType.X, dataX);
     }
 
     /**
@@ -157,8 +156,8 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public double dataToViewY(double dataY)
     {
-        AxisView axisView = getAxisViewY();
-        return axisView.dataToView(dataY);
+        AxisType axisType = getAxisTypeY();
+        return _chartHelper.dataToView(axisType, dataY);
     }
 
     /**
@@ -237,7 +236,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         Intervals ivals = axisView.getIntervals();
         for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
             double dataX = ivals.getInterval(i);
-            double dispX = (int) Math.round(axisView.dataToView(dataX));
+            double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataX));
             aPntr.setColor(gridColor);
             aPntr.drawLine(dispX, areaY, dispX, areaH);
             aPntr.setColor(tickLineColor);
@@ -267,7 +266,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         Intervals ivals = axisView.getIntervals();
         for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
             double dataY = ivals.getInterval(i);
-            double dispY = (int) Math.round(axisView.dataToView(dataY));
+            double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
             aPntr.setColor(gridColor);
             aPntr.drawLine(areaX, dispY, areaW, dispY);
             aPntr.setColor(tickLineColor);

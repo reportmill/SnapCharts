@@ -1,6 +1,5 @@
 package snapcharts.views;
 import snap.geom.Point;
-import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Painter;
@@ -31,14 +30,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // The Title view
     protected StringView  _titleView;
 
-    // Whether axis is radial
-    private boolean  _radial;
-
     // The Axis min override
-    private double  _minOverride = UNSET_DOUBLE;
+    protected double  _minOverride = UNSET_DOUBLE;
 
     // The Axis max override
-    private double  _maxOverride = UNSET_DOUBLE;
+    protected double  _maxOverride = UNSET_DOUBLE;
 
     // The intervals for axis
     private Intervals  _intervals;
@@ -265,19 +261,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Returns whether axis is radial.
-     */
-    public boolean isRadial()  { return _radial; }
-
-    /**
-     * Sets whether axis is radial.
-     */
-    public void setRadial(boolean aValue)
-    {
-        _radial = aValue;
-    }
-
-    /**
      * Returns the grid line color.
      */
     public Color getGridColor()  { return GRID_COLOR; }
@@ -311,47 +294,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_intervals!=null) return _intervals;
 
         // Create, set and return
-        _intervals = createIntervals();
-        return _intervals;
-    }
-
-    /**
-     * Creates the axis intervals for active datasets.
-     */
-    protected Intervals createIntervals()
-    {
-        // Special case, radial
-        if (isRadial() && getAxisType().isAnyY())
-            return _chartHelper.getAxisViewX().getIntervals();
-
-        // Special case, bar
-        if (getAxisType()==AxisType.X) {
-            boolean isBar = getChart().getType().isBarType();
-            DataSetList dsetList = getDataSetList();
-            DataType dataType = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0).getDataType() : null;
-            if (isBar || dataType==DataType.IY || dataType==DataType.CY) {
-                int pointCount = dsetList.getPointCount();
-                int maxX = isBar ? pointCount : pointCount - 1;
-                return Intervals.getIntervalsSimple(0, maxX);
-            }
-        }
-
-        // Get axis min, max, display length
-        double min = getAxisMinForIntervalCalc();
-        double max = getAxisMaxForIntervalCalc();
-        double axisLen = getAxisLen();
-        double divLen = getAxisType()==AxisType.X ? 40 : 30;
-
-        // Get whether interval ends should be adjusted
-        boolean minFixed = _minOverride!=UNSET_DOUBLE || getAxis().getMinBound() != AxisBound.AUTO;
-        boolean maxFixed = _maxOverride!=UNSET_DOUBLE || getAxis().getMaxBound() != AxisBound.AUTO;
-
-        // Handle Log
-        if (isLog())
-            return Intervals.getIntervalsLog(min, max, false, maxFixed);
-
-        // Return intervals
-        return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
+        Intervals ivals = _chartHelper.createIntervals(this);
+        return _intervals = ivals;
     }
 
     /**
@@ -446,32 +390,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public double dataToView(double dataXY)
     {
-        // Handle radial special
-        if (_radial)
-            return dataToViewRad(dataXY);
-
-        // Get data min/max (data coords)
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-
-        // Handle log
-        if (isLog()) {
-            dataXY = log10(dataXY);
-            dataMin = log10(dataMin);
-            dataMax = log10(dataMax);
-        }
-
-        // Get display len (min is zero)
-        boolean isHor = isHorizontal();
-        double areaW = isHor ? getWidth() : getHeight();
-
-        // Convert data to display
-        double dispXY = isHor ? (dataXY - dataMin) / (dataMax - dataMin) * areaW :
-                areaW - (dataXY - dataMin) / (dataMax - dataMin) * areaW;
-
-        // Return display val
-        return dispXY;
+        return _chartHelper.dataToView(this, dataXY);
     }
 
     /**
@@ -479,109 +398,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public double viewToData(double dispXY)
     {
-        // Handle radial special
-        if (_radial)
-            return viewToDataRad(dispXY);
-
-        // Get data min/max (data coords)
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-
-        // Handle log
-        if (isLog()) {
-            dataMin = log10(dataMin);
-            dataMax = log10(dataMax);
-        }
-
-        // Get display len (min is zero)
-        boolean isHor = isHorizontal();
-        double areaW = isHor ? getWidth() : getHeight();
-
-        // Convert display to data
-        double dataXY = isHor ? dataMin + dispXY / areaW * (dataMax - dataMin) :
-                dataMax - dispXY / areaW * (dataMax - dataMin);
-
-        // Handle log
-        if (isLog())
-            dataXY = invLog10(dataXY);
-
-        // Return data val
-        return dataXY;
-    }
-
-    /**
-     * Converts an value from dataset coords to view coords.
-     */
-    public double dataToViewRad(double dataXY)
-    {
-        // Get data min/max (data coords)
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-
-        // Handle log
-        if (isLog()) {
-            dataXY = log10(dataXY);
-            dataMin = log10(dataMin);
-            dataMax = log10(dataMax);
-        }
-
-        // Get display len (min is zero)
-        boolean isHor = isHorizontal();
-        Rect polarBounds = getPolarBounds();
-        double areaX = isHor ? polarBounds.getMidX() : polarBounds.y;
-        double areaW = isHor ? polarBounds.getWidth()/2 : polarBounds.getHeight()/2;
-
-        // Convert data to display
-        double dispXY = isHor ? areaX + (dataXY - dataMin) / (dataMax - dataMin) * areaW :
-                areaX + areaW - (dataXY - dataMin) / (dataMax - dataMin) * areaW;
-
-        // Return display val
-        return dispXY;
-    }
-
-    /**
-     * Converts a value from view coords to data coords.
-     */
-    public double viewToDataRad(double dispXY)
-    {
-        // Get data min/max (data coords)
-        Intervals intervals = getIntervals();
-        double dataMin = intervals.getMin();
-        double dataMax = intervals.getMax();
-
-        // Handle log
-        if (isLog()) {
-            dataMin = log10(dataMin);
-            dataMax = log10(dataMax);
-        }
-
-        // Get display len (min is zero)
-        boolean isHor = isHorizontal();
-        Rect polarBounds = getPolarBounds();
-        double areaX = isHor ? polarBounds.getMidX() : polarBounds.y;
-        double areaW = isHor ? getWidth()/2 : getHeight()/2;
-
-        // Convert display to data
-        double dataXY = isHor ? dataMin + (dispXY - areaX) / areaW * (dataMax - dataMin) :
-                dataMax - (dispXY - areaX) / areaW * (dataMax - dataMin);
-
-        // Handle log
-        if (isLog())
-            dataXY = invLog10(dataXY);
-
-        // Return data val
-        return dataXY;
-    }
-
-    /**
-     * Returns the polar area bounds.
-     */
-    public Rect getPolarBounds()
-    {
-        ChartHelperPolar polarHelper = (ChartHelperPolar) _chartHelper;
-        return polarHelper.getPolarBounds();
+        return _chartHelper.viewToData(this, dispXY);
     }
 
     /**
@@ -708,23 +525,5 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aValue == getHeight()) return;
         super.setHeight(aValue);
         clearIntervals();
-    }
-
-    /**
-     * Returns the log of given value.
-     */
-    private double log10(double aValue)
-    {
-        if (aValue<=0)
-            return 0;
-        return Math.log10(aValue);
-    }
-
-    /**
-     * Returns the inverse of log10.
-     */
-    public double invLog10(double aValue)
-    {
-        return Math.pow(10, aValue);
     }
 }

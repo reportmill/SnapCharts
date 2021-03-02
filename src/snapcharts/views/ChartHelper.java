@@ -266,6 +266,142 @@ public abstract class ChartHelper {
     }
 
     /**
+     * Creates the axis intervals for active datasets.
+     */
+    protected Intervals createIntervals(AxisView axisView)
+    {
+        // Get info
+        AxisType axisType = axisView.getAxisType();
+        Axis axis = axisView.getAxis();
+
+        // Special case, bar
+        if (axisType == AxisType.X) {
+            boolean isBar = getChartType().isBarType();
+            DataSetList dsetList = getDataSetList();
+            DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
+            DataType dataType = dset != null ? dset.getDataType() : null;
+            if (isBar || dataType==DataType.IY || dataType==DataType.CY)
+                return createIntervalsForBarAxis();
+        }
+
+        // Get axis min, max, display length
+        double min = axisView.getAxisMinForIntervalCalc();
+        double max = axisView.getAxisMaxForIntervalCalc();
+        double axisLen = axisView.getAxisLen();
+        double divLen = axisType == AxisType.X ? 40 : 30;
+
+        // Get whether interval ends should be adjusted
+        boolean minFixed = axisView._minOverride!=AxisView.UNSET_DOUBLE || axis.getMinBound() != AxisBound.AUTO;
+        boolean maxFixed = axisView._maxOverride!=AxisView.UNSET_DOUBLE || axis.getMaxBound() != AxisBound.AUTO;
+
+        // Handle Log
+        if (axis.isLog())
+            return Intervals.getIntervalsLog(min, max, false, maxFixed);
+
+        // Return intervals
+        return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
+    }
+
+    /**
+     * Creates the axis intervals for discrete X axis, like bar or indexed value axis.
+     */
+    protected Intervals createIntervalsForBarAxis()
+    {
+        boolean isBar = getChartType().isBarType();
+        DataSetList dsetList = getDataSetList();
+        int pointCount = dsetList.getPointCount();
+        int maxX = isBar ? pointCount : pointCount - 1;
+        return Intervals.getIntervalsSimple(0, maxX);
+    }
+
+    /**
+     * Converts from data to view for given axis type.
+     */
+    public double dataToView(AxisType anAxisType, double dataXY)
+    {
+        AxisView axisView = getAxisView(anAxisType);
+        return dataToView(axisView, dataXY);
+    }
+
+    /**
+     * Converts from data to view for given axis type.
+     */
+    public double dataToView(AxisView axisView, double dataXY)
+    {
+        // Get AxisView and axis min/max (data coords)
+        Intervals intervals = axisView.getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+
+        // Handle log
+        if (axisView.isLog()) {
+            dataXY = ChartViewUtils.log10(dataXY);
+            dataMin = ChartViewUtils.log10(dataMin);
+            dataMax = ChartViewUtils.log10(dataMax);
+        }
+
+        // Handle horizontal (X) axis
+        boolean isHor = axisView.getAxisType() == AxisType.X;
+        if (isHor) {
+            double areaW = axisView.getWidth();
+            double dispX = (dataXY - dataMin) / (dataMax - dataMin) * areaW;
+            return dispX;
+        }
+
+        // Handle vertical (Y) axis
+        double areaH = axisView.getHeight();
+        double dispY = areaH - (dataXY - dataMin) / (dataMax - dataMin) * areaH;
+        return dispY;
+    }
+
+    /**
+     * Converts a value from view coords to data coords.
+     */
+    public double viewToData(AxisType anAxisType, double dispXY)
+    {
+        AxisView axisView = getAxisView(anAxisType);
+        return viewToData(axisView, dispXY);
+    }
+
+    /**
+     * Converts a value from view coords to data coords.
+     */
+    public double viewToData(AxisView axisView, double dispXY)
+    {
+        // Get AxisView and axis min/max (data coords)
+        Intervals intervals = axisView.getIntervals();
+        double dataMin = intervals.getMin();
+        double dataMax = intervals.getMax();
+
+        // Handle log
+        if (axisView.isLog()) {
+            dataMin = ChartViewUtils.log10(dataMin);
+            dataMax = ChartViewUtils.log10(dataMax);
+        }
+
+        // Handle horizontal (X) axis
+        boolean isHor = axisView.getAxisType() == AxisType.X;
+        double dataXY;
+        if (isHor) {
+            double areaW = axisView.getWidth();
+            dataXY = dataMin + dispXY / areaW * (dataMax - dataMin);
+        }
+
+        // Handle vertical (Y) axis
+        else {
+            double areaW = axisView.getHeight();
+            dataXY = dataMax - dispXY / areaW * (dataMax - dataMin);
+        }
+
+        // Handle log
+        if (axisView.isLog())
+            dataXY = ChartViewUtils.invLog10(dataXY);
+
+        // Return data val
+        return dataXY;
+    }
+
+    /**
      * Called after a chart area is installed in chart view.
      */
     public void activate()
