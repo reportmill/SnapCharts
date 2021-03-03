@@ -1,11 +1,9 @@
 package snapcharts.views;
-
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.util.PropChange;
-import snap.view.ViewAnim;
 import snapcharts.model.*;
 
 /**
@@ -18,6 +16,9 @@ public class DataAreaPolar extends DataArea {
 
     // The Path2D for painting DataSet
     private Path2D  _dataPath;
+
+    // The Data path points in display coords
+    private Point[]  _dispPoints;
 
     // The TailShape
     private Shape  _tailShape;
@@ -148,7 +149,6 @@ public class DataAreaPolar extends DataArea {
     {
         // Get info X
         AxisViewX axisViewX = getAxisViewX(); if (axisViewX==null) return;
-        AxisX axis = axisViewX.getAxis();
         Color gridColor = axisViewX.getGridColor();
         double reveal = getReveal();
 
@@ -204,40 +204,54 @@ public class DataAreaPolar extends DataArea {
         // If already set, just return
         if (_dataPath !=null) return _dataPath;
 
-        // Get AxisView X
-        AxisViewX axisViewX = getAxisViewX();
-        Intervals intervalsX = axisViewX.getIntervals();
-        double minX = intervalsX.getMin();
-        double maxX = intervalsX.getMax();
-
-        // Get AxisView Y
-        AxisViewY axisViewY = getAxisViewY();
-        double minY = _chartHelper.getAxisMinForIntervalCalc(axisViewY);
-        double maxY = _chartHelper.getAxisMaxForIntervalCalc(axisViewY);
-
-        // Create/add path for dataset
-        DataSet dset = getDataSet();
-        int pointCount = dset.getPointCount();
+        // Get display points and create new path
+        Point[] dispPoints = getDisplayPoints();
         Path2D path = new Path2D();
 
         // Iterate over data points
-        for (int j = 0; j < pointCount; j++) {
-
-            // Get data X/Y and disp X/Y
-            double dataX = dset.getX(j);
-            double dataY = dset.getY(j);
-            double dataTheta = (dataX - minX) / (maxX - minX) * -360 + 90;
-            double dataRad = (dataY - minY) / (maxY - minY) * (maxX - minX) + minX;
-            double dataX2 = Math.sin(Math.toRadians(dataTheta)) * dataRad;
-            double dataY2 = Math.cos(Math.toRadians(dataTheta)) * dataRad;
-            Point dispXY = dataToView(dataX2, dataY2);
-            if (j == 0)
-                path.moveTo(dispXY.x, dispXY.y);
-            else path.lineTo(dispXY.x, dispXY.y);
+        for (int i=0, iMax=dispPoints.length; i<iMax; i++) {
+            Point point = dispPoints[i];
+            if (i == 0) path.moveTo(point.x, point.y);
+            else path.lineTo(point.x, point.y);
         }
 
         // Return path
         return _dataPath = path;
+    }
+
+    /**
+     * Returns data line points in display coords.
+     */
+    public Point[] getDisplayPoints()
+    {
+        // If already set, just return
+        if (_dispPoints != null) return _dispPoints;
+
+        // Get dataset info
+        DataSet dset = getDataSet();
+        RawData rawData = dset.getRawData();
+        int pointCount = dset.getPointCount();
+
+        // Get AxisView X/Y
+        AxisViewX axisViewX = getAxisViewX();
+        AxisViewY axisViewY = getAxisViewY();
+
+        // Create path
+        Point[] points = new Point[pointCount];
+
+        // Iterate over data points
+        for (int j = 0; j < pointCount; j++) {
+            double dataTheta = rawData.getT(j);
+            double dataRad = rawData.getR(j);
+            double dataX = Math.sin(dataTheta) * dataRad;
+            double dataY = Math.cos(dataTheta) * dataRad;
+            double dispX = _chartHelper.dataToView(axisViewX, dataX);
+            double dispY = _chartHelper.dataToView(axisViewY, dataY);
+            points[j] = new Point(dispX, dispY);
+        }
+
+        // Set/return points
+        return _dispPoints = points;
     }
 
     /**
@@ -246,6 +260,7 @@ public class DataAreaPolar extends DataArea {
     private void clearDataPath()
     {
         _dataPath = null;
+        _dispPoints = null;
     }
 
     /**
@@ -309,17 +324,12 @@ public class DataAreaPolar extends DataArea {
         // Draw dataset points
         if (showSymbols) {
 
-            // Get dataset index (could be different if DataSetList has disabled sets)
-            int pointCount = dset.getPointCount();
-
-            // Iterate over values
-            for (int j=0; j<pointCount; j++) {
-
-                // Get data X/Y and disp X/Y
-                double dataX = dset.getX(j);
-                double dataY = dset.getY(j);
-                double dispX = dataToViewX(dataX);
-                double dispY = dataToViewY(dataY);
+            // Iterate over points
+            Point[] points = getDisplayPoints();
+            for (int i=0, iMax=points.length; i<iMax; i++) {
+                Point point = points[i];
+                double dispX = point.x;
+                double dispY = point.y;
 
                 // Get symbol and color and paint
                 Shape symbol = getDataSymbolShape(dsetIndex).copyFor(new Transform(dispX - 4, dispY - 4));
@@ -345,14 +355,14 @@ public class DataAreaPolar extends DataArea {
         // Get info
         DataSet dset = getDataSet();
         int dsetIndex = dset.getIndex();
-        DataPoint selPoint = getChartView().getTargDataPoint();
-        int selIndex = selPoint.getIndex();
+        DataPoint selDataPoint = getChartView().getTargDataPoint();
+        int selIndex = selDataPoint.getIndex();
 
         // Get data X/Y and disp X/Y
-        double dataX = dset.getX(selIndex);
-        double dataY = dset.getY(selIndex);
-        double dispX = dataToViewX(dataX);
-        double dispY = dataToViewY(dataY);
+        Point[] points = getDisplayPoints();
+        Point selPoint = points[selIndex];
+        double dispX = selPoint.x;
+        double dispY = selPoint.y;
 
         // Get data color and symbol
         Color dataColor = getDataColor(dsetIndex);
