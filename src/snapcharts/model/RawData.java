@@ -267,13 +267,12 @@ public abstract class RawData {
         // Get min/max X to scale to polar
         double minX = getMinX();
         double maxX = getMaxX();
-        double maxAngle = -2 * Math.PI; // 360 degrees
-        double shiftAngle = Math.PI / 2;
+        double maxAngle = 2 * Math.PI; // 360 degrees
 
         // Iterate over X values and convert to 0 - 360 scale
         for (int i=0;i<count;i++) {
             double valX = dataX[i];
-            double valTheta = (valX - minX) / (maxX - minX) * maxAngle + shiftAngle;
+            double valTheta = (valX - minX) / (maxX - minX) * maxAngle;
             dataT[i] = valTheta;
         }
 

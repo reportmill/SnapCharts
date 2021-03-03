@@ -3,7 +3,6 @@ import snap.util.ArrayUtils;
 import snap.util.PropChange;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
-
 import java.util.*;
 
 /**
@@ -13,6 +12,9 @@ public abstract class ChartHelper {
 
     // The ChartView
     protected ChartView  _chartView;
+
+    // The DataView
+    protected DataView  _dataView;
 
     // The DataSetList
     private DataSetList  _dataSetList;
@@ -50,6 +52,15 @@ public abstract class ChartHelper {
      * Returns the ChartView.
      */
     public ChartView getChartView()  { return _chartView; }
+
+    /**
+     * Returns the DataView.
+     */
+    public DataView getDataView()
+    {
+        if (_dataView != null) return _dataView;
+        return _dataView = _chartView.getDataView();
+    }
 
     /**
      * Returns the Chart.
@@ -516,6 +527,16 @@ public abstract class ChartHelper {
                 _dataSetList.clear();
             _dataSetList = null;
         }
+    }
+
+    /**
+     * Called when DataView changes size.
+     */
+    protected void dataViewDidChangeSize()
+    {
+        // Forward to DataAreas
+        for (DataArea dataArea : getDataAreas())
+            dataArea.dataViewDidChangeSize();
     }
 
     /**

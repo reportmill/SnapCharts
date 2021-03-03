@@ -11,8 +11,8 @@ import snapcharts.model.*;
  */
 public class DataAreaPolar extends DataArea {
 
-    // The rect around the polar grid
-    private Rect  _polarBounds;
+    // The Polar ChartHelper
+    private ChartHelperPolar  _polarHelper;
 
     // The Path2D for painting DataSet
     private Path2D  _dataPath;
@@ -34,34 +34,7 @@ public class DataAreaPolar extends DataArea {
     public DataAreaPolar(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super(aChartHelper, aDataSet);
-    }
-
-    /**
-     * Returns the polar area bounds.
-     */
-    public Rect getPolarBounds()
-    {
-        // If already set, just return
-        if (_polarBounds!=null) return _polarBounds;
-
-        // Calc polar rect
-        double viewW = getWidth();
-        double viewH = getHeight();
-        double areaX = 0;
-        double areaY = 0;
-        double areaW = getWidth();
-        double areaH = getHeight();
-        if (areaW<areaH) {
-            areaH = areaW;
-            areaY = areaY + Math.round((viewH - areaH)/2);
-        }
-        else {
-            areaW = areaH;
-            areaX = areaX + Math.round((viewW - areaW)/2);
-        }
-
-        // Set/return
-        return _polarBounds = new Rect(areaX, areaY, areaW, areaH);
+        _polarHelper = (ChartHelperPolar) aChartHelper;
     }
 
     /**
@@ -86,10 +59,8 @@ public class DataAreaPolar extends DataArea {
     {
         // Get info X
         AxisViewX axisViewX = getAxisViewX(); if (axisViewX==null) return;
-        AxisX axis = axisViewX.getAxis();
         Color gridColor = new Color("#d0"); //axisViewX.getGridColor().darker();
         Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        //double tickLen = axis.getTickLength();
         double reveal = getReveal();
 
         // Get info Y
@@ -100,7 +71,7 @@ public class DataAreaPolar extends DataArea {
         aPntr.setStroke(axisViewX.getGridStroke());
 
         // Get area bounds
-        Rect areaBnds = getPolarBounds();
+        Rect areaBnds = _polarHelper.getPolarBounds();
         double areaX = areaBnds.x;
         double areaY = areaBnds.y;
         double areaW = areaBnds.width;
@@ -113,7 +84,7 @@ public class DataAreaPolar extends DataArea {
 
         // Iterate over intervals and paint lines
         Intervals ivals = axisViewX.getIntervals();
-        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
+        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
 
             // Get something
             double dataRad = ivals.getInterval(i);
@@ -153,46 +124,36 @@ public class DataAreaPolar extends DataArea {
         double reveal = getReveal();
 
         // Get info Y
-        AxisViewY axisViewY = getAxisViewY(); if (axisViewY==null) return;
+        AxisType axisTypeY = getAxisTypeY();
 
         // Set Grid Color/Stroke
         aPntr.setColor(gridColor);
         aPntr.setStroke(axisViewX.getGridStroke());
 
         // Get area bounds
-        Rect areaBnds = getPolarBounds();
-        double areaX = areaBnds.x;
-        double areaY = areaBnds.y;
-        double areaW = areaBnds.width;
-        double areaH = areaBnds.height;
-        double areaMidX = areaX + areaW/2;
-        double areaMidY = areaY + areaH/2;
+        Rect areaBnds = _polarHelper.getPolarBounds();
+        double areaMidX = areaBnds.getMidX();
+        double areaMidY = areaBnds.getMidY();
 
         // Get interval max
         Intervals ivals = axisViewX.getIntervals();
-        double dataRad = ivals.getMax();
-        double dispX = (int) Math.round(axisViewX.dataToView(dataRad));
-        double dispY = (int) Math.round(axisViewY.dataToView(dataRad));
-        double radLenX = dispX - areaMidX;
-        double radLenY = areaMidY - dispY;
-        radLenX *= reveal;
-        radLenY *= reveal;
+        double dataRad = ivals.getMax() * reveal;
 
         // Iterate over intervals and paint lines
-        for (int i = 0, iMax = 360; i < iMax; i+=15) {
+        for (int i=0, iMax=360; i<iMax; i+=15) {
             double angleRad = -Math.toRadians((i)) * (-reveal);
-            double radX = areaMidX + radLenX * Math.cos(angleRad);
-            double radY = areaMidY - radLenY * Math.sin(angleRad);
-            aPntr.drawLine(areaMidX, areaMidY, radX, radY);
+            double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
+            double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);
+            aPntr.drawLine(areaMidX, areaMidY, dispX, dispY);
         }
 
         // Iterate over intervals and paint lines
         aPntr.setColor(Color.BLACK);
-        for (int i = 0, iMax = 91; i < iMax; i+=90) {
-            double angleRad = Math.toRadians(i!=90 ? i : -270) * reveal;
-            double radX = areaMidX + radLenX * Math.cos(angleRad);
-            double radY = areaMidY - radLenY * Math.sin(angleRad);
-            aPntr.drawLine(areaMidX, areaMidY, radX, radY);
+        for (int i : new int[] { 0, 90 }) {
+            double angleRad = Math.toRadians(i) * reveal;
+            double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
+            double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);
+            aPntr.drawLine(areaMidX, areaMidY, dispX, dispY);
         }
     }
 
@@ -231,27 +192,22 @@ public class DataAreaPolar extends DataArea {
         DataSet dset = getDataSet();
         RawData rawData = dset.getRawData();
         int pointCount = dset.getPointCount();
+        AxisType axisTypeY = getAxisTypeY();
 
-        // Get AxisView X/Y
-        AxisViewX axisViewX = getAxisViewX();
-        AxisViewY axisViewY = getAxisViewY();
+        // Create points array
+        Point[] dispPoints = new Point[pointCount];
 
-        // Create path
-        Point[] points = new Point[pointCount];
-
-        // Iterate over data points
+        // Iterate over polar data points and covert/set in display points
         for (int j = 0; j < pointCount; j++) {
             double dataTheta = rawData.getT(j);
             double dataRad = rawData.getR(j);
-            double dataX = Math.sin(dataTheta) * dataRad;
-            double dataY = Math.cos(dataTheta) * dataRad;
-            double dispX = _chartHelper.dataToView(axisViewX, dataX);
-            double dispY = _chartHelper.dataToView(axisViewY, dataY);
-            points[j] = new Point(dispX, dispY);
+            double dispX = _polarHelper.polarDataToView(AxisType.X, dataTheta, dataRad);
+            double dispY = _polarHelper.polarDataToView(axisTypeY, dataTheta, dataRad);
+            dispPoints[j] = new Point(dispX, dispY);
         }
 
         // Set/return points
-        return _dispPoints = points;
+        return _dispPoints = dispPoints;
     }
 
     /**
@@ -410,8 +366,9 @@ public class DataAreaPolar extends DataArea {
     }
 
     /**
-     * Called when a ChartPart changes.
+     * Override to clear display points.
      */
+    @Override
     protected void chartPartDidChange(PropChange aPC)
     {
         Object src = aPC.getSource();
@@ -420,21 +377,12 @@ public class DataAreaPolar extends DataArea {
         }
     }
 
+    /**
+     * Called when DataView changes size.
+     */
     @Override
-    public void setWidth(double aValue)
+    protected void dataViewDidChangeSize()
     {
-        if (aValue==getWidth()) return;
-        super.setWidth(aValue);
         clearDataPath();
-        _polarBounds = null;
-    }
-
-    @Override
-    public void setHeight(double aValue)
-    {
-        if (aValue==getHeight()) return;
-        super.setHeight(aValue);
-        clearDataPath();
-        _polarBounds = null;
     }
 }

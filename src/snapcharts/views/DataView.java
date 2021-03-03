@@ -228,6 +228,28 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
+     * Override to notify ChartHelper.
+     */
+    @Override
+    public void setWidth(double aValue)
+    {
+        if (aValue==getWidth()) return;
+        super.setWidth(aValue);
+        _chartHelper.dataViewDidChangeSize();
+    }
+
+    /**
+     * Override to notify ChartHelper.
+     */
+    @Override
+    public void setHeight(double aValue)
+    {
+        if (aValue==getHeight()) return;
+        super.setHeight(aValue);
+        _chartHelper.dataViewDidChangeSize();
+    }
+
+    /**
      * Override to not set focus effect.
      */
     @Override

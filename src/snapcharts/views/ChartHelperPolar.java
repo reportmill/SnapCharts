@@ -2,6 +2,7 @@ package snapcharts.views;
 
 import snap.geom.Rect;
 import snap.util.PropChange;
+import snap.view.View;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 
@@ -12,8 +13,8 @@ import java.util.List;
  */
 public class ChartHelperPolar extends ChartHelper {
 
-    // The first polar area
-    private DataAreaPolar  _polarDataArea;
+    // The rect around the polar grid
+    private Rect  _polarBounds;
 
     // The MinMax for Chart Radius data
     private MinMax  _radiusMinMax;
@@ -54,8 +55,6 @@ public class ChartHelperPolar extends ChartHelper {
         for (int i=0; i<dsetCount; i++) {
             DataSet dset = dsets.get(i);
             dataAreas[i] = new DataAreaPolar(this, dset);
-            if (i==0)
-                _polarDataArea = (DataAreaPolar) dataAreas[0];
         }
 
         return dataAreas;
@@ -66,7 +65,43 @@ public class ChartHelperPolar extends ChartHelper {
      */
     public Rect getPolarBounds()
     {
-        return _polarDataArea.getPolarBounds();
+        // If already set, just return
+        if (_polarBounds!=null) return _polarBounds;
+
+        // Calc polar rect
+        DataView dataView = getDataView();
+        double viewW = dataView.getWidth();
+        double viewH = dataView.getHeight();
+        double areaX = 0;
+        double areaY = 0;
+        double areaW = viewW;
+        double areaH = viewH;
+        if (areaW < areaH) {
+            areaH = areaW;
+            areaY = areaY + Math.round((viewH - areaH)/2);
+        }
+        else {
+            areaW = areaH;
+            areaX = areaX + Math.round((viewW - areaW)/2);
+        }
+
+        // Set/return
+        return _polarBounds = new Rect(areaX, areaY, areaW, areaH);
+    }
+
+    /**
+     * Converts a polar theta/radius point to coord on axis in display coords.
+     */
+    public double polarDataToView(AxisType anAxisType, double aTheta, double aRadius)
+    {
+        // Convert from polar to XY
+        double dataXY;
+        if (anAxisType == AxisType.X)
+            dataXY = Math.cos(aTheta) * aRadius;
+        else dataXY = Math.sin(aTheta) * aRadius;
+
+        // Do normal XY data to view conversion
+        return dataToView(anAxisType, dataXY);
     }
 
     /**
@@ -211,8 +246,10 @@ public class ChartHelperPolar extends ChartHelper {
     /**
      * Called when a ChartPart changes.
      */
+    @Override
     protected void chartPartDidChange(PropChange aPC)
     {
+        // Do normal version
         super.chartPartDidChange(aPC);
 
         // Handle DataSet/DataSetList change
@@ -220,5 +257,18 @@ public class ChartHelperPolar extends ChartHelper {
         if (src instanceof DataSet || src instanceof DataSetList) {
             _radiusMinMax = null;
         }
+    }
+
+    /**
+     * Override to clear PolarBounds.
+     */
+    @Override
+    protected void dataViewDidChangeSize()
+    {
+        // Do normal version
+        super.dataViewDidChangeSize();
+
+        // Clear PolarBounds
+        _polarBounds = null;
     }
 }
