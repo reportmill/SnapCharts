@@ -1,11 +1,8 @@
 package snapcharts.views;
-
 import snap.geom.Rect;
 import snap.util.PropChange;
-import snap.view.View;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
-
 import java.util.List;
 
 /**

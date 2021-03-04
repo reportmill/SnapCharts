@@ -22,6 +22,33 @@ public class RawDataAsArrays extends RawData {
     private int MAX_POINT_COUNT = 2000000;
 
     /**
+     * Constructor.
+     */
+    public RawDataAsArrays()  { }
+
+    /**
+     * Constructor for DataType and arrays.
+     */
+    public RawDataAsArrays(DataType aDataType, Object ... theValues)
+    {
+        setDataType(aDataType);
+
+        DataChan[] channels = aDataType.getChannels();
+        for (int i=0; i<channels.length; i++) {
+            DataChan chan = channels[i];
+            Object chanData = theValues[i];
+            switch (chan) {
+                case X: _dataX = (double[]) chanData; break;
+                case Y: _dataY = (double[]) chanData; break;
+                case Z: _dataZ = (double[]) chanData; break;
+                case T: _dataX = (double[]) chanData; break;
+                case R: _dataY = (double[]) chanData; break;
+                case C: _dataC = (String[]) chanData; break;
+            }
+        }
+    }
+
+    /**
      * Returns the number of points.
      */
     public int getPointCount()  { return _pointCount; }

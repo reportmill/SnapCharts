@@ -11,6 +11,11 @@ public class RawDataAsPoints extends RawData {
     private List<RawPoint>  _points = new ArrayList<>();
 
     /**
+     * Constructor.
+     */
+    public RawDataAsPoints()  { }
+
+    /**
      * Returns the number of points.
      */
     public int getPointCount()  { return _points.size(); }

@@ -49,6 +49,14 @@ public enum ChartType {
     public boolean isBarType()  { return this==BAR || this==BAR_3D; }
 
     /**
+     * Returns whether type is Polar type (Polar or PolarContour).
+     */
+    public boolean isPolarType()
+    {
+        return this == POLAR;
+    }
+
+    /**
      * Returns the name in plain camel-case format.
      */
     public String getStringPlain()

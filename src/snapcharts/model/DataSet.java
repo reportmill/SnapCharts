@@ -4,6 +4,7 @@ import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.DataUtils;
 import snapcharts.util.MinMax;
+import snapcharts.util.RawDataUtils;
 
 import java.util.*;
 
@@ -34,7 +35,10 @@ public class DataSet extends ChartPart {
     private int  _colCount;
 
     // The RawData
-    private RawData  _rawData = new RawDataAsArrays();
+    private RawData  _rawData = RawData.newRawData();
+
+    // RawData in polar form
+    private RawData  _polarRawData;
 
     // Constants for properties
     public static final String DataType_Prop = "DataType";
@@ -356,6 +360,8 @@ public class DataSet extends ChartPart {
             case Z: return getValueZ(anIndex);
             case I: return anIndex;
             case C: return getString(anIndex);
+            case T: return getValueX(anIndex);
+            case R: return getValueY(anIndex);
             default: throw new RuntimeException("DataSet.getValueForChannelAndIndex: Unknown channel: " + aChan);
         }
     }
@@ -415,6 +421,29 @@ public class DataSet extends ChartPart {
     public RawData getRawData()  { return _rawData; }
 
     /**
+     * Returns the raw data in polar form (just normal data if already DataType.isPolar).
+     */
+    public RawData getPolarRawData()
+    {
+        // If already set, just return
+        if (_polarRawData != null) return _polarRawData;
+
+        // If already DataType.isPolar, set/return
+        DataType dataType = getDataType();
+        if (dataType.isPolar())
+            return _polarRawData = _rawData;
+
+        // Get Polar DataType that makes the most sense
+        DataType polarDataType = DataType.TR;
+        if (dataType.hasZ())
+            polarDataType = dataType == DataType.XYZZ ? DataType.TRZZ : DataType.TRZ;
+
+        // Convert, set, return
+        RawData polarRawData = RawDataUtils.getPolarRawDataForType(_rawData, polarDataType);
+        return _polarRawData = polarRawData;
+    }
+
+    /**
      * Returns an array of dataset X values.
      */
     public double[] getDataX()
@@ -444,22 +473,6 @@ public class DataSet extends ChartPart {
     public String[] getDataC()
     {
         return _rawData.getDataC();
-    }
-
-    /**
-     * Returns an array of dataset theta values.
-     */
-    public double[] getDataT()
-    {
-        return _rawData.getDataT();
-    }
-
-    /**
-     * Returns an array of dataset radius values.
-     */
-    public double[] getDataR()
-    {
-        return _rawData.getDataR();
     }
 
     /**

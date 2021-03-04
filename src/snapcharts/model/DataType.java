@@ -1,5 +1,7 @@
 package snapcharts.model;
 
+import snap.util.ArrayUtils;
+
 /**
  * Constants for format of DataSet.
  */
@@ -87,9 +89,13 @@ public enum DataType {
      */
     public boolean hasChannel(DataChan aChan)
     {
-        char c = aChan.getChar();
-        return toString().indexOf(c) >= 0;
+        return ArrayUtils.contains(getChannels(), aChan);
     }
+
+    /**
+     * Returns whether DataType has Z channel.
+     */
+    public boolean hasZ()  { return hasChannel(DataChan.Z); }
 
     /**
      * Returns whether DataType is polar data type.

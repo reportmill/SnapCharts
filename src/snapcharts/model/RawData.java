@@ -7,7 +7,7 @@ import snapcharts.util.MinMax;
 public abstract class RawData {
 
     // The format of the data
-    private DataType _dataType;
+    private DataType _dataType = DataType.XY;
 
     // Cached arrays of X/Y/Z data
     private double[] _dataX, _dataY, _dataZ;
@@ -15,11 +15,8 @@ public abstract class RawData {
     // Cached array of C data
     private String[] _dataC;
 
-    // Cached array of polar Theta/Radial data
-    private double[]  _dataT, _dataR;
-
     // Min/Max values for X/Y/Z
-    private MinMax  _minMaxX, _minMaxY, _minMaxZ, _minMaxT, _minMaxR;
+    private MinMax  _minMaxX, _minMaxY, _minMaxZ;
 
     /**
      * Returns the DataType.
@@ -74,8 +71,7 @@ public abstract class RawData {
      */
     public double getT(int anIndex)
     {
-        double[] dataT = getDataT();
-        return dataT[anIndex];
+        return getX(anIndex);
     }
 
     /**
@@ -83,8 +79,7 @@ public abstract class RawData {
      */
     public double getR(int anIndex)
     {
-        double[] dataR = getDataR();
-        return dataR[anIndex];
+        return getY(anIndex);
     }
 
     /**
@@ -174,24 +169,6 @@ public abstract class RawData {
     }
 
     /**
-     * Returns an array of dataset Theta values.
-     */
-    public double[] getDataT()
-    {
-        if (_dataT != null) return _dataT;
-        return _dataT = getDataTImpl();
-    }
-
-    /**
-     * Returns an array of dataset Radius values.
-     */
-    public double[] getDataR()
-    {
-        if (_dataR != null) return _dataR;
-        return _dataR = getDataRImpl();
-    }
-
-    /**
      * Returns the data array for given channel.
      */
     public double[] getDataArrayForChannel(DataChan aChannel)
@@ -200,8 +177,8 @@ public abstract class RawData {
             case X: return getDataX();
             case Y: return getDataY();
             case Z: return getDataZ();
-            case T: return getDataT();
-            case R: return getDataR();
+            case T: return getDataX();
+            case R: return getDataY();
             default: throw new RuntimeException("RawData.getDataArrayForChannel: Invalid channel: " + aChannel);
         }
     }
@@ -248,44 +225,6 @@ public abstract class RawData {
         String vals[] = new String[count];
         for (int i=0;i<count;i++) vals[i] = getC(i);
         return vals;
-    }
-
-    /**
-     * Returns an array of dataset theta values.
-     */
-    protected double[] getDataTImpl()
-    {
-        // If Polar, just use X channel values
-        if (getDataType().isPolar())
-            return getDataX();
-
-        // Otherwise, get DataX array and create dataT array
-        double[] dataX = getDataX();
-        int count = dataX.length;
-        double dataT[] = new double[count];
-
-        // Get min/max X to scale to polar
-        double minX = getMinX();
-        double maxX = getMaxX();
-        double maxAngle = 2 * Math.PI; // 360 degrees
-
-        // Iterate over X values and convert to 0 - 360 scale
-        for (int i=0;i<count;i++) {
-            double valX = dataX[i];
-            double valTheta = (valX - minX) / (maxX - minX) * maxAngle;
-            dataT[i] = valTheta;
-        }
-
-        // Return values
-        return dataT;
-    }
-
-    /**
-     * Returns an array of dataset radius values.
-     */
-    protected double[] getDataRImpl()
-    {
-        return getDataY();
     }
 
     /**
@@ -350,8 +289,7 @@ public abstract class RawData {
      */
     public MinMax getMinMaxT()
     {
-        if (_minMaxT != null) return _minMaxT;
-        return _minMaxT = getMinMax(DataChan.T);
+        return getMinMaxX();
     }
 
     /**
@@ -359,8 +297,7 @@ public abstract class RawData {
      */
     public MinMax getMinMaxR()
     {
-        if (_minMaxR != null) return _minMaxR;
-        return _minMaxR = getMinMax(DataChan.R);
+        return getMinMaxY();
     }
 
     /**
@@ -385,7 +322,7 @@ public abstract class RawData {
     {
         _dataX = _dataY = _dataZ = null;
         _dataC = null;
-        _minMaxX = _minMaxY = _minMaxZ = _minMaxT = _minMaxR = null;
+        _minMaxX = _minMaxY = _minMaxZ = null;
     }
 
     /**
@@ -400,5 +337,21 @@ public abstract class RawData {
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
         }
         return str + '}';
+    }
+
+    /**
+     * Returns RawData for type and array values.
+     */
+    public static RawData newRawData()
+    {
+        return new RawDataAsArrays();
+    }
+
+    /**
+     * Returns RawData for type and array values.
+     */
+    public static RawData newRawDataForTypeAndValues(DataType aDataType, Object ... theArrays)
+    {
+        return new RawDataAsArrays(aDataType, theArrays);
     }
 }

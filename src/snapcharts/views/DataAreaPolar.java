@@ -190,7 +190,7 @@ public class DataAreaPolar extends DataArea {
 
         // Get dataset info
         DataSet dset = getDataSet();
-        RawData rawData = dset.getRawData();
+        RawData rawData = dset.getPolarRawData();
         int pointCount = dset.getPointCount();
         AxisType axisTypeY = getAxisTypeY();
 
