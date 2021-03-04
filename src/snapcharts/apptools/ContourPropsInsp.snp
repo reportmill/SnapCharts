@@ -10,10 +10,10 @@
     <Button Name="LevelsButton64" PrefWidth="20" Padding="2" text="64" ShowArea="false" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowMeshCheckBox" text="Show Mesh" />
+    <CheckBox Name="ShowLinesCheckBox" text="Show Lines" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowLinesCheckBox" text="Show Lines" />
+    <CheckBox Name="ShowMeshCheckBox" text="Show Mesh" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ReverseScaleCheckBox" text="Reverse Scale" />

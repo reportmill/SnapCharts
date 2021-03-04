@@ -41,8 +41,9 @@ public class ContourPropsInsp extends ChartPartInsp {
         ContourProps contourProps = typeProps instanceof ContourProps ? (ContourProps) typeProps : null;
         if (contourProps == null) return;
 
-        // Reset LevelsText, ShowMeshCheckBox
+        // Reset LevelsText, ShowLinesCheckBox, ShowMeshCheckBox
         setViewValue("LevelsText", contourProps.getLevelCount());
+        setViewValue("ShowLinesCheckBox", contourProps.isShowLines());
         setViewValue("ShowMeshCheckBox", contourProps.isShowMesh());
         setViewEnabled("ReverseScaleCheckBox", false);
     }
@@ -57,7 +58,7 @@ public class ContourPropsInsp extends ChartPartInsp {
         ContourProps contourProps = typeProps instanceof ContourProps ? (ContourProps) typeProps : null;
         if (contourProps == null) return;
 
-        // Reset LevelsText, ShowMeshCheckBox
+        // Reset LevelsText, LevelsButtons
         if (anEvent.equals("LevelsText"))
             contourProps.setLevelCount(anEvent.getIntValue());
         if (anEvent.equals("LevelsButton4"))
@@ -70,6 +71,10 @@ public class ContourPropsInsp extends ChartPartInsp {
             contourProps.setLevelCount(32);
         if (anEvent.equals("LevelsButton64"))
             contourProps.setLevelCount(64);
+
+        // Handle ShowLinesCheckBox, ShowMeshCheckBox
+        if (anEvent.equals("ShowLinesCheckBox"))
+            contourProps.setShowLines(anEvent.getBoolValue());
         if (anEvent.equals("ShowMeshCheckBox"))
             contourProps.setShowMesh(anEvent.getBoolValue());
     }

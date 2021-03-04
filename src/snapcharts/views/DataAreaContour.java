@@ -2,10 +2,7 @@ package snapcharts.views;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.PropChange;
-import snapcharts.model.Axis;
-import snapcharts.model.ChartTypeProps;
-import snapcharts.model.DataSet;
-import snapcharts.model.Intervals;
+import snapcharts.model.*;
 import snapcharts.util.ContourMaker;
 
 /**
@@ -39,6 +36,14 @@ public class DataAreaContour extends DataArea {
         super(aChartHelper, aDataSet);
 
         _contourHelper = (ChartHelperContour) aChartHelper;
+    }
+
+    /**
+     * Returns the ContourProps.
+     */
+    public ContourProps getContourProps()
+    {
+        return getChart().getTypeHelper().getContourProps();
     }
 
     /**
@@ -222,7 +227,7 @@ public class DataAreaContour extends DataArea {
     {
         paintContour(aPntr);
 
-        boolean showMesh = getChart().getTypeHelper().getContourProps().isShowMesh();
+        boolean showMesh = getContourProps().isShowMesh();
         if (showMesh)
             paintMesh(aPntr);
     }
@@ -232,19 +237,23 @@ public class DataAreaContour extends DataArea {
      */
     protected void paintContour(Painter aPntr)
     {
+        // Get contour info
         Shape[] contours = getContours();
         int count = contours.length;
+        boolean showLines = getContourProps().isShowLines();
         Color lineColor = new Color(.5, .25);
-        aPntr.setStroke(Stroke.Stroke1);
 
-        // Get paint order and just paint hull for first/largest
+        // Get paint order and largest color
         int[] paintOrder = getContourPaintOrder();
         int largestContourIndex = paintOrder[0];
         Color largestColor = _contourHelper.getContourColor(largestContourIndex);
-        aPntr.setColor(largestColor);
+
+        // Get hull path and fill
         Shape hull = getContourMaker().getMesh().getHullPath();
         Shape hull2 = dataContourToView(hull);
+        aPntr.setColor(largestColor);
         aPntr.fill(hull2);
+        aPntr.setStroke(Stroke.Stroke1);
 
         // Iterate over contours and paint
         for (int i=1; i<count; i++) {
@@ -261,8 +270,10 @@ public class DataAreaContour extends DataArea {
             aPntr.fill(contour);
 
             // Paint contour line
-            aPntr.setColor(lineColor);
-            aPntr.draw(contour);
+            if (showLines) {
+                aPntr.setColor(lineColor);
+                aPntr.draw(contour);
+            }
         }
     }
 
