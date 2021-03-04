@@ -5,6 +5,7 @@ import snap.util.ArrayUtils;
 import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.model.*;
+import snapcharts.viewx.ContourChartHelper;
 
 /**
  * A view to display chart contour axis.
@@ -12,7 +13,7 @@ import snapcharts.model.*;
 public class ContourAxisView<T extends AxisZ> extends ChartPartView<T> {
 
     // The Contour helper
-    private ChartHelperContour  _contourHelper;
+    private ContourChartHelper _contourHelper;
 
     // The view to hold color scale
     private ColorBox  _colorBox;
@@ -69,7 +70,7 @@ public class ContourAxisView<T extends AxisZ> extends ChartPartView<T> {
 
         ChartView chartView = getChartView();
         ChartHelper chartHelper = chartView.getChartHelper();
-        _contourHelper = chartHelper instanceof ChartHelperContour ? (ChartHelperContour) chartHelper : null;
+        _contourHelper = chartHelper instanceof ContourChartHelper ? (ContourChartHelper) chartHelper : null;
 
         // Do normal version
         super.resetView();

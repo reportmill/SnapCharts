@@ -3,6 +3,9 @@ import snap.util.ArrayUtils;
 import snap.util.PropChange;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
+import snapcharts.viewx.ContourChartHelper;
+import snapcharts.viewx.PolarChartHelper;
+import snapcharts.viewx.PolarContourChartHelper;
 import java.util.*;
 
 /**
@@ -551,8 +554,9 @@ public abstract class ChartHelper {
             case LINE: return new ChartHelperXY(aChartView, ChartType.LINE);
             case AREA: return new ChartHelperXY(aChartView, ChartType.AREA);
             case SCATTER: return new ChartHelperXY(aChartView, ChartType.SCATTER);
-            case POLAR: return new ChartHelperPolar(aChartView);
-            case CONTOUR: return new ChartHelperContour(aChartView);
+            case CONTOUR: return new ContourChartHelper(aChartView);
+            case POLAR: return new PolarChartHelper(aChartView);
+            case POLAR_CONTOUR: return new PolarContourChartHelper(aChartView);
             case BAR_3D: return new ChartHelperBar3D(aChartView);
             case PIE_3D: return new ChartHelperPie3D(aChartView);
             case LINE_3D: return new ChartHelperLine3D(aChartView);

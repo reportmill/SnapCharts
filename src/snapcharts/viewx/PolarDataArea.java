@@ -1,18 +1,19 @@
-package snapcharts.views;
+package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.util.PropChange;
 import snapcharts.model.*;
+import snapcharts.views.*;
 
 /**
  * A DataArea subclass to display Polar charts.
  */
-public class DataAreaPolar extends DataArea {
+public class PolarDataArea extends DataArea {
 
     // The Polar ChartHelper
-    private ChartHelperPolar  _polarHelper;
+    private PolarChartHelper _polarHelper;
 
     // The Path2D for painting DataSet
     private Path2D  _dataPath;
@@ -31,10 +32,10 @@ public class DataAreaPolar extends DataArea {
     /**
      * Constructor.
      */
-    public DataAreaPolar(ChartHelper aChartHelper, DataSet aDataSet)
+    public PolarDataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super(aChartHelper, aDataSet);
-        _polarHelper = (ChartHelperPolar) aChartHelper;
+        _polarHelper = (PolarChartHelper) aChartHelper;
     }
 
     /**

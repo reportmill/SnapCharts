@@ -61,7 +61,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // Grid Constants
     protected static Color GRID_COLOR = Color.get("#E6");
     protected static Stroke GRID_STROKE = Stroke.Stroke1;
-    protected static Color TICK_LINE_COLOR = Color.GRAY;
+    public static Color TICK_LINE_COLOR = Color.GRAY;
 
     // Other constants
     public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
@@ -190,6 +190,26 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         getChartView().repaint();
         getChartView().setTargPoint(null);
     }
+
+    /**
+     * Returns whether AxisMin override value is set.
+     */
+    public boolean isAxisMinOverrideSet()  { return _minOverride != UNSET_DOUBLE; }
+
+    /**
+     * Returns AxisMin override value.
+     */
+    public double getAxisMinOverride()  { return _minOverride; }
+
+    /**
+     * Returns whether AxisMax override value is set.
+     */
+    public boolean isAxisMaxOverrideSet()  { return _maxOverride != UNSET_DOUBLE; }
+
+    /**
+     * Returns AxisMax override value.
+     */
+    public double getAxisMaxOverride()  { return _maxOverride; }
 
     /**
      * Returns whether axis is logarithmic.

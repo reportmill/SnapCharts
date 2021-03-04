@@ -3,6 +3,8 @@ import snap.geom.*;
 import snap.view.ColView;
 import snap.view.RowView;
 import snap.view.ViewProxy;
+import snapcharts.viewx.PolarChartHelper;
+
 import java.util.Arrays;
 
 /**
@@ -309,7 +311,7 @@ public class ChartViewLayout {
     public ViewProxy[] getAxesForSide(Side aSide)
     {
         // Handle ChartHelperPolar
-        if (_chartView.getChartHelper() instanceof ChartHelperPolar)
+        if (_chartView.getChartHelper() instanceof PolarChartHelper)
             return new ViewProxy[0];
 
         // Handle Top

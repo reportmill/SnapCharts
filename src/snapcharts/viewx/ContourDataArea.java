@@ -1,17 +1,20 @@
-package snapcharts.views;
+package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.ContourMaker;
+import snapcharts.views.AxisView;
+import snapcharts.views.ChartHelper;
+import snapcharts.views.DataArea;
 
 /**
  * A DataArea subclass to display ChartType CONTOUR.
  */
-public class DataAreaContour extends DataArea {
+public class ContourDataArea extends DataArea {
 
     // The Contour helper
-    private ChartHelperContour  _contourHelper;
+    private ContourChartHelper _contourHelper;
 
     // The ContourMaker
     private ContourMaker  _contourMaker;
@@ -31,11 +34,11 @@ public class DataAreaContour extends DataArea {
     /**
      * Constructor.
      */
-    public DataAreaContour(ChartHelper aChartHelper, DataSet aDataSet)
+    public ContourDataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super(aChartHelper, aDataSet);
 
-        _contourHelper = (ChartHelperContour) aChartHelper;
+        _contourHelper = (ContourChartHelper) aChartHelper;
     }
 
     /**

@@ -77,6 +77,8 @@ public class ChartInsp extends ChartPartInsp {
             chart.setType(ChartType.POLAR);
         if (anEvent.equals("ContourChartButton"))
             chart.setType(ChartType.CONTOUR);
+        if (anEvent.equals("PolarContourChartButton"))
+            chart.setType(ChartType.POLAR_CONTOUR);
         if (anEvent.equals("Bar3DChartButton"))
             chart.setType(ChartType.BAR_3D);
         if (anEvent.equals("Pie3DChartButton"))

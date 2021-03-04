@@ -1,24 +1,25 @@
-package snapcharts.views;
+package snapcharts.viewx;
 
 import snap.geom.Rect;
+import snapcharts.views.*;
 
 /**
  * A ChartViewLayout for Polar plots.
  */
-public class ChartViewLayoutPolar extends ChartViewLayout {
+public class PolarChartViewLayout extends ChartViewLayout {
 
     // The polar chart helper
-    private ChartHelperPolar _polarHelper;
+    private PolarChartHelper _polarHelper;
 
     /**
      * Constructor
      */
-    public ChartViewLayoutPolar(ChartView aChartView)
+    public PolarChartViewLayout(ChartView aChartView)
     {
         super(aChartView);
 
         // Set Polar helper
-        _polarHelper = (ChartHelperPolar) aChartView.getChartHelper();
+        _polarHelper = (PolarChartHelper) aChartView.getChartHelper();
     }
 
     /**

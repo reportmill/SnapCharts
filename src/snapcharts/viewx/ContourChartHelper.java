@@ -1,4 +1,4 @@
-package snapcharts.views;
+package snapcharts.viewx;
 import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx.GradientPaint;
@@ -7,12 +7,14 @@ import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
+import snapcharts.views.*;
+
 import java.util.List;
 
 /**
  * A ChartHelper for common Contour types.
  */
-public class ChartHelperContour extends ChartHelper {
+public class ContourChartHelper extends ChartHelper {
 
     // The number of contour levels
     private int  _levelsCount;
@@ -26,7 +28,7 @@ public class ChartHelperContour extends ChartHelper {
     /**
      * Constructor.
      */
-    protected ChartHelperContour(ChartView aChartView)
+    public ContourChartHelper(ChartView aChartView)
     {
         super(aChartView);
     }
@@ -161,7 +163,7 @@ public class ChartHelperContour extends ChartHelper {
         for (int i=0; i<dsetCount; i++) {
             DataSet dset = dsets.get(i);
             //dataAreas[i*2] = new DataAreaXY(this, dset, ChartType.LINE);
-            dataAreas[i] = new DataAreaContour(this, dset); // i*2+1
+            dataAreas[i] = new ContourDataArea(this, dset); // i*2+1
         }
 
         return dataAreas;
@@ -173,8 +175,8 @@ public class ChartHelperContour extends ChartHelper {
     private void clearContours()
     {
         for (DataArea dataArea : getDataAreas())
-            if (dataArea instanceof DataAreaContour)
-                ((DataAreaContour)dataArea).clearContours();
+            if (dataArea instanceof ContourDataArea)
+                ((ContourDataArea)dataArea).clearContours();
     }
 
     /**

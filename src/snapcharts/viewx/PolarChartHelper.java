@@ -1,14 +1,15 @@
-package snapcharts.views;
+package snapcharts.viewx;
 import snap.geom.Rect;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
+import snapcharts.views.*;
 import java.util.List;
 
 /**
  * A ChartHelper for Polar charts.
  */
-public class ChartHelperPolar extends ChartHelper {
+public class PolarChartHelper extends ChartHelper {
 
     // The rect around the polar grid
     private Rect  _polarBounds;
@@ -19,7 +20,7 @@ public class ChartHelperPolar extends ChartHelper {
     /**
      * Constructor.
      */
-    public ChartHelperPolar(ChartView aChartView)
+    public PolarChartHelper(ChartView aChartView)
     {
         super(aChartView);
     }
@@ -35,7 +36,7 @@ public class ChartHelperPolar extends ChartHelper {
     @Override
     public ChartViewLayout createLayout()
     {
-        return new ChartViewLayoutPolar(_chartView);
+        return new PolarChartViewLayout(_chartView);
     }
 
     /**
@@ -51,7 +52,7 @@ public class ChartHelperPolar extends ChartHelper {
         DataArea[] dataAreas = new DataArea[dsetCount];
         for (int i=0; i<dsetCount; i++) {
             DataSet dset = dsets.get(i);
-            dataAreas[i] = new DataAreaPolar(this, dset);
+            dataAreas[i] = new PolarDataArea(this, dset);
         }
 
         return dataAreas;
@@ -120,8 +121,8 @@ public class ChartHelperPolar extends ChartHelper {
     public double getAxisMinForIntervalCalc(AxisView axisView)
     {
         // If explicitly set, just return
-        if (axisView._minOverride != AxisView.UNSET_DOUBLE)
-            return axisView._minOverride;
+        if (axisView.isAxisMinOverrideSet())
+            return axisView.getAxisMinOverride();
 
         // Return Min for radius
         return getMinMaxForRadius().getMin();
@@ -133,8 +134,8 @@ public class ChartHelperPolar extends ChartHelper {
     public double getAxisMaxForIntervalCalc(AxisView axisView)
     {
         // If explicitly set, just return
-        if (axisView._maxOverride != AxisView.UNSET_DOUBLE)
-            return axisView._maxOverride;
+        if (axisView.isAxisMaxOverrideSet())
+            return axisView.getAxisMaxOverride();
 
         // Return Min for radius
         return getMinMaxForRadius().getMax();

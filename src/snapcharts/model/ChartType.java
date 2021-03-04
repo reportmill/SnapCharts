@@ -20,11 +20,14 @@ public enum ChartType {
     /** Scatter chart */
     SCATTER,
 
+    /** Contour chart */
+    CONTOUR,
+
     /** Polar chart */
     POLAR,
 
-    /** Contour chart */
-    CONTOUR,
+    /** Polar Contour chart */
+    POLAR_CONTOUR,
 
     /** 3D Bar chart */
     BAR_3D,
@@ -53,7 +56,7 @@ public enum ChartType {
      */
     public boolean isPolarType()
     {
-        return this == POLAR;
+        return this == POLAR || this == POLAR_CONTOUR;
     }
 
     /**
@@ -70,6 +73,7 @@ public enum ChartType {
             case LINE: return "Line";
             case LINE_3D: return "Line3D";
             case SCATTER: return "Scatter";
+            case POLAR_CONTOUR: return "PolarContour";
             default: break;
         }
 
