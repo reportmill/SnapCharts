@@ -3,6 +3,7 @@ import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.DataUtils;
+import snapcharts.util.MinMax;
 
 import java.util.*;
 
@@ -33,7 +34,7 @@ public class DataSet extends ChartPart {
     private int  _colCount;
 
     // The RawData
-    private RawData  _rawData = new RawDataAsPoints();
+    private RawData  _rawData = new RawDataAsArrays();
 
     // Constants for properties
     public static final String DataType_Prop = "DataType";
@@ -193,10 +194,17 @@ public class DataSet extends ChartPart {
      */
     public DataPoint removePoint(int anIndex)
     {
-        DataPoint dpnt = _rawData.removePoint(anIndex);
-        firePropChange(Point_Prop, dpnt, null, anIndex);
+        // Get point at index
+        DataPoint dataPoint = getPoint(anIndex);
+        dataPoint.cacheValues();
+
+        // Remove point from RawData
+        _rawData.removePoint(anIndex);
+        firePropChange(Point_Prop, dataPoint, null, anIndex);
         pointsDidChange();
-        return dpnt;
+
+        // Return point
+        return dataPoint;
     }
 
     /**
@@ -541,6 +549,21 @@ public class DataSet extends ChartPart {
      * Called when a points are added, removed or modified.
      */
     protected void pointsDidChange()  { }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        String str = "DataSet { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        RawData rawData = getRawData();
+        for (DataChan chan : getDataType().getChannels()) {
+            MinMax minMax = rawData.getMinMax(chan);
+            str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
+        }
+        return str + '}';
+    }
 
     /**
      * Archival.

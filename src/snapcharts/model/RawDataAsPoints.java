@@ -68,11 +68,10 @@ public class RawDataAsPoints extends RawData {
      * Removes a point at given index.
      */
     @Override
-    public DataPoint removePoint(int anIndex)
+    public void removePoint(int anIndex)
     {
         RawPoint raw = _points.remove(anIndex);
         pointsDidChange();
-        return new DataPoint(raw._x, raw._y, raw._z, raw._c);
     }
 
     /**

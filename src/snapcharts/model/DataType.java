@@ -32,6 +32,9 @@ public enum DataType {
     /** Unknown */
     UNKNOWN;
 
+    // The chanels (cached)
+    private DataChan[]  _channels;
+
     /**
      * Returns the number of channels of data.
      */
@@ -59,6 +62,24 @@ public enum DataType {
             case 'R': return DataChan.R;
             default: throw new RuntimeException("DataType.getChannel: Unknown char: " + c);
         }
+    }
+
+    /**
+     * Returns the channels.
+     */
+    public DataChan[] getChannels()
+    {
+        // If already set, just return
+        if (_channels != null) return _channels;
+
+        // Create channels array
+        int chanCount = getChannelCount();
+        DataChan[] chans = new DataChan[chanCount];
+        for (int i=0; i<chanCount; i++)
+            chans[i] = getChannel(i);
+
+        // Set/return channels
+        return _channels = chans;
     }
 
     /**

@@ -125,7 +125,7 @@ public abstract class RawData {
     /**
      * Removes a point at index.
      */
-    public abstract DataPoint removePoint(int anIndex);
+    public abstract void removePoint(int anIndex);
 
     /**
      * Clears all points.
@@ -366,7 +366,7 @@ public abstract class RawData {
     /**
      * Returns the minimum X value in this dataset.
      */
-    private MinMax getMinMax(DataChan aChan)
+    public MinMax getMinMax(DataChan aChan)
     {
         double[] dataVals = getDataArrayForChannel(aChan);
         double min = Float.MAX_VALUE;
@@ -394,6 +394,11 @@ public abstract class RawData {
     @Override
     public String toString()
     {
-        return "RawData { " + "PointCount=" + getPointCount() + ", MinX=" + getMinX() + ", MaxX=" + getMaxX() + '}';
+        String str = "RawData { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        for (DataChan chan : getDataType().getChannels()) {
+            MinMax minMax = getMinMax(chan);
+            str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
+        }
+        return str + '}';
     }
 }
