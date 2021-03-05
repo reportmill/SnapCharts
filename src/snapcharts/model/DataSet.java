@@ -28,17 +28,14 @@ public class DataSet extends ChartPart {
     // Whether to show symbols
     private boolean  _showSymbols;
 
-    // The number of rows
-    private int  _rowCount;
-
-    // The number of columns
-    private int  _colCount;
-
     // The RawData
     private RawData  _rawData = RawData.newRawData();
 
     // RawData in polar form
     private RawData  _polarRawData;
+
+    // RawData in polar XY form
+    private RawData  _polarXYRawData;
 
     // Constants for properties
     public static final String DataType_Prop = "DataType";
@@ -87,6 +84,7 @@ public class DataSet extends ChartPart {
         if (aDataType==getDataType()) return;
         DataType old = getDataType();
         _rawData.setDataType(aDataType);
+        clearCachedData();
         firePropChange(DataType_Prop, old, aDataType);
     }
 
@@ -142,22 +140,12 @@ public class DataSet extends ChartPart {
     /**
      * Returns the number of rows.
      */
-    public int getRowCount()  { return _rowCount; }
-
-    /**
-     * Sets the number of rows.
-     */
-    public void setRowCount(int aValue)  { _rowCount = aValue; }
+    public int getRowCount()  { return _rawData.getRowCount(); }
 
     /**
      * Returns the number of columns.
      */
-    public int getColCount()  { return _colCount; }
-
-    /**
-     * Sets the number of columns.
-     */
-    public void setColCount(int aValue)  { _colCount = aValue; }
+    public int getColCount()  { return _rawData.getColCount(); }
 
     /**
      * Returns the number of points.
@@ -189,8 +177,8 @@ public class DataSet extends ChartPart {
     public void addPoint(DataPoint aPoint, int anIndex)
     {
         _rawData.addPoint(aPoint, anIndex);
+        clearCachedData();
         firePropChange(Point_Prop, aPoint, null, anIndex);
-        pointsDidChange();
     }
 
     /**
@@ -204,8 +192,8 @@ public class DataSet extends ChartPart {
 
         // Remove point from RawData
         _rawData.removePoint(anIndex);
+        clearCachedData();
         firePropChange(Point_Prop, dataPoint, null, anIndex);
-        pointsDidChange();
 
         // Return point
         return dataPoint;
@@ -217,7 +205,7 @@ public class DataSet extends ChartPart {
     public void clearPoints()
     {
         _rawData.clearPoints();
-        pointsDidChange();
+        clearCachedData();
     }
 
     /**
@@ -267,7 +255,7 @@ public class DataSet extends ChartPart {
     public void setValueC(String aValue, int anIndex)
     {
         _rawData.setC(aValue, anIndex);
-        pointsDidChange();
+        clearCachedData();
     }
 
     /**
@@ -284,7 +272,7 @@ public class DataSet extends ChartPart {
     public void setValueX(Double aValue, int anIndex)
     {
         _rawData.setValueX(aValue, anIndex);
-        pointsDidChange();
+        clearCachedData();
     }
 
     /**
@@ -301,7 +289,7 @@ public class DataSet extends ChartPart {
     public void setValueY(Double aValue, int anIndex)
     {
         _rawData.setValueY(aValue, anIndex);
-        pointsDidChange();
+        clearCachedData();
     }
 
     /**
@@ -318,7 +306,7 @@ public class DataSet extends ChartPart {
     public void setValueZ(Double aValue, int anIndex)
     {
         _rawData.setValueZ(aValue, anIndex);
-        pointsDidChange();
+        clearCachedData();
     }
 
     /**
@@ -452,6 +440,20 @@ public class DataSet extends ChartPart {
     }
 
     /**
+     * Returns the raw data of PolarRawData converted to XY format.
+     */
+    public RawData getPolarXYRawData()
+    {
+        // If already set, just return
+        if (_polarXYRawData != null) return _polarXYRawData;
+
+        // Get PolarData, convert to polarXY, set/return
+        RawData polarData = getPolarRawData();
+        RawData xyData = RawDataUtils.getPolarXYRawDataForPolar(polarData);
+        return _polarXYRawData = xyData;
+    }
+
+    /**
      * Returns an array of dataset X values.
      */
     public double[] getDataX()
@@ -534,27 +536,12 @@ public class DataSet extends ChartPart {
     /**
      * Returns the dataX values for ZZ.
      */
-    private double[] getDataXforZZ()
-    {
-        int colCount = getColCount();
-        double[] dataX = getDataX();
-        return Arrays.copyOf(dataX, colCount);
-    }
+    public double[] getDataXforZZ()  { return _rawData.getDataXforZZ(); }
 
     /**
      * Returns the dataY values for ZZ.
      */
-    private double[] getDataYforZZ()
-    {
-        int rowCount = getRowCount();
-        int colCount = getColCount();
-        double[] dataY = new double[rowCount];
-        for (int i=0; i<rowCount; i++) {
-            int index = i *colCount;
-            dataY[i] = getY(index);
-        }
-        return dataY;
-    }
+    private double[] getDataYforZZ()  { return _rawData.getDataYforZZ(); }
 
     /**
      * Returns whether this dataset is clear (no name and no values).
@@ -569,7 +556,11 @@ public class DataSet extends ChartPart {
     /**
      * Called when a points are added, removed or modified.
      */
-    protected void pointsDidChange()  { }
+    protected void clearCachedData()
+    {
+        _polarRawData = null;
+        _polarXYRawData = null;
+    }
 
     /**
      * Standard toString implementation.

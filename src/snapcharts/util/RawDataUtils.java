@@ -49,7 +49,7 @@ public class RawDataUtils {
     /**
      * Returns RawData for given polar type.
      */
-    public static RawData getXYRawDataForPolar(RawData aRawData)
+    public static RawData getPolarXYRawDataForPolar(RawData aRawData)
     {
         // If already non-polar, just return
         if (!aRawData.getDataType().isPolar())

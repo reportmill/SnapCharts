@@ -9,8 +9,14 @@ public abstract class RawData {
     // The format of the data
     private DataType _dataType = DataType.XY;
 
-    // Cached arrays of X/Y/Z data
-    private double[] _dataX, _dataY, _dataZ;
+    // The number of rows
+    private int  _rowCount;
+
+    // The number of columns
+    private int  _colCount;
+
+    // Cached arrays of X/Y/Z data (and X/Y for ZZ)
+    private double[] _dataX, _dataY, _dataZ, _dataXZZ, _dataYZZ;
 
     // Cached array of C data
     private String[] _dataC;
@@ -30,6 +36,26 @@ public abstract class RawData {
     {
         _dataType = aDataType;
     }
+
+    /**
+     * Returns the number of rows.
+     */
+    public int getRowCount()  { return _rowCount; }
+
+    /**
+     * Sets the number of rows.
+     */
+    public void setRowCount(int aValue)  { _rowCount = aValue; }
+
+    /**
+     * Returns the number of columns.
+     */
+    public int getColCount()  { return _colCount; }
+
+    /**
+     * Sets the number of columns.
+     */
+    public void setColCount(int aValue)  { _colCount = aValue; }
 
     /**
      * Returns the number of points.
@@ -316,11 +342,48 @@ public abstract class RawData {
     }
 
     /**
+     * Returns the dataX values for ZZ.
+     */
+    public double[] getDataXforZZ()
+    {
+        // If already set, just return
+        if (_dataXZZ != null) return _dataXZZ;
+
+        // Create X array and load
+        int colCount = getColCount();
+        double[] dataX = new double[colCount];
+        for (int i=0; i<colCount; i++)
+            dataX[i] = getX(i);
+
+        // Set/return
+        return _dataXZZ = dataX;
+    }
+
+    /**
+     * Returns the dataY values for ZZ.
+     */
+    public double[] getDataYforZZ()
+    {
+        // If already set, just return
+        if (_dataYZZ != null) return _dataYZZ;
+
+        // Create Y array and load
+        int rowCount = getRowCount();
+        int colCount = getColCount();
+        double[] dataY = new double[rowCount];
+        for (int i=0; i<rowCount; i++)
+            dataY[i] = getY(i * colCount);
+
+        // Set/return
+        return _dataYZZ = dataY;
+    }
+
+    /**
      * Called when points are added, removed or modified.
      */
     protected void pointsDidChange()
     {
-        _dataX = _dataY = _dataZ = null;
+        _dataX = _dataY = _dataZ = _dataXZZ = _dataYZZ = null;
         _dataC = null;
         _minMaxX = _minMaxY = _minMaxZ = null;
     }
