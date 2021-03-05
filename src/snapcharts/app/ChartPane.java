@@ -14,8 +14,8 @@ import snapcharts.model.Chart;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
-import snapcharts.views.ChartView;
-import snapcharts.views.DataView;
+import snapcharts.view.ChartView;
+import snapcharts.view.DataView;
 import java.util.List;
 
 /**

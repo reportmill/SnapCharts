@@ -4,7 +4,7 @@ import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
 import snapcharts.util.MinMax;
-import snapcharts.views.AxisView;
+import snapcharts.view.AxisView;
 
 /**
  * A class to manage UI to edit a ChartView.

@@ -4,6 +4,7 @@ import snap.gfx.Color;
 import snap.geom.VPos;
 import snap.util.*;
 import snapcharts.model.*;
+import snapcharts.modelx.BarProps;
 import snapcharts.util.MapWriter;
 
 /**

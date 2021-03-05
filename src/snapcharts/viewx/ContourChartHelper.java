@@ -1,9 +1,7 @@
 package snapcharts.viewx;
-import snap.gfx.Color;
 import snap.util.PropChange;
 import snapcharts.model.*;
-import snapcharts.util.MinMax;
-import snapcharts.views.*;
+import snapcharts.view.*;
 import java.util.List;
 
 /**

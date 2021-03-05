@@ -6,8 +6,8 @@ import snap.gfx.Stroke;
 import snapcharts.model.DataSet;
 import snapcharts.model.RawData;
 import snapcharts.util.ContourMaker;
-import snapcharts.views.AxisView;
-import snapcharts.views.DataArea;
+import snapcharts.view.AxisView;
+import snapcharts.view.DataArea;
 
 /**
  * This is a class to paint contour for a DataArea and DataSet.

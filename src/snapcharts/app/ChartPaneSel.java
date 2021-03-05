@@ -3,7 +3,7 @@ import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
-import snapcharts.views.*;
+import snapcharts.view.*;
 
 /**
  * A class to manage ChartPart selection in ChartPane.

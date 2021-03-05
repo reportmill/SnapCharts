@@ -1,7 +1,7 @@
 package snapcharts.viewx;
 
 import snap.geom.Rect;
-import snapcharts.views.*;
+import snapcharts.view.*;
 
 /**
  * A ChartViewLayout for Polar plots.

@@ -1,5 +1,7 @@
 package snapcharts.model;
 
+import snapcharts.modelx.*;
+
 /**
  * A class to hold the different types of charts.
  */
@@ -9,19 +11,19 @@ public class ChartTypeHpr {
     private Chart  _chart;
 
     // Line chart properties
-    private LineProps  _lineProps;
+    private LineProps _lineProps;
 
     // Bar chart properties
-    private BarProps  _barProps;
+    private BarProps _barProps;
 
     // Pie chart properties
-    private PieProps  _pieProps;
+    private PieProps _pieProps;
 
     // Contour chart properties
-    private ContourProps  _contourProps;
+    private ContourProps _contourProps;
 
     // Bar3D chart properties
-    private Bar3DProps  _bar3DProps;
+    private Bar3DProps _bar3DProps;
 
     /**
      * Constructor.

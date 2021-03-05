@@ -7,7 +7,7 @@ import snap.view.*;
 import snapcharts.appmisc.SheetView;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
-import snapcharts.views.ChartView;
+import snapcharts.view.ChartView;
 
 /**
  * A class to manage the datasets.

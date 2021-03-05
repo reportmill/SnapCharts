@@ -6,10 +6,10 @@ import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
 import snapcharts.model.Chart;
-import snapcharts.model.ContourProps;
+import snapcharts.modelx.ContourProps;
 import snapcharts.model.DataSet;
 import snapcharts.util.MinMax;
-import snapcharts.views.ChartHelper;
+import snapcharts.view.ChartHelper;
 
 /**
  * This is a class that is a helper for ContourChartHelper and PolarContourChartHelper (a helper's helper), so the

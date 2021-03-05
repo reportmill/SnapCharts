@@ -2,7 +2,7 @@ package snapcharts.viewx;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.*;
-import snapcharts.views.DataArea;
+import snapcharts.view.DataArea;
 
 /**
  * A DataArea subclass to display ChartType CONTOUR.

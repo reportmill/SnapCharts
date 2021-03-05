@@ -4,7 +4,7 @@ import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
 import snapcharts.model.ChartTypeProps;
-import snapcharts.model.ContourProps;
+import snapcharts.modelx.ContourProps;
 
 /**
  * A class to manage UI to edit a ChartTypeProps.

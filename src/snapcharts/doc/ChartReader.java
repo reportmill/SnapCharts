@@ -5,6 +5,7 @@ import snap.geom.VPos;
 import snap.util.*;
 import snap.web.WebURL;
 import snapcharts.model.*;
+import snapcharts.modelx.BarProps;
 
 /**
  * A class to load chart parameters from JSON.

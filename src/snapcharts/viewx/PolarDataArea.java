@@ -5,7 +5,7 @@ import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.util.PropChange;
 import snapcharts.model.*;
-import snapcharts.views.*;
+import snapcharts.view.*;
 
 /**
  * A DataArea subclass to display Polar charts.

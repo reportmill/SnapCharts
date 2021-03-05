@@ -6,10 +6,10 @@ import snap.view.*;
 import snap.gfx3d.Camera;
 import snap.gfx3d.CameraView;
 import snap.gfx3d.Trackball;
-import snapcharts.views.DataArea;
-import snapcharts.views.DataAreaBar3D;
-import snapcharts.views.ChartView;
-import snapcharts.views.DataView;
+import snapcharts.view.DataArea;
+import snapcharts.viewx.Bar3DDataArea;
+import snapcharts.view.ChartView;
+import snapcharts.view.DataView;
 
 /**
  * Tool for visual editing RMScene3D.
@@ -35,7 +35,7 @@ public class Thr3DTool extends ViewOwner {
         DataView dataView = _chartView.getDataView();
         DataArea dataAreas[] = dataView.getDataAreas();
         DataArea dataArea = dataAreas.length>0 ? dataAreas[0] : null;
-        DataAreaBar3D da3d = dataArea instanceof DataAreaBar3D ? (DataAreaBar3D) dataArea : null;
+        Bar3DDataArea da3d = dataArea instanceof Bar3DDataArea ? (Bar3DDataArea) dataArea : null;
         if (da3d==null) return null;
         return da3d.getCameraView();
     }

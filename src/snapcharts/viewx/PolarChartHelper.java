@@ -3,7 +3,7 @@ import snap.geom.Rect;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
-import snapcharts.views.*;
+import snapcharts.view.*;
 import java.util.List;
 
 /**
