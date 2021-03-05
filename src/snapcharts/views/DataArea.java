@@ -338,4 +338,9 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      * Called when DataView changes size.
      */
     protected void dataViewDidChangeSize()  { }
+
+    /**
+     * Called when AxisView changes properties.
+     */
+    protected void axisViewDidChange(PropChange aPC)  { }
 }

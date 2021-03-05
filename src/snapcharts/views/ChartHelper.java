@@ -173,22 +173,23 @@ public abstract class ChartHelper {
     public AxisView getAxisView(AxisType anAxisType)
     {
         // If already set, just return
-        AxisView axis = _axisViews.get(anAxisType);
-        if (axis!=null)
-            return axis;
+        AxisView axisView = _axisViews.get(anAxisType);
+        if (axisView!=null)
+            return axisView;
 
         // If not supported, return null
         if (!ArrayUtils.contains(getAxisTypes(), anAxisType))
             return null;
 
         // Create AxisView, init and add to map
-        axis = createAxisView(anAxisType);
-        axis._chartHelper = this;
-        axis._chartView = _chartView;
-        axis._dataView = _chartView.getDataView();
-        _axisViews.put(anAxisType, axis);
+        axisView = createAxisView(anAxisType);
+        axisView._chartHelper = this;
+        axisView._chartView = _chartView;
+        axisView._dataView = _chartView.getDataView();
+        axisView.addPropChangeListener(pc -> axisViewDidChange(pc));
+        _axisViews.put(anAxisType, axisView);
         _axisViewsArray = null;
-        return axis;
+        return axisView;
     }
 
     /**
@@ -540,6 +541,16 @@ public abstract class ChartHelper {
         // Forward to DataAreas
         for (DataArea dataArea : getDataAreas())
             dataArea.dataViewDidChangeSize();
+    }
+
+    /**
+     * Called when AxisView changes properties.
+     */
+    protected void axisViewDidChange(PropChange aPC)
+    {
+        // Forward to DataAreas
+        for (DataArea dataArea : getDataAreas())
+            dataArea.axisViewDidChange(aPC);
     }
 
     /**

@@ -1,14 +1,9 @@
 package snapcharts.viewx;
-import snap.geom.Rect;
 import snap.gfx.Color;
-import snap.gfx.GradientPaint;
-import snap.gfx.Image;
-import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import snapcharts.views.*;
-
 import java.util.List;
 
 /**
@@ -16,14 +11,8 @@ import java.util.List;
  */
 public class ContourChartHelper extends ChartHelper {
 
-    // The number of contour levels
-    private int  _levelsCount;
-
-    // The contour range values (min/max) for each contour level
-    private MinMax[]  _contourRanges;
-
-    // The array of colors
-    private Color[]  _colors;
+    // An object to help with Contours
+    protected ContourHelper  _contourHelper;
 
     /**
      * Constructor.
@@ -31,6 +20,7 @@ public class ContourChartHelper extends ChartHelper {
     public ContourChartHelper(ChartView aChartView)
     {
         super(aChartView);
+        _contourHelper = new ContourHelper(this);
     }
 
     /**
@@ -40,114 +30,9 @@ public class ContourChartHelper extends ChartHelper {
     public ChartType getChartType()  { return ChartType.CONTOUR; }
 
     /**
-     * Returns the number of contours.
+     * Returns the ContourHelper.
      */
-    public int getContourCount()
-    {
-        if (_levelsCount > 0) return _levelsCount;
-        Chart chart = getChart();
-        ContourProps contourProps = chart.getTypeHelper().getContourProps();
-        return _levelsCount = contourProps.getLevelCount();
-    }
-
-    /**
-     * Returns the contour range for given contour index.
-     */
-    public MinMax getContourRange(int anIndex)
-    {
-        return getContourRanges()[anIndex];
-    }
-
-    /**
-     * Returns the contour ranges.
-     */
-    public MinMax[] getContourRanges()
-    {
-        // If already set, just return
-        if (_contourRanges != null) return _contourRanges;
-
-        // Get contour data min/max
-        DataSet dset = getDataSetList().getDataSet(0);
-        double zmin = dset.getMinZ();
-        double zmax = dset.getMaxZ();
-
-        // Get contour count and delta
-        int count = getContourCount();
-        double delta = (zmax - zmin) / count;
-
-        // Iterate over contour levels and create/set MinMax for each
-        MinMax[] ranges = new MinMax[count];
-        for (int i=0; i<count; i++) {
-            double min = zmin + delta * i;
-            double max = zmin + delta * (i + 1);
-            ranges[i] = new MinMax(min, max);
-        }
-
-        // Set/return
-        return _contourRanges = ranges;
-    }
-
-    /**
-     * Returns the contour color at given index.
-     */
-    public Color getContourColor(int anIndex)
-    {
-        Color[] colors = getContourColors();
-        return colors[anIndex];
-    }
-
-    /**
-     * Returns the colors.
-     */
-    public Color[] getContourColors()
-    {
-        // If colors already set, just return
-        if (_colors!=null) return _colors;
-
-        // Create Gradient
-        String[] chex = {
-            "071E91", "163BA4", "2E6BB9", "469CD0",
-            "5DCAE6", "75FBFD", "82FCC3", "A2FC8E",
-            "CEFE64", "FFFF54", "F5C142", "ED8732",
-            "E85127", "E63222", "AD2317", "75140C"
-        };
-        Color[] gcols = new Color[chex.length];
-        for (int i=0; i<chex.length; i++) gcols[i] = new Color("#" + chex[i]);
-        double[] offsets = new double[chex.length];
-        for (int i=0; i<chex.length; i++) offsets[i] = 1d/(chex.length-1) * i;
-        offsets[chex.length-1] = 1;
-
-        GradientPaint paint = new GradientPaint(0, GradientPaint.getStops(offsets, gcols));
-
-        // Expand to rect
-        int count = getContourCount();
-        paint = paint.copyForRect(new Rect(0, 0, count, 1));
-
-        // Create image and fill with gradient
-        Image img = Image.getImageForSizeAndScale(count, 1, false, 1);
-        Painter pntr = img.getPainter();
-        pntr.setPaint(paint);
-        pntr.fillRect(0, 0, count, 1);
-
-        // Get colors for each step
-        Color[] colors = new Color[count];
-        for (int i=0; i<count; i++)
-            colors[i] = new Color(img.getRGB(i, 0));
-
-        // Return colors
-        return _colors = colors;
-    }
-
-    @Override
-    protected AxisView createAxisView(AxisType anAxisType)
-    {
-        AxisView axisView = super.createAxisView(anAxisType);
-
-        // Listen to axisView changes: HERE?!? - YOU'VE GOT TO BE JOKING!!!
-        axisView.addPropChangeListener(pc -> clearContours());
-
-        return axisView;
-    }
+    public ContourHelper getContourHelper()  { return _contourHelper; }
 
     /**
      * Creates the DataAreas.
@@ -170,16 +55,6 @@ public class ContourChartHelper extends ChartHelper {
     }
 
     /**
-     * Clears contours.
-     */
-    private void clearContours()
-    {
-        for (DataArea dataArea : getDataAreas())
-            if (dataArea instanceof ContourDataArea)
-                ((ContourDataArea)dataArea).clearContours();
-    }
-
-    /**
      * Returns the contour legend.
      */
     public ContourAxisView getContourView()
@@ -190,6 +65,7 @@ public class ContourChartHelper extends ChartHelper {
     /**
      * Called when a ChartPart changes.
      */
+    @Override
     protected void chartPartDidChange(PropChange aPC)
     {
         // Do normal version
@@ -198,9 +74,7 @@ public class ContourChartHelper extends ChartHelper {
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
         if (src instanceof DataSet || src instanceof DataSetList || src instanceof ChartTypeProps) {
-            _levelsCount = 0;
-            _contourRanges = null;
-            _colors = null;
+            _contourHelper.resetCachedValues();
         }
     }
 }

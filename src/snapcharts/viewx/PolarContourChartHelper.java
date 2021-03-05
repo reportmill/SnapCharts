@@ -8,13 +8,22 @@ import java.util.List;
  */
 public class PolarContourChartHelper extends PolarChartHelper {
 
+    // An object to help with Contours
+    protected ContourHelper  _contourHelper;
+
     /**
      * Constructor.
      */
     public PolarContourChartHelper(ChartView aChartView)
     {
         super(aChartView);
+        _contourHelper = new ContourHelper(this);
     }
+
+    /**
+     * Returns the ContourHelper.
+     */
+    public ContourHelper getContourHelper()  { return _contourHelper; }
 
     /**
      * Creates the DataAreas.
