@@ -60,6 +60,14 @@ public enum ChartType {
     }
 
     /**
+     * Returns whether type is Contour type (Contour or PolarContour).
+     */
+    public boolean isContourType()
+    {
+        return this == CONTOUR || this == POLAR_CONTOUR;
+    }
+
+    /**
      * Returns the name in plain camel-case format.
      */
     public String getStringPlain()
@@ -90,6 +98,10 @@ public enum ChartType {
         String str = aStr.toUpperCase();
         str = str.replace(" ", "_").replace("-", "_");
         try { return ChartType.valueOf(str); }
-        catch(Exception e)  { return BAR; }
+        catch(Exception e)
+        {
+            System.err.println("ChartType.get: Couldn't parse chart type string: " + aStr);
+            return LINE;
+        }
     }
 }

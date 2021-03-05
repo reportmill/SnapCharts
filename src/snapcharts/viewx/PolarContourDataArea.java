@@ -33,7 +33,13 @@ public class PolarContourDataArea extends PolarDataArea {
     @Override
     protected void paintChart(Painter aPntr)
     {
+        // Paint contours
         _contourPainter.paintAll(aPntr);
+
+        // Repaint (semi-transparent) gridlines on top of contours
+        aPntr.setOpacity(.4);
+        paintGridlines(aPntr);
+        aPntr.setOpacity(1);
     }
 
     /**
@@ -42,6 +48,10 @@ public class PolarContourDataArea extends PolarDataArea {
     @Override
     protected void chartPartDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.chartPartDidChange(aPC);
+
+        // Handle changes
         Object src = aPC.getSource();
         if (src==getDataSet() || src instanceof Axis || src instanceof ChartTypeProps) {
             _contourPainter.clearContoursAll();
@@ -54,6 +64,10 @@ public class PolarContourDataArea extends PolarDataArea {
     @Override
     protected void dataViewDidChangeSize()
     {
+        // Do normal version
+        super.dataViewDidChangeSize();
+
+        // Handle changes
         _contourPainter.clearContours();
     }
 
@@ -63,6 +77,10 @@ public class PolarContourDataArea extends PolarDataArea {
     @Override
     protected void axisViewDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.axisViewDidChange(aPC);
+
+        // Handle changes
         _contourPainter.clearContours();
     }
 }

@@ -81,6 +81,7 @@ public class TypePropsInsp extends ChartPartInsp {
         ChartType chartType = getChart().getType();
         switch (chartType) {
             case CONTOUR: return getContourPropsInsp();
+            case POLAR_CONTOUR: return getContourPropsInsp();
             default: return null;
         }
     }

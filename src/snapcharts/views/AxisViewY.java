@@ -117,7 +117,7 @@ public class AxisViewY extends AxisView {
         boolean log = isLog();
 
         // Polar stuff
-        boolean isPolar = getChart().getType() == ChartType.POLAR;
+        boolean isPolar = getChart().getType().isPolarType();
         double shiftY = isPolar ? getY() - getDataView().getY() : 0;
 
         // Iterate over tick labels and set location

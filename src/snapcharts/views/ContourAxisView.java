@@ -65,7 +65,7 @@ public class ContourAxisView<T extends AxisZ> extends ChartPartView<T> {
     {
         // Handle visible
         Chart chart = getChart();
-        boolean showView = chart.getType() == ChartType.CONTOUR;
+        boolean showView = chart.getType().isContourType();
         setVisible(showView);
         if (!showView)
             return;

@@ -421,6 +421,14 @@ public class DataSet extends ChartPart {
     public RawData getRawData()  { return _rawData; }
 
     /**
+     * Sets the raw data.
+     */
+    public void setRawData(RawData aRawData)
+    {
+        _rawData = aRawData;
+    }
+
+    /**
      * Returns the raw data in polar form (just normal data if already DataType.isPolar).
      */
     public RawData getPolarRawData()

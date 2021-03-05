@@ -12,6 +12,10 @@ public class RawDataUtils {
      */
     public static RawData getPolarRawDataForType(RawData aRawData, DataType aDataType)
     {
+        // If already polar, just return
+        if (aRawData.getDataType().isPolar())
+            return aRawData;
+
         // Complain if DataType arg isn't polar
         if (!aDataType.isPolar())
             throw new IllegalArgumentException("RawDataUtils.getPolarRawDataForType: Come on, man: " + aDataType);
@@ -40,5 +44,35 @@ public class RawDataUtils {
 
         // Return new RawData for type and values
         return RawData.newRawDataForTypeAndValues(aDataType, dataT, dataR, dataZ);
+    }
+
+    /**
+     * Returns RawData for given polar type.
+     */
+    public static RawData getXYRawDataForPolar(RawData aRawData)
+    {
+        // If already non-polar, just return
+        if (!aRawData.getDataType().isPolar())
+            return aRawData;
+
+        // Otherwise, get DataX array and create dataT array
+        int count = aRawData.getPointCount();
+        double dataX[] = new double[count];
+        double dataY[] = new double[count];
+
+        // Iterate over X values and convert to 0 - 360 scale
+        for (int i=0;i<count;i++) {
+            double valT = aRawData.getT(i);
+            double valR = aRawData.getR(i);
+            dataX[i] = Math.cos(valT) * valR;
+            dataY[i] = Math.sin(valT) * valR;
+        }
+
+        // Get DataZ and DataType
+        double[] dataZ = aRawData.getDataType().hasZ() ? aRawData.getDataZ() : null;
+        DataType dataType = dataZ == null ? DataType.XY : DataType.XYZ;
+
+        // Return new RawData for type and values
+        return RawData.newRawDataForTypeAndValues(dataType, dataX, dataY, dataZ);
     }
 }

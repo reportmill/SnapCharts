@@ -46,6 +46,10 @@ public class RawDataAsArrays extends RawData {
                 case C: _dataC = (String[]) chanData; break;
             }
         }
+
+        // Set PointCount, ArrayLen
+        _pointCount = _dataX != null ? _dataX.length : _dataY.length;
+        _arrayLen = _pointCount;
     }
 
     /**

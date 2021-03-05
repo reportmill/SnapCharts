@@ -87,7 +87,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
         // Get whether this is Axis for Bar chart
         boolean isBar = getChart().getType()==ChartType.BAR;
-        boolean isPolar = getChart().getType()==ChartType.POLAR;
+        boolean isPolar = getChart().getType().isPolarType();
         double shiftX = isPolar ? getX() - getDataView().getX() : 0;
 
         // Iterate over tick labels and set location

@@ -109,9 +109,8 @@ public class DocTextReader {
                     break;
 
                 case "Chart.Type":
-                    ChartType chartType = ChartType.LINE;
-                    try { chartType = ChartType.valueOf(val.toUpperCase()); }
-                    catch (Exception e) { System.err.println("DocTextReader: Unsupported chart type: " + val); }
+                    ChartType chartType = ChartType.get(val.toUpperCase());
+                    if (chartType == null) chartType = ChartType.LINE;
                     _chart.setType(chartType);
                     break;
 

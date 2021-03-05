@@ -47,6 +47,7 @@ public class ChartTypeHpr {
             case BAR: return getBarProps();
             case PIE: return getPieProps();
             case CONTOUR: return getContourProps();
+            case POLAR_CONTOUR: return getContourProps();
             case BAR_3D: return getBar3DProps();
             default: return null;
         }
