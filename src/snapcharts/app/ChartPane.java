@@ -5,6 +5,9 @@ import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Effect;
 import snap.gfx.ShadowEffect;
+import snap.util.DeepChangeListener;
+import snap.util.PropChange;
+import snap.util.PropChangeListener;
 import snap.util.Undoer;
 import snap.view.*;
 import snapcharts.model.Chart;
@@ -47,6 +50,12 @@ public class ChartPane extends DocItemPane {
     // The ChartPart Styler
     private ChartStyler  _styler = new ChartStyler(this);
 
+    // The PropChangeListener
+    private PropChangeListener _pcl = pc -> chartPartDidPropChange(pc);
+
+    // The DeepChangeListener
+    private DeepChangeListener _dcl = (src, pc) -> chartPartDidPropChange(pc);
+
     // The undoer
     private Undoer  _undoer;
 
@@ -75,7 +84,7 @@ public class ChartPane extends DocItemPane {
     /**
      * Returns the inspector.
      */
-    public ViewOwner getInspector()  { return _insp; }
+    public ChartPaneInsp getInspector()  { return _insp; }
 
     /**
      * Returns the chart.
@@ -93,6 +102,10 @@ public class ChartPane extends DocItemPane {
         getUI();
         _chartView.setChart(aChart);
         resetLater();
+
+        // Start listening to changes
+        aChart.addPropChangeListener(_pcl);
+        aChart.addDeepChangeListener(_dcl);
     }
 
     /**
@@ -373,6 +386,9 @@ public class ChartPane extends DocItemPane {
         toolsView.getAnim(0).setOnFinish(() -> installEditorPaneAnimDone());
     }
 
+    /**
+     * MarkupEditor: Called after fully installed.
+     */
     private void installEditorPaneAnimDone()
     {
         RowView toolsView = _editorPane.getToolsView();
@@ -384,8 +400,19 @@ public class ChartPane extends DocItemPane {
         editor.setNeedsInspector(true);
     }
 
+    /**
+     * MarkupEditor: Called when MarkupEditor.NeedsInspector changes.
+     */
     private void markupEditorNeedsInspectorChanged()
     {
         _insp.setMarkupInspectorVisible(_editorPane.getEditor().isNeedsInspector());
+    }
+
+    /**
+     * Called when a ChartPart has change.
+     */
+    private void chartPartDidPropChange(PropChange aPC)
+    {
+        _insp.chartPartDidPropChange(aPC);
     }
 }

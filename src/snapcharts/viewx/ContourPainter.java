@@ -20,9 +20,6 @@ public class ContourPainter {
     // The DataArea
     private DataArea  _dataArea;
 
-    // The RawData
-    private RawData  _rawData;
-
     // The ContourMaker
     private ContourMaker _contourMaker;
 
@@ -48,12 +45,6 @@ public class ContourPainter {
     {
         _contourHelper = aContourHelper;
         _dataArea = aDataArea;
-
-        // Get/set RawData for contours (if Polar, get PolarXY RawData)
-        DataSet dataSet = aDataArea.getDataSet();
-        _rawData = dataSet.getRawData();
-        if (dataSet.getChart().getType().isPolarType())
-            _rawData = dataSet.getPolarXYRawData();
     }
 
     /**
@@ -177,8 +168,14 @@ public class ContourPainter {
         // If already set, just return
         if (_contourMaker != null) return _contourMaker;
 
+        // Get/set RawData for contours (if Polar, get PolarXY RawData)
+        DataSet dataSet = _dataArea.getDataSet();
+        RawData rawData = dataSet.getRawData();
+        if (dataSet.getChart().getType().isPolarType())
+            rawData = dataSet.getPolarXYRawData();
+
         // Create/set ContourMaker from RawData
-        return _contourMaker = new ContourMaker(_rawData);
+        return _contourMaker = new ContourMaker(rawData);
     }
 
     /**

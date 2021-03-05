@@ -3,6 +3,7 @@ import rmdraw.app.InspectorPanel;
 import rmdraw.editors.StylerPane;
 import snap.gfx.Color;
 import snap.gfx.Image;
+import snap.util.PropChange;
 import snap.view.*;
 import snap.viewx.TextPane;
 import snapcharts.appmisc.Collapser;
@@ -266,8 +267,20 @@ public class ChartPaneInsp extends ViewOwner {
 
         if (selPartInsp != null)
             selPartInsp.resetLater();
+    }
 
-        // Bogus !!!
-        _typePropsInsp.resetLater();
+
+    /**
+     * Called when a ChartPart has change.
+     */
+    protected void chartPartDidPropChange(PropChange aPC)
+    {
+        // If not showing, just return
+        if (!isUISet()) return;
+
+        // Handle Chart.Type change
+        String propName = aPC.getPropName();
+        if (propName == Chart.Type_Prop)
+            _typePropsInsp.resetLater();
     }
 }
