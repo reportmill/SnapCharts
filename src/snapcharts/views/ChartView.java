@@ -181,6 +181,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Activate
         _chartHelper.activate();
+
+        // Trigger animate (after delay so size is set for first time)
+        setReveal(0);
+        ViewUtils.runLater(() -> animate());
     }
 
     /**
@@ -240,10 +244,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Reset ChartHelper
         chartHelper.resetView();
-
-        // Trigger animate (after delay so size is set for first time)
-        setReveal(0);
-        ViewUtils.runLater(() -> animate());
     }
 
     /**

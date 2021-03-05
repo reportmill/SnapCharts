@@ -21,6 +21,11 @@ public class PolarContourChartHelper extends PolarChartHelper {
     }
 
     /**
+     * Returns the type.
+     */
+    public ChartType getChartType()  { return ChartType.POLAR_CONTOUR; }
+
+    /**
      * Returns the ContourHelper.
      */
     public ContourHelper getContourHelper()  { return _contourHelper; }

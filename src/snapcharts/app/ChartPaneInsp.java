@@ -266,5 +266,8 @@ public class ChartPaneInsp extends ViewOwner {
 
         if (selPartInsp != null)
             selPartInsp.resetLater();
+
+        // Bogus !!!
+        _typePropsInsp.resetLater();
     }
 }
