@@ -90,6 +90,16 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("MaxBoundDataButton", maxBound == AxisBound.DATA);
         setViewValue("MaxBoundValueButton", maxBound == AxisBound.VALUE);
         setViewValue("MaxBoundText", minMax.getMax());
+
+        // Reset WrapCheckBox, WrapMinMaxBox, WrapMinText, WrapMaxText
+        getView("WrapAxisBox").setVisible(axis.getType() == AxisType.X);
+        boolean isWrapAxis = axis.isWrapAxis();
+        setViewValue("WrapCheckBox", isWrapAxis);
+        getView("WrapMinMaxBox").setVisible(isWrapAxis);
+        if (isWrapAxis) {
+            setViewValue("WrapMinText", axis.getWrapMinMax().getMin());
+            setViewValue("WrapMaxText", axis.getWrapMinMax().getMax());
+        }
     }
 
     /**
@@ -142,6 +152,14 @@ public class AxisInsp extends ChartPartInsp {
             axis.setZeroRequired(anEvent.getBoolValue());
         if (anEvent.equals("LogCheckBox"))
             axis.setLog(anEvent.getBoolValue());
+
+        // Handle WrapCheckBox WrapMinText, WrapMaxText
+        if (anEvent.equals("WrapCheckBox"))
+            axis.setWrapAxis(anEvent.getBoolValue());
+        if (anEvent.equals("WrapMinText"))
+            axis.setWrapMinMax(axis.getMinMax().copyForMin(anEvent.getFloatValue()));
+        if (anEvent.equals("WrapMaxText"))
+            axis.setWrapMinMax(axis.getMinMax().copyForMax(anEvent.getFloatValue()));
     }
 
     /**

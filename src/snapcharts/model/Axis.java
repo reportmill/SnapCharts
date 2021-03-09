@@ -7,6 +7,8 @@ import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.MinMax;
 
+import java.util.Objects;
+
 /**
  * A class to represent a Chart Axis.
  */
@@ -42,6 +44,12 @@ public abstract class Axis extends ChartPart {
     // Whether axis is log10 based
     private boolean  _log;
 
+    // Whether axis repeats/wraps values
+    private boolean  _wrapAxis;
+
+    // The wrap min/max value
+    private MinMax  _wrapMinMax = DEFAULT_WRAP_MINMAX;
+
     // The grid line color
     private Color  _gridLineColor = GRID_LINES_COLOR;
 
@@ -63,11 +71,14 @@ public abstract class Axis extends ChartPart {
     public static final String ZeroRequired_Prop = "ZeroRequired";
     public static final String Log_Prop = "Logarithmic";
     public static final String Side_Prop = "Side";
+    public static final String WrapAxis_Prop = "WrapAxis";
+    public static final String WrapMinMax_Prop = "WrapMinMax";
 
     // Constants for default values
-    static Color   AXIS_LABELS_COLOR = Color.GRAY;
-    static Color   GRID_LINES_COLOR = Color.get("#E6");
-    static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
+    //private static Color   AXIS_LABELS_COLOR = Color.GRAY;
+    protected static Color   GRID_LINES_COLOR = Color.get("#E6");
+    protected static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
+    public static MinMax DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
 
     /**
      * Constructor.
@@ -295,6 +306,34 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns whether axis repeats/wraps values.
+     */
+    public boolean isWrapAxis()  { return _wrapAxis; }
+
+    /**
+     * Sets whether axis repeats/wraps values.
+     */
+    public void setWrapAxis(boolean aValue)
+    {
+        if (aValue == isWrapAxis()) return;
+        firePropChange(WrapAxis_Prop, _wrapAxis, _wrapAxis = aValue);
+    }
+
+    /**
+     * Returns the min/max range to repeat/wrap data values.
+     */
+    public MinMax getWrapMinMax()  { return _wrapMinMax; }
+
+    /**
+     * Sets the min/max range to repeat/wrap data values.
+     */
+    public void setWrapMinMax(MinMax aMinMax)
+    {
+        if (Objects.equals(aMinMax, getWrapMinMax())) return;
+        firePropChange(WrapMinMax_Prop, _wrapMinMax, _wrapMinMax = aMinMax);
+    }
+
+    /**
      * Returns the grid line color.
      */
     public Color getGridLineColor()  { return _gridLineColor; }
@@ -389,6 +428,15 @@ public abstract class Axis extends ChartPart {
             case MaxBound_Prop: setMaxBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
             case MinValue_Prop: setMinValue(SnapUtils.doubleValue(aValue)); break;
             case MaxValue_Prop: setMaxValue(SnapUtils.doubleValue(aValue)); break;
+
+            // Handle WrapMinMax
+            case WrapMinMax_Prop:
+                MinMax minMax = MinMax.getMinMax(aValue);
+                setWrapMinMax(minMax);
+                break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue);
         }
     }
 
@@ -432,6 +480,12 @@ public abstract class Axis extends ChartPart {
         if (isLog())
             e.add(Log_Prop, true);
 
+        // Archive WrapAxis, WrapMinMax
+        if (isWrapAxis()) {
+            e.add(WrapAxis_Prop, true);
+            e.add(WrapMinMax_Prop, getWrapMinMax().getStringRep());
+        }
+
         // Return element
         return e;
     }
@@ -455,6 +509,14 @@ public abstract class Axis extends ChartPart {
             setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop, false));
         if (anElement.hasAttribute(Log_Prop))
             setLog(anElement.getAttributeBoolValue(Log_Prop));
+
+        // Unarchive WrapAxis, WrapMinMax
+        boolean isWrapAxis = anElement.getAttributeBoolValue(WrapAxis_Prop, false);
+        if (isWrapAxis) {
+            MinMax minMax = MinMax.getMinMax(anElement.getAttributeValue(WrapMinMax_Prop));
+            if (minMax != null)
+                setWrapMinMax(minMax);
+        }
 
         // Return this part
         return this;

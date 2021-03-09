@@ -24,4 +24,13 @@
   </RowView>
   <CheckBox Name="ZeroRequiredCheckBox" Padding="4" text="Always Include Zero" />
   <CheckBox Name="LogCheckBox" Padding="4" text="Logarithmic" />
+  <RowView Name="WrapAxisBox" GrowWidth="true" Spacing="4">
+    <CheckBox Name="WrapCheckBox" Padding="4" text="Wrap Axis" />
+    <RowView Name="WrapMinMaxBox" GrowWidth="true" Spacing="4">
+      <Label text="Min:" />
+      <TextField Name="WrapMinText" Align="CENTER" ColCount="7" />
+      <Label text="Max:" />
+      <TextField Name="WrapMaxText" Align="CENTER" ColCount="7" />
+    </RowView>
+  </RowView>
 </ColView>
