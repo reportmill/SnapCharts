@@ -8,6 +8,60 @@ import snapcharts.model.RawData;
 public class RawDataUtils {
 
     /**
+     * Returns the index of the first value that is inside or inside adjacent for given min/max.
+     */
+    public static int getStartIndexForRange(RawData aRawData, double aMin, double aMax)
+    {
+        int start = 0;
+        int pointCount = aRawData.getPointCount();
+        while (start<pointCount && !isArrayValueAtIndexInsideOrInsideAdjacent(aRawData, start, pointCount, aMin, aMax))
+            start++;
+        return start;
+    }
+
+    /**
+     * Returns the index of the last value that is inside or inside adjacent for given min/max.
+     */
+    public static int getEndIndexForRange(RawData aRawData, double aMin, double aMax)
+    {
+        int pointCount = aRawData.getPointCount();
+        int end = pointCount - 1;
+        while (end>0 && !isArrayValueAtIndexInsideOrInsideAdjacent(aRawData, end, pointCount, aMin, aMax))
+            end--;
+        return end;
+    }
+
+    /**
+     * Returns true if given data/index value is inside range or adjacent to point inside.
+     */
+    private static final boolean isArrayValueAtIndexInsideOrInsideAdjacent(RawData aRawData, int i, int pointCount, double aMin, double aMax)
+    {
+        // If val at index in range, return true
+        double val = aRawData.getX(i);
+        if (val >= aMin && val <= aMax)
+            return true;
+
+        // If val at next index in range, return true
+        if (i+1 < pointCount)
+        {
+            double nextVal = aRawData.getX(i + 1);
+            if (val < aMin && nextVal >= aMin || val > aMax && nextVal <= aMax)
+                return true;
+        }
+
+        // If val at previous index in range, return true
+        if (i > 0)
+        {
+            double prevVal = aRawData.getX(i - 1);
+            if ( val < aMin && prevVal >= aMin || val > aMax && prevVal <= aMax)
+                return true;
+        }
+
+        // Return false since nothing in range
+        return false;
+    }
+
+    /**
      * Returns RawData for given polar type.
      */
     public static RawData getPolarRawDataForType(RawData aRawData, DataType aDataType)

@@ -136,7 +136,7 @@ public class PieDataArea extends DataArea {
      * Paints chart.
      */
     @Override
-    protected void paintChart(Painter aPntr)
+    protected void paintDataArea(Painter aPntr)
     {
         // Get wedges and other paint info
         Wedge wedges[] = getWedges();

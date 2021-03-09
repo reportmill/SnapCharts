@@ -2,7 +2,6 @@ package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.PropChange;
-import snap.view.ViewAnim;
 import snapcharts.model.Axis;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataPoint;
@@ -19,8 +18,8 @@ public class XYDataArea extends DataArea {
     // The ChartType
     private ChartType  _chartType;
 
-    // The Path2D for painting DataSet
-    private Path2D  _dataPath;
+    // The XYPainter (an object to provide data line path/shape)
+    private XYPainter  _xyPainter = new XYPainter(this);
 
     // The TailShape
     private Shape  _tailShape;
@@ -49,157 +48,61 @@ public class XYDataArea extends DataArea {
     }
 
     /**
-     * Returns Path2D for painting dataset.
+     * Paints the DataArea (ChartType/DataSet specific painting).
      */
-    public Path2D getDataPath()
+    protected void paintDataArea(Painter aPntr)
     {
-        // If not animating, clear path
-        ViewAnim anim = getAnim(-1);
-        if (anim == null || !anim.isPlaying())
-            _dataPath = null;
-
-        // If already set, just return
-        if (_dataPath != null) return _dataPath;
-
-        // Create path for dataSet, set/return
-        DataSet dset = getDataSet();
-        boolean isAreaChart = _chartType == ChartType.AREA;
-        Path2D path2D = createDataPath(dset, isAreaChart);
-        return _dataPath = path2D;
-    }
-
-    /**
-     * Returns Path2D for painting dataset.
-     */
-    protected Path2D createDataPath(DataSet dset, boolean isArea)
-    {
-        // Create/add path for dataset
-        int pointCount = dset.getPointCount();
-        Path2D path = new Path2D();
-
-        // Iterate over data points
-        for (int j = 0; j < pointCount; j++) {
-
-            // Get data X/Y and disp X/Y
-            double dataX = dset.getX(j);
-            double dataY = dset.getY(j);
-            Point dispXY = dataToView(dataX, dataY);
-            if (j == 0)
-                path.moveTo(dispXY.x, dispXY.y);
-            else path.lineTo(dispXY.x, dispXY.y);
-        }
-
-        // If area, close path
-        if (isArea) {
-            double areaW = getWidth();
-            double areaH = getHeight();
-            Point point0 = path.getPoint(0);
-            Point pointLast = path.getPoint(pointCount-1);
-            path.lineTo(areaW, pointLast.y);
-            path.lineTo(areaW, areaH);
-            path.lineTo(0, areaH);
-            path.lineTo(0, point0.y);
-            path.close();
-        }
-
-        // Return path
-        return path;
-    }
-
-    /**
-     * Clears the DataPath.
-     */
-    private void clearDataPath()
-    {
-        _dataPath = null;
-    }
-
-    /**
-     * Override to return RevealTime based on path length.
-     */
-    @Override
-    protected int getRevealTime()
-    {
-        if (_chartType !=ChartType.LINE || getDataSet().isDisabled())
-            return DataView.DEFAULT_REVEAL_TIME;
-
-        // Calc factor to modify default time
-        Path2D path = getDataPath();
-        double maxLen =  path.getArcLength();
-        double factor = Math.max(1, Math.min(maxLen / 500, 2));
-
-        // Return default time times factor
-        return (int) Math.round(factor * DataView.DEFAULT_REVEAL_TIME);
-    }
-
-    /**
-     * Paints chart.
-     */
-    protected void paintChart(Painter aPntr)
-    {
-        // Get area
+        // Get area bounds
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get DataSet list
+        // Get DataSet and index
         DataSet dset = getDataSet();
         int dsetIndex = dset.getIndex();
 
+        // Get whether DataArea/DataSet is selected
         DataPoint selPoint = getChartView().getTargDataPoint();
         boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
-        double reveal = getReveal();
 
         // If reveal is not full (1) then clip
-        if (reveal < 1 && _chartType ==ChartType.AREA) {
+        double reveal = getReveal();
+        if (reveal < 1 && _chartType == ChartType.AREA) {
             aPntr.save();
             aPntr.clipRect(0, 0, areaW * reveal, areaH);
         }
 
-        // Get path - if Reveal is active, get path spliced
-        Shape path = getDataPath();
-        if (reveal<1 && _chartType ==ChartType.LINE)
-            path = new SplicerShape(path, 0, reveal);
+        // Get dataShape (path) (if Reveal is active, get shape as SplicerShape so we can draw partial/animated)
+        Shape dataShape = _xyPainter.getDataShape();
+        if (reveal<1 && _chartType == ChartType.LINE)
+            dataShape = new SplicerShape(dataShape, 0, reveal);
 
-        // Set dataset color, stroke and paint
-        Color color = getDataColor(dsetIndex);
+        // Get dataset color
+        Color dataColor = getDataColor(dsetIndex);
         if (_chartType ==ChartType.AREA)
-            color = color.blend(Color.CLEAR, .3);
-        aPntr.setColor(color);
+            dataColor = dataColor.blend(Color.CLEAR, .3);
+
+        // Set color, stroke
+        aPntr.setColor(dataColor);
         aPntr.setStroke(isSelected ? Stroke2 : Stroke1);
 
         // If ChartType.LINE, draw path
-        if (_chartType ==ChartType.LINE) {
-            //aPntr.setColor(color.blend(Color.CLEAR, .98)); aPntr.draw(path); aPntr.setColor(color);
+        if (_chartType == ChartType.LINE) {
             aPntr.setStrokePure(true);
-            aPntr.draw(path);
+            aPntr.draw(dataShape);
             aPntr.setStrokePure(false);
         }
 
         // If ChartType.AREA, fill path, too
-        else if (_chartType ==ChartType.AREA)
-            aPntr.fill(path);
+        else if (_chartType == ChartType.AREA)
+            aPntr.fill(dataShape);
 
-        // If Reveal is active, paint end point
-        if (path instanceof SplicerShape) {
-            SplicerShape splicer = (SplicerShape) path;
-            Point tailPoint = splicer.getTailPoint();
-            double tailAngle = splicer.getTailAngle();
-            Shape tailShape = getTailShape();
-            Rect tailShapeBounds = tailShape.getBounds();
-            double tailShapeX = tailPoint.x - tailShapeBounds.getMidX();
-            double tailShapeY = tailPoint.y - tailShapeBounds.getMidY();
-            aPntr.save();
-            aPntr.rotateAround(tailAngle, tailPoint.x, tailPoint.y);
-            aPntr.translate(tailShapeX, tailShapeY);
-            aPntr.fill(tailShape);
+        // If Reveal is active, paint TailShape
+        if (dataShape instanceof SplicerShape)
+            paintTailShape(aPntr, (SplicerShape) dataShape);
+
+        // If reveal not full, restore gstate
+        if (reveal < 1 && _chartType == ChartType.AREA)
             aPntr.restore();
-        }
-
-        // If reveal not full, resture gstate
-        if (reveal < 1 && _chartType ==ChartType.AREA) aPntr.restore();
-
-        // Get DataSets that ShowSymbols
-        boolean showSymbols = dset.isShowSymbols() || _chartType ==ChartType.SCATTER;
 
         // If reveal is not full (1) then clip
         if (reveal < 1) {
@@ -207,32 +110,10 @@ public class XYDataArea extends DataArea {
             aPntr.clipRect(0, 0, areaW * reveal, areaH);
         }
 
-        // Draw dataset points
-        if (showSymbols) {
-
-            // Get dataset index (could be different if DataSetList has disabled sets)
-            int pointCount = dset.getPointCount();
-
-            // Iterate over values
-            for (int j=0; j<pointCount; j++) {
-
-                // Get data X/Y and disp X/Y
-                double dataX = dset.getX(j);
-                double dataY = dset.getY(j);
-                double dispX = dataToViewX(dataX);
-                double dispY = dataToViewY(dataY);
-
-                // Get symbol and color and paint
-                Shape symbol = getDataSymbolShape(dsetIndex).copyFor(new Transform(dispX - 4, dispY - 4));
-                aPntr.setColor(color);
-                aPntr.fill(symbol);
-                if (_chartType ==ChartType.SCATTER) {
-                    aPntr.setStroke(Stroke.Stroke1);
-                    aPntr.setColor(color.darker().darker());
-                    aPntr.draw(symbol);
-                }
-            }
-        }
+        // If ShowSymbols, paint symbols
+        boolean showSymbols = dset.isShowSymbols() || _chartType == ChartType.SCATTER;
+        if (showSymbols)
+            paintSymbols(aPntr);
 
         // Paint selected point
         if (isSelected)
@@ -241,6 +122,42 @@ public class XYDataArea extends DataArea {
         // If reveal not full, resture gstate
         if (reveal < 1)
             aPntr.restore();
+    }
+
+    /**
+     * Paints symbols.
+     */
+    protected void paintSymbols(Painter aPntr)
+    {
+        // Get info
+        DataSet dset = getDataSet();
+        int dsetIndex = dset.getIndex();
+        int pointCount = _xyPainter.getDispPointCount();
+        Color color = getDataColor(dsetIndex);
+        Shape symbolShape = getDataSymbolShape(dsetIndex);
+
+        // Iterate over values
+        for (int j=0; j<pointCount; j++) {
+
+            // Get disp X/Y of symbol origin and translate there
+            double dispX = _xyPainter.getDispX(j) - 4;
+            double dispY = _xyPainter.getDispY(j) - 4;
+            aPntr.translate(dispX, dispY);
+
+            // Set color and fill symbol shape
+            aPntr.setColor(color);
+            aPntr.fill(symbolShape);
+
+            // If Scatter chart, also stroke outline of shape
+            if (_chartType == ChartType.SCATTER) {
+                aPntr.setStroke(Stroke.Stroke1);
+                aPntr.setColor(color.darker().darker());
+                aPntr.draw(symbolShape);
+            }
+
+            // Translate back
+            aPntr.translate(-dispX, -dispY);
+        }
     }
 
     /**
@@ -278,6 +195,24 @@ public class XYDataArea extends DataArea {
     }
 
     /**
+     * Paints the TailShape.
+     */
+    private void paintTailShape(Painter aPntr, SplicerShape splicer)
+    {
+        Point tailPoint = splicer.getTailPoint();
+        double tailAngle = splicer.getTailAngle();
+        Shape tailShape = getTailShape();
+        Rect tailShapeBounds = tailShape.getBounds();
+        double tailShapeX = tailPoint.x - tailShapeBounds.getMidX();
+        double tailShapeY = tailPoint.y - tailShapeBounds.getMidY();
+        aPntr.save();
+        aPntr.rotateAround(tailAngle, tailPoint.x, tailPoint.y);
+        aPntr.translate(tailShapeX, tailShapeY);
+        aPntr.fill(tailShape);
+        aPntr.restore();
+    }
+
+    /**
      * Override for Subtype.Scatter.
      */
     @Override
@@ -310,6 +245,33 @@ public class XYDataArea extends DataArea {
     }
 
     /**
+     * Override to return RevealTime based on path length.
+     */
+    @Override
+    protected int getRevealTime()
+    {
+        // If not Line chart or DataSet.Disabled, return default
+        if (_chartType != ChartType.LINE || getDataSet().isDisabled())
+            return DataView.DEFAULT_REVEAL_TIME;
+
+        // Calc factor to modify default time
+        double maxLen =  _xyPainter.getArcLength();
+        double factor = Math.max(1, Math.min(maxLen / 500, 2));
+
+        // Return default time times factor
+        return (int) Math.round(factor * DataView.DEFAULT_REVEAL_TIME);
+    }
+
+    /**
+     * Clears the DataPath.
+     */
+    private void clearDataPath()
+    {
+        _xyPainter = new XYPainter(this);
+        repaint();
+    }
+
+    /**
      * Called when a ChartPart changes.
      */
     protected void chartPartDidChange(PropChange aPC)
@@ -320,19 +282,21 @@ public class XYDataArea extends DataArea {
         }
     }
 
+    /**
+     * Called when DataView changes size.
+     */
     @Override
-    public void setWidth(double aValue)
+    protected void dataViewDidChangeSize()
     {
-        if (aValue==getWidth()) return;
-        super.setWidth(aValue);
         clearDataPath();
     }
 
+    /**
+     * Called when AxisView changes properties.
+     */
     @Override
-    public void setHeight(double aValue)
+    protected void axisViewDidChange(PropChange aPC)
     {
-        if (aValue==getHeight()) return;
-        super.setHeight(aValue);
         clearDataPath();
     }
 }

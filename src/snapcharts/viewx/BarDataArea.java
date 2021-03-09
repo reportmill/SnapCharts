@@ -122,7 +122,7 @@ public class BarDataArea extends DataArea {
     /**
      * Paints chart.
      */
-    protected void paintChart(Painter aPntr)
+    protected void paintDataArea(Painter aPntr)
     {
         // Get selected point index (section index)
         DataPoint dataPoint = getChartView().getTargDataPoint();

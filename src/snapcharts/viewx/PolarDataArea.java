@@ -223,7 +223,7 @@ public class PolarDataArea extends DataArea {
     /**
      * Paints chart.
      */
-    protected void paintChart(Painter aPntr)
+    protected void paintDataArea(Painter aPntr)
     {
         // Get area
         double areaW = getWidth();

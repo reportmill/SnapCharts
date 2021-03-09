@@ -31,7 +31,7 @@ public class PolarContourDataArea extends PolarDataArea {
      * Paints chart content.
      */
     @Override
-    protected void paintChart(Painter aPntr)
+    protected void paintDataArea(Painter aPntr)
     {
         // Paint contours
         _contourPainter.paintAll(aPntr);

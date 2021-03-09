@@ -107,7 +107,7 @@ public class Pie3DDataArea extends PieDataArea {
      * Override to suppress.
      */
     @Override
-    protected void paintChart(Painter aPntr)  { }
+    protected void paintDataArea(Painter aPntr)  { }
 
     /**
      * Override to suppress - shouldn't need this when CameraView consumes.

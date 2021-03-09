@@ -174,14 +174,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         aPntr.clipRect(0, 0, areaW, areaH);
 
         // Paint chart
-        paintChart(aPntr);
+        paintDataArea(aPntr);
         aPntr.restore();
     }
 
     /**
      * Paints chart content.
      */
-    protected void paintChart(Painter aPntr)  { }
+    protected void paintDataArea(Painter aPntr)  { }
 
     /**
      * Paints chart axis lines.

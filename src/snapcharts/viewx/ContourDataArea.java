@@ -30,7 +30,7 @@ public class ContourDataArea extends DataArea {
      * Paints chart content.
      */
     @Override
-    protected void paintChart(Painter aPntr)
+    protected void paintDataArea(Painter aPntr)
     {
         _contourPainter.paintAll(aPntr);
     }
