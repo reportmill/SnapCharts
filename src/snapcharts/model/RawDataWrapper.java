@@ -39,34 +39,10 @@ public class RawDataWrapper extends RawData {
         _wrapMinX = aWrapMinX;
         _wrapMaxX = aWrapMaxX;
 
+        // Get cycle range
         Range cycleRange = getCycleRange(aRawMinX, aRawMaxX, aWrapMinX, aWrapMaxX);
         _start = cycleRange.start * _rawPointCount;
         _end = cycleRange.end * _rawPointCount;
-        _wrapPointCount = _start - _end;
-
-        // Get RawData info
-        int pointCount = _rawData.getPointCount();
-        double rawRangeLen = _rawMaxX - _rawMinX;
-
-        // Calculate wrap start point
-        double rawMinX = _rawMinX;
-        while (rawMinX > aWrapMinX) {
-            _start -= pointCount;
-            rawMinX -= rawRangeLen;
-            if (_start < -10 * pointCount)
-                break;
-        }
-
-        // Calculate wrap end point
-        _end = pointCount;
-        double rawMaxX = _rawMaxX;
-        while (rawMaxX < aWrapMaxX) {
-            _end += pointCount;
-            rawMaxX += rawRangeLen;
-            if (_end > 10 * pointCount)
-                break;
-        }
-
         _wrapPointCount = _end - _start;
     }
 
@@ -88,9 +64,12 @@ public class RawDataWrapper extends RawData {
     @Override
     public double getX(int anIndex)
     {
-        int cycle = (_start + anIndex) / _wrapPointCount;
-        int index = (_start + anIndex) % _wrapPointCount;
-        double valX = _rawData.getX(index);
+        // Get index of wrapped RawData point and get value X
+        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        double valX = _rawData.getX(rawIndex);
+
+        // Get cycle index and shift value
+        int cycle = (_start + anIndex) / _rawPointCount;
         valX += cycle * (_rawMaxX - _rawMinX);
         return valX;
     }
@@ -98,8 +77,9 @@ public class RawDataWrapper extends RawData {
     @Override
     public double getY(int anIndex)
     {
-        int index = (_start + anIndex) % _wrapPointCount;
-        double valY = _rawData.getY(index);
+        // Get index of wrapped RawData point and get value Y
+        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        double valY = _rawData.getY(rawIndex);
         return valY;
     }
 

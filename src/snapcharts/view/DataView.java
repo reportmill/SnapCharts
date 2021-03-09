@@ -63,7 +63,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     protected void setDataAreas(DataArea[] theDataAreas)
     {
-        _chartHelper = _chartView.getChartHelper();
+        _chartHelper = getChartHelper();
 
         // Remove old
         if (_dataAreas !=null) {

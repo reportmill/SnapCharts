@@ -15,9 +15,6 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     // The ChartHelper
     protected ChartHelper  _chartHelper;
 
-    // The ChartView that owns the area
-    private ChartView  _chartView;
-
     // The DataView that holds this DataArea
     protected DataView _dataView;
 
@@ -69,7 +66,6 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     protected void setDataView(DataView aDataView)
     {
         _dataView = aDataView;
-        _chartView = _dataView.getChartView();
     }
 
     /**
@@ -179,7 +175,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
-     * Paints chart content.
+     * Paints the DataArea (ChartType/DataSet specific painting).
      */
     protected void paintDataArea(Painter aPntr)  { }
 

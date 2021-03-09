@@ -70,8 +70,8 @@ public class ContourAxisView<T extends AxisZ> extends ChartPartView<T> {
         if (!showView)
             return;
 
-        ChartView chartView = getChartView();
-        ChartHelper chartHelper = chartView.getChartHelper();
+        // Get ChartHelper, ContourHelper
+        ChartHelper chartHelper = getChartHelper();
         if (chartHelper instanceof ContourChartHelper)
             _contourHelper = ((ContourChartHelper) chartHelper).getContourHelper();
         else if (chartHelper instanceof PolarContourChartHelper)

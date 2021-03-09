@@ -50,6 +50,7 @@ public class XYDataArea extends DataArea {
     /**
      * Paints the DataArea (ChartType/DataSet specific painting).
      */
+    @Override
     protected void paintDataArea(Painter aPntr)
     {
         // Get area bounds

@@ -5,6 +5,8 @@ import snapcharts.model.*;
 import snapcharts.app.ChartPane;
 import snapcharts.util.MinMax;
 import snapcharts.view.AxisView;
+import snapcharts.view.ChartHelper;
+import snapcharts.view.ChartPartView;
 
 /**
  * A class to manage UI to edit a ChartView.
@@ -47,6 +49,16 @@ public class AxisInsp extends ChartPartInsp {
     }
 
     /**
+     * Returns the AxisView.
+     */
+    public AxisView getAxisView()
+    {
+        ChartPartView chartPartView = getChartPane().getSel().getSelView();
+        AxisView axisView = chartPartView instanceof AxisView ? (AxisView) chartPartView : null;
+        return axisView;
+    }
+
+    /**
      * Returns the ChartPart.
      */
     @Override
@@ -59,7 +71,7 @@ public class AxisInsp extends ChartPartInsp {
     {
         // Get Axis, AxisView (just return if null)
         Axis axis = getAxis();
-        AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
+        AxisView axisView = getAxisView();
         if (axisView == null)
             return;
 
@@ -68,8 +80,7 @@ public class AxisInsp extends ChartPartInsp {
         Label label = getCollapser().getLabel();
         label.setText(title);
 
-        // Reset AxisTypeLabel, TitleText
-        setViewValue("AxisTypeLabel", axis.getType().toString());
+        // Reset TitleText
         setViewValue("TitleText", axis.getTitle());
 
         // Reset ZeroRequiredCheckBox, LogCheckBox
@@ -109,7 +120,7 @@ public class AxisInsp extends ChartPartInsp {
     {
         // Get Axis, AxisView (just return if null)
         Axis axis = getAxis();
-        AxisView axisView = (AxisView) getChartPane().getSel().getSelView();
+        AxisView axisView = getAxisView();
         if (axisView == null)
             return;
 
@@ -154,12 +165,19 @@ public class AxisInsp extends ChartPartInsp {
             axis.setLog(anEvent.getBoolValue());
 
         // Handle WrapCheckBox WrapMinText, WrapMaxText
-        if (anEvent.equals("WrapCheckBox"))
+        if (anEvent.equals("WrapCheckBox")) {
             axis.setWrapAxis(anEvent.getBoolValue());
+            if (axis.getWrapMinMax() == Axis.DEFAULT_WRAP_MINMAX) {
+                ChartHelper chartHelper = axisView.getChartHelper();
+                double wrapMin = chartHelper.getAxisMinForIntervalCalc(axisView);
+                double wrapMax = chartHelper.getAxisMaxForIntervalCalc(axisView);
+                axis.setWrapMinMax(new MinMax(wrapMin, wrapMax));
+            }
+        }
         if (anEvent.equals("WrapMinText"))
-            axis.setWrapMinMax(axis.getMinMax().copyForMin(anEvent.getFloatValue()));
+            axis.setWrapMinMax(axis.getWrapMinMax().copyForMin(anEvent.getFloatValue()));
         if (anEvent.equals("WrapMaxText"))
-            axis.setWrapMinMax(axis.getMinMax().copyForMax(anEvent.getFloatValue()));
+            axis.setWrapMinMax(axis.getWrapMinMax().copyForMax(anEvent.getFloatValue()));
     }
 
     /**

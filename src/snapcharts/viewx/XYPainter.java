@@ -1,9 +1,8 @@
 package snapcharts.viewx;
 import snap.geom.*;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataSet;
-import snapcharts.model.RawData;
+import snapcharts.model.*;
 import snapcharts.view.AxisView;
+import snapcharts.view.AxisViewX;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
 
@@ -36,8 +35,6 @@ public class XYPainter {
     public XYPainter(DataArea aDataArea)
     {
         _dataArea = aDataArea;
-        DataSet dataSet = aDataArea.getDataSet();
-        _rawData = dataSet.getRawData();
     }
 
     /**
@@ -86,16 +83,44 @@ public class XYPainter {
     }
 
     /**
+     * Returns the RawData.
+     */
+    private RawData getRawData()
+    {
+        // If already set, just return
+        if (_rawData != null) return _rawData;
+
+        // Get DataSet and RawData
+        DataSet dataSet = _dataArea.getDataSet();
+        RawData rawData = dataSet.getRawData();
+
+        // If WrapAxis, wrap RawData inside RawDataWrapper for wrap range and axis range
+        AxisViewX axisViewX = _dataArea.getAxisViewX();
+        Axis axisX = axisViewX.getAxis();
+        if (axisX.isWrapAxis()) {
+            double wrapMin = axisX.getWrapMinMax().getMin();
+            double wrapMax = axisX.getWrapMinMax().getMax();
+            double axisMin = axisViewX.getAxisMin();
+            double axisMax = axisViewX.getAxisMax();
+            rawData = new RawDataWrapper(rawData, wrapMin, wrapMax, axisMin, axisMax);
+        }
+
+        // Set/return
+        return _rawData = rawData;
+    }
+
+    /**
      * Loads the display coords.
      */
     private void loadDisplayCoords()
     {
-        int pointCount = _rawData.getPointCount();
+        RawData rawData = getRawData();
+        int pointCount = rawData.getPointCount();
         double[] dispX = new double[pointCount];
         double[] dispY = new double[pointCount];
 
         // Get ChartHelper and AxisViews
-        ChartHelper chartHelper = _dataArea.getChartView().getChartHelper();
+        ChartHelper chartHelper = _dataArea.getChartHelper();
         AxisView axisViewX = _dataArea.getAxisViewX();
         AxisView axisViewY = _dataArea.getAxisViewY();
 
@@ -103,8 +128,8 @@ public class XYPainter {
         for (int i = 0; i < pointCount; i++) {
 
             // Get data X/Y and disp X/Y
-            double dataX = _rawData.getX(i);
-            double dataY = _rawData.getY(i);
+            double dataX = rawData.getX(i);
+            double dataY = rawData.getY(i);
             dispX[i] = chartHelper.dataToView(axisViewX, dataX);
             dispY[i] = chartHelper.dataToView(axisViewY, dataY);
         }
