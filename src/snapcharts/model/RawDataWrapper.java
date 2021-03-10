@@ -27,11 +27,15 @@ public class RawDataWrapper extends RawData {
     // The end index in wrapped RawData
     private int  _end;
 
+    // The maximum number of wrapped points allowed
+    private static int MAX_WRAPPED_POINTS = 100000;
+
     /**
      * Constructor.
      */
     public RawDataWrapper(RawData aRawData, double aRawMinX, double aRawMaxX, double aWrapMinX, double aWrapMaxX)
     {
+        // Get info
         _rawData = aRawData;
         _rawPointCount = aRawData.getPointCount();
         _rawMinX = aRawMinX;
@@ -39,10 +43,16 @@ public class RawDataWrapper extends RawData {
         _wrapMinX = aWrapMinX;
         _wrapMaxX = aWrapMaxX;
 
-        // Get cycle range
+        // Get cycle range (make sure cycles * points doesn't exceed MAX_WRAPPED_POINTS)
         Range cycleRange = getCycleRange(aRawMinX, aRawMaxX, aWrapMinX, aWrapMaxX);
+        while (cycleRange.getLength() > 2 && cycleRange.length * _rawPointCount > MAX_WRAPPED_POINTS)
+            cycleRange = new Range(cycleRange.getStart() + 1, cycleRange.getEnd() - 1);
+
+        // Set point start/end indexes
         _start = cycleRange.start * _rawPointCount;
         _end = cycleRange.end * _rawPointCount;
+
+        // Calc/set total number of wrapped points
         _wrapPointCount = _end - _start;
     }
 
@@ -56,12 +66,6 @@ public class RawDataWrapper extends RawData {
     }
 
     @Override
-    public void setPointCount(int aValue)
-    {
-
-    }
-
-    @Override
     public double getX(int anIndex)
     {
         // Get index of wrapped RawData point and get value X
@@ -69,7 +73,7 @@ public class RawDataWrapper extends RawData {
         double valX = _rawData.getX(rawIndex);
 
         // Get cycle index and shift value
-        int cycle = (_start + anIndex) / _rawPointCount;
+        int cycle = Math.floorDiv(_start + anIndex, _rawPointCount);
         valX += cycle * (_rawMaxX - _rawMinX);
         return valX;
     }
@@ -86,67 +90,79 @@ public class RawDataWrapper extends RawData {
     @Override
     public double getZ(int anIndex)
     {
-        return 0;
+        // Get index of wrapped RawData point and get value Y
+        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        double valZ = _rawData.getZ(rawIndex);
+        return valZ;
     }
 
     @Override
     public String getC(int anIndex)
     {
-        return null;
-    }
-
-    @Override
-    public void setC(String aValue, int anIndex)
-    {
-
+        // Get index of wrapped RawData point and get value Y
+        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        String valC = _rawData.getC(rawIndex);
+        return valC;
     }
 
     @Override
     public Double getValueX(int anIndex)
     {
-        return null;
-    }
-
-    @Override
-    public void setValueX(Double aValue, int anIndex)
-    {
-
+        return getX(anIndex);
     }
 
     @Override
     public Double getValueY(int anIndex)
     {
-        return null;
-    }
-
-    @Override
-    public void setValueY(Double aValue, int anIndex)
-    {
-
+        return getY(anIndex);
     }
 
     @Override
     public Double getValueZ(int anIndex)
     {
-        return null;
+        return getZ(anIndex);
+    }
+
+    @Override
+    public void setPointCount(int aValue)
+    {
+        throw new RuntimeException("RawDataWrapper: setPointCount not implemented");
+    }
+
+    @Override
+    public void setC(String aValue, int anIndex)
+    {
+        throw new RuntimeException("RawDataWrapper: setC not implemented");
+    }
+
+    @Override
+    public void setValueX(Double aValue, int anIndex)
+    {
+        throw new RuntimeException("RawDataWrapper: setValueX not implemented");
+    }
+
+    @Override
+    public void setValueY(Double aValue, int anIndex)
+    {
+        throw new RuntimeException("RawDataWrapper: setValueY not implemented");
     }
 
     @Override
     public void setValueZ(Double aValue, int anIndex)
     {
-
+        throw new RuntimeException("RawDataWrapper: setValueZ not implemented");
     }
 
     @Override
     public void addPoint(DataPoint aPoint, int anIndex)
     {
-
+        throw new RuntimeException("RawDataWrapper: addPoint not implemented");
     }
 
     @Override
     public void removePoint(int anIndex)
     {
-
+        throw new RuntimeException("RawDataWrapper: removePoint not implemented");
     }
 
     @Override
