@@ -28,7 +28,7 @@ public class RawDataWrapper extends RawData {
     private int  _end;
 
     // The maximum number of wrapped points allowed
-    private static int MAX_WRAPPED_POINTS = 100000;
+    private static int MAX_WRAPPED_POINTS = 10000;
 
     /**
      * Constructor.
@@ -69,11 +69,11 @@ public class RawDataWrapper extends RawData {
     public double getX(int anIndex)
     {
         // Get index of wrapped RawData point and get value X
-        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        int rawIndex = floorMod(_start + anIndex, _rawPointCount);
         double valX = _rawData.getX(rawIndex);
 
         // Get cycle index and shift value
-        int cycle = Math.floorDiv(_start + anIndex, _rawPointCount);
+        int cycle = floorDiv(_start + anIndex, _rawPointCount);
         valX += cycle * (_rawMaxX - _rawMinX);
         return valX;
     }
@@ -82,7 +82,7 @@ public class RawDataWrapper extends RawData {
     public double getY(int anIndex)
     {
         // Get index of wrapped RawData point and get value Y
-        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        int rawIndex = floorMod(_start + anIndex, _rawPointCount);
         double valY = _rawData.getY(rawIndex);
         return valY;
     }
@@ -91,7 +91,7 @@ public class RawDataWrapper extends RawData {
     public double getZ(int anIndex)
     {
         // Get index of wrapped RawData point and get value Y
-        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        int rawIndex = floorMod(_start + anIndex, _rawPointCount);
         double valZ = _rawData.getZ(rawIndex);
         return valZ;
     }
@@ -100,7 +100,7 @@ public class RawDataWrapper extends RawData {
     public String getC(int anIndex)
     {
         // Get index of wrapped RawData point and get value Y
-        int rawIndex = Math.floorMod(_start + anIndex, _rawPointCount);
+        int rawIndex = floorMod(_start + anIndex, _rawPointCount);
         String valC = _rawData.getC(rawIndex);
         return valC;
     }
@@ -200,5 +200,23 @@ public class RawDataWrapper extends RawData {
 
         // Return cycle range
         return new Range(cycleStart, cycleEnd);
+    }
+
+    /**
+     * This should just be Math.floorMod, but TeaVM doesn't yet support this.
+     */
+    private static int floorMod(int x, int y) {
+        int r = x - floorDiv(x, y) * y;
+        return r;
+    }
+
+    /**
+     * This should just be Math.floorDiv, but TeaVM doesn't yet support this.
+     */
+    private static int floorDiv(int x, int y) {
+        int r = x / y;
+        if ((x ^ y) < 0 && (r * y != x))
+            r--;
+        return r;
     }
 }

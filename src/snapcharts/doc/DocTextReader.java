@@ -230,6 +230,20 @@ public class DocTextReader {
                 axis.setMaxValue(maxVal);
                 break;
 
+            // Handle WrapMin
+            case "WrapMin":
+                double wrapMin = SnapUtils.doubleValue(aVal);
+                axis.setWrapAxis(true);
+                axis.setWrapMinMax(axis.getWrapMinMax().copyForMin(wrapMin));
+                break;
+
+            // Handle WrapMax
+            case "WrapMax":
+                double wrapMax = SnapUtils.doubleValue(aVal);
+                axis.setWrapAxis(true);
+                axis.setWrapMinMax(axis.getWrapMinMax().copyForMax(wrapMax));
+                break;
+
             // Handle unknown
             default: System.err.println("DocTextReader.readAxisKeyVal: Unknown axis key: " + axisKey);
         }
