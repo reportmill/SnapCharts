@@ -1,6 +1,9 @@
 package snapcharts.util;
+import snap.util.KeyChain;
 import snapcharts.model.DataType;
 import snapcharts.model.RawData;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utilities for RawData.
@@ -59,6 +62,50 @@ public class RawDataUtils {
 
         // Return false since nothing in range
         return false;
+    }
+
+    /**
+     * Returns a copy of given RawData processed with given expressions.
+     */
+    public static RawData getProcessedData(RawData aRawData, String exprX, String exprY, String exprZ)
+    {
+        // If both expressions empty, just return
+        boolean isEmptyX = exprX == null || exprX.length() == 0;
+        boolean isEmptyY = exprY == null || exprY.length() == 0;
+        boolean isEmptyZ = exprZ == null || exprZ.length() == 0;
+        if (isEmptyX && isEmptyY && isEmptyZ)
+            return aRawData;
+
+        // Get KeyChains
+        KeyChain keyChainX = !isEmptyX ? KeyChain.getKeyChain(exprX.toLowerCase()) : null;
+        KeyChain keyChainY = !isEmptyY ? KeyChain.getKeyChain(exprY.toLowerCase()) : null;
+        KeyChain keyChainZ = !isEmptyZ ? KeyChain.getKeyChain(exprZ.toLowerCase()) : null;
+
+        // Get DataX
+        DataType dataType = aRawData.getDataType();
+        int pointCount = aRawData.getPointCount();
+        boolean hasZ = dataType.hasZ();
+        double[] dataX = new double[pointCount];
+        double[] dataY = new double[pointCount];
+        double[] dataZ = hasZ ? new double[pointCount] : null;
+        Map map = new HashMap();
+        for (int i=0; i<pointCount; i++) {
+            double valX = aRawData.getX(i);
+            double valY = aRawData.getY(i);
+            double valZ = hasZ ? aRawData.getZ(i) : 0;
+            map.put("x", valX);
+            map.put("y", valY);
+            if (hasZ)
+                map.put("z", valZ);
+
+            dataX[i] = isEmptyX ? valX : KeyChain.getDoubleValue(map, keyChainX);
+            dataY[i] = isEmptyY ? valY : KeyChain.getDoubleValue(map, keyChainY);
+            if (hasZ)
+                dataZ[i] = isEmptyZ ? valZ : KeyChain.getDoubleValue(map, keyChainZ);
+        }
+
+        // Return new RawData for type and values
+        return RawData.newRawDataForTypeAndValues(dataType, dataX, dataY, dataZ);
     }
 
     /**

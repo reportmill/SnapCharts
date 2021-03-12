@@ -170,7 +170,7 @@ public class ContourPainter {
 
         // Get/set RawData for contours (if Polar, get PolarXY RawData)
         DataSet dataSet = _dataArea.getDataSet();
-        RawData rawData = dataSet.getRawData();
+        RawData rawData = dataSet.getProcessedData();
         if (dataSet.getChart().getType().isPolarType())
             rawData = dataSet.getPolarXYRawData();
 

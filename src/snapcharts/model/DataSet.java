@@ -28,8 +28,20 @@ public class DataSet extends ChartPart {
     // Whether to show symbols
     private boolean  _showSymbols;
 
+    // The expression to apply to X values
+    private String  _exprX;
+
+    // The expression to apply to Y values
+    private String  _exprY;
+
+    // The expression to apply to Z values
+    private String  _exprZ;
+
     // The RawData
     private RawData  _rawData = RawData.newRawData();
+
+    // The Processed Data
+    private RawData  _procData;
 
     // RawData in polar form
     private RawData  _polarRawData;
@@ -43,6 +55,9 @@ public class DataSet extends ChartPart {
     public static final String Point_Prop = "Points";
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String AxisTypeY_Prop = "AxisTypeY";
+    public static final String ExprX_Prop = "ExpressionX";
+    public static final String ExprY_Prop = "ExpressionY";
+    public static final String ExprZ_Prop = "ExpressionZ";
 
     /**
      * Constructor.
@@ -138,6 +153,51 @@ public class DataSet extends ChartPart {
     public boolean isEnabled()  { return !_disabled; }
 
     /**
+     * Returns the expression to apply to X values.
+     */
+    public String getExprX()  { return _exprX; }
+
+    /**
+     * Sets the expressions to apply to X values.
+     */
+    public void setExprX(String anExpr)
+    {
+        if (Objects.equals(anExpr, getExprX())) return;
+        firePropChange(ExprX_Prop, _exprX, _exprX = anExpr);
+        clearCachedData();
+    }
+
+    /**
+     * Returns the expression to apply to Y values.
+     */
+    public String getExprY()  { return _exprY; }
+
+    /**
+     * Sets the expressions to apply to Y values.
+     */
+    public void setExprY(String anExpr)
+    {
+        if (Objects.equals(anExpr, getExprY())) return;
+        firePropChange(ExprY_Prop, _exprY, _exprY = anExpr);
+        clearCachedData();
+    }
+
+    /**
+     * Returns the expression to apply to Z values.
+     */
+    public String getExprZ()  { return _exprZ; }
+
+    /**
+     * Sets the expressions to apply to Z values.
+     */
+    public void setExprZ(String anExpr)
+    {
+        if (Objects.equals(anExpr, getExprZ())) return;
+        firePropChange(ExprZ_Prop, _exprZ, _exprZ = anExpr);
+        clearCachedData();
+    }
+
+    /**
      * Returns the number of rows.
      */
     public int getRowCount()  { return _rawData.getRowCount(); }
@@ -222,7 +282,8 @@ public class DataSet extends ChartPart {
      */
     public double getX(int anIndex)
     {
-        return _rawData.getX(anIndex);
+        RawData procData = getProcessedData();
+        return procData.getX(anIndex);
     }
 
     /**
@@ -230,7 +291,8 @@ public class DataSet extends ChartPart {
      */
     public double getY(int anIndex)
     {
-        return _rawData.getY(anIndex);
+        RawData procData = getProcessedData();
+        return procData.getY(anIndex);
     }
 
     /**
@@ -238,7 +300,8 @@ public class DataSet extends ChartPart {
      */
     public double getZ(int anIndex)
     {
-        return _rawData.getZ(anIndex);
+        RawData procData = getProcessedData();
+        return procData.getZ(anIndex);
     }
 
     /**
@@ -246,7 +309,8 @@ public class DataSet extends ChartPart {
      */
     public String getC(int anIndex)
     {
-        return _rawData.getC(anIndex);
+        RawData procData = getProcessedData();
+        return procData.getC(anIndex);
     }
 
     /**
@@ -280,7 +344,8 @@ public class DataSet extends ChartPart {
      */
     public Double getValueY(int anIndex)
     {
-        return _rawData.getValueY(anIndex);
+        RawData procData = getProcessedData();
+        return procData.getValueY(anIndex);
     }
 
     /**
@@ -297,7 +362,8 @@ public class DataSet extends ChartPart {
      */
     public Double getValueZ(int anIndex)
     {
-        return _rawData.getValueZ(anIndex);
+        RawData procData = getProcessedData();
+        return procData.getValueZ(anIndex);
     }
 
     /**
@@ -414,6 +480,23 @@ public class DataSet extends ChartPart {
     public void setRawData(RawData aRawData)
     {
         _rawData = aRawData;
+        clearCachedData();
+    }
+
+    /**
+     * Returns the Processed Data.
+     */
+    public RawData getProcessedData()
+    {
+        // If already set, just return
+        if (_procData != null) return _procData;
+
+        // Get expressions
+        String exprX = getExprX();
+        String exprY = getExprY();
+        String exprZ = getExprZ();
+        RawData procData = RawDataUtils.getProcessedData(_rawData, exprX, exprY, exprZ);
+        return _procData = procData;
     }
 
     /**
@@ -425,9 +508,10 @@ public class DataSet extends ChartPart {
         if (_polarRawData != null) return _polarRawData;
 
         // If already DataType.isPolar, set/return
+        RawData procData = getProcessedData();
         DataType dataType = getDataType();
         if (dataType.isPolar())
-            return _polarRawData = _rawData;
+            return _polarRawData = procData;
 
         // Get Polar DataType that makes the most sense
         DataType polarDataType = DataType.TR;
@@ -435,7 +519,7 @@ public class DataSet extends ChartPart {
             polarDataType = dataType == DataType.XYZZ ? DataType.TRZZ : DataType.TRZ;
 
         // Convert, set, return
-        RawData polarRawData = RawDataUtils.getPolarRawDataForType(_rawData, polarDataType);
+        RawData polarRawData = RawDataUtils.getPolarRawDataForType(procData, polarDataType);
         return _polarRawData = polarRawData;
     }
 
@@ -458,7 +542,8 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataX()
     {
-        return _rawData.getDataX();
+        RawData procData = getProcessedData();
+        return procData.getDataX();
     }
 
     /**
@@ -466,7 +551,8 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataY()
     {
-        return _rawData.getDataY();
+        RawData procData = getProcessedData();
+        return procData.getDataY();
     }
 
     /**
@@ -474,7 +560,8 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataZ()
     {
-        return _rawData.getDataZ();
+        RawData procData = getProcessedData();
+        return procData.getDataZ();
     }
 
     /**
@@ -482,7 +569,8 @@ public class DataSet extends ChartPart {
      */
     public String[] getDataC()
     {
-        return _rawData.getDataC();
+        RawData procData = getProcessedData();
+        return procData.getDataC();
     }
 
     /**
@@ -490,7 +578,8 @@ public class DataSet extends ChartPart {
      */
     public double getMinX()
     {
-        return _rawData.getMinX();
+        RawData procData = getProcessedData();
+        return procData.getMinX();
     }
 
     /**
@@ -498,7 +587,8 @@ public class DataSet extends ChartPart {
      */
     public double getMaxX()
     {
-        return _rawData.getMaxX();
+        RawData procData = getProcessedData();
+        return procData.getMaxX();
     }
 
     /**
@@ -506,7 +596,8 @@ public class DataSet extends ChartPart {
      */
     public double getMinY()
     {
-        return _rawData.getMinY();
+        RawData procData = getProcessedData();
+        return procData.getMinY();
     }
 
     /**
@@ -514,7 +605,8 @@ public class DataSet extends ChartPart {
      */
     public double getMaxY()
     {
-        return _rawData.getMaxY();
+        RawData procData = getProcessedData();
+        return procData.getMaxY();
     }
 
     /**
@@ -522,7 +614,8 @@ public class DataSet extends ChartPart {
      */
     public double getMinZ()
     {
-        return _rawData.getMinZ();
+        RawData procData = getProcessedData();
+        return procData.getMinZ();
     }
 
     /**
@@ -530,18 +623,27 @@ public class DataSet extends ChartPart {
      */
     public double getMaxZ()
     {
-        return _rawData.getMaxZ();
+        RawData procData = getProcessedData();
+        return procData.getMaxZ();
     }
 
     /**
      * Returns the dataX values for ZZ.
      */
-    public double[] getDataXforZZ()  { return _rawData.getDataXforZZ(); }
+    public double[] getDataXforZZ()
+    {
+        RawData procData = getProcessedData();
+        return procData.getDataXforZZ();
+    }
 
     /**
      * Returns the dataY values for ZZ.
      */
-    private double[] getDataYforZZ()  { return _rawData.getDataYforZZ(); }
+    private double[] getDataYforZZ()
+    {
+        RawData procData = getProcessedData();
+        return procData.getDataYforZZ();
+    }
 
     /**
      * Returns whether this dataset is clear (no name and no values).
@@ -558,6 +660,7 @@ public class DataSet extends ChartPart {
      */
     protected void clearCachedData()
     {
+        _procData = null;
         _polarRawData = null;
         _polarXYRawData = null;
     }

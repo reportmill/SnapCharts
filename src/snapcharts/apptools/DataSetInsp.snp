@@ -30,4 +30,16 @@
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
   </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="X Expr:" />
+    <TextField Name="ExprXText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Y Expr:" />
+    <TextField Name="ExprYText" GrowWidth="true" />
+  </RowView>
+  <RowView Name="ExprZBox" Padding="4" Spacing="4">
+    <Label text="Z Expr:" />
+    <TextField Name="ExprZText" GrowWidth="true" />
+  </RowView>
 </ColView>

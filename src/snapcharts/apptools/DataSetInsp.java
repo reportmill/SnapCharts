@@ -1,6 +1,7 @@
 package snapcharts.apptools;
 
 import snap.view.ComboBox;
+import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.AxisType;
@@ -46,6 +47,10 @@ public class DataSetInsp extends ChartPartInsp {
     {
         ComboBox<DataType> dataTypeComboBox = getView("DataTypeComboBox", ComboBox.class);
         dataTypeComboBox.setItems(DataType.values());
+
+        getView("ExprXText", TextField.class).setPromptText("x * 2 + 5");
+        getView("ExprYText", TextField.class).setPromptText("y * 2 + 5");
+        getView("ExprZText", TextField.class).setPromptText("z * 2 + 5");
     }
 
     /**
@@ -73,6 +78,13 @@ public class DataSetInsp extends ChartPartInsp {
 
         // Reset ShowSymbolsCheckBox
         setViewValue("ShowSymbolsCheckBox", dset.isShowSymbols());
+
+        // Reset ExprXText, ExprYText, ExprZText
+        setViewValue("ExprXText", dset.getExprX());
+        setViewValue("ExprYText", dset.getExprY());
+        setViewValue("ExprZText", dset.getExprZ());
+        DataType dataType = dset.getDataType();
+        getView("ExprZBox").setVisible(dataType.hasZ());
     }
 
     /**
@@ -108,5 +120,13 @@ public class DataSetInsp extends ChartPartInsp {
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox"))
             dset.setShowSymbols(anEvent.getBoolValue());
+
+        // Handle ExprXText, ExprYText, ExprZText
+        if (anEvent.equals("ExprXText"))
+            dset.setExprX(anEvent.getStringValue());
+        if (anEvent.equals("ExprYText"))
+            dset.setExprY(anEvent.getStringValue());
+        if (anEvent.equals("ExprXText"))
+            dset.setExprZ(anEvent.getStringValue());
     }
 }

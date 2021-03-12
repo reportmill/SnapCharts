@@ -223,7 +223,7 @@ public class PolarChartHelper extends ChartHelper {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
         for (DataSet dset : dataSetList.getDataSets()) {
-            RawData rawData = dset.getRawData();
+            RawData rawData = dset.getProcessedData();
             MinMax minMax = rawData.getMinMaxR();
             min = Math.min(min, minMax.getMin());
             max = Math.max(max, minMax.getMax());

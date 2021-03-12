@@ -92,7 +92,7 @@ public class XYPainter {
 
         // Get DataSet and RawData
         DataSet dataSet = _dataArea.getDataSet();
-        RawData rawData = dataSet.getRawData();
+        RawData rawData = dataSet.getProcessedData();
 
         // If WrapAxis, wrap RawData inside RawDataWrapper for wrap range and axis range
         AxisViewX axisViewX = _dataArea.getAxisViewX();
