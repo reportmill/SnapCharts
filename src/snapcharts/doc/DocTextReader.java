@@ -78,6 +78,12 @@ public class DocTextReader {
                 continue;
             }
 
+            // Handle DataSet
+            if (key.startsWith("DataSet.")) {
+                readDataSetKeyVal(key, val);
+                continue;
+            }
+
             // Handle Legend
             if (key.startsWith("Legend")) {
                 readLegendKeyVal(key, val);
@@ -132,41 +138,6 @@ public class DocTextReader {
 
                 case "Chart.AxisY.Title":
                     _chart.getAxisY().setTitle(val);
-                    break;
-
-                case "DataSet.Name":
-                    _dset = new DataSet();
-                    _dset.setName(val);
-                    _chart.addDataSet(_dset);
-                    break;
-
-                case "DataSet.ShowSymbols":
-                    _dset.setShowSymbols(SnapUtils.boolValue(val));
-                    break;
-
-                case "DataSet.DataX":
-                    _dataX = getDoubleArrayForString(val);
-                    break;
-
-                case "DataSet.DataY":
-                    _dataY = getDoubleArrayForString(val);
-                    break;
-
-                case "DataSet.DataZ":
-                    _dataZ = getDoubleArrayForString(val);
-                    break;
-
-                case "DataSet.DataZZ":
-                    _dataZZ = getDoubleArrayForString(val);
-                    break;
-
-                case "DataSet.DataC":
-                    _dataC = getStringArrayForString(val);
-                    break;
-
-                case "DataSet.AxisY":
-                    AxisType axisTypeY = AxisType.valueOf(val);
-                    _dset.setAxisTypeY(axisTypeY);
                     break;
             }
         }
@@ -246,6 +217,64 @@ public class DocTextReader {
 
             // Handle unknown
             default: System.err.println("DocTextReader.readAxisKeyVal: Unknown axis key: " + axisKey);
+        }
+    }
+
+    /**
+     * Reads a DataSet key/val pair.
+     */
+    private void readDataSetKeyVal(String aKey, String aVal)
+    {
+        String key = aKey.substring("DataSet.".length());
+
+        // Handle keys
+        switch (key) {
+            case "Name":
+                _dset = new DataSet();
+                _dset.setName(aVal);
+                _chart.addDataSet(_dset);
+                break;
+
+            case "ShowSymbols":
+                _dset.setShowSymbols(SnapUtils.boolValue(aVal));
+                break;
+
+            case "DataX":
+                _dataX = getDoubleArrayForString(aVal);
+                break;
+
+            case "DataY":
+                _dataY = getDoubleArrayForString(aVal);
+                break;
+
+            case "DataZ":
+                _dataZ = getDoubleArrayForString(aVal);
+                break;
+
+            case "DataZZ":
+                _dataZZ = getDoubleArrayForString(aVal);
+                break;
+
+            case "DataC":
+                _dataC = getStringArrayForString(aVal);
+                break;
+
+            case "AxisY":
+                AxisType axisTypeY = AxisType.valueOf(aVal);
+                _dset.setAxisTypeY(axisTypeY);
+                break;
+
+            case "ExprX":
+                _dset.setExprX(aVal);
+                break;
+
+            case "ExprY":
+                _dset.setExprY(aVal);
+                break;
+
+            case "ExprZ":
+                _dset.setExprZ(aVal);
+                break;
         }
     }
 
