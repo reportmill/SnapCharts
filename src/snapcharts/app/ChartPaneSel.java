@@ -98,7 +98,7 @@ public class ChartPaneSel {
         }
         if (aChartPart instanceof Legend)
             return _chartView.getLegendView();
-        if (aChartPart instanceof ChartTypeProps)
+        if (aChartPart instanceof ChartStyle)
             return _chartView.getDataView();
         return null;
     }

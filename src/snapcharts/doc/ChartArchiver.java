@@ -50,7 +50,7 @@ public class ChartArchiver extends XMLArchiver {
         Map cmap = new HashMap();
 
         // Add classes
-        cmap.put(ChartTypeProps.class.getSimpleName(), ChartTypeProps.class);
+        cmap.put(ChartStyle.class.getSimpleName(), ChartStyle.class);
         cmap.put(Axis.class.getSimpleName(), Axis.class);
         cmap.put(AxisX.class.getSimpleName(), AxisX.class);
         cmap.put(AxisY.class.getSimpleName(), AxisY.class);

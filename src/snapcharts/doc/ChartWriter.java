@@ -4,7 +4,7 @@ import snap.gfx.Color;
 import snap.geom.VPos;
 import snap.util.*;
 import snapcharts.model.*;
-import snapcharts.modelx.BarProps;
+import snapcharts.modelx.BarStyle;
 import snapcharts.util.MapWriter;
 
 /**
@@ -391,7 +391,7 @@ public class ChartWriter {
         Map map = new HashMap();
 
         // Get column chart
-        BarProps colChart = _chart.getTypeHelper().getBarProps();
+        BarStyle colChart = _chart.getChartStyleHelper().getBarStyle();
 
         // Handle colorByPoint
         boolean colorByPoint = colChart.isColorValues();

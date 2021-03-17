@@ -50,7 +50,7 @@ public class Chart extends ChartPart {
     private Shape _symbolShapes[];
 
     // The object holding specific chart type properties
-    private ChartTypeHpr _chartTypeHpr = new ChartTypeHpr(this);
+    private ChartStyleHpr _chartStyleHpr = new ChartStyleHpr(this);
 
     // Property constants
     public static final String Type_Prop = "Type";
@@ -299,14 +299,14 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the ChartTypeHelper that provides/manages ChartTypeProps.
+     * Returns the ChartStyleHpr that provides/manages ChartStyles.
      */
-    public ChartTypeHpr getTypeHelper()  { return _chartTypeHpr; }
+    public ChartStyleHpr getChartStyleHelper()  { return _chartStyleHpr; }
 
     /**
-     * Returns the ChartTypeProps that provides/manages ChartTypeProps.
+     * Returns the ChartStyle for this chart (ChartType).
      */
-    public ChartTypeProps getTypeProps()  { return _chartTypeHpr.getTypeProps(); }
+    public ChartStyle getChartStyle()  { return _chartStyleHpr.getChartStyle(); }
 
     /**
      * Called when chart part has prop change.

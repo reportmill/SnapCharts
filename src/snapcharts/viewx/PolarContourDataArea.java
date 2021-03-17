@@ -2,7 +2,7 @@ package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.Axis;
-import snapcharts.model.ChartTypeProps;
+import snapcharts.model.ChartStyle;
 import snapcharts.model.DataSet;
 
 /**
@@ -53,7 +53,7 @@ public class PolarContourDataArea extends PolarDataArea {
 
         // Handle changes
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis || src instanceof ChartTypeProps) {
+        if (src==getDataSet() || src instanceof Axis || src instanceof ChartStyle) {
             _contourPainter.clearContoursAll();
         }
     }

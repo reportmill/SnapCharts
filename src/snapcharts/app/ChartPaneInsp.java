@@ -42,8 +42,8 @@ public class ChartPaneInsp extends ViewOwner {
     // The LegendInsp
     private LegendInsp  _legendInsp;
 
-    // The TypePropsInsp
-    private TypePropsInsp  _typePropsInsp;
+    // The ChartStyleInsp
+    private ChartStyleInsp  _chartStyleInsp;
 
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
@@ -119,9 +119,9 @@ public class ChartPaneInsp extends ViewOwner {
             _legendInsp = new LegendInsp(_chartPane);
             addInspector(_legendInsp, false);
 
-            // Create/add TypePropsInsp
-            _typePropsInsp = new TypePropsInsp(_chartPane);
-            addInspector(_typePropsInsp, false);
+            // Create/add ChartStyleInsp
+            _chartStyleInsp = new ChartStyleInsp(_chartPane);
+            addInspector(_chartStyleInsp, false);
         }
 
         // Add DataSetInsp
@@ -129,7 +129,7 @@ public class ChartPaneInsp extends ViewOwner {
         addInspector(_dsetInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _typePropsInsp, _dsetInsp };
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _chartStyleInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
 
@@ -145,13 +145,13 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
-     * Override to trigger update of TypePropsInsp.
+     * Override to trigger update of ChartStyleInsp.
      */
     @Override
     protected void initShowing()
     {
-        if (_typePropsInsp != null)
-            _typePropsInsp.resetLater();
+        if (_chartStyleInsp != null)
+            _chartStyleInsp.resetLater();
     }
 
     /**
@@ -238,7 +238,7 @@ public class ChartPaneInsp extends ViewOwner {
         if (aChartPart instanceof AxisX) return _axisXInsp;
         if (aChartPart instanceof AxisY) return _axisYInsp;
         if (aChartPart instanceof Legend) return _legendInsp;
-        if (aChartPart instanceof ChartTypeProps) return _typePropsInsp;
+        if (aChartPart instanceof ChartStyle) return _chartStyleInsp;
         if (aChartPart instanceof DataSet) return _dsetInsp;
         return _chartInsp;
     }
@@ -281,6 +281,6 @@ public class ChartPaneInsp extends ViewOwner {
         // Handle Chart.Type change
         String propName = aPC.getPropName();
         if (propName == Chart.Type_Prop)
-            _typePropsInsp.resetLater();
+            _chartStyleInsp.resetLater();
     }
 }

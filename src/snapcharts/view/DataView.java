@@ -44,7 +44,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     public T getChartPart()
     {
         Chart chart = getChart();
-        return (T) chart.getTypeProps();
+        return (T) chart.getChartStyle();
     }
 
     /**

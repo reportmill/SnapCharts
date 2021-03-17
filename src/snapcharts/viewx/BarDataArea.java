@@ -6,7 +6,7 @@ import snap.geom.Rect;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.*;
-import snapcharts.modelx.BarProps;
+import snapcharts.modelx.BarStyle;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
 
@@ -15,8 +15,8 @@ import snapcharts.view.DataArea;
  */
 public class BarDataArea extends DataArea {
 
-    // The Area
-    private BarProps _barProps;
+    // The BarStyle
+    private BarStyle  _barStyle;
 
     // The number of datasets to display
     protected int  _dsetCount;
@@ -39,12 +39,12 @@ public class BarDataArea extends DataArea {
     }
 
     /**
-     * Returns the area.
+     * Returns the BarStyle.
      */
-    public BarProps getBarProps()
+    public BarStyle getBarStyle()
     {
-        if (_barProps != null) return _barProps;
-        return _barProps = getChart().getTypeHelper().getBarProps();
+        if (_barStyle != null) return _barStyle;
+        return _barStyle = getChart().getChartStyleHelper().getBarStyle();
     }
 
     /**
@@ -60,11 +60,11 @@ public class BarDataArea extends DataArea {
         if (_sections!=null && _sections.length==pointCount && _dsetCount ==dsetCount) return _sections;
 
         // Get DataAreaBar info
-        BarProps barArea = getBarProps();
-        double groupPad = barArea.getGroupPadding();
-        double barPad = barArea.getBarPadding();
+        BarStyle barStyle = getBarStyle();
+        double groupPad = barStyle.getGroupPadding();
+        double barPad = barStyle.getBarPadding();
         double viewHeight = getHeight();
-        boolean colorDataSets = !barArea.isColorValues();
+        boolean colorDataSets = !barStyle.isColorValues();
 
         // Get number of datasets, points and section width
         _dsetCount = dsetCount;

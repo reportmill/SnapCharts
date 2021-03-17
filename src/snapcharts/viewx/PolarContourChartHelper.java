@@ -61,7 +61,7 @@ public class PolarContourChartHelper extends PolarChartHelper {
 
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof ChartTypeProps) {
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof ChartStyle) {
             _contourHelper.resetCachedValues();
         }
     }

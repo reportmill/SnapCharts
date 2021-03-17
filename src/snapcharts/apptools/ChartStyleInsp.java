@@ -6,12 +6,12 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.ChartType;
-import snapcharts.model.ChartTypeProps;
+import snapcharts.model.ChartStyle;
 
 /**
- * A class to manage UI to edit a ChartTypeProps.
+ * A class to manage UI to edit a ChartStyle.
  */
-public class TypePropsInsp extends ChartPartInsp {
+public class ChartStyleInsp extends ChartPartInsp {
 
     // The View that holds the child insp
     private ColView  _inspBox;
@@ -20,12 +20,12 @@ public class TypePropsInsp extends ChartPartInsp {
     private ChartPartInsp  _currentInsp;
 
     // The ContourPropsInsp
-    private ContourPropsInsp  _contourPropsInsp;
+    private ContourStyleInsp _contourStyleInsp;
 
     /**
      * Constructor.
      */
-    public TypePropsInsp(ChartPane aChartPane)
+    public ChartStyleInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }
@@ -46,7 +46,7 @@ public class TypePropsInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getTypeProps(); }
+    public ChartPart getChartPart()  { return getChart().getChartStyle(); }
 
     /**
      * Returns the current inspector.
@@ -89,11 +89,11 @@ public class TypePropsInsp extends ChartPartInsp {
     /**
      * Returns the ContourPropsInsp.
      */
-    private ContourPropsInsp getContourPropsInsp()
+    private ContourStyleInsp getContourPropsInsp()
     {
-        if (_contourPropsInsp != null) return _contourPropsInsp;
-        ContourPropsInsp insp = new ContourPropsInsp(getChartPane());
-        return _contourPropsInsp = insp;
+        if (_contourStyleInsp != null) return _contourStyleInsp;
+        ContourStyleInsp insp = new ContourStyleInsp(getChartPane());
+        return _contourStyleInsp = insp;
     }
 
     @Override
@@ -107,9 +107,6 @@ public class TypePropsInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get TypeProps
-        ChartTypeProps typeProps = getChart().getTypeProps();
-
         ChartPartInsp chartTypeInsp = getChartPropsInsp();
         setCurrentInspector(chartTypeInsp);
 
@@ -127,8 +124,8 @@ public class TypePropsInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TypeProps
-        ChartTypeProps typeProps = getChart().getTypeProps();
+        // Get ChartStyle
+        ChartStyle chartStyle = getChart().getChartStyle();
 
         // Handle TitleText, SubtitleText
         //if(anEvent.equals("TitleText")) header.setTitle(anEvent.getStringValue());

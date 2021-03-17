@@ -6,7 +6,7 @@ import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
 import snapcharts.model.Chart;
-import snapcharts.modelx.ContourProps;
+import snapcharts.modelx.ContourStyle;
 import snapcharts.model.DataSet;
 import snapcharts.util.MinMax;
 import snapcharts.view.ChartHelper;
@@ -41,10 +41,10 @@ public class ContourHelper {
     /**
      * Returns the ContourProps.
      */
-    public ContourProps getContourProps()
+    public ContourStyle getContourProps()
     {
         Chart chart = _chartHelper.getChart();
-        return chart.getTypeHelper().getContourProps();
+        return chart.getChartStyleHelper().getContourStyle();
     }
 
     /**
@@ -52,8 +52,8 @@ public class ContourHelper {
      */
     public boolean isShowLines()
     {
-        ContourProps contourProps = getContourProps();
-        return contourProps.isShowLines();
+        ContourStyle contourStyle = getContourProps();
+        return contourStyle.isShowLines();
     }
 
     /**
@@ -61,8 +61,8 @@ public class ContourHelper {
      */
     public boolean isShowMesh()
     {
-        ContourProps contourProps = getContourProps();
-        return contourProps.isShowMesh();
+        ContourStyle contourStyle = getContourProps();
+        return contourStyle.isShowMesh();
     }
 
     /**
@@ -71,8 +71,8 @@ public class ContourHelper {
     public int getContourCount()
     {
         if (_levelsCount > 0) return _levelsCount;
-        ContourProps contourProps = getContourProps();
-        return _levelsCount = contourProps.getLevelCount();
+        ContourStyle contourStyle = getContourProps();
+        return _levelsCount = contourStyle.getLevelCount();
     }
 
     /**

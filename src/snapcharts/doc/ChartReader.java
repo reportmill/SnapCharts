@@ -5,7 +5,7 @@ import snap.geom.VPos;
 import snap.util.*;
 import snap.web.WebURL;
 import snapcharts.model.*;
-import snapcharts.modelx.BarProps;
+import snapcharts.modelx.BarStyle;
 
 /**
  * A class to load chart parameters from JSON.
@@ -434,7 +434,7 @@ public class ChartReader {
     protected void parsePlotOptionsColumn(JSONNode aNode)
     {
         // Get column chart
-        BarProps colChart = _chart.getTypeHelper().getBarProps();
+        BarStyle colChart = _chart.getChartStyleHelper().getBarStyle();
 
         // Iterate over nodes
         for(JSONNode child : aNode.getNodes()) { String key = child.getKey();

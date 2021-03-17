@@ -1,11 +1,10 @@
 package snapcharts.modelx;
-
-import snapcharts.model.ChartTypeProps;
+import snapcharts.model.ChartStyle;
 
 /**
- * A ChartTypeProps subclass for Contour chart properties.
+ * A ChartStyle subclass for Contour chart properties.
  */
-public class ContourProps extends ChartTypeProps {
+public class ContourStyle extends ChartStyle {
 
     // The number of levels of contours
     private int  _levelCount = 16;
