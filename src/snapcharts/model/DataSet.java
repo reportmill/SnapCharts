@@ -25,9 +25,6 @@ public class DataSet extends ChartPart {
     // Whether dataset is disabled
     private boolean  _disabled;
 
-    // Whether to show symbols
-    private boolean  _showSymbols;
-
     // The expression to apply to X values
     private String  _exprX;
 
@@ -36,6 +33,9 @@ public class DataSet extends ChartPart {
 
     // The expression to apply to Z values
     private String  _exprZ;
+
+    // The ChartStyleHpr
+    private ChartStyleHpr  _chartStyleHpr;
 
     // The RawData
     private RawData  _rawData = RawData.newRawData();
@@ -53,7 +53,6 @@ public class DataSet extends ChartPart {
     public static final String DataType_Prop = "DataType";
     public static final String Disabled_Prop = "Disabled";
     public static final String Point_Prop = "Points";
-    public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String AxisTypeY_Prop = "AxisTypeY";
     public static final String ExprX_Prop = "ExpressionX";
     public static final String ExprY_Prop = "ExpressionY";
@@ -71,7 +70,12 @@ public class DataSet extends ChartPart {
      * Returns the chart.
      */
     @Override
-    public Chart getChart()  { return _dsetList !=null ? _dsetList.getChart() : null; }
+    public Chart getChart()
+    {
+        if (_chart != null)
+            return _chart;
+        return _dsetList !=null ? _dsetList.getChart() : null;
+    }
 
     /**
      * Returns the dataset.
@@ -122,15 +126,19 @@ public class DataSet extends ChartPart {
     /**
      * Returns whether to show symbols for this DataSet.
      */
-    public boolean isShowSymbols()  { return _showSymbols; }
+    public boolean isShowSymbols()
+    {
+        ChartStyle chartStyle = getChartStyle();
+        return chartStyle.isShowSymbols();
+    }
 
     /**
      * Sets whether to show symbols for this DataSet.
      */
     public void setShowSymbols(boolean aValue)
     {
-        if (aValue==isShowSymbols()) return;
-        firePropChange(ShowSymbols_Prop, _showSymbols, _showSymbols = aValue);
+        ChartStyle chartStyle = getChartStyle();
+        chartStyle.setShowSymbols(aValue);
     }
 
     /**
@@ -195,6 +203,16 @@ public class DataSet extends ChartPart {
         if (Objects.equals(anExpr, getExprZ())) return;
         firePropChange(ExprZ_Prop, _exprZ, _exprZ = anExpr);
         clearCachedData();
+    }
+
+    /**
+     * Returns the ChartStyle for this DataSet (and ChartType).
+     */
+    public ChartStyle getChartStyle()
+    {
+        if (_chartStyleHpr == null)
+            _chartStyleHpr = new ChartStyleHpr(this);
+        return _chartStyleHpr.getChartStyle();
     }
 
     /**
@@ -693,9 +711,7 @@ public class DataSet extends ChartPart {
         DataType dataType = getDataType();
         e.add(DataType_Prop, dataType);
 
-        // Archive ShowSymbols, Disabled
-        if (isShowSymbols())
-            e.add(ShowSymbols_Prop, true);
+        // Archive Disabled
         if (isDisabled())
             e.add(Disabled_Prop, true);
 
@@ -729,6 +745,12 @@ public class DataSet extends ChartPart {
             e.add(new XMLElement("DataC", dataStr));
         }
 
+        // Archive ChartStyle
+        ChartStyle chartStyle = getChartStyle();
+        XMLElement chartStyleXML = chartStyle.toXML(anArchiver);
+        if (chartStyleXML.getAttributeCount() > 0)
+            e.addElement(chartStyleXML);
+
         // Return element
         return e;
     }
@@ -748,7 +770,6 @@ public class DataSet extends ChartPart {
         setDataType(dataType);
 
         // Unarchive ShowSymbols, Disabled
-        setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
         setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
 
         // Archive AxisTypeY
@@ -792,6 +813,12 @@ public class DataSet extends ChartPart {
         if (dataType == DataType.XYZZ)
             DataUtils.addDataSetPointsXYZZ(this, dataX, dataY, dataZ);
         else DataUtils.addDataSetPoints(this, dataX, dataY, dataZ, dataC);
+
+        // Legacy
+        if (anElement.hasAttribute(ChartStyle.ShowSymbols_Prop)) {
+            boolean showSymbols = anElement.getAttributeBoolValue(ChartStyle.ShowSymbols_Prop);
+            getChartStyle().setShowSymbols(showSymbols);
+        }
 
         // Return this part
         return this;

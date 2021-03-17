@@ -23,7 +23,7 @@ public class ContourStyleInsp extends ChartPartInsp {
      * Returns the name.
      */
     @Override
-    public String getName()  { return "Contour Settings"; }
+    public String getName()  { return "Contour Style"; }
 
     /**
      * Returns the ChartPart.

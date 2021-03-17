@@ -6,8 +6,8 @@ import snapcharts.modelx.*;
  */
 public class ChartStyleHpr {
 
-    // The Chart
-    private Chart  _chart;
+    // The parent ChartPart that holds this ChartStyleHpr
+    private ChartPart  _parent;
 
     // Line chart properties
     private XYStyle _xyStyle;
@@ -27,14 +27,26 @@ public class ChartStyleHpr {
     /**
      * Constructor.
      */
-    public ChartStyleHpr(Chart aChart)  { _chart = aChart; }
+    public ChartStyleHpr(ChartPart aChartPart)
+    {
+        _parent = aChartPart;
+    }
+
+    /**
+     * Returns the Chart.
+     */
+    public Chart getChart()
+    {
+        return _parent.getChart();
+    }
 
     /**
      * Returns the current ChartStyle.
      */
     public ChartStyle getChartStyle()
     {
-        ChartType chartType = _chart.getType();
+        Chart chart = getChart();
+        ChartType chartType = chart.getType();
         return getChartStyleForChartType(chartType);
     }
 
@@ -50,7 +62,36 @@ public class ChartStyleHpr {
             case CONTOUR: return getContourStyle();
             case POLAR_CONTOUR: return getContourStyle();
             case BAR_3D: return getBar3DStyle();
-            default: return null;
+            default: return getXYStyle();
+        }
+    }
+
+    /**
+     * Returns the ChartStyle for given ChartType.
+     */
+    private ChartStyle createChartStyleForChartType(ChartType aType)
+    {
+        ChartStyle chartStyle = createChartStyleForChartTypeRaw(aType);
+        Chart chart = getChart();
+        chartStyle.setChart(chart);
+        chartStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
+        return chartStyle;
+    }
+
+    /**
+     * Returns the ChartStyle for given ChartType.
+     */
+    private ChartStyle createChartStyleForChartTypeRaw(ChartType aType)
+    {
+        // Get instance
+        switch(aType) {
+            case LINE: return new XYStyle();
+            case BAR: return new BarStyle();
+            case PIE: return new PieStyle();
+            case CONTOUR: return new ContourStyle();
+            case POLAR_CONTOUR: return new ContourStyle();
+            case BAR_3D: return new Bar3DStyle();
+            default: return new XYStyle();
         }
     }
 
@@ -60,10 +101,7 @@ public class ChartStyleHpr {
     public XYStyle getXYStyle()
     {
         if (_xyStyle !=null) return _xyStyle;
-        _xyStyle = new XYStyle();
-        _xyStyle.setChart(_chart);
-        _xyStyle.addPropChangeListener(pc -> _chart.chartPartDidPropChange(pc));
-        return _xyStyle;
+        return _xyStyle = (XYStyle) createChartStyleForChartType(ChartType.LINE);
     }
 
     /**
@@ -72,10 +110,7 @@ public class ChartStyleHpr {
     public BarStyle getBarStyle()
     {
         if(_barStyle !=null) return _barStyle;
-        _barStyle = new BarStyle();
-        _barStyle.setChart(_chart);
-        _barStyle.addPropChangeListener(pc -> _chart.chartPartDidPropChange(pc));
-        return _barStyle;
+        return _barStyle = (BarStyle) createChartStyleForChartType(ChartType.BAR);
     }
 
     /**
@@ -84,10 +119,7 @@ public class ChartStyleHpr {
     public PieStyle getPieStyle()
     {
         if(_pieStyle !=null) return _pieStyle;
-        _pieStyle = new PieStyle();
-        _pieStyle.setChart(_chart);
-        _pieStyle.addPropChangeListener(pc -> _chart.chartPartDidPropChange(pc));
-        return _pieStyle;
+        return _pieStyle = (PieStyle) createChartStyleForChartType(ChartType.PIE);
     }
 
     /**
@@ -96,10 +128,7 @@ public class ChartStyleHpr {
     public ContourStyle getContourStyle()
     {
         if(_contourStyle != null) return _contourStyle;
-        _contourStyle = new ContourStyle();
-        _contourStyle.setChart(_chart);
-        _contourStyle.addPropChangeListener(pc -> _chart.chartPartDidPropChange(pc));
-        return _contourStyle;
+        return _contourStyle = (ContourStyle) createChartStyleForChartType(ChartType.CONTOUR);
     }
 
     /**
@@ -108,9 +137,6 @@ public class ChartStyleHpr {
     public Bar3DStyle getBar3DStyle()
     {
         if(_bar3DStyle !=null) return _bar3DStyle;
-        _bar3DStyle = new Bar3DStyle();
-        _bar3DStyle.setChart(_chart);
-        _bar3DStyle.addPropChangeListener(pc -> _chart.chartPartDidPropChange(pc));
-        return _bar3DStyle;
+        return _bar3DStyle = (Bar3DStyle) createChartStyleForChartType(ChartType.BAR_3D);
     }
 }

@@ -42,11 +42,11 @@ public class ChartPaneInsp extends ViewOwner {
     // The LegendInsp
     private LegendInsp  _legendInsp;
 
-    // The ChartStyleInsp
-    private ChartStyleInsp  _chartStyleInsp;
-
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
+
+    // The ChartStyleInsp
+    private ChartStyleInsp  _chartStyleInsp;
 
     // The array of ChartPartInsp
     private ChartPartInsp  _allInspectors[];
@@ -118,15 +118,15 @@ public class ChartPaneInsp extends ViewOwner {
             // Create/add LegendInsp
             _legendInsp = new LegendInsp(_chartPane);
             addInspector(_legendInsp, false);
-
-            // Create/add ChartStyleInsp
-            _chartStyleInsp = new ChartStyleInsp(_chartPane);
-            addInspector(_chartStyleInsp, false);
         }
 
         // Add DataSetInsp
         _dsetInsp = new DataSetInsp(_chartPane);
         addInspector(_dsetInsp, false);
+
+        // Create/add ChartStyleInsp
+        _chartStyleInsp = new ChartStyleInsp(_chartPane);
+        addInspector(_chartStyleInsp, false);
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _chartStyleInsp, _dsetInsp };
@@ -234,12 +234,16 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public ChartPartInsp getChartPartInsp(ChartPart aChartPart)
     {
-        if (aChartPart instanceof Header) return _headerInsp;
-        if (aChartPart instanceof AxisX) return _axisXInsp;
-        if (aChartPart instanceof AxisY) return _axisYInsp;
-        if (aChartPart instanceof Legend) return _legendInsp;
-        if (aChartPart instanceof ChartStyle) return _chartStyleInsp;
-        if (aChartPart instanceof DataSet) return _dsetInsp;
+        if (aChartPart instanceof Header)
+            return _headerInsp;
+        if (aChartPart instanceof AxisX)
+            return _axisXInsp;
+        if (aChartPart instanceof AxisY)
+            return _axisYInsp;
+        if (aChartPart instanceof Legend)
+            return _legendInsp;
+        if (aChartPart instanceof DataSetList || aChartPart instanceof DataSet)
+            return _dsetInsp;
         return _chartInsp;
     }
 
@@ -248,7 +252,17 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void chartPartInspLabelMousePress(ChartPartInsp anInsp)
     {
+        // Get ChartPart for inspector
         ChartPart chartPart = anInsp.getChartPart();
+
+        // ChartStyleInsp/ChartStyle is going to pretend to represent DataSetList
+        if (chartPart instanceof ChartStyle) {
+            Chart chart = _chartPane.getChart();
+            DataSetList dataList = chart.getDataSetList();
+            chartPart = dataList.getDataSetCount() > 0 ? dataList.getDataSet(0) : chart;
+        }
+
+        // Set new ChartPane.SelChartPart
         _chartPane.getSel().setSelChartPart(chartPart);
     }
 
@@ -262,8 +276,13 @@ public class ChartPaneInsp extends ViewOwner {
         ChartPartInsp selPartInsp = getChartPartInsp(selPart);
 
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
-        for (ChartPartInsp insp : _allInspectors)
-            insp.setSelected(insp==selPartInsp);
+        for (ChartPartInsp insp : _allInspectors) {
+            boolean isSelected = insp == selPartInsp ||
+                (insp == _chartStyleInsp && (selPartInsp == _dsetInsp || selPartInsp == _chartInsp));
+            insp.setSelected(isSelected);
+            if (isSelected)
+                insp.resetLater();
+        }
 
         if (selPartInsp != null)
             selPartInsp.resetLater();

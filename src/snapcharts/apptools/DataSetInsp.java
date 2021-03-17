@@ -68,16 +68,14 @@ public class DataSetInsp extends ChartPartInsp {
         setViewValue("DataTypeComboBox", dset.getDataType());
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
-        setViewValue("YAxisButton", dset.getAxisTypeY() == AxisType.Y);
-        setViewValue("Y2AxisButton", dset.getAxisTypeY() == AxisType.Y2);
-        setViewValue("Y3AxisButton", dset.getAxisTypeY() == AxisType.Y3);
-        setViewValue("Y4AxisButton", dset.getAxisTypeY() == AxisType.Y4);
-
-        // Reset StrokeWidth
-        setViewValue("LineWidthText", 1);
-
-        // Reset ShowSymbolsCheckBox
-        setViewValue("ShowSymbolsCheckBox", dset.isShowSymbols());
+        boolean isMultiYEnabled = dset.getChartType().isMultiYAxisType();
+        getView("AxisTypeYBox").setVisible(isMultiYEnabled);
+        if (isMultiYEnabled) {
+            setViewValue("YAxisButton", dset.getAxisTypeY() == AxisType.Y);
+            setViewValue("Y2AxisButton", dset.getAxisTypeY() == AxisType.Y2);
+            setViewValue("Y3AxisButton", dset.getAxisTypeY() == AxisType.Y3);
+            setViewValue("Y4AxisButton", dset.getAxisTypeY() == AxisType.Y4);
+        }
 
         // Reset ExprXText, ExprYText, ExprZText
         setViewValue("ExprXText", dset.getExprX());

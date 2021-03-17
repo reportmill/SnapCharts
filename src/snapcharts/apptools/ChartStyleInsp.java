@@ -3,10 +3,7 @@ import snap.view.ColView;
 import snap.view.Label;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartPart;
-import snapcharts.model.ChartType;
-import snapcharts.model.ChartStyle;
+import snapcharts.model.*;
 
 /**
  * A class to manage UI to edit a ChartStyle.
@@ -36,10 +33,10 @@ public class ChartStyleInsp extends ChartPartInsp {
     @Override
     public String getName()
     {
-        if (!_chartPane.isUISet()) return "ChartType Settings";
+        if (!_chartPane.isUISet()) return "Chart Style";
         Chart chart = getChart();
         ChartType chartType = chart.getType();
-        return chartType.getStringPlain() + " Settings";
+        return chartType.getStringPlain() + " Style";
     }
 
     /**
@@ -99,7 +96,7 @@ public class ChartStyleInsp extends ChartPartInsp {
     @Override
     protected void initUI()
     {
-        _inspBox = getUI(ColView.class);
+        _inspBox = getView("InspectorBox", ColView.class);
     }
 
     /**
@@ -107,9 +104,9 @@ public class ChartStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
+        // Update child inspector
         ChartPartInsp chartTypeInsp = getChartPropsInsp();
         setCurrentInspector(chartTypeInsp);
-
         if (chartTypeInsp != null)
             chartTypeInsp.resetLater();
 
@@ -117,6 +114,22 @@ public class ChartStyleInsp extends ChartPartInsp {
         String title = chartTypeInsp != null ? chartTypeInsp.getName() : getName();
         Label label = getCollapser().getLabel();
         label.setText(title);
+
+        // Get ChartStyle
+        ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
+        ChartStyle chartStyle = selPart.getChartStyle(); if (chartStyle == null) return;
+
+        // Reset ShowLineCheckBox, LineWidthText
+        boolean showLine = chartStyle.isShowLine();
+        setViewValue("ShowLineCheckBox", showLine);
+        getView("LineStyleBox").setVisible(showLine);
+        if (showLine) {
+            setViewValue("LineWidthText", chartStyle.getLineWidth());
+            setViewEnabled("LineWidthResetButton", chartStyle.getLineWidth() != 1);
+        }
+
+        // Reset ShowSymbolsCheckBox
+        setViewValue("ShowSymbolsCheckBox", chartStyle.isShowSymbols());
     }
 
     /**
@@ -125,10 +138,33 @@ public class ChartStyleInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get ChartStyle
-        ChartStyle chartStyle = getChart().getChartStyle();
+        ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
+        ChartStyle chartStyle = selPart.getChartStyle(); if (chartStyle == null) return;
 
-        // Handle TitleText, SubtitleText
-        //if(anEvent.equals("TitleText")) header.setTitle(anEvent.getStringValue());
-        //if(anEvent.equals("SubtitleText")) header.setSubtitle(anEvent.getStringValue());
+        // Handle ShowLineCheckBox, LineWidthText
+        if (anEvent.equals("ShowLineCheckBox")) {
+            boolean showLine = anEvent.getBoolValue();
+            chartStyle.setShowLine(showLine);
+            if (!showLine)
+                chartStyle.setShowSymbols(true);
+        }
+        if (anEvent.equals("LineWidthText"))
+            chartStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
+
+        // Handle LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
+        if (anEvent.equals("LineWidthAdd1Button"))
+            chartStyle.setLineWidth(chartStyle.getLineWidth() + 1);
+        if (anEvent.equals("LineWidthSub1Button"))
+            chartStyle.setLineWidth(Math.max(chartStyle.getLineWidth() - 1, 1));
+        if (anEvent.equals("LineWidthResetButton"))
+            chartStyle.setLineWidth(1);
+
+        // Handle ShowSymbolsCheckBox
+        if (anEvent.equals("ShowSymbolsCheckBox")) {
+            boolean showSymbols = anEvent.getBoolValue();
+            chartStyle.setShowSymbols(showSymbols);
+            if (!showSymbols)
+                chartStyle.setShowLine(true);
+        }
     }
 }

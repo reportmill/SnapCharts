@@ -8,27 +8,12 @@
     <Label Margin="0,10,0,0" text="Data Type:" />
     <ComboBox Name="DataTypeComboBox" MinWidth="80" MinHeight="22" />
   </RowView>
-  <RowView Padding="4" Spacing="4">
+  <RowView Name="AxisTypeYBox" Padding="4" Spacing="4">
     <Label text="Axis Type Y:" />
     <RadioButton Name="YAxisButton" text="Y" />
     <RadioButton Name="Y2AxisButton" text="Y2" />
     <RadioButton Name="Y3AxisButton" text="Y3" />
     <RadioButton Name="Y4AxisButton" text="Y4" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <Label text="Line width:" />
-    <TextField Name="LineWidthText" GrowWidth="true" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <Label text="Line color:" />
-    <ColorWell MinWidth="60" MinHeight="30" />
-    <ColorButton PrefWidth="32" PrefHeight="22" Title="Stroke" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowSymbolsCheckBox" text="Show Symbols" />
-  </RowView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label text="X Expr:" />

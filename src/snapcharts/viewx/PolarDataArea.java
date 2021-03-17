@@ -233,9 +233,18 @@ public class PolarDataArea extends DataArea {
         DataSet dset = getDataSet();
         int dsetIndex = dset.getIndex();
 
+        // Get Selection, Reveal info
         DataPoint selPoint = getChartView().getTargDataPoint();
         boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
         double reveal = getReveal();
+
+        // Get style info
+        ChartStyle chartStyle = dset.getChartStyle();
+        boolean showLine = chartStyle.isShowLine();
+        int lineWidth = chartStyle.getLineWidth(); if (isSelected) lineWidth++;
+        Stroke dataStroke = XYDataArea.getDataStroke(lineWidth);
+        Color dataColor = getDataColor(dsetIndex);
+        boolean showSymbols = chartStyle.isShowSymbols();
 
         // Get path - if Reveal is active, get path spliced
         Shape path = getDataPath();
@@ -243,15 +252,16 @@ public class PolarDataArea extends DataArea {
             path = new SplicerShape(path, 0, reveal);
 
         // Set dataset color, stroke and paint
-        Color color = getDataColor(dsetIndex);
-        aPntr.setColor(color);
-        aPntr.setStroke(isSelected ? Stroke3 : Stroke2);
+        aPntr.setColor(dataColor);
+        aPntr.setStroke(dataStroke);
 
         // If ChartType.LINE, draw path
-        aPntr.setColor(color.blend(Color.CLEAR, .98));
-        aPntr.draw(path);
-        aPntr.setColor(color);
-        aPntr.draw(path);
+        if (showLine) {
+            aPntr.setColor(dataColor.blend(Color.CLEAR, .98));
+            aPntr.draw(path);
+            aPntr.setColor(dataColor);
+            aPntr.draw(path);
+        }
 
         // If Reveal is active, paint end point
         if (path instanceof SplicerShape) {
@@ -268,9 +278,6 @@ public class PolarDataArea extends DataArea {
             aPntr.fill(tailShape);
             aPntr.restore();
         }
-
-        // Get DataSets that ShowSymbols
-        boolean showSymbols = dset.isShowSymbols();
 
         // If reveal is not full (1) then clip
         if (reveal < 1) {
@@ -290,7 +297,7 @@ public class PolarDataArea extends DataArea {
 
                 // Get symbol and color and paint
                 Shape symbol = getDataSymbolShape(dsetIndex).copyFor(new Transform(dispX - 4, dispY - 4));
-                aPntr.setColor(color);
+                aPntr.setColor(dataColor);
                 aPntr.fill(symbol);
             }
         }

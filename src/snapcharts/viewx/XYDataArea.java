@@ -2,10 +2,7 @@ package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.PropChange;
-import snapcharts.model.Axis;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
+import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
 import snapcharts.view.DataView;
@@ -57,13 +54,20 @@ public class XYDataArea extends DataArea {
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get DataSet and index
+        // Get info
         DataSet dset = getDataSet();
         int dsetIndex = dset.getIndex();
 
         // Get whether DataArea/DataSet is selected
         DataPoint selPoint = getChartView().getTargDataPoint();
         boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
+
+        // Get style info
+        ChartStyle chartStyle = dset.getChartStyle();
+        boolean showLine = chartStyle.isShowLine() && _chartType == ChartType.LINE;
+        int lineWidth = chartStyle.getLineWidth(); if (isSelected) lineWidth++;
+        Stroke dataStroke = getDataStroke(lineWidth);
+        boolean showSymbols = chartStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
 
         // If reveal is not full (1) then clip
         double reveal = getReveal();
@@ -84,10 +88,10 @@ public class XYDataArea extends DataArea {
 
         // Set color, stroke
         aPntr.setColor(dataColor);
-        aPntr.setStroke(isSelected ? Stroke2 : Stroke1);
+        aPntr.setStroke(dataStroke);
 
         // If ChartType.LINE, draw path
-        if (_chartType == ChartType.LINE) {
+        if (showLine) {
             aPntr.setStrokePure(true);
             aPntr.draw(dataShape);
             aPntr.setStrokePure(false);
@@ -112,7 +116,6 @@ public class XYDataArea extends DataArea {
         }
 
         // If ShowSymbols, paint symbols
-        boolean showSymbols = dset.isShowSymbols() || _chartType == ChartType.SCATTER;
         if (showSymbols)
             paintSymbols(aPntr);
 
@@ -299,5 +302,16 @@ public class XYDataArea extends DataArea {
     protected void axisViewDidChange(PropChange aPC)
     {
         clearDataPath();
+    }
+
+    /**
+     * Utility.
+     */
+    protected static Stroke getDataStroke(int aLineWidth)
+    {
+        if (aLineWidth == 1) return Stroke1;
+        if (aLineWidth == 2) return Stroke2;
+        if (aLineWidth == 3) return Stroke3;
+        return new Stroke(aLineWidth, Stroke.Cap.Round, Stroke.Join.Round, 0);
     }
 }

@@ -68,6 +68,14 @@ public enum ChartType {
     }
 
     /**
+     * Returns whether type supports multiple Y Axes.
+     */
+    public boolean isMultiYAxisType()
+    {
+        return this == LINE || this == AREA || this == SCATTER;
+    }
+
+    /**
      * Returns the name in plain camel-case format.
      */
     public String getStringPlain()

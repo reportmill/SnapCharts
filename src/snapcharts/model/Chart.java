@@ -3,6 +3,7 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Paint;
 import snap.util.*;
+import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
 
 /**
@@ -390,6 +391,10 @@ public class Chart extends ChartPart {
     @Override
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
+        // Set Chart
+        if (anArchiver instanceof ChartArchiver)
+            ((ChartArchiver) anArchiver).setChart(this);
+
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 

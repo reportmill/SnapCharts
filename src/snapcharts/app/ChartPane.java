@@ -12,6 +12,7 @@ import snap.util.Undoer;
 import snap.view.*;
 import snapcharts.model.Chart;
 import snapcharts.doc.ChartArchiver;
+import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.view.ChartView;
@@ -310,8 +311,11 @@ public class ChartPane extends DocItemPane {
         _insp.resetLater();
 
         // Update ShowDataSetTabs
-        if (!_dataSetMode)
-            setShowDataSetTabs(getSel().getSelChartPart() instanceof DataSet);
+        if (!_dataSetMode) {
+            ChartPart selPart = getSel().getSelChartPart();
+            boolean showDataSets = selPart instanceof DataSetList || selPart instanceof DataSet;
+            setShowDataSetTabs(showDataSets);
+        }
     }
 
     /**

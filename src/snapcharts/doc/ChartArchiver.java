@@ -11,12 +11,28 @@ import java.util.Map;
  */
 public class ChartArchiver extends XMLArchiver {
 
+    // The Chart (gets set from inside its fromXML
+    private Chart  _chart;
+
     /**
      * Constructor.
      */
     public ChartArchiver()
     {
         setIgnoreCase(true);
+    }
+
+    /**
+     * Returns the Chart.
+     */
+    public Chart getChart()  { return _chart; }
+
+    /**
+     * Sets the Chart.
+     */
+    public void setChart(Chart aChart)
+    {
+        _chart = aChart;
     }
 
     /**

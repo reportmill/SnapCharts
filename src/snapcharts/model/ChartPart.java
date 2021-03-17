@@ -4,6 +4,7 @@ import snap.gfx.Effect;
 import snap.gfx.Font;
 import snap.gfx.Paint;
 import snap.util.*;
+import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
 
 import java.util.*;
@@ -70,7 +71,28 @@ public class ChartPart implements XMLArchiver.Archivable {
     /**
      * Sets the chart.
      */
-    protected void setChart(Chart aChart)  { _chart = aChart; }
+    protected void setChart(Chart aChart)
+    {
+        _chart = aChart;
+    }
+
+    /**
+     * Returns the ChartType.
+     */
+    public ChartType getChartType()
+    {
+        Chart chart = getChart();
+        return chart != null ? chart.getType() : ChartType.LINE;
+    }
+
+    /**
+     * Returns the ChartStyle.
+     */
+    public ChartStyle getChartStyle()
+    {
+        Chart chart = getChart();
+        return chart != null ? chart.getChartStyle() : null;
+    }
 
     /**
      * Returns the dataset.
@@ -285,6 +307,12 @@ public class ChartPart implements XMLArchiver.Archivable {
     @Override
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
+        // Go ahead and set chart
+        if (anArchiver instanceof ChartArchiver) {
+            Chart chart = ((ChartArchiver) anArchiver).getChart();
+            setChart(chart);
+        }
+
         // Unarchive Name
         if (anElement.hasAttribute(Name_Prop))
             setName(anElement.getAttributeValue(Name_Prop));

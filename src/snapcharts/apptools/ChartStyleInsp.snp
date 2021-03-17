@@ -1,3 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
+  <ColView Name="InspectorBox" />
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowLineCheckBox" text="Show Line" />
+  </RowView>
+  <ColView Name="LineStyleBox" Padding="0,0,0,25" FillWidth="true">
+    <RowView Padding="4" Spacing="4">
+      <Label text="Line width:" />
+      <TextField Name="LineWidthText" PrefWidth="50" />
+      <Button Name="LineWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="LineWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="LineWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
+      <Label text="Line color:" />
+      <ColorWell MinWidth="60" MinHeight="30" />
+      <ColorButton PrefWidth="32" PrefHeight="22" Title="Stroke" />
+    </RowView>
+  </ColView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowSymbolsCheckBox" text="Show Symbols" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
+  </RowView>
 </ColView>

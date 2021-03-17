@@ -5,6 +5,7 @@ import snap.view.ViewEvent;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
+import snapcharts.model.DataSetList;
 
 /**
  * A class to display data (via DataArea).
@@ -44,7 +45,9 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     public T getChartPart()
     {
         Chart chart = getChart();
-        return (T) chart.getChartStyle();
+        DataSetList dataList = chart.getDataSetList();
+        ChartPart chartPart = dataList.getDataSetCount() > 0 ? dataList.getDataSet(0) : dataList;
+        return (T) chartPart;
     }
 
     /**

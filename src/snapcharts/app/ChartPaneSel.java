@@ -87,19 +87,30 @@ public class ChartPaneSel {
      */
     private ChartPartView getChartPartViewForPart(ChartPart aChartPart)
     {
+        // Handle Chart
         if (aChartPart instanceof Chart)
             return _chartView;
+
+        // Handle Header
         if (aChartPart instanceof Header)
             return _chartView.getHeaderView();
+
+        // Handle Axis
         if (aChartPart instanceof Axis) {
             Axis axis = (Axis) aChartPart;
             AxisType axisType = axis.getType();
             return _chartView.getChartHelper().getAxisView(axisType);
         }
+
+        // Handle Legend
         if (aChartPart instanceof Legend)
             return _chartView.getLegendView();
-        if (aChartPart instanceof ChartStyle)
+
+        // Handle ChartStyle
+        if (aChartPart instanceof DataSetList || aChartPart instanceof DataSet)
             return _chartView.getDataView();
+
+        // Handle unknown
         return null;
     }
 
