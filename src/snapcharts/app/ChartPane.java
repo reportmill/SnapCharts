@@ -268,6 +268,9 @@ public class ChartPane extends DocItemPane {
             //_chartBox.setPrefHeight(400); _chartBox.setGrowHeight(false);
             _chartBox.setPadding(20, 20, 20, 20);
         }
+
+        // Config ResetButton to provide click events
+        //enableEvents("ResetButton", MouseRelease);
     }
 
     /**
@@ -338,8 +341,16 @@ public class ChartPane extends DocItemPane {
 
         // Handle ResetButton
         if (anEvent.equals("ResetButton")) {
+
+            // Handle MouseRelase double-click
             ChartView chartView = getChartView();
-            chartView.getChartHelper().resetAxesAnimated();
+            if (anEvent.isMouseEvent()) {
+                if (anEvent.getClickCount() == 2)
+                    chartView.animate();
+            }
+
+            // Handle standard action
+            else chartView.getChartHelper().resetAxesAnimated();
         }
 
         // Handle TabView

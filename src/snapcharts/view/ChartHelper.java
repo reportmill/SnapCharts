@@ -233,6 +233,15 @@ public abstract class ChartHelper {
      */
     public void resetAxesAnimated()
     {
+        // If axes don't need reset, do anim instead
+        boolean isAxisOverrideSet = false;
+        for (AxisView axisView : getAxisViews())
+            isAxisOverrideSet |= axisView.isAxisMinOverrideSet() || axisView.isAxisMaxOverrideSet();
+        if (!isAxisOverrideSet) {
+            getChartView().animate();
+            return;
+        }
+
         for (AxisView axisView : getAxisViews())
             axisView.resetAxesAnimated();
     }
