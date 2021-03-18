@@ -158,21 +158,9 @@ public class DocPane extends ViewOwner {
      */
     public DocPane newDoc()
     {
-        // Crummy sample
-        if (ViewUtils.isAltDown()) {
-            //WebURL url = WebURL.getURL(App.class, "Sample.json");
-            WebURL url = WebURL.getURL("/Users/jeff/Samples/Charts/Sample.json");
-            Doc doc = Doc.createDocFromSource(url);
-            setDoc(doc);
-        }
-
-        // Create/set empty doc
-        else {
-            Doc doc = new Doc();
-            doc.setName("Untitled");
-            setDoc(doc);
-        }
-
+        Doc doc = new Doc();
+        doc.setName("Untitled");
+        setDoc(doc);
         return this;
     }
 

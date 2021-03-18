@@ -1,5 +1,4 @@
 package snapcharts.app;
-
 import snap.util.ListUtils;
 import snap.util.Prefs;
 import snap.util.SnapUtils;
@@ -276,11 +275,21 @@ public class WelcomePanel extends ViewOwner {
      */
     protected void openSamples()
     {
-        DocPane dpane = new DocPane().newDoc();
-        dpane.setWindowVisible(true);
-        hide();
+        // If alt-down, open favorite sample
+        if (ViewUtils.isAltDown()) {
+            WebURL url = WebURL.getURL("https://reportmill.com/snaptea/SnapChartsSamples/SolarData/SolarData.charts");
+            DocPane dpane = new DocPane().open(url);
+            dpane.setWindowVisible(true);
+            hide();
+        }
 
-        runLaterDelayed(300, () -> dpane.showSamples());
+        // Otherwise, just newFile + showSamples
+        else {
+            DocPane dpane = new DocPane().newDoc();
+            dpane.setWindowVisible(true);
+            hide();
+            runLaterDelayed(300, () -> dpane.showSamples());
+        }
     }
 
     /**
