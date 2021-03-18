@@ -1,9 +1,6 @@
 package snapcharts.viewx;
 import snapcharts.model.*;
-import snapcharts.view.AxisView;
-import snapcharts.view.ChartHelper;
-import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.*;
 
 /**
  * A ChartHelper for ChartType BAR_3D.
@@ -61,6 +58,7 @@ public class Bar3DChartHelper extends ChartHelper {
     /**
      * Override for chart type.
      */
+    @Override
     public void resetView()
     {
         // Make sure all DataSet.AxisTypeY are just Y
@@ -71,5 +69,17 @@ public class Bar3DChartHelper extends ChartHelper {
 
         // Do normal version
         super.resetView();
+    }
+
+    /**
+     * Override to reset view transform.
+     */
+    @Override
+    public void resetAxesAnimated()
+    {
+        DataArea[] dataAreas = getDataAreas();
+        for (DataArea dataArea : dataAreas)
+            if (dataArea instanceof Bar3DDataArea)
+                ((Bar3DDataArea)dataArea).resetViewMatrixAnimated();
     }
 }

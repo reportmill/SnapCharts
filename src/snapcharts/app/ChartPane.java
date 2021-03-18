@@ -15,6 +15,7 @@ import snapcharts.doc.ChartArchiver;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
+import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
 import java.util.List;
@@ -76,6 +77,11 @@ public class ChartPane extends DocItemPane {
      * Returns the ChartView.
      */
     public ChartView getChartView()  { return _chartView; }
+
+    /**
+     * Returns the ChartHelper.
+     */
+    public ChartHelper getChartHelper()  { return _chartView.getChartHelper(); }
 
     /**
      * Returns the ChartView.DataView
@@ -268,9 +274,6 @@ public class ChartPane extends DocItemPane {
             //_chartBox.setPrefHeight(400); _chartBox.setGrowHeight(false);
             _chartBox.setPadding(20, 20, 20, 20);
         }
-
-        // Config ResetButton to provide click events
-        //enableEvents("ResetButton", MouseRelease);
     }
 
     /**
@@ -341,16 +344,8 @@ public class ChartPane extends DocItemPane {
 
         // Handle ResetButton
         if (anEvent.equals("ResetButton")) {
-
-            // Handle MouseRelase double-click
-            ChartView chartView = getChartView();
-            if (anEvent.isMouseEvent()) {
-                if (anEvent.getClickCount() == 2)
-                    chartView.animate();
-            }
-
-            // Handle standard action
-            else chartView.getChartHelper().resetAxesAnimated();
+            ChartHelper chartHelper = getChartHelper();
+            chartHelper.resetAxesAnimated();
         }
 
         // Handle TabView

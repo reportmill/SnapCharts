@@ -3,6 +3,7 @@ import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.gfx3d.*;
+import snap.view.ViewAnim;
 import snapcharts.model.DataSet;
 import snapcharts.model.Intervals;
 import snapcharts.model.DataPoint;
@@ -49,14 +50,25 @@ public class Bar3DDataArea extends BarDataArea {
         _camera = _camView.getCamera();
         _scene = _camView.getScene();
 
-        _camera.setYaw(26); _camera.setPitch(10); _camera.setDepth(100);
-        _camera.setFocalLength(8*72); _camera.setAdjustZ(true);
+        setDefaultViewTransform();
     }
 
     /**
      * Returns the CameraView.
      */
     public CameraView getCameraView()  { return _camView; }
+
+    /**
+     * Resets the default view transform.
+     */
+    public void setDefaultViewTransform()
+    {
+        _camera.setYaw(26);
+        _camera.setPitch(10);
+        _camera.setDepth(100);
+        _camera.setFocalLength(8*72);
+        _camera.setAdjustZ(true);
+    }
 
     /**
      * Returns the number of suggested ticks between the intervals of the RPG'd graph.
@@ -412,6 +424,7 @@ public class Bar3DDataArea extends BarDataArea {
     /**
      * Override to rebuild chart.
      */
+    @Override
     public void setReveal(double aValue)
     {
         super.setReveal(aValue);
@@ -420,10 +433,20 @@ public class Bar3DDataArea extends BarDataArea {
             _camView.setYaw(90);
             _camView.setPitch(0);
             _camView.setOffsetZ(200);
-            _camView.getAnimCleared(1000).setValue(CameraView.Yaw_Prop,26);
-            _camView.getAnim(1000).setValue(CameraView.Pitch_Prop,10);
-            _camView.getAnim(1000).setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
+            resetViewMatrixAnimated();
         }
+    }
+
+    /**
+     * Resets the ViewMatrix animated.
+     */
+    public void resetViewMatrixAnimated()
+    {
+        ViewAnim anim = _camView.getAnimCleared(1000);
+        anim.setValue(CameraView.Yaw_Prop,26);
+        anim.setValue(CameraView.Pitch_Prop,10);
+        anim.setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
+        anim.setOnFinish(() -> _camera.setAdjustZ(true));
     }
 
     /**
