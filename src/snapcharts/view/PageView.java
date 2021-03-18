@@ -110,6 +110,15 @@ public class PageView extends ParentView {
         _chartViews.add(chartView);
     }
 
+    /**
+     * Animates all charts on page.
+     */
+    public void animateOnShow()
+    {
+        for (ChartView chartView : _chartViews)
+            chartView.animateOnShow();
+    }
+
     @Override
     protected void layoutImpl()
     {

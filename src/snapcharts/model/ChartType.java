@@ -76,6 +76,14 @@ public enum ChartType {
     }
 
     /**
+     * Returns whether type is 3D.
+     */
+    public boolean is3D()
+    {
+        return this == BAR_3D || this == PIE_3D || this == LINE_3D;
+    }
+
+    /**
      * Returns the name in plain camel-case format.
      */
     public String getStringPlain()

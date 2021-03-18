@@ -107,7 +107,8 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public void setReveal(double aValue)
     {
-        for (DataArea dataArea : getDataAreas())
+        DataArea[] dataAreas = getDataAreas();
+        for (DataArea dataArea : dataAreas)
             dataArea.setReveal(aValue);
     }
 
@@ -116,8 +117,9 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     protected int getRevealTime()
     {
+        DataArea[] dataAreas = getDataAreas();
         int revealTime = 0;
-        for (DataArea dataArea : getDataAreas())
+        for (DataArea dataArea : dataAreas)
             revealTime = Math.max(revealTime, dataArea.getRevealTime());
         return revealTime;
     }

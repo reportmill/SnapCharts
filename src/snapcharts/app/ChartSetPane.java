@@ -216,6 +216,10 @@ public class ChartSetPane extends DocItemPane {
         _selPageIndex = -1;
         setSelPageIndex(0);
 
+        // Animate charts on first page
+        PageView page0 = getPage(0);
+        page0.animateOnShow();
+
         _resetChartsRun = null;
 
         resetLater();

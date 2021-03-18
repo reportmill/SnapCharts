@@ -34,6 +34,9 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     // The amount of the chart to show horizontally (0-1)
     private double  _reveal = 1;
 
+    // Whether to animate on show
+    private boolean  _animateOnShow;
+
     // The ToolTipView
     private ToolTipView  _toolTipView;
 
@@ -183,9 +186,13 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         // Activate
         _chartHelper.activate();
 
-        // Trigger animate (after delay so size is set for first time)
-        setReveal(0);
-        ViewUtils.runLater(() -> animate());
+        // Animate 3D charts (I can't help myself
+        if (getChart().getType().is3D())
+            animateOnShow();
+
+        // If AnimateOnShow, reset reveal
+        if (_animateOnShow)
+            setReveal(0);
     }
 
     /**
@@ -245,6 +252,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Reset ChartHelper
         chartHelper.resetView();
+
+        // Trigger animate on show
+        if (_animateOnShow && isShowing())
+            animate();
     }
 
     /**
@@ -258,12 +269,20 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
             updater.runBeforeUpdate(_resetViewRun = _resetViewRunShared);
     }
 
+    /**
+     * Override to trigger reset on showing
+     */
     @Override
     protected void setShowing(boolean aValue)
     {
-        if (aValue==isShowing()) return; super.setShowing(aValue);
-        if (aValue)
+        // Do normal version
+        if (aValue==isShowing()) return;
+        super.setShowing(aValue);
+
+        // If Showing, trigger reset
+        if (aValue) {
             resetLater();
+        }
     }
 
     /**
@@ -382,9 +401,28 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public void animate()
     {
+        // Trigger animate (after delay so size is set for first time)
+        setReveal(0);
+        ViewUtils.runLater(() -> animateImpl());
+        _animateOnShow = false;
+    }
+
+    /**
+     * Registers for animation.
+     */
+    private void animateImpl()
+    {
         setReveal(0);
         int revealTime = getRevealTime();
         getAnimCleared(revealTime).setValue(Reveal_Prop,1).setLinear().play();
+    }
+
+    /**
+     * Whether to animate on show.
+     */
+    public void animateOnShow()
+    {
+        _animateOnShow = true;
     }
 
     /**
