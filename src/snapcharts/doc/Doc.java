@@ -2,6 +2,7 @@ package snapcharts.doc;
 import snap.util.FilePathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
+import snap.web.PathUtils;
 import snap.web.WebURL;
 import snapcharts.model.Chart;
 
@@ -30,10 +31,33 @@ public class Doc extends DocItemGroup {
     }
 
     /**
+     * Returns the filename.
+     */
+    public String getFilename()
+    {
+        WebURL url = getSourceURL();
+        String filename = url != null ? FilePathUtils.getFileName(url.getPath()) : "Untitled.charts";
+        if (!filename.toLowerCase().endsWith(".charts"))
+            filename = "Untitled.charts";
+        return filename;
+    }
+
+    /**
      * Override to return this.
      */
     @Override
     public Doc getDoc()  { return this; }
+
+    /**
+     * Returns XML String for ChartDoc.
+     */
+    public String getChartsFileXMLString()
+    {
+        ChartArchiver archiver = new ChartArchiver();
+        XMLElement xml = archiver.writeToXML(this);
+        String xmlStr = xml.getString();
+        return xmlStr;
+    }
 
     /**
      * Returns XML bytes for ChartDoc.
