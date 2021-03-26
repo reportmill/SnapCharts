@@ -19,6 +19,10 @@ public class AppEnv {
     // The shared instance
     private static AppEnv  _shared;
 
+    // Constants
+    private static final String SNAPCHARTS_URL = "https://reportmill.com/snaptea/SnapCharts/classes.js";
+    private static final String SNAPCHARTS_URL_LOCAL = "http://localhost:8080/classes.js";
+
     /**
      * Open a chart doc in browser.
      */
@@ -64,9 +68,9 @@ public class AppEnv {
     private String getHTMLString(Doc aDoc)
     {
         // Get URL string for SnapCharts script
-        String urls = "http://reportmill.com/snaptea/SnapCharts/classes.js";
+        String urls = SNAPCHARTS_URL;
         if (ViewUtils.isAltDown())
-            urls = "http://localhost:8080/classes.js";
+            urls = SNAPCHARTS_URL_LOCAL;
 
         // Get SelOwner and XML string
         String docFilename = aDoc.getFilename();
