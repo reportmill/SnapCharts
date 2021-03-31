@@ -4,7 +4,6 @@ import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
-import snap.text.StringBox;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.StringView;
@@ -12,6 +11,9 @@ import snap.view.ViewAnim;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A View to display an axis.
@@ -40,7 +42,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     private Intervals  _intervals;
 
     // The tick labels as StringBoxes
-    private StringBox[]  _tickLabels;
+    private TickLabel[]  _tickLabels;
 
     // A helper to do tick label formatting
     private AxisViewTickFormat _tickFormat;
@@ -274,52 +276,100 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     /**
      * Returns the array of tick label StringBoxes.
      */
-    protected StringBox[] getTickLabels()
+    protected TickLabel[] getTickLabels()
     {
         // If already set, just return
         if (_tickLabels != null) return _tickLabels;
 
         // Special case, bar
-        if (getAxisType()==AxisType.X) {
-            boolean isBar = getChart().getType().isBarType();
-            DataSetList dsetList = getDataSetList();
-            DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
-            DataType dataType = dset != null ? dset.getDataType() : null;
-            if (dataType==DataType.CY) { //isBar || dataType==DataType.IY || dataType==DataType.CY
-                int pointCount = dsetList.getPointCount();
-                StringBox[] sboxes = new StringBox[pointCount];
-                for (int i = 0; i < pointCount; i++) {
-                    String str = dset.getC(i);
-                    StringBox sbox = sboxes[i] = new StringBox(str);
-                    sbox.setFont(getFont());
-                    sbox.setColor(AXIS_LABELS_COLOR);
-                }
-                _tickLabels = sboxes;
-                layoutTickLabels();
-                return _tickLabels;
-            }
-        }
+        if (isBarAxis())
+            _tickLabels = createTickLabelsForBarAxis();
+        else _tickLabels = createTickLabels();
 
-        // Get Intervals info
-        Intervals intervals = getIntervals();
-        int count = intervals.getCount();
-
-        // Create array
-        StringBox[] sboxes = new StringBox[count];
-
-        // Iterate over intervals
-        for (int i = 0; i < count; i++) {
-            double dataX = intervals.getInterval(i);
-            String str = _tickFormat.format(dataX); //getLabelStringForValueAndDelta(dataX, delta);
-            StringBox sbox = sboxes[i] = new StringBox(str);
-            sbox.setFont(getFont());
-            sbox.setColor(AXIS_LABELS_COLOR);
-        }
-
-        // Set/return
-        _tickLabels = sboxes;
+        // Layout and return
         layoutTickLabels();
         return _tickLabels;
+    }
+
+    /**
+     * Returns the array of tick label StringBoxes.
+     */
+    protected TickLabel[] createTickLabels()
+    {
+        // Get Intervals info
+        Intervals intervals = getIntervals();
+        int intervalCount = intervals.getCount();
+        double delta = intervals.getDelta();
+        boolean log = isLog();
+
+        // Create list
+        List<TickLabel> tickLabels = new ArrayList<>(intervalCount);
+
+        // Iterate over intervals
+        for (int i = 0; i < intervalCount; i++) {
+            double dataX = intervals.getInterval(i);
+
+            // If edge div too close to next div, skip
+            if (!log && (i == 0 || i + 1 == intervalCount)) {
+                double nextX = intervals.getInterval(i == 0 ? 1 : intervalCount - 2);
+                double delta2 = i == 0 ? (nextX - dataX) : (dataX - nextX);
+                if (delta2 < delta * .99) {  // Was .67
+                    continue;
+                }
+            }
+
+            // Create/config/add TickLabel
+            TickLabel tickLabel = new TickLabel(this, dataX);
+            String str = _tickFormat.format(dataX);
+            tickLabel.setText(str);
+            tickLabel.setFont(getFont());
+            tickLabel.setTextFill(AXIS_LABELS_COLOR);
+            tickLabels.add(tickLabel);
+        }
+
+        // Create/return array of TickLabels
+        return tickLabels.toArray(new TickLabel[0]);
+    }
+
+    /**
+     * Returns whether axis is a bar axis (labels represent bin indexs, not axis values).
+     */
+    private boolean isBarAxis()
+    {
+        if (getAxisType() != AxisType.X)
+            return false;
+        if (getChart().getType().isBarType())
+            return true;
+
+        // Also treat IY and CY Data sets as Bar axis types
+        DataSetList dsetList = getDataSetList();
+        DataSet dset = dsetList.getDataSetCount() > 0 ? dsetList.getDataSet(0) : null;
+        DataType dataType = dset != null ? dset.getDataType() : null;
+        return dataType == DataType.IY || dataType == DataType.CY;
+    }
+
+    /**
+     * Creates Bar Axis Labels.
+     */
+    private TickLabel[] createTickLabelsForBarAxis()
+    {
+        // Get DataSet and pointCount
+        DataSetList dsetList = getDataSetList();
+        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
+        int pointCount = dsetList.getPointCount();
+        TickLabel[] tickLabels = new TickLabel[pointCount];
+
+        // Iterate over points and create/set TickLabel
+        for (int i = 0; i < pointCount; i++) {
+            TickLabel tickLabel = tickLabels[i] = new TickLabel(this, i + .5);
+            String str = dset.getString(i); // was getC(i)
+            tickLabel.setText(str);
+            tickLabel.setFont(getFont());
+            tickLabel.setTextFill(AXIS_LABELS_COLOR);
+        }
+
+        // Return TickLabels
+        return tickLabels;
     }
 
     /**
@@ -340,9 +390,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     protected void paintFront(Painter aPntr)
     {
-        StringBox tickLabels[] = getTickLabels();
-        for (StringBox sbox : tickLabels)
-            sbox.paint(aPntr);
+        TickLabel tickLabels[] = getTickLabels();
+        for (TickLabel tickLabel : tickLabels)
+            tickLabel.paintTickLabel(aPntr);
     }
 
     /**

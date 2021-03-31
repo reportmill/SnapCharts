@@ -1,10 +1,8 @@
 package snapcharts.view;
 import snap.geom.Pos;
 import snap.geom.Side;
-import snap.text.StringBox;
 import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
-import snapcharts.model.Intervals;
 
 /**
  * An AxisView subclass for AxisY.
@@ -81,8 +79,8 @@ public class AxisViewY extends AxisView {
         }
 
         // Update TickLabels X
-        StringBox[] tickLabels = getTickLabels();
-        for (StringBox tickLabel : tickLabels)
+        TickLabel[] tickLabels = getTickLabels();
+        for (TickLabel tickLabel : tickLabels)
             tickLabel.setX(ticksX);
 
         // Set TitleView bounds
@@ -108,43 +106,30 @@ public class AxisViewY extends AxisView {
             ticksAlign = Pos.TOP_LEFT;
         }
 
-        // Get TickLabels and Intervals
-        StringBox[] tickLabels = getTickLabels();
-        Intervals intervals = getIntervals();
-        int count = intervals.getCount();
-        double delta = intervals.getDelta();
-        boolean log = isLog();
+        // Get TickLabels
+        TickLabel[] tickLabels = getTickLabels();
+        int tickLabelCount = tickLabels.length;
 
         // Polar stuff
         boolean isPolar = getChart().getType().isPolarType();
         double shiftY = isPolar ? getY() - getDataView().getY() : 0;
 
         // Iterate over tick labels and set location
-        for (int i=0; i<count; i++) {
+        for (int i=0; i<tickLabelCount; i++) {
 
             // Get Y in data and display coords and draw tick line
-            double dataY = intervals.getInterval(i);
+            TickLabel tickLabel = tickLabels[i];
+            double dataY = tickLabel.getCoord();
             double dispY = Math.round(dataToView(dataY));
 
             if (isPolar)
                 dispY -= shiftY;
 
-            // If edge div too close to next div, skip
-            if (!log && (i==0 || i+1==count)) {
-                double nextY = intervals.getInterval(i==0 ? 1 : count - 2);
-                double delta2 = i==0 ? (nextY - dataY) : (dataY - nextY);
-                if (delta2<delta*.67) {
-                    tickLabels[i].setString("");
-                    continue;
-                }
-            }
-
             // Get/set TickLabel bounds
-            StringBox tickLabel = tickLabels[i];
-            double tickH = tickLabel.getStringHeight();
+            double tickH = tickLabel.getPrefHeight();
             double tickY = dispY - Math.round(tickH / 2);
             tickLabel.setAlign(ticksAlign);
-            tickLabel.setRect(ticksX, tickY, ticksW, tickH);
+            tickLabel.setBounds(ticksX, tickY, ticksW, tickH);
         }
     }
 }

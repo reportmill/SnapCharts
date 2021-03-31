@@ -1,9 +1,6 @@
 package snapcharts.view;
 import snap.gfx.*;
-import snap.text.StringBox;
 import snapcharts.model.AxisX;
-import snapcharts.model.ChartType;
-import snapcharts.model.Intervals;
 
 /**
  * A view to paint Chart X Axis.
@@ -78,55 +75,28 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     protected void layoutTickLabels()
     {
-        // Get TickLabels and Intervals
-        StringBox[] tickLabels = getTickLabels();
-        Intervals intervals = getIntervals();
-        int count = intervals.getCount();
-        double delta = intervals.getDelta();
-        boolean log = isLog();
-
-        // Get whether this is Axis for Bar chart
-        boolean isBar = getChart().getType()==ChartType.BAR;
+        // Get TickLabels and info
+        TickLabel[] tickLabels = getTickLabels();
+        int tickLabelCount = tickLabels.length;
         boolean isPolar = getChart().getType().isPolarType();
         double shiftX = isPolar ? getX() - getDataView().getX() : 0;
 
         // Iterate over tick labels and set location
-        for (int i=0; i<count; i++) {
+        for (int i=0; i<tickLabelCount; i++) {
 
             // Get X in data and display coords and draw tick line
-            double dataX = intervals.getInterval(i);
+            TickLabel tickLabel = tickLabels[i];
+            double dataX = tickLabel.getCoord();
             double dispX = Math.round(dataToView(dataX));
 
             if (isPolar)
                 dispX -= shiftX;
 
-            // If Bar, handle special: Shift labels to mid interval and skip last
-            if (isBar) {
-                if (i + 1 == count) {
-                    if (i < tickLabels.length)
-                        tickLabels[i].setString("");
-                    break;
-                }
-                dataX = dataX + delta / 2;
-                dispX = Math.round(dataToView(dataX));
-            }
-
-            // If edge div too close to next div, skip
-            else if (!log && (i == 0 || i + 1 == count)) {
-                double nextX = intervals.getInterval(i == 0 ? 1 : count - 2);
-                double delta2 = i == 0 ? (nextX - dataX) : (dataX - nextX);
-                if (delta2 < delta * .67) {
-                    tickLabels[i].setString("");
-                    continue;
-                }
-            }
-
             // Get/set TickLabel bounds
-            StringBox tickLabel = tickLabels[i];
-            double tickW = tickLabel.getStringWidth();
-            double tickH = tickLabel.getStringHeight();
+            double tickW = tickLabel.getPrefWidth();
+            double tickH = tickLabel.getPrefHeight();
             double tickX = dispX - Math.round(tickW / 2);
-            tickLabel.setRect(tickX, AXIS_MARGIN, tickW, tickH);
+            tickLabel.setBounds(tickX, AXIS_MARGIN, tickW, tickH);
         }
     }
 }
