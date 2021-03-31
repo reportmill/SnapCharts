@@ -68,12 +68,15 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double titleX = Math.round((areaW - titleW)/2);
         double titleY = AXIS_MARGIN + ticksH + TITLE_TICKS_SPACING;
         _titleView.setBounds(titleX, titleY, titleW, titleH);
+
+        // Layout TickLabels
+        layoutTickLabels();
     }
 
     /**
      * Layout TickLabels.
      */
-    protected void layoutTickLabels()
+    private void layoutTickLabels()
     {
         // Get TickLabels and info
         TickLabel[] tickLabels = getTickLabels();

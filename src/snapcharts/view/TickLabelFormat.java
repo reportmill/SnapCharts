@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 /**
  * A class to format tick labels.
  */
-public class AxisViewTickFormat {
+public class TickLabelFormat {
 
     // The AxisView
     private AxisView  _axisView;
@@ -31,7 +31,7 @@ public class AxisViewTickFormat {
     /**
      * Constructor.
      */
-    public AxisViewTickFormat(AxisView anAxisView)
+    public TickLabelFormat(AxisView anAxisView)
     {
         _axisView = anAxisView;
     }
@@ -193,6 +193,10 @@ public class AxisViewTickFormat {
         if (!NO_FRATIONAL_END_LABELS) {
             minSample = format(ivals.getMin() + delta / 3, format, delta);
             maxSample = format(ivals.getMax() - delta / 3, format, delta);
+        }
+        if (_axisView.isLog()) {
+            minSample = TICKS_FORMAT.format(ivals.getMin());
+            maxSample = TICKS_FORMAT.format(ivals.getMax());
         }
         String longSample = minSample.length()>maxSample.length() ? minSample : maxSample;
 

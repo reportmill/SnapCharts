@@ -85,12 +85,15 @@ public class AxisViewY extends AxisView {
 
         // Set TitleView bounds
         _titleViewBox.setBounds(titleX, 0, titleW, areaH);
+
+        // Layout TickLabels
+        layoutTickLabels();
     }
 
     /**
      * Layout TickLabels.
      */
-    protected void layoutTickLabels()
+    private void layoutTickLabels()
     {
         // Get tick labels X
         double titleW = _titleViewBox.getPrefWidth();

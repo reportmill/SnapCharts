@@ -202,8 +202,8 @@ public class ChartPane extends DocItemPane {
     {
         // Add TabView
         double chartHeight = _chartBox.getPrefHeight();
-        int minTabViewHeight = _dataSetMode ? 400 : 260;
-        double tabViewHeight = Math.max(_splitView.getHeight() - chartHeight, minTabViewHeight);
+        int minTabViewHeight = _dataSetMode ? 320 : 180;
+        double tabViewHeight = Math.max(_splitView.getHeight() - chartHeight - 70, minTabViewHeight);
         _splitView.addItemWithAnim(_tabView, tabViewHeight);
 
         // Make TabView the primary grower if DataSetMode

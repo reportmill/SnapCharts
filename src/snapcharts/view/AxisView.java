@@ -2,7 +2,6 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Color;
 import snap.gfx.Font;
-import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
@@ -45,7 +44,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     private TickLabel[]  _tickLabels;
 
     // A helper to do tick label formatting
-    private AxisViewTickFormat _tickFormat;
+    private TickLabelFormat _tickFormat;
 
     // Constants for Properties
     public static final String AxisMin_Prop = "AxisMin";
@@ -86,7 +85,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         addChild(_titleView);
 
         // Create TickFormatter
-        _tickFormat = new AxisViewTickFormat(this);
+        _tickFormat = new TickLabelFormat(this);
     }
 
     /**
@@ -266,8 +265,13 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public void clearIntervals()
     {
         _intervals = null;
-        _tickLabels = null;
-        repaint();
+
+        // Remove/clear TickLabels
+        if (_tickLabels != null) {
+            for (TickLabel tickLabel : _tickLabels)
+                removeChild(tickLabel);
+            _tickLabels = null;
+        }
 
         // Register for check to see if tick format has changed
         _tickFormat.checkForFormatChange();
@@ -286,8 +290,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             _tickLabels = createTickLabelsForBarAxis();
         else _tickLabels = createTickLabels();
 
-        // Layout and return
-        layoutTickLabels();
+        // Add TickLabels
+        for (TickLabel tickLabel : _tickLabels)
+            addChild(tickLabel);
+
+        // Return
         return _tickLabels;
     }
 
@@ -321,6 +328,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             // Create/config/add TickLabel
             TickLabel tickLabel = new TickLabel(this, dataX);
             String str = _tickFormat.format(dataX);
+            if (log && str.length() == 0)
+                continue;
             tickLabel.setText(str);
             tickLabel.setFont(getFont());
             tickLabel.setTextFill(AXIS_LABELS_COLOR);
@@ -373,26 +382,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Layout TickLabels.
-     */
-    protected void layoutTickLabels()  { }
-
-    /**
      * Returns the max label width.
      */
     protected double getTickLabelsMaxWidth()
     {
         return _tickFormat.getLongSampleStringWidth();
-    }
-
-    /**
-     * Paint axis.
-     */
-    protected void paintFront(Painter aPntr)
-    {
-        TickLabel tickLabels[] = getTickLabels();
-        for (TickLabel tickLabel : tickLabels)
-            tickLabel.paintTickLabel(aPntr);
     }
 
     /**

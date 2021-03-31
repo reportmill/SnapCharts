@@ -1,5 +1,4 @@
 package snapcharts.view;
-import snap.gfx.Painter;
 import snap.view.StringView;
 
 /**
@@ -26,14 +25,4 @@ public class TickLabel extends StringView {
      * Returns the tick label coord.
      */
     public double getCoord()  { return _coord; }
-
-    /**
-     * Paints the TickLabel.
-     */
-    public void paintTickLabel(Painter aPntr)
-    {
-        aPntr.translate(getX(), getY());
-        paintAll(aPntr);
-        aPntr.translate(-getX(), - getY());
-    }
 }
