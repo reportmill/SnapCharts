@@ -16,7 +16,7 @@ public class PageViewLayout {
     private ViewProxy<PageView>  _pageProxy;
 
     // The page area bounds
-    private double  _areaX, _areaY, _areaW, _areaH;
+    private int  _areaX, _areaY, _areaW, _areaH;
 
     // The proxies for ChartViews
     private ViewProxy<ChartView>[] _chartProxies;
@@ -38,16 +38,16 @@ public class PageViewLayout {
         _chartProxies = _pageProxy.getChildrenForClass(ChartView.class);
 
         Insets ins = _page.getInsetsAll();
-        _areaX = ins.left;
-        _areaY = ins.top;
-        _areaW = _page.getWidth() - ins.getWidth();
-        _areaH = _page.getHeight() - ins.getHeight();
+        _areaX = (int) Math.round(ins.left);
+        _areaY = (int) Math.round(ins.top);
+        _areaW = (int) Math.round(_page.getWidth() - ins.getWidth());
+        _areaH = (int) Math.round(_page.getHeight() - ins.getHeight());
 
         // If ChartScale not 1, apply it
         double chartScale = _page.getChartScale();
         if (chartScale != 1) {
-            _areaW = Math.round(_areaW * chartScale);
-            _areaH = Math.round(_areaH * chartScale);
+            _areaW = (int) Math.round(_areaW * chartScale);
+            _areaH = (int) Math.round(_areaH * chartScale);
         }
 
         // Do simple layout of charts in grid
@@ -103,7 +103,8 @@ public class PageViewLayout {
 
         for (int i=0; i<rowCount; i++) {
             for (int j=0; j<colCount; j++) {
-                ViewProxy<ChartView> chart = getChartForRowCol(i, j); if (chart==null) break;
+                ViewProxy<ChartView> chart = getChartForRowCol(i, j);
+                if (chart==null) break;
                 double chartX = _areaX + (chartW + spaceW) * j;
                 double chartY = _areaY + (chartH + spaceH) * i;
                 chart.setBounds(chartX, chartY, chartW, chartH);
@@ -134,7 +135,7 @@ public class PageViewLayout {
         int dataW = (int) (totalDataW / colCount);
 
         // Set all charts to have new data area width and margin column widths
-        setDataViewWidthAndMarginsForAllCharts(dataW, marginColsW);
+        setDataViewWidthForAllCharts(dataW, marginColsW);
 
         // Get margin row heights and total margin row height
         int rowCount = getRowCount();
@@ -161,7 +162,7 @@ public class PageViewLayout {
         int dataH = (int) (totalDataH / rowCount);
 
         // Set all charts to have new data area height and margin column height
-        setDataViewHeightAndMarginsForAllCharts(dataH, marginRowsH);
+        setDataViewHeightForAllCharts(dataH, marginRowsH);
     }
 
     /**
@@ -207,69 +208,62 @@ public class PageViewLayout {
     /**
      * Sets the given DataView width in all page charts and updates so charts have given margins.
      */
-    private void setDataViewWidthAndMarginsForAllCharts(int dataW, int[] marginColsW)
+    private void setDataViewWidthForAllCharts(int dataW, int[] marginColsW)
     {
         // Get info
         int rowCount = getRowCount();
         int colCount = getColCount();
 
-        // Iterate over charts and reset DataView.X/Width and Chart.Width
+        // Iterate over page rows to set chart location/size (X/Width)
         for (int i=0; i<rowCount; i++)
         {
+            // Declare running variables for ChartX and MarginColMaxX
+            int chartX = _areaX;
+            int marginColMaxX = marginColsW[0] + chartX;
+
+            // Iterate over page columns in current page row
             for (int j=0; j<colCount; j++)
             {
-                // Get ChartProxy, Chart.DataView
-                ViewProxy<ChartView> chartProxy = getChartForRowCol(i, j); if (chartProxy==null) break;
-                ViewProxy<DataView> dataProxy = getDataView(chartProxy); if (dataProxy.isEmpty()) continue;
+                // Get ChartView proxy and set new ChartX (just break if we ran out of charts)
+                ViewProxy<ChartView> chartProxy = getChartForRowCol(i, j);
+                if (chartProxy == null) break;
+                chartProxy.setX(chartX);
 
-                // Get PrevChart right margin
-                ViewProxy<ChartView> prevChart = j>0 ? getChartForRowCol(i, j-1) : null;
-                double prevChartInsRight = prevChart!=null ? (prevChart.getWidth() - getDataView(prevChart).getMaxX()) : 0;
+                // Calculate new DataView.X and set new Chart.PrefDataViewBounds
+                int dataX = marginColMaxX - chartX;
+                setPrefDataViewBounds(chartProxy, new Rect(dataX, 0, dataW, 0));
 
-                // Calculate new DataView.X (gets shifted right if MarginCols[i] > margin between prevChart and chart)
-                double dataX = dataProxy.getX();
-                double insLeft = dataProxy.getX();
-                double insLeft2 = marginColsW[j] - prevChartInsRight;
-                double dataDiffX = insLeft2 - insLeft;
-                double dataDiffW = dataW - dataProxy.getWidth();
-
-                // Set new Chart.PrefDataViewBounds
-                double dataX2 = dataX + dataDiffX;
-                setPrefDataViewBounds(chartProxy, new Rect(dataX2, 0, dataW, 0));
-                dataProxy.setX(dataX2);
-                dataProxy.setWidth(dataW);
-
-                // Calculate Chart width change. If shrinking, adjust for next Chart.
-                double chartDiffW = dataDiffX + dataDiffW;
-                if (chartDiffW<0)
-                {
-                    // If last chart, reset diff so chart.MaxX is at MarginCol.MaxX
-                    if (j+1==colCount)
-                    {
-                        double chartMaxX = dataProxy.getMaxX() + marginColsW[j+1];
-                        chartDiffW = chartMaxX - chartProxy.getWidth();
-                    }
-
-                    // Calc min diff to accommodate rightMargin and nextChartLeftMargin and split diff
-                    else
-                    {
-                        ViewProxy<ChartView> nextChart = getChartForRowCol(i, j + 1); if (nextChart==null) break;
-                        double nextChartLeftMargin = getDataView(nextChart).getX();
-                        double chartMaxX = dataProxy.getMaxX() + marginColsW[j + 1] - nextChartLeftMargin;
-                        double minDiffW = chartMaxX - chartProxy.getWidth();
-                        chartDiffW = (chartDiffW + minDiffW) / 2;
-                    }
+                // If last column, set chart width to remaining space and break
+                if (j+1 == colCount) {
+                    int chartW = _areaX + _areaW - chartX;
+                    chartProxy.setWidth(chartW);
+                    break;
                 }
 
-                // Set new Chart.Width to accommodate shifted/resized DataView
-                chartProxy.setWidth(chartProxy.getWidth() + chartDiffW);
+                // Calc new ChartWidth based on given DataWidth and space on right of DataView
+                ViewProxy<DataView> dataProxy = getDataView(chartProxy);
+                int insRight = (int) Math.round(chartProxy.getWidth() - dataProxy.getMaxX());
+                int chartW = dataX + dataW + insRight;
 
-                // Shift successive chart X to account for resizing loop chart
-                for (int k=j+1; k<colCount; k++)
-                {
-                    ViewProxy<ChartView> nextChart = getChartForRowCol(i, k); if (nextChart==null) break;
-                    nextChart.setX(nextChart.getX() + chartDiffW);
+                // Get next chart. If no more charts in row, just set ChartWidth and break
+                ViewProxy<ChartView> nextChart = getChartForRowCol(i, j+1);
+                if (nextChart == null) {
+                    chartProxy.setWidth(chartW);
+                    break;
                 }
+
+                // Calc ChartWidth again based on NextChart.DataView.X. If extra space available, split difference
+                ViewProxy<DataView> nextData = getDataView(nextChart);
+                int nextDataX = (int) Math.round(nextData.getX());
+                int nextMarginColMaxX = marginColMaxX + dataW + marginColsW[j+1];
+                int chartW2 = nextMarginColMaxX - nextDataX - chartX;
+                if (chartW2 > chartW)
+                    chartW = (chartW + chartW2)/2;
+
+                // Set new ChartWidth, update MarginColMaxX, ChartX
+                chartProxy.setWidth(chartW);
+                marginColMaxX = nextMarginColMaxX;
+                chartX += chartW;
             }
         }
     }
@@ -277,75 +271,64 @@ public class PageViewLayout {
     /**
      * Sets the given DataView width in all page charts and updates so charts have given margins.
      */
-    private void setDataViewHeightAndMarginsForAllCharts(int dataH, int[] marginRowsH)
+    private void setDataViewHeightForAllCharts(int dataH, int[] marginRowsH)
     {
         // Get info
         int rowCount = getRowCount();
         int colCount = getColCount();
 
-        // Iterate over charts and reset DataView.Y/Height and Chart.Height
+        // Iterate over page cols to set chart location/size (Y/Height)
         for (int i = 0; i < colCount; i++)
         {
+            // Declare running variables for ChartY and MarginRowMaxY
+            int chartY = _areaY;
+            int marginRowMaxY = marginRowsH[0] + chartY;
+
+            // Iterate over page rows in current page column
             for (int j = 0; j < rowCount; j++)
             {
-                // Get Chart, Chart.DataView (last row might have empty slots, so just break if no chart)
+                // Get ChartView proxy and set new ChartY (just break if we ran out of charts)
                 ViewProxy<ChartView> chartProxy = getChartForRowCol(j, i);
-                if (chartProxy == null)
-                    break;
-                ViewProxy<DataView> dataProxy = getDataView(chartProxy);
-                if (dataProxy.isEmpty())
-                    continue;
+                if (chartProxy == null) break;
+                chartProxy.setY(chartY);
 
-                // Get PrevChart bottom margin
-                ViewProxy<ChartView> prevChart = j > 0 ? getChartForRowCol(j - 1, i) : null;
-                double prevChartInsBottom = prevChart != null ? (prevChart.getHeight() - getDataView(prevChart).getMaxY()) : 0;
-
-                // Calculate new DataView.Y (gets shifted down if MarginRows[i] > margin between prevChart and chart)
-                double dataY = dataProxy.getY();
-                double insTop = dataProxy.getY();
-                double insTop2 = marginRowsH[j] - prevChartInsBottom;
-                double dataDiffY = insTop2 - insTop;
-                double dataDiffH = dataH - dataProxy.getHeight();
-
-                // Set new Chart.PrefDataViewBounds
-                double dataY2 = dataY + dataDiffY;
+                // Calculate new DataView.Y and set new Chart.PrefDataViewBounds
+                int dataY = marginRowMaxY - chartY;
                 Rect prefBounds = getPrefDataViewBounds(chartProxy);
-                prefBounds.setY(dataY2);
+                prefBounds.setY(dataY);
                 prefBounds.setHeight(dataH);
-                dataProxy.setY(dataY2);
-                dataProxy.setHeight(dataH);
 
-                // Calculate Chart height change. If shrinking, adjust for next chart
-                double chartDiffH = dataDiffY + dataDiffH;
-                if (chartDiffH<0)
-                {
-                    // If last chart, reset diff to so chart.MaxY is at MarginRow.MaxY
-                    if (j+1==rowCount)
-                    {
-                        double chartMaxY = dataProxy.getMaxY() + marginRowsH[j+1];
-                        chartDiffH = chartMaxY - chartProxy.getHeight();
-                    }
-
-                    // Calc min diff to accommodate bottomMargin and nextChartTopMargin and split diff
-                    else
-                    {
-                        ViewProxy<ChartView> nextChart = getChartForRowCol(j + 1, i); if (nextChart==null) break;
-                        double nextChartTopMargin = getDataView(nextChart).getY();
-                        double chartMaxY = dataProxy.getMaxY() + marginRowsH[j + 1] - nextChartTopMargin;
-                        double minDiffH = chartMaxY - chartProxy.getHeight();
-                        chartDiffH = (chartDiffH + minDiffH) / 2;
-                    }
+                // If last row, set chart height to remaining space and break
+                if (j+1 == rowCount) {
+                    int chartH = _areaY + _areaH - chartY;
+                    chartProxy.setHeight(chartH);
+                    break;
                 }
 
-                // Set new Chart.Height to accommodate shifted/resized DataView
-                chartProxy.setHeight(chartProxy.getHeight() + chartDiffH);
+                // Calc new ChartHeight based on given DataHeight and space below DataView
+                ViewProxy<DataView> dataProxy = getDataView(chartProxy);
+                int insBottom = (int) Math.round(chartProxy.getHeight() - dataProxy.getMaxY());
+                int chartH = dataY + dataH + insBottom;
 
-                // Shift successive chart Y to account for resizing loop chart
-                for (int k = j + 1; k < rowCount; k++)
-                {
-                    ViewProxy<ChartView> nextChart = getChartForRowCol(k, i); if (nextChart == null) break;
-                    nextChart.setY(nextChart.getY() + chartDiffH);
+                // Get next chart. If no more charts in column, just set ChartHeight and break
+                ViewProxy<ChartView> nextChart = getChartForRowCol(j+1, i);
+                if (nextChart == null) {
+                    chartProxy.setHeight(chartH);
+                    break;
                 }
+
+                // Calc ChartHeight again based on NextChart.DataView.Y. If extra space available, split difference
+                ViewProxy<DataView> nextData = getDataView(nextChart);
+                int nextDataY = (int) Math.round(nextData.getY());
+                int nextMarginRowMaxY = marginRowMaxY + dataH + marginRowsH[j+1];
+                int chartH2 = nextMarginRowMaxY - nextDataY - chartY;
+                if (chartH2 > chartH)
+                    chartH = (chartH + chartH2)/2;
+
+                // Set new ChartHeight, update MarginRowMaxY, ChartY
+                chartProxy.setHeight(chartH);
+                marginRowMaxY = nextMarginRowMaxY;
+                chartY += chartH;
             }
         }
     }
