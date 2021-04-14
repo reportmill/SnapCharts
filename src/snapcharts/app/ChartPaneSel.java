@@ -131,10 +131,17 @@ public class ChartPaneSel {
      */
     private ChartPartView getChartPartViewForXY(double aX, double aY)
     {
+        // Get deepest selectable view for X/Y
         View view = ViewUtils.getDeepestChildAt(_chartView, aX, aY, ChartPartView.class);
         while (view!=null && !isSelectableView(view))
             view = view.getParent();
-        return view instanceof ChartPartView ? (ChartPartView)view : null;
+
+        // If DataView but no TargDataPoint, return ChartView
+        if (view instanceof DataView && _chartView.getTargDataPoint() == null)
+            return _chartView;
+
+        // If as ChartPartView (or null)
+        return view instanceof ChartPartView ? (ChartPartView) view : null;
     }
 
     /**

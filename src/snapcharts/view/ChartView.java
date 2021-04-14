@@ -317,7 +317,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         firePropChange(TargPoint_Prop, _targPoint, _targPoint = aPoint);
 
         // Update TargDataPoint
-        DataPoint dataPoint = aPoint!=null ? getDataPointForXY(aPoint.x, aPoint.y) : null;
+        DataPoint dataPoint = aPoint!=null ? _chartHelper.getDataPointForViewXY(this, aPoint.x, aPoint.y) : null;
         setTargDataPoint(dataPoint);
     }
 
@@ -326,7 +326,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public boolean isShowTargDataPoint()
     {
-        if (getTargDataPoint()==null)
+        if (getTargDataPoint() == null)
             return false;
         if (getDataView().isZoomSelectMode())
             return false;
@@ -351,26 +351,6 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
 
         // Notify ToolTipView
         _toolTipView.reloadContents();
-    }
-
-    /**
-     * Returns the data point for given X/Y.
-     */
-    public DataPoint getDataPointForXY(double aX, double aY)
-    {
-        DataView dataView = getDataView();
-        Point pnt = dataView.parentToLocal(aX, aY, this);
-        return dataView.getDataPointForXY(pnt.x, pnt.y);
-    }
-
-    /**
-     * Returns the given data point X/Y in this view coords.
-     */
-    public Point getDataPointXYLocal(DataPoint aDP)
-    {
-        DataView dataView = getDataView();
-        Point pnt = dataView.getDataPointXYLocal(aDP);
-        return dataView.localToParent(pnt.x, pnt.y, this);
     }
 
     /**

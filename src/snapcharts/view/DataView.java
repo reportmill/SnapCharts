@@ -125,26 +125,6 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the data point for given X/Y.
-     */
-    public DataPoint getDataPointForXY(double aX, double aY)
-    {
-        DataArea dataArea = _chartHelper.getDataAreaForFirstAxisY(); if (dataArea==null) return null;
-        Point pnt = dataArea.parentToLocal(aX, aY, this);
-        return dataArea.getDataPointForXY(pnt.x, pnt.y);
-    }
-
-    /**
-     * Returns the given data point X/Y in this view coords.
-     */
-    public Point getDataPointXYLocal(DataPoint aDP)
-    {
-        DataArea dataArea = _chartHelper.getDataAreaForFirstAxisY(); if (dataArea==null) return null;
-        Point pnt = dataArea.getDataPointXYLocal(aDP);
-        return dataArea.localToParent(pnt.x, pnt.y, this);
-    }
-
-    /**
      * Returns whether view is in ZoomSelectMode.
      */
     public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
@@ -222,7 +202,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
 
         // Handle MouseClick
         if (anEvent.isMouseClick() && anEvent.getClickCount()==1) {
-            DataPoint dpnt = getDataPointForXY(anEvent.getX(), anEvent.getY());
+            DataPoint dpnt = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
             if (dpnt == _chartView.getSelDataPoint())
                 dpnt = null;
             _chartView.setSelDataPoint(dpnt);

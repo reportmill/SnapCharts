@@ -155,8 +155,11 @@ public class DataViewPanZoom {
             }
 
             // Handle click
-            else if (anEvent.isMouseClick())
-                getChartView().setTargPoint(anEvent.getPoint());
+            else if (anEvent.isMouseClick()) {
+                ChartView chartView = getChartView();
+                Point pnt = _dataView.localToParent(anEvent.getX(), anEvent.getY(), chartView);
+                chartView.setTargPoint(pnt);
+            }
         }
 
         // Handle Scroll

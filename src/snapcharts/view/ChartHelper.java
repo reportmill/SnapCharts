@@ -1,6 +1,8 @@
 package snapcharts.view;
+import snap.geom.Point;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
+import snap.view.View;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.viewx.*;
@@ -452,6 +454,34 @@ public abstract class ChartHelper {
 
         // Return data val
         return dataXY;
+    }
+
+    /**
+     * Returns the data point for given View + X/Y.
+     */
+    public DataPoint getDataPointForViewXY(View aView, double aX, double aY)
+    {
+        // Get first DataArea for Y0  (if not found, just return null)
+        DataArea dataArea = getDataAreaForFirstAxisY();
+        if (dataArea==null) return null;
+
+        // Convert point to DataArea and return DataPoint for X/Y
+        Point pnt = dataArea.parentToLocal(aX, aY, aView);
+        return dataArea.getDataPointForXY(pnt.x, pnt.y);
+    }
+
+    /**
+     * Returns the given data point as X/Y in given view coords.
+     */
+    public Point getViewXYForDataPoint(View aView, DataPoint aDP)
+    {
+        // Get first DataArea for Y0  (if not found, just return null)
+        DataArea dataArea = getDataAreaForFirstAxisY();
+        if (dataArea==null) return null;
+
+        // Get DataArea X/Y for DataPoint and return point converted to given view coords
+        Point pnt = dataArea.getDataPointXYLocal(aDP);
+        return dataArea.localToParent(pnt.x, pnt.y, aView);
     }
 
     /**

@@ -302,6 +302,11 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
             }
         }
 
+        // If distance is greater than MAX_SELECT_DISTANCE, return null
+        int MAX_SELECT_DISTANCE = 60;
+        if (dist > MAX_SELECT_DISTANCE)
+            return null;
+
         // Return DataPoint for closest dataset+index
         return dataPoint;
     }
