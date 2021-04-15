@@ -106,6 +106,10 @@ public class ChartViewLayout {
             }
         }
 
+        // If Legend.Inside, Layout Legend special
+        if (_legendProxy != null && _legendProxy.isVisible() && _legendProxy.getView().isInside())
+            layoutLegendInside();
+
         // Copy back to views
         _chartProxy.setBoundsInClient();
 
@@ -273,6 +277,32 @@ public class ChartViewLayout {
     }
 
     /**
+     * Lays out the legend inside (when Legend.Inside is set).
+     */
+    private void layoutLegendInside()
+    {
+        // Get Legend width/height (no larger than DataView bounds)
+        Rect dataBnds = _dataAreaProxy.getBounds();
+        Insets legendMargin = _legendProxy.getMargin();
+        double legendW = Math.min(_legendProxy.getBestWidth(-1) + legendMargin.getWidth(), dataBnds.width);
+        double legendH = Math.min(_legendProxy.getBestHeight(-1) + legendMargin.getHeight(), dataBnds.height);
+
+        // Get Legend XY for position and size
+        Pos legendPos = _legendProxy.getView().getPosition();
+        Point legendXY = Rect.getPointForPositionAndSize(dataBnds, legendPos, legendW, legendH);
+
+        // Eliminate the margin and round
+        legendXY.x += legendMargin.left;
+        legendXY.y += legendMargin.top;
+        legendW -= legendMargin.getWidth();
+        legendH -= legendMargin.getHeight();
+        legendXY.snap();
+
+        // Set new legend bounds
+        _legendProxy.setBounds(legendXY.x, legendXY.y, legendW, legendH);
+    }
+
+    /**
      * Returns the array of views for given side.
      */
     protected ViewProxy<?>[] getViewsForSide(Side aSide)
@@ -283,7 +313,8 @@ public class ChartViewLayout {
         ViewProxy axis2 = axes.length > 1 ? axes[1] : null;
 
         // Get Legend if on given side.
-        boolean hasLegend = _legendProxy!=null && _legendProxy.getView().getPosition().getSide() == aSide;
+        LegendView legendView = _legendProxy!=null ? _legendProxy.getView() : null;
+        boolean hasLegend = legendView!=null && !legendView.isInside() && legendView.getPosition().getSide() == aSide;
         ViewProxy<?> legend = hasLegend ? _legendProxy : null;
         if (hasLegend) {
             legend.setGrowWidth(aSide==Side.LEFT || aSide==Side.RIGHT);
@@ -342,23 +373,25 @@ public class ChartViewLayout {
             return getBoundsForSideFixed(aSide);
 
         // Return bounds for side (size is MAX_SIDE_RATIO of chart size)
-        Rect bounds = new Rect(0, 0, _chartProxy.getWidth(), _chartProxy.getHeight());
+        double chartW = _chartProxy.getWidth();
+        double chartH = _chartProxy.getHeight();
+        Rect bounds = new Rect(0, 0, chartW, chartH);
         switch (aSide)
         {
             case TOP:
-                bounds.height = Math.round(MAX_SIDE_RATIO * _chartProxy.getHeight());
+                bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
                 break;
             case BOTTOM:
                 double maxY = bounds.getMaxY();
-                bounds.height = Math.round(MAX_SIDE_RATIO * _chartProxy.getHeight());
+                bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
                 bounds.y = maxY - bounds.height;
                 break;
             case LEFT:
-                bounds.width = Math.round(MAX_SIDE_RATIO * _chartProxy.getWidth());
+                bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
                 break;
             case RIGHT:
                 double maxX = bounds.getMaxX();
-                bounds.width = Math.round(MAX_SIDE_RATIO * _chartProxy.getWidth());
+                bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
                 bounds.x = maxX - bounds.width;
                 break;
             default: throw new RuntimeException("ChartViewLayout.getBoundsForSide: Unknown side" + aSide);

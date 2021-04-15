@@ -1,8 +1,5 @@
 package snapcharts.model;
-import snap.gfx.Border;
-import snap.gfx.Effect;
-import snap.gfx.Font;
-import snap.gfx.Paint;
+import snap.gfx.*;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
@@ -128,6 +125,14 @@ public class ChartPart implements XMLArchiver.Archivable {
     {
         if (Objects.equals(aBorder, _border)) return;
         firePropChange(Border_Prop, _border, _border=aBorder);
+    }
+
+    /**
+     * Sets the ChartPart border.
+     */
+    public void setBorder(Color aColor, double aBorderWidth)
+    {
+        setBorder(Border.createLineBorder(aColor, aBorderWidth));
     }
 
     /**

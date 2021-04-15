@@ -13,9 +13,13 @@ public class Legend extends ChartPart {
     // The legend position
     private Pos  _position;
 
+    // Whether legend is positioned inside
+    private boolean  _inside;
+
     // Property constants
     public static final String ShowLegend_Prop = "ShowLegend";
     public static final String Position_Prop = "Position";
+    public static final String Inside_Prop = "Inside";
 
     /**
      * Constructor.
@@ -55,6 +59,20 @@ public class Legend extends ChartPart {
     }
 
     /**
+     * Returns whether is positioned inside data area.
+     */
+    public boolean isInside()  { return _inside; }
+
+    /**
+     * Sets whether is positioned inside data area.
+     */
+    public void setInside(boolean aValue)
+    {
+        if (aValue==isInside()) return;
+        firePropChange(Inside_Prop, _inside, _inside = aValue);
+    }
+
+    /**
      * Override to provide custom defaults for Legend (Position).
      */
     @Override
@@ -74,11 +92,13 @@ public class Legend extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive ShowLegend, Position
+        // Archive ShowLegend, Position, Inside
         if (isShowLegend())
             e.add(ShowLegend_Prop, isShowLegend());
         if (getPosition()!=getPropDefault(Position_Prop))
             e.add(Position_Prop, getPosition());
+        if (isInside())
+            e.add(Inside_Prop, true);
 
         // Return element
         return e;
@@ -98,6 +118,8 @@ public class Legend extends ChartPart {
             setShowLegend(anElement.getAttributeBoolValue(ShowLegend_Prop));
         if (anElement.hasAttribute(Position_Prop))
             setPosition(Pos.get(anElement.getAttributeValue(Position_Prop)));
+        if (anElement.hasAttribute(Inside_Prop))
+            setInside(anElement.getAttributeBoolValue(Inside_Prop));
 
         // Return this part
         return this;

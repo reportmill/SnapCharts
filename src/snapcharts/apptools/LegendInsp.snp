@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <RowView Padding="4" Spacing="4" Align="CENTER">
+  <RowView Align="CENTER" Padding="4" Spacing="4">
     <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label text="Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
-  <RowView Padding="4" GrowWidth="true" Spacing="4">
+  <RowView Padding="4" GrowWidth="true" Spacing="10">
     <Label text="Position:" />
     <ColView Margin="5">
       <font name="Arial" size="10" />
@@ -27,5 +27,6 @@
         <ToggleButton Name="Align8" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8600;" Position="BOTTOM_RIGHT" Group="tga" />
       </RowView>
     </ColView>
+    <CheckBox Name="InsideCheckBox" text="Inside" />
   </RowView>
 </ColView>

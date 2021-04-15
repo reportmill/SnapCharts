@@ -47,6 +47,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     public Pos getPosition()  { return getChartPart().getPosition(); }
 
     /**
+     * Returns whether legend is inside data area.
+     */
+    public boolean isInside()  { return getChartPart().isInside(); }
+
+    /**
      * Reloads legend contents.
      */
     public void resetView()
@@ -80,6 +85,26 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         if (!showLegend)
             return;
 
+        // Handle Inside
+        if (legend.isInside()) {
+            if (legend.getFill() == null)
+                setFill(Color.WHITE);
+            if (legend.getBorder() == null)
+                setBorder(Color.BLACK, 1);
+            setMargin(8, 8, 8, 8);
+            setPadding(5, 5, 5, 5);
+            ChartView chartView = getChartView();
+            int childCount = chartView.getChildCount();
+            if (indexInHost() != childCount - 1) {
+                ViewUtils.removeChild(chartView, this);
+                ViewUtils.addChild(chartView, this);
+            }
+        }
+        else {
+            setBorder(legend.getBorder());
+            setMargin(null);
+            setPadding(null);
+        }
         // Remove children
         //removeChildren();
 
@@ -151,7 +176,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        return _scaleBox.getPrefWidth();
+        Insets ins = getInsetsAll();
+        return _scaleBox.getPrefWidth() + ins.getWidth();
     }
 
     /**
@@ -160,7 +186,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        return _scaleBox.getPrefHeight();
+        Insets ins = getInsetsAll();
+        return _scaleBox.getPrefHeight() + ins.getHeight();
     }
 
     /**
@@ -169,8 +196,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     @Override
     protected void layoutImpl()
     {
-        double areaW = getWidth();
-        double areaH = getHeight();
-        _scaleBox.setSize(areaW, areaH);
+        Insets ins = getInsetsAll();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = getWidth() - ins.getWidth();
+        double areaH = getHeight() - ins.getHeight();
+        _scaleBox.setBounds(areaX, areaY, areaW, areaH);
     }
 }

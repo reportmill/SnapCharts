@@ -1,6 +1,8 @@
 package snapcharts.apptools;
 
 import snap.geom.Pos;
+import snap.gfx.Color;
+import snap.gfx.ShadowEffect;
 import snap.util.StringUtils;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
@@ -48,6 +50,8 @@ public class LegendInsp extends ChartPartInsp {
         if (!legend.isShowLegend()) align = Pos.CENTER;
         setViewValue("Align" + align.ordinal(), true);
 
+        // Reset InsideCheckBox
+        setViewValue("InsideCheckBox", legend.isInside());
     }
 
     /**
@@ -69,6 +73,12 @@ public class LegendInsp extends ChartPartInsp {
             int val = StringUtils.intValue(name);
             Pos pos = Pos.values()[val];
             legend.setPosition(pos);
+        }
+
+        // Handle InsideCheckBox
+        if (anEvent.equals("InsideCheckBox")) {
+            legend.setInside(anEvent.getBoolValue());
+            //legend.setEffect(anEvent.getBoolValue() ? new ShadowEffect() : null);
         }
     }
 }
