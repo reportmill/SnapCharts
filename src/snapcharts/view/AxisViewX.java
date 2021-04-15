@@ -81,7 +81,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // Get TickLabels and info
         TickLabel[] tickLabels = getTickLabels();
         int tickLabelCount = tickLabels.length;
-        boolean isPolar = getChart().getType().isPolarType();
+        boolean isPolar = getChartType().isPolarType();
         double shiftX = isPolar ? getX() - getDataView().getX() : 0;
 
         // Iterate over tick labels and set location

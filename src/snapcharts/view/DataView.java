@@ -44,8 +44,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public T getChartPart()
     {
-        Chart chart = getChart();
-        DataSetList dataList = chart.getDataSetList();
+        DataSetList dataList = getDataSetList();
         ChartPart chartPart = dataList.getDataSetCount() > 0 ? dataList.getDataSet(0) : dataList;
         return (T) chartPart;
     }
@@ -134,7 +133,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public void setZoomSelectMode(boolean aValue)
     {
-        if (!getChart().getType().isXYType()) return;
+        if (!getChartType().isXYType()) return;
         _panZoomer.setZoomSelectMode(aValue);
     }
 
@@ -143,7 +142,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
      */
     public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
     {
-        if (!getChart().getType().isXYType()) return;
+        if (!getChartType().isXYType()) return;
         _panZoomer.scaleAxesMinMaxForFactor(aScale, isAnimated);
     }
 
@@ -197,7 +196,7 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
             _chartView.setTargPoint(null);
 
         // Forward to PanZoom
-        else if (getChart().getType().isXYType())
+        else if (getChartType().isXYType())
             _panZoomer.processEvent(anEvent);
 
         // Handle MouseClick

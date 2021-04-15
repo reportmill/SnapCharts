@@ -153,7 +153,7 @@ public class XYPainter {
         Shape dataShape = new XYDisplayCoordsShape(dispX, dispY);
 
         // If area, close path
-        boolean isArea = _dataArea.getChart().getType() == ChartType.AREA;
+        boolean isArea = _dataArea.getChartType() == ChartType.AREA;
         if (isArea) {
             double areaW = _dataArea.getWidth();
             double areaH = _dataArea.getHeight();

@@ -1,7 +1,6 @@
 package snapcharts.view;
 import snap.geom.*;
 import snap.gfx.*;
-import snap.util.ArrayUtils;
 import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.model.*;
@@ -89,10 +88,6 @@ public class ColorBarView extends ChartPartView<ColorBar> {
      */
     private void resetAxisLabels()
     {
-        // Get info
-        Chart chart = getChart();
-        DataSetList dsetList = chart.getDataSetList();
-
         // Remove children
         _entryBox.removeChildren();
 
@@ -122,26 +117,6 @@ public class ColorBarView extends ChartPartView<ColorBar> {
         label.setAlign(Pos.TOP_LEFT);
         label.setGrowHeight(true);
         return label;
-    }
-
-    /**
-     * Called when legend row is clicked.
-     */
-    private void entryWasClicked(View anEntryView)
-    {
-        // Get row/dataset index
-        ParentView parentView = anEntryView.getParent();
-        int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView);
-
-        // Get dataset and disable
-        Chart chart = getChart();
-        DataSetList dsetList = chart.getDataSetList();
-        DataSet dset = dsetList.getDataSet(index);
-        dset.setDisabled(!dset.isDisabled());
-
-        // Reset ChartView
-        ChartView chartView = getChartView();
-        chartView.resetLater();
     }
 
     /**

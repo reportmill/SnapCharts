@@ -560,7 +560,7 @@ public abstract class ChartHelper {
      */
     public static ChartHelper createChartHelper(ChartView aChartView)
     {
-        ChartType chartType = aChartView.getChart().getType();
+        ChartType chartType = aChartView.getChartType();
         switch (chartType) {
             case BAR: return new BarChartHelper(aChartView);
             case PIE: return new PieChartHelper(aChartView);

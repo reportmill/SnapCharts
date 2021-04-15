@@ -1,5 +1,4 @@
 package snapcharts.view;
-
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
@@ -34,12 +33,20 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         _scaleBox = new ScaleBox();
         _scaleBox.setKeepAspect(true);
         addChild(_scaleBox);
+
+        // Register for click
+        addEventHandler(e -> legendWasClicked(e), MouseRelease);
     }
+
+    /**
+     * Returns the legend.
+     */
+    public Legend getLegend()  { return getChart().getLegend(); }
 
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return (T) getChart().getLegend(); }
+    public T getChartPart()  { return (T) getLegend(); }
 
     /**
      * Returns the position of the legend.
@@ -60,8 +67,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         super.resetView();
 
         // Get info
-        Chart chart = getChart();
-        Legend legend = chart.getLegend();
+        Legend legend = getLegend();
 
         // Handle Orientation
         Pos pos = getPosition();
@@ -107,14 +113,16 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         // Remove children
         //removeChildren();
 
-        DataSetList dsetList = chart.getDataSetList();
-        for (int i=0; i<dsetList.getDataSetCount(); i++) {
-            DataSet dset = dsetList.getDataSet(i);
-            View entryView = createLegendEntry(chart, dset, i);
+        // Iterate over DataSets and add entries
+        DataSetList dsetList = getDataSetList();
+        DataSet[] dataSets = dsetList.getDataSets();
+        for (int i=0; i<dataSets.length; i++) {
+            DataSet dset = dataSets[i];
+            View entryView = createLegendEntry(dset, i);
             _entryBox.addChild(entryView);
 
             // Register row to enable/disable
-            entryView.addEventHandler(e -> entryWasClicked(entryView), MouseRelease);
+            entryView.addEventHandler(e -> entryWasClicked(e, entryView), MouseRelease);
             //shpView.setPickable(false); sview.setPickable(false);
         }
     }
@@ -122,12 +130,13 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     /**
      * Creates a legend entry.
      */
-    private View createLegendEntry(Chart aChart, DataSet aDataSet, int anIndex)
+    private View createLegendEntry(DataSet aDataSet, int anIndex)
     {
         // Get marker Shape (if LineChart, add crossbar)
-        Shape shp = aChart.getSymbolShape(anIndex);
+        Chart chart = getChart();
+        Shape shp = chart.getSymbolShape(anIndex);
         shp = shp.copyFor(new Transform(6, 6));
-        if (aChart.getType() == ChartType.LINE) {
+        if (chart.getType() == ChartType.LINE) {
             Shape shp1 = new Rect(2,9,16,2);
             shp = Shape.add(shp, shp1);
         }
@@ -137,7 +146,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         shpView.setPrefSize(20,20);
 
         // Set color
-        shpView.setFill(aChart.getColor(anIndex));
+        shpView.setFill(chart.getColor(anIndex));
 
         String text = aDataSet.getName();
         Label label = new Label(text);
@@ -151,23 +160,31 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     }
 
     /**
+     * Called when legend is clicked.
+     */
+    private void legendWasClicked(ViewEvent anEvent)
+    {
+        // Enable all DataSets
+        DataSetList dsetList = getDataSetList();
+        DataSet[] dataSets = dsetList.getDataSets();
+        for (DataSet dataSet : dataSets)
+            dataSet.setDisabled(false);
+    }
+
+    /**
      * Called when legend row is clicked.
      */
-    private void entryWasClicked(View anEntryView)
+    private void entryWasClicked(ViewEvent anEvent, View anEntryView)
     {
         // Get row/dataset index
         ParentView parentView = anEntryView.getParent();
         int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView);
 
         // Get dataset and disable
-        Chart chart = getChart();
-        DataSetList dsetList = chart.getDataSetList();
+        DataSetList dsetList = getDataSetList();
         DataSet dset = dsetList.getDataSet(index);
         dset.setDisabled(!dset.isDisabled());
-
-        // Reset ChartView
-        ChartView chartView = getChartView();
-        chartView.resetLater();
+        anEvent.consume();
     }
 
     /**

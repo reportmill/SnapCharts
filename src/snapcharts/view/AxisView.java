@@ -347,7 +347,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         if (getAxisType() != AxisType.X)
             return false;
-        if (getChart().getType().isBarType())
+        if (getChartType().isBarType())
             return true;
 
         // Also treat IY and CY Data sets as Bar axis types

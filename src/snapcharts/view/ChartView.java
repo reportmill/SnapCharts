@@ -187,7 +187,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         _chartHelper.activate();
 
         // Animate 3D charts (I can't help myself
-        if (getChart().getType().is3D())
+        if (getChartType().is3D())
             animateOnShow();
 
         // If AnimateOnShow, reset reveal
@@ -230,7 +230,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     {
         // Make sure if ChartHelper is right
         ChartHelper chartHelper = getChartHelper();
-        if (chartHelper==null || getChart().getType() != chartHelper.getChartType()) {
+        if (chartHelper==null || getChartType() != chartHelper.getChartType()) {
             chartHelper = ChartHelper.createChartHelper(this);
             setChartHelper(chartHelper);
         }

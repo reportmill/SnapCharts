@@ -50,8 +50,7 @@ public class Line3DChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        Chart chart = getChart();
-        DataSetList dataSetList = chart.getDataSetList();
+        DataSetList dataSetList = getDataSetList();
         DataSet[] dataSets = dataSetList.getDataSets();
         if (dataSets.length == 0)
             return new DataArea[0];
