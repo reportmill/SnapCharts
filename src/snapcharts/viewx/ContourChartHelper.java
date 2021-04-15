@@ -53,11 +53,11 @@ public class ContourChartHelper extends ChartHelper {
     }
 
     /**
-     * Returns the contour legend.
+     * Returns the ColorBarView.
      */
-    public ContourAxisView getContourView()
+    public ColorBarView getColorBarView()
     {
-        return _chartView.getContourView();
+        return _chartView.getColorBarView();
     }
 
     /**

@@ -28,7 +28,7 @@ public class ChartViewLayout {
     private ViewProxy<LegendView>  _legendProxy;
 
     // The contour proxy
-    private ViewProxy<ContourAxisView>  _contourProxy;
+    private ViewProxy<ColorBarView>  _contourProxy;
 
     // The DataArea proxy
     private ViewProxy<DataView>  _dataAreaProxy;
@@ -67,7 +67,7 @@ public class ChartViewLayout {
         _chartProxy = new ViewProxy<>(_chartView);
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
-        _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);
+        _contourProxy = _chartProxy.getChildForClass(ColorBarView.class);
         _dataAreaProxy = _chartProxy.getChildForClass(DataView.class);
     }
 

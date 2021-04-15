@@ -38,6 +38,9 @@ public class Chart extends ChartPart {
     // The Z Axis
     private AxisZ _axisZ;
 
+    // The ColorBar
+    private ColorBar  _colorBar;
+
     // The DataSet
     private DataSetList _dsetList = new DataSetList(this);
 
@@ -45,10 +48,10 @@ public class Chart extends ChartPart {
     private Legend  _legend;
 
     // The dataset colors
-    private Color  _colors[] = GT_COLORS;
+    private Color[]  _colors = GT_COLORS;
 
     // The dataset shapes
-    private Shape _symbolShapes[];
+    private Shape[] _symbolShapes;
 
     // The object holding specific chart type properties
     private ChartStyleHpr _chartStyleHpr = new ChartStyleHpr(this);
@@ -58,9 +61,11 @@ public class Chart extends ChartPart {
     public static final String Colors_Prop = "Colors";
 
     // Colors
-    private static Color  COLORS[] = new Color[] { Color.get("#88B4E7"), Color.get("#434348"), Color.get("#A6EB8A"),
+    private static Color[]  COLORS = new Color[] {
+        Color.get("#88B4E7"), Color.get("#434348"), Color.get("#A6EB8A"),
         Color.get("#EBA769"), Color.get("#8185E2"), Color.get("#E06681"), Color.get("#E1D369"),
-        Color.get("#4A8E8E"), Color.get("#E26561") };
+        Color.get("#4A8E8E"), Color.get("#E26561")
+    };
 
     // GTColors
     private static Color[] GT_COLORS = new Color[] {
@@ -132,6 +137,10 @@ public class Chart extends ChartPart {
         _axisZ = new AxisZ(this);
         _axisZ.addPropChangeListener(pc -> chartPartDidPropChange(pc));
 
+        // Create/set ColorBar
+        _colorBar = new ColorBar(this);
+        _colorBar.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+
         // Create/set Legend
         _legend = new Legend();
         _legend._chart = this;
@@ -202,6 +211,11 @@ public class Chart extends ChartPart {
      * Returns the Z axis object.
      */
     public AxisZ getAxisZ()  { return _axisZ; }
+
+    /**
+     * Returns the ColorBar object (which is modelled as an axis).
+     */
+    public ColorBar getColorBar()  { return _colorBar; }
 
     /**
      * Returns the Axis for given type.
@@ -276,7 +290,7 @@ public class Chart extends ChartPart {
     public Shape getSymbolShape(int anIndex)
     {
         // Get index in range (wrapped if needed)
-        Shape symbShapes[] = getSymbolShapes();
+        Shape[] symbShapes = getSymbolShapes();
         int index = anIndex % symbShapes.length;
 
         switch (getType()) {
