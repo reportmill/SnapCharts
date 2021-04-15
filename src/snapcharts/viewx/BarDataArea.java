@@ -53,11 +53,12 @@ public class BarDataArea extends DataArea {
     protected Section[] getSections()
     {
         // If recalc not needed, just return
-        DataSetList dsetList = getDataSetList();
-        List<DataSet> dsets = dsetList.getDataSets();
-        int dsetCount = dsetList.getDataSetCount();
-        int pointCount = dsetList.getPointCount();
-        if (_sections!=null && _sections.length==pointCount && _dsetCount ==dsetCount) return _sections;
+        DataSetList dataSetList = getDataSetList();
+        DataSet[] dataSets = dataSetList.getEnabledDataSets();
+        int dsetCount = dataSets.length;
+        int pointCount = dataSetList.getPointCount();
+        if (_sections != null && _sections.length == pointCount && _dsetCount == dsetCount)
+            return _sections;
 
         // Get DataAreaBar info
         BarStyle barStyle = getBarStyle();
@@ -92,7 +93,7 @@ public class BarDataArea extends DataArea {
             section.bars = new Bar[_dsetCount];
 
             // Iterate over datasets
-            for (int j = 0; j< _dsetCount; j++) { DataSet dset = dsets.get(j);
+            for (int j = 0; j< _dsetCount; j++) { DataSet dset = dataSets[j];
 
                 // Get data point
                 DataPoint dataPoint = dset.getPoint(i);
@@ -114,9 +115,10 @@ public class BarDataArea extends DataArea {
     /**
      * Clears the sections when needed (change of data, size)
      */
-    private void clearSections()
+    protected void clearSections()
     {
         _sections = null;
+        repaint();
     }
 
     /**
@@ -210,7 +212,7 @@ public class BarDataArea extends DataArea {
     {
         Object src = aPC.getSource();
         if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
-            _sections = null;
+            clearSections();
         }
     }
 

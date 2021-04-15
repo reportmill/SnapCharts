@@ -2,7 +2,6 @@ package snapcharts.viewx;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.view.*;
-import java.util.List;
 
 /**
  * A ChartHelper for common Contour types.
@@ -39,14 +38,13 @@ public class ContourChartHelper extends ChartHelper {
     protected DataArea[] createDataAreas()
     {
         DataSetList dataSetList = getDataSetList();
-        List<DataSet> dsets = dataSetList.getDataSets();
-        int dsetCount = dsets.size();
+        DataSet[] dataSets = dataSetList.getDataSets();
+        int dsetCount = dataSets.length;
 
-        DataArea[] dataAreas = new DataArea[dsetCount]; // *2
+        DataArea[] dataAreas = new DataArea[dsetCount];
         for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dsets.get(i);
-            //dataAreas[i*2] = new DataAreaXY(this, dset, ChartType.LINE);
-            dataAreas[i] = new ContourDataArea(this, dset); // i*2+1
+            DataSet dset = dataSets[i];
+            dataAreas[i] = new ContourDataArea(this, dset);
         }
 
         return dataAreas;

@@ -62,7 +62,6 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         // Get info
         Chart chart = getChart();
         Legend legend = chart.getLegend();
-        DataSetList dsetList = chart.getDataSetList();
 
         // Handle Orientation
         Pos pos = getPosition();
@@ -108,6 +107,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         // Remove children
         //removeChildren();
 
+        DataSetList dsetList = chart.getDataSetList();
         for (int i=0; i<dsetList.getDataSetCount(); i++) {
             DataSet dset = dsetList.getDataSet(i);
             View entryView = createLegendEntry(chart, dset, i);

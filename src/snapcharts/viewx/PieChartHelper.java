@@ -39,11 +39,12 @@ public class PieChartHelper extends ChartHelper {
     protected DataArea[] createDataAreas()
     {
         DataSetList dataSetList = getDataSetList();
-        if (dataSetList.getDataSetCount() == 0)
-            dataSetList = getDataSetListAll();
-        if (dataSetList.getDataSetCount() == 0)
+        DataSet[] dataSets = dataSetList.getEnabledDataSets();
+        if (dataSets.length == 0)
+            dataSets = dataSetList.getDataSets();
+        if (dataSets.length == 0)
             return new DataArea[0];
-        DataSet dset = dataSetList.getDataSet(0);
+        DataSet dset = dataSets[0];
         return new DataArea[] { _dataArea = new PieDataArea(this, dset) };
     }
 
@@ -53,8 +54,9 @@ public class PieChartHelper extends ChartHelper {
     public void activate()
     {
         // Get info
-        DataSetList dataSetList = getDataSetListAll();
-        int dsetCount = dataSetList.getDataSetCount();
+        DataSetList dataSetList = getDataSetList();
+        DataSet[] dataSets = dataSetList.getDataSets();
+        int dsetCount = dataSets.length;
 
         // Update parts
         Legend legend = getChart().getLegend();
@@ -62,11 +64,8 @@ public class PieChartHelper extends ChartHelper {
         legend.setShowLegend(dsetCount>1);
 
         // If multiple datasets, make sure only first is enabled
-        if (dsetCount>1) {
-            dataSetList.getDataSet(0).setDisabled(false);
-            for (int i=1; i<dsetCount; i++)
-                dataSetList.getDataSet(i).setDisabled(true);
-        }
+        for (int i=1; i<dsetCount; i++)
+            dataSets[i].setDisabled(i > 0);
     }
 
     /**
@@ -85,16 +84,17 @@ public class PieChartHelper extends ChartHelper {
     public void resetView()
     {
         // Make sure all DataSet.AxisTypeY are just Y
-        DataSetList dsetList = getDataSetList(); if (dsetList.getDataSetCount()==0) return;
-        for (DataSet dset : dsetList.getDataSets().toArray(new DataSet[0]))
+        DataSetList dsetList = getDataSetList();
+        DataSet[] dataSets = dsetList.getDataSets(); if (dataSets.length == 0) return;
+        for (DataSet dset : dataSets)
             dset.setAxisTypeY(AxisType.Y);
-        dsetList = getDataSetList();
 
         // Do normal version
         super.resetView();
 
         // Update SelDataPoint
-        DataSet dset = dsetList.getDataSet(0); if (dset.getPointCount()==0) return;
+        DataSet dset = dsetList.getDataSet(0);
+        if (dset.getPointCount()==0) return;
         DataPoint dp = dset.getPoint(0);
         _dataArea._disableMorph = true;
         _chartView.setSelDataPoint(dp);

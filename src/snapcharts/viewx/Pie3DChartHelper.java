@@ -34,11 +34,12 @@ public class Pie3DChartHelper extends PieChartHelper {
     protected DataArea[] createDataAreas()
     {
         DataSetList dataSetList = getDataSetList();
-        if (dataSetList.getDataSetCount() == 0)
-            dataSetList = getDataSetListAll();
-        if (dataSetList.getDataSetCount() == 0)
+        DataSet[] dataSets = dataSetList.getEnabledDataSets();
+        if (dataSets.length == 0)
+            dataSets = dataSetList.getDataSets();
+        if (dataSets.length == 0)
             return new DataArea[0];
-        DataSet dset = dataSetList.getDataSet(0);
+        DataSet dset = dataSets[0];
         return new DataArea[] { _dataArea = new Pie3DDataArea(this, dset) };
     }
 }

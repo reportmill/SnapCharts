@@ -56,6 +56,16 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     public DataSet getDataSet()  { return _dataSet; }
 
     /**
+     * Returns whether dataset is enabled.
+     */
+    public boolean isDataSetEnabled()  { return _dataSet.isEnabled(); }
+
+    /**
+     * Returns whether dataset is disabled.
+     */
+    public boolean isDataSetDisabled()  { return _dataSet.isDisabled(); }
+
+    /**
      * Returns the DataSet AxisType.
      */
     public AxisType getAxisTypeY()  { return _axisTypeY; }
@@ -170,7 +180,11 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         aPntr.clipRect(0, 0, areaW, areaH);
 
         // Paint chart
-        paintDataArea(aPntr);
+        DataSet dataSet = getDataSet();
+        if (dataSet.isEnabled() || getParent().getChildCount()==1)
+            paintDataArea(aPntr);
+
+        // Restore Graphics state
         aPntr.restore();
     }
 
@@ -280,13 +294,13 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
         // Get data info
         DataSetList dsetList = getDataSetList();
-        List<DataSet> dsets = dsetList.getDataSets();
+        DataSet[] dataSets = dsetList.getEnabledDataSets();
         int pointCount = dsetList.getPointCount();
 
         // Iterate over active dataset to find dataset + value index closest to point
         DataPoint dataPoint = null;
         double dist = Float.MAX_VALUE;
-        for (DataSet dset : dsets) {
+        for (DataSet dset : dataSets) {
 
             // Iterate over points
             for (int j=0; j<pointCount; j++) {

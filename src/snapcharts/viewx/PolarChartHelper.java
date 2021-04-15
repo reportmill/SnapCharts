@@ -46,12 +46,12 @@ public class PolarChartHelper extends ChartHelper {
     protected DataArea[] createDataAreas()
     {
         DataSetList dataSetList = getDataSetList();
-        List<DataSet> dsets = dataSetList.getDataSets();
-        int dsetCount = dsets.size();
+        DataSet[] dsets = dataSetList.getDataSets();
+        int dsetCount = dsets.length;
 
         DataArea[] dataAreas = new DataArea[dsetCount];
         for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dsets.get(i);
+            DataSet dset = dsets[i];
             dataAreas[i] = new PolarDataArea(this, dset);
         }
 
@@ -222,7 +222,8 @@ public class PolarChartHelper extends ChartHelper {
         // Get Radius MinMax for all datasets
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        for (DataSet dset : dataSetList.getDataSets()) {
+        DataSet[] dataSets = dataSetList.getEnabledDataSets();
+        for (DataSet dset : dataSets) {
             RawData rawData = dset.getProcessedData();
             MinMax minMax = rawData.getMinMaxR();
             min = Math.min(min, minMax.getMin());

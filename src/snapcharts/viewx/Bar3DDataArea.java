@@ -458,4 +458,14 @@ public class Bar3DDataArea extends BarDataArea {
         double viewH = getHeight();
         _camView.setSize(viewW, viewH);
     }
+
+    /**
+     * Clears the sections when needed (change of data, size)
+     */
+    @Override
+    protected void clearSections()
+    {
+        super.clearSections();
+        _camView.relayout();
+    }
 }

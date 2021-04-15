@@ -86,12 +86,12 @@ public class OpenInPlotly {
 
         // Get DataSet info
         DataSetList dataSetList = aChart.getDataSetList();
-        List<DataSet> dataSets = dataSetList.getDataSets();
-        int dsetCount = dataSets.size();
+        DataSet[] dataSets = dataSetList.getDataSets();
+        int dsetCount = dataSets.length;
 
         // Iterate over DataSets and write trace declaration for each: var trace0 = [ ... ]; var trace1 = [ ... ]; ...
         for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dataSets.get(i);
+            DataSet dset = dataSets[i];
             writeDataSet(dset, i);
         }
 

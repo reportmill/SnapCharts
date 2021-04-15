@@ -52,9 +52,10 @@ public class Line3DChartHelper extends ChartHelper {
     {
         Chart chart = getChart();
         DataSetList dataSetList = chart.getDataSetList();
-        if (dataSetList.getDataSetCount() == 0)
+        DataSet[] dataSets = dataSetList.getDataSets();
+        if (dataSets.length == 0)
             return new DataArea[0];
-        DataSet dset = dataSetList.getDataSet(0);
+        DataSet dset = dataSets[0];
         return new DataArea[] { new Line3DDataArea(this, dset) };
     }
 
@@ -64,9 +65,9 @@ public class Line3DChartHelper extends ChartHelper {
     public void resetView()
     {
         // Make sure all DataSet.AxisTypeY are just Y
-        DataSetList dsetList = getDataSetList();
-        if (dsetList.getDataSetCount() == 0) return;
-        for (DataSet dset : dsetList.getDataSets())
+        DataSetList dataSetList = getDataSetList();
+        DataSet[] dataSets = dataSetList.getDataSets(); if (dataSets.length == 0) return;
+        for (DataSet dset : dataSets)
             dset.setAxisTypeY(AxisType.Y);
 
         // Do normal version

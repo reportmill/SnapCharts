@@ -189,12 +189,12 @@ public class Line3DDataArea extends DataArea {
     {
         // Get info
         DataSetList dataSetList = getDataSetList();
-        List<DataSet> dataSets = dataSetList.getDataSets();
-        int dataSetCount = dataSets.size();
+        DataSet[] dataSets = dataSetList.getEnabledDataSets();
+        int dataSetCount = dataSets.length;
 
         // Iterate over datasets and add Line3D shape for each
         for (int i=0; i<dataSetCount; i++) {
-            DataSet dset = dataSets.get(i);
+            DataSet dset = dataSets[i];
             addLine3D(dset, i, dataSetCount);
         }
     }
@@ -353,14 +353,14 @@ public class Line3DDataArea extends DataArea {
 
         // Get info
         DataSetList dataSetList = getDataSetList();
-        List<DataSet> dataSets = dataSetList.getDataSets();
-        int dataSetCount = dataSets.size();
+        DataSet[] dataSets = dataSetList.getEnabledDataSets();
+        int dataSetCount = dataSets.length;
 
         // Iterate over datasets and add separator for side
         if (dataSetCount>1) {
             double sectionDepth = getWidth() / dataSetCount;
             for (int i = 1; i < dataSetCount; i++) {
-                DataSet dset = dataSets.get(i);
+                DataSet dset = dataSets[i];
                 addLine3D(dset, i, dataSetCount);
                 double lineZ2 = sectionDepth * i;
                 _gridWithoutSep.moveTo(lineZ2, 0);

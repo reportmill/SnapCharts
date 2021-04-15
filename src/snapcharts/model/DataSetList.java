@@ -1,7 +1,6 @@
 package snapcharts.model;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import snap.util.*;
 import snapcharts.util.MinMax;
 
@@ -11,10 +10,16 @@ import snapcharts.util.MinMax;
 public class DataSetList extends ChartPart {
 
     // The list of datasets
-    private List<DataSet> _dsets = new ArrayList<>();
+    private List<DataSet> _dataSetsList = new ArrayList<>();
 
     // The dataset start value
     private int _startValue = 0;
+
+    // The DataSets array
+    private DataSet[]  _dataSets;
+
+    // The Enabled DataSets array
+    private DataSet[]  _enabledDataSets;
 
     // The AxisTypes
     private AxisType[] _axisTypes;
@@ -35,11 +40,13 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the list of datasets.
+     * Returns the array of datasets.
      */
-    public List<DataSet> getDataSets()
+    public DataSet[] getDataSets()
     {
-        return _dsets;
+        if (_dataSets != null) return _dataSets;
+
+        return _dataSets = _dataSetsList.toArray(new DataSet[0]);
     }
 
     /**
@@ -47,7 +54,7 @@ public class DataSetList extends ChartPart {
      */
     public boolean isEmpty()
     {
-        return _dsets.isEmpty();
+        return _dataSetsList.isEmpty();
     }
 
     /**
@@ -55,7 +62,7 @@ public class DataSetList extends ChartPart {
      */
     public int getDataSetCount()
     {
-        return _dsets.size();
+        return _dataSetsList.size();
     }
 
     /**
@@ -82,7 +89,7 @@ public class DataSetList extends ChartPart {
      */
     public DataSet getDataSet(int anIndex)
     {
-        return _dsets.get(anIndex);
+        return _dataSetsList.get(anIndex);
     }
 
     /**
@@ -99,12 +106,12 @@ public class DataSetList extends ChartPart {
     public void addDataSet(DataSet aDataSet, int anIndex)
     {
         // Add DataSet at index
-        _dsets.add(anIndex, aDataSet);
+        _dataSetsList.add(anIndex, aDataSet);
         aDataSet._dsetList = this;
         aDataSet.addPropChangeListener(pc -> dataSetDidPropChange(pc));
 
         // Reset indexes
-        for (int i = 0; i < _dsets.size(); i++)
+        for (int i = 0; i < _dataSetsList.size(); i++)
             getDataSet(i)._index = i;
         clearCachedValues();
 
@@ -117,7 +124,7 @@ public class DataSetList extends ChartPart {
      */
     public DataSet removeDataSet(int anIndex)
     {
-        DataSet dset = _dsets.remove(anIndex);
+        DataSet dset = _dataSetsList.remove(anIndex);
         clearCachedValues();
         if (dset != null)
             firePropChange(DataSet_Prop, dset, null, anIndex);
@@ -129,7 +136,7 @@ public class DataSetList extends ChartPart {
      */
     public int removeDataSet(DataSet aDataSet)
     {
-        int index = _dsets.indexOf(aDataSet);
+        int index = _dataSetsList.indexOf(aDataSet);
         if (index >= 0)
             removeDataSet(index);
         return index;
@@ -146,21 +153,33 @@ public class DataSetList extends ChartPart {
     }
 
     /**
-     * Returns the number of datasets that are enabled.
+     * Returns the enabled datasets.
      */
-    public int getDataSetCountEnabled()
+    public DataSet[] getEnabledDataSets()
     {
-        int count = 0;
-        for (DataSet dset : getDataSets()) if (dset.isEnabled()) count++;
-        return count;
+        if (_enabledDataSets != null) return _enabledDataSets;
+
+        DataSet[] dataSets = getDataSets();
+        DataSet[] dataSets2 = Stream.of(dataSets).filter(i -> i.isEnabled()).toArray(size -> new DataSet[size]);
+        return _enabledDataSets = dataSets2;
     }
 
     /**
-     * Returns a list of datasets for given filter predicate.
+     * Returns the number of datasets that are enabled.
      */
-    public List<DataSet> getDataSetsFiltered(Predicate<? super DataSet> aPredicate)
+    public int getEnabledDataSetCount()
     {
-        return getDataSets().stream().filter(aPredicate).collect(Collectors.toList());
+        DataSet[] enabledDataSets = getEnabledDataSets();
+        return enabledDataSets.length;
+    }
+
+    /**
+     * Returns the enabled datasets at given enabled dataset index.
+     */
+    public DataSet getEnabledDataSet(int anIndex)
+    {
+        DataSet[] enabledDataSets = getEnabledDataSets();
+        return enabledDataSets[anIndex];
     }
 
     /**
@@ -174,7 +193,8 @@ public class DataSetList extends ChartPart {
         // Get set of unique axes
         Set<AxisType> typesSet = new HashSet<>();
         typesSet.add(AxisType.X);
-        for (DataSet dset : getDataSetList().getDataSets())
+        DataSet[] dataSets = getEnabledDataSets();
+        for (DataSet dset : dataSets)
             typesSet.add(dset.getAxisTypeY());
 
         // Convert to array, sort, set and return
@@ -203,14 +223,15 @@ public class DataSetList extends ChartPart {
     private MinMax getMinMaxForAxisImpl(AxisType anAxisType)
     {
         // If empty, just return silly range
-        if (getDataSetCount()==0 || getPointCount()==0)
+        DataSet[] dataSets = getEnabledDataSets();
+        if (dataSets.length==0 || getPointCount()==0)
             return new MinMax(0, 5);
 
         // Handle X
         if (anAxisType == AxisType.X) {
             double min = Double.MAX_VALUE;
             double max = -Double.MAX_VALUE;
-            for (DataSet dset : getDataSets()) {
+            for (DataSet dset : dataSets) {
                 min = Math.min(min, dset.getMinX());
                 max = Math.max(max, dset.getMaxX());
             }
@@ -221,7 +242,7 @@ public class DataSetList extends ChartPart {
         if (anAxisType.isAnyY()) {
             double min = Double.MAX_VALUE;
             double max = -Double.MAX_VALUE;
-            for (DataSet dset : getDataSets()) {
+            for (DataSet dset : dataSets) {
                 if (anAxisType == dset.getAxisTypeY()) {
                     min = Math.min(min, dset.getMinY());
                     max = Math.max(max, dset.getMaxY());
@@ -288,8 +309,9 @@ public class DataSetList extends ChartPart {
      */
     public int getPointCount()
     {
-        int pc = Integer.MAX_VALUE; if (getDataSetCount()==0) return 0;
-        for (DataSet dset : getDataSets()) pc = Math.min(dset.getPointCount(), pc);
+        DataSet[] dataSets = getEnabledDataSets(); if (dataSets.length == 0) return 0;
+        int pc = Integer.MAX_VALUE;
+        for (DataSet dset : dataSets) pc = Math.min(dset.getPointCount(), pc);
         return pc;
     }
 
@@ -298,7 +320,8 @@ public class DataSetList extends ChartPart {
      */
     public void setPointCount(int aValue)
     {
-        for (DataSet dset : getDataSets())
+        DataSet[] dataSets = getDataSets();
+        for (DataSet dset : dataSets)
             dset.setPointCount(aValue);
     }
 
@@ -307,7 +330,8 @@ public class DataSetList extends ChartPart {
      */
     public boolean isSliceEmpty(int anIndex)
     {
-        for (DataSet dset : getDataSets())
+        DataSet[] dataSets = getEnabledDataSets();
+        for (DataSet dset : dataSets)
             if (dset.getPoint(anIndex).getValueY()!=null)
                 return false;
         return true;
@@ -340,6 +364,8 @@ public class DataSetList extends ChartPart {
      */
     private void clearCachedValues()
     {
+        _dataSets = null;
+        _enabledDataSets = null;
         _axisTypes = null;
         _minMaxs.clear();
     }
@@ -354,7 +380,8 @@ public class DataSetList extends ChartPart {
         XMLElement e = super.toXML(anArchiver);
 
         // Archive DataSets
-        for (DataSet dset : getDataSets())
+        DataSet[] dataSets = getDataSets();
+        for (DataSet dset : dataSets)
             e.add(anArchiver.toXML(dset));
 
         // Return element

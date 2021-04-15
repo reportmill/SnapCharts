@@ -38,12 +38,12 @@ public class PolarContourChartHelper extends PolarChartHelper {
     protected DataArea[] createDataAreas()
     {
         DataSetList dataSetList = getDataSetList();
-        List<DataSet> dsets = dataSetList.getDataSets();
-        int dsetCount = dsets.size();
+        DataSet[] dataSets = dataSetList.getDataSets();
+        int dsetCount = dataSets.length;
 
         DataArea[] dataAreas = new DataArea[dsetCount];
         for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dsets.get(i);
+            DataSet dset = dataSets[i];
             dataAreas[i] = new PolarContourDataArea(this, dset);
         }
 

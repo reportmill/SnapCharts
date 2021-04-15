@@ -284,7 +284,7 @@ public class ChartPane extends DocItemPane {
     {
         // Configure TabView with Chart.Datasets
         DataSetList dataSetList = getDataSetList();
-        List<DataSet> dsets = dataSetList.getDataSets();
+        DataSet[] dsets = dataSetList.getDataSets();
         for (DataSet dset : dsets) {
             _tabView.addTab(dset.getName(), new Label(dset.getName()));
         }

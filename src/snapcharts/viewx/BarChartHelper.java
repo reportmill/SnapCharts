@@ -50,8 +50,8 @@ public class BarChartHelper extends ChartHelper {
     {
         // Make sure all DataSet.AxisTypeY are just Y
         DataSetList dsetList = getDataSetList();
-        if (dsetList.getDataSetCount() == 0) return;
-        for (DataSet dset : dsetList.getDataSets())
+        DataSet[] dataSets = dsetList.getDataSets(); if (dataSets.length == 0) return;
+        for (DataSet dset : dataSets)
             dset.setAxisTypeY(AxisType.Y);
 
         // Do normal version

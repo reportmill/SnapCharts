@@ -79,42 +79,13 @@ public abstract class ChartHelper {
     /**
      * Returns the DataSetList.
      */
-    public DataSetList getDataSetListAll()
-    {
-        return getChart().getDataSetList();
-    }
-
-    /**
-     * Returns the DataSetList.
-     */
     public DataSetList getDataSetList()
     {
         // If already set, just return
         if (_dataSetList!=null) return _dataSetList;
 
         // Get DataSetList for DataSets that are enabled
-        return _dataSetList = getDataSetListImpl();
-    }
-
-    /**
-     * Returns a DataSetList of active datasets.
-     */
-    private DataSetList getDataSetListImpl()
-    {
-        // If all datasets are enabled, just return the existing DataSetList
-        DataSetList dataSetList = getDataSetListAll();
-        int activeCount = dataSetList.getDataSetCountEnabled();
-        if (activeCount == dataSetList.getDataSetCount())
-            return dataSetList;
-
-        // Create new DataSetList and initialize with enabled sets
-        DataSetList active = new DataSetList(getChart());
-        List<DataSet> dsets = dataSetList.getDataSets();
-        for (DataSet dset : dsets)
-            if (dset.isEnabled())
-                active.addDataSet(dset);
-        active.setStartValue(dataSetList.getStartValue());
-        return active;
+        return _dataSetList = getChart().getDataSetList();
     }
 
     /**
@@ -267,12 +238,10 @@ public abstract class ChartHelper {
      */
     public DataArea getDataAreaForFirstAxisY()
     {
-        DataArea dataArea = getDataAreaForAxisTypeY(AxisType.Y);
-        if (dataArea!=null)
-            return dataArea;
-        AxisType axisTypes[] = { AxisType.Y2, AxisType.Y3, AxisType.Y4 };
+        AxisType[] axisTypes = getAxisTypes();
         for (AxisType axisType : axisTypes) {
-            dataArea = getDataAreaForAxisTypeY(axisType);
+            if (!axisType.isAnyY()) continue;
+            DataArea dataArea = getDataAreaForAxisTypeY(axisType);
             if (dataArea!=null)
                 return dataArea;
         }
@@ -490,9 +459,9 @@ public abstract class ChartHelper {
     public void activate()
     {
         // Enable all datasets
-        DataSetList dataSetList = getDataSetListAll();
-        List<DataSet> dsets = dataSetList.getDataSets();
-        for (DataSet dset : dsets)
+        DataSetList dataSetList = getDataSetList();
+        DataSet[] dataSets = dataSetList.getDataSets();
+        for (DataSet dset : dataSets)
             dset.setDisabled(false);
     }
 
@@ -516,7 +485,8 @@ public abstract class ChartHelper {
 
         // Reset DataAreas
         for (DataArea dataArea : getDataAreas())
-            dataArea.resetView();
+            if (dataArea.isDataSetEnabled())
+                dataArea.resetView();
     }
 
     /**
@@ -534,8 +504,10 @@ public abstract class ChartHelper {
         _axisY = null;
 
         // Add new axis views
-        for (AxisView axisView : getAxisViews())
+        for (AxisView axisView : getAxisViews()) {
             ViewUtils.addChild(_chartView, axisView);
+            axisView.clearIntervals();
+        }
     }
 
     /**
@@ -561,14 +533,6 @@ public abstract class ChartHelper {
         // Forward to AxisViews
         for (AxisView axisView : getAxisViews())
             axisView.chartPartDidChange(aPC);
-
-        // Handle DataSet/DataSetList change
-        Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList) {
-            if (_dataSetList!=null && _dataSetList!=getDataSetListAll())
-                _dataSetList.clear();
-            _dataSetList = null;
-        }
     }
 
     /**

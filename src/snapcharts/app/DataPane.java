@@ -57,10 +57,10 @@ public class DataPane extends ViewOwner {
     protected void resetUI()
     {
         DataSetList dsetList = getDataSetList();
-        List <DataSet> dsets = dsetList.getDataSets();
+        DataSet[] dsets = dsetList.getDataSets();
 
         // Update SeriesSpinner, PointSpinner
-        setViewValue("SeriesSpinner", dsets.size());
+        setViewValue("SeriesSpinner", dsets.length);
         setViewValue("PointSpinner", dsetList.getPointCount());
 
         // Set TableView row & col count
