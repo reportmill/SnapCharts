@@ -6,6 +6,8 @@ import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
+import snap.util.PropChange;
+import snapcharts.model.Axis;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataSetList;
 import snapcharts.model.Intervals;
@@ -206,7 +208,7 @@ public class Line3DDataArea extends DataArea {
     {
         // Create 2d path
         Path path = createDataPath(dset);
-        Color dataStrokeColor = getDataColor(anIndex);
+        Color dataStrokeColor = getDataColor(dset.getIndex());
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front
@@ -439,5 +441,17 @@ public class Line3DDataArea extends DataArea {
         AxisViewX axisViewX = super.getAxisViewX();
         axisViewX.setWidth(getWidth());
         return axisViewX;
+    }
+
+    /**
+     * Called when a ChartPart changes.
+     */
+    @Override
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        Object src = aPC.getSource();
+        if (src instanceof DataSet || src instanceof DataSetList) {
+            _camView.relayout();
+        }
     }
 }

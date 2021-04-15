@@ -231,7 +231,6 @@ public class PolarDataArea extends DataArea {
 
         // Get DataSet list
         DataSet dset = getDataSet();
-        int dsetIndex = dset.getIndex();
 
         // Get Selection, Reveal info
         DataPoint selPoint = getChartView().getTargDataPoint();
@@ -243,7 +242,7 @@ public class PolarDataArea extends DataArea {
         boolean showLine = chartStyle.isShowLine();
         int lineWidth = chartStyle.getLineWidth(); if (isSelected) lineWidth++;
         Stroke dataStroke = XYDataArea.getDataStroke(lineWidth);
-        Color dataColor = getDataColor(dsetIndex);
+        Color dataColor = getDataColor();
         boolean showSymbols = chartStyle.isShowSymbols();
 
         // Get path - if Reveal is active, get path spliced
@@ -296,7 +295,7 @@ public class PolarDataArea extends DataArea {
                 double dispY = point.y;
 
                 // Get symbol and color and paint
-                Shape symbol = getDataSymbolShape(dsetIndex).copyFor(new Transform(dispX - 4, dispY - 4));
+                Shape symbol = getDataSymbolShape().copyFor(new Transform(dispX - 4, dispY - 4));
                 aPntr.setColor(dataColor);
                 aPntr.fill(symbol);
             }
@@ -317,8 +316,6 @@ public class PolarDataArea extends DataArea {
     protected void paintSelPoint(Painter aPntr)
     {
         // Get info
-        DataSet dset = getDataSet();
-        int dsetIndex = dset.getIndex();
         DataPoint selDataPoint = getChartView().getTargDataPoint();
         int selIndex = selDataPoint.getIndex();
 
@@ -329,8 +326,8 @@ public class PolarDataArea extends DataArea {
         double dispY = selPoint.y;
 
         // Get data color and symbol
-        Color dataColor = getDataColor(dsetIndex);
-        Shape dataSymbol = getDataSymbolShape(dsetIndex).copyFor(new Transform(dispX - 4, dispY - 4));
+        Color dataColor = getDataColor();
+        Shape dataSymbol = getDataSymbolShape().copyFor(new Transform(dispX - 4, dispY - 4));
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));

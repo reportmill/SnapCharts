@@ -54,11 +54,8 @@ public class XYDataArea extends DataArea {
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get info
-        DataSet dset = getDataSet();
-        int dsetIndex = dset.getIndex();
-
         // Get whether DataArea/DataSet is selected
+        DataSet dset = getDataSet();
         DataPoint selPoint = getChartView().getTargDataPoint();
         boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
 
@@ -82,7 +79,7 @@ public class XYDataArea extends DataArea {
             dataShape = new SplicerShape(dataShape, 0, reveal);
 
         // Get dataset color
-        Color dataColor = getDataColor(dsetIndex);
+        Color dataColor = getDataColor();
         if (_chartType ==ChartType.AREA)
             dataColor = dataColor.blend(Color.CLEAR, .3);
 
@@ -134,11 +131,9 @@ public class XYDataArea extends DataArea {
     protected void paintSymbols(Painter aPntr)
     {
         // Get info
-        DataSet dset = getDataSet();
-        int dsetIndex = dset.getIndex();
         int pointCount = _xyPainter.getDispPointCount();
-        Color color = getDataColor(dsetIndex);
-        Shape symbolShape = getDataSymbolShape(dsetIndex);
+        Color color = getDataColor();
+        Shape symbolShape = getDataSymbolShape();
 
         // Iterate over values
         for (int j=0; j<pointCount; j++) {
@@ -171,7 +166,6 @@ public class XYDataArea extends DataArea {
     {
         // Get info
         DataSet dset = getDataSet();
-        int dsetIndex = dset.getIndex();
         DataPoint selPoint = getChartView().getTargDataPoint();
         int selIndex = selPoint.getIndex();
 
@@ -182,8 +176,8 @@ public class XYDataArea extends DataArea {
         double dispY = dataToViewY(dataY);
 
         // Get data color and symbol
-        Color dataColor = getDataColor(dsetIndex);
-        Shape dataSymbol = getDataSymbolShape(dsetIndex).copyFor(new Transform(dispX - 4, dispY - 4));
+        Color dataColor = getDataColor();
+        Shape dataSymbol = getDataSymbolShape().copyFor(new Transform(dispX - 4, dispY - 4));
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));

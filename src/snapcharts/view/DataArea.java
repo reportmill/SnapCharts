@@ -106,6 +106,26 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Returns the dataset color at index.
      */
+    public Color getDataColor()
+    {
+        DataSet dataSet = getDataSet();
+        int index = dataSet.getIndex();
+        return getChart().getColor(index);
+    }
+
+    /**
+     * Returns the Symbol shape at index.
+     */
+    public Shape getDataSymbolShape()
+    {
+        DataSet dataSet = getDataSet();
+        int index = dataSet.getIndex();
+        return getDataSymbolShape(index);
+    }
+
+    /**
+     * Returns the dataset color at index.
+     */
     public Color getDataColor(int anIndex)  { return getChart().getColor(anIndex); }
 
     /**
