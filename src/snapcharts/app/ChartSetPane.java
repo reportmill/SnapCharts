@@ -243,7 +243,7 @@ public class ChartSetPane extends DocItemPane {
 
         // Get ScaleBox and configure
         ScaleBox scaleBox = (ScaleBox) _pageBox.getParent();
-        scaleBox.setVertical(true);
+        //scaleBox.setVertical(true);
         scaleBox.setKeepAspect(true);
 
         // Get PageBoxScrollView

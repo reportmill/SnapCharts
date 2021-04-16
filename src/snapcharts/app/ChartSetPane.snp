@@ -2,7 +2,7 @@
 <RowView FillHeight="true">
 <ColView GrowWidth="true" FillWidth="true">
   <ScrollView Name="ScrollView" GrowHeight="true">
-    <ScaleBox Align="TOP_CENTER" GrowWidth="true">
+    <ScaleBox Align="TOP_CENTER" GrowWidth="true" FillWidth="true">
       <ColView Name="PageBox" Align="TOP_CENTER" Padding="20" Spacing="20" FillWidth="true" />
     </ScaleBox>
   </ScrollView>
