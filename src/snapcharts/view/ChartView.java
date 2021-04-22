@@ -408,19 +408,19 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     /**
      * Returns the value for given key.
      */
-    public Object getValue(String aPropName)
+    public Object getPropValue(String aPropName)
     {
         if (aPropName.equals(Reveal_Prop)) return getReveal();
-        return super.getValue(aPropName);
+        return super.getPropValue(aPropName);
     }
 
     /**
      * Sets the value for given key.
      */
-    public void setValue(String aPropName, Object aValue)
+    public void setPropValue(String aPropName, Object aValue)
     {
         if (aPropName.equals(Reveal_Prop)) setReveal(SnapUtils.doubleValue(aValue));
-        else super.setValue(aPropName, aValue);
+        else super.setPropValue(aPropName, aValue);
     }
 
     /**

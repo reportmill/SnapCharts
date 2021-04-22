@@ -460,12 +460,12 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * Override to add support for this view properties.
      */
     @Override
-    public Object getValue(String aPropName)
+    public Object getPropValue(String aPropName)
     {
         switch (aPropName) {
             case AxisMin_Prop: return getAxisMin();
             case AxisMax_Prop: return getAxisMax();
-            default: return super.getValue(aPropName);
+            default: return super.getPropValue(aPropName);
         }
     }
 
@@ -473,12 +473,12 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * Override to add support for this view properties.
      */
     @Override
-    public void setValue(String aPropName, Object aValue)
+    public void setPropValue(String aPropName, Object aValue)
     {
         switch (aPropName) {
             case AxisMin_Prop: setAxisMin(SnapUtils.doubleValue(aValue)); break;
             case AxisMax_Prop: setAxisMax(SnapUtils.doubleValue(aValue)); break;
-            default: super.setValue(aPropName, aValue);
+            default: super.setPropValue(aPropName, aValue);
         }
     }
 
