@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Base class for parts of a chart: Axis, Area, Legend, etc.
  */
-public class ChartPart implements XMLArchiver.Archivable {
+public class ChartPart extends PropObject implements XMLArchiver.Archivable {
 
     // The name
     private String  _name;
@@ -31,12 +31,6 @@ public class ChartPart implements XMLArchiver.Archivable {
 
     // The Chart
     protected Chart  _chart;
-
-    // PropertyChangeSupport
-    protected PropChangeSupport _pcs = PropChangeSupport.EMPTY;
-
-    // A map to hold prop keys for unique classes
-    private static Map<Class<? extends ChartPart>, String[]>  _classProps = new HashMap<>();
 
     // Constants for properties
     public static final String Name_Prop = "Name";
@@ -198,53 +192,9 @@ public class ChartPart implements XMLArchiver.Archivable {
     }
 
     /**
-     * Add listener.
-     */
-    public void addPropChangeListener(PropChangeListener aPCL)
-    {
-        if (_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addPropChangeListener(aPCL);
-    }
-
-    /**
-     * Remove listener.
-     */
-    public void removePropChangeListener(PropChangeListener aPCL)  { _pcs.removePropChangeListener(aPCL); }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal)
-    {
-        if (!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal));
-    }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal, int anIndex)
-    {
-        if (!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal, anIndex));
-    }
-
-    /**
-     * Fires a given property change.
-     */
-    protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
-
-    /**
      * Returns the prop keys.
      */
-    public String[] getPropKeysAll()
-    {
-        return getPropKeysAllForClass(getClass());
-    }
-
-    /**
-     * Returns the prop keys.
-     */
+    @Override
     protected String[] getPropKeysLocal()
     {
         return new String[] {
@@ -255,6 +205,7 @@ public class ChartPart implements XMLArchiver.Archivable {
     /**
      * Returns the prop value for given key.
      */
+    @Override
     public Object getPropValue(String aPropName)
     {
         // Handle properties
@@ -267,6 +218,7 @@ public class ChartPart implements XMLArchiver.Archivable {
     /**
      * Sets the prop value for given key.
      */
+    @Override
     public void setPropValue(String aPropName, Object aValue)
     {
         // Handle properties
@@ -279,6 +231,7 @@ public class ChartPart implements XMLArchiver.Archivable {
     /**
      * Returns the value for given key.
      */
+    @Override
     public Object getPropDefault(String aPropName)
     {
         // Handle properties
@@ -324,36 +277,5 @@ public class ChartPart implements XMLArchiver.Archivable {
 
         // Return this part
         return this;
-    }
-
-    /**
-     * Returns the prop keys.
-     */
-    public static String[] getPropKeysAllForClass(Class<? extends ChartPart> aClass)
-    {
-        // Get props from cache and just return if found
-        String props[] = _classProps.get(aClass);
-        if (props!=null)
-            return props;
-
-        // Create list and add super props to it
-        List<String> propsList = new ArrayList<>();
-        Class superClass = aClass.getSuperclass();
-        String superProps[] = ChartPart.class.isAssignableFrom(superClass) ? getPropKeysAllForClass(superClass) : null;
-        if (superProps!=null)
-            Collections.addAll(propsList, superProps);
-
-        // Add props for class
-        try {
-            ChartPart object = aClass.newInstance();
-            String classProps[] = object.getPropKeysLocal();
-            Collections.addAll(propsList, classProps);
-        }
-        catch (Exception e) { throw new RuntimeException("ChartPart.getPropKeysAllForClass failed: " + aClass); }
-
-        // Add props array to Class map and return
-        props = propsList.toArray(new String[0]);
-        _classProps.put(aClass, props);
-        return props;
     }
 }
