@@ -300,9 +300,11 @@ public class ChartPaneSel {
         Image img = imgBox.getImage();
         Painter pntr = img.getPainter();
         pntr.setColor(Color.CLEAR);
-        pntr.setComposite(Painter.Composite.SRC_IN);
         pntr.translate(-imgBox.getImageBounds().x, -imgBox.getImageBounds().y);
+        pntr.setComposite(Painter.Composite.SRC_IN);
+        pntr.clip(shape); // For browser, because browser has slightly different idea of SRC_IN
         pntr.fill(shape);
+        pntr.setComposite(Painter.Composite.SRC_OVER);
 
         // Return image
         return imgBox;
