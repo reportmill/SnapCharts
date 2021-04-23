@@ -2,7 +2,6 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
-import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
@@ -231,15 +230,5 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
         _chartHelper.dataViewDidChangeSize();
-    }
-
-    /**
-     * Override to not set focus effect.
-     */
-    @Override
-    public void setSelected(boolean aValue)
-    {
-        super.setSelected(aValue);
-        setEffect(null);
     }
 }

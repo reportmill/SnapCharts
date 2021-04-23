@@ -1,10 +1,7 @@
 package snapcharts.app;
 import rmdraw.app.MarkupEditor;
 import rmdraw.app.MarkupEditorPane;
-import snap.gfx.Border;
-import snap.gfx.Color;
-import snap.gfx.Effect;
-import snap.gfx.ShadowEffect;
+import snap.gfx.*;
 import snap.util.DeepChangeListener;
 import snap.util.PropChange;
 import snap.util.PropChangeListener;
@@ -18,7 +15,6 @@ import snapcharts.model.DataSetList;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
-import java.util.List;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -225,7 +221,12 @@ public class ChartPane extends DocItemPane {
     protected View createUI()
     {
         // Get ColView
-        RowView topRowView = (RowView) super.createUI();
+        ColView topColView = (ColView) super.createUI();
+
+        // Create custom RowView for painting selection
+        RowView topRowView = new TopRowView();
+        topRowView.setFillHeight(true);
+        topRowView.addChild(topColView);
 
         // Create/add InspectorPane
         _insp = new ChartPaneInsp(this);
@@ -424,5 +425,28 @@ public class ChartPane extends DocItemPane {
     private void chartPartDidPropChange(PropChange aPC)
     {
         _insp.chartPartDidPropChange(aPC);
+    }
+
+    /**
+     * A custom RowView for top level of UI, with hook to paint selection.
+     */
+    protected class TopRowView extends RowView {
+
+        /**
+         * Constructor.
+         */
+        public TopRowView()
+        {
+            super();
+        }
+
+        /**
+         * Override to paint targeted view.
+         */
+        @Override
+        protected void paintAbove(Painter aPntr)
+        {
+            getSel().paintSelection(aPntr, this);
+        }
     }
 }
