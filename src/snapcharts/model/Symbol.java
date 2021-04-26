@@ -23,8 +23,8 @@ public class Symbol {
 
     // Named symbols
     public static final String CIRCLE = "Circle";
-    public static final String DIAMOND = "Diamond";
     public static final String SQUARE = "Square";
+    public static final String DIAMOND = "Diamond";
     public static final String TRIANGLE_UP = "Triangle-Up";
     public static final String TRIANGLE_DOWN = "Triangle-DOWN";
     public static final String UNKNOWN = "Unknown";
@@ -102,8 +102,8 @@ public class Symbol {
     {
         switch (anId) {
             case 0: return CIRCLE;
-            case 1: return DIAMOND;
-            case 2: return SQUARE;
+            case 1: return SQUARE;
+            case 2: return DIAMOND;
             case 3: return TRIANGLE_UP;
             case 4: return TRIANGLE_DOWN;
             default: System.err.println("Symbol.getNameForId: Invalid Id: " + anId); return UNKNOWN;
@@ -121,11 +121,11 @@ public class Symbol {
             // CIRCLE
             case 0: return new Ellipse(0, 0, 8, 8);
 
-            // DIAMOND
-            case 1: return new Polygon(4, 0, 8, 4, 4, 8, 0, 4);
-
             // SQUARE
-            case 2: return new Rect(0, 0, 8, 8);
+            case 1: return new Rect(0, 0, 8, 8);
+
+            // DIAMOND
+            case 2: return new Polygon(4, 0, 8, 4, 4, 8, 0, 4);
 
             // TRIANGLE_UP
             case 3: return new Polygon(4, 0, 8, 8, 0, 8);

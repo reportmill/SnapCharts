@@ -343,16 +343,6 @@ public class PolarDataArea extends DataArea {
     }
 
     /**
-     * Override for Subtype.Scatter.
-     */
-    @Override
-    public Shape getDataSymbolShape(int anIndex)
-    {
-        // Otherwise get DataSymbol for DataSet index
-        return getChart().getSymbolShape(anIndex);
-    }
-
-    /**
      * Returns the tail shape.
      */
     public Shape getTailShape()

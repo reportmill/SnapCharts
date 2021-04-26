@@ -16,10 +16,17 @@ public class ChartStyle extends ChartPart {
     // Whether to show symbols
     private boolean  _showSymbols;
 
+    // The Symbol Id
+    private int  _symbolId;
+
+    // The cached symbol
+    private Symbol  _symbol;
+
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String LineWidth_Prop = "LineWidth";
     public static final String ShowSymbols_Prop = "ShowSymbols";
+    public static final String SymbolId_Prop = "SymbolId";
 
     /**
      * Returns whether to show line for this DataSet.
@@ -73,6 +80,34 @@ public class ChartStyle extends ChartPart {
     }
 
     /**
+     * Returns the Symbol Id.
+     */
+    public int getSymbolId()  { return _symbolId; }
+
+    /**
+     * Sets the Symbol Id.
+     */
+    public void setSymbolId(int aValue)
+    {
+        if (aValue == getSymbolId()) return;
+        firePropChange(SymbolId_Prop, _symbolId, _symbolId = aValue);
+        _symbol = null;
+    }
+
+    /**
+     * Returns the Symbol.
+     */
+    public Symbol getSymbol()
+    {
+        // If already set, just return
+        if (_symbol != null) return _symbol;
+
+        // Get, set, return
+        Symbol symbol = Symbol.getSymbolForId(_symbolId);
+        return _symbol = symbol;
+    }
+
+    /**
      * Archival.
      */
     @Override
@@ -87,9 +122,11 @@ public class ChartStyle extends ChartPart {
         if (getLineWidth() != 1)
             e.add(LineWidth_Prop, getLineWidth());
 
-        // Archive ShowSymbols
+        // Archive ShowSymbols, SymbolId
         if (isShowSymbols())
             e.add(ShowSymbols_Prop, true);
+        if (getSymbolId() != 0)
+            e.add(SymbolId_Prop, getSymbolId());
 
         // Return element
         return e;
@@ -109,8 +146,9 @@ public class ChartStyle extends ChartPart {
         if (anElement.hasAttribute(LineWidth_Prop))
             setLineWidth(anElement.getAttributeIntValue(ShowLine_Prop));
 
-        // Unarchive ShowSymbols
+        // Unarchive ShowSymbols, SymbolId
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
+        setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
 
         // Return this part
         return this;

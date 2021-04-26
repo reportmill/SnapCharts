@@ -115,25 +115,26 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Returns the Symbol shape at index.
      */
-    public Shape getDataSymbolShape()
+    public Symbol getDataSymbol()
     {
         DataSet dataSet = getDataSet();
-        int index = dataSet.getIndex();
-        return getDataSymbolShape(index);
+        ChartStyle chartStyle = dataSet.getChartStyle();
+        return chartStyle.getSymbol();
+    }
+
+    /**
+     * Returns the Symbol shape at index.
+     */
+    public Shape getDataSymbolShape()
+    {
+        Symbol symbol = getDataSymbol();
+        return symbol.getShape();
     }
 
     /**
      * Returns the dataset color at index.
      */
     public Color getDataColor(int anIndex)  { return getChart().getColor(anIndex); }
-
-    /**
-     * Returns the Symbol shape at index.
-     */
-    public Shape getDataSymbolShape(int anIndex)
-    {
-        return getChart().getSymbolShape(anIndex);
-    }
 
     /**
      * Return the ratio of the portion of chart to paint.

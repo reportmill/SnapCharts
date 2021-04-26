@@ -64,8 +64,8 @@ public class ChartPaneSel {
         // Reset
         _chartPane.resetLater();
 
-        // Notify ChartPaneInsp
-        _chartPane._insp.chartPaneSelChanged();
+        // Notify ChartPane of change
+        _chartPane.chartPaneSelChanged();
     }
 
     /**

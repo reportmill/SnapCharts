@@ -211,20 +211,6 @@ public class XYDataArea extends DataArea {
     }
 
     /**
-     * Override for Subtype.Scatter.
-     */
-    @Override
-    public Shape getDataSymbolShape(int anIndex)
-    {
-        // If ChartType SCATTER, return Ellipes
-        if (_chartType == ChartType.SCATTER)
-            return new Ellipse(0,0,9,9);
-
-        // Otherwise get DataSymbol for DataSet index
-        return getChart().getSymbolShape(anIndex);
-    }
-
-    /**
      * Returns the tail shape.
      */
     public Shape getTailShape()

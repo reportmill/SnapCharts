@@ -1,7 +1,8 @@
 package snapcharts.apptools;
-import snap.view.ColView;
-import snap.view.Label;
-import snap.view.ViewEvent;
+import snap.geom.Shape;
+import snap.gfx.Color;
+import snap.util.SnapUtils;
+import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
@@ -97,6 +98,15 @@ public class ChartStyleInsp extends ChartPartInsp {
     protected void initUI()
     {
         _inspBox = getView("InspectorBox", ColView.class);
+
+        // Configure SymbolXButton(s)
+        for (int i=0; i<Symbol.SYMBOL_COUNT; i++) {
+            Shape shape = Symbol.getShapeForId(i);
+            ShapeView shapeView = new ShapeView(shape);
+            shapeView.setFill(Color.BLACK);
+            Button symbolButton = getView("Symbol" + i + "Button", Button.class);
+            symbolButton.setGraphic(shapeView);
+        }
     }
 
     /**
@@ -130,6 +140,18 @@ public class ChartStyleInsp extends ChartPartInsp {
 
         // Reset ShowSymbolsCheckBox
         setViewValue("ShowSymbolsCheckBox", chartStyle.isShowSymbols());
+
+        // Reset SymbolShapeButton
+        Symbol symbol = chartStyle.getSymbol();
+        Shape shape = symbol.getShape();
+        ShapeView shapeView = new ShapeView(shape);
+        shapeView.setFill(Color.BLACK);
+        ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
+        symbolShapeButton.setGraphic(shapeView);
+
+        // Reset SymbolsBox
+        View symbolsBox = getView("SymbolsBox");
+        symbolsBox.setVisible(symbolShapeButton.isSelected());
     }
 
     /**
@@ -165,6 +187,13 @@ public class ChartStyleInsp extends ChartPartInsp {
             chartStyle.setShowSymbols(showSymbols);
             if (!showSymbols)
                 chartStyle.setShowLine(true);
+        }
+
+        // Handle SymbolXButton
+        String name = anEvent.getName();
+        if (name.startsWith("Symbol") && name.endsWith("Button")) {
+            int id = SnapUtils.intValue(name);
+            chartStyle.setSymbolId(id);
         }
     }
 }

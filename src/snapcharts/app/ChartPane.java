@@ -420,6 +420,22 @@ public class ChartPane extends DocItemPane {
     }
 
     /**
+     * Called when the selection changes.
+     */
+    public void chartPaneSelChanged()
+    {
+        // If SelPart is DataSet, make sure tabPane is selected
+        ChartPart selPart = getSel().getSelChartPart();
+        if (selPart instanceof DataSet) {
+            DataSet dataSet = (DataSet) selPart;
+            _tabView.setSelIndex(dataSet.getIndex());
+        }
+
+        // Notify Inspector
+        _insp.chartPaneSelChanged();
+    }
+
+    /**
      * Called when a ChartPart has change.
      */
     private void chartPartDidPropChange(PropChange aPC)
