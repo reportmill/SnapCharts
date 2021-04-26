@@ -24,9 +24,13 @@ public class ChartPaneSel {
     // The targeted ChartPart
     private ChartPart  _targPart;
 
+    // The cached ImageBox/image for painting current selection
+    private ImageBox  _selImageBox;
+
     // Constants
-    protected static Stroke TARGET_BORDER_STROKE = new Stroke(2);
-    protected static Color TARGET_BORDER_COLOR = Color.BLUE.blend(Color.CLEARWHITE, .5);
+    private static Color  SEL_COLOR = Color.get("#039ED3");
+    private static Effect  SEL_EFFECT = new ShadowEffect(8, SEL_COLOR.darker(), 0, 0);
+    private static Border  SEL_BORDER = Border.createLineBorder(SEL_COLOR.brighter(), 3);
 
     /**
      * Constructor.
@@ -244,16 +248,28 @@ public class ChartPaneSel {
         Shape selViewShapeInHost = selView.localToParent(selViewShape, aHostView);
 
         // Get image box for SelView bounds shape
-        Color selColor = Color.get("#039ED3");
-        Effect selEffect = new ShadowEffect(8, selColor.darker(), 0, 0);
-        Border selBorder = Border.createLineBorder(selColor.brighter(), 3);
-        ImageBox imgBox = getImageBoxForShapeAndEffect(selViewShapeInHost, selEffect, selBorder);
+        ImageBox imgBox = getSelImageBoxForShape(selViewShapeInHost);
 
         // Paint ImageBox at SelView origin in Host coords
         Rect selViewBoundsInHost = selViewShapeInHost.getBounds();
         aPntr.setOpacity(.7);
         imgBox.paintImageBox(aPntr, selViewBoundsInHost.x, selViewBoundsInHost.y);
         aPntr.setOpacity(1);
+    }
+
+    /**
+     * Returns the image box for sel view.
+     */
+    private ImageBox getSelImageBoxForShape(Shape selViewShapeInHost)
+    {
+        // If ImageBox with same size already set, use it
+        if (_selImageBox != null && _selImageBox.getWidth() == selViewShapeInHost.getWidth() &&
+            _selImageBox.getHeight() == selViewShapeInHost.getHeight())
+            return _selImageBox;
+
+        // Get image box for SelView bounds shape
+        ImageBox imgBox = getImageBoxForShapeAndEffect(selViewShapeInHost, SEL_EFFECT, SEL_BORDER);
+        return _selImageBox = imgBox;
     }
 
     /**

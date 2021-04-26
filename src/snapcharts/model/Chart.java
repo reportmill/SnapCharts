@@ -50,9 +50,6 @@ public class Chart extends ChartPart {
     // The dataset colors
     private Color[]  _colors = GT_COLORS;
 
-    // The dataset shapes
-    private Shape[] _symbolShapes;
-
     // The object holding specific chart type properties
     private ChartStyleHpr _chartStyleHpr = new ChartStyleHpr(this);
 
@@ -289,28 +286,12 @@ public class Chart extends ChartPart {
      */
     public Shape getSymbolShape(int anIndex)
     {
-        // Get index in range (wrapped if needed)
-        Shape[] symbShapes = getSymbolShapes();
-        int index = anIndex % symbShapes.length;
+        // If not Line, return Symbol zero (point)
+        if (getType() != ChartType.LINE)
+            return Symbol.getSymbolForIndex(0).getShape();
 
-        switch (getType()) {
-            case LINE: return symbShapes[index];
-            default: return symbShapes[0];
-        }
-    }
-
-    /**
-     * Returns the symbol shapes.
-     */
-    public Shape[] getSymbolShapes()
-    {
-        if (_symbolShapes !=null) return _symbolShapes;
-        Shape shp0 = new Ellipse(0,0,8,8);
-        Shape shp1 = new Polygon(4,0,8,4,4,8,0,4);
-        Shape shp2 = new Rect(0,0,8,8);
-        Shape shp3 = new Polygon(4,0,8,8,0,8);
-        Shape shp4 = new Polygon(0,0,8,0,4,8);
-        return _symbolShapes = new Shape[] { shp0, shp1, shp2, shp3, shp4 };
+        // Otherwise, return symbol at index
+        return Symbol.getSymbolForIndex(anIndex).getShape();
     }
 
     /**
