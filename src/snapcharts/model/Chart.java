@@ -66,7 +66,7 @@ public class Chart extends ChartPart {
 
     // GTColors
     private static Color[] GT_COLORS = new Color[] {
-            new Color(255,0,0),
+            new Color(232,0,0),
             new Color(0, 0, 255),
             new Color(0,185,25),
             new Color(255,0,255),

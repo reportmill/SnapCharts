@@ -151,7 +151,7 @@ public class ChartStyleInsp extends ChartPartInsp {
 
         // Reset SymbolsBox
         View symbolsBox = getView("SymbolsBox");
-        symbolsBox.setVisible(symbolShapeButton.isSelected());
+        ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true).setLinear();
     }
 
     /**

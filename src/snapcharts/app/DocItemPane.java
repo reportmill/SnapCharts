@@ -1,10 +1,10 @@
 package snapcharts.app;
 import rmdraw.scene.SGDoc;
 import snap.view.View;
+import snap.view.ViewAnimUtils;
 import snap.view.ViewOwner;
 import snapcharts.doc.*;
 import snapcharts.model.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,26 +51,17 @@ public class DocItemPane extends ViewOwner {
     public void setShowInspector(boolean aValue)
     {
         // If already set, just return
-        if (aValue==isShowInspector()) return;
+        if (aValue == isShowInspector()) return;
 
         // Set value
         _showInsp = aValue;
 
-        // Get inspector
+        // Get inspector and view
         ViewOwner insp = getInspector(); if (insp==null) return;
         View inspView = insp.getUI();
 
-        // Handle show inspector
-        if (aValue) {
-            inspView.setVisible(true);
-            inspView.getAnimCleared(500).setPrefWidth(300).play();
-        }
-
-        // Handle hide inspector
-        else {
-            inspView.getAnimCleared(500).setPrefWidth(1);
-            inspView.getAnim(500).setOnFinish(a -> inspView.setVisible(false)).play();
-        }
+        // Set visible (animated)
+        ViewAnimUtils.setVisible(inspView, aValue, true, false);
     }
 
     /**
