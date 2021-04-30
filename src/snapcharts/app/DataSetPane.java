@@ -47,29 +47,20 @@ public class DataSetPane extends DocItemPane {
     /**
      * Called to paste from clipboard.
      */
-    private void paste()
+    public void paste()
     {
-        if (SnapUtils.isTeaVM) {
-            Clipboard cb = Clipboard.get();
-            cb.getApprovedClipboardAndRun(cb2 -> paste(cb2));
+        // Get clipboard (if not loaded (browser), come back when it is)
+        Clipboard cb = Clipboard.get();
+        if (!cb.isLoaded()) {
+            cb.addLoadListener(() -> paste());
+            return;
         }
 
-        else {
-            Clipboard cb = Clipboard.get();
-            paste(cb);
-        }
-    }
-
-    /**
-     * Called to paste from clipboard.
-     */
-    private void paste(Clipboard cb)
-    {
         // Get string (just return if not there)
-        String str = cb.hasString() ? cb.getString() : null; if (str==null) return;
+        String str = cb.hasString() ? cb.getString() : null; if (str == null) return;
 
         // Get cells
-        String cells[][] = DataUtils.getCellData(str);
+        String[][] cells = DataUtils.getCellData(str);
         if (cells != null) {
             DataSet dset = getDataSet();
             ListSel sel = _sheetView.getSel();
