@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView PrefWidth="1200" PrefHeight="900" FillWidth="true">
   <RowView Padding="8,8,8,6" Spacing="4">
+    <Button Name="SidebarButton" PrefWidth="22" PrefHeight="22" ToolTip="Show/Hide Sidebar" image="Sidebar.png" ShowArea="false" />
+    <Separator PrefHeight="18" Vertical="true" />
     <Button Name="SaveButton" PrefWidth="22" PrefHeight="22" ToolTip="Save" image="File_Save.png" ShowArea="false" />
     <Separator PrefHeight="18" Vertical="true" />
     <Button Name="CutButton" PrefWidth="22" PrefHeight="22" ToolTip="Cut" image="Edit_Cut.png" ShowArea="false" />
@@ -17,7 +19,7 @@
     </RowView>
   </RowView>
   <SplitView Name="SplitView" GrowHeight="true">
-    <ColView FillWidth="true">
+    <ColView Name="SidebarView" FillWidth="true">
       <RowView Margin="2" Padding="4" GrowWidth="true" Spacing="4">
         <BevelBorder />
         <Label text="Charts">

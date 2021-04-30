@@ -89,6 +89,29 @@ public class DocPane extends ViewOwner {
     }
 
     /**
+     * Returns whether showing sidebar.
+     */
+    public boolean isShowSidebar()
+    {
+        View sidebarView = getView("SidebarView");
+        return sidebarView != null && sidebarView.isShowing();
+    }
+
+    /**
+     * Sets whether showing sidebar.
+     */
+    public void setShowSidebar(boolean aValue)
+    {
+        // If value already set, just return
+        if (aValue == isShowSidebar()) return;
+
+        // Show/hide sidebarView
+        View sidebarView = getView("SidebarView");
+        SplitView splitView = getView("SplitView", SplitView.class);
+        splitView.setItemVisibleWithAnim(sidebarView, aValue);
+    }
+
+    /**
      * Returns the selected doc item.
      */
     public DocItem getSelItem()  { return _selItem; }
@@ -420,7 +443,7 @@ public class DocPane extends ViewOwner {
     {
         // Get/configure SplitView
         _splitView = getView("SplitView", SplitView.class);
-        _splitView.setDividerSpan(5);
+        _splitView.setDividerSpan(6);
         _splitView.removeItem(1);
 
         // Set Toolbar images
@@ -485,8 +508,14 @@ public class DocPane extends ViewOwner {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle SidebarButton
+        if (anEvent.equals("SidebarButton"))
+            setShowSidebar(!isShowSidebar());
+
         // Handle SaveButton
         if (anEvent.equals("SaveButton")) save();
+
+        // Handle CutButton, CopyButton, PasteButton
         if (anEvent.equals("CutButton")) cut();
         if (anEvent.equals("CopyButton")) copy();
         if (anEvent.equals("PasteButton")) paste();
