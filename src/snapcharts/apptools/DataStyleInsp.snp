@@ -29,13 +29,23 @@
     <Label text="Symbol Shape:" />
     <ToggleButton Name="SymbolShapeButton" PrefWidth="48" PrefHeight="24" Padding="2" />
   </RowView>
-  <RowView Name="SymbolsBox" Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
-    <Button Name="Symbol0Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-    <Button Name="Symbol1Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-    <Button Name="Symbol2Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-    <Button Name="Symbol3Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-    <Button Name="Symbol4Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-  </RowView>
+  <ColView Name="SymbolsBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
+    <EtchBorder />
+    <RowView Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
+      <Button Name="Symbol0Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol1Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol2Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol3Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol4Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+    </RowView>
+    <RowView Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
+      <Button Name="Symbol5Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol6Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol7Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol8Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="Symbol9Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+    </RowView>
+  </ColView>
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
   </RowView>

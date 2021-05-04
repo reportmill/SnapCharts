@@ -99,9 +99,13 @@ public class DataStyleInsp extends ChartPartInsp {
     {
         _inspBox = getView("InspectorBox", ColView.class);
 
+        // Make sure SymbolsBox is hidden
+        View symbolsBox = getView("SymbolsBox");
+        symbolsBox.setVisible(false);
+
         // Configure SymbolXButton(s)
         for (int i=0; i<Symbol.SYMBOL_COUNT; i++) {
-            Shape shape = Symbol.getShapeForId(i);
+            Shape shape = Symbol.getSymbolForId(i).copyForSize(12).getShape();
             ShapeView shapeView = new ShapeView(shape);
             shapeView.setFill(Color.BLACK);
             Button symbolButton = getView("Symbol" + i + "Button", Button.class);
@@ -142,7 +146,7 @@ public class DataStyleInsp extends ChartPartInsp {
         setViewValue("ShowSymbolsCheckBox", dataStyle.isShowSymbols());
 
         // Reset SymbolShapeButton
-        Symbol symbol = dataStyle.getSymbol();
+        Symbol symbol = dataStyle.getSymbol().copyForSize(12);
         Shape shape = symbol.getShape();
         ShapeView shapeView = new ShapeView(shape);
         shapeView.setFill(Color.BLACK);
