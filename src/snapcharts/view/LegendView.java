@@ -135,7 +135,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         // Get marker Shape (if LineChart, add crossbar)
         Chart chart = getChart();
         DataStyle dataStyle = aDataSet.getDataStyle();
-        Shape shp = dataStyle.getSymbol().getShape();
+        Shape shp = dataStyle.getSymbol().copyForSize(8).getShape();
         shp = shp.copyFor(new Transform(6, 6));
         if (chart.getType() == ChartType.LINE) {
             Shape shp1 = new Rect(2,9,16,2);

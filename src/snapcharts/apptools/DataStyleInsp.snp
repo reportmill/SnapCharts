@@ -7,7 +7,7 @@
   <ColView Name="LineStyleBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
       <Label text="Line width:" />
-      <TextField Name="LineWidthText" PrefWidth="50" />
+      <TextField Name="LineWidthText" Align="CENTER" PrefWidth="50" />
       <Button Name="LineWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
         <font name="Arial" size="13" />
       </Button>
@@ -18,33 +18,51 @@
     </RowView>
     <RowView Padding="4" Spacing="4">
       <Label text="Line color:" />
-      <ColorWell MinWidth="60" MinHeight="30" />
+      <ColorWell MinWidth="45" MinHeight="26" />
       <ColorButton PrefWidth="32" PrefHeight="22" Title="Stroke" />
     </RowView>
   </ColView>
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowSymbolsCheckBox" text="Show Symbols" />
   </RowView>
-  <RowView Padding="4" GrowWidth="true" Spacing="13">
-    <Label text="Symbol Shape:" />
-    <ToggleButton Name="SymbolShapeButton" PrefWidth="48" PrefHeight="24" Padding="2" />
-  </RowView>
-  <ColView Name="SymbolsBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
-    <EtchBorder />
-    <RowView Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
-      <Button Name="Symbol0Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol1Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol2Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol3Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol4Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+  <ColView Name="ShowSymbolsBox" Padding="0,0,0,25" FillWidth="true">
+    <RowView Padding="4" Spacing="4">
+      <Label text="Symbol size:" />
+      <TextField Name="SymbolSizeText" Align="CENTER" PrefWidth="50" />
+      <Button Name="SymbolSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="SymbolSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="SymbolSizeResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
     </RowView>
-    <RowView Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
-      <Button Name="Symbol5Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol6Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol7Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol8Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="Symbol9Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+    <RowView Padding="4" Spacing="4">
+      <Label text="Line color:" />
+      <ColorWell MinWidth="45" MinHeight="26" />
+      <ColorButton PrefWidth="32" PrefHeight="22" Title="Stroke" />
     </RowView>
+    <RowView Padding="4" GrowWidth="true" Spacing="13">
+      <Label text="Symbol Shape:" />
+      <ToggleButton Name="SymbolShapeButton" PrefWidth="48" PrefHeight="24" Padding="2" />
+    </RowView>
+    <ColView Name="SymbolsBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
+      <EtchBorder />
+      <RowView Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
+        <Button Name="SymbolId0Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId1Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId2Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId3Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId4Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      </RowView>
+      <RowView Align="CENTER" Padding="4" GrowWidth="true" Spacing="4">
+        <Button Name="SymbolId5Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId6Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId7Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId8Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+        <Button Name="SymbolId9Button" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      </RowView>
+    </ColView>
   </ColView>
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />

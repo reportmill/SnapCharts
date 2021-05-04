@@ -295,9 +295,11 @@ public class PolarDataArea extends DataArea {
                 double dispY = point.y;
 
                 // Get symbol and color and paint
-                Shape symbol = getDataSymbolShape().copyFor(new Transform(dispX - 4, dispY - 4));
+                Symbol symbol = getDataSymbol();
+                double symbolOffset = symbol.getSize() / 2d;
+                Shape symbolShape = symbol.getShape().copyFor(new Transform(dispX - symbolOffset, dispY - symbolOffset));
                 aPntr.setColor(dataColor);
-                aPntr.fill(symbol);
+                aPntr.fill(symbolShape);
             }
         }
 
@@ -327,7 +329,9 @@ public class PolarDataArea extends DataArea {
 
         // Get data color and symbol
         Color dataColor = getDataColor();
-        Shape dataSymbol = getDataSymbolShape().copyFor(new Transform(dispX - 4, dispY - 4));
+        Symbol dataSymbol = getDataSymbol();
+        double symbolOffset = dataSymbol.getSize() / 2d;
+        Shape dataSymbolShape = dataSymbol.getShape().copyFor(new Transform(dispX - symbolOffset, dispY - symbolOffset));
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));
@@ -336,10 +340,10 @@ public class PolarDataArea extends DataArea {
         // Get symbol
         aPntr.setStroke(Stroke5);
         aPntr.setColor(Color.WHITE);
-        aPntr.draw(dataSymbol);
+        aPntr.draw(dataSymbolShape);
         aPntr.setStroke(Stroke3);
         aPntr.setColor(dataColor);
-        aPntr.draw(dataSymbol);
+        aPntr.draw(dataSymbolShape);
     }
 
     /**

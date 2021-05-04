@@ -20,6 +20,9 @@ public class DataStyleInsp extends ChartPartInsp {
     // The ContourPropsInsp
     private ContourStyleInsp _contourStyleInsp;
 
+    // Constants
+    private static final Color SYMBOL_COLOR = Color.DARKGRAY;
+
     /**
      * Constructor.
      */
@@ -99,6 +102,14 @@ public class DataStyleInsp extends ChartPartInsp {
     {
         _inspBox = getView("InspectorBox", ColView.class);
 
+        // Make sure LineStyleBox is hidden
+        View lineStyleBox = getView("LineStyleBox");
+        lineStyleBox.setVisible(false);
+
+        // Make sure ShowSymbolsBox is hidden
+        View showSymbolsBox = getView("ShowSymbolsBox");
+        showSymbolsBox.setVisible(false);
+
         // Make sure SymbolsBox is hidden
         View symbolsBox = getView("SymbolsBox");
         symbolsBox.setVisible(false);
@@ -107,8 +118,8 @@ public class DataStyleInsp extends ChartPartInsp {
         for (int i=0; i<Symbol.SYMBOL_COUNT; i++) {
             Shape shape = Symbol.getSymbolForId(i).copyForSize(12).getShape();
             ShapeView shapeView = new ShapeView(shape);
-            shapeView.setFill(Color.BLACK);
-            Button symbolButton = getView("Symbol" + i + "Button", Button.class);
+            shapeView.setFill(SYMBOL_COLOR);
+            Button symbolButton = getView("SymbolId" + i + "Button", Button.class);
             symbolButton.setGraphic(shapeView);
         }
     }
@@ -136,20 +147,28 @@ public class DataStyleInsp extends ChartPartInsp {
         // Reset ShowLineCheckBox, LineWidthText
         boolean showLine = dataStyle.isShowLine();
         setViewValue("ShowLineCheckBox", showLine);
-        getView("LineStyleBox").setVisible(showLine);
+        View lineStyleBox = getView("LineStyleBox");
+        ViewAnimUtils.setVisible(lineStyleBox, showLine, false, true);
         if (showLine) {
             setViewValue("LineWidthText", dataStyle.getLineWidth());
             setViewEnabled("LineWidthResetButton", dataStyle.getLineWidth() != 1);
         }
 
-        // Reset ShowSymbolsCheckBox
-        setViewValue("ShowSymbolsCheckBox", dataStyle.isShowSymbols());
+        // Reset ShowSymbolsCheckBox, ShowSymbolsBox
+        boolean showSymbols = dataStyle.isShowSymbols();
+        setViewValue("ShowSymbolsCheckBox", showSymbols);
+        View showSymbolsBox = getView("ShowSymbolsBox");
+        ViewAnimUtils.setVisible(showSymbolsBox, showSymbols, false, true);
+        if (showSymbols) {
+            setViewValue("SymbolSizeText", dataStyle.getSymbolSize());
+            setViewDisabled("SymbolSizeResetButton", dataStyle.getSymbolSize() != DataStyle.DEFAULT_SYMBOL_SIZE);
+        }
 
         // Reset SymbolShapeButton
         Symbol symbol = dataStyle.getSymbol().copyForSize(12);
         Shape shape = symbol.getShape();
         ShapeView shapeView = new ShapeView(shape);
-        shapeView.setFill(Color.BLACK);
+        shapeView.setFill(SYMBOL_COLOR);
         ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
         symbolShapeButton.setGraphic(shapeView);
 
@@ -167,17 +186,17 @@ public class DataStyleInsp extends ChartPartInsp {
         ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
         DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
 
-        // Handle ShowLineCheckBox, LineWidthText
+        // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {
             boolean showLine = anEvent.getBoolValue();
             dataStyle.setShowLine(showLine);
             if (!showLine)
                 dataStyle.setShowSymbols(true);
         }
+
+        // Handle LineWidthText, LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
         if (anEvent.equals("LineWidthText"))
             dataStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
-
-        // Handle LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
         if (anEvent.equals("LineWidthAdd1Button"))
             dataStyle.setLineWidth(dataStyle.getLineWidth() + 1);
         if (anEvent.equals("LineWidthSub1Button"))
@@ -193,9 +212,19 @@ public class DataStyleInsp extends ChartPartInsp {
                 dataStyle.setShowLine(true);
         }
 
+        // Handle SymbolSizeText, SymbolSizeAdd1Button, SymbolSizeSub1Button, SymbolSizeResetButton
+        if (anEvent.equals("SymbolSizeText"))
+            dataStyle.setSymbolSize(Math.max(anEvent.getIntValue(), 6));
+        if (anEvent.equals("SymbolSizeAdd1Button"))
+            dataStyle.setSymbolSize(dataStyle.getSymbolSize() + 1);
+        if (anEvent.equals("SymbolSizeSub1Button"))
+            dataStyle.setSymbolSize(Math.max(dataStyle.getSymbolSize() - 1, 6));
+        if (anEvent.equals("SymbolSizeResetButton"))
+            dataStyle.setSymbolSize(DataStyle.DEFAULT_SYMBOL_SIZE);
+
         // Handle SymbolXButton
         String name = anEvent.getName();
-        if (name.startsWith("Symbol") && name.endsWith("Button")) {
+        if (name.startsWith("SymbolId") && name.endsWith("Button")) {
             int id = SnapUtils.intValue(name);
             dataStyle.setSymbolId(id);
         }

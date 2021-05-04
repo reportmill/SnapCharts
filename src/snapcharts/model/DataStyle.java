@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
@@ -19,6 +20,9 @@ public class DataStyle extends ChartPart {
     // The Symbol Id
     private int  _symbolId;
 
+    // The Symbol Size
+    private int  _symbolSize = DEFAULT_SYMBOL_SIZE;
+
     // The cached symbol
     private Symbol  _symbol;
 
@@ -27,6 +31,10 @@ public class DataStyle extends ChartPart {
     public static final String LineWidth_Prop = "LineWidth";
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String SymbolId_Prop = "SymbolId";
+    public static final String SymbolSize_Prop = "SymbolSize";
+
+    // Constants
+    public static final int DEFAULT_SYMBOL_SIZE = 8;
 
     /**
      * Returns whether to show line for this DataSet.
@@ -95,6 +103,21 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns the Symbol size.
+     */
+    public int getSymbolSize()  { return _symbolSize; }
+
+    /**
+     * Sets the Symbol size.
+     */
+    public void setSymbolSize(int aValue)
+    {
+        if (aValue == getSymbolSize()) return;
+        firePropChange(SymbolSize_Prop, _symbolSize, _symbolSize = aValue);
+        _symbol = null;
+    }
+
+    /**
      * Returns the Symbol.
      */
     public Symbol getSymbol()
@@ -103,8 +126,19 @@ public class DataStyle extends ChartPart {
         if (_symbol != null) return _symbol;
 
         // Get, set, return
-        Symbol symbol = Symbol.getSymbolForId(_symbolId);
+        Symbol symbol = Symbol.getSymbolForId(_symbolId).copyForSize(_symbolSize);
         return _symbol = symbol;
+    }
+
+    /**
+     * Override to define more defaults
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        if (aPropName == SymbolSize_Prop)
+            return DEFAULT_SYMBOL_SIZE;
+        return super.getPropDefault(aPropName);
     }
 
     /**
@@ -122,11 +156,13 @@ public class DataStyle extends ChartPart {
         if (getLineWidth() != 1)
             e.add(LineWidth_Prop, getLineWidth());
 
-        // Archive ShowSymbols, SymbolId
+        // Archive ShowSymbols, SymbolId, SymbolSize
         if (isShowSymbols())
             e.add(ShowSymbols_Prop, true);
         if (getSymbolId() != 0)
             e.add(SymbolId_Prop, getSymbolId());
+        if (getSymbolSize() != getPropDefaultInt(SymbolSize_Prop))
+            e.add(SymbolSize_Prop, getSymbolSize());
 
         // Return element
         return e;
@@ -146,9 +182,11 @@ public class DataStyle extends ChartPart {
         if (anElement.hasAttribute(LineWidth_Prop))
             setLineWidth(anElement.getAttributeIntValue(ShowLine_Prop));
 
-        // Unarchive ShowSymbols, SymbolId
+        // Unarchive ShowSymbols, SymbolId, SymbolSize
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
         setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
+        if (anElement.hasAttribute(SymbolSize_Prop))
+            setSymbolSize(anElement.getAttributeIntValue(SymbolSize_Prop));
 
         // Return this part
         return this;

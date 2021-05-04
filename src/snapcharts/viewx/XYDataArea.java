@@ -134,13 +134,14 @@ public class XYDataArea extends DataArea {
         int pointCount = _xyPainter.getDispPointCount();
         Color color = getDataColor();
         Shape symbolShape = getDataSymbolShape();
+        double symbolShift = getDataSymbol().getSize() / 2d;
 
         // Iterate over values
         for (int j=0; j<pointCount; j++) {
 
             // Get disp X/Y of symbol origin and translate there
-            double dispX = _xyPainter.getDispX(j) - 4;
-            double dispY = _xyPainter.getDispY(j) - 4;
+            double dispX = _xyPainter.getDispX(j) - symbolShift;
+            double dispY = _xyPainter.getDispY(j) - symbolShift;
             aPntr.translate(dispX, dispY);
 
             // Set color and fill symbol shape
@@ -177,7 +178,9 @@ public class XYDataArea extends DataArea {
 
         // Get data color and symbol
         Color dataColor = getDataColor();
-        Shape dataSymbol = getDataSymbolShape().copyFor(new Transform(dispX - 4, dispY - 4));
+        Symbol dataSymbol = getDataSymbol();
+        double symbolOffset = dataSymbol.getSize() / 2d;
+        Shape dataSymbolShape = dataSymbol.getShape().copyFor(new Transform(dispX - symbolOffset, dispY - symbolOffset));
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));
@@ -186,10 +189,10 @@ public class XYDataArea extends DataArea {
         // Get symbol
         aPntr.setStroke(Stroke5);
         aPntr.setColor(Color.WHITE);
-        aPntr.draw(dataSymbol);
+        aPntr.draw(dataSymbolShape);
         aPntr.setStroke(Stroke3);
         aPntr.setColor(dataColor);
-        aPntr.draw(dataSymbol);
+        aPntr.draw(dataSymbolShape);
     }
 
     /**
