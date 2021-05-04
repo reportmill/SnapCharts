@@ -60,11 +60,11 @@ public class XYDataArea extends DataArea {
         boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
 
         // Get style info
-        ChartStyle chartStyle = dset.getChartStyle();
-        boolean showLine = chartStyle.isShowLine() && _chartType == ChartType.LINE;
-        int lineWidth = chartStyle.getLineWidth(); if (isSelected) lineWidth++;
+        DataStyle dataStyle = dset.getDataStyle();
+        boolean showLine = dataStyle.isShowLine() && _chartType == ChartType.LINE;
+        int lineWidth = dataStyle.getLineWidth(); if (isSelected) lineWidth++;
         Stroke dataStroke = getDataStroke(lineWidth);
-        boolean showSymbols = chartStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
+        boolean showSymbols = dataStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
 
         // If reveal is not full (1) then clip
         double reveal = getReveal();

@@ -434,7 +434,7 @@ public class ChartReader {
     protected void parsePlotOptionsColumn(JSONNode aNode)
     {
         // Get column chart
-        BarStyle colChart = _chart.getChartStyleHelper().getBarStyle();
+        BarStyle colChart = _chart.getDataStyleHelper().getBarStyle();
 
         // Iterate over nodes
         for(JSONNode child : aNode.getNodes()) { String key = child.getKey();

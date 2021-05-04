@@ -1,9 +1,9 @@
 package snapcharts.modelx;
-import snapcharts.model.ChartStyle;
+import snapcharts.model.DataStyle;
 
 /**
- * A ChartStyle subclass for Line chart properties.
+ * A DataStyle subclass for Line chart properties.
  */
-public class XYStyle extends ChartStyle {
+public class XYStyle extends DataStyle {
 
 }

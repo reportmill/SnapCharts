@@ -1,10 +1,10 @@
 package snapcharts.modelx;
 
-import snapcharts.model.ChartStyle;
+import snapcharts.model.DataStyle;
 
 /**
- * A ChartStyle subclass for Pie chart properties.
+ * A DataStyle subclass for Pie chart properties.
  */
-public class PieStyle extends ChartStyle {
+public class PieStyle extends DataStyle {
 
 }

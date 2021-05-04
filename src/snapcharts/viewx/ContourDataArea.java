@@ -42,7 +42,7 @@ public class ContourDataArea extends DataArea {
     protected void chartPartDidChange(PropChange aPC)
     {
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis || src instanceof ChartStyle) {
+        if (src==getDataSet() || src instanceof Axis || src instanceof DataStyle) {
             _contourPainter.clearContoursAll();
         }
     }

@@ -1,10 +1,10 @@
 package snapcharts.modelx;
-import snapcharts.model.ChartStyle;
+import snapcharts.model.DataStyle;
 
 /**
- * A ChartStyle subclass for Contour chart properties.
+ * A DataStyle subclass for Contour chart properties.
  */
-public class ContourStyle extends ChartStyle {
+public class ContourStyle extends DataStyle {
 
     // The number of levels of contours
     private int  _levelCount = 16;

@@ -77,12 +77,12 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the ChartStyle.
+     * Returns the DataStyle.
      */
-    public ChartStyle getChartStyle()
+    public DataStyle getDataStyle()
     {
         Chart chart = getChart();
-        return chart != null ? chart.getChartStyle() : null;
+        return chart != null ? chart.getDataStyle() : null;
     }
 
     /**

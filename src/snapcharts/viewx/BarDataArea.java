@@ -1,5 +1,4 @@
 package snapcharts.viewx;
-import java.util.List;
 
 import snap.geom.Point;
 import snap.geom.Rect;
@@ -44,7 +43,7 @@ public class BarDataArea extends DataArea {
     public BarStyle getBarStyle()
     {
         if (_barStyle != null) return _barStyle;
-        return _barStyle = getChart().getChartStyleHelper().getBarStyle();
+        return _barStyle = getChart().getDataStyleHelper().getBarStyle();
     }
 
     /**

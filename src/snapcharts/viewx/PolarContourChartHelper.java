@@ -2,7 +2,6 @@ package snapcharts.viewx;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.view.*;
-import java.util.List;
 
 /**
  * A (Polar)ChartHelper subclass for PolarContour charts.
@@ -61,7 +60,7 @@ public class PolarContourChartHelper extends PolarChartHelper {
 
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof ChartStyle) {
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof DataStyle) {
             _contourHelper.resetCachedValues();
         }
     }

@@ -34,8 +34,8 @@ public class DataSet extends ChartPart {
     // The expression to apply to Z values
     private String  _exprZ;
 
-    // The ChartStyleHpr
-    private ChartStyleHpr  _chartStyleHpr;
+    // The DataStyleHpr
+    private DataStyleHpr _dataStyleHpr;
 
     // The RawData
     private RawData  _rawData = RawData.newRawData();
@@ -128,8 +128,8 @@ public class DataSet extends ChartPart {
      */
     public boolean isShowSymbols()
     {
-        ChartStyle chartStyle = getChartStyle();
-        return chartStyle.isShowSymbols();
+        DataStyle dataStyle = getDataStyle();
+        return dataStyle.isShowSymbols();
     }
 
     /**
@@ -137,8 +137,8 @@ public class DataSet extends ChartPart {
      */
     public void setShowSymbols(boolean aValue)
     {
-        ChartStyle chartStyle = getChartStyle();
-        chartStyle.setShowSymbols(aValue);
+        DataStyle dataStyle = getDataStyle();
+        dataStyle.setShowSymbols(aValue);
     }
 
     /**
@@ -206,13 +206,13 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the ChartStyle for this DataSet (and ChartType).
+     * Returns the DataStyle for this DataSet (and ChartType).
      */
-    public ChartStyle getChartStyle()
+    public DataStyle getDataStyle()
     {
-        if (_chartStyleHpr == null)
-            _chartStyleHpr = new ChartStyleHpr(this);
-        return _chartStyleHpr.getChartStyle();
+        if (_dataStyleHpr == null)
+            _dataStyleHpr = new DataStyleHpr(this);
+        return _dataStyleHpr.getDataStyle();
     }
 
     /**
@@ -745,11 +745,11 @@ public class DataSet extends ChartPart {
             e.add(new XMLElement("DataC", dataStr));
         }
 
-        // Archive ChartStyle
-        ChartStyle chartStyle = getChartStyle();
-        XMLElement chartStyleXML = chartStyle.toXML(anArchiver);
-        if (chartStyleXML.getAttributeCount() > 0)
-            e.addElement(chartStyleXML);
+        // Archive DataStyle
+        DataStyle dataStyle = getDataStyle();
+        XMLElement dataStyleXML = dataStyle.toXML(anArchiver);
+        if (dataStyleXML.getAttributeCount() > 0)
+            e.addElement(dataStyleXML);
 
         // Return element
         return e;
@@ -815,9 +815,9 @@ public class DataSet extends ChartPart {
         else DataUtils.addDataSetPoints(this, dataX, dataY, dataZ, dataC);
 
         // Legacy
-        if (anElement.hasAttribute(ChartStyle.ShowSymbols_Prop)) {
-            boolean showSymbols = anElement.getAttributeBoolValue(ChartStyle.ShowSymbols_Prop);
-            getChartStyle().setShowSymbols(showSymbols);
+        if (anElement.hasAttribute(DataStyle.ShowSymbols_Prop)) {
+            boolean showSymbols = anElement.getAttributeBoolValue(DataStyle.ShowSymbols_Prop);
+            getDataStyle().setShowSymbols(showSymbols);
         }
 
         // Return this part

@@ -69,7 +69,7 @@ public class ContourChartHelper extends ChartHelper {
 
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof ChartStyle) {
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof DataStyle) {
             _contourHelper.resetCachedValues();
         }
     }

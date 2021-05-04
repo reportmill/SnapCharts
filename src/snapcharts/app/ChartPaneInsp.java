@@ -45,8 +45,8 @@ public class ChartPaneInsp extends ViewOwner {
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
 
-    // The ChartStyleInsp
-    private ChartStyleInsp  _chartStyleInsp;
+    // The DataStyleInsp
+    private DataStyleInsp _dataStyleInsp;
 
     // The array of ChartPartInsp
     private ChartPartInsp  _allInspectors[];
@@ -124,12 +124,12 @@ public class ChartPaneInsp extends ViewOwner {
         _dsetInsp = new DataSetInsp(_chartPane);
         addInspector(_dsetInsp, false);
 
-        // Create/add ChartStyleInsp
-        _chartStyleInsp = new ChartStyleInsp(_chartPane);
-        addInspector(_chartStyleInsp, false);
+        // Create/add DataStyleInsp
+        _dataStyleInsp = new DataStyleInsp(_chartPane);
+        addInspector(_dataStyleInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _chartStyleInsp, _dsetInsp };
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _dataStyleInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
 
@@ -145,13 +145,13 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
-     * Override to trigger update of ChartStyleInsp.
+     * Override to trigger update of DataStyleInsp.
      */
     @Override
     protected void initShowing()
     {
-        if (_chartStyleInsp != null)
-            _chartStyleInsp.resetLater();
+        if (_dataStyleInsp != null)
+            _dataStyleInsp.resetLater();
     }
 
     /**
@@ -255,8 +255,8 @@ public class ChartPaneInsp extends ViewOwner {
         // Get ChartPart for inspector
         ChartPart chartPart = anInsp.getChartPart();
 
-        // ChartStyleInsp/ChartStyle is going to pretend to represent DataSetList
-        if (chartPart instanceof ChartStyle) {
+        // DataStyleInsp/DataStyle is going to pretend to represent DataSetList
+        if (chartPart instanceof DataStyle) {
             Chart chart = _chartPane.getChart();
             DataSetList dataList = chart.getDataSetList();
             chartPart = dataList.getDataSetCount() > 0 ? dataList.getDataSet(0) : chart;
@@ -278,7 +278,7 @@ public class ChartPaneInsp extends ViewOwner {
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
             boolean isSelected = insp == selPartInsp ||
-                (insp == _chartStyleInsp && (selPartInsp == _dsetInsp || selPartInsp == _chartInsp));
+                (insp == _dataStyleInsp && (selPartInsp == _dsetInsp || selPartInsp == _chartInsp));
             insp.setSelected(isSelected);
             if (isSelected)
                 insp.resetLater();
@@ -300,6 +300,6 @@ public class ChartPaneInsp extends ViewOwner {
         // Handle Chart.Type change
         String propName = aPC.getPropName();
         if (propName == Chart.Type_Prop)
-            _chartStyleInsp.resetLater();
+            _dataStyleInsp.resetLater();
     }
 }

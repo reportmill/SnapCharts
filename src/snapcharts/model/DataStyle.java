@@ -3,9 +3,9 @@ import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
 /**
- * A class to represent properties for a specific ChartType.
+ * A class to represent properties to render data for a specific ChartType.
  */
-public class ChartStyle extends ChartPart {
+public class DataStyle extends ChartPart {
 
     // Whether to show line
     private boolean  _showLine = true;

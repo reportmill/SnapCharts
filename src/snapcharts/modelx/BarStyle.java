@@ -1,11 +1,11 @@
 package snapcharts.modelx;
 
-import snapcharts.model.ChartStyle;
+import snapcharts.model.DataStyle;
 
 /**
- * A ChartStyle subclass for Bar chart properties.
+ * A DataStyle subclass for Bar chart properties.
  */
-public class BarStyle extends ChartStyle {
+public class BarStyle extends DataStyle {
 
     // The ratio of a section used to pad a group of bars
     double             _groupPad = .2;

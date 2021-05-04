@@ -7,9 +7,9 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
 /**
- * A class to manage UI to edit a ChartStyle.
+ * A class to manage UI to edit a DataStyle.
  */
-public class ChartStyleInsp extends ChartPartInsp {
+public class DataStyleInsp extends ChartPartInsp {
 
     // The View that holds the child insp
     private ColView  _inspBox;
@@ -23,7 +23,7 @@ public class ChartStyleInsp extends ChartPartInsp {
     /**
      * Constructor.
      */
-    public ChartStyleInsp(ChartPane aChartPane)
+    public DataStyleInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }
@@ -44,7 +44,7 @@ public class ChartStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getChartStyle(); }
+    public ChartPart getChartPart()  { return getChart().getDataStyle(); }
 
     /**
      * Returns the current inspector.
@@ -125,24 +125,24 @@ public class ChartStyleInsp extends ChartPartInsp {
         Label label = getCollapser().getLabel();
         label.setText(title);
 
-        // Get ChartStyle
+        // Get DataStyle
         ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
-        ChartStyle chartStyle = selPart.getChartStyle(); if (chartStyle == null) return;
+        DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
 
         // Reset ShowLineCheckBox, LineWidthText
-        boolean showLine = chartStyle.isShowLine();
+        boolean showLine = dataStyle.isShowLine();
         setViewValue("ShowLineCheckBox", showLine);
         getView("LineStyleBox").setVisible(showLine);
         if (showLine) {
-            setViewValue("LineWidthText", chartStyle.getLineWidth());
-            setViewEnabled("LineWidthResetButton", chartStyle.getLineWidth() != 1);
+            setViewValue("LineWidthText", dataStyle.getLineWidth());
+            setViewEnabled("LineWidthResetButton", dataStyle.getLineWidth() != 1);
         }
 
         // Reset ShowSymbolsCheckBox
-        setViewValue("ShowSymbolsCheckBox", chartStyle.isShowSymbols());
+        setViewValue("ShowSymbolsCheckBox", dataStyle.isShowSymbols());
 
         // Reset SymbolShapeButton
-        Symbol symbol = chartStyle.getSymbol();
+        Symbol symbol = dataStyle.getSymbol();
         Shape shape = symbol.getShape();
         ShapeView shapeView = new ShapeView(shape);
         shapeView.setFill(Color.BLACK);
@@ -159,41 +159,41 @@ public class ChartStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get ChartStyle
+        // Get DataStyle
         ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
-        ChartStyle chartStyle = selPart.getChartStyle(); if (chartStyle == null) return;
+        DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
 
         // Handle ShowLineCheckBox, LineWidthText
         if (anEvent.equals("ShowLineCheckBox")) {
             boolean showLine = anEvent.getBoolValue();
-            chartStyle.setShowLine(showLine);
+            dataStyle.setShowLine(showLine);
             if (!showLine)
-                chartStyle.setShowSymbols(true);
+                dataStyle.setShowSymbols(true);
         }
         if (anEvent.equals("LineWidthText"))
-            chartStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
+            dataStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
 
         // Handle LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
         if (anEvent.equals("LineWidthAdd1Button"))
-            chartStyle.setLineWidth(chartStyle.getLineWidth() + 1);
+            dataStyle.setLineWidth(dataStyle.getLineWidth() + 1);
         if (anEvent.equals("LineWidthSub1Button"))
-            chartStyle.setLineWidth(Math.max(chartStyle.getLineWidth() - 1, 1));
+            dataStyle.setLineWidth(Math.max(dataStyle.getLineWidth() - 1, 1));
         if (anEvent.equals("LineWidthResetButton"))
-            chartStyle.setLineWidth(1);
+            dataStyle.setLineWidth(1);
 
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox")) {
             boolean showSymbols = anEvent.getBoolValue();
-            chartStyle.setShowSymbols(showSymbols);
+            dataStyle.setShowSymbols(showSymbols);
             if (!showSymbols)
-                chartStyle.setShowLine(true);
+                dataStyle.setShowLine(true);
         }
 
         // Handle SymbolXButton
         String name = anEvent.getName();
         if (name.startsWith("Symbol") && name.endsWith("Button")) {
             int id = SnapUtils.intValue(name);
-            chartStyle.setSymbolId(id);
+            dataStyle.setSymbolId(id);
         }
     }
 }

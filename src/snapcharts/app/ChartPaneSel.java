@@ -144,7 +144,7 @@ public class ChartPaneSel {
         if (aChartPart instanceof Legend)
             return _chartView.getLegendView();
 
-        // Handle ChartStyle
+        // Handle DataStyle
         if (aChartPart instanceof DataSetList || aChartPart instanceof DataSet)
             return _chartView.getDataView();
 

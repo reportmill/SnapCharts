@@ -391,7 +391,7 @@ public class ChartWriter {
         Map map = new HashMap();
 
         // Get column chart
-        BarStyle colChart = _chart.getChartStyleHelper().getBarStyle();
+        BarStyle colChart = _chart.getDataStyleHelper().getBarStyle();
 
         // Handle colorByPoint
         boolean colorByPoint = colChart.isColorValues();

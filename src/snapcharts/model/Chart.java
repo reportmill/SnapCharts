@@ -51,7 +51,7 @@ public class Chart extends ChartPart {
     private Color[]  _colors = GT_COLORS;
 
     // The object holding specific chart type properties
-    private ChartStyleHpr _chartStyleHpr = new ChartStyleHpr(this);
+    private DataStyleHpr _dataStyleHpr = new DataStyleHpr(this);
 
     // Property constants
     public static final String Type_Prop = "Type";
@@ -295,14 +295,14 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the ChartStyleHpr that provides/manages ChartStyles.
+     * Returns the DataStyleHpr that provides/manages DataStyles.
      */
-    public ChartStyleHpr getChartStyleHelper()  { return _chartStyleHpr; }
+    public DataStyleHpr getDataStyleHelper()  { return _dataStyleHpr; }
 
     /**
-     * Returns the ChartStyle for this chart (ChartType).
+     * Returns the DataStyle for this chart (ChartType).
      */
-    public ChartStyle getChartStyle()  { return _chartStyleHpr.getChartStyle(); }
+    public DataStyle getDataStyle()  { return _dataStyleHpr.getDataStyle(); }
 
     /**
      * Called when chart part has prop change.

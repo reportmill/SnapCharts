@@ -2,11 +2,11 @@ package snapcharts.model;
 import snapcharts.modelx.*;
 
 /**
- * A class to hold the different types of charts.
+ * A class to hold the multiple DataStyles for different ChartTypes.
  */
-public class ChartStyleHpr {
+public class DataStyleHpr {
 
-    // The parent ChartPart that holds this ChartStyleHpr
+    // The parent ChartPart that holds this DataStyleHpr
     private ChartPart  _parent;
 
     // Line chart properties
@@ -27,7 +27,7 @@ public class ChartStyleHpr {
     /**
      * Constructor.
      */
-    public ChartStyleHpr(ChartPart aChartPart)
+    public DataStyleHpr(ChartPart aChartPart)
     {
         _parent = aChartPart;
     }
@@ -41,19 +41,19 @@ public class ChartStyleHpr {
     }
 
     /**
-     * Returns the current ChartStyle.
+     * Returns the current DataStyle.
      */
-    public ChartStyle getChartStyle()
+    public DataStyle getDataStyle()
     {
         Chart chart = getChart();
         ChartType chartType = chart.getType();
-        return getChartStyleForChartType(chartType);
+        return getDataStyleForChartType(chartType);
     }
 
     /**
-     * Returns the ChartStyle for given ChartType.
+     * Returns the DataStyle for given ChartType.
      */
-    public ChartStyle getChartStyleForChartType(ChartType aType)
+    public DataStyle getDataStyleForChartType(ChartType aType)
     {
         switch(aType) {
             case LINE: return getXYStyle();
@@ -67,21 +67,21 @@ public class ChartStyleHpr {
     }
 
     /**
-     * Returns the ChartStyle for given ChartType.
+     * Returns the DataStyle for given ChartType.
      */
-    private ChartStyle createChartStyleForChartType(ChartType aType)
+    private DataStyle createDataStyleForChartType(ChartType aType)
     {
-        ChartStyle chartStyle = createChartStyleForChartTypeRaw(aType);
+        DataStyle dataStyle = createDataStyleForChartTypeRaw(aType);
         Chart chart = getChart();
-        chartStyle.setChart(chart);
-        chartStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
-        return chartStyle;
+        dataStyle.setChart(chart);
+        dataStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
+        return dataStyle;
     }
 
     /**
-     * Returns the ChartStyle for given ChartType.
+     * Returns the DataStyle for given ChartType.
      */
-    private ChartStyle createChartStyleForChartTypeRaw(ChartType aType)
+    private DataStyle createDataStyleForChartTypeRaw(ChartType aType)
     {
         // Get instance
         switch(aType) {
@@ -101,7 +101,7 @@ public class ChartStyleHpr {
     public XYStyle getXYStyle()
     {
         if (_xyStyle !=null) return _xyStyle;
-        return _xyStyle = (XYStyle) createChartStyleForChartType(ChartType.LINE);
+        return _xyStyle = (XYStyle) createDataStyleForChartType(ChartType.LINE);
     }
 
     /**
@@ -110,7 +110,7 @@ public class ChartStyleHpr {
     public BarStyle getBarStyle()
     {
         if(_barStyle !=null) return _barStyle;
-        return _barStyle = (BarStyle) createChartStyleForChartType(ChartType.BAR);
+        return _barStyle = (BarStyle) createDataStyleForChartType(ChartType.BAR);
     }
 
     /**
@@ -119,7 +119,7 @@ public class ChartStyleHpr {
     public PieStyle getPieStyle()
     {
         if(_pieStyle !=null) return _pieStyle;
-        return _pieStyle = (PieStyle) createChartStyleForChartType(ChartType.PIE);
+        return _pieStyle = (PieStyle) createDataStyleForChartType(ChartType.PIE);
     }
 
     /**
@@ -128,7 +128,7 @@ public class ChartStyleHpr {
     public ContourStyle getContourStyle()
     {
         if(_contourStyle != null) return _contourStyle;
-        return _contourStyle = (ContourStyle) createChartStyleForChartType(ChartType.CONTOUR);
+        return _contourStyle = (ContourStyle) createDataStyleForChartType(ChartType.CONTOUR);
     }
 
     /**
@@ -137,6 +137,6 @@ public class ChartStyleHpr {
     public Bar3DStyle getBar3DStyle()
     {
         if(_bar3DStyle !=null) return _bar3DStyle;
-        return _bar3DStyle = (Bar3DStyle) createChartStyleForChartType(ChartType.BAR_3D);
+        return _bar3DStyle = (Bar3DStyle) createDataStyleForChartType(ChartType.BAR_3D);
     }
 }

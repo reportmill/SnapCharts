@@ -238,12 +238,12 @@ public class PolarDataArea extends DataArea {
         double reveal = getReveal();
 
         // Get style info
-        ChartStyle chartStyle = dset.getChartStyle();
-        boolean showLine = chartStyle.isShowLine();
-        int lineWidth = chartStyle.getLineWidth(); if (isSelected) lineWidth++;
+        DataStyle dataStyle = dset.getDataStyle();
+        boolean showLine = dataStyle.isShowLine();
+        int lineWidth = dataStyle.getLineWidth(); if (isSelected) lineWidth++;
         Stroke dataStroke = XYDataArea.getDataStroke(lineWidth);
         Color dataColor = getDataColor();
-        boolean showSymbols = chartStyle.isShowSymbols();
+        boolean showSymbols = dataStyle.isShowSymbols();
 
         // Get path - if Reveal is active, get path spliced
         Shape path = getDataPath();
