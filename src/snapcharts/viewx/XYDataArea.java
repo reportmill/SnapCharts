@@ -61,8 +61,8 @@ public class XYDataArea extends DataArea {
 
         // Get style info
         DataStyle dataStyle = dset.getDataStyle();
-        boolean showLine = dataStyle.isShowLine() && _chartType == ChartType.LINE;
-        int lineWidth = dataStyle.getLineWidth(); if (isSelected) lineWidth++;
+        boolean showLine = dataStyle.isShowLine();
+        int lineWidth = dataStyle.getLineWidth(); //if (isSelected) lineWidth++;
         Stroke dataStroke = getDataStroke(lineWidth);
         boolean showSymbols = dataStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
 
@@ -80,8 +80,36 @@ public class XYDataArea extends DataArea {
 
         // Get dataset color
         Color dataColor = getDataColor();
-        if (_chartType ==ChartType.AREA)
-            dataColor = dataColor.blend(Color.CLEAR, .3);
+
+        // If ChartType.AREA, fill path, too
+        if (_chartType == ChartType.AREA) {
+            Color dataColorArea = dataColor.blend(Color.CLEAR, .3);
+            aPntr.setColor(dataColorArea);
+            aPntr.fill(dataShape);
+        }
+
+        // If ChartType.LINE, draw path
+        if (isSelected && showLine) {
+            aPntr.setStrokePure(true);
+
+            // If selected, draw path
+            Color selColor = dataColor.blend(Color.CLEARWHITE, .75);
+            Stroke selStroke = getDataStroke(lineWidth * 3 + 8);
+            aPntr.setColor(selColor);
+            aPntr.setStroke(selStroke);
+            aPntr.draw(dataShape);
+
+            // If selected, draw path
+            Color selColor2 = dataColor.blend(Color.WHITE, 1);
+            Stroke selStroke2 = getDataStroke(lineWidth + 2);
+            aPntr.setColor(selColor2);
+            aPntr.setStroke(selStroke2);
+            aPntr.draw(dataShape);
+
+            aPntr.setStrokePure(false);
+            aPntr.setColor(dataColor);
+            aPntr.setStroke(dataStroke);
+        }
 
         // Set color, stroke
         aPntr.setColor(dataColor);
@@ -93,10 +121,6 @@ public class XYDataArea extends DataArea {
             aPntr.draw(dataShape);
             aPntr.setStrokePure(false);
         }
-
-        // If ChartType.AREA, fill path, too
-        else if (_chartType == ChartType.AREA)
-            aPntr.fill(dataShape);
 
         // If Reveal is active, paint TailShape
         if (dataShape instanceof SplicerShape)
@@ -184,7 +208,9 @@ public class XYDataArea extends DataArea {
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));
-        aPntr.fill(new Ellipse(dispX - 10, dispY - 10, 20, 20));
+        double haloSize = dataSymbol.getSize() * 2 + 4;
+        double haloOffset = haloSize / 2d;
+        aPntr.fill(new Ellipse(dispX - haloOffset, dispY - haloOffset, haloSize, haloSize));
 
         // Get symbol
         aPntr.setStroke(Stroke5);
