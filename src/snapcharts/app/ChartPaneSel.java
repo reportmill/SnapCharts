@@ -3,6 +3,7 @@ import snap.geom.Rect;
 import snap.geom.RoundRect;
 import snap.geom.Shape;
 import snap.gfx.*;
+import snap.util.PropChange;
 import snap.view.*;
 import snapcharts.model.*;
 import snapcharts.view.*;
@@ -156,7 +157,10 @@ public class ChartPaneSel {
      */
     private void chartBoxMousePress(ViewEvent anEvent)
     {
-        setSelChartPart(_chartView.getChart());
+        double chartX = anEvent.getX() - _chartView.getX();
+        double chartY = anEvent.getY() - _chartView.getY();
+        if (!_chartView.contains(chartX, chartY))
+            setSelChartPart(_chartView.getChart());
     }
 
     /**
@@ -179,7 +183,6 @@ public class ChartPaneSel {
         else if (anEvent.isMousePress()) {
             ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
             setSelChartPart(hitPart);
-            anEvent.consume();
         }
     }
 
@@ -228,27 +231,23 @@ public class ChartPaneSel {
     }
 
     /**
-     * Returns whether view is targetable view.
-     */
-    private boolean isTargetableView(View aView)
-    {
-        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView || aView instanceof DataView;
-    }
-
-    /**
      * Paints the selection and targeting.
      */
     protected void paintSelection(Painter aPntr, View aHostView)
     {
         // If SelView set, paint it
         View selView = getSelView();
-        if (selView != null && selView != _chartView)
-            paintSelView(aPntr, selView, aHostView);
+        if (selView != null && selView != _chartView) {
+            if (selView.isShowing())
+                paintSelView(aPntr, selView, aHostView);
+        }
 
         // If TargView set, paint it
         View targView = getTargView();
-        if (targView != null && targView != selView && targView != _chartView)
-            paintTargView(aPntr, targView, aHostView);
+        if (targView != null && targView != selView && targView != _chartView) {
+            if (targView.isShowing())
+                paintTargView(aPntr, targView, aHostView);
+        }
     }
 
     /**
