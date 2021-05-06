@@ -141,7 +141,7 @@ public class DataStyleInsp extends ChartPartInsp {
         label.setText(title);
 
         // Get DataStyle
-        ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
+        ChartPart selPart = _chartPane.getSelChartPart(); if (selPart == null) return;
         DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
 
         // Reset ShowLineCheckBox, LineWidthText
@@ -183,7 +183,7 @@ public class DataStyleInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get DataStyle
-        ChartPart selPart = _chartPane.getSel().getSelChartPart(); if (selPart == null) return;
+        ChartPart selPart = _chartPane.getSelChartPart(); if (selPart == null) return;
         DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
 
         // Handle ShowLineCheckBox

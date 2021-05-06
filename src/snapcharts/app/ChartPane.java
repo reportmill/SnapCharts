@@ -28,7 +28,7 @@ public class ChartPane extends DocItemPane {
     private ChartView  _chartView;
     
     // The ChartBox
-    private BoxView  _chartBox;
+    protected BoxView  _chartBox;
 
     // The SplitView
     private SplitView  _splitView;
@@ -164,6 +164,15 @@ public class ChartPane extends DocItemPane {
     public ChartPaneSel getSel()  { return _selHpr; }
 
     /**
+     * Returns the selected chart part.
+     */
+    public ChartPart getSelChartPart()
+    {
+        ChartPaneSel sel = getSel();
+        return sel.getSelChartPart();
+    }
+
+    /**
      * Override to return the ChartView.
      */
     @Override
@@ -275,6 +284,9 @@ public class ChartPane extends DocItemPane {
             //_chartBox.setPrefHeight(400); _chartBox.setGrowHeight(false);
             _chartBox.setPadding(20, 20, 20, 20);
         }
+
+        // Register for EscapeAction
+        addKeyActionHandler("EscapeAction", "ESCAPE");
     }
 
     /**
@@ -319,8 +331,8 @@ public class ChartPane extends DocItemPane {
 
         // Update ShowDataSetTabs
         if (!_dataSetMode) {
-            ChartPart selPart = getSel().getSelChartPart();
-            boolean showDataSets = selPart instanceof DataSetList || selPart instanceof DataSet;
+            ChartPart selPart = getSelChartPart();
+            boolean showDataSets = selPart instanceof DataSet;
             setShowDataSetTabs(showDataSets);
         }
     }
@@ -359,6 +371,10 @@ public class ChartPane extends DocItemPane {
         // Handle EditButton
         if (anEvent.equals("EditButton"))
             runLater(() -> installEditorPane());
+
+        // Handle EscapeAction
+        if (anEvent.equals("EscapeAction"))
+            getSel().popSelection();
     }
 
     /**
@@ -416,7 +432,8 @@ public class ChartPane extends DocItemPane {
      */
     private void markupEditorNeedsInspectorChanged()
     {
-        _insp.setMarkupInspectorVisible(_editorPane.getEditor().isNeedsInspector());
+        boolean markupInspVisible = _editorPane.getEditor().isNeedsInspector();
+        _insp.setMarkupInspectorVisible(markupInspVisible);
     }
 
     /**
@@ -425,7 +442,7 @@ public class ChartPane extends DocItemPane {
     public void chartPaneSelChanged()
     {
         // If SelPart is DataSet, make sure tabPane is selected
-        ChartPart selPart = getSel().getSelChartPart();
+        ChartPart selPart = getSelChartPart();
         if (selPart instanceof DataSet) {
             DataSet dataSet = (DataSet) selPart;
             _tabView.setSelIndex(dataSet.getIndex());

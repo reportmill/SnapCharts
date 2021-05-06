@@ -121,7 +121,7 @@ public class ChartStyler extends Styler {
      */
     private ChartPart getSelPart()
     {
-        return _editor.getSel().getSelChartPart();
+        return _editor.getSelChartPart();
     }
 
     /**

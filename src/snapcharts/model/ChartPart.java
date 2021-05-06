@@ -77,6 +77,16 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
+     * Returns the parent part.
+     */
+    public ChartPart getParent()
+    {
+        if (this instanceof Chart) return null;
+        if (this instanceof DataSet) return getDataSetList();
+        return getChart();
+    }
+
+    /**
      * Returns the DataStyle.
      */
     public DataStyle getDataStyle()

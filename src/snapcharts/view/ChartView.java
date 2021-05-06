@@ -79,6 +79,10 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public ChartView()
     {
+        // Basic
+        setFocusable(true);
+        setFocusWhenPressed(true);
+
         // Install bogus ChartHelper
         _chartHelper = new EmptyChartHelper(this);
 

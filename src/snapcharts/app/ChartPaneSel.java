@@ -41,8 +41,11 @@ public class ChartPaneSel {
         _chartPane = aChartPane;
         _chartView = aChartPane.getChartView();
 
-        // Start listening to ChartView
+        // Start listening to ChartView MouseEvents (for selection/targeting)
         _chartView.addEventFilter(e -> chartViewMouseEvent(e), View.MouseEvents);
+
+        // Start listening to ChartBox MousePress (for select Chart)
+        _chartPane._chartBox.addEventHandler(e -> chartBoxMousePress(e), View.MousePress);
     }
 
     /**
@@ -66,6 +69,7 @@ public class ChartPaneSel {
 
         // Notify ChartPane of change
         _chartPane.chartPaneSelChanged();
+        _chartPane.getUI().repaint();
     }
 
     /**
@@ -77,12 +81,14 @@ public class ChartPaneSel {
     }
 
     /**
-     * Sets the selected ChartPartView.
+     * Pops the selection.
      */
-    public void setSelView(ChartPartView aView)
+    public void popSelection()
     {
-        ChartPart chartPart = aView!=null ? aView.getChartPart() : _chartView.getChart();
-        setSelChartPart(chartPart);
+        ChartPart selPart = getSelChartPart();
+        ChartPart parPart = selPart != null ? selPart.getParent() : null;
+        if (parPart != null)
+            setSelChartPart(parPart);
     }
 
     /**
@@ -100,6 +106,9 @@ public class ChartPaneSel {
 
         // Set new part
         _targPart = aChartPart;
+
+        // Repaint
+        _chartPane.getUI().repaint();
     }
 
     /**
@@ -108,16 +117,6 @@ public class ChartPaneSel {
     public ChartPartView getTargView()
     {
         return getChartPartViewForPart(_targPart);
-    }
-
-    /**
-     * Sets the targeted ChartPartView.
-     */
-    public void setTargView(ChartPartView aView)
-    {
-        ChartPart chartPart = aView!=null ? aView.getChartPart() : _chartView.getChart();
-        setTargChartPart(chartPart);
-        _chartPane.getUI().repaint();
     }
 
     /**
@@ -153,45 +152,68 @@ public class ChartPaneSel {
     }
 
     /**
+     * Called when ChartBox gets mouse press outside chart to reset SelChartPart to Chart.
+     */
+    private void chartBoxMousePress(ViewEvent anEvent)
+    {
+        setSelChartPart(_chartView.getChart());
+    }
+
+    /**
      * Called when ChartView gets mouse event.
      */
     private void chartViewMouseEvent(ViewEvent anEvent)
     {
         // Handle MouseMove
         if (anEvent.isMouseMove()) {
-            ChartPartView partView = getChartPartViewForXY(anEvent.getX(), anEvent.getY(), true);
-            setTargView(partView);
+            ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
+            setTargChartPart(hitPart);
         }
 
         // Handle MouseExit
         if (anEvent.isMouseExit()) {
-            setTargView(null);
+            setTargChartPart(null);
         }
 
         // Handle MousePress
         else if (anEvent.isMousePress()) {
-            ChartPartView partView = getChartPartViewForXY(anEvent.getX(), anEvent.getY(), false);
-            setSelView(partView);
+            ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
+            setSelChartPart(hitPart);
+            anEvent.consume();
         }
     }
 
     /**
-     * Returns the ChartPart for XY values.
+     * Returns the ChartPart for given point XY in ChartView coords.
      */
-    private ChartPartView getChartPartViewForXY(double aX, double aY, boolean isTargeting)
+    private ChartPart getChartPartForXY(double aX, double aY)
+    {
+        // Get the ChartPartView at XY
+        ChartPartView hitView = getChartPartViewForXY(aX, aY);
+
+        // Handle DataView special: If TargDataPoint, return DataPoint.DataSet
+        if (hitView instanceof DataView) {
+            DataPoint dataPoint = _chartView.getTargDataPoint();
+            if (dataPoint != null)
+                return dataPoint.getDataSet();
+        }
+
+        // Get chartPart for hit view and return
+        ChartPart chartPart = hitView != null ? hitView.getChartPart() : _chartView.getChart();
+        return chartPart;
+    }
+
+    /**
+     * Returns the ChartPart for given point XY in ChartView coords.
+     */
+    private ChartPartView getChartPartViewForXY(double aX, double aY)
     {
         // Get deepest selectable view for X/Y
         View view = ViewUtils.getDeepestChildAt(_chartView, aX, aY, ChartPartView.class);
 
         // Correct for Selecting/Targeting
-        while (!isTargeting && view!=null && !isSelectableView(view))
+        while (view != null && !isSelectableView(view))
             view = view.getParent();
-        while (isTargeting && view!=null && !isTargetableView(view))
-            view = view.getParent();
-
-        // If DataView but no TargDataPoint, return ChartView
-        if (!isTargeting && view instanceof DataView && _chartView.getTargDataPoint() == null)
-            return _chartView;
 
         // If as ChartPartView (or null)
         return view instanceof ChartPartView ? (ChartPartView) view : null;

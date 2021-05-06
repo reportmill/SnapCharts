@@ -2,14 +2,13 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
-import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
 
 /**
  * A class to display data (via DataArea).
  */
-public class DataView<T extends ChartPart> extends ChartPartView<T> {
+public class DataView extends ChartPartView<DataSetList> {
 
     // The ChartView
     private ChartView  _chartView;
@@ -41,11 +40,9 @@ public class DataView<T extends ChartPart> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()
+    public DataSetList getChartPart()
     {
-        DataSetList dataList = getDataSetList();
-        ChartPart chartPart = dataList.getDataSetCount() > 0 ? dataList.getDataSet(0) : dataList;
-        return (T) chartPart;
+        return getDataSetList();
     }
 
     /**

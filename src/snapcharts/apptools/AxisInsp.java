@@ -43,7 +43,7 @@ public class AxisInsp extends ChartPartInsp {
      */
     public Axis getAxis()
     {
-        ChartPart chartPart = getChartPane().getSel().getSelChartPart();
+        ChartPart chartPart = getChartPane().getSelChartPart();
         Axis axis = chartPart instanceof Axis ? (Axis) chartPart : getChart().getAxisForType(_axisType);
         return axis;
     }

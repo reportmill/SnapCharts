@@ -213,17 +213,31 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
+     * Returns whether MarkupInspector is visible.
+     */
+    public boolean isMarkupInspectorVisible()
+    {
+        InspectorPanel markupInsp = _chartPane._editorPane != null ? _chartPane._editorPane.getInspectorPanel() : null;
+        return markupInsp != null && markupInsp.isShowing();
+    }
+
+    /**
      * Sets the MarkupInspector Visible.
      */
     public void setMarkupInspectorVisible(boolean aValue)
     {
-        InspectorPanel insp = _chartPane._editorPane.getInspectorPanel();
-        ColView colView = getUI(ColView.class);
+        // If already set, just return
+        if (aValue == isMarkupInspectorVisible()) return;
 
+        // Get inspector
+        InspectorPanel markupInsp = _chartPane._editorPane.getInspectorPanel();
+
+        // Make MarkupInspector visible
         if (aValue) {
-            _inspScroll.setContent(insp.getUI());
+            _inspScroll.setContent(markupInsp.getUI());
         }
 
+        // Make ChartPaneInsp visble
         else {
             _inspScroll.setContent(_inspColView);
         }
@@ -272,7 +286,7 @@ public class ChartPaneInsp extends ViewOwner {
     public void chartPaneSelChanged()
     {
         // Get SelPart and SelInsp
-        ChartPart selPart = _chartPane.getSel().getSelChartPart();
+        ChartPart selPart = _chartPane.getSelChartPart();
         ChartPartInsp selPartInsp = getChartPartInsp(selPart);
 
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
@@ -284,6 +298,9 @@ public class ChartPaneInsp extends ViewOwner {
                 insp.resetLater();
         }
 
+        setMarkupInspectorVisible(false);
+
+        // Reset inspector
         if (selPartInsp != null)
             selPartInsp.resetLater();
     }
