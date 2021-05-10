@@ -236,6 +236,22 @@ public abstract class ChartHelper {
     /**
      * Returns the first DataArea for axis type.
      */
+    public DataArea getDataAreaForDataSet(DataSet aDataSet)
+    {
+        DataArea[] dataAreas = getDataAreas();
+        for (DataArea dataArea : dataAreas)
+            if (dataArea.getDataSet() == aDataSet)
+                return dataArea;
+
+        // Some charts have only one shared DataArea (Bar, Pie)
+        if (dataAreas.length > 0)
+            return dataAreas[0];
+        return null;
+    }
+
+    /**
+     * Returns the first DataArea for axis type.
+     */
     public DataArea getDataAreaForFirstAxisY()
     {
         AxisType[] axisTypes = getAxisTypes();
@@ -430,13 +446,36 @@ public abstract class ChartHelper {
      */
     public DataPoint getDataPointForViewXY(View aView, double aX, double aY)
     {
-        // Get first DataArea for Y0  (if not found, just return null)
-        DataArea dataArea = getDataAreaForFirstAxisY();
-        if (dataArea==null) return null;
+        // Local vars for data point closest to x/y
+        DataPoint dataPoint = null;
+        double dist = Float.MAX_VALUE;
 
-        // Convert point to DataArea and return DataPoint for X/Y
-        Point pnt = dataArea.parentToLocal(aX, aY, aView);
-        return dataArea.getDataPointForXY(pnt.x, pnt.y);
+        // Get View XY in DataView coords
+        DataView dataView = getDataView();
+        Point dispXY = dataView.isAncestor(aView) ? dataView.parentToLocal(aX, aY, aView) : new Point(aX, aY);
+        double dispX = dispXY.x;
+        double dispY = dispXY.y;
+
+        // If point out of bounds, return null
+        if (!dataView.contains(dispX, dispY))
+            return null;
+
+        // Iterate over data areas to find closest DataPoint
+        DataArea[] dataAreas = getDataAreas();
+        for (DataArea dataArea : dataAreas) {
+            DataPoint dpnt = dataArea.getDataPointForLocalXY(dispX, dispY);
+            if (dpnt != null) {
+                Point dspXY = dataArea.getLocalXYForDataPoint(dpnt);
+                double dst = Point.getDistance(dispX, dispY, dspXY.x, dspXY.y);
+                if (dst < dist) {
+                    dataPoint = dpnt;
+                    dist = dst;
+                }
+            }
+        }
+
+        // Return DataPoint
+        return dataPoint;
     }
 
     /**
@@ -444,13 +483,17 @@ public abstract class ChartHelper {
      */
     public Point getViewXYForDataPoint(View aView, DataPoint aDP)
     {
-        // Get first DataArea for Y0  (if not found, just return null)
-        DataArea dataArea = getDataAreaForFirstAxisY();
-        if (dataArea==null) return null;
+        // Get DataArea for DataPoint
+        DataSet dataSet = aDP.getDataSet();
+        DataArea dataArea = getDataAreaForDataSet(dataSet);
+        if (dataArea == null) return null;
 
         // Get DataArea X/Y for DataPoint and return point converted to given view coords
-        Point pnt = dataArea.getDataPointXYLocal(aDP);
-        return dataArea.localToParent(pnt.x, pnt.y, aView);
+        Point dispXY = dataArea.getLocalXYForDataPoint(aDP);
+        DataView dataView = getDataView();
+        if (dataView.isAncestor(aView))
+            dispXY = dataView.localToParent(dispXY.x, dispXY.y, aView);
+        return dispXY;
     }
 
     /**

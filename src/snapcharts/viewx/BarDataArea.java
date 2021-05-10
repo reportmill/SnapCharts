@@ -82,7 +82,7 @@ public class BarDataArea extends DataArea {
         double barPadWidth = barWidthRatio>=0 ? barPad*groupWidth/ _dsetCount : 1;
 
         // Create new bars array
-        Section sections[] = new Section[pointCount];
+        Section[] sections = new Section[pointCount];
 
         // Iterate over sections
         for (int i=0;i<_pointCount;i++) {
@@ -131,47 +131,47 @@ public class BarDataArea extends DataArea {
 
         double viewW = getWidth();
         double viewH = getHeight();
-        Section sections[] = getSections();
+        Section[] sections = getSections();
 
         // If reveal is not full (1) then clip
-        if (getReveal()<1) {
+        if (getReveal() < 1) {
             aPntr.save();
             aPntr.clipRect(0,viewH*(1-getReveal()), viewW,viewH*getReveal());
         }
 
         // Iterate over sections
-        for (int i=0;i<_pointCount;i++) { Section section = sections[i];
+        for (int i=0; i<_pointCount; i++) { Section section = sections[i];
 
             // If selected section, draw background
-            if (i==selIndex) {
+            if (i == selIndex) {
                 aPntr.setColor(Color.get("#4488FF09"));
                 aPntr.fillRect(i*section.width, 0, section.width, viewH);
             }
 
             // Iterate over datasets and draw bars
-            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
+            for (int j=0; j<_dsetCount; j++) { Bar bar = section.bars[j];
                 aPntr.setColor(bar.color);
                 aPntr.fillRect(bar.x, bar.y, bar.width, bar.height - .5);
             }
         }
 
         // If reveal not full, resture gstate
-        if (getReveal()<1) aPntr.restore();
+        if (getReveal() < 1) aPntr.restore();
     }
 
     /**
      * Returns the data point best associated with given x/y (null if none).
      */
     @Override
-    public DataPoint getDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForLocalXY(double aX, double aY)
     {
         // Get sections array
-        Section sections[] = getSections();
+        Section[] sections = getSections();
 
         // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
-        for (int i=0;i<_pointCount;i++) { Section section = sections[i];
-            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
-                if (bar.contains(aX,aY))
+        for (int i=0; i<_pointCount; i++) { Section section = sections[i];
+            for (int j=0; j<_dsetCount; j++) { Bar bar = section.bars[j];
+                if (bar.contains(aX, aY))
                     return bar.point;
             }
         }
@@ -183,15 +183,16 @@ public class BarDataArea extends DataArea {
     /**
      * Returns the given data point X/Y in this view coords.
      */
-    public Point getDataPointXYLocal(DataPoint aDP)
+    @Override
+    public Point getLocalXYForDataPoint(DataPoint aDP)
     {
         // Get sections array
-        Section sections[] = getSections();
+        Section[] sections = getSections();
 
         // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
-        for (int i=0;i<_pointCount;i++) { Section section = sections[i];
-            for (int j = 0; j< _dsetCount; j++) { Bar bar = section.bars[j];
-                if (bar.point==aDP) {
+        for (int i=0; i<_pointCount; i++) { Section section = sections[i];
+            for (int j=0; j<_dsetCount; j++) { Bar bar = section.bars[j];
+                if (bar.point == aDP) {
                     double dispX = Math.round(bar.x + bar.width/2);
                     double dispY = Math.round(bar.y);
                     return new Point(dispX, dispY);
@@ -253,7 +254,10 @@ public class BarDataArea extends DataArea {
         }
 
         /** Returns whether section contains point. */
-        public boolean contains(double aX, double aY)  { return Rect.contains(x, y, width, height, aX, aY); }
+        public boolean contains(double aX, double aY)
+        {
+            return Rect.contains(x, y, width, height, aX, aY);
+        }
     }
 
     /**
@@ -269,10 +273,15 @@ public class BarDataArea extends DataArea {
         /** Creates a bar. */
         public Bar(DataPoint aDP, double aX, double aY, double aW, double aH, Color aColor)
         {
-            point = aDP; x = aX; y = aY; width = aW; height = aH; color = aColor;
+            point = aDP;
+            x = aX; y = aY; width = aW; height = aH;
+            color = aColor;
         }
 
         /** Returns whether bar contains point. */
-        public boolean contains(double aX, double aY)  { return Rect.contains(x, y, width, height, aX, aY); }
+        public boolean contains(double aX, double aY)
+        {
+            return Rect.contains(x, y, width, height, aX, aY);
+        }
     }
 }

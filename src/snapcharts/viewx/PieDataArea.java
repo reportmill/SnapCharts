@@ -209,7 +209,7 @@ public class PieDataArea extends DataArea {
     /**
      * Returns the data point best associated with given x/y (null if none).
      */
-    public DataPoint getDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForLocalXY(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
         DataSet dset = getDataSet();
@@ -228,7 +228,7 @@ public class PieDataArea extends DataArea {
      * Returns the given data point X/Y in this view coords.
      */
     @Override
-    public Point getDataPointXYLocal(DataPoint aDP)
+    public Point getLocalXYForDataPoint(DataPoint aDP)
     {
         int ind = aDP.getIndex();
         Wedge wedges[] = getWedges();

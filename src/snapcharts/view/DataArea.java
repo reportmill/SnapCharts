@@ -305,52 +305,44 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the data point best associated with given x/y (null if none).
+     * Returns the data point closest to given x/y in local coords (null if none).
      */
-    public DataPoint getDataPointForXY(double aX, double aY)
+    public DataPoint getDataPointForLocalXY(double aX, double aY)
     {
-        // If point out of bounds, return null
-        if (aX<0 || aX>getWidth() || aY<0 || aY>getWidth()) return null;
+        // Constant for maximum display distance (in points)
+        int MAX_SELECT_DISTANCE = 60;
 
         // Get data info
-        DataSetList dsetList = getDataSetList();
-        DataSet[] dataSets = dsetList.getEnabledDataSets();
-        int pointCount = dsetList.getPointCount();
-
-        // Iterate over active dataset to find dataset + value index closest to point
+        DataSet dataSet = getDataSet();
+        int pointCount = dataSet.getPointCount();
         DataPoint dataPoint = null;
-        double dist = Float.MAX_VALUE;
-        for (DataSet dset : dataSets) {
+        double dist = MAX_SELECT_DISTANCE;
 
-            // Iterate over points
-            for (int j=0; j<pointCount; j++) {
-                double dataX = dset.getX(j);
-                double dataY = dset.getY(j);
-                double dispX = dataToViewX(dataX);
-                double dispY = dataToViewY(dataY);
-                double d = Point.getDistance(aX, aY, dispX, dispY);
-                if (d<dist) {
-                    dist = d;
-                    dataPoint = dset.getPoint(j);
-                }
+        // Iterate over points and get closest DataPoint
+        for (int j=0; j<pointCount; j++) {
+            double dataX = dataSet.getX(j);
+            double dataY = dataSet.getY(j);
+            double dispX = dataToViewX(dataX);
+            double dispY = dataToViewY(dataY);
+            double dst = Point.getDistance(aX, aY, dispX, dispY);
+            if (dst < dist) {
+                dist = dst;
+                dataPoint = dataSet.getPoint(j);
             }
         }
 
-        // If distance is greater than MAX_SELECT_DISTANCE, return null
-        int MAX_SELECT_DISTANCE = 60;
-        if (dist > MAX_SELECT_DISTANCE)
-            return null;
-
-        // Return DataPoint for closest dataset+index
+        // Return DataPoint
         return dataPoint;
     }
 
     /**
      * Returns the given data point X/Y in this view coords.
      */
-    public Point getDataPointXYLocal(DataPoint aDP)
+    public Point getLocalXYForDataPoint(DataPoint aDP)
     {
-        return dataToView(aDP.getX(), aDP.getY());
+        double dataX = aDP.getX();
+        double dataY = aDP.getY();
+        return dataToView(dataX, dataY);
     }
 
     /**
