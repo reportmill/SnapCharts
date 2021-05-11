@@ -66,7 +66,7 @@ public class Pie3DDataArea extends PieDataArea {
         Wedge[] wedges = getWedges();
         for(int i=0; i<wedges.length; i++) {
             Wedge wedge = wedges[i];
-            Color color = getDataColor(i);
+            Color color = getColorMapColor(i);
             addWedgeToScene(wedge, color);
         }
 

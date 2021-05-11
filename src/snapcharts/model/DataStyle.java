@@ -1,18 +1,25 @@
 package snapcharts.model;
-import snap.util.SnapUtils;
+import snap.gfx.Color;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
+import java.util.Objects;
 
 /**
  * A class to represent properties to render data for a specific ChartType.
  */
 public class DataStyle extends ChartPart {
 
+    // The DataSet that owns the this style
+    protected ChartPart  _parent;
+
     // Whether to show line
     private boolean  _showLine = true;
 
     // The line width
     private int  _lineWidth = 1;
+
+    // The line color
+    private Color  _lineColor;
 
     // Whether to show symbols
     private boolean  _showSymbols;
@@ -29,12 +36,38 @@ public class DataStyle extends ChartPart {
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String LineWidth_Prop = "LineWidth";
+    public static final String LineColor_Prop = "LineColor";
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String SymbolId_Prop = "SymbolId";
     public static final String SymbolSize_Prop = "SymbolSize";
 
     // Constants
     public static final int DEFAULT_SYMBOL_SIZE = 8;
+
+    /**
+     * Constructor.
+     */
+    public DataStyle()
+    {
+        super();
+    }
+
+    /**
+     * Override to return DataSet.
+     */
+    @Override
+    public ChartPart getParent()
+    {
+        return _parent;
+    }
+
+    /**
+     * Sets the parent.
+     */
+    protected void setParent(ChartPart aParent)
+    {
+        _parent = aParent;
+    }
 
     /**
      * Returns whether to show line for this DataSet.
@@ -51,6 +84,49 @@ public class DataStyle extends ChartPart {
     {
         if (aValue == isShowLine()) return;
         firePropChange(ShowLine_Prop, _showLine, _showLine = aValue);
+    }
+
+    /**
+     * Returns the line color.
+     */
+    public Color getLineColor()
+    {
+        // If set, just return
+        if (_lineColor != null) return _lineColor;
+
+        // Get from DataSet
+        ChartPart parent = getParent();
+        if (parent instanceof DataSet) {
+            DataSet dataSet = (DataSet) parent;
+            int index = dataSet.getIndex();
+            return getColorMapColor(index);
+        }
+
+        // Shouldn't get here
+        return Color.BLACK;
+    }
+
+    /**
+     * Sets the line color.
+     */
+    public void setLineColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _lineColor)) return;
+        firePropChange(LineColor_Prop, _lineColor, _lineColor = aColor);
+    }
+
+    /**
+     * Returns whether line color is explicitly set.
+     */
+    public boolean isLineColorSet()  { return _lineColor != null; }
+
+    /**
+     * Returns the color map color at index.
+     */
+    public Color getColorMapColor(int anIndex)
+    {
+        Chart chart = getChart();
+        return chart.getColor(anIndex);
     }
 
     /**
@@ -150,9 +226,11 @@ public class DataStyle extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive ShowLine, LineWidth
+        // Archive ShowLine, LineColor, LineWidth
         if (!isShowLine())
             e.add(ShowLine_Prop, false);
+        if (isLineColorSet())
+            e.add(LineColor_Prop, getLineColor().toHexString());
         if (getLineWidth() != 1)
             e.add(LineWidth_Prop, getLineWidth());
 
@@ -167,6 +245,7 @@ public class DataStyle extends ChartPart {
         // Return element
         return e;
     }
+
     /**
      * Unarchival.
      */
@@ -176,9 +255,13 @@ public class DataStyle extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive ShowLine, LineWidth
+        // Unarchive ShowLine, LineColor, LineWidth
         if (anElement.hasAttribute(ShowLine_Prop))
             setShowLine(anElement.getAttributeBoolValue(ShowLine_Prop));
+        if (anElement.hasAttribute(LineColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(LineColor_Prop));
+            setLineColor(color);
+        }
         if (anElement.hasAttribute(LineWidth_Prop))
             setLineWidth(anElement.getAttributeIntValue(ShowLine_Prop));
 

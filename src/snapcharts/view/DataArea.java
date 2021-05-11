@@ -55,6 +55,11 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     public DataSet getDataSet()  { return _dataSet; }
 
     /**
+     * Returns the DataStyle.
+     */
+    public DataStyle getDataStyle()  { return _dataSet.getDataStyle(); }
+
+    /**
      * Returns whether dataset is enabled.
      */
     public boolean isDataSetEnabled()  { return _dataSet.isEnabled(); }
@@ -107,9 +112,17 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public Color getDataColor()
     {
-        DataSet dataSet = getDataSet();
-        int index = dataSet.getIndex();
-        return getChart().getColor(index);
+        DataStyle dataStyle = getDataStyle();
+        return dataStyle.getLineColor();
+    }
+
+    /**
+     * Returns the dataset color at index.
+     */
+    public Color getColorMapColor(int anIndex)
+    {
+        DataStyle dataStyle = getDataStyle();
+        return dataStyle.getColorMapColor(anIndex);
     }
 
     /**
@@ -130,11 +143,6 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         Symbol symbol = getDataSymbol();
         return symbol.getShape();
     }
-
-    /**
-     * Returns the dataset color at index.
-     */
-    public Color getDataColor(int anIndex)  { return getChart().getColor(anIndex); }
 
     /**
      * Return the ratio of the portion of chart to paint.

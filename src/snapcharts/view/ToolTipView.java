@@ -53,9 +53,8 @@ public class ToolTipView extends ColView {
         }
 
         // Get info
-        Chart chart = _chartView.getChart();
         DataPoint dataPoint = _chartView.getTargDataPoint();
-        DataSet dset = dataPoint.getDataSet();
+        DataSet dataSet = dataPoint.getDataSet();
 
         // Remove children and reset opacity, padding and spacing
         removeChildren();
@@ -63,12 +62,13 @@ public class ToolTipView extends ColView {
         setPadding(5,5,10,5);
 
         // Create RowView: BulletView
-        Color color = chart.getColor(dset.getIndex());
+        DataStyle dataStyle = dataSet.getDataStyle();
+        Color color = dataStyle.getLineColor();
 
         // If alt down, add index
         int pointIndex = dataPoint.getIndex();
         if (ViewUtils.isAltDown()) {
-            if (dset.getDataType() == DataType.XYZZ) {
+            if (dataSet.getDataType() == DataType.XYZZ) {
                 addChild(createToolTipEntry("Row: " + dataPoint.getRowIndex()));
                 addChild(createToolTipEntry("Col: " + dataPoint.getColIndex()));
             }
@@ -76,12 +76,12 @@ public class ToolTipView extends ColView {
         }
 
         // Add children
-        int chanCount = dset.getDataType().getChannelCount();
+        int chanCount = dataSet.getDataType().getChannelCount();
         for (int i=0; i<chanCount; i++) {
 
             // Get text
-            DataChan chan = dset.getDataType().getChannel(i);
-            Object val = dset.getValueForChannel(chan, pointIndex);
+            DataChan chan = dataSet.getDataType().getChannel(i);
+            Object val = dataSet.getValueForChannel(chan, pointIndex);
             String valStr = val instanceof String ? (String) val : _fmt.format(val);
             String text = chan.toString() + ": " + valStr;
 

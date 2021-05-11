@@ -18,8 +18,8 @@
     </RowView>
     <RowView Padding="4" Spacing="4">
       <Label text="Line color:" />
-      <ColorWell MinWidth="45" MinHeight="26" />
-      <ColorButton PrefWidth="32" PrefHeight="22" Title="Stroke" />
+      <ColorWell Name="LineColorWell" MinWidth="45" MinHeight="26" />
+      <ColorButton Name="LineColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
     </RowView>
   </ColView>
   <RowView Padding="4" Spacing="4">

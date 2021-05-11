@@ -147,7 +147,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         shpView.setPrefSize(20,20);
 
         // Set color
-        shpView.setFill(chart.getColor(anIndex));
+        shpView.setFill(dataStyle.getLineColor());
 
         String text = aDataSet.getName();
         Label label = new Label(text);

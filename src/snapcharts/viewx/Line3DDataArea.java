@@ -1,5 +1,4 @@
 package snapcharts.viewx;
-
 import snap.geom.Path;
 import snap.geom.Point;
 import snap.geom.Rect;
@@ -7,16 +6,11 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.PropChange;
-import snapcharts.model.Axis;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
-import snapcharts.model.Intervals;
+import snapcharts.model.*;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.AxisViewY;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
-
-import java.util.List;
 
 /**
  * A DataArea subclass to display the contents of bar chart.
@@ -204,11 +198,12 @@ public class Line3DDataArea extends DataArea {
     /**
      * Adds the Line3D shape for DataSet.
      */
-    protected void addLine3D(DataSet dset, int anIndex, int aCount)
+    protected void addLine3D(DataSet aDataSet, int anIndex, int aCount)
     {
         // Create 2d path
-        Path path = createDataPath(dset);
-        Color dataStrokeColor = getDataColor(dset.getIndex());
+        Path path = createDataPath(aDataSet);
+        DataStyle dataStyle = aDataSet.getDataStyle();
+        Color dataStrokeColor = dataStyle.getLineColor();
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front

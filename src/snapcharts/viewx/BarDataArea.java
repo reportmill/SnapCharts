@@ -92,15 +92,17 @@ public class BarDataArea extends DataArea {
             section.bars = new Bar[_dsetCount];
 
             // Iterate over datasets
-            for (int j = 0; j< _dsetCount; j++) { DataSet dset = dataSets[j];
+            for (int j = 0; j< _dsetCount; j++) {
 
                 // Get data point
-                DataPoint dataPoint = dset.getPoint(i);
+                DataSet dataSet = dataSets[j];
+                DataPoint dataPoint = dataSet.getPoint(i);
                 double dataY = dataPoint.getY();
                 double dispY = dataToViewY(dataY);
 
                 // Draw bar
-                Color color = colorDataSets ? getDataColor(dset.getIndex()) : getDataColor(i);
+                DataStyle dataStyle = dataSet.getDataStyle();
+                Color color = colorDataSets ? dataStyle.getLineColor() : getColorMapColor(i);
                 double barX = i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
                 double barHeight = viewHeight - dispY;
                 section.bars[j] = new Bar(dataPoint, barX, dispY, barWidth, barHeight, color);

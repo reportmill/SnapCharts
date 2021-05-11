@@ -71,10 +71,16 @@ public class DataStyleHpr {
      */
     private DataStyle createDataStyleForChartType(ChartType aType)
     {
+        // Create DataStyle and set parent
         DataStyle dataStyle = createDataStyleForChartTypeRaw(aType);
+        dataStyle.setParent(_parent);
+        dataStyle.setChart(getChart());
+
+        // Register to notify Chart of changes
         Chart chart = getChart();
-        dataStyle.setChart(chart);
         dataStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
+
+        // Return DataStyle
         return dataStyle;
     }
 

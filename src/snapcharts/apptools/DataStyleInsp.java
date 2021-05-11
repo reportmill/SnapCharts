@@ -3,6 +3,8 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snap.viewx.ColorButton;
+import snap.viewx.ColorWell;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
@@ -149,9 +151,12 @@ public class DataStyleInsp extends ChartPartInsp {
         setViewValue("ShowLineCheckBox", showLine);
         View lineStyleBox = getView("LineStyleBox");
         ViewAnimUtils.setVisible(lineStyleBox, showLine, false, true);
+
+        // Reset LineWidthText, LineWidthResetButton, LineColorWell
         if (showLine) {
             setViewValue("LineWidthText", dataStyle.getLineWidth());
             setViewEnabled("LineWidthResetButton", dataStyle.getLineWidth() != 1);
+            setViewValue("LineColorWell", dataStyle.getLineColor());
         }
 
         // Reset ShowSymbolsCheckBox, ShowSymbolsBox
@@ -183,8 +188,10 @@ public class DataStyleInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get DataStyle
-        ChartPart selPart = _chartPane.getSelChartPart(); if (selPart == null) return;
-        DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
+        ChartPart selPart = _chartPane.getSelChartPart();
+        if (selPart == null) return;
+        DataStyle dataStyle = selPart.getDataStyle();
+        if (dataStyle == null) return;
 
         // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {
@@ -203,6 +210,16 @@ public class DataStyleInsp extends ChartPartInsp {
             dataStyle.setLineWidth(Math.max(dataStyle.getLineWidth() - 1, 1));
         if (anEvent.equals("LineWidthResetButton"))
             dataStyle.setLineWidth(1);
+
+        // Handle LineColorWell, LineColorButton
+        if (anEvent.equals("LineColorWell")) {
+            ColorWell colorWell = getView("LineColorWell", ColorWell.class);
+            dataStyle.setLineColor(colorWell.getColor());
+        }
+        if (anEvent.equals("LineColorButton")) {
+            ColorButton colorButton = getView("LineColorButton", ColorButton.class);
+            dataStyle.setLineColor(colorButton.getColor());
+        }
 
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox")) {
