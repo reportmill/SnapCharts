@@ -22,8 +22,6 @@ public class XYDataArea extends DataArea {
     private Shape  _tailShape;
 
     // Constants for defaults
-    protected static Stroke Stroke1 = new Stroke(1, Stroke.Cap.Round, Stroke.Join.Round, 0);
-    protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
@@ -62,8 +60,7 @@ public class XYDataArea extends DataArea {
         // Get style info
         DataStyle dataStyle = dset.getDataStyle();
         boolean showLine = dataStyle.isShowLine();
-        int lineWidth = dataStyle.getLineWidth(); //if (isSelected) lineWidth++;
-        Stroke dataStroke = getDataStroke(lineWidth);
+        Stroke dataStroke = dataStyle.getLineStroke();
         boolean showSymbols = dataStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
 
         // If reveal is not full (1) then clip
@@ -94,14 +91,14 @@ public class XYDataArea extends DataArea {
 
             // If selected, draw path
             Color selColor = dataColor.blend(Color.CLEARWHITE, .75);
-            Stroke selStroke = getDataStroke(lineWidth * 3 + 8);
+            Stroke selStroke = dataStroke.copyForWidth(dataStroke.getWidth() * 3 + 8).copyForDashes(null);
             aPntr.setColor(selColor);
             aPntr.setStroke(selStroke);
             aPntr.draw(dataShape);
 
             // If selected, draw path
             Color selColor2 = dataColor.blend(Color.WHITE, 1);
-            Stroke selStroke2 = getDataStroke(lineWidth + 2);
+            Stroke selStroke2 = dataStroke.copyForWidth(dataStroke.getWidth() + 2);
             aPntr.setColor(selColor2);
             aPntr.setStroke(selStroke2);
             aPntr.draw(dataShape);
@@ -190,13 +187,13 @@ public class XYDataArea extends DataArea {
     protected void paintSelPoint(Painter aPntr)
     {
         // Get info
-        DataSet dset = getDataSet();
+        DataSet dataSet = getDataSet();
         DataPoint selPoint = getChartView().getTargDataPoint();
         int selIndex = selPoint.getIndex();
 
         // Get data X/Y and disp X/Y
-        double dataX = dset.getX(selIndex);
-        double dataY = dset.getY(selIndex);
+        double dataX = dataSet.getX(selIndex);
+        double dataY = dataSet.getY(selIndex);
         double dispX = dataToViewX(dataX);
         double dispY = dataToViewY(dataY);
 
@@ -212,7 +209,7 @@ public class XYDataArea extends DataArea {
         double haloOffset = haloSize / 2d;
         aPntr.fill(new Ellipse(dispX - haloOffset, dispY - haloOffset, haloSize, haloSize));
 
-        // Get symbol
+        // Paint selected symbol
         aPntr.setStroke(Stroke5);
         aPntr.setColor(Color.WHITE);
         aPntr.draw(dataSymbolShape);
@@ -311,16 +308,5 @@ public class XYDataArea extends DataArea {
     protected void axisViewDidChange(PropChange aPC)
     {
         clearDataPath();
-    }
-
-    /**
-     * Utility.
-     */
-    protected static Stroke getDataStroke(int aLineWidth)
-    {
-        if (aLineWidth == 1) return Stroke1;
-        if (aLineWidth == 2) return Stroke2;
-        if (aLineWidth == 3) return Stroke3;
-        return new Stroke(aLineWidth, Stroke.Cap.Round, Stroke.Join.Round, 0);
     }
 }

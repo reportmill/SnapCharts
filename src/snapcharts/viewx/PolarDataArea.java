@@ -240,8 +240,7 @@ public class PolarDataArea extends DataArea {
         // Get style info
         DataStyle dataStyle = dset.getDataStyle();
         boolean showLine = dataStyle.isShowLine();
-        int lineWidth = dataStyle.getLineWidth(); if (isSelected) lineWidth++;
-        Stroke dataStroke = XYDataArea.getDataStroke(lineWidth);
+        Stroke dataStroke = dataStyle.getLineStroke();
         Color dataColor = getDataColor();
         boolean showSymbols = dataStyle.isShowSymbols();
 
@@ -249,6 +248,10 @@ public class PolarDataArea extends DataArea {
         Shape path = getDataPath();
         if (reveal<1)
             path = new SplicerShape(path, 0, reveal);
+
+        // Handle selected
+        if (isSelected)
+            dataStroke = dataStroke.copyForWidth(dataStroke.getWidth() + 1);
 
         // Set dataset color, stroke and paint
         aPntr.setColor(dataColor);

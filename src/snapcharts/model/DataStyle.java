@@ -1,5 +1,7 @@
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.gfx.Stroke;
+import snap.util.ArrayUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import java.util.Objects;
@@ -16,7 +18,10 @@ public class DataStyle extends ChartPart {
     private boolean  _showLine = true;
 
     // The line width
-    private int  _lineWidth = 1;
+    private int  _lineWidth = DEFAULT_LINE_WIDTH;
+
+    // The line dash
+    private double[]  _lineDash = DEFAULT_LINE_DASH;
 
     // The line color
     private Color  _lineColor;
@@ -36,12 +41,15 @@ public class DataStyle extends ChartPart {
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String LineWidth_Prop = "LineWidth";
+    public static final String LineDash_Prop = "LineDash";
     public static final String LineColor_Prop = "LineColor";
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String SymbolId_Prop = "SymbolId";
     public static final String SymbolSize_Prop = "SymbolSize";
 
-    // Constants
+    // Constants for property defaults
+    public static final int DEFAULT_LINE_WIDTH = 1;
+    public static final double[] DEFAULT_LINE_DASH = null;
     public static final int DEFAULT_SYMBOL_SIZE = 8;
 
     /**
@@ -147,6 +155,29 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns the line dash.
+     */
+    public double[] getLineDash()  { return _lineDash; }
+
+    /**
+     * Sets the line dash.
+     */
+    public void setLineDash(double[] aDashArray)
+    {
+        if (ArrayUtils.equals(aDashArray, _lineDash)) return;
+        firePropChange(LineDash_Prop, _lineDash, _lineDash = aDashArray);
+    }
+
+    /**
+     * Returns the line stroke.
+     */
+    public Stroke getLineStroke()
+    {
+        Stroke stroke = new Stroke(_lineWidth, Stroke.Cap.Butt, Stroke.Join.Round, 10, _lineDash, 0);
+        return stroke;
+    }
+
+    /**
      * Returns whether to show symbols for this DataSet.
      */
     public boolean isShowSymbols()
@@ -226,13 +257,19 @@ public class DataStyle extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive ShowLine, LineColor, LineWidth
+        // Archive ShowLine, LineColor
         if (!isShowLine())
             e.add(ShowLine_Prop, false);
         if (isLineColorSet())
             e.add(LineColor_Prop, getLineColor().toHexString());
-        if (getLineWidth() != 1)
+
+        // Archive LineWidth, LineDash
+        if (getLineWidth() != DEFAULT_LINE_WIDTH)
             e.add(LineWidth_Prop, getLineWidth());
+        if (!ArrayUtils.equals(_lineDash, DEFAULT_LINE_DASH)) {
+            String dashStr = Stroke.getDashArrayNameOrString(_lineDash);
+            e.add(LineDash_Prop, dashStr);
+        }
 
         // Archive ShowSymbols, SymbolId, SymbolSize
         if (isShowSymbols())
@@ -262,8 +299,15 @@ public class DataStyle extends ChartPart {
             Color color = Color.get('#' + anElement.getAttributeValue(LineColor_Prop));
             setLineColor(color);
         }
+
+        // Unarchive LineWidth, LineDash
         if (anElement.hasAttribute(LineWidth_Prop))
             setLineWidth(anElement.getAttributeIntValue(ShowLine_Prop));
+        if (anElement.hasAttribute(LineDash_Prop)) {
+            String dashStr = anElement.getAttributeValue(LineDash_Prop);
+            double[] dashArray = Stroke.getDashArray(dashStr);
+            setLineDash(dashArray);
+        }
 
         // Unarchive ShowSymbols, SymbolId, SymbolSize
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));

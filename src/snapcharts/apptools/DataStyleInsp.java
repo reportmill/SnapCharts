@@ -1,6 +1,9 @@
 package snapcharts.apptools;
+import snap.geom.Line;
 import snap.geom.Shape;
+import snap.gfx.Border;
 import snap.gfx.Color;
+import snap.gfx.Stroke;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.ColorButton;
@@ -108,6 +111,18 @@ public class DataStyleInsp extends ChartPartInsp {
         View lineStyleBox = getView("LineStyleBox");
         lineStyleBox.setVisible(false);
 
+        // Make sure LineDashBox is hidden
+        View lineDashBox = getView("LineDashBox");
+        lineDashBox.setVisible(false);
+
+        // Configure LineDashButton(s)
+        for (int i=0; i<Stroke.DASHES_ALL.length; i++) {
+            double[] dashArray = Stroke.DASHES_ALL[i];
+            Button lineDashButton = getView("LineDashButton_" + i, Button.class);
+            if (lineDashButton != null)
+                configureLineDashButton(lineDashButton, dashArray);
+        }
+
         // Make sure ShowSymbolsBox is hidden
         View showSymbolsBox = getView("ShowSymbolsBox");
         showSymbolsBox.setVisible(false);
@@ -116,13 +131,12 @@ public class DataStyleInsp extends ChartPartInsp {
         View symbolsBox = getView("SymbolsBox");
         symbolsBox.setVisible(false);
 
-        // Configure SymbolXButton(s)
+        // Configure SymbolShapeButton_X
         for (int i=0; i<Symbol.SYMBOL_COUNT; i++) {
-            Shape shape = Symbol.getSymbolForId(i).copyForSize(12).getShape();
-            ShapeView shapeView = new ShapeView(shape);
-            shapeView.setFill(SYMBOL_COLOR);
-            Button symbolButton = getView("SymbolId" + i + "Button", Button.class);
-            symbolButton.setGraphic(shapeView);
+            Symbol symbol = Symbol.getSymbolForId(i);
+            Button symbolButton = getView("SymbolShapeButton_" + i, Button.class);
+            if (symbolButton != null)
+                configureSymbolShapeButton(symbolButton, symbol);
         }
     }
 
@@ -152,12 +166,21 @@ public class DataStyleInsp extends ChartPartInsp {
         View lineStyleBox = getView("LineStyleBox");
         ViewAnimUtils.setVisible(lineStyleBox, showLine, false, true);
 
-        // Reset LineWidthText, LineWidthResetButton, LineColorWell
+        // Reset LineWidthText, LineWidthResetButton, LineColorButton, LineColorResetButton
         if (showLine) {
             setViewValue("LineWidthText", dataStyle.getLineWidth());
-            setViewEnabled("LineWidthResetButton", dataStyle.getLineWidth() != 1);
-            setViewValue("LineColorWell", dataStyle.getLineColor());
+            setViewVisible("LineWidthResetButton", dataStyle.getLineWidth() != DataStyle.DEFAULT_LINE_WIDTH);
+            setViewValue("LineColorButton", dataStyle.getLineColor());
+            setViewVisible("LineColorResetButton", dataStyle.isLineColorSet());
         }
+
+        // Reset LineDashButton
+        ToggleButton lineDashButton = getView("LineDashButton", ToggleButton.class);
+        configureLineDashButton(lineDashButton, dataStyle.getLineDash());
+
+        // Reset LineDashBox
+        View lineDashBox = getView("LineDashBox");
+        ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true).setLinear();
 
         // Reset ShowSymbolsCheckBox, ShowSymbolsBox
         boolean showSymbols = dataStyle.isShowSymbols();
@@ -166,16 +189,12 @@ public class DataStyleInsp extends ChartPartInsp {
         ViewAnimUtils.setVisible(showSymbolsBox, showSymbols, false, true);
         if (showSymbols) {
             setViewValue("SymbolSizeText", dataStyle.getSymbolSize());
-            setViewDisabled("SymbolSizeResetButton", dataStyle.getSymbolSize() != DataStyle.DEFAULT_SYMBOL_SIZE);
+            setViewVisible("SymbolSizeResetButton", dataStyle.getSymbolSize() != DataStyle.DEFAULT_SYMBOL_SIZE);
         }
 
         // Reset SymbolShapeButton
-        Symbol symbol = dataStyle.getSymbol().copyForSize(12);
-        Shape shape = symbol.getShape();
-        ShapeView shapeView = new ShapeView(shape);
-        shapeView.setFill(SYMBOL_COLOR);
         ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
-        symbolShapeButton.setGraphic(shapeView);
+        configureSymbolShapeButton(symbolShapeButton, dataStyle.getSymbol());
 
         // Reset SymbolsBox
         View symbolsBox = getView("SymbolsBox");
@@ -211,14 +230,20 @@ public class DataStyleInsp extends ChartPartInsp {
         if (anEvent.equals("LineWidthResetButton"))
             dataStyle.setLineWidth(1);
 
-        // Handle LineColorWell, LineColorButton
-        if (anEvent.equals("LineColorWell")) {
-            ColorWell colorWell = getView("LineColorWell", ColorWell.class);
-            dataStyle.setLineColor(colorWell.getColor());
-        }
+        // Handle LineColorButton, LineColorResetButton
         if (anEvent.equals("LineColorButton")) {
-            ColorButton colorButton = getView("LineColorButton", ColorButton.class);
-            dataStyle.setLineColor(colorButton.getColor());
+            Color color = (Color) getViewValue("LineColorButton");
+            dataStyle.setLineColor(color);
+        }
+        if (anEvent.equals("LineColorResetButton"))
+            dataStyle.setLineColor(null);
+
+        // Handle LineDashButton_X
+        String eventName = anEvent.getName();
+        if (eventName.startsWith("LineDashButton_")) {
+            int id = SnapUtils.intValue(eventName);
+            double[] dashArray = Stroke.DASHES_ALL[id];
+            dataStyle.setLineDash(dashArray);
         }
 
         // Handle ShowSymbolsCheckBox
@@ -239,11 +264,36 @@ public class DataStyleInsp extends ChartPartInsp {
         if (anEvent.equals("SymbolSizeResetButton"))
             dataStyle.setSymbolSize(DataStyle.DEFAULT_SYMBOL_SIZE);
 
-        // Handle SymbolXButton
-        String name = anEvent.getName();
-        if (name.startsWith("SymbolId") && name.endsWith("Button")) {
-            int id = SnapUtils.intValue(name);
+        // Handle SymbolShapeButton_
+        if (eventName.startsWith("SymbolShapeButton_")) {
+            int id = SnapUtils.intValue(eventName);
             dataStyle.setSymbolId(id);
         }
+    }
+
+    /**
+     * Configures a LineDash button.
+     */
+    private void configureLineDashButton(ButtonBase aButton, double[] dashArray)
+    {
+        Stroke stroke = Stroke.Stroke2.copyForCap(Stroke.Cap.Butt).copyForDashes(dashArray);
+        Border border = Border.createLineBorder(Color.BLUE.darker(), 2).copyForStroke(stroke);
+        Shape shape = new Line(5, 5, 80, 5);
+        ShapeView shapeView = new ShapeView(shape);
+        shapeView.setBounds(0, 0, 100, 12);
+        shapeView.setBorder(border);
+        aButton.setGraphic(shapeView);
+    }
+
+    /**
+     * Configures a SymbolShapeButton.
+     */
+    private void configureSymbolShapeButton(ButtonBase aButton, Symbol aSymbol)
+    {
+        Symbol symbol = aSymbol.copyForSize(12);
+        Shape shape = symbol.getShape();
+        ShapeView shapeView = new ShapeView(shape);
+        shapeView.setFill(SYMBOL_COLOR);
+        aButton.setGraphic(shapeView);
     }
 }

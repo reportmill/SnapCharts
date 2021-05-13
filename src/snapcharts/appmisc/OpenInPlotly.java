@@ -283,8 +283,10 @@ public class OpenInPlotly {
 
             // If polar do something
             if (_chart.getType() == ChartType.POLAR) {
-                if (dataChan==DataChan.X) dataChanStr = "theta";
-                else if (dataChan==DataChan.Y) dataChanStr = "r";
+                if (dataChan==DataChan.X)
+                    dataChanStr = "theta";
+                else if (dataChan==DataChan.Y)
+                    dataChanStr = "r";
                 else return;
                 traceJS.addKeyValue("mode", "markers");
             }
@@ -294,8 +296,10 @@ public class OpenInPlotly {
             traceJS.addKeyValue(dataChanStr, valsJS);
 
             // Iterate over values and add to valsJS
-            for (int j=0; j<pointCount; j++)
-                valsJS.addValue(aDataSet.getValueForChannel(dataChan, j));
+            for (int j=0; j<pointCount; j++) {
+                Object val = aDataSet.getValueForChannel(dataChan, j);
+                valsJS.addValue(val);
+            }
         }
 
         // If ChartType.LINE_3D, add: fill: 'tozeroy'
