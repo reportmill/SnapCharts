@@ -17,14 +17,17 @@ public class DataStyle extends ChartPart {
     // Whether to show line
     private boolean  _showLine = true;
 
+    // The line color
+    private Color  _lineColor;
+
     // The line width
     private int  _lineWidth = DEFAULT_LINE_WIDTH;
 
     // The line dash
     private double[]  _lineDash = DEFAULT_LINE_DASH;
 
-    // The line color
-    private Color  _lineColor;
+    // The color to paint the data area
+    private Color  _fillColor;
 
     // The FillMode
     private FillMode  _fillMode = FillMode.None;
@@ -43,9 +46,10 @@ public class DataStyle extends ChartPart {
 
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
+    public static final String LineColor_Prop = "LineColor";
     public static final String LineWidth_Prop = "LineWidth";
     public static final String LineDash_Prop = "LineDash";
-    public static final String LineColor_Prop = "LineColor";
+    public static final String FillColor_Prop = "FillColor";
     public static final String FillMode_Prop = "FillMode";
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String SymbolId_Prop = "SymbolId";
@@ -203,6 +207,32 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns the color to fill the data area.
+     */
+    public Color getFillColor()
+    {
+        // If set, just return
+        if (_fillColor != null) return _fillColor;
+
+        // Get from LineColor, half transparent
+        return getLineColor().copyForAlpha(.5);
+    }
+
+    /**
+     * Sets the color to fill the data area.
+     */
+    public void setFillColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _fillColor)) return;
+        firePropChange(FillColor_Prop, _fillColor, _fillColor = aColor);
+    }
+
+    /**
+     * Returns whether fill color is explicitly set.
+     */
+    public boolean isFillColorSet()  { return _fillColor != null; }
+
+    /**
      * Returns the FillMode (how/whether to paint the data area).
      */
     public FillMode getFillMode()  { return _fillMode; }
@@ -310,6 +340,12 @@ public class DataStyle extends ChartPart {
             e.add(LineDash_Prop, dashStr);
         }
 
+        // Archive FillColor, FillMode
+        if (isFillColorSet())
+            e.add(FillColor_Prop, getFillColor().toHexString());
+        if (getFillMode() != DEFAULT_FILL_MODE)
+            e.add(FillMode_Prop, getFillMode());
+
         // Archive ShowSymbols, SymbolId, SymbolSize
         if (isShowSymbols())
             e.add(ShowSymbols_Prop, true);
@@ -317,10 +353,6 @@ public class DataStyle extends ChartPart {
             e.add(SymbolId_Prop, getSymbolId());
         if (getSymbolSize() != getPropDefaultInt(SymbolSize_Prop))
             e.add(SymbolSize_Prop, getSymbolSize());
-
-        // Archive FillMode
-        if (getFillMode() != DEFAULT_FILL_MODE)
-            e.add(FillMode_Prop, getFillMode());
 
         // Return element
         return e;
@@ -352,15 +384,19 @@ public class DataStyle extends ChartPart {
             setLineDash(dashArray);
         }
 
+        // Unarchive FillColor, FillMode
+        if (anElement.hasAttribute(FillColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(FillColor_Prop));
+            setFillColor(color);
+        }
+        if (anElement.hasAttribute(FillMode_Prop))
+            setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
+
         // Unarchive ShowSymbols, SymbolId, SymbolSize
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
         setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
         if (anElement.hasAttribute(SymbolSize_Prop))
             setSymbolSize(anElement.getAttributeIntValue(SymbolSize_Prop));
-
-        // Unarchive FillMode
-        if (anElement.hasAttribute(FillMode_Prop))
-            setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
         // Return this part
         return this;

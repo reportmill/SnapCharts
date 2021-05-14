@@ -169,12 +169,16 @@ public class DataStyleInsp extends ChartPartInsp {
         View lineStyleBox = getView("LineStyleBox");
         ViewAnimUtils.setVisible(lineStyleBox, showLine, false, true);
 
-        // Reset LineWidthText, LineWidthResetButton, LineColorButton, LineColorResetButton
+        // Reset LineStyleBox UI
         if (showLine) {
-            setViewValue("LineWidthText", dataStyle.getLineWidth());
-            setViewVisible("LineWidthResetButton", dataStyle.getLineWidth() != DataStyle.DEFAULT_LINE_WIDTH);
+
+            // Reset LineColorButton, LineColorResetButton
             setViewValue("LineColorButton", dataStyle.getLineColor());
             setViewVisible("LineColorResetButton", dataStyle.isLineColorSet());
+
+            // Reset LineWidthText, LineWidthResetButton
+            setViewValue("LineWidthText", dataStyle.getLineWidth());
+            setViewVisible("LineWidthResetButton", dataStyle.getLineWidth() != DataStyle.DEFAULT_LINE_WIDTH);
         }
 
         // Reset LineDashButton
@@ -193,8 +197,14 @@ public class DataStyleInsp extends ChartPartInsp {
         View fillBox = getView("ShowAreaBox");
         ViewAnimUtils.setVisible(fillBox, showArea, false, true);
 
-        // Reset FillModeComboBox
+        // Reset ShowAreaBox UI
         if (showArea) {
+
+            // Reset FillColorButton, FillColorResetButton
+            setViewValue("FillColorButton", dataStyle.getFillColor());
+            setViewVisible("FillColorResetButton", dataStyle.isFillColorSet());
+
+            // Reset FillModeComboBox
             setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
         }
 
@@ -265,6 +275,17 @@ public class DataStyleInsp extends ChartPartInsp {
         // Handle ShowAreaCheckBox, FillModeComboBox
         if (anEvent.equals("ShowAreaCheckBox"))
             dataStyle.setShowArea(anEvent.getBoolValue());
+
+        // Handle FillColorButton, FillColorResetButton
+        if (anEvent.equals("FillColorButton")) {
+            Color color = (Color) getViewValue("FillColorButton");
+            color = color.getAlpha() <= .5 ? color : color.copyForAlpha(.5);
+            dataStyle.setFillColor(color);
+        }
+        if (anEvent.equals("FillColorResetButton"))
+            dataStyle.setFillColor(null);
+
+        // Handle FillModeComboBox
         if (anEvent.equals("FillModeComboBox")) {
             DataStyle.FillMode fillMode = (DataStyle.FillMode) getViewSelItem("FillModeComboBox");
             dataStyle.setFillMode(fillMode);

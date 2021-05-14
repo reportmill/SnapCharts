@@ -44,6 +44,13 @@
   </RowView>
   <ColView Name="ShowAreaBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
+      <Label text="Fill color:" />
+      <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+      <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
       <Label text="Fill Mode:" />
       <ComboBox Name="FillModeComboBox" PrefWidth="90" PrefHeight="24" />
     </RowView>

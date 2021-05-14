@@ -75,8 +75,8 @@ public class XYDataArea extends DataArea {
         // If ShowArea, fill path, too
         if (showArea) {
             Shape dataAreaShape = _xyPainter.getDataAreaShape();
-            Color dataColorArea = dataColor.blend(Color.CLEAR, .5);
-            aPntr.setColor(dataColorArea);
+            Color dataAreaColor = dataStyle.getFillColor();
+            aPntr.setColor(dataAreaColor);
             aPntr.fill(dataAreaShape);
         }
 
