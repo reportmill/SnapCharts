@@ -115,18 +115,6 @@ public class Doc extends DocItemGroup {
             return doc;
         }
 
-        // Handle json file
-        if (ext.equals("json")) {
-            ChartReader parser = new ChartReader();
-            Doc doc = parser.getDocForSource(url);
-
-            DocItemChart chartDocItem = doc.getItemCount()>0 ? (DocItemChart) doc.getItem(0) : null;
-            Chart chart = chartDocItem!=null ? chartDocItem.getChart() : null;
-            if (chart != null && chart.getDataSetList().isEmpty())
-                chart.getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 3d, 3d, 4d, 5d);
-            return doc;
-        }
-
         // Handle simple file
         if (ext.equals("simple")) {
             String str = url.getText();
