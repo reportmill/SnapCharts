@@ -10,6 +10,8 @@ import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
+import java.util.Objects;
+
 /**
  * A class to manage UI to edit a DataStyle.
  */
@@ -213,18 +215,36 @@ public class DataStyleInsp extends ChartPartInsp {
         setViewValue("ShowSymbolsCheckBox", showSymbols);
         View showSymbolsBox = getView("ShowSymbolsBox");
         ViewAnimUtils.setVisible(showSymbolsBox, showSymbols, false, true);
+
+        // Reset ShowSymbolsBox UI
         if (showSymbols) {
+
+            // Reset SymbolColorButton, SymbolColorResetButton
+            setViewValue("SymbolColorButton", dataStyle.getSymbolColor());
+            setViewVisible("SymbolColorResetButton", dataStyle.isSymbolColorSet());
+
+            // Reset SymbolSizeText, SymbolSizeResetButton
             setViewValue("SymbolSizeText", dataStyle.getSymbolSize());
             setViewVisible("SymbolSizeResetButton", dataStyle.getSymbolSize() != DataStyle.DEFAULT_SYMBOL_SIZE);
+
+            // Reset SymbolShapeButton
+            ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
+            configureSymbolShapeButton(symbolShapeButton, dataStyle.getSymbol());
+
+            // Reset SymbolsBox
+            View symbolsBox = getView("SymbolsBox");
+            ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true);
+
+            // Reset SymbolBorderColorButton, SymbolBorderColorResetButton
+            setViewValue("SymbolBorderColorButton", dataStyle.getSymbolBorderColor());
+            setViewVisible("SymbolBorderColorResetButton",
+                !Objects.equals(dataStyle.getSymbolBorderColor(), DataStyle.DEFAULT_SYMBOL_BORDER_COLOR));
+
+            // Reset SymbolBorderWidthText, SymbolBorderWidthResetButton
+            setViewValue("SymbolBorderWidthText", dataStyle.getSymbolBorderWidth());
+            setViewVisible("SymbolBorderWidthResetButton",
+        dataStyle.getSymbolBorderWidth() != DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
         }
-
-        // Reset SymbolShapeButton
-        ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
-        configureSymbolShapeButton(symbolShapeButton, dataStyle.getSymbol());
-
-        // Reset SymbolsBox
-        View symbolsBox = getView("SymbolsBox");
-        ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true);
     }
 
     /**
@@ -299,6 +319,14 @@ public class DataStyleInsp extends ChartPartInsp {
                 dataStyle.setShowLine(true);
         }
 
+        // Handle SymbolColorButton, SymbolColorResetButton
+        if (anEvent.equals("SymbolColorButton")) {
+            Color color = (Color) getViewValue("SymbolColorButton");
+            dataStyle.setSymbolColor(color);
+        }
+        if (anEvent.equals("SymbolColorResetButton"))
+            dataStyle.setSymbolColor(null);
+
         // Handle SymbolSizeText, SymbolSizeAdd1Button, SymbolSizeSub1Button, SymbolSizeResetButton
         if (anEvent.equals("SymbolSizeText"))
             dataStyle.setSymbolSize(Math.max(anEvent.getIntValue(), 6));
@@ -314,6 +342,24 @@ public class DataStyleInsp extends ChartPartInsp {
             int id = SnapUtils.intValue(eventName);
             dataStyle.setSymbolId(id);
         }
+
+        // Handle SymbolBorderColorButton, SymbolBorderColorResetButton
+        if (anEvent.equals("SymbolBorderColorButton")) {
+            Color color = (Color) getViewValue("SymbolBorderColorButton");
+            dataStyle.setSymbolBorderColor(color);
+        }
+        if (anEvent.equals("SymbolBorderColorResetButton"))
+            dataStyle.setSymbolBorderColor(DataStyle.DEFAULT_SYMBOL_BORDER_COLOR);
+
+        // Handle SymbolBorderWidthText, SymbolBorderWidthAdd1Button, SymbolBorderWidthSub1Button, SymbolBorderWidthResetButton
+        if (anEvent.equals("SymbolBorderWidthText"))
+            dataStyle.setSymbolBorderWidth(Math.max(anEvent.getIntValue(), 0));
+        if (anEvent.equals("SymbolBorderWidthAdd1Button"))
+            dataStyle.setSymbolBorderWidth(dataStyle.getSymbolBorderWidth() + 1);
+        if (anEvent.equals("SymbolBorderWidthSub1Button"))
+            dataStyle.setSymbolBorderWidth(Math.max(dataStyle.getSymbolBorderWidth() - 1, 0));
+        if (anEvent.equals("SymbolBorderWidthResetButton"))
+            dataStyle.setSymbolBorderWidth(DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
     }
 
     /**

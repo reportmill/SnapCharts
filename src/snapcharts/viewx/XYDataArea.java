@@ -142,14 +142,23 @@ public class XYDataArea extends DataArea {
     protected void paintSymbols(Painter aPntr)
     {
         // Get info
+        DataStyle dataStyle = getDataStyle();
         int pointCount = _xyPainter.getDispPointCount();
-        Color color = getDataColor();
+        Color symbolColor = dataStyle.getSymbolColor();  //color.darker().darker()
         Shape symbolShape = getDataSymbolShape();
         double symbolShift = getDataSymbol().getSize() / 2d;
 
+        // Get Symbol border info
+        Color symbolBorderColor = dataStyle.getSymbolBorderColor();
+        int symbolBorderWidth = dataStyle.getSymbolBorderWidth();
+
         // Get whether showing points only
-        DataStyle dataStyle = getDataStyle();
         boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
+        if (symbolBorderWidth == 0 && pointsOnly)
+            symbolBorderWidth = 1;
+
+        // Get SymbolBorderStroke
+        Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
 
         // Iterate over values
         for (int j=0; j<pointCount; j++) {
@@ -160,13 +169,13 @@ public class XYDataArea extends DataArea {
             aPntr.translate(dispX, dispY);
 
             // Set color and fill symbol shape
-            aPntr.setColor(color);
+            aPntr.setColor(symbolColor);
             aPntr.fill(symbolShape);
 
             // If only points, also stroke outline of shape
-            if (pointsOnly) {
-                aPntr.setStroke(Stroke.Stroke1);
-                aPntr.setColor(color.darker().darker());
+            if (symbolBorderStroke != null) {
+                aPntr.setStroke(symbolBorderStroke);
+                aPntr.setColor(symbolBorderColor);
                 aPntr.draw(symbolShape);
             }
 

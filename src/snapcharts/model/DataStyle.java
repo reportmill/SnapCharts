@@ -35,11 +35,20 @@ public class DataStyle extends ChartPart {
     // Whether to show symbols
     private boolean  _showSymbols;
 
-    // The Symbol Id
-    private int  _symbolId;
+    // The color to paint symbols
+    private Color  _symbolColor;
 
     // The Symbol Size
     private int  _symbolSize = DEFAULT_SYMBOL_SIZE;
+
+    // The color to paint symbols
+    private Color  _symbolBorderColor = DEFAULT_SYMBOL_BORDER_COLOR;
+
+    // The Symbol border width
+    private int  _symbolBorderWidth = DEFAULT_SYMBOL_BORDER_WIDTH;
+
+    // The Symbol Id
+    private int  _symbolId;
 
     // The cached symbol
     private Symbol  _symbol;
@@ -52,14 +61,19 @@ public class DataStyle extends ChartPart {
     public static final String FillColor_Prop = "FillColor";
     public static final String FillMode_Prop = "FillMode";
     public static final String ShowSymbols_Prop = "ShowSymbols";
-    public static final String SymbolId_Prop = "SymbolId";
+    public static final String SymbolColor_Prop = "SymbolColor";
     public static final String SymbolSize_Prop = "SymbolSize";
+    public static final String SymbolId_Prop = "SymbolId";
+    public static final String SymbolBorderColor_Prop = "SymbolBorderColor";
+    public static final String SymbolBorderWidth_Prop = "SymbolBorderWidth";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
     public static final double[] DEFAULT_LINE_DASH = null;
     public static final FillMode DEFAULT_FILL_MODE = FillMode.None;
     public static final int DEFAULT_SYMBOL_SIZE = 8;
+    public static final Color DEFAULT_SYMBOL_BORDER_COLOR = Color.BLACK;
+    public static final int DEFAULT_SYMBOL_BORDER_WIDTH = 0;
 
     // Constant for how dataset area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
@@ -264,6 +278,48 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns the color to fill symbols.
+     */
+    public Color getSymbolColor()
+    {
+        // If set, just return
+        if (_symbolColor != null) return _symbolColor;
+
+        // Get from LineColor
+        return getLineColor();
+    }
+
+    /**
+     * Sets the color to fill symbols.
+     */
+    public void setSymbolColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _symbolColor)) return;
+        firePropChange(SymbolColor_Prop, _symbolColor, _symbolColor = aColor);
+        _symbol = null;
+    }
+
+    /**
+     * Returns whether symbol color is explicitly set.
+     */
+    public boolean isSymbolColorSet()  { return _symbolColor != null; }
+
+    /**
+     * Returns the Symbol size.
+     */
+    public int getSymbolSize()  { return _symbolSize; }
+
+    /**
+     * Sets the Symbol size.
+     */
+    public void setSymbolSize(int aValue)
+    {
+        if (aValue == getSymbolSize()) return;
+        firePropChange(SymbolSize_Prop, _symbolSize, _symbolSize = aValue);
+        _symbol = null;
+    }
+
+    /**
      * Returns the Symbol Id.
      */
     public int getSymbolId()  { return _symbolId; }
@@ -279,18 +335,34 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns the Symbol size.
+     * Returns the color to stroke symbols.
      */
-    public int getSymbolSize()  { return _symbolSize; }
+    public Color getSymbolBorderColor()
+    {
+        return _symbolBorderColor;
+    }
 
     /**
-     * Sets the Symbol size.
+     * Sets the color to stroke symbols.
      */
-    public void setSymbolSize(int aValue)
+    public void setSymbolBorderColor(Color aColor)
     {
-        if (aValue == getSymbolSize()) return;
-        firePropChange(SymbolSize_Prop, _symbolSize, _symbolSize = aValue);
-        _symbol = null;
+        if (Objects.equals(aColor, _symbolBorderColor)) return;
+        firePropChange(SymbolBorderColor_Prop, _symbolBorderColor, _symbolBorderColor = aColor);
+    }
+
+    /**
+     * Returns the Symbol border width.
+     */
+    public int getSymbolBorderWidth()  { return _symbolBorderWidth; }
+
+    /**
+     * Sets the Symbol border width.
+     */
+    public void setSymbolBorderWidth(int aValue)
+    {
+        if (aValue == getSymbolBorderWidth()) return;
+        firePropChange(SymbolBorderWidth_Prop, _symbolBorderWidth, _symbolBorderWidth = aValue);
     }
 
     /**
@@ -346,13 +418,25 @@ public class DataStyle extends ChartPart {
         if (getFillMode() != DEFAULT_FILL_MODE)
             e.add(FillMode_Prop, getFillMode());
 
-        // Archive ShowSymbols, SymbolId, SymbolSize
+        // Archive ShowSymbols
         if (isShowSymbols())
             e.add(ShowSymbols_Prop, true);
-        if (getSymbolId() != 0)
-            e.add(SymbolId_Prop, getSymbolId());
+
+        // Archive SymbolColor, SymbolSize
+        if (isSymbolColorSet())
+            e.add(SymbolColor_Prop, getSymbolColor().toHexString());
         if (getSymbolSize() != getPropDefaultInt(SymbolSize_Prop))
             e.add(SymbolSize_Prop, getSymbolSize());
+
+        // Archive SymbolId
+        if (getSymbolId() != 0)
+            e.add(SymbolId_Prop, getSymbolId());
+
+        // Archive SymbolBorderColor, SymbolBorderWidth
+        if (!Objects.equals(getSymbolBorderColor(), DEFAULT_SYMBOL_BORDER_COLOR))
+            e.add(SymbolBorderColor_Prop, getSymbolBorderColor().toHexString());
+        if (getSymbolBorderWidth() != DEFAULT_SYMBOL_BORDER_WIDTH)
+            e.add(SymbolBorderWidth_Prop, getSymbolBorderWidth());
 
         // Return element
         return e;
@@ -392,11 +476,27 @@ public class DataStyle extends ChartPart {
         if (anElement.hasAttribute(FillMode_Prop))
             setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
-        // Unarchive ShowSymbols, SymbolId, SymbolSize
+        // Unarchive ShowSymbols
         setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
-        setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
+
+        // Unarchive SymbolColor, SymbolSize
+        if (anElement.hasAttribute(SymbolColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(SymbolColor_Prop));
+            setSymbolColor(color);
+        }
         if (anElement.hasAttribute(SymbolSize_Prop))
             setSymbolSize(anElement.getAttributeIntValue(SymbolSize_Prop));
+
+        // Unarchive SymbolId
+        setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
+
+        // Unarchive SymbolBorderColor, SymbolBorderWidth
+        if (anElement.hasAttribute(SymbolBorderColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(SymbolBorderColor_Prop));
+            setSymbolBorderColor(color);
+        }
+        if (anElement.hasAttribute(SymbolBorderWidth_Prop))
+            setSymbolBorderWidth(anElement.getAttributeIntValue(SymbolBorderWidth_Prop));
 
         // Return this part
         return this;

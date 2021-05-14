@@ -249,8 +249,13 @@ public class OpenInPlotly {
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'
-        if (_chart.getType() == ChartType.SCATTER)
-            traceJS.addKeyValue("mode", "markers");
+        if (_chart.getType() == ChartType.SCATTER) {
+            boolean isShowLine = dataStyle.isShowLine();
+            boolean isShowSymbols = dataStyle.isShowSymbols();
+            String modeStr = isShowLine && isShowSymbols ? "lines+markers" :
+                    isShowLine ? "lines" : isShowSymbols ? "markers" : "";
+            traceJS.addKeyValue("mode", modeStr);
+        }
 
         // If ChartType.CONTOUR, add: colorscale: 'Jet'
         if (_chart.getType() == ChartType.CONTOUR) {
