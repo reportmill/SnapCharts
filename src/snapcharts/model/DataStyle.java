@@ -26,6 +26,9 @@ public class DataStyle extends ChartPart {
     // The line color
     private Color  _lineColor;
 
+    // The FillMode
+    private FillMode  _fillMode = FillMode.None;
+
     // Whether to show symbols
     private boolean  _showSymbols;
 
@@ -38,26 +41,23 @@ public class DataStyle extends ChartPart {
     // The cached symbol
     private Symbol  _symbol;
 
-    // The FillMode
-    private FillMode  _fillMode = FillMode.None;
-
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String LineWidth_Prop = "LineWidth";
     public static final String LineDash_Prop = "LineDash";
     public static final String LineColor_Prop = "LineColor";
+    public static final String FillMode_Prop = "FillMode";
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String SymbolId_Prop = "SymbolId";
     public static final String SymbolSize_Prop = "SymbolSize";
-    public static final String FillMode_Prop = "FillMode";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
     public static final double[] DEFAULT_LINE_DASH = null;
-    public static final int DEFAULT_SYMBOL_SIZE = 8;
     public static final FillMode DEFAULT_FILL_MODE = FillMode.None;
+    public static final int DEFAULT_SYMBOL_SIZE = 8;
 
-    // Constant for how dataset should be filled
+    // Constant for how dataset area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
 
     /**
@@ -186,6 +186,37 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns whether to paint area for data.
+     */
+    public boolean isShowArea()
+    {
+        return _fillMode != FillMode.None;
+    }
+
+    /**
+     * Sets whether to paint area for data.
+     */
+    public void setShowArea(boolean aValue)
+    {
+        FillMode fillMode = aValue ? FillMode.ToZeroY : FillMode.None;
+        setFillMode(fillMode);
+    }
+
+    /**
+     * Returns the FillMode (how/whether to paint the data area).
+     */
+    public FillMode getFillMode()  { return _fillMode; }
+
+    /**
+     * Sets the FillMode (how/whether to paint the data area).
+     */
+    public void setFillMode(FillMode aFillMode)
+    {
+        if (aFillMode == _fillMode) return;
+        firePropChange(FillMode_Prop, _fillMode, _fillMode = aFillMode);
+    }
+
+    /**
      * Returns whether to show symbols for DataSet.
      */
     public boolean isShowSymbols()
@@ -243,37 +274,6 @@ public class DataStyle extends ChartPart {
         // Get, set, return
         Symbol symbol = Symbol.getSymbolForId(_symbolId).copyForSize(_symbolSize);
         return _symbol = symbol;
-    }
-
-    /**
-     * Returns whether to paint area for data.
-     */
-    public boolean isShowFill()
-    {
-        return _fillMode != FillMode.None;
-    }
-
-    /**
-     * Sets whether to paint area for data.
-     */
-    public void setShowFill(boolean aValue)
-    {
-        FillMode fillMode = aValue ? FillMode.ToZeroY : FillMode.None;
-        setFillMode(fillMode);
-    }
-
-    /**
-     * Returns the FillMode (how/whether to paint the data area).
-     */
-    public FillMode getFillMode()  { return _fillMode; }
-
-    /**
-     * Sets the FillMode (how/whether to paint the data area).
-     */
-    public void setFillMode(FillMode aFillMode)
-    {
-        if (aFillMode == _fillMode) return;
-        firePropChange(FillMode_Prop, _fillMode, _fillMode = aFillMode);
     }
 
     /**

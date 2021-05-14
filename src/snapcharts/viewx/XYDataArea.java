@@ -59,7 +59,7 @@ public class XYDataArea extends DataArea {
         DataStyle dataStyle = getDataStyle();
         boolean showLine = dataStyle.isShowLine();
         boolean showSymbols = dataStyle.isShowSymbols();
-        boolean showArea = dataStyle.isShowFill();
+        boolean showArea = dataStyle.isShowArea();
 
         // Get DataColor, DataStroke
         Color dataColor = getDataColor();
@@ -149,7 +149,7 @@ public class XYDataArea extends DataArea {
 
         // Get whether showing points only
         DataStyle dataStyle = getDataStyle();
-        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowFill());
+        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
 
         // Iterate over values
         for (int j=0; j<pointCount; j++) {
@@ -261,7 +261,7 @@ public class XYDataArea extends DataArea {
     {
         // If not Line chart or DataSet.Disabled, return default
         DataStyle dataStyle = getDataStyle();
-        boolean showSymbolsOrFill = dataStyle.isShowSymbols() || dataStyle.isShowFill();
+        boolean showSymbolsOrFill = dataStyle.isShowSymbols() || dataStyle.isShowArea();
         if (showSymbolsOrFill || getDataSet().isDisabled())
             return DataView.DEFAULT_REVEAL_TIME;
 

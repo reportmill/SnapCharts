@@ -7,8 +7,6 @@ import snap.gfx.Stroke;
 import snap.util.SnapUtils;
 import snap.util.StringUtils;
 import snap.view.*;
-import snap.viewx.ColorButton;
-import snap.viewx.ColorWell;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
@@ -122,6 +120,14 @@ public class DataStyleInsp extends ChartPartInsp {
                 configureLineDashButton(lineDashButton, dashArray);
         }
 
+        // Configure ShowAreaBox
+        setViewVisible("ShowAreaBox", false);
+
+        // Configure FillModeComboBox to show FillModes
+        ComboBox<DataStyle.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
+        fillModeComboBox.setItems(DataStyle.FillMode.values());
+        fillModeComboBox.setItemTextFunction(item -> StringUtils.fromCamelCase(item.toString()));
+
         // Make sure ShowSymbolsBox is hidden
         setViewVisible("ShowSymbolsBox", false);
 
@@ -135,14 +141,6 @@ public class DataStyleInsp extends ChartPartInsp {
             if (symbolButton != null)
                 configureSymbolShapeButton(symbolButton, symbol);
         }
-
-        // Configure FillModeComboBox to show FillModes
-        ComboBox<DataStyle.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
-        fillModeComboBox.setItems(DataStyle.FillMode.values());
-        fillModeComboBox.setItemTextFunction(item -> StringUtils.fromCamelCase(item.toString()));
-
-        // Configure ShowFillBox
-        setViewVisible("ShowFillBox", false);
     }
 
     /**
@@ -187,6 +185,19 @@ public class DataStyleInsp extends ChartPartInsp {
         View lineDashBox = getView("LineDashBox");
         ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
 
+        // Reset ShowAreaCheckBox
+        boolean showArea = dataStyle.isShowArea();
+        setViewValue("ShowAreaCheckBox", showArea);
+
+        // Reset ShowAreaBox
+        View fillBox = getView("ShowAreaBox");
+        ViewAnimUtils.setVisible(fillBox, showArea, false, true);
+
+        // Reset FillModeComboBox
+        if (showArea) {
+            setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
+        }
+
         // Reset ShowSymbolsCheckBox, ShowSymbolsBox
         boolean showSymbols = dataStyle.isShowSymbols();
         setViewValue("ShowSymbolsCheckBox", showSymbols);
@@ -204,19 +215,6 @@ public class DataStyleInsp extends ChartPartInsp {
         // Reset SymbolsBox
         View symbolsBox = getView("SymbolsBox");
         ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true);
-
-        // Reset ShowFillCheckBox
-        boolean showFill = dataStyle.isShowFill();
-        setViewValue("ShowFillCheckBox", showFill);
-
-        // Reset ShowFillBox
-        View fillBox = getView("ShowFillBox");
-        ViewAnimUtils.setVisible(fillBox, showFill, false, true);
-
-        // Reset FillModeComboBox
-        if (showFill) {
-            setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
-        }
     }
 
     /**
@@ -264,6 +262,14 @@ public class DataStyleInsp extends ChartPartInsp {
             dataStyle.setLineDash(dashArray);
         }
 
+        // Handle ShowAreaCheckBox, FillModeComboBox
+        if (anEvent.equals("ShowAreaCheckBox"))
+            dataStyle.setShowArea(anEvent.getBoolValue());
+        if (anEvent.equals("FillModeComboBox")) {
+            DataStyle.FillMode fillMode = (DataStyle.FillMode) getViewSelItem("FillModeComboBox");
+            dataStyle.setFillMode(fillMode);
+        }
+
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox")) {
             boolean showSymbols = anEvent.getBoolValue();
@@ -286,14 +292,6 @@ public class DataStyleInsp extends ChartPartInsp {
         if (eventName.startsWith("SymbolShapeButton_")) {
             int id = SnapUtils.intValue(eventName);
             dataStyle.setSymbolId(id);
-        }
-
-        // Handle ShowFillCheckBox, FillModeComboBox
-        if (anEvent.equals("ShowFillCheckBox"))
-            dataStyle.setShowFill(anEvent.getBoolValue());
-        if (anEvent.equals("FillModeComboBox")) {
-            DataStyle.FillMode fillMode = (DataStyle.FillMode) getViewSelItem("FillModeComboBox");
-            dataStyle.setFillMode(fillMode);
         }
     }
 

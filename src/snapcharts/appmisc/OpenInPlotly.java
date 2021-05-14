@@ -1,7 +1,6 @@
 package snapcharts.appmisc;
 import snap.geom.Side;
 import snap.util.FileUtils;
-import snap.util.FormatUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
 import snapcharts.model.*;
@@ -246,7 +245,7 @@ public class OpenInPlotly {
         }
 
         // If ShoFill, add: fill: 'tozeroy'
-        if (dataStyle.isShowFill())
+        if (dataStyle.isShowArea())
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'

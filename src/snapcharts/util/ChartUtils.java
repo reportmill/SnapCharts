@@ -22,7 +22,7 @@ public class ChartUtils {
             return ScatterType.SCATTER;
         boolean showArea = true;
         for (DataSet dataSet : dataSets) {
-            if (!dataSet.getDataStyle().isShowFill()) {
+            if (!dataSet.getDataStyle().isShowArea()) {
                 showArea = false;
                 break;
             }
@@ -52,7 +52,7 @@ public class ChartUtils {
             DataStyle dataStyle = dataSet.getDataStyle();
             dataStyle.setShowLine(scatterType == ScatterType.LINE || scatterType == ScatterType.AREA);
             dataStyle.setShowSymbols(scatterType == ScatterType.LINE || scatterType == ScatterType.SCATTER);
-            dataStyle.setShowFill(scatterType == ScatterType.AREA);
+            dataStyle.setShowArea(scatterType == ScatterType.AREA);
         }
     }
 

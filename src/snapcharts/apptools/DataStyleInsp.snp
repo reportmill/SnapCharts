@@ -40,6 +40,15 @@
     </ColView>
   </ColView>
   <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowAreaCheckBox" text="Show Area" />
+  </RowView>
+  <ColView Name="ShowAreaBox" Padding="0,0,0,25" FillWidth="true">
+    <RowView Padding="4" Spacing="4">
+      <Label text="Fill Mode:" />
+      <ComboBox Name="FillModeComboBox" PrefWidth="90" PrefHeight="24" />
+    </RowView>
+  </ColView>
+  <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowSymbolsCheckBox" text="Show Symbols" />
   </RowView>
   <ColView Name="ShowSymbolsBox" Padding="0,0,0,25" FillWidth="true">
@@ -77,15 +86,6 @@
     </ColView>
   </ColView>
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowFillCheckBox" text="Show Fill" />
-  </RowView>
-  <ColView Name="ShowFillBox" Padding="0,0,0,25" FillWidth="true">
-    <RowView Padding="4" Spacing="4">
-      <Label text="Fill Mode:" />
-      <ComboBox Name="FillModeComboBox" PrefWidth="90" PrefHeight="24" />
-    </RowView>
-  </ColView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="PartialYAxisCheckBox" text="Show data tags" />
+    <CheckBox Name="ShowTagsCheckBox" text="Show data tags" />
   </RowView>
 </ColView>
