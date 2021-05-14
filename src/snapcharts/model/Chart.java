@@ -1,10 +1,10 @@
 package snapcharts.model;
-import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Paint;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
+import snapcharts.util.ChartUtils;
 
 /**
  * A view to render a chart.
@@ -15,7 +15,7 @@ public class Chart extends ChartPart {
     private Doc _doc;
 
     // The chart type
-    private ChartType  _type = ChartType.LINE;
+    private ChartType  _type = DEFAULT_TYPE;
 
     // The Header
     private Header  _header;
@@ -53,9 +53,12 @@ public class Chart extends ChartPart {
     // The object holding specific chart type properties
     private DataStyleHpr _dataStyleHpr = new DataStyleHpr(this);
 
-    // Property constants
+    // Constants for properties
     public static final String Type_Prop = "Type";
     public static final String Colors_Prop = "Colors";
+
+    // Constants for property defaults
+    public static final ChartType DEFAULT_TYPE = ChartType.SCATTER;
 
     // Colors
     private static Color[]  COLORS = new Color[] {
@@ -282,19 +285,6 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Returns the symbol shape at index.
-     */
-    public Shape getSymbolShape(int anIndex)
-    {
-        // If not Line, return Symbol zero (point)
-        if (getType() != ChartType.LINE)
-            return Symbol.getSymbolForIndex(0).getShape();
-
-        // Otherwise, return symbol at index
-        return Symbol.getSymbolForIndex(anIndex).getShape();
-    }
-
-    /**
      * Returns the DataStyleHpr that provides/manages DataStyles.
      */
     public DataStyleHpr getDataStyleHelper()  { return _dataStyleHpr; }
@@ -394,7 +384,9 @@ public class Chart extends ChartPart {
         super.fromXML(anArchiver, anElement);
 
         // Unarchive Type
-        setType(ChartType.get(anElement.getAttributeValue(Type_Prop)));
+        String typeStr = anElement.getAttributeValue(Type_Prop);
+        ChartType chartType = ChartType.get(typeStr);
+        setType(chartType);
 
         // Unarchive Header
         XMLElement header_XML = anElement.get("Header");
@@ -426,6 +418,12 @@ public class Chart extends ChartPart {
             getHeader().setSubtitle(anElement.getAttributeValue(Header.Subtitle_Prop));
         if (anElement.hasAttribute(Legend.ShowLegend_Prop))
             getLegend().setShowLegend(anElement.getAttributeBoolValue(Legend.ShowLegend_Prop));
+
+        // Legacy
+        if (typeStr.equalsIgnoreCase("LINE"))
+            ChartUtils.setScatterType(this, ChartUtils.ScatterType.LINE);
+        if (typeStr.equalsIgnoreCase("AREA"))
+            ChartUtils.setScatterType(this, ChartUtils.ScatterType.AREA);
 
         // Return this part
         return this;

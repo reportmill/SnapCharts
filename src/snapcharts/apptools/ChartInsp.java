@@ -1,10 +1,8 @@
 package snapcharts.apptools;
-
 import snap.view.ViewEvent;
-import snapcharts.model.ChartPart;
-import snapcharts.model.ChartType;
+import snapcharts.model.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.Chart;
+import snapcharts.util.ChartUtils;
 
 /**
  * A class to manage UI to edit a ChartView.
@@ -45,6 +43,8 @@ public class ChartInsp extends ChartPartInsp {
         // Reset ChartButtons
         ChartType type = chart.getType();
         String typeName = type.getStringPlain() + "ChartButton";
+        if (type == ChartType.SCATTER)
+            typeName = ChartUtils.getScatterTypeString(chart) + "ChartButton";
         setViewValue(typeName, true);
     }
 
@@ -64,11 +64,11 @@ public class ChartInsp extends ChartPartInsp {
 
         // Handle BarChartButton, LineChartButton, PieChartButton
         if (anEvent.equals("LineChartButton"))
-            chart.setType(ChartType.LINE);
+            ChartUtils.setScatterType(chart, ChartUtils.ScatterType.LINE);
         if (anEvent.equals("AreaChartButton"))
-            chart.setType(ChartType.AREA);
+            ChartUtils.setScatterType(chart, ChartUtils.ScatterType.AREA);
         if (anEvent.equals("ScatterChartButton"))
-            chart.setType(ChartType.SCATTER);
+            ChartUtils.setScatterType(chart, ChartUtils.ScatterType.SCATTER);
         if (anEvent.equals("BarChartButton"))
             chart.setType(ChartType.BAR);
         if (anEvent.equals("PieChartButton"))

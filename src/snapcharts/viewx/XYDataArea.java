@@ -58,8 +58,8 @@ public class XYDataArea extends DataArea {
         // Get DataStyle info
         DataStyle dataStyle = getDataStyle();
         boolean showLine = dataStyle.isShowLine();
-        boolean showSymbols = dataStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
-        boolean showArea = dataStyle.isShowFill() || _chartType == ChartType.AREA;
+        boolean showSymbols = dataStyle.isShowSymbols();
+        boolean showArea = dataStyle.isShowFill();
 
         // Get DataColor, DataStroke
         Color dataColor = getDataColor();
@@ -147,6 +147,10 @@ public class XYDataArea extends DataArea {
         Shape symbolShape = getDataSymbolShape();
         double symbolShift = getDataSymbol().getSize() / 2d;
 
+        // Get whether showing points only
+        DataStyle dataStyle = getDataStyle();
+        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowFill());
+
         // Iterate over values
         for (int j=0; j<pointCount; j++) {
 
@@ -159,8 +163,8 @@ public class XYDataArea extends DataArea {
             aPntr.setColor(color);
             aPntr.fill(symbolShape);
 
-            // If Scatter chart, also stroke outline of shape
-            if (_chartType == ChartType.SCATTER) {
+            // If only points, also stroke outline of shape
+            if (pointsOnly) {
                 aPntr.setStroke(Stroke.Stroke1);
                 aPntr.setColor(color.darker().darker());
                 aPntr.draw(symbolShape);

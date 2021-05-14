@@ -132,12 +132,14 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
      */
     private View createLegendEntry(DataSet aDataSet, int anIndex)
     {
-        // Get marker Shape (if LineChart, add crossbar)
+        // Get Symbol.Shape
         Chart chart = getChart();
         DataStyle dataStyle = aDataSet.getDataStyle();
         Shape shp = dataStyle.getSymbol().copyForSize(8).getShape();
         shp = shp.copyFor(new Transform(6, 6));
-        if (chart.getType() == ChartType.LINE) {
+
+        // If SCATTER, add crossbar
+        if (chart.getType() == ChartType.SCATTER) {
             Shape shp1 = new Rect(2,9,16,2);
             shp = Shape.add(shp, shp1);
         }

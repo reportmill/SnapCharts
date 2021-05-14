@@ -607,8 +607,6 @@ public abstract class ChartHelper {
         switch (chartType) {
             case BAR: return new BarChartHelper(aChartView);
             case PIE: return new PieChartHelper(aChartView);
-            case LINE: return new XYChartHelper(aChartView, ChartType.LINE);
-            case AREA: return new XYChartHelper(aChartView, ChartType.AREA);
             case SCATTER: return new XYChartHelper(aChartView, ChartType.SCATTER);
             case CONTOUR: return new ContourChartHelper(aChartView);
             case POLAR: return new PolarChartHelper(aChartView);

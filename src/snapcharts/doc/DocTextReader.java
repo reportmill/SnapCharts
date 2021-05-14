@@ -116,7 +116,7 @@ public class DocTextReader {
 
                 case "Chart.Type":
                     ChartType chartType = ChartType.get(val.toUpperCase());
-                    if (chartType == null) chartType = ChartType.LINE;
+                    if (chartType == null) chartType = ChartType.SCATTER;
                     _chart.setType(chartType);
                     break;
 

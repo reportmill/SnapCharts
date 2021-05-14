@@ -73,7 +73,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public ChartType getChartType()
     {
         Chart chart = getChart();
-        return chart != null ? chart.getType() : ChartType.LINE;
+        return chart != null ? chart.getType() : ChartType.SCATTER;
     }
 
     /**

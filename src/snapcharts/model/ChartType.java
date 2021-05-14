@@ -11,12 +11,6 @@ public enum ChartType {
     /** Pie chart */
     PIE,
 
-    /** Line chart */
-    LINE,
-
-    /** Area chart */
-    AREA,
-
     /** Scatter chart */
     SCATTER,
 
@@ -43,7 +37,7 @@ public enum ChartType {
      */
     public boolean isXYType()
     {
-        return this==LINE || this==AREA || this==SCATTER || this==CONTOUR;
+        return this==SCATTER || this==CONTOUR;
     }
 
     /**
@@ -72,7 +66,7 @@ public enum ChartType {
      */
     public boolean isMultiYAxisType()
     {
-        return this == LINE || this == AREA || this == SCATTER;
+        return this == SCATTER;
     }
 
     /**
@@ -94,7 +88,6 @@ public enum ChartType {
             case BAR_3D: return "Bar3D";
             case PIE_3D: return "Pie3D";
             case PIE: return "Pie";
-            case LINE: return "Line";
             case LINE_3D: return "Line3D";
             case SCATTER: return "Scatter";
             case POLAR_CONTOUR: return "PolarContour";
@@ -111,13 +104,20 @@ public enum ChartType {
      */
     public static ChartType get(String aStr)
     {
+        // Normalize string
         String str = aStr.toUpperCase();
         str = str.replace(" ", "_").replace("-", "_");
+
+        // Legacy
+        if (str.equals("LINE") || str.equals("AREA"))
+            return SCATTER;
+
+        // Return Enum
         try { return ChartType.valueOf(str); }
         catch(Exception e)
         {
             System.err.println("ChartType.get: Couldn't parse chart type string: " + aStr);
-            return LINE;
+            return SCATTER;
         }
     }
 }

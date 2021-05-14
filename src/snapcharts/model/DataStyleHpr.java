@@ -56,7 +56,7 @@ public class DataStyleHpr {
     public DataStyle getDataStyleForChartType(ChartType aType)
     {
         switch(aType) {
-            case LINE: return getXYStyle();
+            case SCATTER: return getXYStyle();
             case BAR: return getBarStyle();
             case PIE: return getPieStyle();
             case CONTOUR: return getContourStyle();
@@ -91,7 +91,7 @@ public class DataStyleHpr {
     {
         // Get instance
         switch(aType) {
-            case LINE: return new XYStyle();
+            case SCATTER: return new XYStyle();
             case BAR: return new BarStyle();
             case PIE: return new PieStyle();
             case CONTOUR: return new ContourStyle();
@@ -107,7 +107,7 @@ public class DataStyleHpr {
     public XYStyle getXYStyle()
     {
         if (_xyStyle !=null) return _xyStyle;
-        return _xyStyle = (XYStyle) createDataStyleForChartType(ChartType.LINE);
+        return _xyStyle = (XYStyle) createDataStyleForChartType(ChartType.SCATTER);
     }
 
     /**

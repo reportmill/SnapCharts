@@ -221,6 +221,7 @@ public class OpenInPlotly {
     private void writeDataSet(DataSet aDataSet, int anIndex)
     {
         // Get DataSet info
+        DataStyle dataStyle = aDataSet.getDataStyle();
         int pointCount = aDataSet.getPointCount();
         DataType dataType = aDataSet.getDataType();
         int chanCount = dataType.getChannelCount();
@@ -244,8 +245,8 @@ public class OpenInPlotly {
                 traceJS.addKeyValue("type", "scatter");
         }
 
-        // If ChartType.AREA, add: fill: 'tozeroy'
-        if (_chart.getType() == ChartType.AREA)
+        // If ShoFill, add: fill: 'tozeroy'
+        if (dataStyle.isShowFill())
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'
