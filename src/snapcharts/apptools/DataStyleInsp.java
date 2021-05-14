@@ -5,6 +5,7 @@ import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
 import snap.util.SnapUtils;
+import snap.util.StringUtils;
 import snap.view.*;
 import snap.viewx.ColorButton;
 import snap.viewx.ColorWell;
@@ -108,12 +109,10 @@ public class DataStyleInsp extends ChartPartInsp {
         _inspBox = getView("InspectorBox", ColView.class);
 
         // Make sure LineStyleBox is hidden
-        View lineStyleBox = getView("LineStyleBox");
-        lineStyleBox.setVisible(false);
+        setViewVisible("LineStyleBox", false);
 
         // Make sure LineDashBox is hidden
-        View lineDashBox = getView("LineDashBox");
-        lineDashBox.setVisible(false);
+        setViewVisible("LineDashBox", false);
 
         // Configure LineDashButton(s)
         for (int i=0; i<Stroke.DASHES_ALL.length; i++) {
@@ -124,12 +123,10 @@ public class DataStyleInsp extends ChartPartInsp {
         }
 
         // Make sure ShowSymbolsBox is hidden
-        View showSymbolsBox = getView("ShowSymbolsBox");
-        showSymbolsBox.setVisible(false);
+        setViewVisible("ShowSymbolsBox", false);
 
         // Make sure SymbolsBox is hidden
-        View symbolsBox = getView("SymbolsBox");
-        symbolsBox.setVisible(false);
+        setViewVisible("SymbolsBox", false);
 
         // Configure SymbolShapeButton_X
         for (int i=0; i<Symbol.SYMBOL_COUNT; i++) {
@@ -138,6 +135,14 @@ public class DataStyleInsp extends ChartPartInsp {
             if (symbolButton != null)
                 configureSymbolShapeButton(symbolButton, symbol);
         }
+
+        // Configure FillModeComboBox to show FillModes
+        ComboBox<DataStyle.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
+        fillModeComboBox.setItems(DataStyle.FillMode.values());
+        fillModeComboBox.setItemTextFunction(item -> StringUtils.fromCamelCase(item.toString()));
+
+        // Configure ShowFillBox
+        setViewVisible("ShowFillBox", false);
     }
 
     /**
@@ -180,7 +185,7 @@ public class DataStyleInsp extends ChartPartInsp {
 
         // Reset LineDashBox
         View lineDashBox = getView("LineDashBox");
-        ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true).setLinear();
+        ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
 
         // Reset ShowSymbolsCheckBox, ShowSymbolsBox
         boolean showSymbols = dataStyle.isShowSymbols();
@@ -198,7 +203,20 @@ public class DataStyleInsp extends ChartPartInsp {
 
         // Reset SymbolsBox
         View symbolsBox = getView("SymbolsBox");
-        ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true).setLinear();
+        ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true);
+
+        // Reset ShowFillCheckBox
+        boolean showFill = dataStyle.isShowFill();
+        setViewValue("ShowFillCheckBox", showFill);
+
+        // Reset ShowFillBox
+        View fillBox = getView("ShowFillBox");
+        ViewAnimUtils.setVisible(fillBox, showFill, false, true);
+
+        // Reset FillModeComboBox
+        if (showFill) {
+            setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
+        }
     }
 
     /**
@@ -268,6 +286,14 @@ public class DataStyleInsp extends ChartPartInsp {
         if (eventName.startsWith("SymbolShapeButton_")) {
             int id = SnapUtils.intValue(eventName);
             dataStyle.setSymbolId(id);
+        }
+
+        // Handle ShowFillCheckBox, FillModeComboBox
+        if (anEvent.equals("ShowFillCheckBox"))
+            dataStyle.setShowFill(anEvent.getBoolValue());
+        if (anEvent.equals("FillModeComboBox")) {
+            DataStyle.FillMode fillMode = (DataStyle.FillMode) getViewSelItem("FillModeComboBox");
+            dataStyle.setFillMode(fillMode);
         }
     }
 

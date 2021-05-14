@@ -52,38 +52,38 @@ public class XYDataArea extends DataArea {
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get whether DataArea/DataSet is selected
-        DataSet dset = getDataSet();
-        DataPoint selPoint = getChartView().getTargDataPoint();
-        boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
+        // Get whether DataArea/DataSet is selected or targeted
+        boolean isSelected = isSelectedOrTargeted();
 
-        // Get style info
-        DataStyle dataStyle = dset.getDataStyle();
+        // Get DataStyle info
+        DataStyle dataStyle = getDataStyle();
         boolean showLine = dataStyle.isShowLine();
-        Stroke dataStroke = dataStyle.getLineStroke();
         boolean showSymbols = dataStyle.isShowSymbols() || _chartType == ChartType.SCATTER;
+        boolean showArea = dataStyle.isShowFill() || _chartType == ChartType.AREA;
+
+        // Get DataColor, DataStroke
+        Color dataColor = getDataColor();
+        Stroke dataStroke = dataStyle.getLineStroke();
 
         // If reveal is not full (1) then clip
         double reveal = getReveal();
-        if (reveal < 1 && _chartType == ChartType.AREA) {
+        if (reveal < 1 && (showSymbols || showArea)) {
             aPntr.save();
             aPntr.clipRect(0, 0, areaW * reveal, areaH);
         }
 
-        // Get dataShape (path) (if Reveal is active, get shape as SplicerShape so we can draw partial/animated)
-        Shape dataShape = _xyPainter.getDataShape();
-        if (reveal<1 && _chartType == ChartType.LINE)
-            dataShape = new SplicerShape(dataShape, 0, reveal);
-
-        // Get dataset color
-        Color dataColor = getDataColor();
-
-        // If ChartType.AREA, fill path, too
-        if (_chartType == ChartType.AREA) {
-            Color dataColorArea = dataColor.blend(Color.CLEAR, .3);
+        // If ShowArea, fill path, too
+        if (showArea) {
+            Shape dataAreaShape = _xyPainter.getDataAreaShape();
+            Color dataColorArea = dataColor.blend(Color.CLEAR, .5);
             aPntr.setColor(dataColorArea);
-            aPntr.fill(dataShape);
+            aPntr.fill(dataAreaShape);
         }
+
+        // Get dataShape (path) (if Reveal is active, get shape as SplicerShape so we can draw partial/animated)
+        Shape dataShape = _xyPainter.getDataLineShape();
+        if (reveal < 1 && showLine)
+            dataShape = new SplicerShape(dataShape, 0, reveal);
 
         // If ChartType.LINE, draw path
         if (isSelected && showLine) {
@@ -123,26 +123,16 @@ public class XYDataArea extends DataArea {
         if (dataShape instanceof SplicerShape)
             paintTailShape(aPntr, (SplicerShape) dataShape);
 
-        // If reveal not full, restore gstate
-        if (reveal < 1 && _chartType == ChartType.AREA)
-            aPntr.restore();
-
-        // If reveal is not full (1) then clip
-        if (reveal < 1) {
-            aPntr.save();
-            aPntr.clipRect(0, 0, areaW * reveal, areaH);
-        }
-
         // If ShowSymbols, paint symbols
         if (showSymbols)
             paintSymbols(aPntr);
 
         // Paint selected point
         if (isSelected)
-            paintSelPoint(aPntr);
+            paintSelDataPoint(aPntr);
 
         // If reveal not full, resture gstate
-        if (reveal < 1)
+        if (reveal < 1 && (showSymbols || showArea))
             aPntr.restore();
     }
 
@@ -184,16 +174,21 @@ public class XYDataArea extends DataArea {
     /**
      * Paints selected point.
      */
-    protected void paintSelPoint(Painter aPntr)
+    protected void paintSelDataPoint(Painter aPntr)
     {
+        // Get targeted or selected datapoint (targeted takes precidence)
+        DataPoint targPoint = getTargDataPoint();
+        DataPoint dataPoint = targPoint != null ? targPoint : getSelDataPoint();
+        if (dataPoint == null)
+            return;
+
         // Get info
         DataSet dataSet = getDataSet();
-        DataPoint selPoint = getChartView().getTargDataPoint();
-        int selIndex = selPoint.getIndex();
+        int pointIndex = dataPoint.getIndex();
 
         // Get data X/Y and disp X/Y
-        double dataX = dataSet.getX(selIndex);
-        double dataY = dataSet.getY(selIndex);
+        double dataX = dataSet.getX(pointIndex);
+        double dataY = dataSet.getY(pointIndex);
         double dispX = dataToViewX(dataX);
         double dispY = dataToViewY(dataY);
 
@@ -261,11 +256,13 @@ public class XYDataArea extends DataArea {
     protected int getRevealTime()
     {
         // If not Line chart or DataSet.Disabled, return default
-        if (_chartType != ChartType.LINE || getDataSet().isDisabled())
+        DataStyle dataStyle = getDataStyle();
+        boolean showSymbolsOrFill = dataStyle.isShowSymbols() || dataStyle.isShowFill();
+        if (showSymbolsOrFill || getDataSet().isDisabled())
             return DataView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time
-        double maxLen =  _xyPainter.getArcLength();
+        double maxLen = _xyPainter.getArcLength();
         double factor = Math.max(1, Math.min(maxLen / 500, 2));
 
         // Return default time times factor

@@ -154,7 +154,14 @@ public class DataPoint {
      */
     public boolean equals(Object anObj)
     {
-        DataPoint other = anObj instanceof DataPoint ? (DataPoint)anObj : null; if (other==null) return false;
-        return other._dset==_dset && other._index==_index;
+        // Check basics
+        if (anObj == this) return true;
+        DataPoint other = anObj instanceof DataPoint ? (DataPoint)anObj : null;
+        if (other == null) return false;
+
+        // Check DataSet, Index
+        if (other._dset != _dset) return false;
+        if (other._index != _index) return false;
+        return true;
     }
 }

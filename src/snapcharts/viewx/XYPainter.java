@@ -20,8 +20,11 @@ public class XYPainter {
     // The display X/Y coords
     private double[]  _dispX, _dispY;
 
-    // The Dataline shape
-    private Shape  _dataShape;
+    // The shape to draw data line
+    private Shape  _dataLineShape;
+
+    // The shape to fill data area
+    private Shape  _dataAreaShape;
 
     // The combined length of all display point path segments
     private double _arcLen;
@@ -140,37 +143,50 @@ public class XYPainter {
     }
 
     /**
-     * Returns the XY data line shape.
+     * Returns the shape to draw data line.
      */
-    public Shape getDataShape()
+    public Shape getDataLineShape()
     {
         // If already set, just return
-        if (_dataShape != null) return _dataShape;
+        if (_dataLineShape != null) return _dataLineShape;
 
         // Create basic data shape from display coord arrays
         double[] dispX = getDispX();
         double[] dispY = getDispY();
-        Shape dataShape = new XYDisplayCoordsShape(dispX, dispY);
-
-        // If area, close path
-        boolean isArea = _dataArea.getChartType() == ChartType.AREA;
-        if (isArea) {
-            double areaW = _dataArea.getWidth();
-            double areaH = _dataArea.getHeight();
-            int pointCount = dispX.length;
-            double point0y = dispY[0];
-            double pointLastY = dispY[pointCount-1];
-            Path2D path = new Path2D(dataShape);
-            path.lineTo(areaW, pointLastY);
-            path.lineTo(areaW, areaH);
-            path.lineTo(0, areaH);
-            path.lineTo(0, point0y);
-            path.close();
-            dataShape = path;
-        }
+        Shape dataLineShape = new XYDisplayCoordsShape(dispX, dispY);
 
         // Set/return
-        return _dataShape = dataShape;
+        return _dataLineShape = dataLineShape;
+    }
+
+    /**
+     * Returns the shape to fill data area.
+     */
+    public Shape getDataAreaShape()
+    {
+        // If already set, just return
+        if (_dataAreaShape != null) return _dataAreaShape;
+
+        // Get data line shape and area bounds
+        Shape dataLineShape = getDataLineShape();
+        double areaW = _dataArea.getWidth();
+        double areaH = _dataArea.getHeight();
+
+        // Close path
+        double[] dispX = getDispX();
+        double[] dispY = getDispY();
+        int pointCount = dispX.length;
+        double point0y = dispY[0];
+        double pointLastY = dispY[pointCount-1];
+        Path2D path = new Path2D(dataLineShape);
+        path.lineTo(areaW, pointLastY);
+        path.lineTo(areaW, areaH);
+        path.lineTo(0, areaH);
+        path.lineTo(0, point0y);
+        path.close();
+
+        // Set/return
+        return _dataAreaShape = path;
     }
 
     /**

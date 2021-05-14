@@ -8,6 +8,8 @@ import snap.view.*;
 import snapcharts.model.*;
 import snapcharts.viewx.EmptyChartHelper;
 
+import java.util.Objects;
+
 /**
  * A view to render a chart.
  */
@@ -299,7 +301,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
      */
     public void setSelDataPoint(DataPoint aDP)
     {
-        if (SnapUtils.equals(aDP, _selPoint)) return;
+        if (Objects.equals(aDP, _selPoint)) return;
         firePropChange(SelDataPoint_Prop, _selPoint, _selPoint = aDP);
         repaint();
     }
@@ -315,7 +317,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public void setTargPoint(Point aPoint)
     {
         // If already set, just return
-        if (SnapUtils.equals(aPoint, _targPoint)) return;
+        if (Objects.equals(aPoint, _targPoint)) return;
 
         // Set and firePropChange
         firePropChange(TargPoint_Prop, _targPoint, _targPoint = aPoint);
@@ -348,13 +350,14 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     public void setTargDataPoint(DataPoint aDP)
     {
         // If already set, just return
-        if (SnapUtils.equals(aDP, _targDataPoint)) return;
+        if (Objects.equals(aDP, _targDataPoint)) return;
 
         // Set and firePropChange
         firePropChange(TargDataPoint_Prop, _targDataPoint, _targDataPoint = aDP);
 
         // Notify ToolTipView
         _toolTipView.reloadContents();
+        repaint();
     }
 
     /**

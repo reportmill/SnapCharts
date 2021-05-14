@@ -5,6 +5,8 @@ import snap.view.ViewEvent;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
 
+import java.util.Objects;
+
 /**
  * A class to display data (via DataArea).
  */
@@ -198,7 +200,7 @@ public class DataView extends ChartPartView<DataSetList> {
         // Handle MouseClick
         if (anEvent.isMouseClick() && anEvent.getClickCount()==1) {
             DataPoint dpnt = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
-            if (dpnt == _chartView.getSelDataPoint())
+            if (Objects.equals(dpnt, _chartView.getSelDataPoint()))
                 dpnt = null;
             _chartView.setSelDataPoint(dpnt);
         }

@@ -38,6 +38,9 @@ public class DataStyle extends ChartPart {
     // The cached symbol
     private Symbol  _symbol;
 
+    // The FillMode
+    private FillMode  _fillMode = FillMode.None;
+
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String LineWidth_Prop = "LineWidth";
@@ -46,11 +49,16 @@ public class DataStyle extends ChartPart {
     public static final String ShowSymbols_Prop = "ShowSymbols";
     public static final String SymbolId_Prop = "SymbolId";
     public static final String SymbolSize_Prop = "SymbolSize";
+    public static final String FillMode_Prop = "FillMode";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
     public static final double[] DEFAULT_LINE_DASH = null;
     public static final int DEFAULT_SYMBOL_SIZE = 8;
+    public static final FillMode DEFAULT_FILL_MODE = FillMode.None;
+
+    // Constant for how dataset should be filled
+    public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
 
     /**
      * Constructor.
@@ -78,7 +86,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns whether to show line for this DataSet.
+     * Returns whether to show line for DataSet.
      */
     public boolean isShowLine()
     {
@@ -86,7 +94,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Sets whether to show line for this DataSet.
+     * Sets whether to show line for DataSet.
      */
     public void setShowLine(boolean aValue)
     {
@@ -178,7 +186,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns whether to show symbols for this DataSet.
+     * Returns whether to show symbols for DataSet.
      */
     public boolean isShowSymbols()
     {
@@ -186,7 +194,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Sets whether to show symbols for this DataSet.
+     * Sets whether to show symbols for DataSet.
      */
     public void setShowSymbols(boolean aValue)
     {
@@ -238,6 +246,37 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns whether to paint area for data.
+     */
+    public boolean isShowFill()
+    {
+        return _fillMode != FillMode.None;
+    }
+
+    /**
+     * Sets whether to paint area for data.
+     */
+    public void setShowFill(boolean aValue)
+    {
+        FillMode fillMode = aValue ? FillMode.ToZeroY : FillMode.None;
+        setFillMode(fillMode);
+    }
+
+    /**
+     * Returns the FillMode (how/whether to paint the data area).
+     */
+    public FillMode getFillMode()  { return _fillMode; }
+
+    /**
+     * Sets the FillMode (how/whether to paint the data area).
+     */
+    public void setFillMode(FillMode aFillMode)
+    {
+        if (aFillMode == _fillMode) return;
+        firePropChange(FillMode_Prop, _fillMode, _fillMode = aFillMode);
+    }
+
+    /**
      * Override to define more defaults
      */
     @Override
@@ -279,6 +318,10 @@ public class DataStyle extends ChartPart {
         if (getSymbolSize() != getPropDefaultInt(SymbolSize_Prop))
             e.add(SymbolSize_Prop, getSymbolSize());
 
+        // Archive FillMode
+        if (getFillMode() != DEFAULT_FILL_MODE)
+            e.add(FillMode_Prop, getFillMode());
+
         // Return element
         return e;
     }
@@ -314,6 +357,10 @@ public class DataStyle extends ChartPart {
         setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
         if (anElement.hasAttribute(SymbolSize_Prop))
             setSymbolSize(anElement.getAttributeIntValue(SymbolSize_Prop));
+
+        // Unarchive FillMode
+        if (anElement.hasAttribute(FillMode_Prop))
+            setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
         // Return this part
         return this;

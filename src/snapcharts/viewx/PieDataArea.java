@@ -353,10 +353,23 @@ public class PieDataArea extends DataArea {
         getAnimCleared(400).setValue(SelDataPointMorph_Prop, 1).setLinear().setOnFinish(a -> _selPointLast = null).play();
     }
 
-    /** Convenience methods to return ChartView SelDataPoint.Index, SelDataPointLast.Index & TargDataPoint.Index. */
-    int getSelPointIndex()  { DataPoint dp = getChartView().getSelDataPoint(); return dp!=null? dp.getIndex() : -1; }
-    int getSelPointLastIndex()  { return _selPointLast!=null? _selPointLast.getIndex() : -1; }
-    int getTargPointIndex()  { DataPoint dp = getChartView().getTargDataPoint(); return dp!=null? dp.getIndex() : -1; }
+    /**
+     * Convenience methods to return ChartView SelDataPoint.Index, SelDataPointLast.Index & TargDataPoint.Index.
+     */
+    int getSelPointIndex()
+    {
+        DataPoint dp = getChartView().getSelDataPoint();
+        return dp != null ? dp.getIndex() : -1;
+    }
+    int getSelPointLastIndex()
+    {
+        return _selPointLast != null ? _selPointLast.getIndex() : -1;
+    }
+    int getTargPointIndex()
+    {
+        DataPoint dp = getChartView().getTargDataPoint();
+        return dp != null ? dp.getIndex() : -1;
+    }
 
     /**
      * Returns the value for given key.

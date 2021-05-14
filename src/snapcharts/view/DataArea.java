@@ -145,6 +145,56 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
+     * Returns whether dataset is selected.
+     */
+    public boolean isSelected()
+    {
+        DataSet dataSet = getDataSet();
+        DataPoint dataPoint = getChartView().getSelDataPoint();
+        return dataPoint != null && dataPoint.getDataSet() == dataSet;
+    }
+
+    /**
+     * Returns whether dataset is targeted.
+     */
+    public boolean isTargeted()
+    {
+        DataSet dataSet = getDataSet();
+        DataPoint dataPoint = getChartView().getTargDataPoint();
+        return dataPoint != null && dataPoint.getDataSet() == dataSet;
+    }
+
+    /**
+     * Returns whether dataset is selected or targeted.
+     */
+    public boolean isSelectedOrTargeted()
+    {
+        return isSelected() || isTargeted();
+    }
+
+    /**
+     * Returns selected data point if in DataSet.
+     */
+    public DataPoint getSelDataPoint()
+    {
+        DataPoint selDataPoint = getChartView().getSelDataPoint();
+        if (selDataPoint != null && selDataPoint.getDataSet() == getDataSet())
+            return selDataPoint;
+        return null;
+    }
+
+    /**
+     * Returns targeted data point if in DataSet.
+     */
+    public DataPoint getTargDataPoint()
+    {
+        DataPoint targDataPoint = getChartView().getTargDataPoint();
+        if (targDataPoint != null && targDataPoint.getDataSet() == getDataSet())
+            return targDataPoint;
+        return null;
+    }
+
+    /**
      * Return the ratio of the portion of chart to paint.
      */
     public double getReveal()  { return _dataView!=null ? _dataView.getReveal() : 1; }
