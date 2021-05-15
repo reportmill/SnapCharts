@@ -108,10 +108,8 @@ public class DataStyleInsp extends ChartPartInsp {
     {
         _inspBox = getView("InspectorBox", ColView.class);
 
-        // Make sure LineStyleBox is hidden
-        setViewVisible("LineStyleBox", false);
-
-        // Make sure LineDashBox is hidden
+        // Hide ShowLineBox, LineDashBox
+        setViewVisible("ShowLineBox", false);
         setViewVisible("LineDashBox", false);
 
         // Configure LineDashButton(s)
@@ -122,7 +120,7 @@ public class DataStyleInsp extends ChartPartInsp {
                 configureLineDashButton(lineDashButton, dashArray);
         }
 
-        // Configure ShowAreaBox
+        // Hide ShowAreaBox
         setViewVisible("ShowAreaBox", false);
 
         // Configure FillModeComboBox to show FillModes
@@ -130,10 +128,8 @@ public class DataStyleInsp extends ChartPartInsp {
         fillModeComboBox.setItems(DataStyle.FillMode.values());
         fillModeComboBox.setItemTextFunction(item -> StringUtils.fromCamelCase(item.toString()));
 
-        // Make sure ShowSymbolsBox is hidden
+        // Hide ShowSymbolsBox, SymbolsBox
         setViewVisible("ShowSymbolsBox", false);
-
-        // Make sure SymbolsBox is hidden
         setViewVisible("SymbolsBox", false);
 
         // Configure SymbolShapeButton_X
@@ -143,6 +139,9 @@ public class DataStyleInsp extends ChartPartInsp {
             if (symbolButton != null)
                 configureSymbolShapeButton(symbolButton, symbol);
         }
+
+        // Configure MoreBG ToggleGroup to allow empty, so clicks on selected button will collapse
+        getToggleGroup("MoreBG").setAllowEmpty(true);
     }
 
     /**
@@ -165,14 +164,17 @@ public class DataStyleInsp extends ChartPartInsp {
         ChartPart selPart = _chartPane.getSelChartPart(); if (selPart == null) return;
         DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
 
-        // Reset ShowLineCheckBox, LineWidthText
+        // Reset ShowLineCheckBox
         boolean showLine = dataStyle.isShowLine();
         setViewValue("ShowLineCheckBox", showLine);
-        View lineStyleBox = getView("LineStyleBox");
-        ViewAnimUtils.setVisible(lineStyleBox, showLine, false, true);
 
-        // Reset LineStyleBox UI
-        if (showLine) {
+        // Reset ShowLineBox.Visible
+        boolean showLineMore = getViewBoolValue("ShowLineMoreButton");
+        View showLineBox = getView("ShowLineBox");
+        ViewAnimUtils.setVisible(showLineBox, showLineMore, false, true);
+
+        // Reset ShowLineBox UI
+        if (showLineMore) {
 
             // Reset LineColorButton, LineColorResetButton
             setViewValue("LineColorButton", dataStyle.getLineColor());
@@ -195,12 +197,13 @@ public class DataStyleInsp extends ChartPartInsp {
         boolean showArea = dataStyle.isShowArea();
         setViewValue("ShowAreaCheckBox", showArea);
 
-        // Reset ShowAreaBox
+        // Reset ShowAreaBox.Visible
+        boolean showAreaMore = getViewBoolValue("ShowAreaMoreButton");
         View fillBox = getView("ShowAreaBox");
-        ViewAnimUtils.setVisible(fillBox, showArea, false, true);
+        ViewAnimUtils.setVisible(fillBox, showAreaMore, false, true);
 
         // Reset ShowAreaBox UI
-        if (showArea) {
+        if (showAreaMore) {
 
             // Reset FillColorButton, FillColorResetButton
             setViewValue("FillColorButton", dataStyle.getFillColor());
@@ -210,14 +213,18 @@ public class DataStyleInsp extends ChartPartInsp {
             setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
         }
 
-        // Reset ShowSymbolsCheckBox, ShowSymbolsBox
+        // Reset ShowSymbolsCheckBox
         boolean showSymbols = dataStyle.isShowSymbols();
         setViewValue("ShowSymbolsCheckBox", showSymbols);
+
+        // Reset ShowSymbolsBox.Visible
+        boolean showSymbolsMore = getViewBoolValue("ShowSymbolsMoreButton");
         View showSymbolsBox = getView("ShowSymbolsBox");
-        ViewAnimUtils.setVisible(showSymbolsBox, showSymbols, false, true);
+        ViewAnimUtils.setVisible(showSymbolsBox, showSymbolsMore, false, true);
+        ViewAnimUtils.setVisible(showSymbolsBox, showSymbolsMore, false, true);
 
         // Reset ShowSymbolsBox UI
-        if (showSymbols) {
+        if (showSymbolsMore) {
 
             // Reset SymbolColorButton, SymbolColorResetButton
             setViewValue("SymbolColorButton", dataStyle.getSymbolColor());
@@ -264,6 +271,7 @@ public class DataStyleInsp extends ChartPartInsp {
             dataStyle.setShowLine(showLine);
             if (!showLine)
                 dataStyle.setShowSymbols(true);
+            setViewValue("ShowLineMoreButton", showLine);
         }
 
         // Handle LineWidthText, LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
@@ -293,8 +301,11 @@ public class DataStyleInsp extends ChartPartInsp {
         }
 
         // Handle ShowAreaCheckBox, FillModeComboBox
-        if (anEvent.equals("ShowAreaCheckBox"))
-            dataStyle.setShowArea(anEvent.getBoolValue());
+        if (anEvent.equals("ShowAreaCheckBox")) {
+            boolean showArea = anEvent.getBoolValue();
+            dataStyle.setShowArea(showArea);
+            setViewValue("ShowAreaMoreButton", showArea);
+        }
 
         // Handle FillColorButton, FillColorResetButton
         if (anEvent.equals("FillColorButton")) {
@@ -317,6 +328,7 @@ public class DataStyleInsp extends ChartPartInsp {
             dataStyle.setShowSymbols(showSymbols);
             if (!showSymbols)
                 dataStyle.setShowLine(true);
+            setViewValue("ShowSymbolsMoreButton", showSymbols);
         }
 
         // Handle SymbolColorButton, SymbolColorResetButton

@@ -3,8 +3,9 @@
   <ColView Name="InspectorBox" />
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowLineCheckBox" text="Show Line" />
+    <ToggleButton Name="ShowLineMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
   </RowView>
-  <ColView Name="LineStyleBox" Padding="0,0,0,25" FillWidth="true">
+  <ColView Name="ShowLineBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
       <Label text="Color:" />
       <ColorButton Name="LineColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
@@ -13,7 +14,7 @@
       </Button>
     </RowView>
     <RowView Padding="4" Spacing="4">
-      <Label text="Line width:" />
+      <Label text="Width:" />
       <TextField Name="LineWidthText" Align="CENTER" PrefWidth="50" />
       <Button Name="LineWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
         <font name="Arial" size="13" />
@@ -24,7 +25,7 @@
       </Button>
     </RowView>
     <RowView Padding="4" GrowWidth="true" Spacing="13">
-      <Label text="Line Style:" />
+      <Label text="Style:" />
       <ToggleButton Name="LineDashButton" PrefWidth="100" PrefHeight="24" Padding="2" />
     </RowView>
     <ColView Name="LineDashBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
@@ -39,12 +40,14 @@
       </ColView>
     </ColView>
   </ColView>
+  <Separator Name="ShowMoreSep" Margin="0,20,0,10" GrowWidth="true" />
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowAreaCheckBox" text="Show Area" />
+    <ToggleButton Name="ShowAreaMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
   </RowView>
   <ColView Name="ShowAreaBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
-      <Label text="Fill color:" />
+      <Label text="Color:" />
       <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
       <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
         <font name="Arial" size="12" />
@@ -55,8 +58,10 @@
       <ComboBox Name="FillModeComboBox" PrefWidth="90" PrefHeight="24" />
     </RowView>
   </ColView>
+  <Separator Name="ShowMoreSep" Margin="0,20,0,10" GrowWidth="true" />
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowSymbolsCheckBox" text="Show Symbols" />
+    <ToggleButton Name="ShowSymbolsMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
   </RowView>
   <ColView Name="ShowSymbolsBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
@@ -117,7 +122,9 @@
       </Button>
     </RowView>
   </ColView>
+  <Separator Name="ShowMoreSep" Margin="0,20,0,10" GrowWidth="true" />
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowTagsCheckBox" text="Show data tags" />
+    <ToggleButton Name="ShowTagsMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" Enabled="false" />
   </RowView>
 </ColView>
