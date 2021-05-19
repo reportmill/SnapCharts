@@ -1,9 +1,6 @@
 package snapcharts.viewx;
 import snap.geom.*;
 import snapcharts.model.*;
-import snapcharts.view.AxisView;
-import snapcharts.view.AxisViewX;
-import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
 
 /**
@@ -13,9 +10,6 @@ public class XYPainter {
 
     // The DataArea
     private DataArea  _dataArea;
-
-    // The display X/Y coords
-    private double[]  _dispX, _dispY;
 
     // The shape to draw data line
     private Shape  _dataLineShape;
@@ -38,81 +32,6 @@ public class XYPainter {
     }
 
     /**
-     * Returns the number of display points.
-     */
-    public int getDispPointCount()
-    {
-        double[] dispX = getDispX();
-        return dispX.length;
-    }
-
-    /**
-     * Returns the X display coord at given index.
-     */
-    public double getDispX(int anIndex)
-    {
-        double[] dispX = getDispX();
-        return dispX[anIndex];
-    }
-
-    /**
-     * Returns the Y display coord at given index.
-     */
-    public double getDispY(int anIndex)
-    {
-        double[] dispY = getDispY();
-        return dispY[anIndex];
-    }
-
-    /**
-     * Returns X display coords array.
-     */
-    private double[] getDispX()
-    {
-        if (_dispX == null) loadDisplayCoords();
-        return _dispX;
-    }
-
-    /**
-     * Returns Y display coords array.
-     */
-    private double[] getDispY()
-    {
-        if (_dispX == null) loadDisplayCoords();
-        return _dispY;
-    }
-
-    /**
-     * Loads the display coords.
-     */
-    private void loadDisplayCoords()
-    {
-        RawData rawData = _dataArea.getProcessedData();
-        int pointCount = rawData.getPointCount();
-        double[] dispX = new double[pointCount];
-        double[] dispY = new double[pointCount];
-
-        // Get ChartHelper and AxisViews
-        ChartHelper chartHelper = _dataArea.getChartHelper();
-        AxisView axisViewX = _dataArea.getAxisViewX();
-        AxisView axisViewY = _dataArea.getAxisViewY();
-
-        // Iterate over data points
-        for (int i = 0; i < pointCount; i++) {
-
-            // Get data X/Y and disp X/Y
-            double dataX = rawData.getX(i);
-            double dataY = rawData.getY(i);
-            dispX[i] = chartHelper.dataToView(axisViewX, dataX);
-            dispY[i] = chartHelper.dataToView(axisViewY, dataY);
-        }
-
-        // Set/return
-        _dispX = dispX;
-        _dispY = dispY;
-    }
-
-    /**
      * Returns the shape to draw data line.
      */
     public Shape getDataLineShape()
@@ -121,8 +40,9 @@ public class XYPainter {
         if (_dataLineShape != null) return _dataLineShape;
 
         // Create basic data shape from display coord arrays
-        double[] dispX = getDispX();
-        double[] dispY = getDispY();
+        RawData dispData = _dataArea.getDispData();
+        double[] dispX = dispData.getDataX();
+        double[] dispY = dispData.getDataY();
         Shape dataLineShape = new XYDisplayCoordsShape(dispX, dispY);
 
         // Set/return
@@ -143,8 +63,9 @@ public class XYPainter {
         double areaH = _dataArea.getHeight();
 
         // Close path
-        double[] dispX = getDispX();
-        double[] dispY = getDispY();
+        RawData dispData = _dataArea.getDispData();
+        double[] dispX = dispData.getDataX();
+        double[] dispY = dispData.getDataY();
         int pointCount = dispX.length;
         double point0y = dispY[0];
         double pointLastY = dispY[pointCount-1];
@@ -177,8 +98,9 @@ public class XYPainter {
         if (_arcLens != null) return _arcLens;
 
         // Get Display coords and count
-        double[] dispX = getDispX();
-        double[] dispY = getDispY();
+        RawData dispData = _dataArea.getDispData();
+        double[] dispX = dispData.getDataX();
+        double[] dispY = dispData.getDataY();
         int pointCount = dispX.length;
 
         // Iterate over data points

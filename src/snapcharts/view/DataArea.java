@@ -26,6 +26,9 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     // The DataSet.ProcessedData possibly further processed for DataArea/Axes
     private RawData  _procData;
 
+    // The ProcessedData converted to DataArea display coords
+    private RawData  _dispData;
+
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
     protected static Color AXIS_LINE_COLOR = Color.DARKGRAY;
@@ -172,6 +175,39 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
         // Set/return
         return _procData = rawData;
+    }
+
+    /**
+     * Returns the DataSet.ProcessedData as PureData in DataArea display coords.
+     */
+    public RawData getDispData()
+    {
+        // If already set, just return
+        if (_dispData != null) return _dispData;
+
+        RawData rawData = getProcessedData();
+        int pointCount = rawData.getPointCount();
+        double[] dispX = new double[pointCount];
+        double[] dispY = new double[pointCount];
+
+        // Get ChartHelper and AxisViews
+        ChartHelper chartHelper = getChartHelper();
+        AxisView axisViewX = getAxisViewX();
+        AxisView axisViewY = getAxisViewY();
+
+        // Iterate over data points
+        for (int i = 0; i < pointCount; i++) {
+
+            // Get data X/Y and disp X/Y
+            double dataX = rawData.getX(i);
+            double dataY = rawData.getY(i);
+            dispX[i] = chartHelper.dataToView(axisViewX, dataX);
+            dispY[i] = chartHelper.dataToView(axisViewY, dataY);
+        }
+
+        // Create PureData, set, return
+        RawData dispData = new RawDataAsArrays(DataType.XY, dispX, dispY);
+        return _dispData = dispData;
     }
 
     /**
@@ -471,13 +507,17 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         Object src = aPC.getSource();
         if (src==getDataSet() || src instanceof Axis) {
             _procData = null;
+            _dispData = null;
         }
     }
 
     /**
      * Called when DataView changes size.
      */
-    protected void dataViewDidChangeSize()  { }
+    protected void dataViewDidChangeSize()
+    {
+        _dispData = null;
+    }
 
     /**
      * Called when AxisView changes properties.

@@ -131,7 +131,6 @@ public class XYDataArea extends DataArea {
     {
         // Get info
         DataStyle dataStyle = getDataStyle();
-        int pointCount = _xyPainter.getDispPointCount();
         Color symbolColor = dataStyle.getSymbolColor();  //color.darker().darker()
         Shape symbolShape = getDataSymbolShape();
         double symbolShift = getDataSymbol().getSize() / 2d;
@@ -148,12 +147,16 @@ public class XYDataArea extends DataArea {
         // Get SymbolBorderStroke
         Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
 
+        // Get DisplayData
+        RawData dispData = getDispData();
+        int pointCount = dispData.getPointCount();
+
         // Iterate over values
         for (int j=0; j<pointCount; j++) {
 
             // Get disp X/Y of symbol origin and translate there
-            double dispX = _xyPainter.getDispX(j) - symbolShift;
-            double dispY = _xyPainter.getDispY(j) - symbolShift;
+            double dispX = dispData.getX(j) - symbolShift;
+            double dispY = dispData.getY(j) - symbolShift;
             aPntr.translate(dispX, dispY);
 
             // Set color and fill symbol shape
