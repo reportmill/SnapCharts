@@ -105,7 +105,7 @@
     </ColView>
     <RowView Padding="4" Spacing="4">
       <Label text="Border color:" />
-      <ColorButton Name="SymbolBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+      <ColorButton Name="SymbolBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
       <Button Name="SymbolBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
         <font name="Arial" size="12" />
       </Button>
@@ -125,6 +125,44 @@
   <Separator Name="ShowMoreSep" Margin="0,20,0,10" GrowWidth="true" />
   <RowView Padding="4" Spacing="4">
     <CheckBox Name="ShowTagsCheckBox" text="Show data tags" />
-    <ToggleButton Name="ShowTagsMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" Enabled="false" />
+    <ToggleButton Name="ShowTagsMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
   </RowView>
+  <ColView Name="ShowTagsBox" Padding="0,0,0,25" FillWidth="true">
+    <RowView Padding="4,20,4,4" Spacing="4">
+      <Label text="Font:" />
+      <TextField Name="TagFontText" GrowWidth="true" />
+      <Button Name="TagFontSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="TagFontSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="TagFontResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
+      <Label text="Color:" />
+      <ColorButton Name="TagColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+      <Button Name="TagColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
+      <Label text="Border color:" />
+      <ColorButton Name="TagBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
+      <Button Name="TagBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
+      <Label text="Border width:" />
+      <TextField Name="TagBorderWidthText" Align="CENTER" PrefWidth="50" />
+      <Button Name="TagBorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="TagBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="TagBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+  </ColView>
 </ColView>
