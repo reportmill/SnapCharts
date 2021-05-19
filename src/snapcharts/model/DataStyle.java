@@ -1,5 +1,6 @@
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.gfx.Font;
 import snap.gfx.Stroke;
 import snap.util.ArrayUtils;
 import snap.util.XMLArchiver;
@@ -41,7 +42,7 @@ public class DataStyle extends ChartPart {
     // The Symbol Size
     private int  _symbolSize = DEFAULT_SYMBOL_SIZE;
 
-    // The color to paint symbols
+    // The color to paint symbol borders (if border width > 0)
     private Color  _symbolBorderColor = DEFAULT_SYMBOL_BORDER_COLOR;
 
     // The Symbol border width
@@ -49,6 +50,21 @@ public class DataStyle extends ChartPart {
 
     // The Symbol Id
     private int  _symbolId;
+
+    // Whether to show data tags
+    private boolean  _showTags;
+
+    // The font to paint tag background
+    private Font  _tagFont = DEFAULT_TAG_FONT;
+
+    // The color to paint tag background
+    private Color  _tagColor = DEFAULT_TAG_COLOR;
+
+    // The color to paint data tag box border
+    private Color  _tagBorderColor = DEFAULT_TAG_BORDER_COLOR;
+
+    // The data tag box border width
+    private int  _tagBorderWidth = DEFAULT_TAG_BORDER_WIDTH;
 
     // The cached symbol
     private Symbol  _symbol;
@@ -66,6 +82,11 @@ public class DataStyle extends ChartPart {
     public static final String SymbolId_Prop = "SymbolId";
     public static final String SymbolBorderColor_Prop = "SymbolBorderColor";
     public static final String SymbolBorderWidth_Prop = "SymbolBorderWidth";
+    public static final String ShowTags_Prop = "ShowTags";
+    public static final String TagFont_Prop = "TagFont";
+    public static final String TagColor_Prop = "TagColor";
+    public static final String TagBorderColor_Prop = "TagBorderColor";
+    public static final String TagBorderWidth_Prop = "TagBorderWidth";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
@@ -74,6 +95,10 @@ public class DataStyle extends ChartPart {
     public static final int DEFAULT_SYMBOL_SIZE = 8;
     public static final Color DEFAULT_SYMBOL_BORDER_COLOR = Color.BLACK;
     public static final int DEFAULT_SYMBOL_BORDER_WIDTH = 0;
+    public static final Font DEFAULT_TAG_FONT = Font.Arial11;
+    public static final Color DEFAULT_TAG_COLOR = null;
+    public static final Color DEFAULT_TAG_BORDER_COLOR = null;
+    public static final int DEFAULT_TAG_BORDER_WIDTH = 0;
 
     // Constant for how dataset area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
@@ -379,6 +404,97 @@ public class DataStyle extends ChartPart {
     }
 
     /**
+     * Returns whether to show data tags for DataSet.
+     */
+    public boolean isShowTags()
+    {
+        return _showTags;
+    }
+
+    /**
+     * Sets whether to show data tags for DataSet.
+     */
+    public void setShowTags(boolean aValue)
+    {
+        if (aValue == isShowTags()) return;
+        firePropChange(ShowTags_Prop, _showTags, _showTags = aValue);
+    }
+
+    /**
+     * Returns the font to paint data tag text.
+     */
+    public Font getTagFont()
+    {
+        return _tagFont;
+    }
+
+    /**
+     * Sets the font to paint data tag text.
+     */
+    public void setTagFont(Font aFont)
+    {
+        if (Objects.equals(aFont, _tagFont)) return;
+        firePropChange(TagFont_Prop, _tagFont, _tagFont = aFont);
+    }
+
+    /**
+     * Returns the color to fill data tag boxes.
+     */
+    public Color getTagColor()
+    {
+        return _tagColor;
+    }
+
+    /**
+     * Sets the color to fill data tag boxes.
+     */
+    public void setTagColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _tagColor)) return;
+        firePropChange(TagColor_Prop, _tagColor, _tagColor = aColor);
+    }
+
+    /**
+     * Returns the border color for data tag boxes.
+     */
+    public Color getTagBorderColor()
+    {
+        // If set, just return
+        if (_tagBorderColor != null) return _tagBorderColor;
+
+        // User line color
+        return getLineColor();
+    }
+
+    /**
+     * Sets the border color for data tag boxes.
+     */
+    public void setTagBorderColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _tagBorderColor)) return;
+        firePropChange(TagBorderColor_Prop, _tagBorderColor, _tagBorderColor = aColor);
+    }
+
+    /**
+     * Returns whether tag border color is explicitly set.
+     */
+    public boolean isTagBorderColorSet()  { return _tagBorderColor != null; }
+
+    /**
+     * Returns the border width for data tag boxes.
+     */
+    public int getTagBorderWidth()  { return _tagBorderWidth; }
+
+    /**
+     * Sets the border width for data tag boxes.
+     */
+    public void setTagBorderWidth(int aValue)
+    {
+        if (aValue == getTagBorderWidth()) return;
+        firePropChange(TagBorderWidth_Prop, _tagBorderWidth, _tagBorderWidth = aValue);
+    }
+
+    /**
      * Override to define more defaults
      */
     @Override
@@ -438,6 +554,27 @@ public class DataStyle extends ChartPart {
         if (getSymbolBorderWidth() != DEFAULT_SYMBOL_BORDER_WIDTH)
             e.add(SymbolBorderWidth_Prop, getSymbolBorderWidth());
 
+        // Archive ShowTags
+        if (isShowTags())
+            e.add(ShowTags_Prop, true);
+
+        // Archive TagFont
+        if (!Objects.equals(getTagFont(), DEFAULT_TAG_FONT)) {
+            XMLElement tagFontXML = getTagFont().toXML(anArchiver);
+            tagFontXML.setName(TagFont_Prop);
+            e.addElement(tagFontXML);
+        }
+
+        // Archive TagColor
+        if (!Objects.equals(getTagColor(), DEFAULT_TAG_COLOR))
+            e.add(TagColor_Prop, getTagColor().toHexString());
+
+        // Archive TagBorderColor, TagBorderWidth
+        if (isTagBorderColorSet())
+            e.add(TagBorderColor_Prop, getTagBorderColor().toHexString());
+        if (getTagBorderWidth() != DEFAULT_TAG_BORDER_WIDTH)
+            e.add(TagBorderWidth_Prop, getTagBorderWidth());
+
         // Return element
         return e;
     }
@@ -477,7 +614,8 @@ public class DataStyle extends ChartPart {
             setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
         // Unarchive ShowSymbols
-        setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop, false));
+        if (anElement.hasAttribute(ShowSymbols_Prop))
+            setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop));
 
         // Unarchive SymbolColor, SymbolSize
         if (anElement.hasAttribute(SymbolColor_Prop)) {
@@ -497,6 +635,31 @@ public class DataStyle extends ChartPart {
         }
         if (anElement.hasAttribute(SymbolBorderWidth_Prop))
             setSymbolBorderWidth(anElement.getAttributeIntValue(SymbolBorderWidth_Prop));
+
+        // Unarchive ShowTags
+        if (anElement.hasAttribute(ShowTags_Prop))
+            setShowTags(anElement.getAttributeBoolValue(ShowTags_Prop));
+
+        // Unarchive TagFont
+        XMLElement tagFontXML = anElement.getElement(TagFont_Prop);
+        if (tagFontXML != null) {
+            Font font = (Font) new Font().fromXML(anArchiver, tagFontXML);
+            setTagFont(font);
+        }
+
+        // Unarchive TagColor
+        if (anElement.hasAttribute(TagColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(TagColor_Prop));
+            setTagColor(color);
+        }
+
+        // Unarchive TagBorderColor, TagBorderWidth
+        if (anElement.hasAttribute(TagBorderColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(TagBorderColor_Prop));
+            setTagBorderColor(color);
+        }
+        if (anElement.hasAttribute(TagBorderWidth_Prop))
+            setTagBorderWidth(anElement.getAttributeIntValue(TagBorderWidth_Prop));
 
         // Return this part
         return this;
