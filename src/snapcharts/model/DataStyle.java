@@ -95,7 +95,7 @@ public class DataStyle extends ChartPart {
     public static final int DEFAULT_SYMBOL_SIZE = 8;
     public static final Color DEFAULT_SYMBOL_BORDER_COLOR = Color.BLACK;
     public static final int DEFAULT_SYMBOL_BORDER_WIDTH = 0;
-    public static final Font DEFAULT_TAG_FONT = Font.Arial11;
+    public static final Font DEFAULT_TAG_FONT = Font.Arial10;
     public static final Color DEFAULT_TAG_COLOR = null;
     public static final Color DEFAULT_TAG_BORDER_COLOR = null;
     public static final int DEFAULT_TAG_BORDER_WIDTH = 0;

@@ -142,15 +142,6 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the Symbol shape at index.
-     */
-    public Shape getDataSymbolShape()
-    {
-        Symbol symbol = getDataSymbol();
-        return symbol.getShape();
-    }
-
-    /**
      * Returns the DataSet.ProcessedData (possibly further processed for DataArea/Axes).
      */
     public RawData getProcessedData()
@@ -164,8 +155,8 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
         // If WrapAxis, wrap RawData inside RawDataWrapper for wrap range and axis range
         AxisViewX axisViewX = getAxisViewX();
-        Axis axisX = axisViewX.getAxis();
-        if (axisX.isWrapAxis()) {
+        Axis axisX = axisViewX != null ? axisViewX.getAxis() : null;
+        if (axisX != null && axisX.isWrapAxis()) {
             double wrapMin = axisX.getWrapMinMax().getMin();
             double wrapMax = axisX.getWrapMinMax().getMax();
             double axisMin = axisViewX.getAxisMin();
@@ -443,7 +434,8 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     protected void paintDataTags(Painter aPntr)
     {
-
+        TagPainter tagPainter = new TagPainter(this);
+        tagPainter.paintTags(aPntr);
     }
 
     /**

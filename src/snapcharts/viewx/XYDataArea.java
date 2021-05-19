@@ -131,8 +131,9 @@ public class XYDataArea extends DataArea {
     {
         // Get info
         DataStyle dataStyle = getDataStyle();
+        Symbol symbol = dataStyle.getSymbol();
         Color symbolColor = dataStyle.getSymbolColor();  //color.darker().darker()
-        Shape symbolShape = getDataSymbolShape();
+        Shape symbolShape = symbol.getShape();
         double symbolShift = getDataSymbol().getSize() / 2d;
 
         // Get Symbol border info
