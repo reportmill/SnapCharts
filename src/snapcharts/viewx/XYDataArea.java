@@ -12,9 +12,6 @@ import snapcharts.view.DataView;
  */
 public class XYDataArea extends DataArea {
 
-    // The ChartType
-    private ChartType  _chartType;
-
     // The XYPainter (an object to provide data line path/shape)
     private XYPainter  _xyPainter = new XYPainter(this);
 
@@ -30,16 +27,7 @@ public class XYDataArea extends DataArea {
      */
     public XYDataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
-        this(aChartHelper, aDataSet, aChartHelper.getChartType());
-    }
-
-    /**
-     * Constructor.
-     */
-    public XYDataArea(ChartHelper aChartHelper, DataSet aDataSet, ChartType aChartType)
-    {
         super(aChartHelper, aDataSet);
-        _chartType = aChartType;
     }
 
     /**
@@ -296,6 +284,10 @@ public class XYDataArea extends DataArea {
      */
     protected void chartPartDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.chartPartDidChange(aPC);
+
+        // Clear XYPainter
         Object src = aPC.getSource();
         if (src==getDataSet() || src instanceof Axis) {
             clearDataPath();

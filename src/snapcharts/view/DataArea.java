@@ -22,7 +22,10 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
     // The AxisType for Y axis (might get coerced down to Y if chart type doesn't support it)
     private AxisType  _axisTypeY;
-    
+
+    // The DataSet.ProcessedData possibly further processed for DataArea/Axes
+    private RawData  _procData;
+
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
     protected static Color AXIS_LINE_COLOR = Color.DARKGRAY;
@@ -142,6 +145,33 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     {
         Symbol symbol = getDataSymbol();
         return symbol.getShape();
+    }
+
+    /**
+     * Returns the DataSet.ProcessedData (possibly further processed for DataArea/Axes).
+     */
+    public RawData getProcessedData()
+    {
+        // If already set, just return
+        if (_procData != null) return _procData;
+
+        // Get DataSet and RawData
+        DataSet dataSet = getDataSet();
+        RawData rawData = dataSet.getProcessedData();
+
+        // If WrapAxis, wrap RawData inside RawDataWrapper for wrap range and axis range
+        AxisViewX axisViewX = getAxisViewX();
+        Axis axisX = axisViewX.getAxis();
+        if (axisX.isWrapAxis()) {
+            double wrapMin = axisX.getWrapMinMax().getMin();
+            double wrapMax = axisX.getWrapMinMax().getMax();
+            double axisMin = axisViewX.getAxisMin();
+            double axisMax = axisViewX.getAxisMax();
+            rawData = new RawDataWrapper(rawData, wrapMin, wrapMax, axisMin, axisMax);
+        }
+
+        // Set/return
+        return _procData = rawData;
     }
 
     /**
@@ -272,6 +302,16 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     protected void paintDataArea(Painter aPntr)  { }
 
     /**
+     * Paints the DataArea above all DataView.DataAreas.paintDataArea() painting.
+     */
+    protected void paintDataAreaAbove(Painter aPntr)
+    {
+        DataStyle dataStyle = getDataStyle();
+        if (dataStyle.isShowTags())
+            paintDataTags(aPntr);
+    }
+
+    /**
      * Paints chart axis lines.
      */
     public void paintBorder(Painter aPntr)
@@ -363,6 +403,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
+     * Paints tags for DataSet.
+     */
+    protected void paintDataTags(Painter aPntr)
+    {
+
+    }
+
+    /**
      * Returns the data point closest to given x/y in local coords (null if none).
      */
     public DataPoint getDataPointForLocalXY(double aX, double aY)
@@ -417,7 +465,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Called when a ChartPart changes.
      */
-    protected void chartPartDidChange(PropChange aPC)  { }
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        // Clear XYPainter
+        Object src = aPC.getSource();
+        if (src==getDataSet() || src instanceof Axis) {
+            _procData = null;
+        }
+    }
 
     /**
      * Called when DataView changes size.

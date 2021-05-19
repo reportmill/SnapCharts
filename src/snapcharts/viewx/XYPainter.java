@@ -14,9 +14,6 @@ public class XYPainter {
     // The DataArea
     private DataArea  _dataArea;
 
-    // The RawData
-    private RawData  _rawData;
-
     // The display X/Y coords
     private double[]  _dispX, _dispY;
 
@@ -86,38 +83,11 @@ public class XYPainter {
     }
 
     /**
-     * Returns the RawData.
-     */
-    private RawData getRawData()
-    {
-        // If already set, just return
-        if (_rawData != null) return _rawData;
-
-        // Get DataSet and RawData
-        DataSet dataSet = _dataArea.getDataSet();
-        RawData rawData = dataSet.getProcessedData();
-
-        // If WrapAxis, wrap RawData inside RawDataWrapper for wrap range and axis range
-        AxisViewX axisViewX = _dataArea.getAxisViewX();
-        Axis axisX = axisViewX.getAxis();
-        if (axisX.isWrapAxis()) {
-            double wrapMin = axisX.getWrapMinMax().getMin();
-            double wrapMax = axisX.getWrapMinMax().getMax();
-            double axisMin = axisViewX.getAxisMin();
-            double axisMax = axisViewX.getAxisMax();
-            rawData = new RawDataWrapper(rawData, wrapMin, wrapMax, axisMin, axisMax);
-        }
-
-        // Set/return
-        return _rawData = rawData;
-    }
-
-    /**
      * Loads the display coords.
      */
     private void loadDisplayCoords()
     {
-        RawData rawData = getRawData();
+        RawData rawData = _dataArea.getProcessedData();
         int pointCount = rawData.getPointCount();
         double[] dispX = new double[pointCount];
         double[] dispY = new double[pointCount];

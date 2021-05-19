@@ -212,6 +212,10 @@ public class BarDataArea extends DataArea {
     @Override
     protected void chartPartDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.chartPartDidChange(aPC);
+
+        // Handle Data changes
         Object src = aPC.getSource();
         if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
             clearSections();

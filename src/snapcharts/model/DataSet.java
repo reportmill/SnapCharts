@@ -443,6 +443,10 @@ public class DataSet extends ChartPart {
      */
     public void setValueForChannel(Object aValue, DataChan aChan, int anIndex)
     {
+        // Get point
+        DataPoint dataPoint = getPoint(anIndex);
+        dataPoint.cacheValues();
+
         switch (aChan) {
             case X:
                 Double valX = aValue!=null ? SnapUtils.doubleValue(aValue) : null;
@@ -465,6 +469,11 @@ public class DataSet extends ChartPart {
                 break;
             default: throw new RuntimeException("DataSet.getValueForChannelAndIndex: Unknown channel: " + aChan);
         }
+
+        // Get point
+        DataPoint dataPoint2 = getPoint(anIndex);
+        dataPoint2.cacheValues();
+        firePropChange(Point_Prop, dataPoint, dataPoint2, anIndex);
     }
 
     /**

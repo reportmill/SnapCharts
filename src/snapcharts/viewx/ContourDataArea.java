@@ -41,6 +41,10 @@ public class ContourDataArea extends DataArea {
     @Override
     protected void chartPartDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.chartPartDidChange(aPC);
+
+        // Handle Data changes
         Object src = aPC.getSource();
         if (src==getDataSet() || src instanceof Axis || src instanceof DataStyle) {
             _contourPainter.clearContoursAll();

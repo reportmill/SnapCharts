@@ -175,6 +175,12 @@ public class DataView extends ChartPartView<DataSetList> {
     @Override
     protected void paintAbove(Painter aPntr)
     {
+        // Paint Tags
+        DataArea[] dataAreas = getDataAreas();
+        for (DataArea dataArea : dataAreas)
+            dataArea.paintDataAreaAbove(aPntr);
+
+        // Paint PanZoomer
         _panZoomer.paintAbove(aPntr);
     }
 
