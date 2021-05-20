@@ -224,7 +224,7 @@ public class DataSetList extends ChartPart {
     {
         // If empty, just return silly range
         DataSet[] dataSets = getEnabledDataSets();
-        if (dataSets.length==0 || getPointCount()==0)
+        if (dataSets.length == 0 || getPointCount() == 0)
             return new MinMax(0, 5);
 
         // Handle X
@@ -232,8 +232,9 @@ public class DataSetList extends ChartPart {
             double min = Double.MAX_VALUE;
             double max = -Double.MAX_VALUE;
             for (DataSet dset : dataSets) {
-                min = Math.min(min, dset.getMinX());
-                max = Math.max(max, dset.getMaxX());
+                DataStore procData = dset.getProcessedData();
+                min = Math.min(min, procData.getMinX());
+                max = Math.max(max, procData.getMaxX());
             }
             return new MinMax(min, max);
         }
@@ -244,8 +245,9 @@ public class DataSetList extends ChartPart {
             double max = -Double.MAX_VALUE;
             for (DataSet dset : dataSets) {
                 if (anAxisType == dset.getAxisTypeY()) {
-                    min = Math.min(min, dset.getMinY());
-                    max = Math.max(max, dset.getMaxY());
+                    DataStore procData = dset.getProcessedData();
+                    min = Math.min(min, procData.getMinY());
+                    max = Math.max(max, procData.getMaxY());
                 }
             }
             if (min==Double.MAX_VALUE)

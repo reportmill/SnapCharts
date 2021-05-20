@@ -91,40 +91,36 @@ public class DataSetInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get DataSet
-        DataSet dset = getDataSet(); if (dset==null) return;
+        DataSet dataSet = getDataSet(); if (dataSet == null) return;
 
         // Handle NameText
         if (anEvent.equals("NameText")) {
-            dset.setName(anEvent.getStringValue());
+            dataSet.setName(anEvent.getStringValue());
             _chartPane.getDocPane().docItemNameChanged();
         }
 
         // Handle DataTypeCombo
         if (anEvent.equals("DataTypeComboBox")) {
             DataType dataType = (DataType) getViewSelItem("DataTypeComboBox");
-            dset.setDataType(dataType);
+            dataSet.setDataType(dataType);
         }
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
         if (anEvent.equals("YAxisButton"))
-            dset.setAxisTypeY(AxisType.Y);
+            dataSet.setAxisTypeY(AxisType.Y);
         if (anEvent.equals("Y2AxisButton"))
-            dset.setAxisTypeY(AxisType.Y2);
+            dataSet.setAxisTypeY(AxisType.Y2);
         if (anEvent.equals("Y3AxisButton"))
-            dset.setAxisTypeY(AxisType.Y3);
+            dataSet.setAxisTypeY(AxisType.Y3);
         if (anEvent.equals("Y4AxisButton"))
-            dset.setAxisTypeY(AxisType.Y4);
-
-        // Handle ShowSymbolsCheckBox
-        if (anEvent.equals("ShowSymbolsCheckBox"))
-            dset.setShowSymbols(anEvent.getBoolValue());
+            dataSet.setAxisTypeY(AxisType.Y4);
 
         // Handle ExprXText, ExprYText, ExprZText
         if (anEvent.equals("ExprXText"))
-            dset.setExprX(anEvent.getStringValue());
+            dataSet.setExprX(anEvent.getStringValue());
         if (anEvent.equals("ExprYText"))
-            dset.setExprY(anEvent.getStringValue());
+            dataSet.setExprY(anEvent.getStringValue());
         if (anEvent.equals("ExprXText"))
-            dset.setExprZ(anEvent.getStringValue());
+            dataSet.setExprZ(anEvent.getStringValue());
     }
 }

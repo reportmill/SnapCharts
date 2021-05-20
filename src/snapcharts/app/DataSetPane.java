@@ -9,6 +9,7 @@ import snapcharts.appmisc.SheetView;
 import snapcharts.model.DataChan;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
+import snapcharts.util.DataSetUtils;
 import snapcharts.util.DataUtils;
 
 /**
@@ -64,7 +65,7 @@ public class DataSetPane extends DocItemPane {
         if (cells != null) {
             DataSet dset = getDataSet();
             ListSel sel = _sheetView.getSel();
-            DataUtils.replaceDataSetDataForSelection(dset, sel, cells);
+            DataSetUtils.replaceDataForSelection(dset, sel, cells);
         }
 
         // Reset
@@ -84,7 +85,7 @@ public class DataSetPane extends DocItemPane {
 
         // Get DataSet
         DataSet dset = getDataSet();
-        DataUtils.deleteDataSetDataForSelection(dset, sel);
+        DataSetUtils.deleteDataForSelection(dset, sel);
 
         // Reset selection
         _sheetView.setSelIndex(sel.getMin()-1);

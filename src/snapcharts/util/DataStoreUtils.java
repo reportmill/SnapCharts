@@ -1,7 +1,11 @@
 package snapcharts.util;
 import snap.util.KeyChain;
+import snapcharts.model.DataPoint;
+import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
 import snapcharts.model.DataStore;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +13,64 @@ import java.util.Map;
  * Utilities for DataStore.
  */
 public class DataStoreUtils {
+
+    /**
+     * Adds data points to given DataSet for given data arrays.
+     */
+    public static void addDataPoints(DataStore aDataStore, double[] dataX, double[] dataY, double[] dataZ, String[] dataC)
+    {
+        // Get min length of staged data
+        int xlen = dataX != null ? dataX.length : Integer.MAX_VALUE;
+        int ylen = dataY != null ? dataY.length : Integer.MAX_VALUE;
+        int zlen = dataZ != null ? dataZ.length : Integer.MAX_VALUE;
+        int clen = dataC != null ? dataC.length : Integer.MAX_VALUE;
+        int len = Math.min(xlen, Math.min(ylen, Math.min(zlen, clen)));
+
+        // Iterate over data arrays and add to DataSet
+        for (int i=0; i<len; i++) {
+            Double valX = dataX != null ? dataX[i] : null;
+            Double valY = dataY != null ? dataY[i] : null;
+            Double valZ = dataZ != null ? dataZ[i] : null;
+            String valC = dataC != null ? dataC[i] : null;
+            DataPoint dataPoint = new DataPoint(valX, valY, valZ, valC);
+            int index = aDataStore.getPointCount();
+            aDataStore.addPoint(dataPoint, index);
+        }
+    }
+
+    /**
+     * Adds data points to given DataSet for given data arrays.
+     */
+    public static void addDataPointsXYZZ(DataStore aDataStore, double[] dataX, double[] dataY, double[] dataZZ)
+    {
+        // Get rows and cols
+        int colCount = dataX.length;
+        int rowCount = dataY.length;
+
+        // Set in DataStore
+        aDataStore.setColCount(colCount);
+        aDataStore.setRowCount(rowCount);
+
+        // If insufficient Z, complain and pad with zero
+        int pointCount = colCount * rowCount;
+        if (pointCount>dataZZ.length) {
+            System.err.println("DataStoreUtils.addDataPointsXYZZ: Insufficient number of Z values");
+            dataZZ = Arrays.copyOf(dataZZ, pointCount);
+        }
+
+        // Iterate over rows/cols and add points
+        for (int row=0; row<rowCount; row++) {
+            for (int col=0; col<colCount; col++) {
+                double xval = dataX[col];
+                double yval = dataY[row];
+                int zind = row * colCount + col;
+                double zval = dataZZ[zind];
+                DataPoint dataPoint = new DataPoint(xval, yval, zval, null);
+                int index = aDataStore.getPointCount();
+                aDataStore.addPoint(dataPoint, index);
+            }
+        }
+    }
 
     /**
      * Returns the index of the first value that is inside or inside adjacent for given min/max.

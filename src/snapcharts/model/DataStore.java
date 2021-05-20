@@ -1,5 +1,10 @@
 package snapcharts.model;
+import snap.util.XMLArchiver;
+import snap.util.XMLElement;
+import snapcharts.util.DataStoreUtils;
+import snapcharts.util.DataUtils;
 import snapcharts.util.MinMax;
+import java.util.Arrays;
 
 /**
  * This class is a low-level representation of a chart data set.
@@ -7,7 +12,7 @@ import snapcharts.util.MinMax;
  * It provides a simple API for defining the DataType (which defines the data format/schema), the number of data
  * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
-public abstract class DataStore {
+public abstract class DataStore implements XMLArchiver.Archivable {
 
     // The format of the data
     private DataType _dataType = DataType.XY;
@@ -19,10 +24,10 @@ public abstract class DataStore {
     private int  _colCount;
 
     // Cached arrays of X/Y/Z data (and X/Y for ZZ)
-    private double[] _dataX, _dataY, _dataZ;
+    private double[]  _dataX, _dataY, _dataZ;
 
     // Cached array of C data
-    private String[] _dataC;
+    private String[]  _dataC;
 
     // Cached arrays of X/Y for ZZ (for ZZ data types)
     private double[]  _dataXZZ, _dataYZZ;
@@ -221,8 +226,8 @@ public abstract class DataStore {
     protected double[] getDataXImpl()
     {
         int count = getPointCount();
-        double vals[] = new double[count];
-        for (int i=0;i<count;i++) vals[i] = getX(i);
+        double[] vals = new double[count];
+        for (int i=0; i<count; i++) vals[i] = getX(i);
         return vals;
     }
 
@@ -232,8 +237,8 @@ public abstract class DataStore {
     protected double[] getDataYImpl()
     {
         int count = getPointCount();
-        double vals[] = new double[count];
-        for (int i=0;i<count;i++) vals[i] = getY(i);
+        double[] vals = new double[count];
+        for (int i=0; i<count; i++) vals[i] = getY(i);
         return vals;
     }
 
@@ -243,8 +248,8 @@ public abstract class DataStore {
     protected double[] getDataZImpl()
     {
         int count = getPointCount();
-        double vals[] = new double[count];
-        for (int i=0;i<count;i++) vals[i] = getZ(i);
+        double[] vals = new double[count];
+        for (int i=0; i<count; i++) vals[i] = getZ(i);
         return vals;
     }
 
@@ -254,8 +259,8 @@ public abstract class DataStore {
     protected String[] getDataCImpl()
     {
         int count = getPointCount();
-        String vals[] = new String[count];
-        for (int i=0;i<count;i++) vals[i] = getC(i);
+        String[] vals = new String[count];
+        for (int i=0; i<count; i++) vals[i] = getC(i);
         return vals;
     }
 
@@ -392,6 +397,108 @@ public abstract class DataStore {
         _dataX = _dataY = _dataZ = _dataXZZ = _dataYZZ = null;
         _dataC = null;
         _minMaxX = _minMaxY = _minMaxZ = null;
+    }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        XMLElement e = new XMLElement("DataStore");
+        toXML(anArchiver, e);
+        return e;
+    }
+
+    /**
+     * Archival.
+     */
+    public XMLElement toXML(XMLArchiver anArchiver, XMLElement e)
+    {
+        // Archive DataType
+        DataType dataType = getDataType();
+        e.add(DataSet.DataType_Prop, dataType);
+
+        // If DataType has X, add DataX values
+        if (dataType.hasChannel(DataChan.X)) {
+            double[] dataX = dataType!=DataType.XYZZ ? getDataX() : getDataXforZZ();
+            String dataStr = DataUtils.getStringForDoubleArray(dataX);
+            e.add(new XMLElement("DataX", dataStr));
+        }
+
+        // If DataType has Y, add DataY values
+        if (dataType.hasChannel(DataChan.Y)) {
+            double[] dataY = dataType!=DataType.XYZZ ? getDataY() : getDataYforZZ();
+            String dataStr = DataUtils.getStringForDoubleArray(dataY);
+            e.add(new XMLElement("DataY", dataStr));
+        }
+
+        // If DataType has Z, add DataZ values
+        if (dataType.hasChannel(DataChan.Z)) {
+            String dataStr = DataUtils.getStringForDoubleArray(getDataZ());
+            e.add(new XMLElement("DataZ", dataStr));
+        }
+
+        // If DataType has C, add DataC values
+        if (dataType.hasChannel(DataChan.C)) {
+            String dataStr = Arrays.toString(getDataC());
+            e.add(new XMLElement("DataC", dataStr));
+        }
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive DataType
+        String dataTypeStr = anElement.getAttributeValue(DataSet.DataType_Prop);
+        DataType dataType = DataType.valueOf(dataTypeStr);
+        setDataType(dataType);
+
+        // Get DataX
+        double[] dataX = null;
+        XMLElement dataX_XML = anElement.get("DataX");
+        if (dataX_XML!=null) {
+            String dataXStr = dataX_XML.getValue();
+            dataX = DataUtils.getDoubleArrayForString(dataXStr);
+        }
+
+        // Get DataY
+        double[] dataY = null;
+        XMLElement dataY_XML = anElement.get("DataY");
+        if (dataY_XML!=null) {
+            String dataYStr = dataY_XML.getValue();
+            dataY = DataUtils.getDoubleArrayForString(dataYStr);
+        }
+
+        // Get DataZ
+        double[] dataZ = null;
+        XMLElement dataZ_XML = anElement.get("DataZ");
+        if (dataZ_XML!=null) {
+            String dataZStr = dataZ_XML.getValue();
+            dataZ = DataUtils.getDoubleArrayForString(dataZStr);
+        }
+
+        // Get DataC
+        String[] dataC = null;
+        XMLElement dataC_XML = anElement.get("DataC");
+        if (dataC_XML!=null) {
+            String dataCStr = dataC_XML.getValue();
+            dataC = DataUtils.getStringArrayForString(dataCStr);
+        }
+
+        // Add Data points
+        if (dataType == DataType.XYZZ)
+            DataStoreUtils.addDataPointsXYZZ(this, dataX, dataY, dataZ);
+        else DataStoreUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
+
+        // Return this part
+        return this;
     }
 
     /**

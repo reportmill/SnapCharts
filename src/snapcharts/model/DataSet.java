@@ -5,7 +5,6 @@ import snap.util.XMLElement;
 import snapcharts.util.DataUtils;
 import snapcharts.util.MinMax;
 import snapcharts.util.DataStoreUtils;
-
 import java.util.*;
 
 /**
@@ -123,24 +122,6 @@ public class DataSet extends ChartPart {
         if (anAxisType==null || !anAxisType.isAnyY())
             throw new IllegalArgumentException("DataSet.setAxisTypeY: Unsupported AxisTypeY: " + anAxisType);
         firePropChange(AxisTypeY_Prop, _axisTypeY, _axisTypeY = anAxisType);
-    }
-
-    /**
-     * Returns whether to show symbols for this DataSet.
-     */
-    public boolean isShowSymbols()
-    {
-        DataStyle dataStyle = getDataStyle();
-        return dataStyle.isShowSymbols();
-    }
-
-    /**
-     * Sets whether to show symbols for this DataSet.
-     */
-    public void setShowSymbols(boolean aValue)
-    {
-        DataStyle dataStyle = getDataStyle();
-        dataStyle.setShowSymbols(aValue);
     }
 
     /**
@@ -567,78 +548,6 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns an array of dataset X values.
-     */
-    public double[] getDataX()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getDataX();
-    }
-
-    /**
-     * Returns an array of dataset Y values.
-     */
-    public double[] getDataY()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getDataY();
-    }
-
-    /**
-     * Returns an array of dataset Z values.
-     */
-    public double[] getDataZ()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getDataZ();
-    }
-
-    /**
-     * Returns an array of dataset C values.
-     */
-    public String[] getDataC()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getDataC();
-    }
-
-    /**
-     * Returns the minimum X value in this dataset.
-     */
-    public double getMinX()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getMinX();
-    }
-
-    /**
-     * Returns the maximum X value in this dataset.
-     */
-    public double getMaxX()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getMaxX();
-    }
-
-    /**
-     * Returns the minimum Y value in this dataset.
-     */
-    public double getMinY()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getMinY();
-    }
-
-    /**
-     * Returns the maximum Y value in this dataset.
-     */
-    public double getMaxY()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getMaxY();
-    }
-
-    /**
      * Returns the minimum Z value in this dataset.
      */
     public double getMinZ()
@@ -654,24 +563,6 @@ public class DataSet extends ChartPart {
     {
         DataStore procData = getProcessedData();
         return procData.getMaxZ();
-    }
-
-    /**
-     * Returns the dataX values for ZZ.
-     */
-    public double[] getDataXforZZ()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getDataXforZZ();
-    }
-
-    /**
-     * Returns the dataY values for ZZ.
-     */
-    private double[] getDataYforZZ()
-    {
-        DataStore procData = getProcessedData();
-        return procData.getDataYforZZ();
     }
 
     /**
@@ -718,9 +609,9 @@ public class DataSet extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive DataType
-        DataType dataType = getDataType();
-        e.add(DataType_Prop, dataType);
+        // Archive RawData
+        DataStore rawData = getRawData();
+        rawData.toXML(anArchiver, e);
 
         // Archive Disabled
         if (isDisabled())
@@ -729,32 +620,6 @@ public class DataSet extends ChartPart {
         // Archive AxisTypeY
         if (getAxisTypeY() != AxisType.Y)
             e.add(AxisTypeY_Prop, getAxisTypeY());
-
-        // If DataType has X, add DataX values
-        if (dataType.hasChannel(DataChan.X)) {
-            double[] dataX = dataType!=DataType.XYZZ ? getDataX() : getDataXforZZ();
-            String dataStr = DataUtils.getStringForDoubleArray(dataX);
-            e.add(new XMLElement("DataX", dataStr));
-        }
-
-        // If DataType has Y, add DataY values
-        if (dataType.hasChannel(DataChan.Y)) {
-            double[] dataY = dataType!=DataType.XYZZ ? getDataY() : getDataYforZZ();
-            String dataStr = DataUtils.getStringForDoubleArray(dataY);
-            e.add(new XMLElement("DataY", dataStr));
-        }
-
-        // If DataType has Z, add DataZ values
-        if (dataType.hasChannel(DataChan.Z)) {
-            String dataStr = DataUtils.getStringForDoubleArray(getDataZ());
-            e.add(new XMLElement("DataZ", dataStr));
-        }
-
-        // If DataType has C, add DataC values
-        if (dataType.hasChannel(DataChan.C)) {
-            String dataStr = Arrays.toString(getDataC());
-            e.add(new XMLElement("DataC", dataStr));
-        }
 
         // Archive DataStyle
         DataStyle dataStyle = getDataStyle();
@@ -775,55 +640,17 @@ public class DataSet extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive DataType
-        String dataTypeStr = anElement.getAttributeValue(DataType_Prop);
-        DataType dataType = DataType.valueOf(dataTypeStr);
-        setDataType(dataType);
+        // Unarchive RawData
+        DataStore rawData = getRawData();
+        rawData.fromXML(anArchiver, anElement);
 
-        // Unarchive ShowSymbols, Disabled
+        // Unarchive Disabled
         setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
 
-        // Archive AxisTypeY
+        // Unarchive AxisTypeY
         String axisTypeStr = anElement.getAttributeValue(AxisTypeY_Prop);
         if (axisTypeStr != null)
             setAxisTypeY(AxisType.valueOf(axisTypeStr));
-
-        // Get DataX
-        double dataX[] = null;
-        XMLElement dataX_XML = anElement.get("DataX");
-        if (dataX_XML!=null) {
-            String dataXStr = dataX_XML.getValue();
-            dataX = DataUtils.getDoubleArrayForString(dataXStr);
-        }
-
-        // Get DataY
-        double dataY[] = null;
-        XMLElement dataY_XML = anElement.get("DataY");
-        if (dataY_XML!=null) {
-            String dataYStr = dataY_XML.getValue();
-            dataY = DataUtils.getDoubleArrayForString(dataYStr);
-        }
-
-        // Get DataZ
-        double dataZ[] = null;
-        XMLElement dataZ_XML = anElement.get("DataZ");
-        if (dataZ_XML!=null) {
-            String dataZStr = dataZ_XML.getValue();
-            dataZ = DataUtils.getDoubleArrayForString(dataZStr);
-        }
-
-        // Get DataC
-        String dataC[] = null;
-        XMLElement dataC_XML = anElement.get("DataC");
-        if (dataC_XML!=null) {
-            String dataCStr = dataC_XML.getValue();
-            dataC = DataUtils.getStringArrayForString(dataCStr);
-        }
-
-        // Add Data points
-        if (dataType == DataType.XYZZ)
-            DataUtils.addDataSetPointsXYZZ(this, dataX, dataY, dataZ);
-        else DataUtils.addDataSetPoints(this, dataX, dataY, dataZ, dataC);
 
         // Legacy
         if (anElement.hasAttribute(DataStyle.ShowSymbols_Prop)) {

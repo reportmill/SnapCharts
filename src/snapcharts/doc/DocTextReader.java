@@ -2,8 +2,7 @@ package snapcharts.doc;
 import snap.geom.Pos;
 import snap.util.SnapUtils;
 import snapcharts.model.*;
-import snapcharts.util.DataUtils;
-
+import snapcharts.util.DataStoreUtils;
 import java.util.Arrays;
 
 /**
@@ -18,10 +17,10 @@ public class DocTextReader {
     private DocItemGroup  _itemGroup;
 
     // The current chart
-    private Chart _chart;
+    private Chart  _chart;
 
     // The current DataSet
-    private DataSet _dset;
+    private DataSet  _dset;
 
     // Staged data arrays X/Y/Z
     private double[]  _dataX, _dataY, _dataZ, _dataZZ;
@@ -53,13 +52,13 @@ public class DocTextReader {
     public void readString(String aStr)
     {
         // Get string lines
-        String lines[] = aStr.split("\n");
+        String[] lines = aStr.split("\n");
 
         // Iterate over lines
         for (String line : lines) {
 
             // Get line split around '=' sign
-            String keyVal[] = line.split("=");
+            String[] keyVal = line.split("=");
             if (keyVal.length<2) continue;
 
             // Get key, val
@@ -236,7 +235,7 @@ public class DocTextReader {
                 break;
 
             case "ShowSymbols":
-                _dset.setShowSymbols(SnapUtils.boolValue(aVal));
+                _dset.getDataStyle().setShowSymbols(SnapUtils.boolValue(aVal));
                 break;
 
             case "DataX":
@@ -330,11 +329,12 @@ public class DocTextReader {
         _dset.setDataType(dataType);
 
         // Add points XYZZ
+        DataStore rawData = _dset.getRawData();
         if (dataType == DataType.XYZZ)
-            DataUtils.addDataSetPointsXYZZ(_dset, _dataX, _dataY, _dataZZ);
+            DataStoreUtils.addDataPointsXYZZ(rawData, _dataX, _dataY, _dataZZ);
 
         // Add points other
-        else DataUtils.addDataSetPoints(_dset, _dataX, _dataY, _dataZ, _dataC);
+        else DataStoreUtils.addDataPoints(rawData, _dataX, _dataY, _dataZ, _dataC);
 
         // Clear staged data
         _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;
@@ -352,11 +352,11 @@ public class DocTextReader {
         str = str.substring(start, end);
 
         // Get strings for values separated by comma
-        String valStrs[] = str.split("\\s*,\\s*");
+        String[] valStrs = str.split("\\s*,\\s*");
         int len = valStrs.length;
 
         // Create array for return vals
-        double vals[] = new double[len];
+        double[] vals = new double[len];
         int count = 0;
 
         // Iterate over strings and add valid numbers
@@ -382,7 +382,7 @@ public class DocTextReader {
         String str = aStr.trim();
         if (str.startsWith("[")) str = str.substring(1);
         if (str.endsWith("]")) str = str.substring(0, str.length() - 1);
-        String valStrs[] = str.split("\\s*,\\s*");
+        String[] valStrs = str.split("\\s*,\\s*");
         return valStrs;
     }
 
