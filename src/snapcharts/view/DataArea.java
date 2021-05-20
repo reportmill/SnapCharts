@@ -14,7 +14,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     protected ChartHelper  _chartHelper;
 
     // The DataView that holds this DataArea
-    protected DataView _dataView;
+    protected DataView  _dataView;
 
     // The DataSet
     private T  _dataSet;
@@ -23,10 +23,10 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     private AxisType  _axisTypeY;
 
     // The DataSet.ProcessedData possibly further processed for DataArea/Axes
-    private DataStore _procData;
+    private DataStore  _procData;
 
     // The ProcessedData converted to DataArea display coords
-    private DataStore _dispData;
+    private DataStore  _dispData;
 
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
@@ -496,7 +496,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     {
         // Clear XYPainter
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis) {
+        if (src == getDataSet() || src instanceof Axis) {
             _procData = null;
             _dispData = null;
         }
@@ -513,5 +513,8 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Called when AxisView changes properties.
      */
-    protected void axisViewDidChange(PropChange aPC)  { }
+    protected void axisViewDidChange(PropChange aPC)
+    {
+        _dispData = null;
+    }
 }

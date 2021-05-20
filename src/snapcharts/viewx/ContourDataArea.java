@@ -57,6 +57,10 @@ public class ContourDataArea extends DataArea {
     @Override
     protected void dataViewDidChangeSize()
     {
+        // Do normal version
+        super.dataViewDidChangeSize();
+
+        // Clear Contours
         _contourPainter.clearContours();
     }
 
@@ -66,6 +70,10 @@ public class ContourDataArea extends DataArea {
     @Override
     protected void axisViewDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.axisViewDidChange(aPC);
+
+        // Clear Contours
         _contourPainter.clearContours();
     }
 }

@@ -293,7 +293,7 @@ public class XYDataArea extends DataArea {
 
         // Clear XYPainter
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis) {
+        if (src == getDataSet() || src instanceof Axis) {
             clearDataPath();
         }
     }
@@ -304,6 +304,10 @@ public class XYDataArea extends DataArea {
     @Override
     protected void dataViewDidChangeSize()
     {
+        // Do normal version
+        super.dataViewDidChangeSize();
+
+        // Clear DataPath
         clearDataPath();
     }
 
@@ -313,6 +317,10 @@ public class XYDataArea extends DataArea {
     @Override
     protected void axisViewDidChange(PropChange aPC)
     {
+        // Do normal version
+        super.axisViewDidChange(aPC);
+
+        // Clear DataPath
         clearDataPath();
     }
 }

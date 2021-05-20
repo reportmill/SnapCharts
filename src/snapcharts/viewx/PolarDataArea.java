@@ -378,7 +378,7 @@ public class PolarDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis) {
+        if (src == getDataSet() || src instanceof Axis) {
             clearDataPath();
         }
     }
@@ -389,6 +389,10 @@ public class PolarDataArea extends DataArea {
     @Override
     protected void dataViewDidChangeSize()
     {
+        // Do normal version
+        super.dataViewDidChangeSize();
+
+        // Clear DataPath
         clearDataPath();
     }
 }
