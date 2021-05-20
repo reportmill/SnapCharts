@@ -2,12 +2,12 @@ package snapcharts.model;
 import snap.util.Range;
 
 /**
- * A RawData implementation that wraps around another RawData and wraps extends its data to any min/max.
+ * A DataStore implementation that wraps around another DataStore and extends its data to any min/max.
  */
-public class RawDataWrapper extends RawData {
+public class DataStoreWrapper extends DataStore {
 
-    // The wrapped RawData
-    private RawData  _rawData;
+    // The wrapped DataStore
+    private DataStore _dataStore;
 
     // The raw min/max X
     private double  _rawMinX, _rawMaxX;
@@ -21,10 +21,10 @@ public class RawDataWrapper extends RawData {
     // The wrap pointCount
     private int  _wrapPointCount;
 
-    // The start index in wrapped RawData
+    // The start index in wrapped DataStore
     private int  _start;
 
-    // The end index in wrapped RawData
+    // The end index in wrapped DataStore
     private int  _end;
 
     // The maximum number of wrapped points allowed
@@ -33,11 +33,11 @@ public class RawDataWrapper extends RawData {
     /**
      * Constructor.
      */
-    public RawDataWrapper(RawData aRawData, double aRawMinX, double aRawMaxX, double aWrapMinX, double aWrapMaxX)
+    public DataStoreWrapper(DataStore aDataStore, double aRawMinX, double aRawMaxX, double aWrapMinX, double aWrapMaxX)
     {
         // Get info
-        _rawData = aRawData;
-        _rawPointCount = aRawData.getPointCount();
+        _dataStore = aDataStore;
+        _rawPointCount = aDataStore.getPointCount();
         _rawMinX = aRawMinX;
         _rawMaxX = aRawMaxX;
         _wrapMinX = aWrapMinX;
@@ -57,7 +57,7 @@ public class RawDataWrapper extends RawData {
     }
 
     /**
-     * Override to forward to RawData.
+     * Override to return point count for wrapped data.
      */
     @Override
     public int getPointCount()
@@ -68,9 +68,9 @@ public class RawDataWrapper extends RawData {
     @Override
     public double getX(int anIndex)
     {
-        // Get index of wrapped RawData point and get value X
+        // Get index of wrapped DataStore point and get value X
         int rawIndex = floorMod(_start + anIndex, _rawPointCount);
-        double valX = _rawData.getX(rawIndex);
+        double valX = _dataStore.getX(rawIndex);
 
         // Get cycle index and shift value
         int cycle = floorDiv(_start + anIndex, _rawPointCount);
@@ -81,27 +81,27 @@ public class RawDataWrapper extends RawData {
     @Override
     public double getY(int anIndex)
     {
-        // Get index of wrapped RawData point and get value Y
+        // Get index of wrapped DataStore point and get value Y
         int rawIndex = floorMod(_start + anIndex, _rawPointCount);
-        double valY = _rawData.getY(rawIndex);
+        double valY = _dataStore.getY(rawIndex);
         return valY;
     }
 
     @Override
     public double getZ(int anIndex)
     {
-        // Get index of wrapped RawData point and get value Y
+        // Get index of wrapped DataStore point and get value Y
         int rawIndex = floorMod(_start + anIndex, _rawPointCount);
-        double valZ = _rawData.getZ(rawIndex);
+        double valZ = _dataStore.getZ(rawIndex);
         return valZ;
     }
 
     @Override
     public String getC(int anIndex)
     {
-        // Get index of wrapped RawData point and get value Y
+        // Get index of wrapped DataStore point and get value Y
         int rawIndex = floorMod(_start + anIndex, _rawPointCount);
-        String valC = _rawData.getC(rawIndex);
+        String valC = _dataStore.getC(rawIndex);
         return valC;
     }
 
@@ -126,55 +126,55 @@ public class RawDataWrapper extends RawData {
     @Override
     public void setPointCount(int aValue)
     {
-        throw new RuntimeException("RawDataWrapper: setPointCount not implemented");
+        throw new RuntimeException("DataStoreWrapper: setPointCount not implemented");
     }
 
     @Override
     public void setC(String aValue, int anIndex)
     {
-        throw new RuntimeException("RawDataWrapper: setC not implemented");
+        throw new RuntimeException("DataStoreWrapper: setC not implemented");
     }
 
     @Override
     public void setValueX(Double aValue, int anIndex)
     {
-        throw new RuntimeException("RawDataWrapper: setValueX not implemented");
+        throw new RuntimeException("DataStoreWrapper: setValueX not implemented");
     }
 
     @Override
     public void setValueY(Double aValue, int anIndex)
     {
-        throw new RuntimeException("RawDataWrapper: setValueY not implemented");
+        throw new RuntimeException("DataStoreWrapper: setValueY not implemented");
     }
 
     @Override
     public void setValueZ(Double aValue, int anIndex)
     {
-        throw new RuntimeException("RawDataWrapper: setValueZ not implemented");
+        throw new RuntimeException("DataStoreWrapper: setValueZ not implemented");
     }
 
     @Override
     public void addPoint(DataPoint aPoint, int anIndex)
     {
-        throw new RuntimeException("RawDataWrapper: addPoint not implemented");
+        throw new RuntimeException("DataStoreWrapper: addPoint not implemented");
     }
 
     @Override
     public void removePoint(int anIndex)
     {
-        throw new RuntimeException("RawDataWrapper: removePoint not implemented");
+        throw new RuntimeException("DataStoreWrapper: removePoint not implemented");
     }
 
     @Override
     public void clearPoints()
     {
-        _rawData.clearPoints();
+        _dataStore.clearPoints();
     }
 
     @Override
     public boolean isClear()
     {
-        return _rawData.isClear();
+        return _dataStore.isClear();
     }
 
     /**

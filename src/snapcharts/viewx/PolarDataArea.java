@@ -191,7 +191,7 @@ public class PolarDataArea extends DataArea {
 
         // Get dataset info
         DataSet dset = getDataSet();
-        RawData rawData = dset.getPolarRawData();
+        DataStore dataStore = dset.getPolarData();
         int pointCount = dset.getPointCount();
         AxisType axisTypeY = getAxisTypeY();
 
@@ -200,8 +200,8 @@ public class PolarDataArea extends DataArea {
 
         // Iterate over polar data points and covert/set in display points
         for (int j = 0; j < pointCount; j++) {
-            double dataTheta = rawData.getT(j);
-            double dataRad = rawData.getR(j);
+            double dataTheta = dataStore.getT(j);
+            double dataRad = dataStore.getR(j);
             double dispX = _polarHelper.polarDataToView(AxisType.X, dataTheta, dataRad);
             double dispY = _polarHelper.polarDataToView(axisTypeY, dataTheta, dataRad);
             dispPoints[j] = new Point(dispX, dispY);

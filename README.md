@@ -43,10 +43,10 @@ constants and types.
     
 ### SnapCharts.model Data classes
  
-    - DataSet: Has type
+    - DataSet: High-level representation of chart data with optional transforms, filters, sorting
     - DataSetList: Holds a list of DataSets
     - Intervals: Calculates and describes equally spaced divisions for a min/max
-    - RawData: Simple representation of raw data
+    - DataStore: Low-level representation of chart data
     
 ### SnapCharts.model Supporting Types and Constants
 

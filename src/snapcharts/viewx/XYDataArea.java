@@ -149,7 +149,7 @@ public class XYDataArea extends DataArea {
         Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
 
         // Get DisplayData
-        RawData dispData = getDispData();
+        DataStore dispData = getDispData();
         int pointCount = dispData.getPointCount();
 
         // Iterate over values

@@ -2,9 +2,8 @@ package snapcharts.util;
 import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
-import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
-import snapcharts.model.RawData;
+import snapcharts.model.DataStore;
 
 import java.util.*;
 
@@ -14,7 +13,7 @@ import java.util.*;
 public class Mesh {
 
     // The RawData to provide X/Y/Z values to Contour
-    private RawData _rawData;
+    private DataStore _dataStore;
 
     // The number of points in dataset
     private int  _pointCount;
@@ -40,10 +39,10 @@ public class Mesh {
     /**
      * Constructor to create mesh for given DataSet and array of triangle vertex indexes.
      */
-    public Mesh(RawData aRawData)
+    public Mesh(DataStore aDataStore)
     {
-        _rawData = aRawData;
-        _pointCount = aRawData.getPointCount();
+        _dataStore = aDataStore;
+        _pointCount = aDataStore.getPointCount();
     }
 
     /**
@@ -55,7 +54,7 @@ public class Mesh {
         if (_triangles != null) return _triangles;
 
         // If DataType is XYZZ, do simple matrix to triangles
-        if (_rawData.getDataType() == DataType.XYZZ)
+        if (_dataStore.getDataType() == DataType.XYZZ)
             return _triangles = getTrianglesXYZZ();
 
         // Get vertices
@@ -63,10 +62,10 @@ public class Mesh {
         List<Triangle> triangles = new ArrayList<>();
 
         // Add super triangles
-        double xmin = _rawData.getMinX();
-        double ymin = _rawData.getMinY();
-        double xmax = _rawData.getMaxX();
-        double ymax = _rawData.getMaxY();
+        double xmin = _dataStore.getMinX();
+        double ymin = _dataStore.getMinY();
+        double xmax = _dataStore.getMaxX();
+        double ymax = _dataStore.getMaxY();
         double dx = (xmax - xmin) * .1;
         double dy = (ymax - ymin) * .1;
         xmin -= dx; xmax += dx;
@@ -148,7 +147,7 @@ public class Mesh {
      */
     public int[] getPointIndexes()
     {
-        int pointCount = _rawData.getPointCount();
+        int pointCount = _dataStore.getPointCount();
         int[] points = new int[pointCount];
         for (int i=0; i<pointCount; i++) points[i] = i;
         return points;
@@ -216,7 +215,7 @@ public class Mesh {
     {
         if (anIndex >= _pointCount)
             return _superPoints[anIndex-_pointCount].x;
-        return _rawData.getX(anIndex);
+        return _dataStore.getX(anIndex);
     }
 
     /**
@@ -226,7 +225,7 @@ public class Mesh {
     {
         if (anIndex >= _pointCount)
             return _superPoints[anIndex-_pointCount].y;
-        return _rawData.getY(anIndex);
+        return _dataStore.getY(anIndex);
     }
 
     /**
@@ -234,7 +233,7 @@ public class Mesh {
      */
     public double getZ(int anIndex)
     {
-        return _rawData.getZ(anIndex);
+        return _dataStore.getZ(anIndex);
     }
 
     /**
@@ -331,8 +330,8 @@ public class Mesh {
     private Triangle[] getTrianglesXYZZ()
     {
         // Get dataset row/col counts
-        int colCount = _rawData.getColCount();
-        int rowCount = _rawData.getRowCount();
+        int colCount = _dataStore.getColCount();
+        int rowCount = _dataStore.getRowCount();
 
         // Create triangles array (2 triangles for every grid square)
         int triangleCount = (colCount - 1) * (rowCount - 1) * 2;

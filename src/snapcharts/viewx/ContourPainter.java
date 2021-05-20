@@ -4,7 +4,7 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snapcharts.model.DataSet;
-import snapcharts.model.RawData;
+import snapcharts.model.DataStore;
 import snapcharts.util.ContourMaker;
 import snapcharts.view.AxisView;
 import snapcharts.view.DataArea;
@@ -168,14 +168,14 @@ public class ContourPainter {
         // If already set, just return
         if (_contourMaker != null) return _contourMaker;
 
-        // Get/set RawData for contours (if Polar, get PolarXY RawData)
+        // Get/set DataStore for contours (if Polar, get PolarXYData)
         DataSet dataSet = _dataArea.getDataSet();
-        RawData rawData = dataSet.getProcessedData();
+        DataStore dataStore = dataSet.getProcessedData();
         if (dataSet.getChart().getType().isPolarType())
-            rawData = dataSet.getPolarXYRawData();
+            dataStore = dataSet.getPolarXYData();
 
-        // Create/set ContourMaker from RawData
-        return _contourMaker = new ContourMaker(rawData);
+        // Create/set ContourMaker from DataStore
+        return _contourMaker = new ContourMaker(dataStore);
     }
 
     /**

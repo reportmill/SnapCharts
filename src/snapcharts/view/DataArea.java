@@ -1,6 +1,5 @@
 package snapcharts.view;
 import snap.geom.Point;
-import snap.geom.Shape;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snapcharts.model.Intervals;
@@ -24,10 +23,10 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     private AxisType  _axisTypeY;
 
     // The DataSet.ProcessedData possibly further processed for DataArea/Axes
-    private RawData  _procData;
+    private DataStore _procData;
 
     // The ProcessedData converted to DataArea display coords
-    private RawData  _dispData;
+    private DataStore _dispData;
 
     // Constants for defaults
     protected static Color  BORDER_COLOR = Color.GRAY;
@@ -144,16 +143,16 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Returns the DataSet.ProcessedData (possibly further processed for DataArea/Axes).
      */
-    public RawData getProcessedData()
+    public DataStore getProcessedData()
     {
         // If already set, just return
         if (_procData != null) return _procData;
 
-        // Get DataSet and RawData
+        // Get DataSet and ProcessedData
         DataSet dataSet = getDataSet();
-        RawData rawData = dataSet.getProcessedData();
+        DataStore dataStore = dataSet.getProcessedData();
 
-        // If WrapAxis, wrap RawData inside RawDataWrapper for wrap range and axis range
+        // If WrapAxis, wrap DataStore inside DataStoreWrapper for wrap range and axis range
         AxisViewX axisViewX = getAxisViewX();
         Axis axisX = axisViewX != null ? axisViewX.getAxis() : null;
         if (axisX != null && axisX.isWrapAxis()) {
@@ -161,23 +160,23 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
             double wrapMax = axisX.getWrapMinMax().getMax();
             double axisMin = axisViewX.getAxisMin();
             double axisMax = axisViewX.getAxisMax();
-            rawData = new RawDataWrapper(rawData, wrapMin, wrapMax, axisMin, axisMax);
+            dataStore = new DataStoreWrapper(dataStore, wrapMin, wrapMax, axisMin, axisMax);
         }
 
         // Set/return
-        return _procData = rawData;
+        return _procData = dataStore;
     }
 
     /**
      * Returns the DataSet.ProcessedData as PureData in DataArea display coords.
      */
-    public RawData getDispData()
+    public DataStore getDispData()
     {
         // If already set, just return
         if (_dispData != null) return _dispData;
 
-        RawData rawData = getProcessedData();
-        int pointCount = rawData.getPointCount();
+        DataStore dataStore = getProcessedData();
+        int pointCount = dataStore.getPointCount();
         double[] dispX = new double[pointCount];
         double[] dispY = new double[pointCount];
 
@@ -190,14 +189,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         for (int i = 0; i < pointCount; i++) {
 
             // Get data X/Y and disp X/Y
-            double dataX = rawData.getX(i);
-            double dataY = rawData.getY(i);
+            double dataX = dataStore.getX(i);
+            double dataY = dataStore.getY(i);
             dispX[i] = chartHelper.dataToView(axisViewX, dataX);
             dispY[i] = chartHelper.dataToView(axisViewY, dataY);
         }
 
         // Create PureData, set, return
-        RawData dispData = new RawDataAsArrays(DataType.XY, dispX, dispY);
+        DataStore dispData = new DataStoreImpl(DataType.XY, dispX, dispY);
         return _dispData = dispData;
     }
 

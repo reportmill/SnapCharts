@@ -4,7 +4,6 @@ import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import snapcharts.view.*;
-import java.util.List;
 
 /**
  * A ChartHelper for Polar charts.
@@ -224,8 +223,8 @@ public class PolarChartHelper extends ChartHelper {
         double max = -Double.MAX_VALUE;
         DataSet[] dataSets = dataSetList.getEnabledDataSets();
         for (DataSet dset : dataSets) {
-            RawData rawData = dset.getProcessedData();
-            MinMax minMax = rawData.getMinMaxR();
+            DataStore dataStore = dset.getProcessedData();
+            MinMax minMax = dataStore.getMinMaxR();
             min = Math.min(min, minMax.getMin());
             max = Math.max(max, minMax.getMax());
         }

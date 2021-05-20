@@ -4,12 +4,14 @@ import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.DataUtils;
 import snapcharts.util.MinMax;
-import snapcharts.util.RawDataUtils;
+import snapcharts.util.DataStoreUtils;
 
 import java.util.*;
 
 /**
- * A class to represent a list of data points.
+ * This class is a high-level representation of a chart data set.
+ *
+ * It contains the raw data (DataStore) and expressions, filters and more to provide processed data (also a DataStore).
  */
 public class DataSet extends ChartPart {
     
@@ -38,16 +40,16 @@ public class DataSet extends ChartPart {
     private DataStyleHpr _dataStyleHpr;
 
     // The RawData
-    private RawData  _rawData = RawData.newRawData();
+    private DataStore _rawData = DataStore.newDataStore();
 
     // The Processed Data
-    private RawData  _procData;
+    private DataStore _procData;
 
-    // RawData in polar form
-    private RawData  _polarRawData;
+    // Processed data in polar form
+    private DataStore _polarData;
 
-    // RawData in polar XY form
-    private RawData  _polarXYRawData;
+    // Processed data in polar XY form
+    private DataStore _polarXYData;
 
     // Constants for properties
     public static final String DataType_Prop = "DataType";
@@ -300,7 +302,7 @@ public class DataSet extends ChartPart {
      */
     public double getX(int anIndex)
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getX(anIndex);
     }
 
@@ -309,7 +311,7 @@ public class DataSet extends ChartPart {
      */
     public double getY(int anIndex)
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getY(anIndex);
     }
 
@@ -318,7 +320,7 @@ public class DataSet extends ChartPart {
      */
     public double getZ(int anIndex)
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getZ(anIndex);
     }
 
@@ -327,7 +329,7 @@ public class DataSet extends ChartPart {
      */
     public String getC(int anIndex)
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getC(anIndex);
     }
 
@@ -362,7 +364,7 @@ public class DataSet extends ChartPart {
      */
     public Double getValueY(int anIndex)
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getValueY(anIndex);
     }
 
@@ -380,7 +382,7 @@ public class DataSet extends ChartPart {
      */
     public Double getValueZ(int anIndex)
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getValueZ(anIndex);
     }
 
@@ -499,21 +501,21 @@ public class DataSet extends ChartPart {
     /**
      * Returns the raw data.
      */
-    public RawData getRawData()  { return _rawData; }
+    public DataStore getRawData()  { return _rawData; }
 
     /**
      * Sets the raw data.
      */
-    public void setRawData(RawData aRawData)
+    public void setRawData(DataStore aDataStore)
     {
-        _rawData = aRawData;
+        _rawData = aDataStore;
         clearCachedData();
     }
 
     /**
      * Returns the Processed Data.
      */
-    public RawData getProcessedData()
+    public DataStore getProcessedData()
     {
         // If already set, just return
         if (_procData != null) return _procData;
@@ -522,23 +524,23 @@ public class DataSet extends ChartPart {
         String exprX = getExprX();
         String exprY = getExprY();
         String exprZ = getExprZ();
-        RawData procData = RawDataUtils.getProcessedData(_rawData, exprX, exprY, exprZ);
+        DataStore procData = DataStoreUtils.getProcessedData(_rawData, exprX, exprY, exprZ);
         return _procData = procData;
     }
 
     /**
      * Returns the raw data in polar form (just normal data if already DataType.isPolar).
      */
-    public RawData getPolarRawData()
+    public DataStore getPolarData()
     {
         // If already set, just return
-        if (_polarRawData != null) return _polarRawData;
+        if (_polarData != null) return _polarData;
 
         // If already DataType.isPolar, set/return
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         DataType dataType = getDataType();
         if (dataType.isPolar())
-            return _polarRawData = procData;
+            return _polarData = procData;
 
         // Get Polar DataType that makes the most sense
         DataType polarDataType = DataType.TR;
@@ -546,22 +548,22 @@ public class DataSet extends ChartPart {
             polarDataType = dataType == DataType.XYZZ ? DataType.TRZZ : DataType.TRZ;
 
         // Convert, set, return
-        RawData polarRawData = RawDataUtils.getPolarRawDataForType(procData, polarDataType);
-        return _polarRawData = polarRawData;
+        DataStore polarData = DataStoreUtils.getPolarDataForType(procData, polarDataType);
+        return _polarData = polarData;
     }
 
     /**
-     * Returns the raw data of PolarRawData converted to XY format.
+     * Returns the PolarData converted to XY format.
      */
-    public RawData getPolarXYRawData()
+    public DataStore getPolarXYData()
     {
         // If already set, just return
-        if (_polarXYRawData != null) return _polarXYRawData;
+        if (_polarXYData != null) return _polarXYData;
 
         // Get PolarData, convert to polarXY, set/return
-        RawData polarData = getPolarRawData();
-        RawData xyData = RawDataUtils.getPolarXYRawDataForPolar(polarData);
-        return _polarXYRawData = xyData;
+        DataStore polarData = getPolarData();
+        DataStore xyData = DataStoreUtils.getPolarXYDataForPolar(polarData);
+        return _polarXYData = xyData;
     }
 
     /**
@@ -569,7 +571,7 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataX()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getDataX();
     }
 
@@ -578,7 +580,7 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataY()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getDataY();
     }
 
@@ -587,7 +589,7 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataZ()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getDataZ();
     }
 
@@ -596,7 +598,7 @@ public class DataSet extends ChartPart {
      */
     public String[] getDataC()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getDataC();
     }
 
@@ -605,7 +607,7 @@ public class DataSet extends ChartPart {
      */
     public double getMinX()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getMinX();
     }
 
@@ -614,7 +616,7 @@ public class DataSet extends ChartPart {
      */
     public double getMaxX()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getMaxX();
     }
 
@@ -623,7 +625,7 @@ public class DataSet extends ChartPart {
      */
     public double getMinY()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getMinY();
     }
 
@@ -632,7 +634,7 @@ public class DataSet extends ChartPart {
      */
     public double getMaxY()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getMaxY();
     }
 
@@ -641,7 +643,7 @@ public class DataSet extends ChartPart {
      */
     public double getMinZ()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getMinZ();
     }
 
@@ -650,7 +652,7 @@ public class DataSet extends ChartPart {
      */
     public double getMaxZ()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getMaxZ();
     }
 
@@ -659,7 +661,7 @@ public class DataSet extends ChartPart {
      */
     public double[] getDataXforZZ()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getDataXforZZ();
     }
 
@@ -668,7 +670,7 @@ public class DataSet extends ChartPart {
      */
     private double[] getDataYforZZ()
     {
-        RawData procData = getProcessedData();
+        DataStore procData = getProcessedData();
         return procData.getDataYforZZ();
     }
 
@@ -688,8 +690,8 @@ public class DataSet extends ChartPart {
     protected void clearCachedData()
     {
         _procData = null;
-        _polarRawData = null;
-        _polarXYRawData = null;
+        _polarData = null;
+        _polarXYData = null;
     }
 
     /**
@@ -699,9 +701,9 @@ public class DataSet extends ChartPart {
     public String toString()
     {
         String str = "DataSet { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
-        RawData rawData = getRawData();
+        DataStore dataStore = getRawData();
         for (DataChan chan : getDataType().getChannels()) {
-            MinMax minMax = rawData.getMinMax(chan);
+            MinMax minMax = dataStore.getMinMax(chan);
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
         }
         return str + '}';

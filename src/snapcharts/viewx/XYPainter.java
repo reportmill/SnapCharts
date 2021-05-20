@@ -40,7 +40,7 @@ public class XYPainter {
         if (_dataLineShape != null) return _dataLineShape;
 
         // Create basic data shape from display coord arrays
-        RawData dispData = _dataArea.getDispData();
+        DataStore dispData = _dataArea.getDispData();
         double[] dispX = dispData.getDataX();
         double[] dispY = dispData.getDataY();
         Shape dataLineShape = new XYDisplayCoordsShape(dispX, dispY);
@@ -63,7 +63,7 @@ public class XYPainter {
         double areaH = _dataArea.getHeight();
 
         // Close path
-        RawData dispData = _dataArea.getDispData();
+        DataStore dispData = _dataArea.getDispData();
         double[] dispX = dispData.getDataX();
         double[] dispY = dispData.getDataY();
         int pointCount = dispX.length;
@@ -98,7 +98,7 @@ public class XYPainter {
         if (_arcLens != null) return _arcLens;
 
         // Get Display coords and count
-        RawData dispData = _dataArea.getDispData();
+        DataStore dispData = _dataArea.getDispData();
         double[] dispX = dispData.getDataX();
         double[] dispY = dispData.getDataY();
         int pointCount = dispX.length;

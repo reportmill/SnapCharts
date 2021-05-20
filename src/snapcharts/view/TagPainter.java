@@ -9,7 +9,7 @@ import snap.gfx.Painter;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
 import snapcharts.model.DataStyle;
-import snapcharts.model.RawData;
+import snapcharts.model.DataStore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +58,8 @@ public class TagPainter {
         // Declare LastBox var for checks
         List<StringBox> tagBoxList = new ArrayList<>();
 
-        RawData procData = _dataArea.getProcessedData();
-        RawData dispData = _dataArea.getDispData();
+        DataStore procData = _dataArea.getProcessedData();
+        DataStore dispData = _dataArea.getDispData();
         int pointCount = Math.min(procData.getPointCount(), dispData.getPointCount()); // Shouldn't need this
         Rect dataBounds = _dataArea.getBoundsLocal();
 

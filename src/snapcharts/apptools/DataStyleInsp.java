@@ -223,7 +223,6 @@ public class DataStyleInsp extends ChartPartInsp {
         boolean showSymbolsMore = getViewBoolValue("ShowSymbolsMoreButton");
         View showSymbolsBox = getView("ShowSymbolsBox");
         ViewAnimUtils.setVisible(showSymbolsBox, showSymbolsMore, false, true);
-        ViewAnimUtils.setVisible(showSymbolsBox, showSymbolsMore, false, true);
 
         // Reset ShowSymbolsBox UI
         if (showSymbolsMore) {
@@ -262,7 +261,6 @@ public class DataStyleInsp extends ChartPartInsp {
         // Reset ShowTagsBox.Visible
         boolean showTagsMore = getViewBoolValue("ShowTagsMoreButton");
         View showTagsBox = getView("ShowTagsBox");
-        ViewAnimUtils.setVisible(showTagsBox, showTagsMore, false, true);
         ViewAnimUtils.setVisible(showTagsBox, showTagsMore, false, true);
 
         // Reset ShowTagsBox UI

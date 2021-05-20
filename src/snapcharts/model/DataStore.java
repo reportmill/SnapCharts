@@ -2,9 +2,12 @@ package snapcharts.model;
 import snapcharts.util.MinMax;
 
 /**
- * This is the cover class for holding the raw data.
+ * This class is a low-level representation of a chart data set.
+ *
+ * It provides a simple API for defining the DataType (which defines the data format/schema), the number of data
+ * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
-public abstract class RawData {
+public abstract class DataStore {
 
     // The format of the data
     private DataType _dataType = DataType.XY;
@@ -16,10 +19,13 @@ public abstract class RawData {
     private int  _colCount;
 
     // Cached arrays of X/Y/Z data (and X/Y for ZZ)
-    private double[] _dataX, _dataY, _dataZ, _dataXZZ, _dataYZZ;
+    private double[] _dataX, _dataY, _dataZ;
 
     // Cached array of C data
     private String[] _dataC;
+
+    // Cached arrays of X/Y for ZZ (for ZZ data types)
+    private double[]  _dataXZZ, _dataYZZ;
 
     // Min/Max values for X/Y/Z
     private MinMax  _minMaxX, _minMaxY, _minMaxZ;
@@ -205,7 +211,7 @@ public abstract class RawData {
             case Z: return getDataZ();
             case T: return getDataX();
             case R: return getDataY();
-            default: throw new RuntimeException("RawData.getDataArrayForChannel: Invalid channel: " + aChannel);
+            default: throw new RuntimeException("DataStore.getDataArrayForChannel: Invalid channel: " + aChannel);
         }
     }
 
@@ -394,7 +400,7 @@ public abstract class RawData {
     @Override
     public String toString()
     {
-        String str = "RawData { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        String str = "DataStore { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
         for (DataChan chan : getDataType().getChannels()) {
             MinMax minMax = getMinMax(chan);
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
@@ -403,18 +409,18 @@ public abstract class RawData {
     }
 
     /**
-     * Returns RawData for type and array values.
+     * Returns new DataStore instance.
      */
-    public static RawData newRawData()
+    public static DataStore newDataStore()
     {
-        return new RawDataAsArrays();
+        return new DataStoreImpl();
     }
 
     /**
-     * Returns RawData for type and array values.
+     * Returns new DataStore instance for type and array values.
      */
-    public static RawData newRawDataForTypeAndValues(DataType aDataType, Object ... theArrays)
+    public static DataStore newDataStoreForTypeAndValues(DataType aDataType, Object ... theArrays)
     {
-        return new RawDataAsArrays(aDataType, theArrays);
+        return new DataStoreImpl(aDataType, theArrays);
     }
 }

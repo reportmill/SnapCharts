@@ -3,7 +3,7 @@ import snap.util.ListSel;
 import snap.util.SnapUtils;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
-import snapcharts.model.RawData;
+import snapcharts.model.DataStore;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -53,9 +53,9 @@ public class DataUtils {
         int rowCount = dataY.length;
 
         // Set in dataset
-        RawData rawData = aDataSet.getRawData();
-        rawData.setColCount(colCount);
-        rawData.setRowCount(rowCount);
+        DataStore dataStore = aDataSet.getRawData();
+        dataStore.setColCount(colCount);
+        dataStore.setRowCount(rowCount);
 
         // If insufficient Z, complain and pad with zero
         int pointCount = colCount * rowCount;
