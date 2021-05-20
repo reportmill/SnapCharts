@@ -2,7 +2,6 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Color;
 import snap.gfx.Font;
-import snap.gfx.Stroke;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.StringView;
@@ -10,7 +9,6 @@ import snap.view.ViewAnim;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +58,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
 
     // Grid Constants
-    protected static Color GRID_COLOR = Color.get("#E6");
-    protected static Stroke GRID_STROKE = Stroke.Stroke1;
     public static Color TICK_LINE_COLOR = Color.GRAY;
 
     // Other constants
@@ -219,21 +215,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         Axis axis = getAxis();
         return axis.isLog();
-    }
-
-    /**
-     * Returns the grid line color.
-     */
-    public Color getGridColor()  { return GRID_COLOR; }
-
-    /**
-     * Returns the grid line stroke.
-     */
-    public Stroke getGridStroke()
-    {
-        //double dashes[] = getAxis().getGridDashArray();
-        //Stroke stroke = dashes==null ? Stroke.Stroke1 : new Stroke(GRID_LINE_WIDTH, dashes, 0);
-        return GRID_STROKE;
     }
 
     /**

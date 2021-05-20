@@ -376,13 +376,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         // Get info
         AxisViewX axisView = getAxisViewX(); if (axisView==null) return;
         AxisX axis = axisView.getAxis();
-        Color gridColor = axisView.getGridColor();
         Color tickLineColor = AxisView.TICK_LINE_COLOR;
         double tickLen = axis.getTickLength();
 
-        // Set Grid Color/Stroke
+        // Get/set Grid Color/Stroke
+        Color gridColor = axis.getGridColor();
+        Stroke gridStroke = axis.getGridStroke();
         aPntr.setColor(gridColor);
-        aPntr.setStroke(axisView.getGridStroke());
+        aPntr.setStroke(gridStroke);
 
         // Iterate over intervals and paint lines
         double areaY = 0;
@@ -406,13 +407,14 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         // Get info
         AxisViewY axisView = getAxisViewY(); if (axisView==null || !axisView.isVisible()) return;
         AxisY axis = axisView.getAxis();
-        Color gridColor = axisView.getGridColor();
         Color tickLineColor = AxisView.TICK_LINE_COLOR;
         double tickLen = axis.getTickLength();
 
-        // Set Grid Color/Stroke
+        // Get/set Grid Color/Stroke
+        Color gridColor = axis.getGridColor();
+        Stroke gridStroke = axis.getGridStroke();
         aPntr.setColor(gridColor);
-        aPntr.setStroke(axisView.getGridStroke());
+        aPntr.setStroke(gridStroke);
 
         // Iterate over intervals and paint lines
         double areaX = 0;

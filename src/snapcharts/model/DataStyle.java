@@ -588,7 +588,7 @@ public class DataStyle extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive ShowLine, LineColor, LineWidth
+        // Unarchive ShowLine, LineColor
         if (anElement.hasAttribute(ShowLine_Prop))
             setShowLine(anElement.getAttributeBoolValue(ShowLine_Prop));
         if (anElement.hasAttribute(LineColor_Prop)) {

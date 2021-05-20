@@ -2,6 +2,8 @@ package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.gfx.Stroke;
+import snap.util.ArrayUtils;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -50,17 +52,22 @@ public abstract class Axis extends ChartPart {
     // The wrap min/max value
     private MinMax  _wrapMinMax = DEFAULT_WRAP_MINMAX;
 
-    // The grid line color
-    private Color  _gridLineColor = GRID_LINES_COLOR;
-
-    // The grid line
-    private double  _gridLineDashArray[];
-
     // The Side this axis
     private Side  _side;
 
+    // Whether to show grid lines
+    private boolean  _showGrid = DEFAULT_SHOW_GRID;
+
+    // The grid line color
+    private Color  _gridColor = DEFAULT_GRID_COLOR;
+
+    // The grid line width
+    private int  _gridWidth = DEFAULT_GRID_WIDTH;
+
+    // The grid line
+    private double[]  _gridDash = DEFAULT_GRID_DASH;
+
     // Constants for properties
-    public static final String Type_Prop = "Type";
     public static final String Title_Prop = "Title";
     public static final String TitleAlign_Prop = "TitleAlign";
     public static final String TitleRotate_Prop = "TitleRotate";
@@ -73,12 +80,18 @@ public abstract class Axis extends ChartPart {
     public static final String Side_Prop = "Side";
     public static final String WrapAxis_Prop = "WrapAxis";
     public static final String WrapMinMax_Prop = "WrapMinMax";
+    public static final String ShowGrid_Prop = "ShowGrid";
+    public static final String GridColor_Prop = "GridColor";
+    public static final String GridWidth_Prop = "GridWidth";
+    public static final String GridDash_Prop = "GridDash";
 
     // Constants for default values
-    //private static Color   AXIS_LABELS_COLOR = Color.GRAY;
-    protected static Color   GRID_LINES_COLOR = Color.get("#E6");
     protected static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
     public static MinMax DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
+    public static final boolean DEFAULT_SHOW_GRID = true;
+    public static final Color DEFAULT_GRID_COLOR = Color.get("#E6");
+    public static final int DEFAULT_GRID_WIDTH = 1;
+    public static final double[] DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
 
     /**
      * Constructor.
@@ -334,32 +347,11 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
-     * Returns the grid line color.
-     */
-    public Color getGridLineColor()  { return _gridLineColor; }
-
-    /**
-     * Returns the grid line color.
-     */
-    public void setGridLineColor(Color aColor)  { _gridLineColor = aColor; }
-
-    /**
-     * Returns the grid line dash array.
-     */
-    public double[] getGridLineDashArray()  { return _gridLineDashArray; }
-
-    /**
-     * Returns the grid line dash array.
-     */
-    public void setGridLineDashArray(double theVals[])  { _gridLineDashArray = theVals; }
-
-
-    /**
      * Returns the side this axis is shown on.
      */
     public Side getSide()
     {
-        return _side!=null ? _side : getSideDefault();
+        return _side != null ? _side : getSideDefault();
     }
 
     /**
@@ -367,8 +359,8 @@ public abstract class Axis extends ChartPart {
      */
     public void setSide(Side aSide)
     {
-        if (aSide==getSide()) return;
-        if (aSide==null || aSide.isHorizontal() != getSideDefault().isHorizontal())
+        if (aSide == getSide()) return;
+        if (aSide == null || aSide.isHorizontal() != getSideDefault().isHorizontal())
             throw new IllegalArgumentException("Axis.setSide: Can't set Axis side to " + aSide);
         firePropChange(Side_Prop, _side, _side = aSide);
     }
@@ -386,6 +378,72 @@ public abstract class Axis extends ChartPart {
             case Y4: return Side.RIGHT;
             default: throw new RuntimeException("Axis.getSide: Unknown AxisType: " + getType());
         }
+    }
+
+    /**
+     * Returns whether to show grid lines.
+     */
+    public boolean isShowGrid()  { return _showGrid; }
+
+    /**
+     * Sets whether to show grid lines.
+     */
+    public void setShowGrid(boolean aValue)
+    {
+        if (aValue == _showGrid) return;
+        firePropChange(ShowGrid_Prop, _showGrid, _showGrid = aValue);
+    }
+
+    /**
+     * Returns the grid line color.
+     */
+    public Color getGridColor()  { return _gridColor; }
+
+    /**
+     * Returns the grid line color.
+     */
+    public void setGridColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _gridColor)) return;
+        firePropChange(GridColor_Prop, _gridColor, _gridColor = aColor);
+    }
+
+    /**
+     * Returns the grid line width.
+     */
+    public int getGridWidth()  { return _gridWidth; }
+
+    /**
+     * Returns the grid line width.
+     */
+    public void setGridWidth(int aValue)
+    {
+        if (aValue == _gridWidth) return;
+        firePropChange(GridWidth_Prop, _gridWidth, _gridWidth = aValue);
+    }
+
+    /**
+     * Returns the grid line dash array.
+     */
+    public double[] getGridDash()  { return _gridDash; }
+
+    /**
+     * Returns the grid line dash array.
+     */
+    public void setGridDash(double[] aDashArray)
+    {
+        if (ArrayUtils.equals(aDashArray, _gridDash)) return;
+        firePropChange(GridDash_Prop, _gridDash, _gridDash = aDashArray);
+    }
+
+    /**
+     * Returns the grid stroke.
+     */
+    public Stroke getGridStroke()
+    {
+        if (_gridDash == null)
+            return Stroke.getStroke(_gridWidth);
+        return new Stroke(_gridWidth, _gridDash, 0);
     }
 
     /**
@@ -486,6 +544,21 @@ public abstract class Axis extends ChartPart {
             e.add(WrapMinMax_Prop, getWrapMinMax().getStringRep());
         }
 
+        // Archive ShowGrid, GridColor
+        if (isShowGrid() != DEFAULT_SHOW_GRID)
+            e.add(ShowGrid_Prop, false);
+        if (!getGridColor().equals(DEFAULT_GRID_COLOR))
+            e.add(GridColor_Prop, getGridColor().toHexString());
+
+        // Archive GridWidth, GridDash
+        if (getGridWidth() != DEFAULT_GRID_WIDTH)
+            e.add(GridWidth_Prop, getGridWidth());
+        double[] gridDash = getGridDash();
+        if (!ArrayUtils.equals(gridDash, DEFAULT_GRID_DASH)) {
+            String dashStr = Stroke.getDashArrayNameOrString(gridDash);
+            e.add(GridDash_Prop, dashStr);
+        }
+
         // Return element
         return e;
     }
@@ -516,6 +589,23 @@ public abstract class Axis extends ChartPart {
             MinMax minMax = MinMax.getMinMax(anElement.getAttributeValue(WrapMinMax_Prop));
             if (minMax != null)
                 setWrapMinMax(minMax);
+        }
+
+        // Unarchive ShowLine, LineColor
+        if (anElement.hasAttribute(ShowGrid_Prop))
+            setShowGrid(anElement.getAttributeBoolValue(ShowGrid_Prop));
+        if (anElement.hasAttribute(GridColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(GridColor_Prop));
+            setGridColor(color);
+        }
+
+        // Unarchive GridWidth, GridDash
+        if (anElement.hasAttribute(GridWidth_Prop))
+            setGridWidth(anElement.getAttributeIntValue(ShowGrid_Prop));
+        if (anElement.hasAttribute(GridDash_Prop)) {
+            String dashStr = anElement.getAttributeValue(GridDash_Prop);
+            double[] dashArray = Stroke.getDashArray(dashStr);
+            setGridDash(dashArray);
         }
 
         // Return this part

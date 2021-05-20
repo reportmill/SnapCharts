@@ -4,7 +4,6 @@ import snap.gfx.Painter;
 import snap.view.ViewEvent;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
-
 import java.util.Objects;
 
 /**
@@ -80,16 +79,6 @@ public class DataView extends ChartPartView<DataSetList> {
             dataArea.setDataView(this);
         }
     }
-
-    /**
-     * Returns the X Axis View.
-     */
-    public AxisViewX getAxisViewX()  { return _chartHelper.getAxisViewX(); }
-
-    /**
-     * Returns the Y Axis View.
-     */
-    public AxisViewY getAxisViewY()  { return _chartHelper.getAxisViewY(); }
 
     /**
      * Return the ratio of the chart to show horizontally.

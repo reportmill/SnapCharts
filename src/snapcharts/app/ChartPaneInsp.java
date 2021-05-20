@@ -42,6 +42,9 @@ public class ChartPaneInsp extends ViewOwner {
     // The LegendInsp
     private LegendInsp  _legendInsp;
 
+    // The DataViewInsp
+    private DataViewInsp  _dataViewInsp;
+
     // The DataSet Inspector
     private DataSetInsp _dsetInsp;
 
@@ -118,6 +121,10 @@ public class ChartPaneInsp extends ViewOwner {
             // Create/add LegendInsp
             _legendInsp = new LegendInsp(_chartPane);
             addInspector(_legendInsp, false);
+
+            // Create/add DataViewInsp
+            _dataViewInsp = new DataViewInsp(_chartPane);
+            addInspector(_dataViewInsp, false);
         }
 
         // Add DataSetInsp
@@ -129,7 +136,8 @@ public class ChartPaneInsp extends ViewOwner {
         addInspector(_dataStyleInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp, _dataStyleInsp, _dsetInsp };
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp,
+                _dataViewInsp, _dataStyleInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
 
@@ -256,7 +264,9 @@ public class ChartPaneInsp extends ViewOwner {
             return _axisYInsp;
         if (aChartPart instanceof Legend)
             return _legendInsp;
-        if (aChartPart instanceof DataSetList || aChartPart instanceof DataSet)
+        if (aChartPart instanceof DataSetList)
+            return _dataViewInsp;
+        if (aChartPart instanceof DataSet)
             return _dsetInsp;
         return _chartInsp;
     }
@@ -292,7 +302,7 @@ public class ChartPaneInsp extends ViewOwner {
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
             boolean isSelected = insp == selPartInsp ||
-                (insp == _dataStyleInsp && (selPartInsp == _dsetInsp || selPartInsp == _chartInsp));
+                (insp == _dataStyleInsp && selPartInsp == _dsetInsp);
             insp.setSelected(isSelected);
             if (isSelected)
                 insp.resetLater();

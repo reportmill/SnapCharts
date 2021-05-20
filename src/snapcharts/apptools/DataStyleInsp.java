@@ -105,6 +105,9 @@ public class DataStyleInsp extends ChartPartInsp {
         return _contourStyleInsp = insp;
     }
 
+    /**
+     * Initialize UI.
+     */
     @Override
     protected void initUI()
     {
@@ -185,15 +188,15 @@ public class DataStyleInsp extends ChartPartInsp {
             // Reset LineWidthText, LineWidthResetButton
             setViewValue("LineWidthText", dataStyle.getLineWidth());
             setViewVisible("LineWidthResetButton", dataStyle.getLineWidth() != DataStyle.DEFAULT_LINE_WIDTH);
+
+            // Reset LineDashButton
+            ToggleButton lineDashButton = getView("LineDashButton", ToggleButton.class);
+            configureLineDashButton(lineDashButton, dataStyle.getLineDash());
+
+            // Reset LineDashBox
+            View lineDashBox = getView("LineDashBox");
+            ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
         }
-
-        // Reset LineDashButton
-        ToggleButton lineDashButton = getView("LineDashButton", ToggleButton.class);
-        configureLineDashButton(lineDashButton, dataStyle.getLineDash());
-
-        // Reset LineDashBox
-        View lineDashBox = getView("LineDashBox");
-        ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
 
         // Reset ShowAreaCheckBox
         boolean showArea = dataStyle.isShowArea();

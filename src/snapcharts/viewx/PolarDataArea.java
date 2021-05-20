@@ -60,16 +60,20 @@ public class PolarDataArea extends DataArea {
     {
         // Get info X
         AxisViewX axisViewX = getAxisViewX(); if (axisViewX==null) return;
-        Color gridColor = new Color("#d0"); //axisViewX.getGridColor().darker();
-        Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        double reveal = getReveal();
+        Axis axisX = axisViewX.getAxis();
 
         // Get info Y
         AxisViewY axisViewY = getAxisViewY(); if (axisViewY==null) return;
 
         // Set Grid Color/Stroke
+        Color gridColor = axisX.getGridColor(); //new Color("#d0"); //axisViewX.getGridColor().darker();
+        Stroke gridStroke = axisX.getGridStroke();
         aPntr.setColor(gridColor);
-        aPntr.setStroke(axisViewX.getGridStroke());
+        aPntr.setStroke(gridStroke);
+
+        // Other info
+        Color tickLineColor = AxisView.TICK_LINE_COLOR;
+        double reveal = getReveal();
 
         // Get area bounds
         Rect areaBnds = _polarHelper.getPolarBounds();
@@ -120,16 +124,18 @@ public class PolarDataArea extends DataArea {
     protected void paintAngleLines(Painter aPntr)
     {
         // Get info X
-        AxisViewX axisViewX = getAxisViewX(); if (axisViewX==null) return;
-        Color gridColor = axisViewX.getGridColor();
+        AxisViewX axisViewX = getAxisViewX(); if (axisViewX == null) return;
+        Axis axis = axisViewX.getAxis();
         double reveal = getReveal();
 
         // Get info Y
         AxisType axisTypeY = getAxisTypeY();
 
         // Set Grid Color/Stroke
+        Color gridColor = axis.getGridColor();
+        Stroke gridStroke = axis.getGridStroke();
         aPntr.setColor(gridColor);
-        aPntr.setStroke(axisViewX.getGridStroke());
+        aPntr.setStroke(gridStroke);
 
         // Get area bounds
         Rect areaBnds = _polarHelper.getPolarBounds();
