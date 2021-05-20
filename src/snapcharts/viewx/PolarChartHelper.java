@@ -261,10 +261,10 @@ public class PolarChartHelper extends ChartHelper {
      * Override to clear PolarBounds.
      */
     @Override
-    protected void dataViewDidChangeSize()
+    protected void dataViewSizeDidChange()
     {
         // Do normal version
-        super.dataViewDidChangeSize();
+        super.dataViewSizeDidChange();
 
         // Clear PolarBounds
         _polarBounds = null;

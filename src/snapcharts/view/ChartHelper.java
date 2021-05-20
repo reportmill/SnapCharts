@@ -581,7 +581,7 @@ public abstract class ChartHelper {
     /**
      * Called when DataView changes size.
      */
-    protected void dataViewDidChangeSize()
+    protected void dataViewSizeDidChange()
     {
         // Forward to DataAreas
         for (DataArea dataArea : getDataAreas())

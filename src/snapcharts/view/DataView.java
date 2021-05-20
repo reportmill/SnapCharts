@@ -223,7 +223,7 @@ public class DataView extends ChartPartView<DataSetList> {
     {
         if (aValue==getWidth()) return;
         super.setWidth(aValue);
-        _chartHelper.dataViewDidChangeSize();
+        _chartHelper.dataViewSizeDidChange();
     }
 
     /**
@@ -234,6 +234,6 @@ public class DataView extends ChartPartView<DataSetList> {
     {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
-        _chartHelper.dataViewDidChangeSize();
+        _chartHelper.dataViewSizeDidChange();
     }
 }
