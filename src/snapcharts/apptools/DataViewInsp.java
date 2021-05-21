@@ -80,7 +80,7 @@ public class DataViewInsp extends ChartPartInsp {
         Axis axis = axes.length > 0 ? axes[0] : null;
 
         // Reset ShowBorderCheckBox
-        Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
+        Border border = dataSetList.getBorder();
         boolean showBorder = border != null;
         setViewValue("ShowBorderCheckBox", showBorder);
 
@@ -150,45 +150,43 @@ public class DataViewInsp extends ChartPartInsp {
         Axis[] axes = new Axis[axisViews.length];
         for (int i=0; i<axisViews.length; i++) axes[i] = axisViews[i].getAxis();
 
+        // Get Border (and non-null/default version if needed)
+        Border border = dataSetList.getBorder();
+        Border borderNonNull = border != null ? border : DataSetList.DEFAULT_BORDER;
+
         // Handle ShowBorderCheckBox
         if (anEvent.equals("ShowBorderCheckBox")) {
             boolean showBorder = anEvent.getBoolValue();
-            Border border = showBorder ? Border.blackBorder() : null;
+            Border border2 = showBorder ? borderNonNull : null;
             dataSetList.setBorder(border);
         }
 
         // Handle BorderWidthText, BorderWidthAdd1Button, BorderWidthSub1Button, BorderWidthResetButton
         if (anEvent.equals("BorderWidthText")) {
-            Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
-            Border border2 = border.copyForStrokeWidth(Math.max(anEvent.getIntValue(), 1));
+            Border border2 = borderNonNull.copyForStrokeWidth(Math.max(anEvent.getIntValue(), 1));
             dataSetList.setBorder(border2);
         }
         if (anEvent.equals("BorderWidthAdd1Button")) {
-            Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
-            Border border2 = border.copyForStrokeWidth(Math.max(anEvent.getIntValue(), 1));
+            Border border2 = borderNonNull.copyForStrokeWidth(borderNonNull.getWidth() + 1);
             dataSetList.setBorder(border2);
         }
         if (anEvent.equals("BorderWidthSub1Button")) {
-            Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
-            Border border2 = border.copyForStrokeWidth(Math.max(anEvent.getIntValue(), 1));
+            Border border2 = borderNonNull.copyForStrokeWidth(Math.max(borderNonNull.getWidth() - 1, 1));
             dataSetList.setBorder(border2);
         }
         if (anEvent.equals("BorderWidthResetButton")) {
-            Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
-            Border border2 = border.copyForStrokeWidth(1);
+            Border border2 = borderNonNull.copyForStrokeWidth(1);
             dataSetList.setBorder(border2);
         }
 
         // Handle BorderColorButton, BorderColorResetButton
         if (anEvent.equals("BorderColorButton")) {
             Color color = (Color) getViewValue("BorderColorButton");
-            Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
-            Border border2 = border.copyForColor(color);
+            Border border2 = borderNonNull.copyForColor(color);
             dataSetList.setBorder(border2);
         }
         if (anEvent.equals("BorderColorResetButton")) {
-            Border border = dataSetList.getBorder(); if (border == null) border = Border.blackBorder();
-            Border border2 = border.copyForColor(Color.BLACK);
+            Border border2 = borderNonNull.copyForColor(Color.BLACK);
             dataSetList.setBorder(border2);
         }
 

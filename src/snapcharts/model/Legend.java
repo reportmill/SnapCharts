@@ -5,7 +5,7 @@ import snap.util.*;
 /**
  * A class to represent the Legend of chart.
  */
-public class Legend extends ChartPart {
+public class Legend extends StyledChartPart {
 
     // Whether legend is showing
     private boolean  _showLegend;

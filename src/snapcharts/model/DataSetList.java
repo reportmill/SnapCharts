@@ -1,13 +1,16 @@
 package snapcharts.model;
 import java.util.*;
 import java.util.stream.Stream;
+
+import snap.geom.Insets;
+import snap.gfx.Border;
 import snap.util.*;
 import snapcharts.util.MinMax;
 
 /**
  * A class to manage a list of DataSets.
  */
-public class DataSetList extends ChartPart {
+public class DataSetList extends StyledChartPart {
 
     // The list of datasets
     private List<DataSet> _dataSetsList = new ArrayList<>();
@@ -30,6 +33,9 @@ public class DataSetList extends ChartPart {
     // Constants for properties
     public static final String StartValue_Prop = "StartValue";
     public static final String DataSet_Prop = "DataSet";
+
+    // Constants for property defaults
+    public static final Border DEFAULT_BORDER = Border.blackBorder().copyForInsets(Insets.EMPTY);
 
     /**
      * Creates a DataSet for given ChartView.
@@ -370,6 +376,17 @@ public class DataSetList extends ChartPart {
         _enabledDataSets = null;
         _axisTypes = null;
         _minMaxs.clear();
+    }
+
+    /**
+     * Override to customize default Border.
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        if (aPropName == Border_Prop)
+            return DEFAULT_BORDER;
+        return super.getPropDefault(aPropName);
     }
 
     /**

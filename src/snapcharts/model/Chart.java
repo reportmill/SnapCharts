@@ -9,7 +9,7 @@ import snapcharts.util.ChartUtils;
 /**
  * A view to render a chart.
  */
-public class Chart extends ChartPart {
+public class Chart extends StyledChartPart {
 
     // The ChartDoc that owns this chart
     private Doc _doc;

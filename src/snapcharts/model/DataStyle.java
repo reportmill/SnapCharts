@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * A class to represent properties to render data for a specific ChartType.
  */
-public class DataStyle extends ChartPart {
+public class DataStyle extends StyledChartPart {
 
     // The DataSet that owns the this style
     protected ChartPart  _parent;

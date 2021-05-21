@@ -1,9 +1,6 @@
 package snapcharts.view;
 import snap.view.ParentView;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartPart;
-import snapcharts.model.ChartType;
-import snapcharts.model.DataSetList;
+import snapcharts.model.*;
 
 /**
  * A superclass for ChartView views.
@@ -69,19 +66,29 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     }
 
     /**
-     * Called to reset view from updated Chart.
+     * Called to reset view from ChartPart to make sure it is up to date.
      */
     protected void resetView()
     {
-        // Get Axis
-        ChartPart chartPart = getChartPart(); if (chartPart==null) return;
+        // Get ChartPart
+        ChartPart chartPart = getChartPart();
+        if (chartPart instanceof StyledChartPart)
+            resetViewFromStyledChartPart((StyledChartPart) chartPart);
+    }
 
-        // Update basic props
-        setFont(chartPart.getFont());
-        setFill(chartPart.getFill());
+    /**
+     * Called to reset view paint style attributes from updated ChartPartPainted.
+     */
+    protected void resetViewFromStyledChartPart(StyledChartPart aChartPart)
+    {
+        // Update Font, Fill
+        setFont(aChartPart.getFont());
+        setFill(aChartPart.getFill());
+
+        // Update Border, Effect
         if (!(this instanceof ChartView)) {
-            setBorder(chartPart.getBorder());
-            setEffect(chartPart.getEffect());
+            setBorder(aChartPart.getBorder());
+            setEffect(aChartPart.getEffect());
         }
     }
 }

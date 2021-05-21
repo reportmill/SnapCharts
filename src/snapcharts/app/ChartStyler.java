@@ -1,5 +1,4 @@
 package snapcharts.app;
-
 import rmdraw.editors.Styler;
 import snap.gfx.Border;
 import snap.gfx.Effect;
@@ -8,6 +7,8 @@ import snap.gfx.Paint;
 import snap.util.Undoer;
 import snap.view.View;
 import snapcharts.model.ChartPart;
+import snapcharts.model.DataSet;
+import snapcharts.model.StyledChartPart;
 
 /**
  * ChartStyler.
@@ -30,7 +31,7 @@ public class ChartStyler extends Styler {
      */
     public Border getBorder()
     {
-        ChartPart chartPart = getSelPart();
+        StyledChartPart chartPart = getSelPart();
         return chartPart!=null ? chartPart.getBorder() : null;
     }
 
@@ -47,7 +48,7 @@ public class ChartStyler extends Styler {
      */
     public Paint getFill()
     {
-        ChartPart chartPart = getSelPart();
+        StyledChartPart chartPart = getSelPart();
         return chartPart!=null ? chartPart.getFill() : null;
     }
 
@@ -64,7 +65,7 @@ public class ChartStyler extends Styler {
      */
     public Font getFont()
     {
-        ChartPart chartPart = getSelPart();
+        StyledChartPart chartPart = getSelPart();
         return chartPart!=null ? chartPart.getFont() : Font.Arial12;
     }
 
@@ -81,7 +82,7 @@ public class ChartStyler extends Styler {
      */
     public Effect getEffect()
     {
-        ChartPart chartPart = getSelPart();
+        StyledChartPart chartPart = getSelPart();
         return chartPart!=null ? chartPart.getEffect() : null;
     }
 
@@ -98,7 +99,7 @@ public class ChartStyler extends Styler {
      */
     public double getOpacity()
     {
-        ChartPart chartPart = getSelPart();
+        StyledChartPart chartPart = getSelPart();
         return chartPart!=null ? chartPart.getOpacity() : 1;
     }
 
@@ -119,9 +120,12 @@ public class ChartStyler extends Styler {
     /**
      * Returns the Selected ChartPart.
      */
-    private ChartPart getSelPart()
+    private StyledChartPart getSelPart()
     {
-        return _editor.getSelChartPart();
+        ChartPart chartPart = _editor.getSelChartPart();
+        if (chartPart instanceof DataSet)
+            chartPart = ((DataSet) chartPart).getDataStyle();
+        return chartPart instanceof StyledChartPart ? (StyledChartPart) chartPart : null;
     }
 
     /**

@@ -7,7 +7,7 @@ import snap.util.XMLElement;
 /**
  * A ChartPart to represent Header.
  */
-public class Header extends ChartPart {
+public class Header extends StyledChartPart {
 
     // The title
     private String  _title;

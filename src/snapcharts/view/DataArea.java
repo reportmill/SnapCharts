@@ -342,6 +342,12 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     public void paintBorder(Painter aPntr)
     {
+        // Get border
+        DataSetList dataSetList = getDataSetList();
+        Border border = dataSetList.getBorder();
+        if (border == null)
+            return;
+
         // Get view area
         double areaX = 0;
         double areaY = 0;
@@ -349,8 +355,8 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         double areaH = getHeight();
 
         // Paint Border
-        aPntr.setColor(DataArea.BORDER_COLOR);
-        aPntr.setStroke(Stroke.Stroke1);
+        aPntr.setColor(border.getColor());
+        aPntr.setStroke(border.getStroke());
         aPntr.drawRect(areaX, areaY, areaW, areaH);
 
         // Paint Axis lines
