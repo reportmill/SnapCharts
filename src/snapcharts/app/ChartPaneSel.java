@@ -71,6 +71,11 @@ public class ChartPaneSel {
         // Notify ChartPane of change
         _chartPane.chartPaneSelChanged();
         _chartPane.getUI().repaint();
+
+        // If SelPart not DataSet, clear SelDataPoint
+        if (!(_selPart instanceof DataSet)) {
+            _chartView.setSelDataPoint(null);
+        }
     }
 
     /**
@@ -86,6 +91,7 @@ public class ChartPaneSel {
      */
     public void popSelection()
     {
+        // Get parent of SelChartPart and select
         ChartPart selPart = getSelChartPart();
         ChartPart parPart = selPart != null ? selPart.getParent() : null;
         if (parPart != null)
