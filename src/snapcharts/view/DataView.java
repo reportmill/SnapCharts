@@ -4,6 +4,8 @@ import snap.gfx.Painter;
 import snap.view.ViewEvent;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
+import snapcharts.model.StyledChartPart;
+
 import java.util.Objects;
 
 /**
@@ -224,5 +226,16 @@ public class DataView extends ChartPartView<DataSetList> {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
         _chartHelper.dataViewSizeDidChange();
+    }
+
+    /**
+     * Override to suppress Border.
+     */
+    @Override
+    protected void resetViewFromStyledChartPart(StyledChartPart aChartPart)
+    {
+        setFont(aChartPart.getFont());
+        setFill(aChartPart.getFill());
+        setEffect(aChartPart.getEffect());
     }
 }

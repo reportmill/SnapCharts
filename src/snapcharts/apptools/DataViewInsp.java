@@ -3,6 +3,7 @@ import snap.geom.Line;
 import snap.geom.Shape;
 import snap.gfx.Border;
 import snap.gfx.Color;
+import snap.gfx.Paint;
 import snap.gfx.Stroke;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -50,8 +51,8 @@ public class DataViewInsp extends ChartPartInsp {
     protected void initUI()
     {
         // Hide ShowBorderBox, ShowGridBox, GridDashBox
-        setViewVisible("ShowBorderBox", true);
-        setViewVisible("ShowGridBox", true);
+        setViewVisible("ShowBorderBox", false);
+        setViewVisible("ShowGridBox", false);
         setViewVisible("GridDashBox", false);
 
         // Configure GridDashButton(s)
@@ -61,6 +62,9 @@ public class DataViewInsp extends ChartPartInsp {
             if (lineDashButton != null)
                 configureLineDashButton(lineDashButton, dashArray);
         }
+
+        // Configure MoreBG ToggleGroup to allow empty, so clicks on selected button will collapse
+        getToggleGroup("MoreBG").setAllowEmpty(true);
     }
 
     /**
@@ -85,22 +89,41 @@ public class DataViewInsp extends ChartPartInsp {
         setViewValue("ShowBorderCheckBox", showBorder);
 
         // Reset ShowBorderBox.Visible
-        View showLineBox = getView("ShowBorderBox");
-        ViewAnimUtils.setVisible(showLineBox, showBorder, false, true);
+        boolean showBorderMore = getViewBoolValue("ShowBorderMoreButton");
+        View showBorderBox = getView("ShowBorderBox");
+        ViewAnimUtils.setVisible(showBorderBox, showBorderMore, false, true);
 
         // Reset ShowBorderBox UI
-        if (showBorder) {
+        if (showBorderMore) {
 
             // Reset BorderColorButton, BorderColorResetButton
             Color borderColor = border != null ? border.getColor() : null;
             setViewValue("BorderColorButton", borderColor);
-            setViewVisible("BorderColorResetButton", !Objects.equals(borderColor, Color.BLACK));
+            setViewVisible("BorderColorResetButton", !Objects.equals(borderColor, DataSetList.DEFAULT_BORDER.getColor()));
 
             // Reset BorderWidthText, BorderWidthResetButton
             double borderWidth = border != null ? border.getWidth() : 0;
-            double DEFAULT_BORDER_WIDTH = 1;
             setViewValue("BorderWidthText", borderWidth);
-            setViewVisible("BorderWidthResetButton", borderWidth != DEFAULT_BORDER_WIDTH);
+            setViewVisible("BorderWidthResetButton", borderWidth != DataSetList.DEFAULT_BORDER.getWidth());
+        }
+
+        // Reset ShowFillCheckBox
+        Paint fill = dataSetList.getFill();
+        boolean showFill = fill != null;
+        setViewValue("ShowFillCheckBox", showFill);
+
+        // Reset ShowFillBox.Visible
+        boolean showFillMore = getViewBoolValue("ShowFillMoreButton");
+        View showFillBox = getView("ShowFillBox");
+        ViewAnimUtils.setVisible(showFillBox, showFillMore, false, true);
+
+        // Reset ShowFillBox UI
+        if (showFillMore) {
+
+            // Reset FillColorButton, FillColorResetButton
+            Color fillColor = fill != null ? fill.getColor() : null;
+            setViewValue("FillColorButton", fillColor);
+            setViewVisible("FillColorResetButton", !Objects.equals(fill, StyledChartPart.DEFAULT_FILL));
         }
 
         // Reset ShowGridCheckBox
@@ -108,11 +131,12 @@ public class DataViewInsp extends ChartPartInsp {
         setViewValue("ShowGridCheckBox", showGrid);
 
         // Reset ShowGridBox.Visible
+        boolean showGridMore = getViewBoolValue("ShowGridMoreButton");
         View showGridBox = getView("ShowGridBox");
-        ViewAnimUtils.setVisible(showGridBox, showGrid, false, true);
+        ViewAnimUtils.setVisible(showGridBox, showGridMore, false, true);
 
         // Reset ShowGridBox UI
-        if (showGrid) {
+        if (showGridMore) {
 
             // Reset GridColorButton, GridColorResetButton
             Color gridColor = axis.getGridColor();
@@ -159,6 +183,7 @@ public class DataViewInsp extends ChartPartInsp {
             boolean showBorder = anEvent.getBoolValue();
             Border border2 = showBorder ? borderNonNull : null;
             dataSetList.setBorder(border);
+            setViewValue("ShowBorderMoreButton", showBorder);
         }
 
         // Handle BorderWidthText, BorderWidthAdd1Button, BorderWidthSub1Button, BorderWidthResetButton
@@ -186,8 +211,26 @@ public class DataViewInsp extends ChartPartInsp {
             dataSetList.setBorder(border2);
         }
         if (anEvent.equals("BorderColorResetButton")) {
-            Border border2 = borderNonNull.copyForColor(Color.BLACK);
+            Border border2 = borderNonNull.copyForColor(DataSetList.DEFAULT_BORDER.getColor());
             dataSetList.setBorder(border2);
+        }
+
+        // Handle ShowFillCheckBox
+        if (anEvent.equals("ShowFillCheckBox")) {
+            boolean showFill = anEvent.getBoolValue();
+            Color fill2 = showFill ? Color.WHITE : null;
+            dataSetList.setFill(fill2);
+            setViewValue("ShowFillMoreButton", showFill);
+        }
+
+        // Handle FillColorButton, FillColorResetButton
+        if (anEvent.equals("FillColorButton")) {
+            Color fillColor = (Color) getViewValue("FillColorButton");
+            dataSetList.setFill(fillColor);
+        }
+        if (anEvent.equals("FillColorResetButton")) {
+            Paint fill = StyledChartPart.DEFAULT_FILL;
+            dataSetList.setFill(fill);
         }
 
         // Handle ShowGridCheckBox

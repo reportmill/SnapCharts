@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import snap.geom.Insets;
 import snap.gfx.Border;
+import snap.gfx.Color;
 import snap.util.*;
 import snapcharts.util.MinMax;
 
@@ -35,7 +36,7 @@ public class DataSetList extends StyledChartPart {
     public static final String DataSet_Prop = "DataSet";
 
     // Constants for property defaults
-    public static final Border DEFAULT_BORDER = Border.blackBorder().copyForInsets(Insets.EMPTY);
+    public static final Border DEFAULT_BORDER = Border.createLineBorder(Color.GRAY, 1).copyForInsets(Insets.EMPTY);
 
     /**
      * Creates a DataSet for given ChartView.

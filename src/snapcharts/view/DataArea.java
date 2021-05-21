@@ -28,10 +28,6 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     // The ProcessedData converted to DataArea display coords
     private DataStore  _dispData;
 
-    // Constants for defaults
-    protected static Color  BORDER_COLOR = Color.GRAY;
-    protected static Color AXIS_LINE_COLOR = Color.DARKGRAY;
-
     /**
      * Constructor.
      */
@@ -354,15 +350,22 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
         double areaW = getWidth();
         double areaH = getHeight();
 
+        // Disable antialiasing to get crisp lines
+        aPntr.setAntialiasing(false);
+
         // Paint Border
         aPntr.setColor(border.getColor());
         aPntr.setStroke(border.getStroke());
         aPntr.drawRect(areaX, areaY, areaW, areaH);
 
         // Paint Axis lines
-        aPntr.setColor(DataArea.AXIS_LINE_COLOR);
+        Color axisColor = border.getColor().darker();
+        aPntr.setColor(axisColor);
         aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
         aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
+
+        // Enable antialiasing
+        aPntr.setAntialiasing(true);
     }
 
     /**
@@ -379,27 +382,37 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     protected void paintGridlinesX(Painter aPntr)
     {
-        // Get info
+        // Get Axis
         AxisViewX axisView = getAxisViewX(); if (axisView==null) return;
         AxisX axis = axisView.getAxis();
-        Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        double tickLen = axis.getTickLength();
 
-        // Get/set Grid Color/Stroke
+        // Get Grid Color/Stroke
+        boolean isShowGrid = axis.isShowGrid();
         Color gridColor = axis.getGridColor();
         Stroke gridStroke = axis.getGridStroke();
-        aPntr.setColor(gridColor);
         aPntr.setStroke(gridStroke);
+
+        // Get Tick info
+        Color tickLineColor = AxisView.TICK_LINE_COLOR;
+        double tickLen = axis.getTickLength();
 
         // Iterate over intervals and paint lines
         double areaY = 0;
         double areaH = getHeight();
         Intervals ivals = axisView.getIntervals();
         for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
+
+            // Get line X
             double dataX = ivals.getInterval(i);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataX));
-            aPntr.setColor(gridColor);
-            aPntr.drawLine(dispX, areaY, dispX, areaH);
+
+            // Paint line
+            if (isShowGrid) {
+                aPntr.setColor(gridColor);
+                aPntr.drawLine(dispX, areaY, dispX, areaH);
+            }
+
+            // Paint tick
             aPntr.setColor(tickLineColor);
             aPntr.drawLine(dispX, areaY + areaH - tickLen, dispX, areaY + areaH);
         }
@@ -410,27 +423,37 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
      */
     protected void paintGridlinesY(Painter aPntr)
     {
-        // Get info
+        // Get Axis
         AxisViewY axisView = getAxisViewY(); if (axisView==null || !axisView.isVisible()) return;
         AxisY axis = axisView.getAxis();
-        Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        double tickLen = axis.getTickLength();
 
-        // Get/set Grid Color/Stroke
+        // Get Grid Color/Stroke
+        boolean isShowGrid = axis.isShowGrid();
         Color gridColor = axis.getGridColor();
         Stroke gridStroke = axis.getGridStroke();
-        aPntr.setColor(gridColor);
         aPntr.setStroke(gridStroke);
+
+        // Get Tick info
+        Color tickLineColor = AxisView.TICK_LINE_COLOR;
+        double tickLen = axis.getTickLength();
 
         // Iterate over intervals and paint lines
         double areaX = 0;
         double areaW = getWidth();
         Intervals ivals = axisView.getIntervals();
         for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
+
+            // Get line Y
             double dataY = ivals.getInterval(i);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
-            aPntr.setColor(gridColor);
-            aPntr.drawLine(areaX, dispY, areaW, dispY);
+
+            // Paint line
+            if (isShowGrid) {
+                aPntr.setColor(gridColor);
+                aPntr.drawLine(areaX, dispY, areaW, dispY);
+            }
+
+            // Paint tick
             aPntr.setColor(tickLineColor);
             aPntr.drawLine(areaX, dispY, areaX + tickLen, dispY);
         }

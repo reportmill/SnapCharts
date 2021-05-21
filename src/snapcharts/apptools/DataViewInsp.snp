@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowBorderCheckBox" text="Show Border" />
+    <CheckBox Name="ShowBorderCheckBox" PrefWidth="100" text="Show Border" />
+    <ToggleButton Name="ShowBorderMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
   </RowView>
   <ColView Name="ShowBorderBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
@@ -24,7 +25,21 @@
     </RowView>
   </ColView>
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowGridCheckBox" text="Show Grid" />
+    <CheckBox Name="ShowFillCheckBox" PrefWidth="100" text="Show Fill" />
+    <ToggleButton Name="ShowFillMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
+  </RowView>
+  <ColView Name="ShowFillBox" Padding="0,0,0,25" FillWidth="true">
+    <RowView Padding="4" Spacing="4">
+      <Label text="Color:" />
+      <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+      <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+  </ColView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowGridCheckBox" PrefWidth="100" text="Show Grid" />
+    <ToggleButton Name="ShowGridMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
   </RowView>
   <ColView Name="ShowGridBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">
