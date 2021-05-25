@@ -64,7 +64,7 @@ public class SamplesPane extends ViewOwner {
     {
         if (_dbox._cancelled) return;
         WebURL url = getDocURL(_selIndex);
-        _docPane.open(url);
+        _docPane.openDocFromSource(url);
     }
 
     /**

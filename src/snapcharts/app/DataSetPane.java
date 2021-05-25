@@ -1,6 +1,7 @@
 package snapcharts.app;
 
 import snap.geom.HPos;
+import snap.util.FormatUtils;
 import snap.util.ListSel;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
@@ -8,6 +9,7 @@ import snap.view.*;
 import snapcharts.appmisc.SheetView;
 import snapcharts.model.DataChan;
 import snapcharts.model.DataSet;
+import snapcharts.model.DataStore;
 import snapcharts.model.DataType;
 import snapcharts.util.DataSetUtils;
 import snapcharts.util.DataUtils;
@@ -137,7 +139,13 @@ public class DataSetPane extends DocItemPane {
         _sheetView.setMinColCount(colCount);
 
         // Update PointCountLabel
-        setViewValue("PointCountLabel", pointCount + " Points");
+        DataStore dataStore = dset.getRawData();
+        String str = "Points: " + pointCount + "   |   ";
+        str += "Min X: " + FormatUtils.formatNum(dataStore.getMinX()) + "   |   ";
+        str += "Max X: " + FormatUtils.formatNum(dataStore.getMaxX()) + "   |   ";
+        str += "Min Y: " + FormatUtils.formatNum(dataStore.getMinY()) + "   |   ";
+        str += "Max Y: " + FormatUtils.formatNum(dataStore.getMaxY());
+        setViewValue("PointCountLabel", str);
     }
 
     /**

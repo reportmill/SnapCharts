@@ -278,7 +278,7 @@ public class WelcomePanel extends ViewOwner {
         // If alt-down, open favorite sample
         if (ViewUtils.isAltDown()) {
             WebURL url = WebURL.getURL("https://reportmill.com/snaptea/SnapChartsSamples/SolarData/SolarData.charts");
-            DocPane dpane = new DocPane().open(url);
+            DocPane dpane = new DocPane().openDocFromSource(url);
             dpane.setWindowVisible(true);
             hide();
         }
@@ -321,7 +321,7 @@ public class WelcomePanel extends ViewOwner {
     public void openFile(Object aSource)
     {
         // Have editor run open panel (if no document opened, just return)
-        DocPane dpane = new DocPane().open(aSource); if (dpane==null) return;
+        DocPane dpane = new DocPane().openDocFromSource(aSource); if (dpane==null) return;
 
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);

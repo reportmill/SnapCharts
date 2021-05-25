@@ -193,15 +193,33 @@ public class DocPane extends ViewOwner {
     public DocPane showOpenPanel(View aView)
     {
         // Get path from open panel for supported file extensions
-        String extensions[] = { DocPane.CHARTS_FILE_EXT, DocPane.CHARTS_SIMPLE_FILE_EXT };
+        String[] extensions = { DocPane.CHARTS_FILE_EXT, DocPane.CHARTS_SIMPLE_FILE_EXT };
         String path = FilePanel.showOpenPanel(aView, "Snap Charts File", extensions);
-        return open(path);
+        return openDocFromSource(path);
     }
 
     /**
-     * Creates a new editor window by opening the document from the given source.
+     * Creates a new editor window by opening the given chart doc.
      */
-    public DocPane open(Object aSource)
+    public DocPane openDoc(Doc aDoc)
+    {
+        // Set new doc
+        setDoc(aDoc);
+
+        // If source is string, add to recent files menu
+        WebURL url = aDoc.getSourceURL();
+        String urls = url != null ? url.getString() : null;
+        if(urls != null)
+            RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
+
+        // Return the editor
+        return this;
+    }
+
+    /**
+     * Creates a new editor window by opening chart doc from given source.
+     */
+    public DocPane openDocFromSource(Object aSource)
     {
         // Get URL for source
         WebURL url = WebURL.getURL(aSource);
@@ -209,17 +227,8 @@ public class DocPane extends ViewOwner {
         // Get doc for URL
         Doc doc = Doc.createDocFromSource(url);
 
-        // Set new doc
-        setDoc(doc);
-
-        // If source is string, add to recent files menu
-        url = doc.getSourceURL();
-        String urls = url!=null ? url.getString() : null;
-        if(urls!=null)
-            RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
-
-        // Return the editor
-        return this;
+        // Return call to openDoc
+        return openDoc(doc);
     }
 
     /**
@@ -228,9 +237,9 @@ public class DocPane extends ViewOwner {
     public void saveAs()
     {
         // Run save panel, set Document.Source to path and re-save (or just return if cancelled)
-        String exts[] = new String[] { CHARTS_FILE_EXT };
+        String[] exts = new String[] { CHARTS_FILE_EXT };
         //String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
-        WebFile file = FilePanel.showSavePanelWeb(getUI(), "Snap Charts file", exts); if (file==null) return;
+        WebFile file = FilePanel.showSavePanelWeb(getUI(), "Snap Charts file", exts); if (file == null) return;
 
         getDoc().setSourceURL(file.getURL());
         save();
@@ -242,7 +251,7 @@ public class DocPane extends ViewOwner {
     public void save()
     {
         // If can't save to current source, do SaveAs instead
-        WebURL url = getSourceURL(); if (url==null) { saveAs(); return; }
+        WebURL url = getSourceURL(); if (url == null) { saveAs(); return; }
 
         // Make sure editor isn't previewing and has focus (to commit any inspector textfield changes)
         //getEditor().requestFocus();
@@ -292,7 +301,7 @@ public class DocPane extends ViewOwner {
 
         // Re-open filename
         getSourceURL().getFile().reload();
-        open(getSourceURL());
+        openDocFromSource(getSourceURL());
     }
 
     /**

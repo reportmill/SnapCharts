@@ -2,7 +2,9 @@ package snapcharts.app;
 import snap.gfx.GFXEnv;
 import snap.util.Prefs;
 import snap.util.SnapUtils;
+import snap.view.ViewUtils;
 import snap.web.WebURL;
+import snapcharts.doc.Doc;
 
 import java.io.File;
 
@@ -33,8 +35,15 @@ public class App {
 
         // Handle AppLaunchURL
         if (_openOnLaunchURL != null) {
-            DocPane dpane = new DocPane().open(_openOnLaunchURL);
-            dpane.setWindowVisible(true);
+
+            // Open DocPane from launch URL source and make visible
+            DocPane docPane = new DocPane().openDocFromSource(_openOnLaunchURL);
+            docPane.setWindowVisible(true);
+
+            // If only one chart, hide DocPane.Siderbar
+            Doc doc = docPane.getDoc();
+            if (doc.getItemCount() == 1 && doc.getCharts().size() == 1)
+                ViewUtils.runLater(() -> docPane.setShowSidebar(false));
         }
 
         // Otherwise just present WelcomePanel

@@ -19,6 +19,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     // Constants
     private static Insets DEFAULT_PADDING = new Insets(5, 5, 5, 5);
     private static Font DEFAULT_ENTRY_FONT = Font.Arial12.deriveFont(13).getBold();
+    private static Color DISABLED_COLOR = Color.LIGHTGRAY;
 
     /**
      * Constructor.
@@ -132,33 +133,19 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
      */
     private View createLegendEntry(DataSet aDataSet, int anIndex)
     {
-        // Get Symbol.Shape
-        Chart chart = getChart();
-        DataStyle dataStyle = aDataSet.getDataStyle();
-        Shape shp = dataStyle.getSymbol().copyForSize(8).getShape();
-        shp = shp.copyFor(new Transform(6, 6));
-
-        // If SCATTER, add crossbar
-        if (chart.getType() == ChartType.SCATTER) {
-            Shape shp1 = new Rect(2,9,16,2);
-            shp = Shape.add(shp, shp1);
-        }
-
-        // Create marker ShapeView
-        ShapeView shpView = new ShapeView(shp);
-        shpView.setPrefSize(20,20);
-
-        // Set color
-        shpView.setFill(dataStyle.getLineColor());
-
+        // Create Label for entry text
         String text = aDataSet.getName();
         Label label = new Label(text);
         label.setFont(DEFAULT_ENTRY_FONT);
         if (aDataSet.isDisabled()) {
-            shpView.setFill(Color.LIGHTGRAY);
             label.setTextFill(Color.LIGHTGRAY);
         }
-        label.setGraphic(shpView);
+
+        // Create/add EntryGraphicView for entry graphic
+        View entryGraphicView = new EntryGraphicView(aDataSet);
+        label.setGraphic(entryGraphicView);
+
+        // Return entry label
         return label;
     }
 
@@ -222,5 +209,66 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         double areaW = getWidth() - ins.getWidth();
         double areaH = getHeight() - ins.getHeight();
         _scaleBox.setBounds(areaX, areaY, areaW, areaH);
+    }
+
+    /**
+     * A placeholder view to paint entry graphic.
+     */
+    private class EntryGraphicView extends View {
+
+        // The DataSet
+        private DataSet  _dataSet;
+
+        // The DataStyle
+        private DataStyle  _dataStyle;
+
+        /**
+         * Constructor.
+         */
+        EntryGraphicView(DataSet aDataSet)
+        {
+            setPrefSize(24, 20);
+            _dataSet = aDataSet;
+            _dataStyle = aDataSet.getDataStyle();
+        }
+
+        @Override
+        protected void paintFront(Painter aPntr)
+        {
+            // Whether disabled
+            boolean disabled = _dataSet.isDisabled();
+
+            // Handle ShowArea
+            if (_dataStyle.isShowArea()) {
+                Color fillColor = _dataStyle.getFillColor();
+                aPntr.fillRectWithPaint(2, 9, 20, 7, fillColor);
+            }
+
+            // Handle ShowLine
+            if (_dataStyle.isShowLine()) {
+                Color lineColor = _dataStyle.getLineColor(); if (disabled) lineColor = DISABLED_COLOR;
+                aPntr.fillRectWithPaint(2, 9, 20, 2, lineColor);
+            }
+
+            // Handle ShowSymbol
+            if (_dataStyle.isShowSymbols()) {
+
+                // Get/paint symbol shape
+                Shape symbShape = _dataStyle.getSymbol().copyForSize(8).getShape();
+                symbShape = symbShape.copyFor(new Transform(8, 6));
+                Color symbColor = _dataStyle.getSymbolColor();
+                if (disabled) symbColor = DISABLED_COLOR;
+                aPntr.fillWithPaint(symbShape, symbColor);
+
+                // Paint border (if visible)
+                int borderWidth = _dataStyle.getSymbolBorderWidth();
+                if (borderWidth > 0) {
+                    Color borderColor = _dataStyle.getSymbolBorderColor();
+                    if (disabled) borderColor = DISABLED_COLOR;
+                    aPntr.setStroke(Stroke.getStroke(1));
+                    aPntr.drawWithPaint(symbShape, borderColor);
+                }
+            }
+        }
     }
 }
