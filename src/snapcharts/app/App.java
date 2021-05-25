@@ -5,6 +5,8 @@ import snap.util.SnapUtils;
 import snap.view.ViewUtils;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
+import snapcharts.doc.DocItem;
+import snapcharts.doc.DocItemGroup;
 
 import java.io.File;
 
@@ -43,7 +45,11 @@ public class App {
             // If only one chart, hide DocPane.Siderbar
             Doc doc = docPane.getDoc();
             if (doc.getItemCount() == 1 && doc.getCharts().size() == 1)
-                ViewUtils.runLater(() -> docPane.setShowSidebar(false));
+                ViewUtils.runLater(() -> {
+                    DocItem docItem = doc.getItem(0);
+                    docPane.setSelItem(docItem);
+                    docPane.setShowSidebar(false);
+                });
         }
 
         // Otherwise just present WelcomePanel
