@@ -6,6 +6,7 @@ import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.StringView;
 import snap.view.ViewAnim;
+import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
@@ -79,6 +80,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView.setTextFill(AXIS_LABEL_TEXT_COLOR);
         _titleView.setShrinkToFit(true);
         addChild(_titleView);
+
+        // Enable events
+        enableEvents(MouseEvents);
+        enableEvents(Scroll);
 
         // Create TickFormatter
         _tickFormat = new TickLabelFormat(this);
@@ -477,6 +482,15 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Reset title
         String title = axis.getTitle();
         _titleView.setText(title);
+    }
+
+    /**
+     * Override to forward to ChartHelper.
+     */
+    @Override
+    protected void processEvent(ViewEvent anEvent)
+    {
+        _chartHelper.processEventForChartPartView(this, anEvent);
     }
 
     /**

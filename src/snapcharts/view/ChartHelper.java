@@ -592,7 +592,7 @@ public abstract class ChartHelper {
     protected void processEventForChartPartView(ChartPartView aView, ViewEvent anEvent)
     {
         if (getChartType().isXYType())
-            _panZoomer.processEvent(anEvent);
+            _panZoomer.processEventForChartPartView(aView, anEvent);
     }
 
     /**
@@ -600,7 +600,6 @@ public abstract class ChartHelper {
      */
     protected void paintAboveForChartPartView(ChartPartView aView, Painter aPntr)
     {
-        // Paint PanZoomer
         if (aView instanceof DataView)
             _panZoomer.paintAbove(aPntr);
     }

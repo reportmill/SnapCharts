@@ -12,5 +12,10 @@ public enum AxisType {
     /**
      * Returns whether AxisType is Y type.
      */
-    public boolean isAnyY()  { return this==Y || this==Y2 || this==Y3 || this==Y4; }
+    public boolean isX()  { return this == X; }
+
+    /**
+     * Returns whether AxisType is Y type.
+     */
+    public boolean isAnyY()  { return this == Y || this == Y2 || this == Y3 || this == Y4; }
 }

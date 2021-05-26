@@ -148,8 +148,9 @@ public class DataView extends ChartPartView<DataSetList> {
     }
 
     /**
-     * Override to forward to PanZoom.
+     * Override to forward to ChartHelper.
      */
+    @Override
     protected void processEvent(ViewEvent anEvent)
     {
         // Handle MouseMove: Set ChartView.TargPoint
@@ -163,7 +164,7 @@ public class DataView extends ChartPartView<DataSetList> {
             _chartView.setTargPoint(null);
 
         // Forward to ChartHelper
-        else _chartHelper.processEventForChartPartView(this, anEvent);
+        _chartHelper.processEventForChartPartView(this, anEvent);
 
         // Handle MouseClick
         if (anEvent.isMouseClick() && anEvent.getClickCount() == 1) {
