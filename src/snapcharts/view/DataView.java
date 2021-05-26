@@ -5,7 +5,6 @@ import snap.view.ViewEvent;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
 import snapcharts.model.StyledChartPart;
-
 import java.util.Objects;
 
 /**
@@ -22,9 +21,6 @@ public class DataView extends ChartPartView<DataSetList> {
     // The DataAreas
     private DataArea[]  _dataAreas;
 
-    // A helper class to handle Pan/Zoom
-    private DataViewPanZoom  _panZoomer;
-
     // Constants
     public static int DEFAULT_REVEAL_TIME = 2000;
 
@@ -36,7 +32,6 @@ public class DataView extends ChartPartView<DataSetList> {
         _chartView = aChartView;
 
         // Create/set PanZoomer
-        _panZoomer = new DataViewPanZoom(this);
         enableEvents(MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
     }
 
@@ -113,29 +108,6 @@ public class DataView extends ChartPartView<DataSetList> {
     }
 
     /**
-     * Returns whether view is in ZoomSelectMode.
-     */
-    public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
-
-    /**
-     * Sets whether view is in ZoomSelectMode.
-     */
-    public void setZoomSelectMode(boolean aValue)
-    {
-        if (!getChartType().isXYType()) return;
-        _panZoomer.setZoomSelectMode(aValue);
-    }
-
-    /**
-     * Sets X/Y Axis min/max values for mouse drag points.
-     */
-    public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
-    {
-        if (!getChartType().isXYType()) return;
-        _panZoomer.scaleAxesMinMaxForFactor(aScale, isAnimated);
-    }
-
-    /**
      * Actual method to layout children.
      */
     protected void layoutImpl()
@@ -171,8 +143,8 @@ public class DataView extends ChartPartView<DataSetList> {
         for (DataArea dataArea : dataAreas)
             dataArea.paintDataAreaAbove(aPntr);
 
-        // Paint PanZoomer
-        _panZoomer.paintAbove(aPntr);
+        // Forward to ChartHelper hook
+        _chartHelper.paintAboveForChartPartView(this, aPntr);
     }
 
     /**
@@ -190,12 +162,11 @@ public class DataView extends ChartPartView<DataSetList> {
         else if (anEvent.isMouseExit())
             _chartView.setTargPoint(null);
 
-        // Forward to PanZoom
-        else if (getChartType().isXYType())
-            _panZoomer.processEvent(anEvent);
+        // Forward to ChartHelper
+        else _chartHelper.processEventForChartPartView(this, anEvent);
 
         // Handle MouseClick
-        if (anEvent.isMouseClick() && anEvent.getClickCount()==1) {
+        if (anEvent.isMouseClick() && anEvent.getClickCount() == 1) {
             DataPoint dpnt = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
             if (Objects.equals(dpnt, _chartView.getSelDataPoint()))
                 dpnt = null;

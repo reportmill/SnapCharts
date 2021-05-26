@@ -92,6 +92,15 @@ public class MinMax implements Cloneable {
     }
 
     /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        return "MinMax { " + "Min=" + getMin() + ", Max=" + getMax() + " }";
+    }
+
+    /**
      * Returns a MinMax from given object (or null if impossible).
      */
     public static MinMax getMinMax(Object anObj)

@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * A helper class to help DataView do Pan/Zoom.
  */
-public class DataViewPanZoom {
+public class ChartHelperPanZoom {
 
     // The ChartHelper
     private ChartHelper  _chartHelper;
@@ -40,10 +40,9 @@ public class DataViewPanZoom {
     /**
      * Constructor.
      */
-    public DataViewPanZoom(DataView aDataView)
+    public ChartHelperPanZoom(ChartHelper aChartHelper)
     {
-        _dataView = aDataView;
-        _chartHelper = _dataView.getChartHelper();
+        _chartHelper = aChartHelper;
     }
 
     /**
@@ -68,9 +67,10 @@ public class DataViewPanZoom {
     /**
      * Some conveniences.
      */
-    public ChartView getChartView()  { return _dataView.getChartView(); }
-    public double getWidth()  { return _dataView.getWidth(); }
-    public double getHeight()  { return _dataView.getHeight(); }
+    public ChartView getChartView()  { return _chartHelper.getChartView(); }
+    public DataView getDataView()  { return _chartHelper.getDataView(); }
+    public double getWidth()  { return getDataView().getWidth(); }
+    public double getHeight()  { return getDataView().getHeight(); }
 
     /**
      * Paint ZoomSelectRect, if ZoomSelectMode is set.
@@ -90,7 +90,7 @@ public class DataViewPanZoom {
      */
     protected void processEvent(ViewEvent anEvent)
     {
-        _chartHelper = _dataView.getChartHelper();
+        DataView dataView = getDataView();
 
         // Handle MousePress: Store Axis min/max values at MousePress
         if (anEvent.isMousePress()) {
@@ -130,7 +130,7 @@ public class DataViewPanZoom {
             // Handle ZoomSelectMode
             if (isZoomSelectMode()) {
                 _zoomSelectRect = Rect.get(_pressPoint, anEvent.getPoint());
-                _dataView.repaint();
+                dataView.repaint();
             }
 
             // Handle Shift axes
@@ -157,14 +157,14 @@ public class DataViewPanZoom {
             // Handle click
             else if (anEvent.isMouseClick()) {
                 ChartView chartView = getChartView();
-                Point pnt = _dataView.localToParent(anEvent.getX(), anEvent.getY(), chartView);
+                Point pnt = dataView.localToParent(anEvent.getX(), anEvent.getY(), chartView);
                 chartView.setTargPoint(pnt);
             }
         }
 
         // Handle Scroll
         else if (anEvent.isScroll()) {
-            if (_dataView.isMouseDown()) return;
+            if (dataView.isMouseDown()) return;
             scaleAxesMinMaxForScroll(anEvent);
         }
     }
@@ -174,27 +174,35 @@ public class DataViewPanZoom {
      */
     private void shiftAxesMinMaxForDrag(double dispX0, double dispY0, double dispX1, double dispY1)
     {
-        // Iterate over axes and scale
+        // Iterate over axes and shift each (using X or Y coords based on AxisType)
         AxisView[] axisViews = _chartHelper.getAxisViews();
         for (AxisView axisView : axisViews) {
-
-            // Get Axis MinMax on press (I don't think this can ever be null)
             AxisType axisType = axisView.getAxisType();
-            MinMax pressMinMax = _axesMinMaxOnPress.get(axisType);
-            if (pressMinMax == null) { System.err.println("PanZoom: Null axis min/max"); return; }
-
-            // Calculate new axis min/max for
             double dispXY0 = axisType == AxisType.X ? dispX0 : dispY0;
             double dispXY1 = axisType == AxisType.X ? dispX1 : dispY1;
-            double dataXY1 = axisView.viewToData(dispXY0);
-            double dataXY2 = axisView.viewToData(dispXY1);
-            double dispMinXY = pressMinMax.getMin() - (dataXY2 - dataXY1);
-            double dispMaxXY = pressMinMax.getMax() - (dataXY2 - dataXY1);
-
-            // Set new X Axis min/max
-            axisView.setAxisMin(dispMinXY);
-            axisView.setAxisMax(dispMaxXY);
+            shiftAxisMinMaxForDrag(axisView, dispXY0, dispXY1);
         }
+    }
+
+    /**
+     * Translate Axes min/max values for mouse drag points.
+     */
+    private void shiftAxisMinMaxForDrag(AxisView anAxisView, double dispXY0, double dispXY1)
+    {
+        // Get Axis MinMax on press (I don't think this can ever be null)
+        AxisType axisType = anAxisView.getAxisType();
+        MinMax pressMinMax = _axesMinMaxOnPress.get(axisType);
+        if (pressMinMax == null) { System.err.println("PanZoom: Null axis min/max"); return; }
+
+        // Calculate new axis min/max for
+        double dataXY1 = anAxisView.viewToData(dispXY0);
+        double dataXY2 = anAxisView.viewToData(dispXY1);
+        double dispMinXY = pressMinMax.getMin() - (dataXY2 - dataXY1);
+        double dispMaxXY = pressMinMax.getMax() - (dataXY2 - dataXY1);
+
+        // Set new X Axis min/max
+        anAxisView.setAxisMin(dispMinXY);
+        anAxisView.setAxisMax(dispMaxXY);
    }
 
     /**

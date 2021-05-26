@@ -1,8 +1,10 @@
 package snapcharts.view;
 import snap.geom.Point;
+import snap.gfx.Painter;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
 import snap.view.View;
+import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.viewx.*;
@@ -27,7 +29,7 @@ public abstract class ChartHelper {
     private AxisType[]  _axisTypes;
 
     // The AxisViews
-    private Map<AxisType,AxisView> _axisViews = new HashMap<>();
+    private Map<AxisType,AxisView>  _axisViews = new HashMap<>();
 
     // The AxisViews array
     private AxisView[]  _axisViewsArray;
@@ -41,6 +43,9 @@ public abstract class ChartHelper {
     // The DataAreas
     private DataArea[]  _dataAreas;
 
+    // A helper class to handle Pan/Zoom
+    private ChartHelperPanZoom _panZoomer;
+
     /**
      * Constructor.
      */
@@ -50,6 +55,9 @@ public abstract class ChartHelper {
 
         // Init to empty array so views get added in resetView() + resetAxisViews()
         _axisTypes = new AxisType[0];
+
+        // Create PanZoomer
+        _panZoomer = new ChartHelperPanZoom(this);
     }
 
     /**
@@ -562,6 +570,48 @@ public abstract class ChartHelper {
         AxisView[] oldAxisViews = _chartView.getChildrenForClass(AxisView.class);
         for (AxisView axisView : oldAxisViews)
             ViewUtils.removeChild(_chartView, axisView);
+    }
+
+    /**
+     * Returns whether view is in ZoomSelectMode.
+     */
+    public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
+
+    /**
+     * Sets whether view is in ZoomSelectMode.
+     */
+    public void setZoomSelectMode(boolean aValue)
+    {
+        if (!getChartType().isXYType()) return;
+        _panZoomer.setZoomSelectMode(aValue);
+    }
+
+    /**
+     * Called to process event for hook.
+     */
+    protected void processEventForChartPartView(ChartPartView aView, ViewEvent anEvent)
+    {
+        if (getChartType().isXYType())
+            _panZoomer.processEvent(anEvent);
+    }
+
+    /**
+     * Override to forward to PanZoom.
+     */
+    protected void paintAboveForChartPartView(ChartPartView aView, Painter aPntr)
+    {
+        // Paint PanZoomer
+        if (aView instanceof DataView)
+            _panZoomer.paintAbove(aPntr);
+    }
+
+    /**
+     * Sets X/Y Axis min/max values for mouse drag points.
+     */
+    public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
+    {
+        if (getChartType().isXYType())
+            _panZoomer.scaleAxesMinMaxForFactor(aScale, isAnimated);
     }
 
     /**

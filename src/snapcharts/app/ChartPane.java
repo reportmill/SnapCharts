@@ -314,8 +314,8 @@ public class ChartPane extends DocItemPane {
     protected void resetUI()
     {
         // Update ZoomSelectButton
-        DataView dataView = getDataView();
-        setViewValue("ZoomSelectButton", dataView!=null && dataView.isZoomSelectMode());
+        ChartHelper chartHelper = getChartHelper();
+        setViewValue("ZoomSelectButton", chartHelper.isZoomSelectMode());
 
         // Make sure TabView has DataSetPane UI view (not Label placeholder)
         int selTabIndex = _tabView.getSelIndex();
@@ -344,15 +344,15 @@ public class ChartPane extends DocItemPane {
     {
         // Handle ZoomSelectButton
         if (anEvent.equals("ZoomSelectButton")) {
-            DataView dataView = getDataView();
-            dataView.setZoomSelectMode(anEvent.getBoolValue());
+            ChartHelper chartHelper = getChartHelper();
+            chartHelper.setZoomSelectMode(anEvent.getBoolValue());
         }
 
         // Handle ZoomInButton, ZoomOutButton
         if (anEvent.equals("ZoomInButton") || anEvent.equals("ZoomOutButton")) {
-            DataView dataView = getDataView();
             double scale = anEvent.equals("ZoomInButton") ? .5 : 2;
-            dataView.scaleAxesMinMaxForFactor(scale, true);
+            ChartHelper chartHelper = getChartHelper();
+            chartHelper.scaleAxesMinMaxForFactor(scale, true);
         }
 
         // Handle ResetButton

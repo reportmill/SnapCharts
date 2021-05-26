@@ -334,7 +334,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     {
         if (getTargDataPoint() == null)
             return false;
-        if (getDataView().isZoomSelectMode())
+        if (getChartHelper().isZoomSelectMode())
             return false;
         return true;
     }
