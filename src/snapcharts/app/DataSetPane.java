@@ -133,7 +133,7 @@ public class DataSetPane extends DocItemPane {
 
         // Set TableView row & col count
         int pointCount = dset.getPointCount();
-        int rowCount = pointCount + 1;
+        int rowCount = Math.min(pointCount + 1, 500); // SheetView/TableView can't handle 1000s
         int colCount = dataType.getChannelCount();
         _sheetView.setMinRowCount(rowCount);
         _sheetView.setMinColCount(colCount);

@@ -138,7 +138,7 @@ public class AxisInsp extends ChartPartInsp {
             axis.setMinValue(getViewFloatValue("MinBoundText"));
         }
         if (anEvent.equals("MinBoundText")) {
-            double val = Math.min(anEvent.getFloatValue(), getViewFloatValue("MaxBoundText") - 1);
+            double val = Math.min(anEvent.getFloatValue(), getViewFloatValue("MaxBoundText"));
             axis.setMinBound(AxisBound.VALUE);
             axis.setMinValue(val);
         }
@@ -153,7 +153,7 @@ public class AxisInsp extends ChartPartInsp {
             axis.setMaxValue(getViewFloatValue("MaxBoundText"));
         }
         if (anEvent.equals("MaxBoundText")) {
-            double val = Math.max(anEvent.getFloatValue(), getViewFloatValue("MinBoundText") + 1);
+            double val = Math.max(anEvent.getFloatValue(), getViewFloatValue("MinBoundText"));
             axis.setMaxBound(AxisBound.VALUE);
             axis.setMaxValue(val);
         }
