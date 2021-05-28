@@ -3,7 +3,6 @@ import snap.geom.Rect;
 import snap.geom.RoundRect;
 import snap.geom.Shape;
 import snap.gfx.*;
-import snap.util.PropChange;
 import snap.view.*;
 import snapcharts.model.*;
 import snapcharts.view.*;
@@ -25,13 +24,17 @@ public class ChartPaneSel {
     // The targeted ChartPart
     private ChartPart  _targPart;
 
-    // The cached ImageBox/image for painting current selection
-    private ImageBox  _selImageBox;
+    // The cached ImageBox/image for painting current selection, target
+    private ImageBox  _selImageBox, _targImageBox;
 
     // Constants
     private static Color  SEL_COLOR = Color.get("#039ED3");
     private static Effect  SEL_EFFECT = new ShadowEffect(8, SEL_COLOR.darker(), 0, 0);
     private static Border  SEL_BORDER = Border.createLineBorder(SEL_COLOR.brighter(), 3);
+    private static Color  TARGET_COLOR = Color.LIGHTGRAY.copyForAlpha(.4);
+    private static Stroke  TARGET_STROKE = Stroke.Stroke1;
+    private static Effect  TARG_EFFECT = new ShadowEffect(8, Color.GRAY, 0, 0);
+    private static Border  TARG_BORDER = Border.createLineBorder(Color.LIGHTGRAY, 3);
 
     /**
      * Constructor.
@@ -48,6 +51,11 @@ public class ChartPaneSel {
         // Start listening to ChartBox MousePress (for select Chart)
         _chartPane._chartBox.addEventHandler(e -> chartBoxMousePress(e), View.MousePress);
     }
+
+    /**
+     * Returns the chart.
+     */
+    private Chart getChart()  { return _chartView.getChart(); }
 
     /**
      * Returns the selected part.
@@ -166,7 +174,7 @@ public class ChartPaneSel {
         double chartX = anEvent.getX() - _chartView.getX();
         double chartY = anEvent.getY() - _chartView.getY();
         if (!_chartView.contains(chartX, chartY))
-            setSelChartPart(_chartView.getChart());
+            setSelChartPart(getChart());
     }
 
     /**
@@ -186,9 +194,24 @@ public class ChartPaneSel {
         }
 
         // Handle MousePress
-        else if (anEvent.isMousePress()) {
-            ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
-            setSelChartPart(hitPart);
+        else if (anEvent.isMousePress())
+            _chartView.repaint();
+
+        // Handle MouseRelease: If click, select part at event point, otherwise select chart
+        else if (anEvent.isMouseRelease()) {
+
+            // Handle Click: Select part at mouse point
+            boolean isClick = anEvent.isEventWithinTimeAndDist(-1, 1);
+            if (isClick) {
+                ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
+                setSelChartPart(hitPart);
+            }
+
+            // Otherwise, clear selection
+            else setSelChartPart(getChart());
+
+            // Repaint because targ paint might change
+            _chartView.repaint();
         }
     }
 
@@ -208,7 +231,7 @@ public class ChartPaneSel {
         }
 
         // Get chartPart for hit view and return
-        ChartPart chartPart = hitView != null ? hitView.getChartPart() : _chartView.getChart();
+        ChartPart chartPart = hitView != null ? hitView.getChartPart() : getChart();
         return chartPart;
     }
 
@@ -285,21 +308,6 @@ public class ChartPaneSel {
     }
 
     /**
-     * Returns the image box for sel view.
-     */
-    private ImageBox getSelImageBoxForShape(Shape selViewShapeInHost)
-    {
-        // If ImageBox with same size already set, use it
-        if (_selImageBox != null && _selImageBox.getWidth() == selViewShapeInHost.getWidth() &&
-            _selImageBox.getHeight() == selViewShapeInHost.getHeight())
-            return _selImageBox;
-
-        // Get image box for SelView bounds shape
-        ImageBox imgBox = getImageBoxForShapeAndEffect(selViewShapeInHost, SEL_EFFECT, SEL_BORDER);
-        return _selImageBox = imgBox;
-    }
-
-    /**
      * Paints the targeting.
      */
     protected void paintTargView(Painter aPntr, View targView, View aHostView)
@@ -317,12 +325,51 @@ public class ChartPaneSel {
         Shape targViewShape = new RoundRect(targViewBounds, 4);
         Shape targViewShapeInHost = targView.localToParent(targViewShape, aHostView);
 
-        // Paint TargViewShapeInHost
-        Stroke TARGET_STROKE = Stroke.Stroke1;
-        Color TARGET_COLOR = Color.LIGHTGRAY.copyForAlpha(.4);
-        aPntr.setStroke(TARGET_STROKE);
-        aPntr.setColor(TARGET_COLOR);
-        aPntr.draw(targViewShapeInHost);
+        // If MouseDown, paint effect
+        if (ViewUtils.isMouseDown()) {
+            ImageBox imgBox = getTargImageBoxForShape(targViewShapeInHost);
+            Rect targViewBoundsInHost = targViewShapeInHost.getBounds();
+            aPntr.setOpacity(.7);
+            imgBox.paintImageBox(aPntr, targViewBoundsInHost.x, targViewBoundsInHost.y);
+            aPntr.setOpacity(1);
+        }
+
+        // Otherwise, Paint TargViewShapeInHost
+        else {
+            aPntr.setStroke(TARGET_STROKE);
+            aPntr.setColor(TARGET_COLOR);
+            aPntr.draw(targViewShapeInHost);
+        }
+    }
+
+    /**
+     * Returns the image box for sel view.
+     */
+    private ImageBox getSelImageBoxForShape(Shape selViewShapeInHost)
+    {
+        // If ImageBox with same size already set, use it
+        if (_selImageBox != null && _selImageBox.getWidth() == selViewShapeInHost.getWidth() &&
+                _selImageBox.getHeight() == selViewShapeInHost.getHeight())
+            return _selImageBox;
+
+        // Get image box for SelView bounds shape
+        ImageBox imgBox = getImageBoxForShapeAndEffect(selViewShapeInHost, SEL_EFFECT, SEL_BORDER);
+        return _selImageBox = imgBox;
+    }
+
+    /**
+     * Returns the image box for targ view.
+     */
+    private ImageBox getTargImageBoxForShape(Shape targViewShapeInHost)
+    {
+        // If ImageBox with same size already set, use it
+        if (_targImageBox != null && _targImageBox.getWidth() == targViewShapeInHost.getWidth() &&
+                _targImageBox.getHeight() == targViewShapeInHost.getHeight())
+            return _targImageBox;
+
+        // Get image box for SelView bounds shape
+        ImageBox imgBox = getImageBoxForShapeAndEffect(targViewShapeInHost, TARG_EFFECT, TARG_BORDER);
+        return _targImageBox = imgBox;
     }
 
     /**
