@@ -281,9 +281,13 @@ public class ChartViewLayout {
      */
     private void layoutLegendInside()
     {
+        // Get LegendMargin - if empty, change to 5, otherwise looks too close to border
+        Insets legendMargin = _legendProxy.getMargin();
+        if (legendMargin.isEmpty())
+            legendMargin = new Insets(5, 5, 5, 5);
+
         // Get Legend width/height (no larger than DataView bounds)
         Rect dataBnds = _dataAreaProxy.getBounds();
-        Insets legendMargin = _legendProxy.getMargin();
         double legendW = Math.min(_legendProxy.getBestWidth(-1) + legendMargin.getWidth(), dataBnds.width);
         double legendH = Math.min(_legendProxy.getBestHeight(-1) + legendMargin.getHeight(), dataBnds.height);
 

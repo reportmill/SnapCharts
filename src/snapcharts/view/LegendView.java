@@ -93,26 +93,15 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
 
         // Handle Inside
         if (legend.isInside()) {
-            if (legend.getFill() == null)
-                setFill(Color.WHITE);
-            if (legend.getBorder() == null)
-                setBorder(Color.BLACK, 1);
-            setMargin(8, 8, 8, 8);
             setPadding(5, 5, 5, 5);
             ChartView chartView = getChartView();
-            int childCount = chartView.getChildCount();
-            if (indexInHost() != childCount - 1) {
-                ViewUtils.removeChild(chartView, this);
-                ViewUtils.addChild(chartView, this);
-            }
+            ViewUtils.moveToFront(chartView, this);
         }
+
+        // Handle outside
         else {
-            setBorder(legend.getBorder());
-            setMargin(null);
             setPadding(null);
         }
-        // Remove children
-        //removeChildren();
 
         // Iterate over DataSets and add entries
         DataSetList dsetList = getDataSetList();
@@ -124,7 +113,6 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
 
             // Register row to enable/disable
             entryView.addEventHandler(e -> entryWasClicked(e, entryView), MouseRelease);
-            //shpView.setPickable(false); sview.setPickable(false);
         }
     }
 

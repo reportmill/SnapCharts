@@ -29,4 +29,23 @@
     </ColView>
     <CheckBox Name="InsideCheckBox" text="Inside" />
   </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Fill:" />
+    <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="Border:" />
+    <ColorButton Name="BorderColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+    <TextField Name="BorderWidthText" Align="CENTER" PrefWidth="40" Margin="0,0,0,5" />
+    <Button Name="BorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+      <font name="Arial" size="13" />
+    </Button>
+    <Button Name="BorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+    <Button Name="BorderResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
 </ColView>

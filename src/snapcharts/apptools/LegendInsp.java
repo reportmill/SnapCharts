@@ -1,8 +1,7 @@
 package snapcharts.apptools;
-
 import snap.geom.Pos;
+import snap.gfx.Border;
 import snap.gfx.Color;
-import snap.gfx.ShadowEffect;
 import snap.util.StringUtils;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
@@ -52,6 +51,18 @@ public class LegendInsp extends ChartPartInsp {
 
         // Reset InsideCheckBox
         setViewValue("InsideCheckBox", legend.isInside());
+
+        // Reset FillColorButton, FillColorResetButton
+        setViewValue("FillColorButton", legend.getFill() != null ? legend.getFill().getColor() : null);
+        setViewVisible("FillColorResetButton", legend.getFill() != null);
+
+        // Reset BorderColorButton
+        Border border = legend.getBorder();
+        setViewValue("BorderColorButton", border != null ? border.getColor() : null);
+
+        // Reset BorderWidthText, BorderWidthResetButton
+        setViewValue("BorderWidthText", border != null ? border.getWidth() : 0);
+        setViewVisible("BorderResetButton", border != null);
     }
 
     /**
@@ -80,5 +91,31 @@ public class LegendInsp extends ChartPartInsp {
             legend.setInside(anEvent.getBoolValue());
             //legend.setEffect(anEvent.getBoolValue() ? new ShadowEffect() : null);
         }
+
+        // Handle FillColorButton, FillColorResetButton
+        if (anEvent.equals("FillColorButton")) {
+            Color color = (Color) getViewValue("FillColorButton");
+            legend.setFill(color);
+        }
+        if (anEvent.equals("FillColorResetButton"))
+            legend.setFill(null);
+
+        // Handle BorderColorButton
+        Border border = legend.getBorder();
+        Border borderNonNull = border != null ? border : Border.blackBorder();
+        if (anEvent.equals("BorderColorButton")) {
+            Color color = (Color) getViewValue("BorderColorButton");
+            legend.setBorder(borderNonNull.copyForColor(color));
+        }
+
+        // Handle BorderWidthText, BorderWidthAdd1Button, BorderWidthSub1Button, BorderWidthResetButton
+        if (anEvent.equals("BorderWidthText"))
+            legend.setBorder(borderNonNull.copyForStrokeWidth(Math.max(anEvent.getIntValue(), 0)));
+        if (anEvent.equals("BorderWidthAdd1Button"))
+            legend.setBorder(border == null ? borderNonNull : border.copyForStrokeWidth(border.getWidth() + 1));
+        if (anEvent.equals("BorderWidthSub1Button"))
+            legend.setBorder(borderNonNull.copyForStrokeWidth(Math.max(borderNonNull.getWidth() - 1, 1)));
+        if (anEvent.equals("BorderResetButton"))
+            legend.setBorder(null);
     }
 }
