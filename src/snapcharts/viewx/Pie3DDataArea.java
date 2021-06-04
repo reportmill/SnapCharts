@@ -97,7 +97,7 @@ public class Pie3DDataArea extends PieDataArea {
 
         // Create/configure bar path/path3d and add to scene
         Path path = new Path(arc);
-        PathBox3D bar = new PathBox3D(path, z0, z1, false);
+        PathBox3D bar = new PathBox3D(path, z0, z1);
         bar.setColor(aColor);
         bar.setStroke(Color.BLACK, 1);
         _scene.addShape(bar);

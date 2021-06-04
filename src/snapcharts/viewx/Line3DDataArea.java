@@ -211,7 +211,7 @@ public class Line3DDataArea extends DataArea {
         double lineZ = sectionDepth * (anIndex + .5);
 
         // Create/configure bar path/path3d and add to scene
-        PathBox3D bar = new PathBox3D(path, lineZ, lineZ, false);
+        PathBox3D bar = new PathBox3D(path, lineZ, lineZ);
         bar.setColor(dataFillColor);
         bar.setStroke(dataStrokeColor, 1);
         _scene.addShape(bar);
