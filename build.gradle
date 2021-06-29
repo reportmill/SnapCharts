@@ -1,7 +1,12 @@
 
 plugins {
     id 'application'
+    id 'java-library'
+    id 'maven-publish'
 }
+
+group 'com.reportmill'
+version '1.0.0'
 
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.main.resources.srcDirs = ['src']
@@ -13,23 +18,59 @@ java {
 
 repositories {
 
-    // Jitpack makes builds from GitHub repos
+    mavenCentral()
+
+    // Jitpack.io builds Github packages
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
 
-    // If Local SnapKit project, use that, otherwise use latest SnapKit GitHub repo
-    if (findProject(':SnapKit') != null) { println 'Using local SnapKit project'
-        compile project(':SnapKit') }
-    else { println 'Using latest SnapKit GitHub repo'
-        implementation 'com.github.reportmill:SnapKit:master-SNAPSHOT'  }
+    // If Local SnapKit project, use it
+    if (findProject(':SnapKit') != null) {
+        println 'Using local SnapKit project'
+        compile project(':SnapKit')
+    }
 
-    // If Local RMDraw project, use that, otherwise use latest RMDraw GitHub repo
-    if (findProject(':RMDraw') != null) { println 'Using local RMDraw project'
-        compile project(':RMDraw') }
-    else { println 'Using latest RMDraw GitHub repo'
-        implementation 'com.github.reportmill:RMDraw:master-SNAPSHOT'  }
+    // Otherwise use GitHub SnapKit repo build
+    else {
+        println 'Using latest SnapKit GitHub package'
+        implementation 'com.reportmill:snapkit:1.0.0'
+    }
+
+    // If Local RMDraw project, use it,
+    if (findProject(':RMDraw') != null) {
+        println 'Using local RMDraw project'
+        compile project(':RMDraw')
+    }
+
+    // Otherwise use GitHub RMDraw repo build
+    else {
+        println 'Using latest RMDraw GitHub package'
+        implementation 'com.reportmill:rmdraw:1.0.0'
+    }
 }
 
 mainClassName = 'snapcharts.app.App'
+
+publishing {
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/reportmill/SnapCharts"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+                println "GitHubPackages Publish Artifact:\n\tusername=$username\n\ttoken=$password"
+            }
+        }
+    }
+
+    publications {
+        gpr(MavenPublication) {
+            artifactId 'snapcharts'
+            from(components.java)
+        }
+    }
+}
