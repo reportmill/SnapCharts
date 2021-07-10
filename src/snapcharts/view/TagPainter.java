@@ -47,9 +47,6 @@ public class TagPainter {
         DataStyle dataStyle = _dataArea.getDataStyle();
         Font font = dataStyle.getTagFont();
 
-        // Get data color (used for border, connect line and data point dot)
-        Color dataColor = dataStyle.getTagColor();
-
         // Get position
         Pos tagPos = Pos.TOP_CENTER;
         double symbolSize = dataStyle.getSymbolSize();
@@ -58,32 +55,55 @@ public class TagPainter {
         // Declare LastBox var for checks
         List<StringBox> tagBoxList = new ArrayList<>();
 
+        // Get info
         DataStore procData = _dataArea.getProcessedData();
-        DataStore dispData = _dataArea.getDispData();
-        int pointCount = Math.min(procData.getPointCount(), dispData.getPointCount()); // Shouldn't need this
-        Rect dataBounds = _dataArea.getBoundsLocal();
-
         boolean hasZ = procData.getDataType().hasZ();
         Color tagBorderColor = dataStyle.getTagBorderColor();
         int tagBorderWidth = dataStyle.getTagBorderWidth();
         Border tagBorder = tagBorderWidth > 0 ? Border.createLineBorder(tagBorderColor, tagBorderWidth) : null;
 
-        // Iterate over points and paint each tag
-        for (int i = 0; i < pointCount; i++)
-        {
+        // Get DispData and start/end index for current visible range
+        DataStore dispData = _dataArea.getDispData();
+        int startIndex = _dataArea.getDispDataStartIndex();
+        int endIndex = _dataArea.getDispDataEndIndex();
+
+        // Get VisPointCount and MaxPointCount
+        int visPointCount = endIndex - startIndex + 1;
+        int maxPointCount = dataStyle.getMaxPointCount();
+
+        // Get point increment (as real number, so we can round to point index for distribution)
+        double incrementReal = 1;
+        if (maxPointCount == 1)
+            startIndex = endIndex;
+        if (maxPointCount > 1 && maxPointCount < visPointCount)
+            incrementReal = (visPointCount - 1) / (maxPointCount - 1d);
+
+        // Loop variables for point index (rounded) and point index (real)
+        int index = startIndex;
+        double indexReal = startIndex;
+        Rect dataBounds = _dataArea.getBoundsLocal();
+
+        // Iterate over point indexes by incrementReal (round to get nearest index)
+        while (index <= endIndex) {
+
             // Get StringBox for string, X/Y and TagPos
-            double val = hasZ ? procData.getZ(i) : procData.getY(i);
+            double val = hasZ ? procData.getZ(index) : procData.getY(index);
             String valStr = FormatUtils.formatNum(val);
-            double disX = dispData.getX(i);
-            double disY = dispData.getY(i);
+            double disX = dispData.getX(index);
+            double disY = dispData.getY(index);
 
-            // If box outside data bounds, skip
-            if (!dataBounds.contains(disX, disY))
-                continue;
+            // Create/add TagBox
+            if (dataBounds.contains(disX, disY)) {
+                StringBox strBox = getTagStringBox(valStr, font, tagBorder, disX, disY, tagPos, tagOffset);
+                tagBoxList.add(strBox);
+            }
 
-            // Create TagBox
-            StringBox strBox = getTagStringBox(valStr, font, tagBorder, disX, disY, tagPos, tagOffset);
-            tagBoxList.add(strBox);
+            // Calculate next index
+            if (incrementReal > 1) {
+                indexReal += incrementReal;
+                index = (int) Math.round(indexReal);
+            }
+            else index++;
         }
 
         // Paint boxes last, so they will be above all data-point lines/dots

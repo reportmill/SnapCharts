@@ -66,6 +66,9 @@ public class DataStyle extends StyledChartPart {
     // The data tag box border width
     private int  _tagBorderWidth = DEFAULT_TAG_BORDER_WIDTH;
 
+    // The maximum number of symbols/tags visible
+    private int  _maxPointCount = DEFAULT_MAX_POINT_COUNT;
+
     // The cached symbol
     private Symbol  _symbol;
 
@@ -87,6 +90,7 @@ public class DataStyle extends StyledChartPart {
     public static final String TagColor_Prop = "TagColor";
     public static final String TagBorderColor_Prop = "TagBorderColor";
     public static final String TagBorderWidth_Prop = "TagBorderWidth";
+    public static final String MaxPointCount_Prop = "MaxPointCount";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
@@ -99,6 +103,7 @@ public class DataStyle extends StyledChartPart {
     public static final Color DEFAULT_TAG_COLOR = null;
     public static final Color DEFAULT_TAG_BORDER_COLOR = null;
     public static final int DEFAULT_TAG_BORDER_WIDTH = 0;
+    public static final int DEFAULT_MAX_POINT_COUNT = 0;
 
     // Constant for how dataset area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
@@ -495,6 +500,20 @@ public class DataStyle extends StyledChartPart {
     }
 
     /**
+     * Returns the maximum number of symbols/tags visible.
+     */
+    public int getMaxPointCount()  { return _maxPointCount; }
+
+    /**
+     * Sets the maximum number of symbols/tags visible.
+     */
+    public void setMaxPointCount(int aValue)
+    {
+        if (aValue == getMaxPointCount()) return;
+        firePropChange(MaxPointCount_Prop, _maxPointCount, _maxPointCount = aValue);
+    }
+
+    /**
      * Override to define more defaults
      */
     @Override
@@ -574,6 +593,10 @@ public class DataStyle extends StyledChartPart {
             e.add(TagBorderColor_Prop, getTagBorderColor().toHexString());
         if (getTagBorderWidth() != DEFAULT_TAG_BORDER_WIDTH)
             e.add(TagBorderWidth_Prop, getTagBorderWidth());
+
+        // Archive MaxPointCount
+        if (getMaxPointCount() != DEFAULT_MAX_POINT_COUNT)
+            e.add(MaxPointCount_Prop, getMaxPointCount());
 
         // Return element
         return e;
@@ -660,6 +683,10 @@ public class DataStyle extends StyledChartPart {
         }
         if (anElement.hasAttribute(TagBorderWidth_Prop))
             setTagBorderWidth(anElement.getAttributeIntValue(TagBorderWidth_Prop));
+
+        // Unarchive MaxPointCount
+        if (anElement.hasAttribute(MaxPointCount_Prop))
+            setMaxPointCount(anElement.getAttributeIntValue(MaxPointCount_Prop));
 
         // Return this part
         return this;

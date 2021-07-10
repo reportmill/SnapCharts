@@ -197,6 +197,43 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the start index for display data.
+     */
+    public int getDispDataStartIndex()
+    {
+        // Get DisplayData and PointCount
+        DataStore dispData = getDispData();
+        int pointCount = dispData.getPointCount();
+
+        // Iterate over DispData to find first visible point index
+        int startIndex = 0;
+        while (startIndex < pointCount && dispData.getX(startIndex) < 0)
+            startIndex++;
+
+        // Return start index
+        return startIndex;
+    }
+
+    /**
+     * Returns the start index for display data.
+     */
+    public int getDispDataEndIndex()
+    {
+        // Get DisplayData and PointCount
+        DataStore dispData = getDispData();
+        int pointCount = dispData.getPointCount();
+
+        // Iterate over DispData (back-to-front) to find last visible point index
+        int endIndex = pointCount - 1;
+        double areaMaxX = getWidth();
+        while (endIndex > 0 && dispData.getX(endIndex) > areaMaxX)
+            endIndex--;
+
+        // Return end index
+        return endIndex;
+    }
+
+    /**
      * Returns whether dataset is selected.
      */
     public boolean isSelected()

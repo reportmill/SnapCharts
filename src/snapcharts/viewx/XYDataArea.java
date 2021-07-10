@@ -111,13 +111,13 @@ public class XYDataArea extends DataArea {
         if (dataShape instanceof SplicerShape)
             paintTailShape(aPntr, (SplicerShape) dataShape);
 
-        // If ShowSymbols, paint symbols
-        if (showSymbols)
-            paintSymbols(aPntr);
-
         // Paint selected point
         if (isSelected)
             paintSelDataPoint(aPntr);
+
+        // If ShowSymbols, paint symbols
+        if (showSymbols)
+            paintSymbols(aPntr);
 
         // If reveal not full, resture gstate
         if (reveal < 1 && (showSymbols || showArea))
@@ -148,16 +148,32 @@ public class XYDataArea extends DataArea {
         // Get SymbolBorderStroke
         Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
 
-        // Get DisplayData
+        // Get DispData and start/end index for current visible range
         DataStore dispData = getDispData();
-        int pointCount = dispData.getPointCount();
+        int startIndex = getDispDataStartIndex();
+        int endIndex = getDispDataEndIndex();
 
-        // Iterate over values
-        for (int j=0; j<pointCount; j++) {
+        // Get VisPointCount and MaxPointCount
+        int visPointCount = endIndex - startIndex + 1;
+        int maxPointCount = dataStyle.getMaxPointCount();
+
+        // Get point increment (as real number, so we can round to point index for distribution)
+        double incrementReal = 1;
+        if (maxPointCount == 1)
+            startIndex = endIndex;
+        if (maxPointCount > 1 && maxPointCount < visPointCount)
+            incrementReal = (visPointCount - 1) / (maxPointCount - 1d);
+
+        // Loop variables for point index (rounded) and point index (real)
+        int index = startIndex;
+        double indexReal = startIndex;
+
+        // Iterate over point indexes by incrementReal (round to get nearest index)
+        while (index <= endIndex) {
 
             // Get disp X/Y of symbol origin and translate there
-            double dispX = dispData.getX(j) - symbolShift;
-            double dispY = dispData.getY(j) - symbolShift;
+            double dispX = dispData.getX(index) - symbolShift;
+            double dispY = dispData.getY(index) - symbolShift;
             aPntr.translate(dispX, dispY);
 
             // Set color and fill symbol shape
@@ -173,6 +189,13 @@ public class XYDataArea extends DataArea {
 
             // Translate back
             aPntr.translate(-dispX, -dispY);
+
+            // Calculate next index
+            if (incrementReal > 1) {
+                indexReal += incrementReal;
+                index = (int) Math.round(indexReal);
+            }
+            else index++;
         }
     }
 
@@ -209,13 +232,19 @@ public class XYDataArea extends DataArea {
         double haloOffset = haloSize / 2d;
         aPntr.fill(new Ellipse(dispX - haloOffset, dispY - haloOffset, haloSize, haloSize));
 
-        // Paint selected symbol
+        // Paint large white outline
         aPntr.setStroke(Stroke5);
         aPntr.setColor(Color.WHITE);
         aPntr.draw(dataSymbolShape);
-        aPntr.setStroke(Stroke3);
-        aPntr.setColor(dataColor);
-        aPntr.draw(dataSymbolShape);
+
+        // Paint selected symbol
+        DataStyle dataStyle = dataSet.getDataStyle();
+        boolean showSymbols = dataStyle.isShowSymbols();
+        if (!showSymbols) {
+            aPntr.setStroke(Stroke3);
+            aPntr.setColor(dataColor);
+            aPntr.draw(dataSymbolShape);
+        }
     }
 
     /**

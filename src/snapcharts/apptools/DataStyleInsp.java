@@ -255,6 +255,10 @@ public class DataStyleInsp extends ChartPartInsp {
             setViewValue("SymbolBorderWidthText", dataStyle.getSymbolBorderWidth());
             setViewVisible("SymbolBorderWidthResetButton",
         dataStyle.getSymbolBorderWidth() != DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+
+            // Reset MaxPointCountText, MaxPointCountResetButton
+            setViewValue("MaxPointCountText", dataStyle.getMaxPointCount());
+            setViewVisible("MaxPointCountResetButton", dataStyle.getMaxPointCount() != DataStyle.DEFAULT_MAX_POINT_COUNT);
         }
 
         // Reset ShowTagsCheckBox
@@ -410,6 +414,16 @@ public class DataStyleInsp extends ChartPartInsp {
             dataStyle.setSymbolBorderWidth(Math.max(dataStyle.getSymbolBorderWidth() - 1, 0));
         if (anEvent.equals("SymbolBorderWidthResetButton"))
             dataStyle.setSymbolBorderWidth(DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+
+        // Handle MaxPointCountText, MaxPointCountAdd1Button, MaxPointCountSub1Button, MaxPointCountResetButton
+        if (anEvent.equals("MaxPointCountText"))
+            dataStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
+        if (anEvent.equals("MaxPointCountAdd1Button"))
+            dataStyle.setMaxPointCount(dataStyle.getMaxPointCount() + 1);
+        if (anEvent.equals("MaxPointCountSub1Button"))
+            dataStyle.setMaxPointCount(Math.max(dataStyle.getMaxPointCount() - 1, 0));
+        if (anEvent.equals("MaxPointCountResetButton"))
+            dataStyle.setMaxPointCount(DataStyle.DEFAULT_MAX_POINT_COUNT);
 
         // Handle ShowTagsCheckBox
         if (anEvent.equals("ShowTagsCheckBox")) {
