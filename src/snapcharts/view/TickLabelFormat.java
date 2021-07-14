@@ -105,7 +105,15 @@ public class TickLabelFormat {
             return getFormatWithExponent(aValue, aDelta);
 
         // Return formatted value
-        return aFormat.format(aValue);
+        try {
+            return aFormat.format(aValue);
+        }
+
+        // TeaVM 0.6.0 threw an exception here
+        catch (RuntimeException e) {
+            System.err.println("Failed to format with: " + aFormat.toPattern() + ", value: " + aValue);
+            return FormatUtils.formatNum(aValue);
+        }
     }
 
     /**

@@ -50,6 +50,15 @@ public class ChartArchiver extends XMLArchiver {
     }
 
     /**
+     * Returns a ChartDoc for XML string.
+     */
+    public Doc getDocFromXMLBytes(byte[] xmlBytes)
+    {
+        Doc doc = (Doc) readFromXMLBytes(xmlBytes);
+        return doc;
+    }
+
+    /**
      * Returns a ChartPart for XML source.
      */
     public ChartPart getChartPartFromXMLSource(Object anObj)

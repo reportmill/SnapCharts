@@ -5,6 +5,7 @@ import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Image;
+import snap.util.FilePathUtils;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.*;
@@ -489,6 +490,9 @@ public class DocPane extends ViewOwner {
 
         // Add the plotly button
         addPlotlyButton();
+
+        // Add drag-drop support to open new files
+        enableEvents(getUI(), DragEvents);
     }
 
     /**
@@ -558,6 +562,10 @@ public class DocPane extends ViewOwner {
             respondToNewAction();
             //getSelItemPane().sendEvent(New_Action);
         }
+
+        // Handle DragEvents
+        if (anEvent.isDragEvent())
+            handleDragEvent(anEvent);
     }
 
     /**
@@ -631,6 +639,52 @@ public class DocPane extends ViewOwner {
             doc.addItem(rptDocItem, index);
             setSelItem(rptDocItem);
         }
+    }
+
+    /**
+     * Called when DragEvent is over DocPane.
+     */
+    private void handleDragEvent(ViewEvent anEvent)
+    {
+        anEvent.acceptDrag();
+        anEvent.consume();
+
+        // If not Drag-Drop file, just return
+        Clipboard clipboard = anEvent.getClipboard();
+        if (!clipboard.hasFiles())
+            return;
+
+        // If no files, just return
+        List<ClipboardData> cbFiles = clipboard.getFiles();
+        if (cbFiles.size() == 0)
+            return;
+
+        // If file not '.charts' or '.simple', just return
+        ClipboardData cbFile = cbFiles.get(0);
+        String fileName = cbFile.getName();
+        String ext = FilePathUtils.getExtension(fileName);
+        if (!ext.equalsIgnoreCase("charts") && !ext.equalsIgnoreCase("simple"))
+            return;
+
+        // Handle DragDropEvent: Call handleDragDropChartsFile (with loaded file)
+        if(anEvent.isDragDropEvent()) {
+            if (cbFile.isLoaded())
+                handleDragDropChartsFile(anEvent, cbFile);
+            else cbFile.addLoadListener(cbd -> handleDragDropChartsFile(anEvent, cbd));
+            anEvent.dropComplete();
+        }
+    }
+
+    /**
+     * Called when DragEvent is over DocPane.
+     */
+    private void handleDragDropChartsFile(ViewEvent anEvent, ClipboardData aFile)
+    {
+        byte[] xmlBytes = aFile.getBytes();
+        ChartArchiver chartArchiver = new ChartArchiver();
+        Doc doc = chartArchiver.getDocFromXMLBytes(xmlBytes);
+        if (doc != null)
+            setDoc(doc);
     }
 
     // Constants for images
