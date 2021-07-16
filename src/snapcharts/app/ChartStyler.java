@@ -1,9 +1,9 @@
 package snapcharts.app;
-import rmdraw.editors.Styler;
 import snap.gfx.Border;
 import snap.gfx.Effect;
 import snap.gfx.Font;
 import snap.gfx.Paint;
+import snap.styler.Styler;
 import snap.util.Undoer;
 import snap.view.View;
 import snapcharts.model.ChartPart;

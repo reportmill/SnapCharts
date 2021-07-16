@@ -1,8 +1,8 @@
 package snapcharts.app;
 import rmdraw.app.InspectorPanel;
-import rmdraw.editors.StylerPane;
 import snap.gfx.Color;
 import snap.gfx.Image;
+import snap.styler.StylerPane;
 import snap.util.PropChange;
 import snap.view.*;
 import snap.viewx.TextPane;

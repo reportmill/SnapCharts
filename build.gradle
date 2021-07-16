@@ -24,6 +24,9 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+// SnapKit version (might want 'master-SNAPSHOT', '2021.06.29', '<tag_hash>', etc.)
+project.ext.SnapKitVersion = "master-SNAPSHOT"
+
 dependencies {
 
     // If Local SnapKit project, use it
@@ -35,7 +38,7 @@ dependencies {
     // Otherwise use GitHub SnapKit repo build
     else {
         println 'Using GitHub/Jitpack SnapKit package'
-        implementation 'com.github.reportmill:SnapKit:2021.06.29'
+        implementation 'com.github.reportmill:SnapKit:SnapKitVersion'
     }
 
     // If Local RMDraw project, use it,
