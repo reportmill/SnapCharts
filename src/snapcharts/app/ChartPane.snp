@@ -1,7 +1,6 @@
 <ColView Name="TopColView" GrowWidth="true" FillWidth="true">
   <color value="#ededed" />
   <RowView Name="ToolBar" Padding="5,15,5,5" Spacing="4">
-    <Button Name="EditButton" PrefWidth="24" PrefHeight="24" ToolTip="Zoom In" image="/rmdraw/apptools/SGPencil.png" ShowArea="false" />
     <ToggleButton Name="ZoomSelectButton" PrefWidth="24" PrefHeight="24" LeanX="RIGHT" ToolTip="Zoom Select" image="/snap/viewx/pkg.images/Find.png" ShowArea="false" />
     <Button Name="ZoomInButton" PrefWidth="24" PrefHeight="24" ToolTip="Zoom In" image="/snap/viewx/pkg.images/Add.png" ShowArea="false" />
     <Button Name="ZoomOutButton" PrefWidth="24" PrefHeight="24" ToolTip="Zoom Out" image="/snap/viewx/pkg.images/Remove.png" ShowArea="false" />

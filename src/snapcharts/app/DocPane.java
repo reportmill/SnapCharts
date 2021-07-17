@@ -1,5 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.app;
-import rmdraw.scene.SGDoc;
 import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.gfx.Color;
@@ -15,9 +17,7 @@ import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.appmisc.SamplesPane;
 import snapcharts.doc.*;
 import snapcharts.model.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -42,15 +42,13 @@ public class DocPane extends ViewOwner {
     // A helper class for Copy/Paste functionality
     private DocPaneCopyPaster  _copyPaster;
 
+    // A map of DocItems to a DocItemPane
+    private Map<DocItem,DocItemPane>  _docItemPanes = new HashMap<>();
+
     // Constants
     public static final String RECENT_FILES_ID = "RecentChartDocs";
     public static final String CHARTS_FILE_EXT = "charts";
     public static final String CHARTS_SIMPLE_FILE_EXT = "simple";
-
-
-    // Constants for actions
-    //public static final String New_Action = "NewAction";
-    //public static final String NewChart_Action = "NewChartAction";
 
     /**
      * Constructor.
@@ -58,7 +56,6 @@ public class DocPane extends ViewOwner {
     public DocPane()
     {
         super();
-        //_editorPane = new EditorPane();
     }
 
     /**
@@ -127,7 +124,7 @@ public class DocPane extends ViewOwner {
 
         // Remove old SelItem UI
         if (_selItem !=null) {
-            ViewOwner itemUI = DocItemPane.getItemPane(_selItem);
+            ViewOwner itemUI = getItemPane(_selItem);
             _splitView.removeItem(itemUI.getUI());
         }
 
@@ -136,7 +133,7 @@ public class DocPane extends ViewOwner {
 
         // Install new sel item UI
         if (_selItem !=null) {
-            DocItemPane itemPane = DocItemPane.getItemPane(_selItem);
+            DocItemPane itemPane = getItemPane(_selItem);
             itemPane.setDocPane(this);
             itemPane.getUI().setGrowWidth(true);
             _splitView.addItem(itemPane.getUI());
@@ -152,7 +149,7 @@ public class DocPane extends ViewOwner {
     public DocItemPane getSelItemPane()
     {
         DocItem selItem = getSelItem();
-        return DocItemPane.getItemPane(selItem);
+        return getItemPane(selItem);
     }
 
     /**
@@ -360,6 +357,54 @@ public class DocPane extends ViewOwner {
      * Standard selectAll.
      */
     public void selectAll()  { getCopyPaster().selectAll(); }
+
+    /**
+     * Returns the DocItemPane for given DocItem.
+     */
+    public DocItemPane getItemPane(DocItem anItem)
+    {
+        // Get DocItemPane for DocItem from DocItemPanes map (if found, just return)
+        DocItemPane pane = _docItemPanes.get(anItem);
+        if (pane != null)
+            return pane;
+
+        // Create pane, add to DocItemPanes map, return
+        pane = createItemPane(anItem);
+        _docItemPanes.put(anItem, pane);
+        return pane;
+    }
+
+    /**
+     * Creates a DocItemPane for given DocItem.
+     */
+    protected DocItemPane createItemPane(DocItem anItem)
+    {
+        // Handle DocItemChart
+        if (anItem instanceof DocItemChart) {
+            Chart chart = ((DocItemChart)anItem).getChart();
+            ChartPane pane = new ChartPane();
+            pane.setChart(chart);
+            return pane;
+        }
+
+        // Handle DocItemDataSet
+        if (anItem instanceof DocItemDataSet) {
+            DataSet dset = ((DocItemDataSet)anItem).getDataSet();
+            ChartPane pane = new ChartPane();
+            pane.setDataSet(dset);
+            return pane;
+        }
+
+        // Handle DocItemGroup
+        if (anItem instanceof DocItemGroup) {
+            ChartSetPane pane = new ChartSetPane();
+            pane.setDocItem((DocItemGroup)anItem);
+            return pane;
+        }
+
+        // Complain (bitterly)
+        throw new RuntimeException("DocItemPane.createItemPane: Unknown item: " + anItem);
+    }
 
     /**
      * Opens current selection in Plotly.
@@ -573,31 +618,65 @@ public class DocPane extends ViewOwner {
      */
     private void respondToNewAction()
     {
-        //DialogBox dbox = new DialogBox("New Document Item");
-        //dbox.setMessage("Select new item type:");
-        //dbox.setOptions("New Chart", "New Dataset");
-        //int resp = dbox.showOptionDialog(getUI(), "New Chart");
+        // Show new doc item panel (if null response, just return)
+        Class newDocItemClass = showNewDocItemPanel();
+        if (newDocItemClass == null)
+            return;
 
+        // Create new DocItem for selected type (class)
+        createNewDocItem(newDocItemClass);
+    }
+
+    /**
+     * Shows the New Document Item panel.
+     */
+    protected Class showNewDocItemPanel()
+    {
         // Get new FormBuilder and configure
         FormBuilder form = new FormBuilder();
         form.setPadding(20, 5, 15, 5);
         form.addLabel("Select new item type:           ").setFont(new Font("Arial", 24));
         form.setSpacing(15);
 
+        // Get options
+        Map<String,Class> docItemTypes = getDocItemTypes();
+        String[] typeNames = docItemTypes.keySet().toArray(new String[0]);
+        Class[] classes = docItemTypes.values().toArray(new Class[0]);
+
         // Define options, add and configure radio buttons
-        String NEW_CHART = "New Chart";
-        String NEW_DATASET = "New Dataset";
-        String NEW_REPORT = "New Report";
-        String[] options = { NEW_CHART, NEW_DATASET, NEW_REPORT };
-        for (String option : options)
-            form.addRadioButton("ItemType", option, option==options[0]);
+        for (String option : typeNames)
+            form.addRadioButton("ItemType", "New " + option, option == typeNames[0]);
 
         // Run dialog panel (just return if null), select type and extension
-        if (!form.showPanel(getUI(), "New Document Item", DialogBox.infoImage)) return;
-        String selOption = form.getStringValue("ItemType");
+        if (!form.showPanel(getUI(), "New Document Item", DialogBox.infoImage))
+            return null;
 
-        // Handle NEW_CHART
-        if (selOption==NEW_CHART) {
+        // Get item and return
+        String selOption = form.getStringValue("ItemType");
+        for (int i=0; i<typeNames.length; i++)
+            if (selOption.endsWith(typeNames[i]))
+                return classes[i];
+        return null;
+    }
+
+    /**
+     * Returns an ordered map of Names to DocItem types.
+     */
+    protected Map<String,Class> getDocItemTypes()
+    {
+        Map<String,Class> docItemTypes = new TreeMap<>();
+        docItemTypes.put("Chart", Chart.class);
+        docItemTypes.put("DataSet", DataSet.class);
+        return docItemTypes;
+    }
+
+    /**
+     * Creates a new DocItem for given class.
+     */
+    protected void createNewDocItem(Class aClass)
+    {
+        // Handle Chart
+        if (aClass == Chart.class) {
 
             // Create new chart
             Chart chart = new Chart();
@@ -612,8 +691,8 @@ public class DocPane extends ViewOwner {
             setSelItem(newChartItem);
         }
 
-        // Handle NEW_DATASET
-        else if (selOption==NEW_DATASET) {
+        // Handle DataSet
+        else if (aClass == DataSet.class) {
 
             // Create new dataset
             DataSet dset = new DataSet();
@@ -623,21 +702,6 @@ public class DocPane extends ViewOwner {
             DocItem selItem = getSelItem();
             DocItem newDataSetItem = selItem.addChartPart(dset, null);
             setSelItem(newDataSetItem);
-        }
-
-        // Handle NEW_REPORT
-        else if (selOption==NEW_REPORT) {
-
-            // Get sel index
-            DocItem item = getSelItem();
-            while (item!=null && item!=getDoc() && item.getParent()!=getDoc()) item = item.getParent();
-            int index = item==null || item==getDoc() ? 0 : (item.getIndex() + 1);
-
-            SGDoc rptDoc = new SGDoc();
-            DocItem rptDocItem = new DocItemReport(rptDoc);
-            Doc doc = getDoc();
-            doc.addItem(rptDocItem, index);
-            setSelItem(rptDocItem);
         }
     }
 

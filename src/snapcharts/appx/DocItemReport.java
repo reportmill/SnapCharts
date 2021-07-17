@@ -1,5 +1,9 @@
-package snapcharts.doc;
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
+package snapcharts.appx;
 import rmdraw.scene.SGDoc;
+import snapcharts.doc.DocItem;
 import snapcharts.model.ChartPart;
 
 /**

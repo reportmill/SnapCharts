@@ -46,7 +46,7 @@ public class WelcomePanel extends ViewOwner {
     /**
      * Constructor.
      */
-    private WelcomePanel()
+    protected WelcomePanel()
     {
         // Get FileSystem
         String fileSys = Prefs.get().getString(FILE_SYSTEM);
@@ -54,6 +54,9 @@ public class WelcomePanel extends ViewOwner {
 
         // Get Email
         _email = Prefs.get().getString(USER_EMAIL);
+
+        // Set as Shared (there should only be one instance)
+        _shared = this;
     }
 
     /**
@@ -98,8 +101,8 @@ public class WelcomePanel extends ViewOwner {
      */
     public static WelcomePanel getShared()
     {
-        if(_shared!=null) return _shared;
-        return _shared!=null? _shared : (_shared = new WelcomePanel());
+        if(_shared != null) return _shared;
+        return _shared = new WelcomePanel();
     }
 
     /**
@@ -278,14 +281,14 @@ public class WelcomePanel extends ViewOwner {
         // If alt-down, open favorite sample
         if (ViewUtils.isAltDown()) {
             WebURL url = WebURL.getURL("https://reportmill.com/snaptea/SnapChartsSamples/SolarData/SolarData.charts");
-            DocPane dpane = new DocPane().openDocFromSource(url);
+            DocPane dpane = newDocPane().openDocFromSource(url);
             dpane.setWindowVisible(true);
             hide();
         }
 
         // Otherwise, just newFile + showSamples
         else {
-            DocPane dpane = new DocPane().newDoc();
+            DocPane dpane = newDocPane().newDoc();
             dpane.setWindowVisible(true);
             hide();
             runLaterDelayed(300, () -> dpane.showSamples());
@@ -297,7 +300,7 @@ public class WelcomePanel extends ViewOwner {
      */
     protected void newFile()
     {
-        DocPane dpane = new DocPane().newDoc();
+        DocPane dpane = newDocPane().newDoc();
         dpane.setWindowVisible(true);
         hide();
     }
@@ -308,7 +311,7 @@ public class WelcomePanel extends ViewOwner {
     public void showOpenPanel()
     {
         // Have editor run open panel (if no document opened, just return)
-        DocPane dpane = new DocPane().showOpenPanel(getUI()); if (dpane==null) return;
+        DocPane dpane = newDocPane().showOpenPanel(getUI()); if (dpane==null) return;
 
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);
@@ -321,11 +324,19 @@ public class WelcomePanel extends ViewOwner {
     public void openFile(Object aSource)
     {
         // Have editor run open panel (if no document opened, just return)
-        DocPane dpane = new DocPane().openDocFromSource(aSource); if (dpane==null) return;
+        DocPane dpane = newDocPane().openDocFromSource(aSource); if (dpane==null) return;
 
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);
         hide();
+    }
+
+    /**
+     * Creates the DocPane (as a hook, so it can be overriden).
+     */
+    protected DocPane newDocPane()
+    {
+        return new DocPane();
     }
 
     /**
@@ -408,7 +419,7 @@ public class WelcomePanel extends ViewOwner {
     DocView getAnimView()
     {
         // Unarchive WelcomePaneAnim.snp as DocView
-        WebURL url = WebURL.getURL(getClass(), "WelcomePanelAnim.snp");
+        WebURL url = WebURL.getURL(WelcomePanel.class, "WelcomePanelAnim.snp");
         DocView doc = (DocView)new ViewArchiver().getView(url);
 
         // Get page and clear border/shadow

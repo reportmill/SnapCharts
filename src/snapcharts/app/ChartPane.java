@@ -1,6 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.app;
-import rmdraw.app.MarkupEditor;
-import rmdraw.app.MarkupEditorPane;
 import snap.gfx.*;
 import snap.util.DeepChangeListener;
 import snap.util.PropChange;
@@ -20,9 +21,6 @@ import snapcharts.view.DataView;
  * A class to manage charts/data in a ChartBook.
  */
 public class ChartPane extends DocItemPane {
-
-    // A MarkupEditorPane to hold ChartView and allow markup
-    protected MarkupEditorPane  _editorPane;
 
     // The chartView
     private ChartView  _chartView;
@@ -75,9 +73,9 @@ public class ChartPane extends DocItemPane {
     public ChartView getChartView()  { return _chartView; }
 
     /**
-     * Returns the ChartHelper.
+     * Returns the ChartBox (holds ChartView).
      */
-    public ChartHelper getChartHelper()  { return _chartView.getChartHelper(); }
+    public BoxView getChartBox()  { return _chartBox; }
 
     /**
      * Returns the ChartView.DataView
@@ -110,6 +108,11 @@ public class ChartPane extends DocItemPane {
         aChart.addPropChangeListener(_pcl);
         aChart.addDeepChangeListener(_dcl);
     }
+
+    /**
+     * Returns the ChartHelper.
+     */
+    public ChartHelper getChartHelper()  { return _chartView.getChartHelper(); }
 
     /**
      * Returns the DataSetList.
@@ -368,72 +371,9 @@ public class ChartPane extends DocItemPane {
             getSel().setSelChartPart(dset);
         }
 
-        // Handle EditButton
-        if (anEvent.equals("EditButton"))
-            runLater(() -> installEditorPane());
-
         // Handle EscapeAction
         if (anEvent.equals("EscapeAction"))
             getSel().popSelection();
-    }
-
-    /**
-     * Installs EditorPane.
-     */
-    private void installEditorPane()
-    {
-        // Get toolbar
-        RowView toolBar = getView("ToolBar", RowView.class);
-        toolBar.removeChild(getView("EditButton"));
-        toolBar.setClipToBounds(true);
-
-        // Get EditorPane, Editor
-        _editorPane = new MarkupEditorPane(_chartView);
-        MarkupEditor editor = _editorPane.getEditor();
-        editor.setFill(ChartSetPane.BACK_FILL);
-        _editorPane.getScrollView().setBorder(null);
-
-        // Install EditorPane
-        SplitView splitView = (SplitView) _chartBox.getParent();
-        splitView.removeItem(_chartBox);
-        splitView.addItem(_editorPane.getUI(), 0);
-
-        // WTF
-        ViewUtils.setFocused(editor, false);
-
-        // Install ToolBar
-        RowView toolsView = _editorPane.getToolsView();
-        toolBar.addChild(toolsView, 0);
-        for (View child : toolsView.getChildren())
-            ((ToggleButton)child).setShowArea(false);
-
-        // Animate in
-        toolsView.setTransX(-100);
-        toolsView.getAnimCleared(700).setTransX(0).play();
-        toolsView.getAnim(0).setOnFinish(() -> installEditorPaneAnimDone());
-    }
-
-    /**
-     * MarkupEditor: Called after fully installed.
-     */
-    private void installEditorPaneAnimDone()
-    {
-        RowView toolsView = _editorPane.getToolsView();
-        ((ToggleButton)toolsView.getChildLast()).fire();
-
-        MarkupEditor editor = _editorPane.getEditor();
-        editor.setNeedsInspector(false);
-        editor.addPropChangeListener(pc -> markupEditorNeedsInspectorChanged(), MarkupEditor.NeedsInspector_Prop);
-        editor.setNeedsInspector(true);
-    }
-
-    /**
-     * MarkupEditor: Called when MarkupEditor.NeedsInspector changes.
-     */
-    private void markupEditorNeedsInspectorChanged()
-    {
-        boolean markupInspVisible = _editorPane.getEditor().isNeedsInspector();
-        _insp.setMarkupInspectorVisible(markupInspVisible);
     }
 
     /**

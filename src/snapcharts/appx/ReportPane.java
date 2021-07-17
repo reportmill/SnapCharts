@@ -1,10 +1,14 @@
-package snapcharts.app;
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
+package snapcharts.appx;
 import rmdraw.app.EditorPane;
 import rmdraw.scene.SGDoc;
 import snap.view.View;
+import snapcharts.app.DocItemPane;
 
 /**
- *
+ * This DocItemPane subclass supports DocItemReport.
  */
 public class ReportPane extends DocItemPane {
 

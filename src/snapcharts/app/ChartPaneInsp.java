@@ -1,5 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.app;
-import rmdraw.app.InspectorPanel;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.styler.StylerPane;
@@ -221,34 +223,12 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
-     * Returns whether MarkupInspector is visible.
+     * Sets a view that overrides normal inspector UI.
      */
-    public boolean isMarkupInspectorVisible()
+    public void setOverrideInspectorView(View aView)
     {
-        InspectorPanel markupInsp = _chartPane._editorPane != null ? _chartPane._editorPane.getInspectorPanel() : null;
-        return markupInsp != null && markupInsp.isShowing();
-    }
-
-    /**
-     * Sets the MarkupInspector Visible.
-     */
-    public void setMarkupInspectorVisible(boolean aValue)
-    {
-        // If already set, just return
-        if (aValue == isMarkupInspectorVisible()) return;
-
-        // Get inspector
-        InspectorPanel markupInsp = _chartPane._editorPane.getInspectorPanel();
-
-        // Make MarkupInspector visible
-        if (aValue) {
-            _inspScroll.setContent(markupInsp.getUI());
-        }
-
-        // Make ChartPaneInsp visble
-        else {
-            _inspScroll.setContent(_inspColView);
-        }
+        View inspContent = aView != null ? aView : _inspColView;
+        _inspScroll.setContent(inspContent);
     }
 
     /**
@@ -307,8 +287,6 @@ public class ChartPaneInsp extends ViewOwner {
             if (isSelected)
                 insp.resetLater();
         }
-
-        setMarkupInspectorVisible(false);
 
         // Reset inspector
         if (selPartInsp != null)
