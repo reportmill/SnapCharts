@@ -38,7 +38,7 @@ dependencies {
     // Otherwise use GitHub SnapKit repo build
     else {
         println 'Using GitHub/Jitpack SnapKit package'
-        implementation 'com.github.reportmill:SnapKit:SnapKitVersion'
+        implementation 'com.github.reportmill:SnapKit:$SnapKitVersion'
     }
 }
 
