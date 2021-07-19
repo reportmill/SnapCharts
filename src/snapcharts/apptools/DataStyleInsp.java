@@ -255,10 +255,6 @@ public class DataStyleInsp extends ChartPartInsp {
             setViewValue("SymbolBorderWidthText", dataStyle.getSymbolBorderWidth());
             setViewVisible("SymbolBorderWidthResetButton",
         dataStyle.getSymbolBorderWidth() != DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
-
-            // Reset MaxPointCountText, MaxPointCountResetButton
-            setViewValue("MaxPointCountText", dataStyle.getMaxPointCount());
-            setViewVisible("MaxPointCountResetButton", dataStyle.getMaxPointCount() != DataStyle.DEFAULT_MAX_POINT_COUNT);
         }
 
         // Reset ShowTagsCheckBox
@@ -293,6 +289,26 @@ public class DataStyleInsp extends ChartPartInsp {
             setViewValue("TagBorderWidthText", dataStyle.getTagBorderWidth());
             setViewVisible("TagBorderWidthResetButton",
         dataStyle.getTagBorderWidth() != DataStyle.DEFAULT_TAG_BORDER_WIDTH);
+        }
+
+        // Reset PointSpacing UI
+        boolean showSymbolsOrTags = showSymbols || showTags;
+        setViewVisible("PointSpacingSep", showSymbolsOrTags);
+        setViewVisible("PointSpacingLabel", showSymbolsOrTags);
+        setViewVisible("PointSpacingBox", showSymbolsOrTags);
+        if (showSymbolsOrTags) {
+
+            // Reset PointSpacingText, PointSpacingResetButton
+            setViewValue("PointSpacingText", dataStyle.getPointSpacing());
+            setViewVisible("PointSpacingResetButton", dataStyle.getPointSpacing() != DataStyle.DEFAULT_POINT_SPACING);
+
+            // Reset SkipPointCountText, SkipPointCountResetButton
+            setViewValue("SkipPointCountText", dataStyle.getSkipPointCount());
+            setViewVisible("SkipPointCountResetButton", dataStyle.getSkipPointCount() != DataStyle.DEFAULT_SKIP_POINT_COUNT);
+
+            // Reset MaxPointCountText, MaxPointCountResetButton
+            setViewValue("MaxPointCountText", dataStyle.getMaxPointCount());
+            setViewVisible("MaxPointCountResetButton", dataStyle.getMaxPointCount() != DataStyle.DEFAULT_MAX_POINT_COUNT);
         }
     }
 
@@ -415,16 +431,6 @@ public class DataStyleInsp extends ChartPartInsp {
         if (anEvent.equals("SymbolBorderWidthResetButton"))
             dataStyle.setSymbolBorderWidth(DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
 
-        // Handle MaxPointCountText, MaxPointCountAdd1Button, MaxPointCountSub1Button, MaxPointCountResetButton
-        if (anEvent.equals("MaxPointCountText"))
-            dataStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
-        if (anEvent.equals("MaxPointCountAdd1Button"))
-            dataStyle.setMaxPointCount(dataStyle.getMaxPointCount() + 1);
-        if (anEvent.equals("MaxPointCountSub1Button"))
-            dataStyle.setMaxPointCount(Math.max(dataStyle.getMaxPointCount() - 1, 0));
-        if (anEvent.equals("MaxPointCountResetButton"))
-            dataStyle.setMaxPointCount(DataStyle.DEFAULT_MAX_POINT_COUNT);
-
         // Handle ShowTagsCheckBox
         if (anEvent.equals("ShowTagsCheckBox")) {
             boolean showTags = anEvent.getBoolValue();
@@ -475,6 +481,36 @@ public class DataStyleInsp extends ChartPartInsp {
             dataStyle.setTagBorderWidth(Math.max(dataStyle.getTagBorderWidth() - 1, 0));
         if (anEvent.equals("TagBorderWidthResetButton"))
             dataStyle.setTagBorderWidth(DataStyle.DEFAULT_TAG_BORDER_WIDTH);
+
+        // Handle PointSpacingText, PointSpacingAdd1Button, PointSpacingSub1Button, PointSpacingResetButton
+        if (anEvent.equals("PointSpacingText"))
+            dataStyle.setPointSpacing(Math.max(anEvent.getIntValue(), 0));
+        if (anEvent.equals("PointSpacingAdd1Button"))
+            dataStyle.setPointSpacing(dataStyle.getPointSpacing() + 1);
+        if (anEvent.equals("PointSpacingSub1Button"))
+            dataStyle.setPointSpacing(Math.max(dataStyle.getPointSpacing() - 1, 0));
+        if (anEvent.equals("PointSpacingResetButton"))
+            dataStyle.setPointSpacing(DataStyle.DEFAULT_POINT_SPACING);
+
+        // Handle SkipPointCountText, SkipPointCountAdd1Button, SkipPointCountSub1Button, SkipPointCountResetButton
+        if (anEvent.equals("SkipPointCountText"))
+            dataStyle.setSkipPointCount(Math.max(anEvent.getIntValue(), 0));
+        if (anEvent.equals("SkipPointCountAdd1Button"))
+            dataStyle.setSkipPointCount(dataStyle.getSkipPointCount() + 1);
+        if (anEvent.equals("SkipPointCountSub1Button"))
+            dataStyle.setSkipPointCount(Math.max(dataStyle.getSkipPointCount() - 1, 0));
+        if (anEvent.equals("SkipPointCountResetButton"))
+            dataStyle.setSkipPointCount(DataStyle.DEFAULT_SKIP_POINT_COUNT);
+
+        // Handle MaxPointCountText, MaxPointCountAdd1Button, MaxPointCountSub1Button, MaxPointCountResetButton
+        if (anEvent.equals("MaxPointCountText"))
+            dataStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
+        if (anEvent.equals("MaxPointCountAdd1Button"))
+            dataStyle.setMaxPointCount(dataStyle.getMaxPointCount() + 1);
+        if (anEvent.equals("MaxPointCountSub1Button"))
+            dataStyle.setMaxPointCount(Math.max(dataStyle.getMaxPointCount() - 1, 0));
+        if (anEvent.equals("MaxPointCountResetButton"))
+            dataStyle.setMaxPointCount(DataStyle.DEFAULT_MAX_POINT_COUNT);
     }
 
     /**

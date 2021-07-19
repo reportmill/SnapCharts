@@ -69,6 +69,12 @@ public class DataStyle extends StyledChartPart {
     // The maximum number of symbols/tags visible
     private int  _maxPointCount = DEFAULT_MAX_POINT_COUNT;
 
+    // The number of symbols/tags to skip to avoid excessive overlap
+    private int  _skipPointCount = DEFAULT_SKIP_POINT_COUNT;
+
+    // The minimum amount of space between symbols/tags to avoid excessive overlap
+    private int  _pointSpacing = DEFAULT_POINT_SPACING;
+
     // The cached symbol
     private Symbol  _symbol;
 
@@ -90,7 +96,9 @@ public class DataStyle extends StyledChartPart {
     public static final String TagColor_Prop = "TagColor";
     public static final String TagBorderColor_Prop = "TagBorderColor";
     public static final String TagBorderWidth_Prop = "TagBorderWidth";
+    public static final String PointSpacing_Prop = "PointSpacing";
     public static final String MaxPointCount_Prop = "MaxPointCount";
+    public static final String SkipPointCount_Prop = "SkipPointCount";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
@@ -103,7 +111,9 @@ public class DataStyle extends StyledChartPart {
     public static final Color DEFAULT_TAG_COLOR = null;
     public static final Color DEFAULT_TAG_BORDER_COLOR = null;
     public static final int DEFAULT_TAG_BORDER_WIDTH = 0;
+    public static final int DEFAULT_POINT_SPACING = 4;
     public static final int DEFAULT_MAX_POINT_COUNT = 0;
+    public static final int DEFAULT_SKIP_POINT_COUNT = 0;
 
     // Constant for how dataset area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
@@ -500,6 +510,20 @@ public class DataStyle extends StyledChartPart {
     }
 
     /**
+     * Returns the minimum amount of space between symbols/tags to avoid excessive overlap.
+     */
+    public int getPointSpacing()  { return _pointSpacing; }
+
+    /**
+     * Sets the minimum amount of space between symbols/tags to avoid excessive overlap.
+     */
+    public void setPointSpacing(int aValue)
+    {
+        if (aValue == getPointSpacing()) return;
+        firePropChange(PointSpacing_Prop, _pointSpacing, _pointSpacing = aValue);
+    }
+
+    /**
      * Returns the maximum number of symbols/tags visible.
      */
     public int getMaxPointCount()  { return _maxPointCount; }
@@ -514,6 +538,20 @@ public class DataStyle extends StyledChartPart {
     }
 
     /**
+     * Returns the number of symbols/tags to skip to avoid excessive overlap.
+     */
+    public int getSkipPointCount()  { return _skipPointCount; }
+
+    /**
+     * Sets the number of symbols/tags to skip to avoid excessive overlap.
+     */
+    public void setSkipPointCount(int aValue)
+    {
+        if (aValue == getSkipPointCount()) return;
+        firePropChange(SkipPointCount_Prop, _skipPointCount, _skipPointCount = aValue);
+    }
+
+    /**
      * Override to define more defaults
      */
     @Override
@@ -521,6 +559,12 @@ public class DataStyle extends StyledChartPart {
     {
         if (aPropName == SymbolSize_Prop)
             return DEFAULT_SYMBOL_SIZE;
+        if (aPropName == PointSpacing_Prop)
+            return DEFAULT_POINT_SPACING;
+        if (aPropName == MaxPointCount_Prop)
+            return DEFAULT_MAX_POINT_COUNT;
+        if (aPropName == SkipPointCount_Prop)
+            return DEFAULT_SKIP_POINT_COUNT;
         return super.getPropDefault(aPropName);
     }
 
@@ -594,9 +638,13 @@ public class DataStyle extends StyledChartPart {
         if (getTagBorderWidth() != DEFAULT_TAG_BORDER_WIDTH)
             e.add(TagBorderWidth_Prop, getTagBorderWidth());
 
-        // Archive MaxPointCount
+        // Archive PointSpacing, MaxPointCount, SkipPointCount
+        if (getPointSpacing() != DEFAULT_POINT_SPACING)
+            e.add(PointSpacing_Prop, getPointSpacing());
         if (getMaxPointCount() != DEFAULT_MAX_POINT_COUNT)
             e.add(MaxPointCount_Prop, getMaxPointCount());
+        if (getSkipPointCount() != DEFAULT_SKIP_POINT_COUNT)
+            e.add(SkipPointCount_Prop, getSkipPointCount());
 
         // Return element
         return e;
@@ -684,9 +732,13 @@ public class DataStyle extends StyledChartPart {
         if (anElement.hasAttribute(TagBorderWidth_Prop))
             setTagBorderWidth(anElement.getAttributeIntValue(TagBorderWidth_Prop));
 
-        // Unarchive MaxPointCount
+        // Unarchive PointSpacing, MaxPointCount, SkipPointCount
+        if (anElement.hasAttribute(PointSpacing_Prop))
+            setPointSpacing(anElement.getAttributeIntValue(PointSpacing_Prop));
         if (anElement.hasAttribute(MaxPointCount_Prop))
             setMaxPointCount(anElement.getAttributeIntValue(MaxPointCount_Prop));
+        if (anElement.hasAttribute(SkipPointCount_Prop))
+            setSkipPointCount(anElement.getAttributeIntValue(SkipPointCount_Prop));
 
         // Return this part
         return this;

@@ -121,17 +121,6 @@
         <font name="Arial" size="12" />
       </Button>
     </RowView>
-    <RowView Padding="4" Spacing="4">
-      <Label text="Max Point Count:" />
-      <TextField Name="MaxPointCountText" Align="CENTER" PrefWidth="50" />
-      <Button Name="MaxPointCountAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-        <font name="Arial" size="13" />
-      </Button>
-      <Button Name="MaxPointCountSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-      <Button Name="MaxPointCountResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
   </ColView>
   <Separator Name="ShowMoreSep" Margin="0,20,0,10" GrowWidth="true" />
   <RowView Padding="4" Spacing="4">
@@ -172,6 +161,46 @@
       </Button>
       <Button Name="TagBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
       <Button Name="TagBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+  </ColView>
+  <Separator Name="PointSpacingSep" Margin="0,20,0,10" GrowWidth="true" />
+  <RowView Padding="4" Spacing="4">
+    <Label Name="PointSpacingLabel" text="Sybmbol/Tag Spacing:" />
+    <ToggleButton Name="ShowTagsMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
+  </RowView>
+  <ColView Name="PointSpacingBox" Padding="0,0,0,25" FillWidth="true">
+    <RowView Padding="4" Spacing="4">
+      <Label text="Spacing between:" />
+      <TextField Name="PointSpacingText" Align="CENTER" PrefWidth="50" />
+      <Button Name="PointSpacingAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="PointSpacingSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="PointSpacingResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
+      <Label text="Skip points count:" />
+      <TextField Name="SkipPointCountText" Align="CENTER" PrefWidth="50" />
+      <Button Name="SkipPointCountAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="SkipPointCountSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="SkipPointCountResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="4" Spacing="4">
+      <Label text="Max Point Count:" />
+      <TextField Name="MaxPointCountText" Align="CENTER" PrefWidth="50" />
+      <Button Name="MaxPointCountAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="MaxPointCountSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="MaxPointCountResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
         <font name="Arial" size="12" />
       </Button>
     </RowView>
