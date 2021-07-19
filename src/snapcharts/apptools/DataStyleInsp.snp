@@ -167,8 +167,7 @@
   </ColView>
   <Separator Name="PointSpacingSep" Margin="0,20,0,10" GrowWidth="true" />
   <RowView Padding="4" Spacing="4">
-    <Label Name="PointSpacingLabel" text="Sybmbol/Tag Spacing:" />
-    <ToggleButton Name="ShowTagsMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
+    <Label Name="PointSpacingLabel" text="Symbol / Tag Spacing:" />
   </RowView>
   <ColView Name="PointSpacingBox" Padding="0,0,0,25" FillWidth="true">
     <RowView Padding="4" Spacing="4">

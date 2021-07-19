@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.model;
 import snap.gfx.Color;
 import snap.gfx.Font;
@@ -111,7 +114,7 @@ public class DataStyle extends StyledChartPart {
     public static final Color DEFAULT_TAG_COLOR = null;
     public static final Color DEFAULT_TAG_BORDER_COLOR = null;
     public static final int DEFAULT_TAG_BORDER_WIDTH = 0;
-    public static final int DEFAULT_POINT_SPACING = 4;
+    public static final int DEFAULT_POINT_SPACING = 0;
     public static final int DEFAULT_MAX_POINT_COUNT = 0;
     public static final int DEFAULT_SKIP_POINT_COUNT = 0;
 

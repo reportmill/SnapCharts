@@ -1,22 +1,22 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
-import snap.geom.Point;
-import snap.geom.Pos;
-import snap.geom.Rect;
-import snap.gfx.Border;
-import snap.gfx.Color;
-import snap.gfx.Font;
-import snap.gfx.Painter;
+import snap.geom.*;
+import snap.gfx.*;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
-import snapcharts.model.DataStyle;
 import snapcharts.model.DataStore;
+import snapcharts.model.DataStyle;
+import snapcharts.model.Symbol;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A class to handle painting DataArea.DataSet data tags.
  */
-public class TagPainter {
+public class PointPainter {
 
     // The DataArea
     private DataArea  _dataArea;
@@ -30,37 +30,48 @@ public class TagPainter {
     /**
      * Constructor.
      */
-    public TagPainter(DataArea aDataArea)
+    public PointPainter(DataArea aDataArea)
     {
         _dataArea = aDataArea;
     }
 
     /**
-     * Returns the array of tag boxes.
+     * Paints symbols.
      */
-    public TagBox[] getTagBoxes()
+    public void paintSymbols(Painter aPntr)
     {
-        // If already set, just return
-        if (_tagBoxes != null) return _tagBoxes;
-
         // Get info
         DataStyle dataStyle = _dataArea.getDataStyle();
-        Font font = dataStyle.getTagFont();
+        Symbol symbol = dataStyle.getSymbol();
+        Color symbolColor = dataStyle.getSymbolColor();  //color.darker().darker()
+        Shape symbolShape = symbol.getShape();
+        int symbolSize = dataStyle.getSymbolSize();
+        double symbolShift = symbolSize / 2d;
 
-        // Get position
-        Pos tagPos = Pos.TOP_CENTER;
-        double symbolSize = dataStyle.getSymbolSize();
-        double tagOffset = TAG_OFFSET + Math.round(symbolSize / 2);
+        // Get Symbol border info
+        Color symbolBorderColor = dataStyle.getSymbolBorderColor();
+        int symbolBorderWidth = dataStyle.getSymbolBorderWidth();
 
-        // Declare LastBox var for checks
-        List<StringBox> tagBoxList = new ArrayList<>();
+        // Get whether showing points only
+        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
+        if (symbolBorderWidth == 0 && pointsOnly)
+            symbolBorderWidth = 1;
 
-        // Get info
-        DataStore procData = _dataArea.getProcessedData();
+        // Get SymbolBorderStroke
+        Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
+
+        // Get ShowTag info because TagBoxes are created
+        boolean showTags = dataStyle.isShowTags();
+        DataStore procData = _dataArea.getDataSet().getProcessedData();
         boolean hasZ = procData.getDataType().hasZ();
         Color tagBorderColor = dataStyle.getTagBorderColor();
         int tagBorderWidth = dataStyle.getTagBorderWidth();
         Border tagBorder = tagBorderWidth > 0 ? Border.createLineBorder(tagBorderColor, tagBorderWidth) : null;
+        Font tagFont = dataStyle.getTagFont();
+        Pos tagPos = Pos.TOP_CENTER;
+        double tagOffset = TAG_OFFSET + Math.round(symbolSize / 2);
+        Rect dataBounds = _dataArea.getBoundsLocal();
+        List<StringBox> tagBoxList = new ArrayList<>();
 
         // Get DispData and start/end index for current visible range
         DataStore dispData = _dataArea.getDispData();
@@ -70,6 +81,8 @@ public class TagPainter {
         // Get VisPointCount and MaxPointCount
         int visPointCount = endIndex - startIndex + 1;
         int maxPointCount = dataStyle.getMaxPointCount();
+        int skipPointCount = dataStyle.getSkipPointCount();
+        int pointSpacing = dataStyle.getPointSpacing();
 
         // Get point increment (as real number, so we can round to point index for distribution)
         double incrementReal = 1;
@@ -78,25 +91,78 @@ public class TagPainter {
         if (maxPointCount > 1 && maxPointCount < visPointCount)
             incrementReal = (visPointCount - 1) / (maxPointCount - 1d);
 
+        // If SkipPointCount produces larger increment, reset increment (and round startIndex down to increment so points don't jump)
+        if (skipPointCount + 1 > incrementReal) {
+            incrementReal = skipPointCount + 1;
+            while (startIndex > 0 && startIndex % (int) incrementReal != 0)
+                startIndex--;
+        }
+
         // Loop variables for point index (rounded) and point index (real)
         int index = startIndex;
         double indexReal = startIndex;
-        Rect dataBounds = _dataArea.getBoundsLocal();
+        double lastDispX = 0;
+        double lastDispY = 0;
 
         // Iterate over point indexes by incrementReal (round to get nearest index)
         while (index <= endIndex) {
 
-            // Get StringBox for string, X/Y and TagPos
-            double val = hasZ ? procData.getZ(index) : procData.getY(index);
-            String valStr = FormatUtils.formatNum(val);
-            double disX = dispData.getX(index);
-            double disY = dispData.getY(index);
+            // Get DispX/Y coords
+            double dispX = dispData.getX(index);
+            double dispY = dispData.getY(index);
 
-            // Create/add TagBox
-            if (dataBounds.contains(disX, disY)) {
-                StringBox strBox = getTagStringBox(valStr, font, tagBorder, disX, disY, tagPos, tagOffset);
-                tagBoxList.add(strBox);
+            // If ShowTags, create TagBox
+            if (showTags) {
+
+                // Get StringBox for string, X/Y and TagPos
+                double val = hasZ ? procData.getZ(index) : procData.getY(index);
+                String valStr = FormatUtils.formatNum(val);
+
+                // Create/add TagBox
+                if (dataBounds.contains(dispX, dispY)) {
+                    StringBox strBox = getTagStringBox(valStr, tagFont, tagBorder, dispX, dispY, tagPos, tagOffset);
+                    if (pointSpacing > 0 && tagBoxList.size() > 0) {
+                        StringBox lastBox = tagBoxList.get(tagBoxList.size() - 1);
+                        if (intersectsCircleBounds(lastBox, strBox, pointSpacing)) {
+                            index++;
+                            indexReal = index;
+                            continue;
+                        }
+                    }
+                    tagBoxList.add(strBox);
+                }
             }
+
+            // If not ShowTags and Spacing is
+            else if (pointSpacing > 0 && index > startIndex) {
+                double distBetween = Point.getDistance(lastDispX, lastDispY, dispX, dispY);
+                if (distBetween < symbolSize + pointSpacing) {
+                    index++;
+                    indexReal = index;
+                    continue;
+                }
+                lastDispX = dispX;
+                lastDispY = dispY;
+            }
+
+            // Get disp X/Y of symbol origin and translate there
+            double symbX = dispX - symbolShift;
+            double symbY = dispY - symbolShift;
+            aPntr.translate(symbX, symbY);
+
+            // Set color and fill symbol shape
+            aPntr.setColor(symbolColor);
+            aPntr.fill(symbolShape);
+
+            // If only points, also stroke outline of shape
+            if (symbolBorderStroke != null) {
+                aPntr.setStroke(symbolBorderStroke);
+                aPntr.setColor(symbolBorderColor);
+                aPntr.draw(symbolShape);
+            }
+
+            // Translate back
+            aPntr.translate(-symbX, -symbY);
 
             // Calculate next index
             if (incrementReal > 1) {
@@ -106,10 +172,14 @@ public class TagPainter {
             else index++;
         }
 
-        // Paint boxes last, so they will be above all data-point lines/dots
-        TagBox[] tagBoxes = tagBoxList.toArray(new TagBox[0]);
-        return _tagBoxes = tagBoxes;
+        // Reset TagBoxes
+        _tagBoxes = tagBoxList.toArray(new TagBox[0]);
     }
+
+    /**
+     * Returns the array of tag boxes.
+     */
+    public TagBox[] getTagBoxes()  { return _tagBoxes; }
 
     /**
      * Paints the data tags.
@@ -244,4 +314,31 @@ public class TagPainter {
      * Returns the angle for position in radians.
      */
     private static double getAngleRad(Pos aPos)  { return Math.toRadians(getAngleDeg(aPos)); }
+
+    /**
+     * Returns the distance between two rects.
+     */
+    private static double getDistanceBetween(RectBase aRect1, RectBase aRect2)
+    {
+        if (aRect1.intersects(aRect2))
+            return 0;
+        double dx1 = aRect2.x - aRect1.getMaxX();
+        double dx2 = aRect1.x - aRect2.getMaxX();
+        double dy1 = aRect2.y - aRect1.getMaxY();
+        double dy2 = aRect1.y - aRect2.getMaxY();
+        double dx = Math.max(dx1, dx2);
+        double dy = Math.max(dy1, dy2);
+        double dist = dx < 0 ? dy : dy < 0 ? dx : Math.min(dx, dy);
+        return dist;
+    }
+
+    /**
+     * Returns given rects overlap bounds circles with given extra spacing.
+     */
+    public boolean intersectsCircleBounds(RectBase box1, RectBase box2, int extraSpacing)
+    {
+        double radiusOfBoth = box1.width / 2 + box2.width / 2 + extraSpacing;
+        double dist = Point.getDistance(box1.getMidX(), box1.getMidY(), box2.getMidX(), box2.getMidY());
+        return dist < radiusOfBoth;
+    }
 }

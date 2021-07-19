@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.*;
@@ -8,7 +11,7 @@ import snapcharts.model.*;
 /**
  * A view to display the actual contents of a chart.
  */
-public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
+public abstract class DataArea extends ChartPartView<DataSet> {
 
     // The ChartHelper
     protected ChartHelper  _chartHelper;
@@ -17,7 +20,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     protected DataView  _dataView;
 
     // The DataSet
-    private T  _dataSet;
+    private DataSet  _dataSet;
 
     // The AxisType for Y axis (might get coerced down to Y if chart type doesn't support it)
     private AxisType  _axisTypeY;
@@ -37,7 +40,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
 
         // Set ivars
         _chartHelper = aChartHelper;
-        _dataSet = (T) aDataSet;
+        _dataSet = aDataSet;
 
         // Get/set DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
         _axisTypeY = _dataSet.getAxisTypeY();
@@ -48,7 +51,8 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return _dataSet; }
+    @Override
+    public DataSet getChartPart()  { return _dataSet; }
 
     /**
      * Returns the DataSet.
@@ -499,11 +503,7 @@ public abstract class DataArea<T extends DataSet> extends ChartPartView<T> {
     /**
      * Paints tags for DataSet.
      */
-    protected void paintDataTags(Painter aPntr)
-    {
-        TagPainter tagPainter = new TagPainter(this);
-        tagPainter.paintTags(aPntr);
-    }
+    protected void paintDataTags(Painter aPntr)  { }
 
     /**
      * Returns the data point closest to given x/y in local coords (null if none).

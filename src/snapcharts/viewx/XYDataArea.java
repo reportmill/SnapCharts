@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
@@ -6,6 +9,7 @@ import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
 import snapcharts.view.DataView;
+import snapcharts.view.PointPainter;
 
 /**
  * A DataArea subclass to display common XY ChartTypes: LINE, AREA, SCATTER.
@@ -17,6 +21,9 @@ public class XYDataArea extends DataArea {
 
     // The TailShape
     private Shape  _tailShape;
+
+    // A PointPainter to handle painting symbols and tags
+    private PointPainter  _pointPainter = new PointPainter(this);
 
     // Constants for defaults
     protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
@@ -129,74 +136,16 @@ public class XYDataArea extends DataArea {
      */
     protected void paintSymbols(Painter aPntr)
     {
-        // Get info
-        DataStyle dataStyle = getDataStyle();
-        Symbol symbol = dataStyle.getSymbol();
-        Color symbolColor = dataStyle.getSymbolColor();  //color.darker().darker()
-        Shape symbolShape = symbol.getShape();
-        double symbolShift = getDataSymbol().getSize() / 2d;
+        _pointPainter.paintSymbols(aPntr);
+    }
 
-        // Get Symbol border info
-        Color symbolBorderColor = dataStyle.getSymbolBorderColor();
-        int symbolBorderWidth = dataStyle.getSymbolBorderWidth();
-
-        // Get whether showing points only
-        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
-        if (symbolBorderWidth == 0 && pointsOnly)
-            symbolBorderWidth = 1;
-
-        // Get SymbolBorderStroke
-        Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
-
-        // Get DispData and start/end index for current visible range
-        DataStore dispData = getDispData();
-        int startIndex = getDispDataStartIndex();
-        int endIndex = getDispDataEndIndex();
-
-        // Get VisPointCount and MaxPointCount
-        int visPointCount = endIndex - startIndex + 1;
-        int maxPointCount = dataStyle.getMaxPointCount();
-
-        // Get point increment (as real number, so we can round to point index for distribution)
-        double incrementReal = 1;
-        if (maxPointCount == 1)
-            startIndex = endIndex;
-        if (maxPointCount > 1 && maxPointCount < visPointCount)
-            incrementReal = (visPointCount - 1) / (maxPointCount - 1d);
-
-        // Loop variables for point index (rounded) and point index (real)
-        int index = startIndex;
-        double indexReal = startIndex;
-
-        // Iterate over point indexes by incrementReal (round to get nearest index)
-        while (index <= endIndex) {
-
-            // Get disp X/Y of symbol origin and translate there
-            double dispX = dispData.getX(index) - symbolShift;
-            double dispY = dispData.getY(index) - symbolShift;
-            aPntr.translate(dispX, dispY);
-
-            // Set color and fill symbol shape
-            aPntr.setColor(symbolColor);
-            aPntr.fill(symbolShape);
-
-            // If only points, also stroke outline of shape
-            if (symbolBorderStroke != null) {
-                aPntr.setStroke(symbolBorderStroke);
-                aPntr.setColor(symbolBorderColor);
-                aPntr.draw(symbolShape);
-            }
-
-            // Translate back
-            aPntr.translate(-dispX, -dispY);
-
-            // Calculate next index
-            if (incrementReal > 1) {
-                indexReal += incrementReal;
-                index = (int) Math.round(indexReal);
-            }
-            else index++;
-        }
+    /**
+     * Paints tags for DataSet.
+     */
+    @Override
+    protected void paintDataTags(Painter aPntr)
+    {
+        _pointPainter.paintTags(aPntr);
     }
 
     /**
