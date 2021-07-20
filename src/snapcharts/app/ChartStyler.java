@@ -1,8 +1,5 @@
 package snapcharts.app;
-import snap.gfx.Border;
-import snap.gfx.Effect;
-import snap.gfx.Font;
-import snap.gfx.Paint;
+import snap.gfx.*;
 import snap.styler.Styler;
 import snap.util.Undoer;
 import snap.view.View;
@@ -61,23 +58,6 @@ public class ChartStyler extends Styler {
     }
 
     /**
-     * Returns the font of editor's selected shape.
-     */
-    public Font getFont()
-    {
-        StyledChartPart chartPart = getSelPart();
-        return chartPart!=null ? chartPart.getFont() : Font.Arial12;
-    }
-
-    /**
-     * Sets the current font.
-     */
-    public void setFont(Font aFont)
-    {
-        getSelPart().setFont(aFont);
-    }
-
-    /**
      * Returns the current effect.
      */
     public Effect getEffect()
@@ -110,6 +90,43 @@ public class ChartStyler extends Styler {
     {
         setUndoTitle("Transparency Change");
         getSelPart().setOpacity(aValue);
+    }
+
+    /**
+     * Returns the font of editor's selected shape.
+     */
+    public Font getFont()
+    {
+        StyledChartPart chartPart = getSelPart();
+        return chartPart!=null ? chartPart.getFont() : Font.Arial12;
+    }
+
+    /**
+     * Sets the current font.
+     */
+    public void setFont(Font aFont)
+    {
+        getSelPart().setFont(aFont);
+    }
+
+    /**
+     * Returns the text color current text.
+     */
+    public Color getTextColor()
+    {
+        StyledChartPart chartPart = getSelPart();
+        Paint textFill = chartPart != null ? chartPart.getTextFill() : null;
+        return textFill != null ? textFill.getColor() : null;
+    }
+
+    /**
+     * Sets the text color current text.
+     */
+    public void setTextColor(Color aColor)
+    {
+        StyledChartPart chartPart = getSelPart();
+        if (chartPart != null)
+            chartPart.setTextFill(aColor);
     }
 
     /**

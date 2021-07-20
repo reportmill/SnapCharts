@@ -1,8 +1,6 @@
 package snapcharts.view;
 import snap.geom.Insets;
 import snap.geom.Pos;
-import snap.gfx.Color;
-import snap.gfx.Font;
 import snap.view.ColView;
 import snap.view.StringView;
 import snapcharts.model.Chart;
@@ -22,11 +20,6 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     // The ColView to hold children in ScaleBox
     private ColView  _colView;
 
-    // Constants
-    private final Font DEFAULT_TITLE_FONT = Header.DEFAULT_TITLE_FONT;
-    private final Font DEFAULT_SUBTITLE_FONT = Font.Arial12;
-    private final Color DEFAULT_SUBTITLE_COLOR = Color.GRAY;
-
     /**
      * Constructor.
      */
@@ -45,14 +38,11 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
 
         // Create configure TitleView
         _titleView = new StringView();
-        _titleView.setFont(DEFAULT_TITLE_FONT);
         _titleView.setShrinkToFit(true);
         _colView.addChild(_titleView);
 
         // Create configure SubtitleView
         _subtitleView = new StringView();
-        _subtitleView.setFont(DEFAULT_SUBTITLE_FONT);
-        _subtitleView.setTextFill(DEFAULT_SUBTITLE_COLOR);
         _subtitleView.setShrinkToFit(true);
         _colView.addChild(_subtitleView);
     }
@@ -79,12 +69,16 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
         _titleView.setText(title);
         _titleView.setVisible(title != null && title.length() > 0);
         _titleView.setFont(header.getFont());
+        _titleView.setTextFill(header.getTextFill());
 
         // Reset Subtitle
         String subtitle = header.getSubtitle();
         _subtitleView.setText(subtitle);
         _subtitleView.setVisible(subtitle != null && subtitle.length() > 0);
+        _subtitleView.setFont(header.getSubtitleFont());
+        _subtitleView.setTextFill(header.getTextFill());
     }
+
 
     /**
      * Override to use ColView layout.

@@ -86,6 +86,7 @@ public abstract class Axis extends StyledChartPart {
     public static final String GridDash_Prop = "GridDash";
 
     // Constants for default values
+    protected static Color  AXIS_TEXT_COLOR = Color.DARKGRAY;
     protected static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
     public static MinMax DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
     public static final boolean DEFAULT_SHOW_GRID = true;
@@ -506,7 +507,7 @@ public abstract class Axis extends StyledChartPart {
     {
         // Handle properties
         switch (aPropName) {
-            case Font_Prop: return Font.Arial12;
+            case TextFill_Prop: return AXIS_TEXT_COLOR;
             case MinBound_Prop: return AxisBound.AUTO;
             case MaxBound_Prop: return AxisBound.AUTO;
             case MinValue_Prop: return 0;

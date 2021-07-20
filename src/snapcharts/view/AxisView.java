@@ -2,6 +2,7 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.gfx.Paint;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.StringView;
@@ -53,11 +54,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     protected final int AXIS_MARGIN = 5;
     protected final int TITLE_TICKS_SPACING = 8;
 
-    // Constants for painting
-    protected static Font AXIS_LABEL_FONT = Font.Arial12.getBold().deriveFont(13);
-    protected static Color AXIS_LABEL_TEXT_COLOR = Color.GRAY;
-    protected static Color  AXIS_LABELS_COLOR = Color.DARKGRAY;
-
     // Grid Constants
     public static Color TICK_LINE_COLOR = Color.GRAY;
 
@@ -76,8 +72,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Create configure TitleView
         _titleView = new StringView();
-        _titleView.setFont(AXIS_LABEL_FONT);
-        _titleView.setTextFill(AXIS_LABEL_TEXT_COLOR);
         _titleView.setShrinkToFit(true);
         addChild(_titleView);
 
@@ -295,6 +289,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         double delta = intervals.getDelta();
         boolean log = isLog();
 
+        // Get TickLabel attributes
+        Axis axis = getAxis();
+        Font tickLabelFont = getFont();
+        Paint tickTextFill = axis.getTextFill();
+
         // Create list
         List<TickLabel> tickLabels = new ArrayList<>(intervalCount);
 
@@ -317,8 +316,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             if (log && str.length() == 0)
                 continue;
             tickLabel.setText(str);
-            tickLabel.setFont(getFont());
-            tickLabel.setTextFill(AXIS_LABELS_COLOR);
+            tickLabel.setFont(tickLabelFont);
+            tickLabel.setTextFill(tickTextFill);
             tickLabels.add(tickLabel);
         }
 
@@ -354,13 +353,18 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         int pointCount = dsetList.getPointCount();
         TickLabel[] tickLabels = new TickLabel[pointCount];
 
+        // Get TickLabel attributes
+        Axis axis = getAxis();
+        Font tickLabelFont = getFont();
+        Paint tickTextFill = axis.getTextFill();
+
         // Iterate over points and create/set TickLabel
         for (int i = 0; i < pointCount; i++) {
             TickLabel tickLabel = tickLabels[i] = new TickLabel(this, i + .5);
             String str = dset.getString(i); // was getC(i)
             tickLabel.setText(str);
-            tickLabel.setFont(getFont());
-            tickLabel.setTextFill(AXIS_LABELS_COLOR);
+            tickLabel.setFont(tickLabelFont);
+            tickLabel.setTextFill(tickTextFill);
         }
 
         // Return TickLabels
@@ -482,6 +486,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Reset title
         String title = axis.getTitle();
         _titleView.setText(title);
+        _titleView.setFont(axis.getFont());
+        _titleView.setTextFill(axis.getTextFill());
     }
 
     /**

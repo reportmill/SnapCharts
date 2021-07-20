@@ -15,6 +15,9 @@ public class Header extends StyledChartPart {
     // The subtitle
     private String  _subtitle;
 
+    // The subtitle font
+    private Font  _subtitleFont;
+
     // Constants for properties
     public static final String Title_Prop = "Title";
     public static final String Subtitle_Prop = "Subtitle";
@@ -48,6 +51,28 @@ public class Header extends StyledChartPart {
     {
         if (SnapUtils.equals(aStr, getSubtitle())) return;
         firePropChange(Subtitle_Prop, _subtitle, _subtitle = aStr);
+    }
+
+    /**
+     * Returns the subtitle font.
+     */
+    public Font getSubtitleFont()
+    {
+        if (_subtitleFont != null) return _subtitleFont;
+
+        // If not set, return Header font reduced by 2
+        Font headerFont = getFont();
+        Font subtitleFont = headerFont.isBold() ? headerFont.getBold() : headerFont;
+        subtitleFont = subtitleFont.deriveFont(subtitleFont.getSize() - 2);
+        return subtitleFont;
+    }
+
+    /**
+     * Sets the subtitle font.
+     */
+    public void setSubtitleFont(Font aFont)
+    {
+        _subtitleFont = aFont;
     }
 
     /**

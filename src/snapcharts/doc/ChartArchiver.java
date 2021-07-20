@@ -1,4 +1,5 @@
 package snapcharts.doc;
+import snap.gfx.*;
 import snap.util.XMLArchiver;
 import snap.web.WebURL;
 import snapcharts.model.*;
@@ -86,6 +87,24 @@ public class ChartArchiver extends XMLArchiver {
         cmap.put(DataSetList.class.getSimpleName(), DataSetList.class);
         cmap.put(Header.class.getSimpleName(), Header.class);
         cmap.put(Legend.class.getSimpleName(), Legend.class);
+
+        // Add Graphics classes (Border, Paint, Font, Effect)
+        cmap.put("color", Color.class);
+        cmap.put("Color", Color.class);
+        cmap.put("font", Font.class);
+        cmap.put("Font", Font.class);
+        cmap.put("EmptyBorder", Borders.EmptyBorder.class);
+        cmap.put("BevelBorder", Borders.BevelBorder.class);
+        cmap.put("EtchBorder", Borders.EtchBorder.class);
+        cmap.put("LineBorder", Borders.LineBorder.class);
+        cmap.put("GradientPaint", GradientPaint.class); //RMGradientFill.class
+        cmap.put("ImagePaint", ImagePaint.class); //RMImageFill.class
+        cmap.put("BlurEffect", BlurEffect.class);
+        cmap.put("ShadowEffect", ShadowEffect.class);
+        cmap.put("ReflectEffect", ReflectEffect.class);
+        cmap.put("EmbossEffect", EmbossEffect.class);
+
+        // Return map
         return cmap;
     }
 }
