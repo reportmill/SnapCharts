@@ -23,9 +23,6 @@ public class DataSet extends ChartPart {
     // The Y Axis type
     private AxisType  _axisTypeY = AxisType.Y;
 
-    // Whether dataset is disabled
-    private boolean  _disabled;
-
     // The expression to apply to X values
     private String  _exprX;
 
@@ -34,6 +31,9 @@ public class DataSet extends ChartPart {
 
     // The expression to apply to Z values
     private String  _exprZ;
+
+    // Whether dataset is disabled
+    private boolean  _disabled;
 
     // The DataStyleHpr
     private DataStyleHpr _dataStyleHpr;
@@ -125,25 +125,6 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns whether this dataset is disabled.
-     */
-    public boolean isDisabled()  { return _disabled; }
-
-    /**
-     * Sets whether this dataset is disabled.
-     */
-    public void setDisabled(boolean aValue)
-    {
-        if (aValue==isDisabled()) return;
-        firePropChange(Disabled_Prop, _disabled, _disabled = aValue);
-    }
-
-    /**
-     * Returns whether this dataset is enabled.
-     */
-    public boolean isEnabled()  { return !_disabled; }
-
-    /**
      * Returns the expression to apply to X values.
      */
     public String getExprX()  { return _exprX; }
@@ -187,6 +168,25 @@ public class DataSet extends ChartPart {
         firePropChange(ExprZ_Prop, _exprZ, _exprZ = anExpr);
         clearCachedData();
     }
+
+    /**
+     * Returns whether this dataset is disabled.
+     */
+    public boolean isDisabled()  { return _disabled; }
+
+    /**
+     * Sets whether this dataset is disabled.
+     */
+    public void setDisabled(boolean aValue)
+    {
+        if (aValue==isDisabled()) return;
+        firePropChange(Disabled_Prop, _disabled, _disabled = aValue);
+    }
+
+    /**
+     * Returns whether this dataset is enabled.
+     */
+    public boolean isEnabled()  { return !_disabled; }
 
     /**
      * Returns the DataStyle for this DataSet (and ChartType).
@@ -609,23 +609,31 @@ public class DataSet extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive RawData
-        DataStore rawData = getRawData();
-        rawData.toXML(anArchiver, e);
+        // Archive AxisTypeY
+        if (getAxisTypeY() != AxisType.Y)
+            e.add(AxisTypeY_Prop, getAxisTypeY());
+
+        // Archive ExprX, ExprY, ExprZ
+        if (getExprX() != null && getExprX().length() > 0)
+            e.add(ExprX_Prop, getExprX());
+        if (getExprY() != null && getExprY().length() > 0)
+            e.add(ExprY_Prop, getExprY());
+        if (getExprZ() != null && getExprZ().length() > 0)
+            e.add(ExprZ_Prop, getExprZ());
 
         // Archive Disabled
         if (isDisabled())
             e.add(Disabled_Prop, true);
-
-        // Archive AxisTypeY
-        if (getAxisTypeY() != AxisType.Y)
-            e.add(AxisTypeY_Prop, getAxisTypeY());
 
         // Archive DataStyle
         DataStyle dataStyle = getDataStyle();
         XMLElement dataStyleXML = dataStyle.toXML(anArchiver);
         if (dataStyleXML.getAttributeCount() > 0)
             e.addElement(dataStyleXML);
+
+        // Archive RawData
+        DataStore rawData = getRawData();
+        rawData.toXML(anArchiver, e);
 
         // Return element
         return e;
@@ -640,17 +648,25 @@ public class DataSet extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive RawData
-        DataStore rawData = getRawData();
-        rawData.fromXML(anArchiver, anElement);
-
-        // Unarchive Disabled
-        setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
-
         // Unarchive AxisTypeY
         String axisTypeStr = anElement.getAttributeValue(AxisTypeY_Prop);
         if (axisTypeStr != null)
             setAxisTypeY(AxisType.valueOf(axisTypeStr));
+
+        // Unarchive ExprX, ExprY, ExprZ
+        if (anElement.hasAttribute(ExprX_Prop))
+            setExprX(anElement.getAttributeValue(ExprX_Prop));
+        if (anElement.hasAttribute(ExprY_Prop))
+            setExprY(anElement.getAttributeValue(ExprY_Prop));
+        if (anElement.hasAttribute(ExprZ_Prop))
+            setExprZ(anElement.getAttributeValue(ExprZ_Prop));
+
+        // Unarchive Disabled
+        setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
+
+        // Unarchive RawData
+        DataStore rawData = getRawData();
+        rawData.fromXML(anArchiver, anElement);
 
         // Legacy
         if (anElement.hasAttribute(DataStyle.ShowSymbols_Prop)) {

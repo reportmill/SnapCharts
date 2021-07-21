@@ -1,5 +1,8 @@
 package snapcharts.model;
 import snap.geom.*;
+import snap.gfx.Color;
+import snap.gfx.Painter;
+import snap.gfx.Stroke;
 
 /**
  * A class to represent a Symbol.
@@ -75,6 +78,35 @@ public class Symbol {
 
         // Set/return
         return _shape = shape;
+    }
+
+    /**
+     * Paints the symbol shape with given fill, border color, border width at given X/Y point.
+     */
+    public void paintSymbol(Painter aPntr, Color fillColor, Color borderColor, double borderWidth, double aX, double aY)
+    {
+        // Get symbol shape and XY of top-left corner
+        Shape symbolShape = getShape();
+        double halfSize = getSize() / 2d;
+        double symbolX = aX - halfSize;
+        double symbolY = aY - halfSize;
+
+        // Translate to top-left corner
+        aPntr.translate(symbolX, symbolY);
+
+        // Fill SymbolShape
+        if (fillColor != null) {
+            aPntr.fillWithPaint(symbolShape, fillColor);
+        }
+
+        // Draw SymbolShape border
+        if (borderColor != null && borderWidth > 0) {
+            aPntr.setStroke(Stroke.getStroke(borderWidth));
+            aPntr.drawWithPaint(symbolShape, borderColor);
+        }
+
+        // Translate back
+        aPntr.translate(-symbolX, -symbolY);
     }
 
     /**

@@ -1,6 +1,5 @@
 package snapcharts.view;
 import snap.geom.*;
-import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.*;
 import snapcharts.model.*;
@@ -18,8 +17,6 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
 
     // Constants
     private static Insets DEFAULT_PADDING = new Insets(5, 5, 5, 5);
-    private static Font DEFAULT_ENTRY_FONT = Font.Arial12.deriveFont(13).getBold();
-    private static Color DISABLED_COLOR = Color.LIGHTGRAY;
 
     /**
      * Constructor.
@@ -28,9 +25,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     {
         super();
 
-        setPadding(DEFAULT_PADDING);
-        setAlign(Pos.CENTER_LEFT);
-
+        // Create/configure/add ScaleBox to hold EntryBox
         _scaleBox = new ScaleBox();
         _scaleBox.setKeepAspect(true);
         addChild(_scaleBox);
@@ -70,20 +65,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         // Get info
         Legend legend = getLegend();
 
-        // Handle Orientation
-        Pos pos = getPosition();
-        boolean isHor = pos==Pos.TOP_CENTER || pos==Pos.BOTTOM_CENTER;
-        setVertical(!isHor);
-        if (isHor) {
-            setAlign(Pos.TOP_CENTER);
-            _scaleBox.setContent(_entryBox = new RowView());
-            _scaleBox.setAlign(Pos.CENTER);
-        }
-        else {
-            setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
-            _scaleBox.setContent(_entryBox = new ColView());
-            _scaleBox.setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
-        }
+        // Reset EntryBox
+        resetEntryBox();
 
         // Handle visible
         boolean showLegend = legend.isShowLegend();
@@ -104,11 +87,11 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         }
 
         // Iterate over DataSets and add entries
-        DataSetList dsetList = getDataSetList();
-        DataSet[] dataSets = dsetList.getDataSets();
+        DataSetList dataSetList = getDataSetList();
+        DataSet[] dataSets = dataSetList.getDataSets();
         for (int i=0; i<dataSets.length; i++) {
-            DataSet dset = dataSets[i];
-            View entryView = createLegendEntry(dset, i);
+            DataSet dataSet = dataSets[i];
+            View entryView = new LegendEntryView(legend, dataSet);
             _entryBox.addChild(entryView);
 
             // Register row to enable/disable
@@ -117,24 +100,47 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     }
 
     /**
-     * Creates a legend entry.
+     * Resets the EntryBox.
      */
-    private View createLegendEntry(DataSet aDataSet, int anIndex)
+    private void resetEntryBox()
     {
-        // Create Label for entry text
-        String text = aDataSet.getName();
-        Label label = new Label(text);
-        label.setFont(DEFAULT_ENTRY_FONT);
-        if (aDataSet.isDisabled()) {
-            label.setTextFill(Color.LIGHTGRAY);
+        // Get position
+        Pos pos = getPosition();
+
+        // Update View.Vertical for position
+        boolean isVer = !(pos == Pos.TOP_CENTER || pos == Pos.BOTTOM_CENTER);
+        setVertical(isVer);
+
+        // Handle Vertical layout
+        if (isVer) {
+            setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
+            _scaleBox.setContent(_entryBox = newEntryBox());
+            _scaleBox.setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
         }
 
-        // Create/add EntryGraphicView for entry graphic
-        View entryGraphicView = new EntryGraphicView(aDataSet);
-        label.setGraphic(entryGraphicView);
+        // Handle Horizontal layout
+        else {
+            setAlign(Pos.TOP_CENTER);
+            _scaleBox.setContent(_entryBox = newEntryBox());
+            _scaleBox.setAlign(Pos.CENTER);
+        }
+    }
 
-        // Return entry label
-        return label;
+    /**
+     * Creates the EntryBox that holds LegendEntryViews.
+     */
+    private ChildView newEntryBox()
+    {
+        // Handle Vertical: create/return ColView
+        if (isVertical()) {
+            ColView colView = new ColView();
+            return colView;
+        }
+
+        // Handle Horizontal: Create/return RowView
+        RowView rowView = new RowView();
+        rowView.setSpacing(5);
+        return rowView;
     }
 
     /**
@@ -197,66 +203,5 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
         double areaW = getWidth() - ins.getWidth();
         double areaH = getHeight() - ins.getHeight();
         _scaleBox.setBounds(areaX, areaY, areaW, areaH);
-    }
-
-    /**
-     * A placeholder view to paint entry graphic.
-     */
-    private class EntryGraphicView extends View {
-
-        // The DataSet
-        private DataSet  _dataSet;
-
-        // The DataStyle
-        private DataStyle  _dataStyle;
-
-        /**
-         * Constructor.
-         */
-        EntryGraphicView(DataSet aDataSet)
-        {
-            setPrefSize(24, 20);
-            _dataSet = aDataSet;
-            _dataStyle = aDataSet.getDataStyle();
-        }
-
-        @Override
-        protected void paintFront(Painter aPntr)
-        {
-            // Whether disabled
-            boolean disabled = _dataSet.isDisabled();
-
-            // Handle ShowArea
-            if (_dataStyle.isShowArea()) {
-                Color fillColor = _dataStyle.getFillColor();
-                aPntr.fillRectWithPaint(2, 9, 20, 7, fillColor);
-            }
-
-            // Handle ShowLine
-            if (_dataStyle.isShowLine()) {
-                Color lineColor = _dataStyle.getLineColor(); if (disabled) lineColor = DISABLED_COLOR;
-                aPntr.fillRectWithPaint(2, 9, 20, 2, lineColor);
-            }
-
-            // Handle ShowSymbol
-            if (_dataStyle.isShowSymbols()) {
-
-                // Get/paint symbol shape
-                Shape symbShape = _dataStyle.getSymbol().copyForSize(8).getShape();
-                symbShape = symbShape.copyFor(new Transform(8, 6));
-                Color symbColor = _dataStyle.getSymbolColor();
-                if (disabled) symbColor = DISABLED_COLOR;
-                aPntr.fillWithPaint(symbShape, symbColor);
-
-                // Paint border (if visible)
-                int borderWidth = _dataStyle.getSymbolBorderWidth();
-                if (borderWidth > 0) {
-                    Color borderColor = _dataStyle.getSymbolBorderColor();
-                    if (disabled) borderColor = DISABLED_COLOR;
-                    aPntr.setStroke(Stroke.getStroke(1));
-                    aPntr.drawWithPaint(symbShape, borderColor);
-                }
-            }
-        }
     }
 }

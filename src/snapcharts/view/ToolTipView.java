@@ -155,7 +155,8 @@ public class ToolTipView extends ColView {
         }
 
         // Otherwise animate move
-        getAnimCleared(300).setX(aX).setY(aY).play();
+        //getAnimCleared(300).setX(aX).setY(aY).play();
+        setXY(aX, aY);
     }
 
     /**
@@ -164,6 +165,6 @@ public class ToolTipView extends ColView {
     public void hideWindow()
     {
         if (getParent()==null) return;
-        getAnimCleared(500).setOpacity(0).setOnFinish(a -> ViewUtils.removeChild(_chartView, this)).play();
+        getAnimCleared(300).setOpacity(0).setOnFinish(a -> ViewUtils.removeChild(_chartView, this)).play();
     }
 }
