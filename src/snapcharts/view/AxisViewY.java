@@ -44,7 +44,7 @@ public class AxisViewY extends AxisView<AxisY> {
 
         // Create/configure LegendGraphicBox
         _legendGraphicRowView = new RowView();
-        _legendGraphicRowView.setSpacing(5);
+        _legendGraphicRowView.setSpacing(10);
         _legendGraphicRowView.setRotate(270);
         _legendGraphicBox = new WrapView(_legendGraphicRowView);
         _legendGraphicBox.setGrowHeight(true);
@@ -84,10 +84,12 @@ public class AxisViewY extends AxisView<AxisY> {
         if (showLegendGraphic) {
             _legendGraphicRowView.removeChildren();
             Legend legend = axisY.getChart().getLegend();
-            for (DataSet dataSet : axisY.getDataSetList().getDataSets()) {
+            DataSet[] dataSets = getDataSetList().getDataSets();
+            for (DataSet dataSet : dataSets) {
                 if (dataSet.getAxisTypeY() == getAxisType()) {
                     LegendEntryView legendEntryView = new LegendEntryView(legend, dataSet);
                     legendEntryView.setShowText(false);
+                    legendEntryView.getGraphic().setPrefWidth(40);
                     _legendGraphicRowView.addChild(legendEntryView);
                 }
             }
