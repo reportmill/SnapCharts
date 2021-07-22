@@ -86,6 +86,8 @@ public class AxisInsp extends ChartPartInsp {
         // Reset ZeroRequiredCheckBox, LogCheckBox
         setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
         setViewValue("LogCheckBox", axis.isLog());
+        setViewValue("ShowLegendGraphicCheckBox", axis instanceof AxisY && ((AxisY) axis).isShowLegendGraphic());
+        setViewVisible("ShowLegendGraphicCheckBox", axis instanceof AxisY);
 
         // Reset MinBoundAutoButton, MinBoundDataButton, MinBoundValueButton, MinBoundText
         AxisBound minBound = axis.getMinBound();
@@ -158,11 +160,13 @@ public class AxisInsp extends ChartPartInsp {
             axis.setMaxValue(val);
         }
 
-        // Handle ZeroRequiredCheckBox, LogCheckBox
+        // Handle ZeroRequiredCheckBox, LogCheckBox, ShowLegendGraphic
         if (anEvent.equals("ZeroRequiredCheckBox"))
             axis.setZeroRequired(anEvent.getBoolValue());
         if (anEvent.equals("LogCheckBox"))
             axis.setLog(anEvent.getBoolValue());
+        if (anEvent.equals("ShowLegendGraphicCheckBox"))
+            ((AxisY) axis).setShowLegendGraphic(anEvent.getBoolValue());
 
         // Handle WrapCheckBox WrapMinText, WrapMaxText
         if (anEvent.equals("WrapCheckBox")) {

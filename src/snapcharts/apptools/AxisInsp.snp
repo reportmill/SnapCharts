@@ -24,6 +24,7 @@
   </RowView>
   <CheckBox Name="ZeroRequiredCheckBox" Padding="4" text="Always Include Zero" />
   <CheckBox Name="LogCheckBox" Padding="4" text="Logarithmic" />
+  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="4" text="Show Legend Graphic" />
   <RowView Name="WrapAxisBox" GrowWidth="true" Spacing="4">
     <CheckBox Name="WrapCheckBox" Padding="4" text="Wrap Axis" />
     <RowView Name="WrapMinMaxBox" GrowWidth="true" Spacing="4">
