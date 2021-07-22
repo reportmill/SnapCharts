@@ -122,34 +122,37 @@ public class ChartViewLayout {
      */
     protected void layoutTopSide()
     {
-        // Get views and bounds above DataArea
-        ViewProxy<?>[] sideViews = getViewsForSide(Side.TOP);
-        Rect sideBounds = getBoundsForSide(Side.TOP);
+        // Create view proxy for layout of chart top
+        ViewProxy<?> topProxy = getTopViewProxy();
 
-        // Create temp proxy for layout
-        ViewProxy<?> sideProxy = new ViewProxy<>(_chartView);
-        sideProxy.setAlign(Pos.BOTTOM_CENTER);
-        sideProxy.setChildren(sideViews);
-        sideProxy.setSpacing(VIEW_SPACING);
-
-        // Set SideProxy.Insets, with special accommodation for AxisViewX (no inset)
-        ViewProxy<?> sideViewN = sideViews.length > 0 ? sideViews[sideViews.length-1] : null;
-        double insBottom = sideViewN!=null && sideViewN.getView() instanceof AxisView ? 0 : SIDE_MARGIN;
-        sideProxy.setInsets(new Insets(SIDE_MARGIN, SIDE_MARGIN, insBottom, SIDE_MARGIN));
-
-        // Get/set sideHeight for proxy: If no, PrefDataBounds, use proxy PrefHeight
-        double sideHeight = sideBounds.height;
+        // Get top Width/Height for proxy: If no, PrefDataBounds, use proxy PrefHeight
+        Rect topBounds = getBoundsForSide(Side.TOP);
+        double topHeight = topBounds.height;
         if (_prefDataBounds == null) {
-            double prefHeight = ColView.getPrefHeightProxy(sideProxy, sideBounds.width);
-            sideHeight = Math.min(prefHeight, sideHeight);
+            double prefHeight = ColView.getPrefHeightProxy(topProxy, topBounds.width);
+            topHeight = Math.min(prefHeight, topHeight);
         }
-        sideProxy.setSize(sideBounds.width, sideHeight);
 
-        // Layout ColView
-        ColView.layoutProxy(sideProxy, true);
+        // Set proxy size and layout ColView
+        topProxy.setSize(topBounds.width, topHeight);
+        ColView.layoutProxy(topProxy, true);
 
         // Update insets
-        _dataAreaInsets.top = sideHeight;
+        _dataAreaInsets.top = topHeight;
+    }
+
+    /**
+     * Returns the ViewProxy to layout chart top.
+     */
+    private ViewProxy<?> getTopViewProxy()
+    {
+        ViewProxy<?> viewProxy = new ViewProxy<>(_chartView);
+        viewProxy.setAlign(Pos.BOTTOM_CENTER);
+        viewProxy.setSpacing(VIEW_SPACING);
+        viewProxy.setInsets(new Insets(SIDE_MARGIN, SIDE_MARGIN, 0, SIDE_MARGIN));
+        ViewProxy<?>[] topViews = getViewsForSide(Side.TOP);
+        viewProxy.setChildren(topViews);
+        return viewProxy;
     }
 
     /**

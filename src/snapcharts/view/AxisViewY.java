@@ -6,14 +6,22 @@ import snap.view.RowView;
 import snap.view.ViewProxy;
 import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
+import snapcharts.model.DataSet;
+import snapcharts.model.Legend;
 
 /**
  * An AxisView subclass for AxisY.
  */
-public class AxisViewY extends AxisView {
+public class AxisViewY extends AxisView<AxisY> {
     
     // The Title view wrapper (to allow rotation)
     private WrapView  _titleViewBox;
+
+    // A RowView to hold LegendEntryViews if AxisY.ShowLegendGraphic
+    private RowView  _legendGraphicRowView;
+
+    // A WrapView to hold rotated LegendGraphicRowView
+    private WrapView  _legendGraphicBox;
 
     // The AxisType
     private AxisType  _axisType;
@@ -34,6 +42,14 @@ public class AxisViewY extends AxisView {
         _titleViewBox.setGrowHeight(true);
         addChild(_titleViewBox, 0);
 
+        // Create/configure LegendGraphicBox
+        _legendGraphicRowView = new RowView();
+        _legendGraphicRowView.setSpacing(5);
+        _legendGraphicRowView.setRotate(270);
+        _legendGraphicBox = new WrapView(_legendGraphicRowView);
+        _legendGraphicBox.setGrowHeight(true);
+        addChild(_legendGraphicBox, 1);
+
         // Set Padding
         setPadding(0, AXIS_MARGIN, 0, AXIS_MARGIN);
         _tickLabelBox.setGrowHeight(true);
@@ -50,6 +66,32 @@ public class AxisViewY extends AxisView {
     public AxisY getAxis()
     {
         return (AxisY) getChart().getAxisForType(_axisType);
+    }
+
+    /**
+     * Override to configure LegendGraphicRowView.
+     */
+    @Override
+    protected void resetView()
+    {
+        // Do normal version
+        super.resetView();
+
+        // Configure LegendGraphicRowView
+        AxisY axisY = getAxis();
+        boolean showLegendGraphic = axisY.isShowLegendGraphic();
+        _legendGraphicBox.setVisible(showLegendGraphic);
+        if (showLegendGraphic) {
+            _legendGraphicRowView.removeChildren();
+            Legend legend = axisY.getChart().getLegend();
+            for (DataSet dataSet : axisY.getDataSetList().getDataSets()) {
+                if (dataSet.getAxisTypeY() == getAxisType()) {
+                    LegendEntryView legendEntryView = new LegendEntryView(legend, dataSet);
+                    legendEntryView.setShowText(false);
+                    _legendGraphicRowView.addChild(legendEntryView);
+                }
+            }
+        }
     }
 
     /**

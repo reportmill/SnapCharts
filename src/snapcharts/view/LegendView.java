@@ -16,7 +16,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     private ChildView  _entryBox;
 
     // Constants
-    private static Insets DEFAULT_PADDING = new Insets(5, 5, 5, 5);
+    private static Insets DEFAULT_MARGIN = new Insets(5, 5, 5, 5);
 
     /**
      * Constructor.
@@ -24,6 +24,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     public LegendView()
     {
         super();
+        setMargin(DEFAULT_MARGIN);
 
         // Create/configure/add ScaleBox to hold EntryBox
         _scaleBox = new ScaleBox();
@@ -76,7 +77,7 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
 
         // Handle Inside
         if (legend.isInside()) {
-            setPadding(5, 5, 5, 5);
+            //setPadding(5, 5, 5, 5);
             ChartView chartView = getChartView();
             ViewUtils.moveToFront(chartView, this);
         }
@@ -104,10 +105,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
      */
     private void resetEntryBox()
     {
-        // Get position
+        // Get position and update View.Vertical
         Pos pos = getPosition();
-
-        // Update View.Vertical for position
         boolean isVer = !(pos == Pos.TOP_CENTER || pos == Pos.BOTTOM_CENTER);
         setVertical(isVer);
 

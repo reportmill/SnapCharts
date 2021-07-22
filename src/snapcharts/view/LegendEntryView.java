@@ -1,7 +1,5 @@
 package snapcharts.view;
 import snap.geom.Insets;
-import snap.geom.Shape;
-import snap.geom.Transform;
 import snap.gfx.*;
 import snap.view.Label;
 import snap.view.View;
@@ -41,7 +39,7 @@ public class LegendEntryView extends Label {
         setTextFill(textFill);
 
         // Create/add LegendGraphic
-        View legendGraphic = new LegendGraphic(aDataSet);
+        View legendGraphic = new LegendGraphic();
         setGraphic(legendGraphic);
     }
 
@@ -69,20 +67,45 @@ public class LegendEntryView extends Label {
      */
     private class LegendGraphic extends View {
 
+        // Constant for default width of graphic
+        private static final int DEFAULT_WIDTH = 30;
+
+        // Constant for height of 'ShowArea' part of graphic
+        private static final int AREA_HEIGHT = 6;
+
         /**
          * Constructor.
          */
-        public LegendGraphic(DataSet aDataSet)
+        public LegendGraphic()
         {
             // Basic config
-            setPrefSize(30, 20);
-            setPadding(2, 2, 2, 2);
-
-            // Set DataSet, DataStyle
-            _dataSet = aDataSet;
-            _dataStyle = aDataSet.getDataStyle();
+            setPrefWidth(DEFAULT_WIDTH);
+            //setPadding(2, 2, 2, 2);
         }
 
+        /**
+         * Override to return height to fit style.
+         */
+        @Override
+        protected double getPrefHeightImpl(double aW)
+        {
+            // Get marked height of line/area/symbol
+            double markedHeight = 0;
+            if (_dataStyle.isShowLine())
+                markedHeight = _dataStyle.getLineWidth();
+            if (_dataStyle.isShowArea())
+                markedHeight += AREA_HEIGHT;
+            if (_dataStyle.isShowSymbols())
+                markedHeight = Math.max(_dataStyle.getSymbol().getSize(), markedHeight);
+
+            // Return markedHeight plus insets height
+            Insets ins = getInsetsAll();
+            return markedHeight + ins.getHeight();
+        }
+
+        /**
+         * Override to paint sample of DataStyle line.
+         */
         @Override
         protected void paintFront(Painter aPntr)
         {
@@ -93,26 +116,30 @@ public class LegendEntryView extends Label {
             double areaW = getWidth() - ins.getWidth();
             double areaH = getHeight() - ins.getHeight();
 
-            // Whether disabled
+            // Get info
+            boolean showArea = _dataStyle.isShowArea();
+            boolean showLine = _dataStyle.isShowLine();
+            boolean showSymbols = _dataStyle.isShowSymbols();
             boolean disabled = _dataSet.isDisabled();
+            double lineWidth = showLine ? _dataStyle.getLineWidth() : 0;
+            double lineY = areaY + (areaH - lineWidth) / 2;
 
             // Handle ShowArea
-            if (_dataStyle.isShowArea()) {
+            if (showArea) {
                 Color fillColor = _dataStyle.getFillColor();
-                aPntr.fillRectWithPaint(2, 9, 20, 7, fillColor);
+                double lineMaxY = lineY + lineWidth;
+                aPntr.fillRectWithPaint(areaX, lineMaxY, areaW, AREA_HEIGHT, fillColor);
             }
 
             // Handle ShowLine
-            if (_dataStyle.isShowLine()) {
+            if (showLine) {
                 Color lineColor = _dataStyle.getLineColor();
                 if (disabled) lineColor = DISABLED_COLOR;
-                double lineWidth = _dataStyle.getLineWidth();
-                double lineY = areaY + (areaH - lineWidth) / 2;
                 aPntr.fillRectWithPaint(areaX, lineY, areaW, lineWidth, lineColor);
             }
 
             // Handle ShowSymbol
-            if (_dataStyle.isShowSymbols()) {
+            if (showSymbols) {
 
                 // Get symbol fill color
                 Color fillColor = _dataStyle.getSymbolColor();
@@ -124,7 +151,7 @@ public class LegendEntryView extends Label {
                 if (disabled) borderColor = DISABLED_COLOR;
 
                 // Paint Symbol at midpoint
-                Symbol symbol = _dataStyle.getSymbol().copyForSize(8);
+                Symbol symbol = _dataStyle.getSymbol(); //.copyForSize(8);
                 double areaMidX = areaX + areaW / 2;
                 double areaMidY = areaY + areaH / 2;
                 symbol.paintSymbol(aPntr, fillColor, borderColor, borderWidth, areaMidX, areaMidY);
