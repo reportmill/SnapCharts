@@ -1,6 +1,9 @@
 package snapcharts.view;
 import snap.geom.Pos;
 import snap.geom.Side;
+import snap.util.ArrayUtils;
+import snap.view.RowView;
+import snap.view.ViewProxy;
 import snapcharts.model.AxisType;
 import snapcharts.model.AxisY;
 
@@ -28,7 +31,12 @@ public class AxisViewY extends AxisView {
         // Create configure TitleView
         _titleView.setRotate(270);
         _titleViewBox = new WrapView(_titleView);
-        addChild(_titleViewBox);
+        _titleViewBox.setGrowHeight(true);
+        addChild(_titleViewBox, 0);
+
+        // Set Padding
+        setPadding(0, AXIS_MARGIN, 0, AXIS_MARGIN);
+        _tickLabelBox.setGrowHeight(true);
     }
 
     /**
@@ -45,14 +53,29 @@ public class AxisViewY extends AxisView {
     }
 
     /**
+     * Returns a ViewProxy of AxisView to layout as RowView.
+     */
+    private ViewProxy<?> getViewProxy()
+    {
+        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        viewProxy.setSpacing(TITLE_TICKS_SPACING);
+
+        // If RightSide, reverse children
+        AxisY axisY = getAxis();
+        boolean isRightSide = axisY.getSide() == Side.RIGHT;
+        viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+        if (isRightSide)
+            ArrayUtils.reverse(viewProxy.getChildren());
+        return viewProxy;
+    }
+
+    /**
      * Calculates the preferred width.
      */
     protected double getPrefWidthImpl(double aH)
     {
-        double titleW = _titleViewBox.getPrefWidth();
-        double spacing = titleW > 0 ? TITLE_TICKS_SPACING : 0;
-        double ticksW = getTickLabelsMaxWidth();
-        return AXIS_MARGIN + titleW + spacing + ticksW + AXIS_MARGIN;
+        ViewProxy viewProxy = getViewProxy();
+        return RowView.getPrefWidthProxy(viewProxy, aH);
     }
 
     /**
@@ -60,31 +83,10 @@ public class AxisViewY extends AxisView {
      */
     protected void layoutImpl()
     {
-        // Get area bounds
-        double areaH = getHeight();
-
-        // Get TitleView bounds
-        double titleX = AXIS_MARGIN;
-        double titleW = _titleViewBox.getPrefWidth();
-
-        // Get TickLabels X
-        double spacing = titleW > 0 ? TITLE_TICKS_SPACING : 0;
-        double ticksX = AXIS_MARGIN + titleW + spacing;
-
-        // If on RIGHT, reset titleX
-        if (getAxis().getSide() == Side.RIGHT) {
-            double areaMaxX = getWidth();
-            titleX = areaMaxX - AXIS_MARGIN - titleW;
-            ticksX = AXIS_MARGIN;
-        }
-
-        // Update TickLabels X
-        TickLabel[] tickLabels = getTickLabels();
-        for (TickLabel tickLabel : tickLabels)
-            tickLabel.setX(ticksX);
-
-        // Set TitleView bounds
-        _titleViewBox.setBounds(titleX, 0, titleW, areaH);
+        // Layout as RowView
+        ViewProxy viewProxy = getViewProxy();
+        RowView.layoutProxy(viewProxy, false);
+        viewProxy.setBoundsInClient();
 
         // Layout TickLabels
         layoutTickLabels();
@@ -95,19 +97,12 @@ public class AxisViewY extends AxisView {
      */
     private void layoutTickLabels()
     {
-        // Get tick labels X
-        double titleW = _titleViewBox.getPrefWidth();
-        double spacing = titleW > 0 ? TITLE_TICKS_SPACING : 0;
-        double ticksX = AXIS_MARGIN + titleW + spacing;
+        // Get tick labels width
         double ticksW = getTickLabelsMaxWidth();
-        Pos ticksAlign = Pos.TOP_RIGHT;
 
-        // If on RIGHT, reset ticksX and align
-        Side side = getAxis().getSide();
-        if (side == Side.RIGHT) {
-            ticksX = AXIS_MARGIN;
-            ticksAlign = Pos.TOP_LEFT;
-        }
+        // Get TickLabel.Align (if Side RIGHT, align left)
+        boolean isRightSide = getAxis().getSide() == Side.RIGHT;
+        Pos ticksAlign = isRightSide ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
 
         // Get TickLabels
         TickLabel[] tickLabels = getTickLabels();
@@ -132,7 +127,7 @@ public class AxisViewY extends AxisView {
             double tickH = tickLabel.getPrefHeight();
             double tickY = dispY - Math.round(tickH / 2);
             tickLabel.setAlign(ticksAlign);
-            tickLabel.setBounds(ticksX, tickY, ticksW, tickH);
+            tickLabel.setBounds(0, tickY, ticksW, tickH);
         }
     }
 }

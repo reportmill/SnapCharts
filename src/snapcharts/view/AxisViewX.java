@@ -1,5 +1,9 @@
 package snapcharts.view;
+import snap.geom.Pos;
 import snap.gfx.*;
+import snap.util.ArrayUtils;
+import snap.view.ColView;
+import snap.view.ViewProxy;
 import snapcharts.model.AxisX;
 
 /**
@@ -14,6 +18,10 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     {
         super();
         setFont(Font.Arial12);
+
+        // Set Padding
+        setPadding(AXIS_MARGIN, 0, AXIS_MARGIN, 0);
+        _tickLabelBox.setGrowWidth(true);
     }
 
     /**
@@ -22,6 +30,18 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     public AxisX getAxis()
     {
         return getChart().getAxisX();
+    }
+
+    /**
+     * Returns a ViewProxy for AxisView to layout as ColView.
+     */
+    private ViewProxy<?> getViewProxy()
+    {
+        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        viewProxy.setAlign(Pos.BOTTOM_CENTER);
+        ArrayUtils.reverse(viewProxy.getChildren());
+        viewProxy.setSpacing(TITLE_TICKS_SPACING);
+        return viewProxy;
     }
 
     /**
@@ -37,15 +57,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     protected double getPrefHeightImpl(double aW)
     {
-        // Get ticks height
-        Font font = getFont();
-        int ascent = (int) Math.ceil(font.getAscent());
-        int descent = (int) Math.ceil(font.getDescent());
-        double ticksH = ascent + descent;
-
-        // Get TitleView height
-        double titleH = _titleView.getPrefHeight();
-        return AXIS_MARGIN + ticksH + TITLE_TICKS_SPACING + titleH + AXIS_MARGIN;
+        ViewProxy<?> viewProxy = getViewProxy();
+        return ColView.getPrefHeightProxy(viewProxy, aW);
     }
 
     /**
@@ -53,21 +66,10 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     protected void layoutImpl()
     {
-        // Get area bounds
-        double areaW = getWidth();
-
-        // Get ticks height
-        Font font = getFont();
-        int ascent = (int) Math.ceil(font.getAscent());
-        int descent = (int) Math.ceil(font.getDescent());
-        double ticksH = ascent + descent;
-
-        // Set TitleView bounds
-        double titleW = Math.min(_titleView.getPrefWidth(), areaW);
-        double titleH = _titleView.getPrefHeight();
-        double titleX = Math.round((areaW - titleW)/2);
-        double titleY = AXIS_MARGIN + ticksH + TITLE_TICKS_SPACING;
-        _titleView.setBounds(titleX, titleY, titleW, titleH);
+        // Layout as ColView
+        ViewProxy<?> viewProxy = getViewProxy();
+        ColView.layoutProxy(viewProxy, false);
+        viewProxy.setBoundsInClient();
 
         // Layout TickLabels
         layoutTickLabels();
@@ -99,7 +101,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
             double tickW = tickLabel.getPrefWidth();
             double tickH = tickLabel.getPrefHeight();
             double tickX = dispX - Math.round(tickW / 2);
-            tickLabel.setBounds(tickX, AXIS_MARGIN, tickW, tickH);
+            tickLabel.setBounds(tickX, 0, tickW, tickH);
         }
     }
 }

@@ -5,10 +5,7 @@ import snap.gfx.Font;
 import snap.gfx.Paint;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
-import snap.view.StringView;
-import snap.view.ViewAnim;
-import snap.view.ViewEvent;
-import snap.view.ViewUtils;
+import snap.view.*;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import java.util.ArrayList;
@@ -30,6 +27,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // The Title view
     protected StringView  _titleView;
+
+    // The view that holds TickLabels
+    protected ChildView  _tickLabelBox;
 
     // The Axis min override
     protected double  _minOverride = UNSET_DOUBLE;
@@ -74,6 +74,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView = new StringView();
         _titleView.setShrinkToFit(true);
         addChild(_titleView);
+
+        // Create TickLabelBox
+        _tickLabelBox = new TickLabelBox();
+        addChild(_tickLabelBox);
 
         // Enable events
         enableEvents(MouseEvents);
@@ -248,8 +252,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Remove/clear TickLabels
         if (_tickLabels != null) {
-            for (TickLabel tickLabel : _tickLabels)
-                removeChild(tickLabel);
+            _tickLabelBox.removeChildren();
             _tickLabels = null;
         }
 
@@ -270,9 +273,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             _tickLabels = createTickLabelsForBarAxis();
         else _tickLabels = createTickLabels();
 
-        // Add TickLabels
+        // Add TickLabels to TickLabelBox
         for (TickLabel tickLabel : _tickLabels)
-            addChild(tickLabel);
+            _tickLabelBox.addChild(tickLabel);
 
         // Return
         return _tickLabels;
@@ -488,6 +491,12 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView.setText(title);
         _titleView.setFont(axis.getFont());
         _titleView.setTextFill(axis.getTextFill());
+
+        // If no title, make TitleView not visible so it takes no space (for AxisViewY, TitleView is in WrapView)
+        boolean titleVisible = title != null && title.length() > 0;
+        _titleView.setVisible(titleVisible);
+        if (_titleView.getParent() != this)
+            _titleView.getParent().setVisible(titleVisible);
     }
 
     /**
@@ -530,5 +539,40 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (aValue == getHeight()) return;
         super.setHeight(aValue);
         clearIntervals();
+    }
+
+    /**
+     * A container view to hold TickLabels.
+     */
+    protected static class TickLabelBox extends ChildView {
+
+        /**
+         * Override to return TickLabels.MaxWidth for AxisViewY.
+         */
+        @Override
+        protected double getPrefWidthImpl(double aH)
+        {
+            ParentView parent = getParent();
+            if (parent instanceof AxisViewY) {
+                return ((AxisViewY) parent).getTickLabelsMaxWidth();
+            }
+            return 200;
+        }
+
+        /**
+         * Override to return text height for AxisViewX.
+         */
+        @Override
+        protected double getPrefHeightImpl(double aW)
+        {
+            ParentView parent = getParent();
+            if (parent instanceof AxisViewX) {
+                Font font = getFont();
+                int ascent = (int) Math.ceil(font.getAscent());
+                int descent = (int) Math.ceil(font.getDescent());
+                return ascent + descent;
+            }
+            return 200;
+        }
     }
 }
