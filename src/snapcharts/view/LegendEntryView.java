@@ -80,7 +80,6 @@ public class LegendEntryView extends Label {
         {
             // Basic config
             setPrefWidth(DEFAULT_WIDTH);
-            //setPadding(2, 2, 2, 2);
         }
 
         /**
@@ -94,13 +93,13 @@ public class LegendEntryView extends Label {
             if (_dataStyle.isShowLine())
                 markedHeight = _dataStyle.getLineWidth();
             if (_dataStyle.isShowArea())
-                markedHeight += AREA_HEIGHT;
+                markedHeight += AREA_HEIGHT - markedHeight / 2;
             if (_dataStyle.isShowSymbols())
                 markedHeight = Math.max(_dataStyle.getSymbol().getSize(), markedHeight);
 
             // Return markedHeight plus insets height
             Insets ins = getInsetsAll();
-            return markedHeight + ins.getHeight();
+            return Math.ceil(markedHeight + ins.getHeight());
         }
 
         /**
@@ -129,15 +128,18 @@ public class LegendEntryView extends Label {
             // Handle ShowArea
             if (showArea) {
                 Color fillColor = _dataStyle.getFillColor();
-                double lineMaxY = lineY + lineWidth;
-                aPntr.fillRectWithPaint(areaX, lineMaxY, areaW, AREA_HEIGHT, fillColor);
+                double lineMidY = lineY + lineWidth / 2;
+                aPntr.fillRectWithPaint(areaX, lineMidY, areaW, AREA_HEIGHT, fillColor);
             }
 
             // Handle ShowLine
             if (showLine) {
                 Color lineColor = _dataStyle.getLineColor();
                 if (disabled) lineColor = DISABLED_COLOR;
-                aPntr.fillRectWithPaint(areaX, lineY, areaW, lineWidth, lineColor);
+                Stroke lineStroke = _dataStyle.getLineStroke();
+                aPntr.setColor(lineColor);
+                aPntr.setStroke(lineStroke);
+                aPntr.drawLine(areaX, lineY, areaX + areaW, lineY);
             }
 
             // Handle ShowSymbol
