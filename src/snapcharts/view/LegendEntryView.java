@@ -123,6 +123,8 @@ public class LegendEntryView extends Label {
             boolean disabled = _dataSet.isDisabled();
             double lineWidth = showLine ? _dataStyle.getLineWidth() : 0;
             double lineY = areaY + (areaH - lineWidth) / 2;
+            if (showArea)
+                lineY -= AREA_HEIGHT / 2;
 
             // Handle ShowArea
             if (showArea) {
@@ -153,8 +155,8 @@ public class LegendEntryView extends Label {
                 // Paint Symbol at midpoint
                 Symbol symbol = _dataStyle.getSymbol(); //.copyForSize(8);
                 double areaMidX = areaX + areaW / 2;
-                double areaMidY = areaY + areaH / 2;
-                symbol.paintSymbol(aPntr, fillColor, borderColor, borderWidth, areaMidX, areaMidY);
+                double lineMidY = lineY + lineWidth / 2;
+                symbol.paintSymbol(aPntr, fillColor, borderColor, borderWidth, areaMidX, lineMidY);
             }
         }
     }

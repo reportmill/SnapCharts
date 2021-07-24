@@ -7,7 +7,7 @@ import snapcharts.model.*;
 /**
  * A view to display chart legend.
  */
-public class LegendView<T extends Legend> extends ChartPartView<T> {
+public class LegendView extends ChartPartView<Legend> {
 
     // A ScaleBox to make sure Legend always fits
     private ScaleBox  _scaleBox;
@@ -43,7 +43,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return (T) getLegend(); }
+    @Override
+    public Legend getChartPart()  { return getLegend(); }
 
     /**
      * Returns the position of the legend.
@@ -77,14 +78,8 @@ public class LegendView<T extends Legend> extends ChartPartView<T> {
 
         // Handle Inside
         if (legend.isInside()) {
-            //setPadding(5, 5, 5, 5);
             ChartView chartView = getChartView();
             ViewUtils.moveToFront(chartView, this);
-        }
-
-        // Handle outside
-        else {
-            setPadding(null);
         }
 
         // Iterate over DataSets and add entries

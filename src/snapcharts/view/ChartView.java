@@ -13,19 +13,19 @@ import java.util.Objects;
 /**
  * A view to render a chart.
  */
-public class ChartView<T extends Chart> extends ChartPartView<T> {
+public class ChartView extends ChartPartView<Chart> {
 
     // The Chart
-    private T  _chart;
+    private Chart  _chart;
 
     // The ChartHelper
     private ChartHelper  _chartHelper;
 
     // The view to display chart parts at top of chart
-    private HeaderView _headerView;
+    private HeaderView  _headerView;
 
     // The view to manage essential chart parts: DataView and AxisViews
-    private DataView _dataView;
+    private DataView  _dataView;
 
     // The Legend
     private LegendView  _legendView;
@@ -122,16 +122,19 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return _chart; }
+    @Override
+    public Chart getChartPart()  { return _chart; }
 
     /**
      * Returns the ChartView.
      */
+    @Override
     public ChartView getChartView()  { return this; }
 
     /**
      * Returns the Chart.
      */
+    @Override
     public Chart getChart()  { return _chart; }
 
     /**
@@ -149,7 +152,7 @@ public class ChartView<T extends Chart> extends ChartPartView<T> {
         }
 
         // Set Chart
-        _chart = (T) aChart;
+        _chart = aChart;
 
         // Start listening to new chart
         _chart.addPropChangeListener(_pcl);

@@ -9,7 +9,7 @@ import snapcharts.model.Header;
 /**
  * A view to hold header elements at top of ChartView.
  */
-public class HeaderView<T extends Header> extends ChartPartView<T> {
+public class HeaderView extends ChartPartView<Header> {
 
     // The title
     private StringView  _titleView;
@@ -50,7 +50,7 @@ public class HeaderView<T extends Header> extends ChartPartView<T> {
     /**
      * Returns the ChartPart.
      */
-    public T getChartPart()  { return (T) getChart().getHeader(); }
+    public Header getChartPart()  { return getChart().getHeader(); }
 
     /**
      * Called to reset view from Chart.
