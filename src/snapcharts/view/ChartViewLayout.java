@@ -133,7 +133,7 @@ public class ChartViewLayout {
             topHeight = Math.min(prefHeight, topHeight);
         }
 
-        // Set proxy size and layout ColView
+        // Set proxy size and layout as ColView
         topProxy.setSize(topBounds.width, topHeight);
         ColView.layoutProxy(topProxy, true);
 
@@ -160,40 +160,47 @@ public class ChartViewLayout {
      */
     protected void layoutBottomSide()
     {
-        // Get views and bounds below DataArea
-        ViewProxy<?>[] sideViews = getViewsForSide(Side.BOTTOM);
-        Rect sideBounds = getBoundsForSide(Side.BOTTOM);
+        // Create view proxy for layout of chart bottom
+        ViewProxy<?> bottomProxy = getBottomViewProxy();
 
-        // Create temp proxy for layout
-        ViewProxy<?> sideProxy = new ViewProxy<>(_chartView);
-        sideProxy.setAlign(Pos.TOP_CENTER);
-        sideProxy.setChildren(sideViews);
-        sideProxy.setSpacing(VIEW_SPACING);
-
-        // Set SideProxy.Insets, with special accommodation for AxisViewX (no inset)
-        ViewProxy sideView0 = sideViews.length > 0 ? sideViews[0] : null;
-        double insTop = sideView0!=null && sideView0.getView() instanceof AxisViewX ? 0 : SIDE_MARGIN;
-        sideProxy.setInsets(new Insets(insTop, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
-
-        // Get/set sideHeight for proxy: If no, PrefDataBounds, use proxy PrefHeight
-        double sideHeight = sideBounds.height;
+        // Get/set bottomHeight for proxy: If no, PrefDataBounds, use proxy PrefHeight
+        Rect bottomBounds = getBoundsForSide(Side.BOTTOM);
+        double bottomHeight = bottomBounds.height;
         if (_prefDataBounds == null) {
-            double prefHeight = ColView.getPrefHeightProxy(sideProxy, sideBounds.width);
+            double prefHeight = ColView.getPrefHeightProxy(bottomProxy, bottomBounds.width);
             prefHeight = Math.max(prefHeight, RIGHT_MARGIN_MIN);
-            sideHeight = Math.min(prefHeight, sideHeight);
+            bottomHeight = Math.min(prefHeight, bottomHeight);
         }
-        sideProxy.setSize(sideBounds.width, sideHeight);
 
-        // Layout ColView
-        ColView.layoutProxy(sideProxy, true);
+        // Set proxy size and layout as ColView
+        bottomProxy.setSize(bottomBounds.width, bottomHeight);
+        ColView.layoutProxy(bottomProxy, true);
 
         // Shift views to sideBounds origin y
-        double sideY = _chartProxy.getHeight() - sideHeight;
-        for (ViewProxy proxy : sideViews)
+        double sideY = _chartProxy.getHeight() - bottomHeight;
+        for (ViewProxy proxy : bottomProxy.getChildren())
             proxy.setY(proxy.getY() + sideY);
 
         // Update insets
-        _dataAreaInsets.bottom = sideHeight;
+        _dataAreaInsets.bottom = bottomHeight;
+    }
+
+    /**
+     * Returns the ViewProxy to layout chart bottom.
+     */
+    private ViewProxy<?> getBottomViewProxy()
+    {
+        ViewProxy<?> viewProxy = new ViewProxy<>(_chartView);
+        viewProxy.setAlign(Pos.TOP_CENTER);
+        viewProxy.setSpacing(VIEW_SPACING);
+        ViewProxy<?>[] bottomViews = getViewsForSide(Side.BOTTOM);
+        viewProxy.setChildren(bottomViews);
+
+        // Set ViewProxy.Insets, with special accommodation for AxisViewX (no inset)
+        ViewProxy bottomView0 = bottomViews.length > 0 ? bottomViews[0] : null;
+        double insTop = bottomView0 != null && bottomView0.getView() instanceof AxisViewX ? 0 : SIDE_MARGIN;
+        viewProxy.setInsets(new Insets(insTop, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
+        return viewProxy;
     }
 
     /**
