@@ -252,16 +252,6 @@ public class Chart extends StyledChartPart {
     }
 
     /**
-     * Returns the start value of the dataset.
-     */
-    public int getDataSetStartValue()  { return _dsetList.getStartValue(); }
-
-    /**
-     * Sets the start value of the dataset.
-     */
-    public void setDataSetStartValue(int aValue)  { _dsetList.setStartValue(aValue); }
-
-    /**
      * Returns the colors.
      */
     public Color[] getColors()  { return _colors; }
@@ -280,8 +270,9 @@ public class Chart extends StyledChartPart {
      */
     public Color getColor(int anIndex)
     {
-        if (anIndex<_colors.length) return _colors[anIndex];
-        return COLORS[(anIndex - _colors.length)%COLORS.length];
+        if (anIndex < _colors.length) return _colors[anIndex];
+        int index = (anIndex - _colors.length) % COLORS.length;
+        return COLORS[index];
     }
 
     /**
@@ -309,20 +300,6 @@ public class Chart extends StyledChartPart {
     {
         _pcs.fireDeepChange(this, aPC);
     }
-
-    /**
-     * Add DeepChange listener.
-     */
-    public void addDeepChangeListener(DeepChangeListener aDCL)
-    {
-        if (_pcs==PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addDeepChangeListener(aDCL);
-    }
-
-    /**
-     * Remove DeepChange listener.
-     */
-    public void removeDeepChangeListener(DeepChangeListener aPCL)  { _pcs.removeDeepChangeListener(aPCL); }
 
     /**
      * Returns the value for given key.
@@ -390,25 +367,25 @@ public class Chart extends StyledChartPart {
 
         // Unarchive Header
         XMLElement header_XML = anElement.get("Header");
-        if (header_XML!=null)
+        if (header_XML != null)
             anArchiver.fromXML(header_XML, _header, this);
 
         // Unarchive AxisX, AxisY
         XMLElement axisX_XML = anElement.get("AxisX");
-        if (axisX_XML!=null)
+        if (axisX_XML != null)
             anArchiver.fromXML(axisX_XML, _axisX, this);
         XMLElement axisY_XML = anElement.get("AxisY");
-        if (axisY_XML!=null)
+        if (axisY_XML != null)
             anArchiver.fromXML(axisY_XML, _axisY, this);
 
         // Unarchive Legend
         XMLElement legend_XML = anElement.get("Legend");
-        if (legend_XML!=null)
+        if (legend_XML != null)
             anArchiver.fromXML(legend_XML, _legend, this);
 
         // Unarchive DataSetList
         XMLElement dsetListXML = anElement.get("DataSetList");
-        if (dsetListXML!=null)
+        if (dsetListXML != null)
             anArchiver.fromXML(dsetListXML, _dsetList, this);
 
         // Legacy: Unarchive Title, Subtitle, ShowLegend

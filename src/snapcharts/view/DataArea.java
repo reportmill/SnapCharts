@@ -137,7 +137,8 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     {
         DataSet dataSet = getDataSet();
         DataStyle dataStyle = dataSet.getDataStyle();
-        return dataStyle.getSymbol();
+        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        return symbolStyle.getSymbol();
     }
 
     /**

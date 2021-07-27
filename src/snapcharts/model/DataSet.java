@@ -664,6 +664,11 @@ public class DataSet extends ChartPart {
         // Unarchive Disabled
         setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
 
+        // Unarchive DataStyle
+        XMLElement dataStyleXML = anElement.getElement("DataStyle");
+        if (dataStyleXML != null)
+            getDataStyle().fromXML(anArchiver, dataStyleXML);
+
         // Unarchive RawData
         DataStore rawData = getRawData();
         rawData.fromXML(anArchiver, anElement);

@@ -1,10 +1,7 @@
 package snapcharts.apptools;
 import snap.geom.Line;
 import snap.geom.Shape;
-import snap.gfx.Border;
-import snap.gfx.Color;
-import snap.gfx.Font;
-import snap.gfx.Stroke;
+import snap.gfx.*;
 import snap.util.FormatUtils;
 import snap.util.SnapUtils;
 import snap.util.StringUtils;
@@ -212,7 +209,7 @@ public class DataStyleInsp extends ChartPartInsp {
 
             // Reset FillColorButton, FillColorResetButton
             setViewValue("FillColorButton", dataStyle.getFillColor());
-            setViewVisible("FillColorResetButton", dataStyle.isFillColorSet());
+            setViewVisible("FillColorResetButton", dataStyle.isFillSet());
 
             // Reset FillModeComboBox
             setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
@@ -231,30 +228,32 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showSymbolsMore) {
 
             // Reset SymbolColorButton, SymbolColorResetButton
-            setViewValue("SymbolColorButton", dataStyle.getSymbolColor());
-            setViewVisible("SymbolColorResetButton", dataStyle.isSymbolColorSet());
+            SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+            Color symbolColor = symbolStyle.getFillColor();
+            setViewValue("SymbolColorButton", symbolColor);
+            setViewVisible("SymbolColorResetButton", symbolStyle.isFillSet());
 
             // Reset SymbolSizeText, SymbolSizeResetButton
-            setViewValue("SymbolSizeText", dataStyle.getSymbolSize());
-            setViewVisible("SymbolSizeResetButton", dataStyle.getSymbolSize() != DataStyle.DEFAULT_SYMBOL_SIZE);
+            setViewValue("SymbolSizeText", symbolStyle.getSymbolSize());
+            setViewVisible("SymbolSizeResetButton", symbolStyle.getSymbolSize() != SymbolStyle.DEFAULT_SYMBOL_SIZE);
 
             // Reset SymbolShapeButton
             ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
-            configureSymbolShapeButton(symbolShapeButton, dataStyle.getSymbol());
+            configureSymbolShapeButton(symbolShapeButton, symbolStyle.getSymbol());
 
             // Reset SymbolsBox
             View symbolsBox = getView("SymbolsBox");
             ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true);
 
             // Reset SymbolBorderColorButton, SymbolBorderColorResetButton
-            setViewValue("SymbolBorderColorButton", dataStyle.getSymbolBorderColor());
-            setViewVisible("SymbolBorderColorResetButton",
-                !Objects.equals(dataStyle.getSymbolBorderColor(), DataStyle.DEFAULT_SYMBOL_BORDER_COLOR));
+            Color symbolBorderColor = symbolStyle.getLineColor();
+            setViewValue("SymbolBorderColorButton", symbolBorderColor);
+            setViewVisible("SymbolBorderColorResetButton", symbolStyle.isLineColorSet());
 
             // Reset SymbolBorderWidthText, SymbolBorderWidthResetButton
-            setViewValue("SymbolBorderWidthText", dataStyle.getSymbolBorderWidth());
-            setViewVisible("SymbolBorderWidthResetButton",
-        dataStyle.getSymbolBorderWidth() != DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+            double symbolBorderWidth = symbolStyle.getLineWidth();
+            setViewValue("SymbolBorderWidthText", symbolBorderWidth);
+            setViewVisible("SymbolBorderWidthResetButton", symbolBorderWidth != SymbolStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
         }
 
         // Reset ShowTagsCheckBox
@@ -270,25 +269,28 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showTagsMore) {
 
             // Reset TagFontText, TagFontResetButton
-            Font tagFont = dataStyle.getTagFont();
+            TagStyle tagStyle = dataStyle.getTagStyle();
+            Font tagFont = tagStyle.getFont();
             String fontName = tagFont.getName() + ' ' + FormatUtils.formatNum(tagFont.getSize());
             setViewValue("TagFontText", fontName);
             View tagFontResetButton = getView("TagFontResetButton");
-            tagFontResetButton.setPaintable(!Objects.equals(tagFont, DataStyle.DEFAULT_TAG_FONT));
-            tagFontResetButton.setPickable(!Objects.equals(tagFont, DataStyle.DEFAULT_TAG_FONT));
+            tagFontResetButton.setPaintable(!Objects.equals(tagFont, TagStyle.DEFAULT_TAG_FONT));
+            tagFontResetButton.setPickable(!Objects.equals(tagFont, TagStyle.DEFAULT_TAG_FONT));
 
             // Reset TagColorButton, TagColorResetButton
-            setViewValue("TagColorButton", dataStyle.getTagColor());
-            setViewVisible("TagColorResetButton", !Objects.equals(dataStyle.getTagColor(), DataStyle.DEFAULT_TAG_COLOR));
+            Color tagColor = tagStyle.getFillColor();
+            setViewValue("TagColorButton", tagColor);
+            setViewVisible("TagColorResetButton", tagStyle.isFillSet());
 
             // Reset TagBorderColorButton, TagBorderColorResetButton
-            setViewValue("TagBorderColorButton", dataStyle.getTagBorderColor());
-            setViewVisible("TagBorderColorResetButton", dataStyle.isTagBorderColorSet());
+            Color tagLineColor = tagStyle.getLineColor();
+            setViewValue("TagBorderColorButton", tagLineColor);
+            setViewVisible("TagBorderColorResetButton", tagStyle.isLineColorSet());
 
             // Reset TagBorderWidthText, TagBorderWidthResetButton
-            setViewValue("TagBorderWidthText", dataStyle.getTagBorderWidth());
-            setViewVisible("TagBorderWidthResetButton",
-        dataStyle.getTagBorderWidth() != DataStyle.DEFAULT_TAG_BORDER_WIDTH);
+            double tagLineWidth = tagStyle.getLineWidth();
+            setViewValue("TagBorderWidthText", tagLineWidth);
+            setViewVisible("TagBorderWidthResetButton", tagLineWidth != TagStyle.DEFAULT_TAG_BORDER_WIDTH);
         }
 
         // Reset PointSpacing UI
@@ -317,11 +319,13 @@ public class DataStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get DataStyle
+        // Get DataStyle, SymbolStyle, TagStyle
         ChartPart selPart = _chartPane.getSelChartPart();
         if (selPart == null) return;
         DataStyle dataStyle = selPart.getDataStyle();
         if (dataStyle == null) return;
+        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        TagStyle tagStyle = dataStyle.getTagStyle();
 
         // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {
@@ -369,10 +373,10 @@ public class DataStyleInsp extends ChartPartInsp {
         if (anEvent.equals("FillColorButton")) {
             Color color = (Color) getViewValue("FillColorButton");
             color = color.getAlpha() <= .5 ? color : color.copyForAlpha(.5);
-            dataStyle.setFillColor(color);
+            dataStyle.setFill(color);
         }
         if (anEvent.equals("FillColorResetButton"))
-            dataStyle.setFillColor(null);
+            dataStyle.setFill(null);
 
         // Handle FillModeComboBox
         if (anEvent.equals("FillModeComboBox")) {
@@ -392,44 +396,44 @@ public class DataStyleInsp extends ChartPartInsp {
         // Handle SymbolColorButton, SymbolColorResetButton
         if (anEvent.equals("SymbolColorButton")) {
             Color color = (Color) getViewValue("SymbolColorButton");
-            dataStyle.setSymbolColor(color);
+            symbolStyle.setFill(color);
         }
         if (anEvent.equals("SymbolColorResetButton"))
-            dataStyle.setSymbolColor(null);
+            symbolStyle.setFill(SymbolStyle.DEFAULT_SYMBOL_FILL);
 
         // Handle SymbolSizeText, SymbolSizeAdd1Button, SymbolSizeSub1Button, SymbolSizeResetButton
         if (anEvent.equals("SymbolSizeText"))
-            dataStyle.setSymbolSize(Math.max(anEvent.getIntValue(), 6));
+            symbolStyle.setSymbolSize(Math.max(anEvent.getIntValue(), 6));
         if (anEvent.equals("SymbolSizeAdd1Button"))
-            dataStyle.setSymbolSize(dataStyle.getSymbolSize() + 1);
+            symbolStyle.setSymbolSize(symbolStyle.getSymbolSize() + 1);
         if (anEvent.equals("SymbolSizeSub1Button"))
-            dataStyle.setSymbolSize(Math.max(dataStyle.getSymbolSize() - 1, 6));
+            symbolStyle.setSymbolSize(Math.max(symbolStyle.getSymbolSize() - 1, 6));
         if (anEvent.equals("SymbolSizeResetButton"))
-            dataStyle.setSymbolSize(DataStyle.DEFAULT_SYMBOL_SIZE);
+            symbolStyle.setSymbolSize(SymbolStyle.DEFAULT_SYMBOL_SIZE);
 
         // Handle SymbolShapeButton_
         if (eventName.startsWith("SymbolShapeButton_")) {
             int id = SnapUtils.intValue(eventName);
-            dataStyle.setSymbolId(id);
+            symbolStyle.setSymbolId(id);
         }
 
         // Handle SymbolBorderColorButton, SymbolBorderColorResetButton
         if (anEvent.equals("SymbolBorderColorButton")) {
             Color color = (Color) getViewValue("SymbolBorderColorButton");
-            dataStyle.setSymbolBorderColor(color);
+            symbolStyle.setLineColor(color);
         }
         if (anEvent.equals("SymbolBorderColorResetButton"))
-            dataStyle.setSymbolBorderColor(DataStyle.DEFAULT_SYMBOL_BORDER_COLOR);
+            symbolStyle.setLineColor(SymbolStyle.DEFAULT_SYMBOL_BORDER_COLOR);
 
         // Handle SymbolBorderWidthText, SymbolBorderWidthAdd1Button, SymbolBorderWidthSub1Button, SymbolBorderWidthResetButton
         if (anEvent.equals("SymbolBorderWidthText"))
-            dataStyle.setSymbolBorderWidth(Math.max(anEvent.getIntValue(), 0));
+            symbolStyle.setLineWidth(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("SymbolBorderWidthAdd1Button"))
-            dataStyle.setSymbolBorderWidth(dataStyle.getSymbolBorderWidth() + 1);
+            symbolStyle.setLineWidth(symbolStyle.getLineWidth() + 1);
         if (anEvent.equals("SymbolBorderWidthSub1Button"))
-            dataStyle.setSymbolBorderWidth(Math.max(dataStyle.getSymbolBorderWidth() - 1, 0));
+            symbolStyle.setLineWidth(Math.max(symbolStyle.getLineWidth() - 1, 0));
         if (anEvent.equals("SymbolBorderWidthResetButton"))
-            dataStyle.setSymbolBorderWidth(DataStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+            symbolStyle.setLineWidth(SymbolStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
 
         // Handle ShowTagsCheckBox
         if (anEvent.equals("ShowTagsCheckBox")) {
@@ -439,48 +443,49 @@ public class DataStyleInsp extends ChartPartInsp {
         }
 
         // Handle TagFontText, TagFontSizeAdd1Button, TagFontSizeSub1Button, TagFontResetButton
+        Font tagFont = tagStyle.getFont();
         if (anEvent.equals("TagFontText")) {
             String fontStr = anEvent.getStringValue();
-            Font font = Font.getFont(fontStr, dataStyle.getTagFont().getSize());
-            dataStyle.setFont(font);
+            Font font = Font.getFont(fontStr, tagFont.getSize());
+            tagStyle.setFont(font);
         }
         if (anEvent.equals("TagFontSizeAdd1Button")) {
-            Font font2 = dataStyle.getTagFont().deriveFont(dataStyle.getTagFont().getSize() + 1);
-            dataStyle.setTagFont(font2);
+            Font font2 = tagFont.deriveFont(tagFont.getSize() + 1);
+            tagStyle.setFont(font2);
         }
         if (anEvent.equals("TagFontSizeSub1Button")) {
-            double size2 = Math.max(dataStyle.getTagFont().getSize() - 1, 6);
-            Font font2 = dataStyle.getTagFont().deriveFont(size2);
-            dataStyle.setTagFont(font2);
+            double size2 = Math.max(tagFont.getSize() - 1, 6);
+            Font font2 = tagFont.deriveFont(size2);
+            tagStyle.setFont(font2);
         }
         if (anEvent.equals("TagFontResetButton"))
-            dataStyle.setTagFont(DataStyle.DEFAULT_TAG_FONT);
+            tagStyle.setFont(TagStyle.DEFAULT_TAG_FONT);
 
         // Handle TagColorButton, TagColorResetButton
         if (anEvent.equals("TagColorButton")) {
             Color color = (Color) getViewValue("TagColorButton");
-            dataStyle.setTagColor(color);
+            tagStyle.setFill(color);
         }
         if (anEvent.equals("TagColorResetButton"))
-            dataStyle.setTagColor(DataStyle.DEFAULT_TAG_COLOR);
+            tagStyle.setFill(TagStyle.DEFAULT_TAG_COLOR);
 
         // Handle TagBorderColorButton, TagBorderColorResetButton
         if (anEvent.equals("TagBorderColorButton")) {
             Color color = (Color) getViewValue("TagBorderColorButton");
-            dataStyle.setTagBorderColor(color);
+            tagStyle.setLineColor(color);
         }
         if (anEvent.equals("TagBorderColorResetButton"))
-            dataStyle.setTagBorderColor(DataStyle.DEFAULT_TAG_BORDER_COLOR);
+            tagStyle.setLineColor(TagStyle.DEFAULT_TAG_BORDER_COLOR);
 
         // Handle TagBorderWidthText, TagBorderWidthAdd1Button, TagBorderWidthSub1Button, TagBorderWidthResetButton
         if (anEvent.equals("TagBorderWidthText"))
-            dataStyle.setTagBorderWidth(Math.max(anEvent.getIntValue(), 0));
+            tagStyle.setLineWidth(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("TagBorderWidthAdd1Button"))
-            dataStyle.setTagBorderWidth(dataStyle.getTagBorderWidth() + 1);
+            tagStyle.setLineWidth(tagStyle.getLineWidth() + 1);
         if (anEvent.equals("TagBorderWidthSub1Button"))
-            dataStyle.setTagBorderWidth(Math.max(dataStyle.getTagBorderWidth() - 1, 0));
+            tagStyle.setLineWidth(Math.max(tagStyle.getLineWidth() - 1, 0));
         if (anEvent.equals("TagBorderWidthResetButton"))
-            dataStyle.setTagBorderWidth(DataStyle.DEFAULT_TAG_BORDER_WIDTH);
+            tagStyle.setLineWidth(TagStyle.DEFAULT_TAG_BORDER_WIDTH);
 
         // Handle PointSpacingText, PointSpacingAdd1Button, PointSpacingSub1Button, PointSpacingResetButton
         if (anEvent.equals("PointSpacingText"))

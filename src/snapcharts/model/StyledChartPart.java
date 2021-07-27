@@ -1,5 +1,6 @@
 package snapcharts.model;
 import snap.gfx.*;
+import snap.util.ArrayUtils;
 import snap.util.MathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -12,10 +13,19 @@ import java.util.Objects;
 public class StyledChartPart extends ChartPart {
 
     // The border
-    private Border  _border = (Border) getPropDefault(Border_Prop);
+    private Border  _border;
+
+    // The line color
+    private Color  _lineColor = DEFAULT_LINE_COLOR;
+
+    // The line width
+    private int  _lineWidth = DEFAULT_LINE_WIDTH;
+
+    // The line dash
+    private double[]  _lineDash = DEFAULT_LINE_DASH;
 
     // The Fill
-    private Paint  _fill = (Paint) getPropDefault(Fill_Prop);
+    private Paint  _fill;
 
     // The Effect
     private Effect  _effect = DEFAULT_EFFECT;
@@ -31,6 +41,9 @@ public class StyledChartPart extends ChartPart {
 
     // Constants for properties
     public static final String Border_Prop = "Border";
+    public static final String LineColor_Prop = "LineColor";
+    public static final String LineWidth_Prop = "LineWidth";
+    public static final String LineDash_Prop = "LineDash";
     public static final String Fill_Prop = "Fill";
     public static final String Effect_Prop = "Effect";
     public static final String Opacity_Prop = "Opacity";
@@ -39,6 +52,9 @@ public class StyledChartPart extends ChartPart {
 
     // Constants for defaults
     public static final Border DEFAULT_BORDER = null;
+    public static final Color DEFAULT_LINE_COLOR = null;
+    public static final int DEFAULT_LINE_WIDTH = 0;
+    public static final double[] DEFAULT_LINE_DASH = null;
     public static final Paint DEFAULT_FILL = null;
     public static final Effect DEFAULT_EFFECT = null;
     public static final double DEFAULT_OPACTIY = 1;
@@ -54,15 +70,33 @@ public class StyledChartPart extends ChartPart {
     }
 
     /**
+     * Returns whether border is set.
+     */
+    public boolean isBorderSet()  { return _border != null; }
+
+    /**
      * Returns the ChartPart border.
      */
-    public Border getBorder()  { return _border; }
+    public Border getBorder()
+    {
+        // If border not supported, use Line Prop version
+        if (!isBorderSupported()) return getBorderUsingLineProps();
+
+        // If explicitly set, just return
+        if (_border != null) return _border;
+
+        // Return default border
+        return (Border) getPropDefault(Border_Prop);
+    }
 
     /**
      * Sets the ChartPart border.
      */
     public void setBorder(Border aBorder)
     {
+        // If border not supported, use Line Prop version
+        if (!isBorderSupported())  { setBorderUsingLineProps(aBorder); return; }
+
         if (Objects.equals(aBorder, _border)) return;
         firePropChange(Border_Prop, _border, _border=aBorder);
     }
@@ -72,13 +106,92 @@ public class StyledChartPart extends ChartPart {
      */
     public void setBorder(Color aColor, double aBorderWidth)
     {
-        setBorder(Border.createLineBorder(aColor, aBorderWidth));
+        Border border = Border.createLineBorder(aColor, aBorderWidth);
+        setBorder(border);
     }
+
+    /**
+     * Returns whether line color is explicitly set.
+     */
+    public boolean isLineColorSet()  { return _lineColor != null; }
+
+    /**
+     * Returns the line color.
+     */
+    public Color getLineColor()
+    {
+        // If set, just return
+        if (_lineColor != null) return _lineColor;
+
+        // Return default
+        return (Color) getPropDefault(LineColor_Prop);
+    }
+
+    /**
+     * Sets the line color.
+     */
+    public void setLineColor(Color aColor)
+    {
+        if (Objects.equals(aColor, _lineColor)) return;
+        firePropChange(LineColor_Prop, _lineColor, _lineColor = aColor);
+    }
+
+    /**
+     * Returns line width.
+     */
+    public int getLineWidth()
+    {
+        return _lineWidth;
+    }
+
+    /**
+     * Sets line width.
+     */
+    public void setLineWidth(int aValue)
+    {
+        if (aValue == getLineWidth()) return;
+        firePropChange(LineWidth_Prop, _lineWidth, _lineWidth = aValue);
+    }
+
+    /**
+     * Returns the line dash.
+     */
+    public double[] getLineDash()  { return _lineDash; }
+
+    /**
+     * Sets the line dash.
+     */
+    public void setLineDash(double[] aDashArray)
+    {
+        if (ArrayUtils.equals(aDashArray, _lineDash)) return;
+        firePropChange(LineDash_Prop, _lineDash, _lineDash = aDashArray);
+    }
+
+    /**
+     * Returns the line stroke.
+     */
+    public Stroke getLineStroke()
+    {
+        Stroke stroke = new Stroke(_lineWidth, Stroke.Cap.Butt, Stroke.Join.Round, 10, _lineDash, 0);
+        return stroke;
+    }
+
+    /**
+     * Returns whether fill is set.
+     */
+    public boolean isFillSet()  { return _fill != null; }
 
     /**
      * Returns the fill of ChartPart.
      */
-    public Paint getFill()  { return _fill; }
+    public Paint getFill()
+    {
+        // If explicitly set, just return
+        if (_fill != null) return _fill;
+
+        // Return default fill
+        return (Paint) getPropDefault(Fill_Prop);
+    }
 
     /**
      * Sets the fill of ChartPart.
@@ -87,6 +200,15 @@ public class StyledChartPart extends ChartPart {
     {
         if (Objects.equals(aPaint, _fill)) return;
         firePropChange(Fill_Prop, _fill, _fill = aPaint);
+    }
+
+    /**
+     * Returns the fill color.
+     */
+    public Color getFillColor()
+    {
+        Paint fill = getFill();
+        return fill != null ? fill.getColor() : null;
     }
 
     /**
@@ -118,13 +240,17 @@ public class StyledChartPart extends ChartPart {
     }
 
     /**
+     * Returns whether the font is set.
+     */
+    public boolean isFontSet()  { return _font != null; }
+
+    /**
      * Returns the font of ChartPart.
      */
     public Font getFont()
     {
-        // If font explicitly set, just return
-        if (_font != null)
-            return _font;
+        // If explicitly set, just return
+        if (_font != null) return _font;
 
         // Get font from prop-default and return
         Font font = (Font) getPropDefault(Font_Prop);
@@ -155,6 +281,33 @@ public class StyledChartPart extends ChartPart {
     }
 
     /**
+     * Returns whether border is supported.
+     */
+    public boolean isBorderSupported()  { return true; }
+
+    /**
+     * Override to create border from line props.
+     */
+    private Border getBorderUsingLineProps()
+    {
+        double lineWidth = getLineWidth(); if (lineWidth <= 0) return null;
+        Color lineColor = getLineColor();
+        System.err.println(getClass().getSimpleName() + ".getBorder: Should probably call line prop methods instead");
+        return Border.createLineBorder(lineColor, lineWidth);
+    }
+
+    /**
+     * Override to set line props from border.
+     */
+    private void setBorderUsingLineProps(Border aBorder)
+    {
+        Color lineColor = aBorder != null ? aBorder.getColor() : null;
+        int lineWidth = aBorder != null ? (int) Math.round(aBorder.getWidth()) : 0;
+        setLineColor(lineColor); setLineWidth(lineWidth);
+        System.err.println(getClass().getSimpleName() + ".setBorder: Should probably call line prop methods instead");
+    }
+
+    /**
      * Returns the value for given key.
      */
     @Override
@@ -164,6 +317,10 @@ public class StyledChartPart extends ChartPart {
         switch (aPropName) {
 
             case Border_Prop: return DEFAULT_BORDER;
+
+            case LineColor_Prop: return DEFAULT_LINE_COLOR;
+            case LineWidth_Prop: return DEFAULT_LINE_WIDTH;
+            case LineDash_Prop: return DEFAULT_LINE_DASH;
 
             case Fill_Prop: return DEFAULT_FILL;
 
@@ -191,15 +348,25 @@ public class StyledChartPart extends ChartPart {
             e.add(Name_Prop, getName());
 
         // Archive Border
-        Border border = getBorder(), borderDef = (Border) getPropDefault(Border_Prop);
-        if (!Objects.equals(border, borderDef)) {
+        if (isBorderSet()) {
+            Border border = getBorder();
             XMLElement borderXML = border.toXML(anArchiver);
             e.add(Border_Prop, borderXML);
         }
 
+        // Archive LineColor, LineWidth, LineDash
+        if (isLineColorSet())
+            e.add(LineColor_Prop, getLineColor().toHexString());
+        if (getLineWidth() != getPropDefaultInt(LineWidth_Prop))
+            e.add(LineWidth_Prop, getLineWidth());
+        if (!ArrayUtils.equals(_lineDash, DEFAULT_LINE_DASH)) {
+            String dashStr = Stroke.getDashArrayNameOrString(_lineDash);
+            e.add(LineDash_Prop, dashStr);
+        }
+
         // Archive Fill
-        Paint fill = getFill(), fillDef = (Paint) getPropDefault(Fill_Prop);
-        if (!Objects.equals(fill, fillDef)) {
+        if (isFillSet()) {
+            Paint fill = getFill();
             XMLElement fillXML = fill.toXML(anArchiver);
             e.add(Fill_Prop, fillXML);
         }
@@ -216,8 +383,8 @@ public class StyledChartPart extends ChartPart {
             e.add(Opacity_Prop, getOpacity());
 
         // Archive Font
-        Font font = getFont(), fontDef = (Font) getPropDefault(Font_Prop);
-        if (!Objects.equals(font, fontDef)) {
+        if (isFontSet()) {
+            Font font = getFont();
             XMLElement fontXML = font.toXML(anArchiver);
             e.add(Font_Prop, fontXML);
         }
@@ -251,6 +418,19 @@ public class StyledChartPart extends ChartPart {
         if (borderXML != null) {
             Border border = (Border) anArchiver.fromXML(borderXML, null);
             setBorder(border);
+        }
+
+        // Unarchive LineColor, LineWidth, LineDash
+        if (anElement.hasAttribute(LineColor_Prop)) {
+            Color color = Color.get('#' + anElement.getAttributeValue(LineColor_Prop));
+            setLineColor(color);
+        }
+        if (anElement.hasAttribute(LineWidth_Prop))
+            setLineWidth(anElement.getAttributeIntValue(LineWidth_Prop));
+        if (anElement.hasAttribute(LineDash_Prop)) {
+            String dashStr = anElement.getAttributeValue(LineDash_Prop);
+            double[] dashArray = Stroke.getDashArray(dashStr);
+            setLineDash(dashArray);
         }
 
         // Unarchive Fill

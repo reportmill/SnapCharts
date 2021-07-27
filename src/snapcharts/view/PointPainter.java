@@ -6,9 +6,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
-import snapcharts.model.DataStore;
-import snapcharts.model.DataStyle;
-import snapcharts.model.Symbol;
+import snapcharts.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,15 +40,16 @@ public class PointPainter {
     {
         // Get info
         DataStyle dataStyle = _dataArea.getDataStyle();
-        Symbol symbol = dataStyle.getSymbol();
-        Color symbolColor = dataStyle.getSymbolColor();  //color.darker().darker()
+        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        Symbol symbol = symbolStyle.getSymbol();
+        Color symbolColor = symbolStyle.getFillColor();  //color.darker().darker()
         Shape symbolShape = symbol.getShape();
-        int symbolSize = dataStyle.getSymbolSize();
+        int symbolSize = symbolStyle.getSymbolSize();
         double symbolShift = symbolSize / 2d;
 
         // Get Symbol border info
-        Color symbolBorderColor = dataStyle.getSymbolBorderColor();
-        int symbolBorderWidth = dataStyle.getSymbolBorderWidth();
+        Color symbolBorderColor = symbolStyle.getLineColor();
+        double symbolBorderWidth = symbolStyle.getLineWidth();
 
         // Get whether showing points only
         boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
@@ -62,12 +61,13 @@ public class PointPainter {
 
         // Get ShowTag info because TagBoxes are created
         boolean showTags = dataStyle.isShowTags();
+        TagStyle tagStyle = dataStyle.getTagStyle();
         DataStore procData = _dataArea.getDataSet().getProcessedData();
         boolean hasZ = procData.getDataType().hasZ();
-        Color tagBorderColor = dataStyle.getTagBorderColor();
-        int tagBorderWidth = dataStyle.getTagBorderWidth();
+        Color tagBorderColor = tagStyle.getLineColor();
+        double tagBorderWidth = tagStyle.getLineWidth();
         Border tagBorder = tagBorderWidth > 0 ? Border.createLineBorder(tagBorderColor, tagBorderWidth) : null;
-        Font tagFont = dataStyle.getTagFont();
+        Font tagFont = tagStyle.getFont();
         Pos tagPos = Pos.TOP_CENTER;
         double tagOffset = TAG_OFFSET + Math.round(symbolSize / 2);
         Rect dataBounds = _dataArea.getBoundsLocal();
@@ -188,7 +188,8 @@ public class PointPainter {
     {
         TagBox[] tagBoxes = getTagBoxes();
         DataStyle dataStyle = _dataArea.getDataStyle();
-        Color fillColor = dataStyle.getTagColor();
+        TagStyle tagStyle = dataStyle.getTagStyle();
+        Color fillColor = tagStyle.getFillColor();
 
         for (TagBox sbox : tagBoxes)
         {

@@ -3,10 +3,7 @@ import snap.geom.Insets;
 import snap.gfx.*;
 import snap.view.Label;
 import snap.view.View;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataStyle;
-import snapcharts.model.Legend;
-import snapcharts.model.Symbol;
+import snapcharts.model.*;
 
 /**
  * A placeholder view to paint entry graphic.
@@ -19,6 +16,9 @@ public class LegendEntryView extends Label {
     // The DataStyle
     private DataStyle _dataStyle;
 
+    // The SymbolStyle
+    private SymbolStyle _symbolStyle;
+
     // Constants
     private static Color DISABLED_COLOR = Color.LIGHTGRAY;
 
@@ -30,6 +30,7 @@ public class LegendEntryView extends Label {
         super();
         _dataSet = aDataSet;
         _dataStyle = aDataSet.getDataStyle();
+        _symbolStyle = _dataStyle.getSymbolStyle();
 
         // Set ShowText
         setShowText(true);
@@ -95,7 +96,7 @@ public class LegendEntryView extends Label {
             if (_dataStyle.isShowArea())
                 markedHeight += AREA_HEIGHT - markedHeight / 2;
             if (_dataStyle.isShowSymbols())
-                markedHeight = Math.max(_dataStyle.getSymbol().getSize(), markedHeight);
+                markedHeight = Math.max(_symbolStyle.getSymbol().getSize(), markedHeight);
 
             // Return markedHeight plus insets height
             Insets ins = getInsetsAll();
@@ -121,7 +122,7 @@ public class LegendEntryView extends Label {
             boolean showSymbols = _dataStyle.isShowSymbols();
             boolean disabled = _dataSet.isDisabled();
             double lineWidth = showLine ? _dataStyle.getLineWidth() : 0;
-            double lineY = areaY + (areaH - lineWidth) / 2;
+            double lineY = areaY + areaH / 2;
             if (showArea)
                 lineY -= AREA_HEIGHT / 2;
 
@@ -146,19 +147,18 @@ public class LegendEntryView extends Label {
             if (showSymbols) {
 
                 // Get symbol fill color
-                Color fillColor = _dataStyle.getSymbolColor();
+                Color fillColor = _symbolStyle.getFillColor();
                 if (disabled) fillColor = DISABLED_COLOR;
 
                 // Get symbol border color
-                int borderWidth = _dataStyle.getSymbolBorderWidth();
-                Color borderColor = _dataStyle.getSymbolBorderColor();
+                double borderWidth = _symbolStyle.getLineWidth();
+                Color borderColor = _symbolStyle.getLineColor();
                 if (disabled) borderColor = DISABLED_COLOR;
 
                 // Paint Symbol at midpoint
-                Symbol symbol = _dataStyle.getSymbol(); //.copyForSize(8);
+                Symbol symbol = _symbolStyle.getSymbol(); //.copyForSize(8);
                 double areaMidX = areaX + areaW / 2;
-                double lineMidY = lineY + lineWidth / 2;
-                symbol.paintSymbol(aPntr, fillColor, borderColor, borderWidth, areaMidX, lineMidY);
+                symbol.paintSymbol(aPntr, fillColor, borderColor, borderWidth, areaMidX, lineY);
             }
         }
     }
