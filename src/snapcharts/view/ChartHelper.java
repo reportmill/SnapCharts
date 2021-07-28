@@ -7,6 +7,7 @@ import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
+import snapcharts.util.MinMax;
 import snapcharts.viewx.*;
 
 import java.util.*;
@@ -341,9 +342,21 @@ public abstract class ChartHelper {
         if (axisView._minOverride != AxisView.UNSET_DOUBLE)
             return axisView._minOverride;
 
-        // Get Min based on Axis.MinBound and Axis.ZeroRequired
+        // Get axis info
         Axis axis = axisView.getAxis();
-        double min = axis.getMinValueForBoundAndZeroRequired();
+        AxisType axisType = axis.getType();
+        AxisBound minBound = axis.getMinBound();
+
+        // If Axis.MinBound is user configured use MinValue, Otherwise get from axis StagedData
+        double min = axis.getMinValue();
+        if (minBound != AxisBound.VALUE)
+            min = getMinMaxForAxisStagedData(axisType).getMin();
+
+        // If ZeroRequired and min greater than zero, reset min
+        if (axis.isZeroRequired() && min>0)
+            min = 0;
+
+        // Return min
         return min;
     }
 
@@ -356,10 +369,64 @@ public abstract class ChartHelper {
         if (axisView._maxOverride != AxisView.UNSET_DOUBLE)
             return axisView._maxOverride;
 
-        // Get Max based on Axis.MaxBound and Axis.ZeroRequired
+        // Get axis info
         Axis axis = axisView.getAxis();
-        double max = axis.getMaxValueForBoundAndZeroRequired();
+        AxisType axisType = axis.getType();
+        AxisBound maxBound = axis.getMaxBound();
+
+        // If Axis.MaxBound is user configured use MaxValue, Otherwise get from axis StagedData
+        double max = axis.getMaxValue();
+        if (maxBound != AxisBound.VALUE)
+            max = getMinMaxForAxisStagedData(axisType).getMax();
+
+        // If ZeroRequired and max less than zero, reset max
+        if (axis.isZeroRequired() && max < 0)
+            max = 0;
+
+        // Return max
         return max;
+    }
+
+    /**
+     * Returns the MinMax for given axis.
+     */
+    private MinMax getMinMaxForAxisStagedData(AxisType anAxisType)
+    {
+        // If empty, just return silly range
+        DataArea[] dataAreas = getDataAreas();
+        if (dataAreas.length == 0)
+            return new MinMax(0, 5);
+
+        // Handle X
+        if (anAxisType == AxisType.X) {
+            double min = Double.MAX_VALUE;
+            double max = -Double.MAX_VALUE;
+            for (DataArea dataArea : dataAreas) {
+                DataStore stagedData = dataArea.getStagedData();
+                min = Math.min(min, stagedData.getMinX());
+                max = Math.max(max, stagedData.getMaxX());
+            }
+            return new MinMax(min, max);
+        }
+
+        // Handle Y
+        if (anAxisType.isAnyY()) {
+            double min = Double.MAX_VALUE;
+            double max = -Double.MAX_VALUE;
+            for (DataArea dataArea : dataAreas) {
+                if (anAxisType == dataArea.getAxisTypeY()) {
+                    DataStore stagedData = dataArea.getStagedData();
+                    min = Math.min(min, stagedData.getMinY());
+                    max = Math.max(max, stagedData.getMaxY());
+                }
+            }
+            if (min==Double.MAX_VALUE)
+                return new MinMax(0, 5);
+            return new MinMax(min, max);
+        }
+
+        // Complain
+        throw new RuntimeException("ChartHelper.getMinMaxForAxis: Unknown axis: " + anAxisType);
     }
 
     /**

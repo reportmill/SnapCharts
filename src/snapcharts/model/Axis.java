@@ -1,14 +1,12 @@
 package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
-import snap.gfx.Font;
 import snap.gfx.Stroke;
 import snap.util.ArrayUtils;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.MinMax;
-
 import java.util.Objects;
 
 /**
@@ -117,7 +115,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setTitle(String aStr)
     {
-        if (aStr== _title) return;
+        if (Objects.equals(aStr, _title)) return;
         firePropChange(Title_Prop, _title, _title =aStr);
     }
 
@@ -131,7 +129,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setTitleAlign(Pos aPos)
     {
-        if (aPos==_titleAlign) return;
+        if (aPos == _titleAlign) return;
         firePropChange(TitleAlign_Prop, _titleAlign, _titleAlign = aPos);
     }
 
@@ -165,8 +163,8 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setTitleRotate(double aValue)
     {
-        if (aValue==_titleRot) return;
-        firePropChange(TitleRotate_Prop, _titleRot, _titleRot=aValue);
+        if (aValue == _titleRot) return;
+        firePropChange(TitleRotate_Prop, _titleRot, _titleRot = aValue);
     }
 
     /**
@@ -217,7 +215,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setMinValue(double aValue)
     {
-        if (aValue==_minValue) return;
+        if (aValue == _minValue) return;
         firePropChange(MinValue_Prop, _minValue, _minValue = aValue);
     }
 
@@ -231,7 +229,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setMaxValue(double aValue)
     {
-        if (aValue==_maxValue) return;
+        if (aValue == _maxValue) return;
         firePropChange(MaxValue_Prop, _maxValue, _maxValue = aValue);
     }
 
@@ -246,52 +244,6 @@ public abstract class Axis extends StyledChartPart {
     }
 
     /**
-     * Returns the Axis Min value based on MinBound (either AxisBound.[VALUE | DATA]) and ZeroRequired.
-     */
-    public double getMinValueForBoundAndZeroRequired()
-    {
-        // Get Min based on whether Axis.MinBound is AxisBound.VALUE or AxisBound.DATA
-        AxisBound minBound = getMinBound();
-        double min;
-        if (minBound == AxisBound.VALUE)
-            min = getMinValue();
-        else {
-            DataSetList dsetList = getDataSetList();
-            min = dsetList.getMinForAxis(getType());
-        }
-
-        // If ZeroRequired and min greater than zero, reset min
-        if (isZeroRequired() && min>0)
-            min = 0;
-
-        // Return min
-        return min;
-    }
-
-    /**
-     * Returns the Axis Max value based on MaxBound (either AxisBound.[VALUE | DATA]) and ZeroRequired.
-     */
-    public double getMaxValueForBoundAndZeroRequired()
-    {
-        // Get Max based on whether Axis.MaxBound is AxisBound.VALUE or AxisBound.DATA
-        AxisBound maxBound = getMaxBound();
-        double max;
-        if (maxBound == AxisBound.VALUE)
-            max = getMaxValue();
-        else {
-            DataSetList dsetList = getDataSetList();
-            max = dsetList.getMaxForAxis(getType());
-        }
-
-        // If ZeroRequired and max less than zero, reset max
-        if (isZeroRequired() && max<0)
-            max = 0;
-
-        // Return max
-        return max;
-    }
-
-    /**
      * Returns whether Zero should always be included.
      */
     public boolean isZeroRequired()  { return _zeroRequired; }
@@ -301,7 +253,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setZeroRequired(boolean aValue)
     {
-        if (aValue==isZeroRequired()) return;
+        if (aValue == isZeroRequired()) return;
         firePropChange(ZeroRequired_Prop, _zeroRequired, _zeroRequired=aValue);
     }
 
@@ -315,7 +267,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setLog(boolean aValue)
     {
-        if (aValue==isLog()) return;
+        if (aValue == isLog()) return;
         firePropChange(Log_Prop, _log, _log = aValue);
     }
 
@@ -526,11 +478,11 @@ public abstract class Axis extends StyledChartPart {
         XMLElement e = super.toXML(anArchiver);
 
         // Archive Title, TitleAlign, TitleRotate
-        if (getTitle()!=null && getTitle().length()>0)
+        if (getTitle() != null && getTitle().length() > 0)
             e.add(Title_Prop, getTitle());
-        if (getTitleAlign()!= DEFAULT_TITLE_ALIGN)
+        if (getTitleAlign() != DEFAULT_TITLE_ALIGN)
             e.add(TitleAlign_Prop, getTitleAlign());
-        if (getTitleRotate()!=0)
+        if (getTitleRotate() != 0)
             e.add(TitleRotate_Prop, getTitleRotate());
 
         // Archive ZeroRequired, Log
@@ -574,9 +526,12 @@ public abstract class Axis extends StyledChartPart {
         super.fromXML(anArchiver, anElement);
 
         // Unarchive Title, TitleAlign, TitleRotate
-        setTitle(anElement.getAttributeValue(Title_Prop));
-        setTitleAlign(Pos.get(anElement.getAttributeValue(TitleAlign_Prop, DEFAULT_TITLE_ALIGN.toString())));
-        setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
+        if (anElement.hasAttribute(Title_Prop))
+            setTitle(anElement.getAttributeValue(Title_Prop));
+        if (anElement.hasAttribute(TitleAlign_Prop))
+            setTitleAlign(Pos.get(anElement.getAttributeValue(TitleAlign_Prop, DEFAULT_TITLE_ALIGN.toString())));
+        if (anElement.hasAttribute(TitleRotate_Prop))
+            setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
 
         // Unachive ZeroRequired
         if (anElement.hasAttribute(ZeroRequired_Prop))
