@@ -159,15 +159,10 @@ public class XYDataArea extends DataArea {
         if (dataPoint == null)
             return;
 
-        // Get info
-        DataSet dataSet = getDataSet();
-        int pointIndex = dataPoint.getIndex();
-
-        // Get data X/Y and disp X/Y
-        double dataX = dataSet.getX(pointIndex);
-        double dataY = dataSet.getY(pointIndex);
-        double dispX = dataToViewX(dataX);
-        double dispY = dataToViewY(dataY);
+        // Get disp X/Y for DataPoint
+        Point dispXY = getLocalXYForDataPoint(dataPoint);
+        double dispX = dispXY.x;
+        double dispY = dispXY.y;
 
         // Get data color and symbol
         Color dataColor = getDataColor();
@@ -187,6 +182,7 @@ public class XYDataArea extends DataArea {
         aPntr.draw(dataSymbolShape);
 
         // Paint selected symbol
+        DataSet dataSet = getDataSet();
         DataStyle dataStyle = dataSet.getDataStyle();
         boolean showSymbols = dataStyle.isShowSymbols();
         if (!showSymbols) {

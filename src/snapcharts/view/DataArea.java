@@ -542,21 +542,21 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         int MAX_SELECT_DISTANCE = 60;
 
         // Get data info
-        DataSet dataSet = getDataSet();
-        int pointCount = dataSet.getPointCount();
+        DataStore stagedData = getStagedData();
+        int pointCount = stagedData.getPointCount();
         DataPoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
         for (int j=0; j<pointCount; j++) {
-            double dataX = dataSet.getX(j);
-            double dataY = dataSet.getY(j);
+            double dataX = stagedData.getX(j);
+            double dataY = stagedData.getY(j);
             double dispX = dataToViewX(dataX);
             double dispY = dataToViewY(dataY);
             double dst = Point.getDistance(aX, aY, dispX, dispY);
             if (dst < dist) {
                 dist = dst;
-                dataPoint = dataSet.getPoint(j);
+                dataPoint = getDataSet().getPoint(j);
             }
         }
 
@@ -569,8 +569,10 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     public Point getLocalXYForDataPoint(DataPoint aDP)
     {
-        double dataX = aDP.getX();
-        double dataY = aDP.getY();
+        DataStore stagedData = getStagedData();
+        int index = aDP.getIndex();
+        double dataX = stagedData.getX(index);
+        double dataY = stagedData.getY(index);
         return dataToView(dataX, dataY);
     }
 
