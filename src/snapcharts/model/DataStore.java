@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.util.MathUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.DataStoreUtils;
@@ -12,7 +13,7 @@ import java.util.Arrays;
  * It provides a simple API for defining the DataType (which defines the data format/schema), the number of data
  * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
-public abstract class DataStore implements XMLArchiver.Archivable {
+public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
 
     // The format of the data
     private DataType _dataType = DataType.XY;
@@ -390,6 +391,44 @@ public abstract class DataStore implements XMLArchiver.Archivable {
     }
 
     /**
+     * Returns the Y value for given X value.
+     */
+    public double getYForX(double aX)
+    {
+        // If empty, just return
+        int pointCount = getPointCount();
+        if (pointCount == 0)
+            return 0;
+
+        // Get index for given X value
+        double[] dataX = getDataX();
+        int index = Arrays.binarySearch(dataX, aX);
+        if (index >= 0)
+            return getY(index);
+
+        // Get lower/upper indexes
+        int highIndex = -index - 1;
+        int lowIndex = highIndex - 1;
+
+        // If beyond end, just return last Y
+        if (highIndex >= pointCount)
+            return getY(pointCount - 1);
+
+        // If before start, just return first Y
+        if (lowIndex < 0)
+            return getY(0);
+
+        // Otherwise, return weighted average
+        double x0 = getX(lowIndex);
+        double y0 = getY(lowIndex);
+        double x1 = getX(highIndex);
+        double y1 = getY(highIndex);
+        double weightX = (aX - x0) / (x1 - x0);
+        double y = weightX * (y1 - y0) + y0;
+        return y;
+    }
+
+    /**
      * Called when points are added, removed or modified.
      */
     protected void pointsDidChange()
@@ -397,6 +436,18 @@ public abstract class DataStore implements XMLArchiver.Archivable {
         _dataX = _dataY = _dataZ = _dataXZZ = _dataYZZ = null;
         _dataC = null;
         _minMaxX = _minMaxY = _minMaxZ = null;
+    }
+
+    /**
+     * Standard clone implementation.
+     */
+    @Override
+    public DataStore clone()
+    {
+        DataStore clone;
+        try { clone = (DataStore) super.clone(); }
+        catch (CloneNotSupportedException e) { throw new RuntimeException(e); }
+        return clone;
     }
 
     /**

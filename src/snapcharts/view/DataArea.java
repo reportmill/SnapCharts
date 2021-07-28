@@ -4,9 +4,11 @@
 package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.*;
+import snap.util.ArrayUtils;
 import snap.util.PropChange;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
+import snapcharts.util.DataStoreUtils;
 
 /**
  * A view to display the actual contents of a chart.
@@ -26,7 +28,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     private AxisType  _axisTypeY;
 
     // The DataSet.ProcessedData possibly further processed for DataArea/Axes
-    private DataStore  _procData;
+    private DataStore _stagedData;
 
     // The ProcessedData converted to DataArea display coords
     private DataStore  _dispData;
@@ -142,12 +144,13 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns the DataSet.ProcessedData (possibly further processed for DataArea/Axes).
+     * Returns the DataSet.ProcessedData possibly further processed for DataArea/Axes.
+     * Conditions that cause further processing: Stacked, AxisWrap, Axis Log.
      */
-    public DataStore getProcessedData()
+    public DataStore getStagedData()
     {
         // If already set, just return
-        if (_procData != null) return _procData;
+        if (_stagedData != null) return _stagedData;
 
         // Get DataSet and ProcessedData
         DataSet dataSet = getDataSet();
@@ -164,8 +167,31 @@ public abstract class DataArea extends ChartPartView<DataSet> {
             dataStore = new DataStoreWrapper(dataStore, wrapMin, wrapMax, axisMin, axisMax);
         }
 
+        // Handle stacked
+        if (dataSet.isStacked()) {
+            DataStore prevStackedData = getPreviousStackedData();
+            if (prevStackedData != null)
+                dataStore = DataStoreUtils.addStackedData(dataStore, prevStackedData);
+        }
+
         // Set/return
-        return _procData = dataStore;
+        return _stagedData = dataStore;
+    }
+
+    /**
+     * Returns the previous stacked data.
+     */
+    public DataStore getPreviousStackedData()
+    {
+        DataArea[] dataAreas = _chartHelper.getDataAreas();
+        int index = ArrayUtils.indexOf(dataAreas, this);
+        for (int i=index-1; i>=0; i--) {
+            DataArea prevDataArea = dataAreas[i];
+            DataSet prevDataSet = prevDataArea.getDataSet();
+            if (prevDataSet.isStacked())
+                return prevDataArea.getStagedData();
+        }
+        return null;
     }
 
     /**
@@ -176,7 +202,8 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         // If already set, just return
         if (_dispData != null) return _dispData;
 
-        DataStore dataStore = getProcessedData();
+        // Get StagedData
+        DataStore dataStore = getStagedData();
         int pointCount = dataStore.getPointCount();
         double[] dispX = new double[pointCount];
         double[] dispY = new double[pointCount];
@@ -565,8 +592,9 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     {
         // Clear XYPainter
         Object src = aPC.getSource();
-        if (src == getDataSet() || src instanceof Axis) {
-            _procData = null;
+        String propName = aPC.getPropName();
+        if (src == getDataSet() || src instanceof Axis || propName == DataSet.Stacked_Prop) {
+            _stagedData = null;
             _dispData = null;
         }
     }

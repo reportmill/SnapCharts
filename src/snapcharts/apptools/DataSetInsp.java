@@ -59,30 +59,34 @@ public class DataSetInsp extends ChartPartInsp {
     protected void resetUI()
     {
         // Get DataSet
-        DataSet dset = getDataSet(); if (dset==null) return;
+        DataSet dataSet = getDataSet(); if (dataSet == null) return;
 
         // Reset NameText
-        setViewValue("NameText", dset.getName());
+        setViewValue("NameText", dataSet.getName());
 
         // Reset DataTypeComboBox
-        setViewValue("DataTypeComboBox", dset.getDataType());
+        setViewValue("DataTypeComboBox", dataSet.getDataType());
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
-        boolean isMultiYEnabled = dset.getChartType().isMultiYAxisType();
+        boolean isMultiYEnabled = dataSet.getChartType().isMultiYAxisType();
         getView("AxisTypeYBox").setVisible(isMultiYEnabled);
         if (isMultiYEnabled) {
-            setViewValue("YAxisButton", dset.getAxisTypeY() == AxisType.Y);
-            setViewValue("Y2AxisButton", dset.getAxisTypeY() == AxisType.Y2);
-            setViewValue("Y3AxisButton", dset.getAxisTypeY() == AxisType.Y3);
-            setViewValue("Y4AxisButton", dset.getAxisTypeY() == AxisType.Y4);
+            AxisType axisTypeY = dataSet.getAxisTypeY();
+            setViewValue("YAxisButton", axisTypeY == AxisType.Y);
+            setViewValue("Y2AxisButton", axisTypeY == AxisType.Y2);
+            setViewValue("Y3AxisButton", axisTypeY == AxisType.Y3);
+            setViewValue("Y4AxisButton", axisTypeY == AxisType.Y4);
         }
 
         // Reset ExprXText, ExprYText, ExprZText
-        setViewValue("ExprXText", dset.getExprX());
-        setViewValue("ExprYText", dset.getExprY());
-        setViewValue("ExprZText", dset.getExprZ());
-        DataType dataType = dset.getDataType();
-        getView("ExprZBox").setVisible(dataType.hasZ());
+        setViewValue("ExprXText", dataSet.getExprX());
+        setViewValue("ExprYText", dataSet.getExprY());
+        setViewValue("ExprZText", dataSet.getExprZ());
+        DataType dataType = dataSet.getDataType();
+        setViewVisible("ExprZBox", dataType.hasZ());
+
+        // Reset StackedCheckBox
+        setViewValue("StackedCheckBox", dataSet.isStacked());
     }
 
     /**
@@ -122,5 +126,12 @@ public class DataSetInsp extends ChartPartInsp {
             dataSet.setExprY(anEvent.getStringValue());
         if (anEvent.equals("ExprXText"))
             dataSet.setExprZ(anEvent.getStringValue());
+
+        // Handle StackedCheckBox: Set them all
+        if (anEvent.equals("StackedCheckBox")) {
+            DataSet[] dataSets = dataSet.getDataSetList().getDataSets();
+            for (DataSet dset : dataSets)
+                dset.setStacked(anEvent.getBoolValue());
+        }
     }
 }

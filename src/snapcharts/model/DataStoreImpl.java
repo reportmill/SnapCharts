@@ -260,6 +260,7 @@ public class DataStoreImpl extends DataStore {
 
         // Set new value
         _dataX[anIndex] = aValue;
+        pointsDidChange();
     }
 
     /**
@@ -280,6 +281,7 @@ public class DataStoreImpl extends DataStore {
 
         // Set new value
         _dataY[anIndex] = aValue;
+        pointsDidChange();
     }
 
     /**
@@ -300,6 +302,7 @@ public class DataStoreImpl extends DataStore {
 
         // Set new value
         _dataZ[anIndex] = aValue;
+        pointsDidChange();
     }
 
     /**
@@ -308,5 +311,19 @@ public class DataStoreImpl extends DataStore {
     public boolean isClear()
     {
         return _pointCount == 0;
+    }
+
+    /**
+     * Override to copy arrays.
+     */
+    @Override
+    public DataStore clone()
+    {
+        DataStoreImpl clone = (DataStoreImpl) super.clone();
+        clone._dataX = _dataX != null ? _dataX.clone() : null;
+        clone._dataY = _dataY != null ? _dataY.clone() : null;
+        clone._dataZ = _dataZ != null ? _dataZ.clone() : null;
+        clone._dataC = _dataC != null ? _dataC.clone() : null;
+        return clone;
     }
 }

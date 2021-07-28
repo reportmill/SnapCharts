@@ -1,5 +1,6 @@
 package snapcharts.util;
 import snap.util.KeyChain;
+import snap.util.MathUtils;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
@@ -237,5 +238,62 @@ public class DataStoreUtils {
 
         // Return new DataStore for type and values
         return DataStore.newDataStoreForTypeAndValues(dataType, dataX, dataY, dataZ);
+    }
+
+    /**
+     * Adds stacked data
+     */
+    public static DataStore addStackedData(DataStore aDataStore1, DataStore aDataStore2)
+    {
+        // Get new dataStore
+        DataStore dataStore = aDataStore1.clone();
+
+        // If DataStores have identical DataX, just add Y values
+        if (isAlignedX(aDataStore1, aDataStore2)) {
+            int pointCount = aDataStore1.getPointCount();
+            for (int i=0; i<pointCount; i++) {
+                double y1 = aDataStore1.getY(i);
+                double y2 = aDataStore2.getY(i);
+                double y3 = y1 + y2;
+                dataStore.setValueY(y3, i);
+            }
+        }
+
+        // Otherwise, we must use interpolated values
+        else {
+            int pointCount = aDataStore1.getPointCount();
+            for (int i=0; i<pointCount; i++) {
+                double x1 = aDataStore1.getX(i);
+                double y1 = aDataStore1.getY(i);
+                double y2 = aDataStore2.getYForX(x1);
+                double y3 = y1 + y2;
+                dataStore.setValueY(y3, i);
+            }
+        }
+
+        // Return new DataStore
+        return dataStore;
+    }
+
+    /**
+     * Returns whether given DataStore is has same X values as this one.
+     */
+    public static boolean isAlignedX(DataStore aDataStore1, DataStore aDataStore2)
+    {
+        // If PointCounts don't match, return false
+        int pointCount = aDataStore1.getPointCount();
+        if (pointCount != aDataStore2.getPointCount())
+            return false;
+
+        // Iterate over X coords and return false if they don't match
+        for (int i=0; i<pointCount; i++) {
+            double x0 = aDataStore1.getX(i);
+            double x1 = aDataStore2.getX(i);
+            if (!MathUtils.equals(x0, x1))
+                return false;
+        }
+
+        // Return true since X coords are aligned
+        return true;
     }
 }

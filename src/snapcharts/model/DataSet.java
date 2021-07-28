@@ -32,6 +32,9 @@ public class DataSet extends ChartPart {
     // The expression to apply to Z values
     private String  _exprZ;
 
+    // Whether data is stacked
+    private boolean  _stacked;
+
     // Whether dataset is disabled
     private boolean  _disabled;
 
@@ -58,6 +61,7 @@ public class DataSet extends ChartPart {
     public static final String ExprX_Prop = "ExpressionX";
     public static final String ExprY_Prop = "ExpressionY";
     public static final String ExprZ_Prop = "ExpressionZ";
+    public static final String Stacked_Prop = "Stacked";
 
     /**
      * Constructor.
@@ -167,6 +171,20 @@ public class DataSet extends ChartPart {
         if (Objects.equals(anExpr, getExprZ())) return;
         firePropChange(ExprZ_Prop, _exprZ, _exprZ = anExpr);
         clearCachedData();
+    }
+
+    /**
+     * Returns whether this dataset is stacked.
+     */
+    public boolean isStacked()  { return _stacked; }
+
+    /**
+     * Sets whether this dataset is stacked.
+     */
+    public void setStacked(boolean aValue)
+    {
+        if (aValue==isStacked()) return;
+        firePropChange(Stacked_Prop, _stacked, _stacked = aValue);
     }
 
     /**
@@ -328,7 +346,8 @@ public class DataSet extends ChartPart {
      */
     public Double getValueX(int anIndex)
     {
-        return _rawData.getValueX(anIndex);
+        DataStore procData = getProcessedData();
+        return procData.getValueX(anIndex);
     }
 
     /**
@@ -591,7 +610,7 @@ public class DataSet extends ChartPart {
     @Override
     public String toString()
     {
-        String str = "DataSet { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        String str = "DataSet { " + "Name=" + getName() + ", DataType=" + getDataType() + ", PointCount=" + getPointCount();
         DataStore dataStore = getRawData();
         for (DataChan chan : getDataType().getChannels()) {
             MinMax minMax = dataStore.getMinMax(chan);
@@ -620,6 +639,10 @@ public class DataSet extends ChartPart {
             e.add(ExprY_Prop, getExprY());
         if (getExprZ() != null && getExprZ().length() > 0)
             e.add(ExprZ_Prop, getExprZ());
+
+        // Archive Stacked
+        if (isStacked())
+            e.add(Stacked_Prop, true);
 
         // Archive Disabled
         if (isDisabled())
@@ -661,8 +684,13 @@ public class DataSet extends ChartPart {
         if (anElement.hasAttribute(ExprZ_Prop))
             setExprZ(anElement.getAttributeValue(ExprZ_Prop));
 
+        // Unarchive Stacked
+        if (anElement.hasAttribute(Stacked_Prop))
+            setStacked(anElement.getAttributeBoolValue(Stacked_Prop, false));
+
         // Unarchive Disabled
-        setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
+        if (anElement.hasAttribute(Disabled_Prop))
+            setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
 
         // Unarchive DataStyle
         XMLElement dataStyleXML = anElement.getElement("DataStyle");
