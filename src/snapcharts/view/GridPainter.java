@@ -170,9 +170,9 @@ public class GridPainter {
         for (int i=1; i<10; i++, datY+=incrY) {
             double datYLog = Math.log10(datY);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, datYLog));
-            if (dispY < areaY)
-                continue;
             if (dispY > areaMaxY)
+                continue;
+            if (dispY < areaY)
                 return;
             paintGridlineY(aPntr, dispY);
         }

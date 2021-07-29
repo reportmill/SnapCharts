@@ -112,8 +112,10 @@ public class Intervals {
     public static Intervals getIntervalsSimple(double aMin, double aMax, boolean minFixed, boolean maxFixed)
     {
         // Get min/max as ints
-        int min = (int) Math.floor(aMin);
-        int max = (int) Math.ceil(aMax);
+        double minRound = MathUtils.floor(aMin, .1);
+        double maxRound = MathUtils.ceil(aMax, .1);
+        int min = (int) Math.floor(minRound);
+        int max = (int) Math.ceil(maxRound);
 
         // Create/fill divs from min to max
         int len = max - min + 1;
@@ -122,8 +124,10 @@ public class Intervals {
             divs[i] = min + i;
 
         // Update ends
+        divs[0] = minRound;
         if (minFixed)
             divs[0] = aMin;
+        divs[len - 1] = maxRound;
         if (maxFixed)
             divs[len - 1] = aMax;
 

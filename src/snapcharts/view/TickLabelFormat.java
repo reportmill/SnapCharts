@@ -103,7 +103,7 @@ public class TickLabelFormat {
         }
 
         // If large delta, format with exponent
-        if (aDelta>=1000)
+        if (aDelta >= 1000)
             return getFormatWithExponent(aValue, aDelta);
 
         // Return formatted value
@@ -124,25 +124,25 @@ public class TickLabelFormat {
     private String getFormatWithExponent(double aValue, double aDelta)
     {
         // Handle case where delta is in the trillions
-        if (aDelta>=1000000000000L) {
-            int val = (int)Math.round(aValue/1000000000000L);
+        if (aDelta >= 1000000000000L) {
+            int val = (int) Math.round(aValue / 1000000000000L);
             return val + "T";
         }
 
         // Handle case where delta is in the billions
-        if (aDelta>=1000000000) {
-            int val = (int)Math.round(aValue/1000000000);
+        if (aDelta >= 1000000000) {
+            int val = (int) Math.round(aValue / 1000000000);
             return val + "B";
         }
 
         // Handle case where delta is in the millions
-        if (aDelta>=1000000) {
-            int val = (int)Math.round(aValue/1000000);
+        if (aDelta >= 1000000) {
+            int val = (int) Math.round(aValue / 1000000);
             return val + "M";
         }
 
         // Handle case where delta is in the thousands
-        int val = (int)Math.round(aValue/1000);
+        int val = (int) Math.round(aValue / 1000);
         return val + "k";
     }
 
@@ -206,8 +206,10 @@ public class TickLabelFormat {
         }
         boolean isLog = _axisView.getAxis().isLog();
         if (isLog) {
-            minSample = TICKS_FORMAT.format(ivals.getMin());
-            maxSample = TICKS_FORMAT.format(ivals.getMax());
+            double minLog = Math.pow(10, Math.floor(ivals.getMin()));
+            double maxLog = Math.pow(10, Math.ceil(ivals.getMax()));
+            minSample = TICKS_FORMAT.format(minLog);
+            maxSample = TICKS_FORMAT.format(maxLog);
         }
         String longSample = minSample.length()>maxSample.length() ? minSample : maxSample;
 
