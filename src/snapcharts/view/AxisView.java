@@ -212,15 +212,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public double getAxisMaxOverride()  { return _maxOverride; }
 
     /**
-     * Returns whether axis is logarithmic.
-     */
-    public boolean isLog()
-    {
-        Axis axis = getAxis();
-        return axis.isLog();
-    }
-
-    /**
      * Returns the axis length.
      */
     public double getAxisLen()
@@ -290,7 +281,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         Intervals intervals = getIntervals();
         int intervalCount = intervals.getCount();
         double delta = intervals.getDelta();
-        boolean log = isLog();
 
         // Get TickLabel attributes
         Axis axis = getAxis();
@@ -305,7 +295,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             double dataX = intervals.getInterval(i);
 
             // If edge div too close to next div, skip
-            if (!log && (i == 0 || i + 1 == intervalCount)) {
+            if (i == 0 || i + 1 == intervalCount) {
                 double nextX = intervals.getInterval(i == 0 ? 1 : intervalCount - 2);
                 double delta2 = i == 0 ? (nextX - dataX) : (dataX - nextX);
                 if (delta2 < delta * .99) {  // Was .67
@@ -316,7 +306,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             // Create/config/add TickLabel
             TickLabel tickLabel = new TickLabel(this, dataX);
             String str = _tickFormat.format(dataX);
-            if (log && str.length() == 0)
+            if (str.length() == 0)
                 continue;
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);

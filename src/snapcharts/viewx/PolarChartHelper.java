@@ -150,13 +150,6 @@ public class PolarChartHelper extends ChartHelper {
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Handle log
-        if (axisView.isLog()) {
-            dataXY = ChartViewUtils.log10(dataXY);
-            dataMin = ChartViewUtils.log10(dataMin);
-            dataMax = ChartViewUtils.log10(dataMax);
-        }
-
         // Get display len (min is zero)
         boolean isHor = axisView.getAxisType() == AxisType.X;
         Rect polarBounds = getPolarBounds();
@@ -181,12 +174,6 @@ public class PolarChartHelper extends ChartHelper {
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Handle log
-        if (axisView.isLog()) {
-            dataMin = ChartViewUtils.log10(dataMin);
-            dataMax = ChartViewUtils.log10(dataMax);
-        }
-
         // Get display len (min is zero)
         boolean isHor = axisView.getAxisType() == AxisType.X;
         Rect polarBounds = getPolarBounds();
@@ -196,10 +183,6 @@ public class PolarChartHelper extends ChartHelper {
         // Convert display to data
         double dataXY = isHor ? dataMin + (dispXY - areaX) / areaW * (dataMax - dataMin) :
                 dataMax - (dispXY - areaX) / areaW * (dataMax - dataMin);
-
-        // Handle log
-        if (axisView.isLog())
-            dataXY = ChartViewUtils.invLog10(dataXY);
 
         // Return data val
         return dataXY;

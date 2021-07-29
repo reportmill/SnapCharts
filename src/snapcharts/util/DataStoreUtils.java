@@ -2,10 +2,9 @@ package snapcharts.util;
 import snap.util.KeyChain;
 import snap.util.MathUtils;
 import snapcharts.model.DataPoint;
-import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
 import snapcharts.model.DataStore;
-
+import snapcharts.view.ChartViewUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,6 +164,33 @@ public class DataStoreUtils {
             dataY[i] = isEmptyY ? valY : KeyChain.getDoubleValue(map, keyChainY);
             if (hasZ)
                 dataZ[i] = isEmptyZ ? valZ : KeyChain.getDoubleValue(map, keyChainZ);
+        }
+
+        // Return new DataStore for type and values
+        return DataStore.newDataStoreForTypeAndValues(dataType, dataX, dataY, dataZ);
+    }
+
+    /**
+     * Returns a copy of given DataStore with values converted to log.
+     */
+    public static DataStore getLogData(DataStore aDataStore, boolean doLogX, boolean doLogY)
+    {
+        // Get DataX
+        DataType dataType = aDataStore.getDataType();
+        int pointCount = aDataStore.getPointCount();
+        boolean hasZ = dataType.hasZ();
+        double[] dataX = new double[pointCount];
+        double[] dataY = new double[pointCount];
+        double[] dataZ = hasZ ? new double[pointCount] : null;
+        for (int i=0; i<pointCount; i++) {
+            double valX = aDataStore.getX(i);
+            double valY = aDataStore.getY(i);
+            double valZ = hasZ ? aDataStore.getZ(i) : 0;
+
+            dataX[i] = doLogX ? ChartViewUtils.log10(valX) : valX;
+            dataY[i] = doLogY ? ChartViewUtils.log10(valY) : valY;
+            if (hasZ)
+                dataZ[i] = valZ;
         }
 
         // Return new DataStore for type and values

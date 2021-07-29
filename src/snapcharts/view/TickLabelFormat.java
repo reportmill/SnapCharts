@@ -93,8 +93,10 @@ public class TickLabelFormat {
     public String format(double aValue, DecimalFormat aFormat, double aDelta)
     {
         // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
-        if (_axisView.isLog()) {
-            String str = TICKS_FORMAT.format(aValue);
+        boolean isLog = _axisView.getAxis().isLog();
+        if (isLog) {
+            double value = Math.pow(10, aValue);
+            String str = TICKS_FORMAT.format(value);
             if (str.matches("1[0]*|0\\.[0]*1"))
                 return str;
             return "";
@@ -202,7 +204,8 @@ public class TickLabelFormat {
             minSample = format(ivals.getMin() + delta / 3, format, delta);
             maxSample = format(ivals.getMax() - delta / 3, format, delta);
         }
-        if (_axisView.isLog()) {
+        boolean isLog = _axisView.getAxis().isLog();
+        if (isLog) {
             minSample = TICKS_FORMAT.format(ivals.getMin());
             maxSample = TICKS_FORMAT.format(ivals.getMax());
         }

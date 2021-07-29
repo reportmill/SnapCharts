@@ -310,12 +310,12 @@ public abstract class ChartHelper {
         double divLen = axisType == AxisType.X ? 40 : 30;
 
         // Get whether interval ends should be adjusted
-        boolean minFixed = axisView._minOverride!=AxisView.UNSET_DOUBLE || axis.getMinBound() != AxisBound.AUTO;
-        boolean maxFixed = axisView._maxOverride!=AxisView.UNSET_DOUBLE || axis.getMaxBound() != AxisBound.AUTO;
+        boolean minFixed = axisView._minOverride != AxisView.UNSET_DOUBLE || axis.getMinBound() != AxisBound.AUTO;
+        boolean maxFixed = axisView._maxOverride != AxisView.UNSET_DOUBLE || axis.getMaxBound() != AxisBound.AUTO;
 
-        // Handle Log
+        // Handle Log: min/max are powers of 10, so we just want simple intervals from min to max by 1
         if (axis.isLog())
-            return Intervals.getIntervalsLog(min, max, false, maxFixed);
+            return Intervals.getIntervalsSimple(min, max, minFixed, maxFixed);
 
         // Return intervals
         return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
@@ -448,13 +448,6 @@ public abstract class ChartHelper {
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Handle log
-        if (axisView.isLog()) {
-            dataXY = ChartViewUtils.log10(dataXY);
-            dataMin = ChartViewUtils.log10(dataMin);
-            dataMax = ChartViewUtils.log10(dataMax);
-        }
-
         // Handle horizontal (X) axis
         boolean isHor = axisView.getAxisType() == AxisType.X;
         if (isHor) {
@@ -488,12 +481,6 @@ public abstract class ChartHelper {
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Handle log
-        if (axisView.isLog()) {
-            dataMin = ChartViewUtils.log10(dataMin);
-            dataMax = ChartViewUtils.log10(dataMax);
-        }
-
         // Handle horizontal (X) axis
         boolean isHor = axisView.getAxisType() == AxisType.X;
         double dataXY;
@@ -507,10 +494,6 @@ public abstract class ChartHelper {
             double areaW = axisView.getHeight();
             dataXY = dataMax - dispXY / areaW * (dataMax - dataMin);
         }
-
-        // Handle log
-        if (axisView.isLog())
-            dataXY = ChartViewUtils.invLog10(dataXY);
 
         // Return data val
         return dataXY;

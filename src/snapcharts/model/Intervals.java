@@ -107,50 +107,25 @@ public class Intervals {
     }
 
     /**
-     * Return log 10 intervals for given max value.
+     * Just returns intervals of whole numbers from min (floor) to max (ceil), incremented by 1.
      */
-    public static Intervals getIntervalsLog(double aMin, double aMax, boolean minFixed, boolean maxFixed)
+    public static Intervals getIntervalsSimple(double aMin, double aMax, boolean minFixed, boolean maxFixed)
     {
-        // Get factors of 10 below min value and above max value
-        double minFactor = minFactor(aMin);
-        double maxFactor = maxFactor(aMax);
-        if (minFactor >= maxFactor) // Is this possible?
-            minFactor = maxFactor / 10;
+        // Get min/max as ints
+        int min = (int) Math.floor(aMin);
+        int max = (int) Math.ceil(aMax);
 
-        // Calculate total number of sections
-        int sectionCount = 0;
-        for (double exp=minFactor; MathUtils.lte(exp, maxFactor); exp*=10) sectionCount++;
-
-        // Calc max number of divs and create array
-        int maxDivCount = sectionCount * 9 + 1;
-        double[] divs = new double[maxDivCount];
-
-        // Init array to minExp
-        int divCount = 0;
-        divs[divCount++] = minFactor;
-
-        // Iterate from minExp to maxExp
-        for (double factor=minFactor; MathUtils.lt(factor, maxFactor); factor*=10) {
-            for (int j=1; j<=9; j++) {
-                double val = factor + factor * j;
-                divs[divCount++] = val;
-
-                // If max fixed and val passes max, stop
-                if (maxFixed && val >= aMax) {
-                    factor = maxFactor;
-                    break;
-                }
-            }
-        }
-
-        // Trim array to set values
-        divs = Arrays.copyOf(divs, divCount);
+        // Create/fill divs from min to max
+        int len = max - min + 1;
+        double[] divs = new double[len];
+        for (int i=0; i<len; i++)
+            divs[i] = min + i;
 
         // Update ends
         if (minFixed)
-            divs[0] = 0;
+            divs[0] = aMin;
         if (maxFixed)
-            divs[divCount - 1] = aMax;
+            divs[len - 1] = aMax;
 
         Intervals ivals = new Intervals();
         ivals._minVal = 0;

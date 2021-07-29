@@ -39,19 +39,22 @@ public class DataSet extends ChartPart {
     private boolean  _disabled;
 
     // The DataStyleHpr
-    private DataStyleHpr _dataStyleHpr;
+    private DataStyleHpr  _dataStyleHpr;
 
     // The RawData
-    private DataStore _rawData = DataStore.newDataStore();
+    private DataStore  _rawData = DataStore.newDataStore();
 
     // The Processed Data
-    private DataStore _procData;
+    private DataStore  _procData;
+
+    // Processed Data in log form
+    private DataStore[]  _logData;
 
     // Processed data in polar form
-    private DataStore _polarData;
+    private DataStore  _polarData;
 
     // Processed data in polar XY form
-    private DataStore _polarXYData;
+    private DataStore  _polarXYData;
 
     // Constants for properties
     public static final String DataType_Prop = "DataType";
@@ -529,7 +532,26 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the raw data in polar form (just normal data if already DataType.isPolar).
+     * Returns the ProcessedData converted to log.
+     */
+    public DataStore getLogData(boolean doLogX, boolean doLogY)
+    {
+        // If already set, just return
+        int index = (doLogX && doLogY) ? 2 : doLogX ? 0 : 1;
+        if (_logData != null && _logData[index] != null) return _logData[index];
+
+        // Make sure LogData array is present
+        if (_logData == null)
+            _logData = new DataStore[3];
+
+        // If already DataType.isPolar, set/return
+        DataStore procData = getProcessedData();
+        DataStore logData = DataStoreUtils.getLogData(procData, doLogX, doLogY);
+        return _logData[index] = logData;
+    }
+
+    /**
+     * Returns the ProcessedData in polar form (just normal data if already DataType.isPolar).
      */
     public DataStore getPolarData()
     {
@@ -600,6 +622,7 @@ public class DataSet extends ChartPart {
     protected void clearCachedData()
     {
         _procData = null;
+        _logData = null;
         _polarData = null;
         _polarXYData = null;
     }

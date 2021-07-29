@@ -156,22 +156,30 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         DataSet dataSet = getDataSet();
         DataStore dataStore = dataSet.getProcessedData();
 
-        // If WrapAxis, wrap DataStore inside DataStoreWrapper for wrap range and axis range
+        // If Log, use DataSet.LogData
         AxisViewX axisViewX = getAxisViewX();
+        AxisViewY axisViewY = getAxisViewY();
         Axis axisX = axisViewX != null ? axisViewX.getAxis() : null;
-        if (axisX != null && axisX.isWrapAxis()) {
-            double wrapMin = axisX.getWrapMinMax().getMin();
-            double wrapMax = axisX.getWrapMinMax().getMax();
-            double axisMin = axisViewX.getAxisMin();
-            double axisMax = axisViewX.getAxisMax();
-            dataStore = new DataStoreWrapper(dataStore, wrapMin, wrapMax, axisMin, axisMax);
-        }
+        Axis axisY = axisViewY != null ? axisViewY.getAxis() : null;
+        boolean isLogX = axisX != null && axisX.isLog();
+        boolean isLogY = axisY != null && axisY.isLog();
+        if (isLogX || isLogY)
+            dataStore = dataSet.getLogData(isLogX, isLogY);
 
         // Handle stacked
         if (dataSet.isStacked()) {
             DataStore prevStackedData = getPreviousStackedData();
             if (prevStackedData != null)
                 dataStore = DataStoreUtils.addStackedData(dataStore, prevStackedData);
+        }
+
+        // If WrapAxis, wrap DataStore inside DataStoreWrapper for wrap range and axis range
+        if (axisX != null && axisX.isWrapAxis()) {
+            double wrapMin = axisX.getWrapMinMax().getMin();
+            double wrapMax = axisX.getWrapMinMax().getMax();
+            double axisMin = axisViewX.getAxisMin();
+            double axisMax = axisViewX.getAxisMax();
+            dataStore = new DataStoreWrapper(dataStore, wrapMin, wrapMax, axisMin, axisMax);
         }
 
         // Set/return
@@ -442,90 +450,8 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     public void paintGridlines(Painter aPntr)
     {
-        paintGridlinesX(aPntr);
-        paintGridlinesY(aPntr);
-    }
-
-    /**
-     * Paints chart X axis lines.
-     */
-    protected void paintGridlinesX(Painter aPntr)
-    {
-        // Get Axis
-        AxisViewX axisView = getAxisViewX(); if (axisView==null) return;
-        AxisX axis = axisView.getAxis();
-
-        // Get Grid Color/Stroke
-        boolean isShowGrid = axis.isShowGrid();
-        Color gridColor = axis.getGridColor();
-        Stroke gridStroke = axis.getGridStroke();
-        aPntr.setStroke(gridStroke);
-
-        // Get Tick info
-        Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        double tickLen = axis.getTickLength();
-
-        // Iterate over intervals and paint lines
-        double areaY = 0;
-        double areaH = getHeight();
-        Intervals ivals = axisView.getIntervals();
-        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
-
-            // Get line X
-            double dataX = ivals.getInterval(i);
-            double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataX));
-
-            // Paint line
-            if (isShowGrid) {
-                aPntr.setColor(gridColor);
-                aPntr.drawLine(dispX, areaY, dispX, areaH);
-            }
-
-            // Paint tick
-            aPntr.setColor(tickLineColor);
-            aPntr.drawLine(dispX, areaY + areaH - tickLen, dispX, areaY + areaH);
-        }
-    }
-
-    /**
-     * Paints chart Y axis lines.
-     */
-    protected void paintGridlinesY(Painter aPntr)
-    {
-        // Get Axis
-        AxisViewY axisView = getAxisViewY(); if (axisView==null || !axisView.isVisible()) return;
-        AxisY axis = axisView.getAxis();
-
-        // Get Grid Color/Stroke
-        boolean isShowGrid = axis.isShowGrid();
-        Color gridColor = axis.getGridColor();
-        Stroke gridStroke = axis.getGridStroke();
-        aPntr.setStroke(gridStroke);
-
-        // Get Tick info
-        Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        double tickLen = axis.getTickLength();
-
-        // Iterate over intervals and paint lines
-        double areaX = 0;
-        double areaW = getWidth();
-        Intervals ivals = axisView.getIntervals();
-        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
-
-            // Get line Y
-            double dataY = ivals.getInterval(i);
-            double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
-
-            // Paint line
-            if (isShowGrid) {
-                aPntr.setColor(gridColor);
-                aPntr.drawLine(areaX, dispY, areaW, dispY);
-            }
-
-            // Paint tick
-            aPntr.setColor(tickLineColor);
-            aPntr.drawLine(areaX, dispY, areaX + tickLen, dispY);
-        }
+        GridPainter gridPainter = new GridPainter(this);
+        gridPainter.paintGridlines(aPntr);
     }
 
     /**
