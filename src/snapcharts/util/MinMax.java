@@ -1,5 +1,4 @@
 package snapcharts.util;
-
 import snap.util.FormatUtils;
 import snap.util.SnapUtils;
 
@@ -22,7 +21,10 @@ public class MinMax implements Cloneable {
         if (aMax <= aMin) {
             if (aMax == aMin) {
                 System.err.println("MinMax.new: Equal min/max: I'm going to let it slide this time.");
-                aMin = aMin - 1; aMax = aMax + 1;
+                double epsilon = Math.abs(aMin) * .001;
+                if (epsilon == 0) epsilon = .0000001;
+                aMin = aMin - epsilon;
+                aMax = aMax + epsilon;
             }
             else {
                 System.err.println("MinMax.new: Invalid min/max: I'm going to let it slide this time.");
