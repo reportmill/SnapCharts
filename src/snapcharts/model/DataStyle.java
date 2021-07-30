@@ -157,7 +157,7 @@ public class DataStyle extends StyledChartPart {
     public Color getFillColorDefault()
     {
         // Get from LineColor, half transparent
-        return getLineColor().copyForAlpha(.5);
+        return getDefaultLineColor().copyForAlpha(.5);
     }
 
     /**

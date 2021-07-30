@@ -100,7 +100,7 @@ public class SymbolStyle extends StyledChartPart {
     {
         if (getLineWidth() > 0 && !isLineColorSet())
             return Color.WHITE;
-        return _dataStyle.getLineColor();
+        return _dataStyle.getDefaultLineColor();
     }
 
     /**
