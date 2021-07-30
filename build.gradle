@@ -25,7 +25,7 @@ repositories {
 }
 
 // SnapKit version (might want 'master-SNAPSHOT', '2021.06.29', '<tag_hash>', etc.)
-project.ext.snapkitVersion = '2021.07.22'
+project.ext.snapkitVersion = '2021.07.24'
 
 dependencies {
 
