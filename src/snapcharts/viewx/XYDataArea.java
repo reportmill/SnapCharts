@@ -16,14 +16,14 @@ import snapcharts.view.PointPainter;
  */
 public class XYDataArea extends DataArea {
 
-    // The XYPainter (an object to provide data line path/shape)
-    private XYPainter  _xyPainter = new XYPainter(this);
-
     // The TailShape
     private Shape  _tailShape;
 
     // A PointPainter to handle painting symbols and tags
     private PointPainter  _pointPainter = new PointPainter(this);
+
+    // The arc length of the DataLineShape
+    private double  _dataLineArcLength;
 
     // Constants for defaults
     protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
@@ -35,6 +35,33 @@ public class XYDataArea extends DataArea {
     public XYDataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super(aChartHelper, aDataSet);
+    }
+
+    /**
+     * Returns the Shape used to paint the DataArea data line.
+     */
+    public Shape getDataLineShape()
+    {
+        return XYDataAreaShapes.getLineShape(this, false);
+    }
+
+    /**
+     * Returns the Shape used to paint the DataArea filled area shape.
+     */
+    public Shape getDataAreaShape()
+    {
+        return XYDataAreaShapes.getAreaShape(this);
+    }
+
+    /**
+     * Returns the length of the data line shape.
+     */
+    public double getDataLineShapeArcLength()
+    {
+        if (_dataLineArcLength > 0) return _dataLineArcLength;
+        Shape dataLineShape = XYDataAreaShapes.getLineShape(this, true);
+        double arcLength = dataLineShape.getArcLength();
+        return _dataLineArcLength = arcLength;
     }
 
     /**
@@ -69,14 +96,14 @@ public class XYDataArea extends DataArea {
 
         // If ShowArea, fill path, too
         if (showArea) {
-            Shape dataAreaShape = _xyPainter.getDataAreaShape();
+            Shape dataAreaShape = getDataAreaShape();
             Color dataAreaColor = dataStyle.getFillColor();
             aPntr.setColor(dataAreaColor);
             aPntr.fill(dataAreaShape);
         }
 
         // Get dataShape (path) (if Reveal is active, get shape as SplicerShape so we can draw partial/animated)
-        Shape dataShape = _xyPainter.getDataLineShape();
+        Shape dataShape = getDataLineShape();
         if (reveal < 1 && showLine)
             dataShape = new SplicerShape(dataShape, 0, reveal);
 
@@ -241,7 +268,7 @@ public class XYDataArea extends DataArea {
             return DataView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time
-        double maxLen = _xyPainter.getArcLength();
+        double maxLen = getDataLineShapeArcLength();
         double factor = Math.max(1, Math.min(maxLen / 500, 2));
 
         // Return default time times factor
@@ -253,7 +280,7 @@ public class XYDataArea extends DataArea {
      */
     private void clearDataPath()
     {
-        _xyPainter = new XYPainter(this);
+        _dataLineArcLength = 0;
         repaint();
     }
 
@@ -265,7 +292,7 @@ public class XYDataArea extends DataArea {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Clear XYPainter
+        // Clear cached data path info
         Object src = aPC.getSource();
         if (src == getDataSet() || src instanceof Axis) {
             clearDataPath();

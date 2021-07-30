@@ -187,22 +187,6 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns the previous stacked data.
-     */
-    public DataStore getPreviousStackedData()
-    {
-        DataArea[] dataAreas = _chartHelper.getDataAreas();
-        int index = ArrayUtils.indexOf(dataAreas, this);
-        for (int i=index-1; i>=0; i--) {
-            DataArea prevDataArea = dataAreas[i];
-            DataSet prevDataSet = prevDataArea.getDataSet();
-            if (prevDataSet.isStacked())
-                return prevDataArea.getStagedData();
-        }
-        return null;
-    }
-
-    /**
      * Returns the DataSet.ProcessedData as PureData in DataArea display coords.
      */
     public DataStore getDispData()
@@ -271,6 +255,54 @@ public abstract class DataArea extends ChartPartView<DataSet> {
 
         // Return end index
         return endIndex;
+    }
+
+    /**
+     * Returns the start index for display data, starting with first point outside display range.
+     */
+    public int getDispDataStartOutsideIndex()
+    {
+        int startIndex = getDispDataStartIndex();
+        if (startIndex > 0)
+            startIndex--;
+        return startIndex;
+    }
+
+    /**
+     * Returns the end index for display data, ending with first point outside display range.
+     */
+    public int getDispDataEndOutsideIndex()
+    {
+        int endIndex = getDispDataEndIndex();
+        int pointCount = getDispData().getPointCount();
+        if (endIndex + 1 < pointCount)
+            endIndex++;
+        return endIndex;
+    }
+
+    /**
+     * Returns the previous stacked DataArea.
+     */
+    public DataArea getPreviousStackedDataArea()
+    {
+        DataArea[] dataAreas = _chartHelper.getDataAreas();
+        int index = ArrayUtils.indexOf(dataAreas, this);
+        for (int i=index-1; i>=0; i--) {
+            DataArea prevDataArea = dataAreas[i];
+            DataSet prevDataSet = prevDataArea.getDataSet();
+            if (prevDataSet.isStacked())
+                return prevDataArea;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the previous stacked DataArea.StagedData.
+     */
+    public DataStore getPreviousStackedData()
+    {
+        DataArea prevDataArea = getPreviousStackedDataArea();
+        return prevDataArea != null ? prevDataArea.getStagedData() : null;
     }
 
     /**
