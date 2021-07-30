@@ -674,8 +674,10 @@ public class DataSet extends ChartPart {
         // Archive DataStyle
         DataStyle dataStyle = getDataStyle();
         XMLElement dataStyleXML = dataStyle.toXML(anArchiver);
-        if (dataStyleXML.getAttributeCount() > 0)
+        if (dataStyleXML.getAttributeCount() > 0) {
+            dataStyleXML.setName("DataStyle");
             e.addElement(dataStyleXML);
+        }
 
         // Archive RawData
         DataStore rawData = getRawData();
