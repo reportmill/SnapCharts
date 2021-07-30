@@ -1,6 +1,7 @@
 package snapcharts.view;
 import snap.gfx.Font;
 import snap.util.FormatUtils;
+import snap.util.MathUtils;
 import snap.view.ViewUpdater;
 import snapcharts.model.Intervals;
 import java.text.DecimalFormat;
@@ -94,13 +95,8 @@ public class TickLabelFormat {
     {
         // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
         boolean isLog = _axisView.getAxis().isLog();
-        if (isLog) {
-            double value = Math.pow(10, aValue);
-            String str = TICKS_FORMAT.format(value);
-            if (str.matches("1[0]*|0\\.[0]*1"))
-                return str;
-            return "";
-        }
+        if (isLog)
+            return formatLog(aValue);
 
         // If large delta, format with exponent
         if (aDelta >= 1000)
@@ -116,6 +112,24 @@ public class TickLabelFormat {
             System.err.println("Failed to format with: " + aFormat.toPattern() + ", value: " + aValue);
             return FormatUtils.formatNum(aValue);
         }
+    }
+
+    /**
+     * Formats a log value.
+     */
+    private String formatLog(double aValue)
+    {
+        // If not whole number, return empty string
+        if (!MathUtils.equals(aValue, (int) aValue))
+            return "";
+
+        // Get value
+        double value = Math.pow(10, aValue);
+        if (value >= 1000)
+            return getFormatWithExponent(value, value);
+
+        // Return
+        return TICKS_FORMAT.format(value);
     }
 
     /**
@@ -204,14 +218,24 @@ public class TickLabelFormat {
             minSample = format(ivals.getMin() + delta / 3, format, delta);
             maxSample = format(ivals.getMax() - delta / 3, format, delta);
         }
+
+        // Handle Log axis
         boolean isLog = _axisView.getAxis().isLog();
         if (isLog) {
-            double minLog = Math.pow(10, Math.floor(ivals.getMin()));
-            double maxLog = Math.pow(10, Math.ceil(ivals.getMax()));
-            minSample = TICKS_FORMAT.format(minLog);
-            maxSample = TICKS_FORMAT.format(maxLog);
+            double minVal = Math.floor(ivals.getMin());
+            minSample = formatLog(minVal);
+            double maxVal = Math.ceil(ivals.getMax());
+            maxSample = formatLog(maxVal);
+            for (int i=1; i<ivals.getCount()-1; i++) {
+                double loopVal = ivals.getInterval(i);
+                String sample = formatLog(loopVal);
+                if (sample.length() > minSample.length())
+                    minSample = sample;
+            }
         }
-        String longSample = minSample.length()>maxSample.length() ? minSample : maxSample;
+
+        // Get long sample
+        String longSample = minSample.length() > maxSample.length() ? minSample : maxSample;
 
         // Return pattern and long sample in array
         return new String[] { pattern, longSample };
