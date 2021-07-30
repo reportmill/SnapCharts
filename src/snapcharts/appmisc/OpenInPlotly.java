@@ -181,7 +181,7 @@ public class OpenInPlotly {
         }
 
         // Set Y on particular side
-        if (anAxisType.isAnyY() && anAxisType!=AxisType.Y) {
+        if (anAxisType.isAnyY() && anAxisType != AxisType.Y) {
             axisJS.addKeyValue("side", axis.getSide().toString().toLowerCase());
             axisJS.addKeyValue("overlaying", "y");
             if (anAxisType == AxisType.Y2) {
@@ -209,9 +209,9 @@ public class OpenInPlotly {
         if (axis.isLog())
             axisJS.addKeyValue("type", "log");
 
-        if (axisJS.getNodeCount() > 0) {
+        // Add Axis json node to layout node (if needed)
+        if (axisJS.getNodeCount() > 0)
             layoutJS.addKeyValue(axisName, axisJS);
-        }
     }
 
     /**
@@ -244,8 +244,12 @@ public class OpenInPlotly {
                 traceJS.addKeyValue("type", "scatter");
         }
 
-        // If ShoFill, add: fill: 'tozeroy'
-        if (dataStyle.isShowArea())
+        // Handle Stacked
+        if (aDataSet.isStacked())
+            traceJS.addKeyValue("stackgroup", "one");
+
+        // If ShowArea, add: fill: 'tozeroy'
+        if (dataStyle.isShowArea() && !aDataSet.isStacked())
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'
