@@ -72,7 +72,7 @@ public class LegendEntryView extends Label {
         private static final int DEFAULT_WIDTH = 30;
 
         // Constant for height of 'ShowArea' part of graphic
-        private static final int AREA_HEIGHT = 6;
+        private static final int AREA_HEIGHT = 8;
 
         /**
          * Constructor.
@@ -81,6 +81,10 @@ public class LegendEntryView extends Label {
         {
             // Basic config
             setPrefWidth(DEFAULT_WIDTH);
+
+            // Set padding to get better centering for default font size
+            // This is bogus - Label.StringView really needs a UseGlyphSizing property so StringView is centered
+            setPadding(new Insets(0, 0, 1, 0));
         }
 
         /**
