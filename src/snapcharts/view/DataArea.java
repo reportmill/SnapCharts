@@ -175,8 +175,13 @@ public abstract class DataArea extends ChartPartView<DataSet> {
 
         // If WrapAxis, wrap DataStore inside DataStoreWrapper for wrap range and axis range
         if (axisX != null && axisX.isWrapAxis()) {
+
+            // Get Wrap Min/Max values
             double wrapMin = axisX.getWrapMinMax().getMin();
             double wrapMax = axisX.getWrapMinMax().getMax();
+
+            // Get Axis Min/Max values
+            _stagedData = dataStore; // Is this lame? I think it might be
             double axisMin = axisViewX.getAxisMin();
             double axisMax = axisViewX.getAxisMax();
             dataStore = new DataStoreWrapper(dataStore, wrapMin, wrapMax, axisMin, axisMax);
