@@ -85,7 +85,7 @@ public class ChartViewLayout {
         layoutRightSide();
 
         // Set DataAreaBounds (either from PrefDataAreaBounds or from resulting layout insets)
-        _dataAreaBounds = _prefDataBounds;
+        _dataAreaBounds = _prefDataBounds = _chartView.getPrefDataViewBounds();
         if (_dataAreaBounds==null) {
             _dataAreaBounds = _chartProxy.getBounds().clone();
             _dataAreaBounds.inset(_dataAreaInsets);
@@ -115,6 +115,7 @@ public class ChartViewLayout {
 
         // Clear PrefDataAreaBounds
         _prefDataBounds = null;
+        _chartView.setPrefDataViewBounds(null);
     }
 
     /**

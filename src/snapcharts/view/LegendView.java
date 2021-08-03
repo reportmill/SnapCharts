@@ -87,6 +87,8 @@ public class LegendView extends ChartPartView<Legend> {
         DataSet[] dataSets = dataSetList.getDataSets();
         for (int i=0; i<dataSets.length; i++) {
             DataSet dataSet = dataSets[i];
+            if (!dataSet.isShowLegendEntry())
+                continue;
             View entryView = new LegendEntryView(legend, dataSet);
             _entryBox.addChild(entryView);
 

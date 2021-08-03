@@ -351,12 +351,11 @@ public class PageViewLayout {
     private Rect getPrefDataViewBounds(ViewProxy<ChartView> aChartProxy)
     {
         ChartView chartView = aChartProxy.getView();
-        return chartView._layout._prefDataBounds;
+        return chartView.getPrefDataViewBounds();
     }
     private void setPrefDataViewBounds(ViewProxy<ChartView> aChartProxy, Rect aRect)
     {
         ChartView chartView = aChartProxy.getView();
-        chartView._layout._prefDataBounds = aRect;
-        chartView.relayout();
+        chartView.setPrefDataViewBounds(aRect);
     }
 }

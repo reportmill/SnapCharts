@@ -38,6 +38,9 @@ public class DataSet extends ChartPart {
     // Whether dataset is disabled
     private boolean  _disabled;
 
+    // Whether to show legend entry
+    private boolean  _showLegendEntry = true;
+
     // The DataStyleHpr
     private DataStyleHpr  _dataStyleHpr;
 
@@ -65,6 +68,7 @@ public class DataSet extends ChartPart {
     public static final String ExprY_Prop = "ExpressionY";
     public static final String ExprZ_Prop = "ExpressionZ";
     public static final String Stacked_Prop = "Stacked";
+    public static final String ShowLegendEntry_Prop = "ShowLegendEntry";
 
     /**
      * Constructor.
@@ -208,6 +212,20 @@ public class DataSet extends ChartPart {
      * Returns whether this dataset is enabled.
      */
     public boolean isEnabled()  { return !_disabled; }
+
+    /**
+     * Returns whether to show legend entry for this dataset.
+     */
+    public boolean isShowLegendEntry()  { return _showLegendEntry; }
+
+    /**
+     * Sets whether to show legend entry for this dataset.
+     */
+    public void setShowLegendEntry(boolean aValue)
+    {
+        if (aValue==isShowLegendEntry()) return;
+        firePropChange(ShowLegendEntry_Prop, _showLegendEntry, _showLegendEntry = aValue);
+    }
 
     /**
      * Returns the DataStyle for this DataSet (and ChartType).

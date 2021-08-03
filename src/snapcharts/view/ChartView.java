@@ -51,6 +51,9 @@ public class ChartView extends ChartPartView<Chart> {
     // The targeted data point
     private DataPoint  _targDataPoint;
 
+    // The preferred DataArea bounds (optional)
+    protected Rect  _prefDataBounds;
+
     // A helper class for layout
     protected ChartViewLayout  _layout = new ChartViewLayout(this);
 
@@ -361,6 +364,21 @@ public class ChartView extends ChartPartView<Chart> {
         // Notify ToolTipView
         _toolTipView.reloadContents();
         repaint();
+    }
+
+    /**
+     * Returns the preferred bounds for the DataView.
+     */
+    public Rect getPrefDataViewBounds()  { return _prefDataBounds; }
+
+    /**
+     * Sets the preferred bounds for the DataView.
+     */
+    public void setPrefDataViewBounds(Rect aRect)
+    {
+        if (Objects.equals(aRect, _prefDataBounds)) return;
+        _prefDataBounds = aRect;
+        relayout();
     }
 
     /**
