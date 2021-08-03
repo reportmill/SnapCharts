@@ -27,7 +27,10 @@
     <Label text="Z Expr:" />
     <TextField Name="ExprZText" GrowWidth="true" />
   </RowView>
-  <RowView Name="ExprZBox" Padding="4" Spacing="4">
+  <RowView Padding="4" Spacing="4">
     <CheckBox Name="StackedCheckBox" text="Show Stacked" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowLegendEntryCheckBox" text="Show Legend Entry" />
   </RowView>
 </ColView>

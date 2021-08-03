@@ -85,8 +85,9 @@ public class DataSetInsp extends ChartPartInsp {
         DataType dataType = dataSet.getDataType();
         setViewVisible("ExprZBox", dataType.hasZ());
 
-        // Reset StackedCheckBox
+        // Reset StackedCheckBox, ShowLegendEntryCheckBox
         setViewValue("StackedCheckBox", dataSet.isStacked());
+        setViewValue("ShowLegendEntryCheckBox", dataSet.isShowLegendEntry());
     }
 
     /**
@@ -133,5 +134,9 @@ public class DataSetInsp extends ChartPartInsp {
             for (DataSet dset : dataSets)
                 dset.setStacked(anEvent.getBoolValue());
         }
+
+        // Handle ShowLegendEntryCheckBox
+        if (anEvent.equals("ShowLegendEntryCheckBox"))
+            dataSet.setShowLegendEntry(anEvent.getBoolValue());
     }
 }

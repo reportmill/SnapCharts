@@ -681,13 +681,13 @@ public class DataSet extends ChartPart {
         if (getExprZ() != null && getExprZ().length() > 0)
             e.add(ExprZ_Prop, getExprZ());
 
-        // Archive Stacked
+        // Archive Stacked, Disabled, ShowLegendEntry
         if (isStacked())
             e.add(Stacked_Prop, true);
-
-        // Archive Disabled
         if (isDisabled())
             e.add(Disabled_Prop, true);
+        if (!isShowLegendEntry())
+            e.add(ShowLegendEntry_Prop, false);
 
         // Archive DataStyle
         DataStyle dataStyle = getDataStyle();
@@ -727,13 +727,13 @@ public class DataSet extends ChartPart {
         if (anElement.hasAttribute(ExprZ_Prop))
             setExprZ(anElement.getAttributeValue(ExprZ_Prop));
 
-        // Unarchive Stacked
+        // Unarchive Stacked, Disabled, ShowLegendEntry
         if (anElement.hasAttribute(Stacked_Prop))
             setStacked(anElement.getAttributeBoolValue(Stacked_Prop, false));
-
-        // Unarchive Disabled
         if (anElement.hasAttribute(Disabled_Prop))
             setDisabled(anElement.getAttributeBoolValue(Disabled_Prop, false));
+        if (anElement.hasAttribute(ShowLegendEntry_Prop))
+            setShowLegendEntry(anElement.getAttributeBoolValue(ShowLegendEntry_Prop));
 
         // Unarchive DataStyle
         XMLElement dataStyleXML = anElement.getElement("DataStyle");

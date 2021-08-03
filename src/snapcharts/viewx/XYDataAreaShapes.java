@@ -322,8 +322,9 @@ public class XYDataAreaShapes {
             // If starting NextDataArea, create its PathIter, and add connecting LineTo to its end point
             if (_nextDataAreaPathIter == null) {
                 _nextDataAreaPathIter = new ReversedDataLinePathIter(_trans, _nextDataArea);
-                double dispX = _nextDataAreaPathIter._dispX[_endIndex];
-                double dispY = _nextDataAreaPathIter._dispY[_endIndex];
+                int endIndex = _nextDataArea.getDispDataEndOutsideIndex();
+                double dispX = _nextDataAreaPathIter._dispX[endIndex];
+                double dispY = _nextDataAreaPathIter._dispY[endIndex];
                 return lineTo(dispX, dispY, coords);
             }
 
