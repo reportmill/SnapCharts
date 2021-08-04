@@ -13,7 +13,7 @@ import java.util.Objects;
 public class StyledChartPart extends ChartPart {
 
     // The border
-    private Border  _border;
+    private Border  _border = UNSET_BORDER;
 
     // The line color
     private Color  _lineColor = DEFAULT_LINE_COLOR;
@@ -61,6 +61,9 @@ public class StyledChartPart extends ChartPart {
     public static final Font DEFAULT_FONT = Font.Arial12;
     public static final Color DEFAULT_TEXT_FILL = Color.BLACK;
 
+    // Constant for unset border
+    private static Border UNSET_BORDER = new Borders.NullBorder();
+
     /**
      * Constructor.
      */
@@ -70,20 +73,17 @@ public class StyledChartPart extends ChartPart {
     }
 
     /**
-     * Returns whether border is set.
-     */
-    public boolean isBorderSet()  { return _border != null; }
-
-    /**
      * Returns the ChartPart border.
      */
     public Border getBorder()
     {
         // If border not supported, use Line Prop version
-        if (!isBorderSupported()) return getBorderUsingLineProps();
+        if (!isBorderSupported())
+            return getBorderUsingLineProps();
 
         // If explicitly set, just return
-        if (_border != null) return _border;
+        if (_border != UNSET_BORDER)
+            return _border;
 
         // Return default border
         return (Border) getPropDefault(Border_Prop);
@@ -95,10 +95,20 @@ public class StyledChartPart extends ChartPart {
     public void setBorder(Border aBorder)
     {
         // If border not supported, use Line Prop version
-        if (!isBorderSupported())  { setBorderUsingLineProps(aBorder); return; }
+        if (!isBorderSupported())  {
+            setBorderUsingLineProps(aBorder);
+            return;
+        }
 
-        if (Objects.equals(aBorder, _border)) return;
-        firePropChange(Border_Prop, _border, _border=aBorder);
+        // If already set, just return
+        if (Objects.equals(aBorder, getBorder())) return;
+
+        // If given border is default, replace with UNSET_BORDER
+        if (Objects.equals(aBorder, getPropDefault(Border_Prop)))
+            aBorder = UNSET_BORDER;
+
+        // Set and firePropChange
+        firePropChange(Border_Prop, _border, _border = aBorder);
     }
 
     /**
@@ -308,6 +318,21 @@ public class StyledChartPart extends ChartPart {
     }
 
     /**
+     * Returns whether give prop is set to default.
+     */
+    public boolean isPropDefault(String aPropName)
+    {
+        switch (aPropName) {
+            case Border_Prop: return _border == UNSET_BORDER;
+            default: {
+                Object propValue = getPropValue(aPropName);
+                Object propDefault = getPropDefault(aPropName);
+                return Objects.equals(propValue, propDefault);
+            }
+        }
+    }
+
+    /**
      * Returns the value for given key.
      */
     @Override
@@ -348,8 +373,8 @@ public class StyledChartPart extends ChartPart {
             e.add(Name_Prop, getName());
 
         // Archive Border
-        if (isBorderSet()) {
-            Border border = getBorder();
+        if (!isPropDefault(Border_Prop)) {
+            Border border = getBorder(); if (border == null) border = new Borders.NullBorder();
             XMLElement borderXML = border.toXML(anArchiver);
             e.add(Border_Prop, borderXML);
         }
@@ -417,6 +442,7 @@ public class StyledChartPart extends ChartPart {
         XMLElement borderXML = anElement.get(Border_Prop);
         if (borderXML != null) {
             Border border = (Border) anArchiver.fromXML(borderXML, null);
+            if (border instanceof Borders.NullBorder) border = null;
             setBorder(border);
         }
 

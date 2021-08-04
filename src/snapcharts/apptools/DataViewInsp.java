@@ -182,7 +182,7 @@ public class DataViewInsp extends ChartPartInsp {
         if (anEvent.equals("ShowBorderCheckBox")) {
             boolean showBorder = anEvent.getBoolValue();
             Border border2 = showBorder ? borderNonNull : null;
-            dataSetList.setBorder(border);
+            dataSetList.setBorder(border2);
             setViewValue("ShowBorderMoreButton", showBorder);
         }
 
