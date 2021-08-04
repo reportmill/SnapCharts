@@ -1,8 +1,7 @@
 package snapcharts.view;
+import snap.geom.Line;
 import snap.geom.Point;
-import snap.gfx.Color;
-import snap.gfx.Font;
-import snap.gfx.Paint;
+import snap.gfx.*;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -438,6 +437,20 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             setAxisMax(aMax);
         }
     }
+
+    /**
+     * Override to paint axis line and ticks.
+     */
+    @Override
+    protected void paintFront(Painter aPntr)
+    {
+        paintAxisLineAndTicks(aPntr);
+    }
+
+    /**
+     * Override to paint axis line and ticks.
+     */
+    protected void paintAxisLineAndTicks(Painter aPntr)  { }
 
     /**
      * Override to add support for this view properties.

@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.geom.Side;
 import java.util.List;
 
 /**
@@ -15,6 +16,9 @@ public class AxisX extends Axis {
     public AxisX()
     {
         super();
+
+        // Override default property values
+        _side = Side.BOTTOM;
     }
 
     /**

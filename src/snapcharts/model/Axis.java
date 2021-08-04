@@ -18,13 +18,13 @@ public abstract class Axis extends StyledChartPart {
     private String  _title;
 
     // The title alignment
-    private Pos  _titleAlign = DEFAULT_TITLE_ALIGN;
+    private Pos  _titleAlign;
 
     // The title rotation
     private double  _titleRot;
 
     // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
-    private double  _tickLength = 8;
+    private double  _tickLength;
 
     // The Axis Min Bounding
     private AxisBound _minBound = AxisBound.AUTO;
@@ -33,10 +33,10 @@ public abstract class Axis extends StyledChartPart {
     private AxisBound _maxBound = AxisBound.AUTO;
 
     // The Axis Min Value (if MinBounding is VALUE)
-    private double  _minValue = 0;
+    private double  _minValue;
 
     // The Axis Max Value (if MaxBounding is VALUE)
-    private double  _maxValue = 0;
+    private double  _maxValue;
 
     // Whether Zero should always be included
     private boolean  _zeroRequired;
@@ -48,22 +48,22 @@ public abstract class Axis extends StyledChartPart {
     private boolean  _wrapAxis;
 
     // The wrap min/max value
-    private MinMax  _wrapMinMax = DEFAULT_WRAP_MINMAX;
+    private MinMax  _wrapMinMax;
 
     // The Side this axis
-    private Side  _side;
+    protected Side  _side;
 
     // Whether to show grid lines
-    private boolean  _showGrid = DEFAULT_SHOW_GRID;
+    private boolean  _showGrid;
 
     // The grid line color
-    private Color  _gridColor = DEFAULT_GRID_COLOR;
+    private Color  _gridColor;
 
     // The grid line width
-    private int  _gridWidth = DEFAULT_GRID_WIDTH;
+    private int  _gridWidth;
 
     // The grid line
-    private double[]  _gridDash = DEFAULT_GRID_DASH;
+    private double[]  _gridDash;
 
     // Constants for properties
     public static final String Title_Prop = "Title";
@@ -84,13 +84,15 @@ public abstract class Axis extends StyledChartPart {
     public static final String GridDash_Prop = "GridDash";
 
     // Constants for default values
-    protected static Color  AXIS_TEXT_COLOR = Color.DARKGRAY;
-    protected static Pos DEFAULT_TITLE_ALIGN = Pos.CENTER;
-    public static MinMax DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
-    public static final boolean DEFAULT_SHOW_GRID = true;
-    public static final Color DEFAULT_GRID_COLOR = Color.get("#E6");
-    public static final int DEFAULT_GRID_WIDTH = 1;
-    public static final double[] DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
+    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.GRAY.darker();
+    public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
+    protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
+    protected static Pos  DEFAULT_TITLE_ALIGN = Pos.CENTER;
+    public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
+    public static final boolean  DEFAULT_SHOW_GRID = true;
+    public static final Color  DEFAULT_GRID_COLOR = Color.get("#E6");
+    public static final int  DEFAULT_GRID_WIDTH = 1;
+    public static final double[]  DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
 
     /**
      * Constructor.
@@ -98,6 +100,20 @@ public abstract class Axis extends StyledChartPart {
     public Axis()
     {
         super();
+
+        // Set default property values
+        _titleAlign = DEFAULT_TITLE_ALIGN;
+        _tickLength = 8;
+        _wrapMinMax = DEFAULT_WRAP_MINMAX;
+        _showGrid = DEFAULT_SHOW_GRID;
+        _gridColor = DEFAULT_GRID_COLOR;
+        _gridWidth = DEFAULT_GRID_WIDTH;
+        _gridDash = DEFAULT_GRID_DASH;
+
+        // Override default property values
+        _lineColor = Color.GREEN; //DEFAULT_AXIS_LINE_COLOR;
+        _lineWidth = DEFAULT_AXIS_LINE_WIDTH;
+        _textFill = DEFAULT_AXIS_TEXT_FILL;
     }
 
     /**
@@ -304,7 +320,7 @@ public abstract class Axis extends StyledChartPart {
      */
     public Side getSide()
     {
-        return _side != null ? _side : getSideDefault();
+        return _side;
     }
 
     /**
@@ -312,9 +328,14 @@ public abstract class Axis extends StyledChartPart {
      */
     public void setSide(Side aSide)
     {
+        // If already set, just return
         if (aSide == getSide()) return;
+
+        // If trying to set to invalid side, complain
         if (aSide == null || aSide.isHorizontal() != getSideDefault().isHorizontal())
             throw new IllegalArgumentException("Axis.setSide: Can't set Axis side to " + aSide);
+
+        // Set and firePropChange
         firePropChange(Side_Prop, _side, _side = aSide);
     }
 
@@ -419,10 +440,14 @@ public abstract class Axis extends StyledChartPart {
     {
         // Handle properties
         switch (aPropName) {
+
+            // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return getMinBound();
             case MaxBound_Prop: return getMaxBound();
             case MinValue_Prop: return getMinValue();
             case MaxValue_Prop: return getMaxValue();
+
+            // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
         }
     }
@@ -435,6 +460,8 @@ public abstract class Axis extends StyledChartPart {
     {
         // Handle properties
         switch (aPropName) {
+
+            // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: setMinBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
             case MaxBound_Prop: setMaxBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
             case MinValue_Prop: setMinValue(SnapUtils.doubleValue(aValue)); break;
@@ -459,7 +486,15 @@ public abstract class Axis extends StyledChartPart {
     {
         // Handle properties
         switch (aPropName) {
-            case TextFill_Prop: return AXIS_TEXT_COLOR;
+
+            // LineWidth
+            case LineWidth_Prop: return DEFAULT_AXIS_LINE_WIDTH;
+            case LineColor_Prop: return DEFAULT_AXIS_LINE_COLOR;
+
+            // TextFill
+            case TextFill_Prop: return DEFAULT_AXIS_TEXT_FILL;
+
+            // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return AxisBound.AUTO;
             case MaxBound_Prop: return AxisBound.AUTO;
             case MinValue_Prop: return 0;

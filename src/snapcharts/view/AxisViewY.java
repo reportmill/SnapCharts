@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.view;
+import snap.geom.Line;
 import snap.geom.Pos;
 import snap.geom.Side;
 import snap.gfx.Color;
@@ -10,10 +11,7 @@ import snap.gfx.Stroke;
 import snap.util.ArrayUtils;
 import snap.view.RowView;
 import snap.view.ViewProxy;
-import snapcharts.model.AxisType;
-import snapcharts.model.AxisY;
-import snapcharts.model.DataSet;
-import snapcharts.model.Legend;
+import snapcharts.model.*;
 
 /**
  * An AxisView subclass for AxisY.
@@ -78,11 +76,23 @@ public class AxisViewY extends AxisView<AxisY> {
      * Override to paint axis line and ticks.
      */
     @Override
-    protected void paintFront(Painter aPntr)
+    protected void paintAxisLineAndTicks(Painter aPntr)
     {
-        AxisY axis = getAxis();
+        // Get axis line style properties
+        Axis axis = getAxis();
         Color lineColor = axis.getLineColor();
         Stroke lineStroke = axis.getLineStroke();
+
+        // Get Axis line
+        double areaY = 0;
+        double areaMaxY = areaY + getHeight();
+        double lineX = getAxis().getSide() == Side.LEFT ? getWidth() : 0;
+        Line axisLine = new Line(lineX, areaY, lineX, areaMaxY);
+
+        // Paint Axis line
+        aPntr.setColor(lineColor);
+        aPntr.setStroke(lineStroke);
+        aPntr.draw(axisLine);
     }
 
     /**

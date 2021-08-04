@@ -1,9 +1,12 @@
 package snapcharts.view;
+import snap.geom.Line;
 import snap.geom.Pos;
+import snap.geom.Side;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.ColView;
 import snap.view.ViewProxy;
+import snapcharts.model.Axis;
 import snapcharts.model.AxisX;
 
 /**
@@ -33,15 +36,26 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     }
 
     /**
-     * Returns a ViewProxy for AxisView to layout as ColView.
+     * Override to paint axis line and ticks.
      */
-    private ViewProxy<?> getViewProxy()
+    @Override
+    protected void paintAxisLineAndTicks(Painter aPntr)
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
-        viewProxy.setAlign(Pos.BOTTOM_CENTER);
-        ArrayUtils.reverse(viewProxy.getChildren());
-        viewProxy.setSpacing(TITLE_TICKS_SPACING);
-        return viewProxy;
+        // Get axis line style properties
+        Axis axis = getAxis();
+        Color lineColor = axis.getLineColor();
+        Stroke lineStroke = axis.getLineStroke();
+
+        // Get Axis line
+        double areaX = 0;
+        double areaMaxX = areaX + getWidth();
+        double lineY = getAxis().getSide() == Side.TOP ? getHeight() : 0;
+        Line axisLine = new Line(areaX, lineY, areaMaxX, lineY);
+
+        // Paint Axis line
+        aPntr.setColor(lineColor);
+        aPntr.setStroke(lineStroke);
+        aPntr.draw(axisLine);
     }
 
     /**
@@ -73,6 +87,18 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
         // Layout TickLabels
         layoutTickLabels();
+    }
+
+    /**
+     * Returns a ViewProxy for AxisView to layout as ColView.
+     */
+    private ViewProxy<?> getViewProxy()
+    {
+        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        viewProxy.setAlign(Pos.BOTTOM_CENTER);
+        ArrayUtils.reverse(viewProxy.getChildren());
+        viewProxy.setSpacing(TITLE_TICKS_SPACING);
+        return viewProxy;
     }
 
     /**

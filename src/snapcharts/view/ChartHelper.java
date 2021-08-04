@@ -298,6 +298,11 @@ public abstract class ChartHelper {
     public void paintBorder(Painter aPntr)  { }
 
     /**
+     * Paints axes lines and ticks.
+     */
+    public void paintAxesLinesAndTicks(Painter aPntr)  { }
+
+    /**
      * Creates the axis intervals for active datasets.
      */
     protected Intervals createIntervals(AxisView axisView)

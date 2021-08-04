@@ -24,6 +24,9 @@ public class AxisY extends Axis {
         super();
         _chart = aChart;
         _axisType = anAxisType;
+
+        // Override default property values
+        _side = getSideDefault();
     }
 
     /**

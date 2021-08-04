@@ -1,9 +1,6 @@
 package snapcharts.model;
 import snap.gfx.*;
-import snap.util.ArrayUtils;
-import snap.util.MathUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
+import snap.util.*;
 import java.util.Objects;
 
 /**
@@ -13,31 +10,31 @@ import java.util.Objects;
 public class StyledChartPart extends ChartPart {
 
     // The border
-    private Border  _border = UNSET_BORDER;
+    protected Border  _border;
 
     // The line color
-    private Color  _lineColor = DEFAULT_LINE_COLOR;
+    protected Color  _lineColor;
 
     // The line width
-    private int  _lineWidth = DEFAULT_LINE_WIDTH;
+    protected int  _lineWidth;
 
     // The line dash
-    private double[]  _lineDash = DEFAULT_LINE_DASH;
+    protected double[]  _lineDash;
 
     // The Fill
-    private Paint  _fill;
+    protected Paint  _fill;
 
     // The Effect
-    private Effect  _effect = DEFAULT_EFFECT;
+    protected Effect  _effect;
 
     // The opacity
-    private double  _opacity = DEFAULT_OPACTIY;
+    protected double  _opacity ;
 
     // The Font
-    private Font  _font;
+    protected Font  _font;
 
     // The Text Fill
-    private Paint  _textFill = (Paint) getPropDefault(TextFill_Prop);
+    protected Paint  _textFill;
 
     // Constants for properties
     public static final String Border_Prop = "Border";
@@ -70,6 +67,15 @@ public class StyledChartPart extends ChartPart {
     public StyledChartPart()
     {
         super();
+
+        // Set default property values
+        _border = UNSET_BORDER;
+        _lineColor = DEFAULT_LINE_COLOR;
+        _lineWidth = DEFAULT_LINE_WIDTH;
+        _lineDash = DEFAULT_LINE_DASH;
+        _effect = DEFAULT_EFFECT;
+        _opacity = DEFAULT_OPACTIY;
+        _textFill = DEFAULT_TEXT_FILL;
     }
 
     /**
@@ -318,12 +324,54 @@ public class StyledChartPart extends ChartPart {
     }
 
     /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // LineColor, LineWidth, LineDash
+            case LineColor_Prop: return getLineColor();
+            case LineWidth_Prop: return getLineWidth();
+            case LineDash_Prop: return getLineDash();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // LineColor, LineWidth, LineDash
+            case LineColor_Prop: setLineColor((Color) aValue); break;
+            case LineWidth_Prop: setLineWidth(SnapUtils.intValue(aValue)); break;
+            case LineDash_Prop: setLineDash((double[]) aValue); break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue);
+        }
+    }
+
+    /**
      * Returns whether give prop is set to default.
      */
     public boolean isPropDefault(String aPropName)
     {
         switch (aPropName) {
+
+            // Border
             case Border_Prop: return _border == UNSET_BORDER;
+
+            // Default
             default: {
                 Object propValue = getPropValue(aPropName);
                 Object propDefault = getPropDefault(aPropName);
@@ -341,20 +389,23 @@ public class StyledChartPart extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
+            // Border
             case Border_Prop: return DEFAULT_BORDER;
 
+            // LineColor, LineWidth, LineDash
             case LineColor_Prop: return DEFAULT_LINE_COLOR;
             case LineWidth_Prop: return DEFAULT_LINE_WIDTH;
             case LineDash_Prop: return DEFAULT_LINE_DASH;
 
+            // Fill, Effect
             case Fill_Prop: return DEFAULT_FILL;
-
             case Effect_Prop: return DEFAULT_EFFECT;
 
+            // Font, TextFill
             case Font_Prop: return DEFAULT_FONT;
-
             case TextFill_Prop: return DEFAULT_TEXT_FILL;
 
+            // Superclass props
             default: return super.getPropDefault(aPropName);
         }
     }
@@ -380,9 +431,9 @@ public class StyledChartPart extends ChartPart {
         }
 
         // Archive LineColor, LineWidth, LineDash
-        if (isLineColorSet())
+        if (!isPropDefault(LineColor_Prop))
             e.add(LineColor_Prop, getLineColor().toHexString());
-        if (getLineWidth() != getPropDefaultInt(LineWidth_Prop))
+        if (!isPropDefault(LineWidth_Prop))
             e.add(LineWidth_Prop, getLineWidth());
         if (!ArrayUtils.equals(_lineDash, DEFAULT_LINE_DASH)) {
             String dashStr = Stroke.getDashArrayNameOrString(_lineDash);
@@ -397,8 +448,8 @@ public class StyledChartPart extends ChartPart {
         }
 
         // Archive Effect
-        Effect effect = getEffect(), effectDef = (Effect) getPropDefault(Effect_Prop);
-        if (!Objects.equals(effect, effectDef)) {
+        if (!isPropDefault(Effect_Prop)) {
+            Effect effect = getEffect();
             XMLElement effectXML = effect.toXML(anArchiver);
             e.add(Effect_Prop, effectXML);
         }
@@ -415,8 +466,8 @@ public class StyledChartPart extends ChartPart {
         }
 
         // Archive TextFill
-        Paint textFill = getTextFill(), textFillDef = (Paint) getPropDefault(TextFill_Prop);
-        if (!Objects.equals(textFill, textFillDef)) {
+        if (!isPropDefault(TextFill_Prop)) {
+            Paint textFill = getTextFill();
             XMLElement textFillXML = textFill.toXML(anArchiver);
             e.add(TextFill_Prop, textFillXML);
         }

@@ -54,10 +54,10 @@ public class TagStyle extends StyledChartPart {
     {
         switch (aPropName) {
 
-            // Handle LineColor_Prop
+            // Handle LineColor
             case LineColor_Prop: return _dataStyle.getLineColor();
 
-            // Handle LineColor_Prop
+            // Handle LineColor
             case Fill_Prop: return getDefaultFill();
 
             // Handle Font
