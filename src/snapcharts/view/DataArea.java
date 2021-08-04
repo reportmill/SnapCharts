@@ -448,50 +448,6 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Paints chart axis lines.
-     */
-    public void paintBorder(Painter aPntr)
-    {
-        // Get border
-        DataSetList dataSetList = getDataSetList();
-        Border border = dataSetList.getBorder();
-        if (border == null)
-            return;
-
-        // Get view area
-        double areaX = 0;
-        double areaY = 0;
-        double areaW = getWidth();
-        double areaH = getHeight();
-
-        // Disable antialiasing to get crisp lines
-        aPntr.setAntialiasing(false);
-
-        // Paint Border
-        aPntr.setColor(border.getColor());
-        aPntr.setStroke(border.getStroke());
-        aPntr.drawRect(areaX, areaY, areaW, areaH);
-
-        // Paint Axis lines
-        Color axisColor = border.getColor().darker();
-        aPntr.setColor(axisColor);
-        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
-        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
-
-        // Enable antialiasing
-        aPntr.setAntialiasing(true);
-    }
-
-    /**
-     * Paints chart axis lines.
-     */
-    public void paintGridlines(Painter aPntr)
-    {
-        GridPainter gridPainter = new GridPainter(this);
-        gridPainter.paintGridlines(aPntr);
-    }
-
-    /**
      * Paints tags for DataSet.
      */
     protected void paintDataTags(Painter aPntr)  { }

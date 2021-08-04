@@ -1,4 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
+import snap.gfx.Painter;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
@@ -40,6 +44,24 @@ public class BarChartHelper extends ChartHelper {
             return new DataArea[0];
         DataSet dset = dataSetList.getDataSet(0);
         return new DataArea[] { new BarDataArea(this, dset) };
+    }
+
+    /**
+     * Paints chart axis lines.
+     */
+    @Override
+    public void paintGridlines(Painter aPntr)
+    {
+        XYChartHelper.paintGridlinesXY(this, aPntr);
+    }
+
+    /**
+     * Paints chart border.
+     */
+    @Override
+    public void paintBorder(Painter aPntr)
+    {
+        XYChartHelper.paintBorderXY(this, aPntr);
     }
 
     /**

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.util.PropChange;
@@ -37,8 +40,8 @@ public class PolarContourDataArea extends PolarDataArea {
         _contourPainter.paintAll(aPntr);
 
         // Repaint (semi-transparent) gridlines on top of contours
-        aPntr.setOpacity(.4);
-        paintGridlines(aPntr);
+        aPntr.setOpacity(.2);
+        _chartHelper.paintGridlines(aPntr);
         aPntr.setOpacity(1);
     }
 

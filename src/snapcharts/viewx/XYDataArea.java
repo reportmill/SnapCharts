@@ -9,7 +9,6 @@ import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
 import snapcharts.view.DataView;
-import snapcharts.view.PointPainter;
 
 /**
  * A DataArea subclass to display common XY ChartTypes: LINE, AREA, SCATTER.

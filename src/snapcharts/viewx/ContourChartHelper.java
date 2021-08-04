@@ -1,4 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
+import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.view.*;
@@ -32,6 +36,14 @@ public class ContourChartHelper extends ChartHelper {
     public ContourHelper getContourHelper()  { return _contourHelper; }
 
     /**
+     * Returns the ColorBarView.
+     */
+    public ColorBarView getColorBarView()
+    {
+        return _chartView.getColorBarView();
+    }
+
+    /**
      * Creates the DataAreas.
      */
     @Override
@@ -51,11 +63,21 @@ public class ContourChartHelper extends ChartHelper {
     }
 
     /**
-     * Returns the ColorBarView.
+     * Paints chart axis lines.
      */
-    public ColorBarView getColorBarView()
+    @Override
+    public void paintGridlines(Painter aPntr)
     {
-        return _chartView.getColorBarView();
+        XYChartHelper.paintGridlinesXY(this, aPntr);
+    }
+
+    /**
+     * Paints chart border.
+     */
+    @Override
+    public void paintBorder(Painter aPntr)
+    {
+        XYChartHelper.paintBorderXY(this, aPntr);
     }
 
     /**

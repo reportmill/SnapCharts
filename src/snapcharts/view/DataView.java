@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
@@ -124,12 +127,11 @@ public class DataView extends ChartPartView<DataSetList> {
     @Override
     protected void paintFront(Painter aPntr)
     {
-        // Make DataArea for lowest Y axis paint gridlines
-        DataArea dataArea = _chartHelper.getDataAreaForFirstAxisY();
-        if (dataArea != null) {
-            dataArea.paintGridlines(aPntr);
-            dataArea.paintBorder(aPntr);
-        }
+        // Paint Chart Gridlines
+        _chartHelper.paintGridlines(aPntr);
+
+        // Paint Chart Border
+        _chartHelper.paintBorder(aPntr);
     }
 
     /**

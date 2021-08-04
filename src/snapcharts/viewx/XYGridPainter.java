@@ -1,97 +1,42 @@
-package snapcharts.view;
-
-import snap.gfx.Color;
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
+package snapcharts.viewx;
 import snap.gfx.Painter;
-import snap.gfx.Stroke;
-import snapcharts.model.Axis;
-import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
+import snapcharts.view.*;
 
 /**
- * This class handles grid painting for DataArea.
+ * This class handles grid painting for XY Charts.
  */
-public class GridPainter {
-
-    // The DataArea
-    private DataArea  _dataArea;
-
-    // The ChartHelper
-    private ChartHelper  _chartHelper;
-
-    // Area bounds
-    protected double  areaX, areaY;
-    protected double  areaW, areaH;
-    protected double  areaMaxX, areaMaxY;
-
-    // AxisView
-    protected AxisView  axisView;
-
-    // The axis
-    protected Axis  axis;
-
-    // Whether using log
-    protected boolean  axisIsLog;
-
-    // Whether to show grid
-    protected boolean  isShowGrid;
-
-    // Grid Color
-    protected Color  gridColor;
-
-    // Grid Stroke
-    protected Stroke  gridStroke;
-
-    // TickLine Color
-    protected Color  tickLineColor;
-
-    // TickLength
-    protected double  tickLength;
+public class XYGridPainter extends GridPainter {
 
     /**
      * Constructor.
      */
-    public GridPainter(DataArea aDataArea)
+    public XYGridPainter(ChartHelper aChartHelper)
     {
-        // Set DataArea, ChartHelper
-        _dataArea = aDataArea;
-        _chartHelper = aDataArea.getChartHelper();
-
-        // Get Area bounds
-        areaW = _dataArea.getWidth();
-        areaH = _dataArea.getHeight();
-        areaMaxX = areaX + areaW;
-        areaMaxY = areaY + areaH;
-    }
-
-    /**
-     * Updates values for axis.
-     */
-    protected void updateForAxis(AxisType anAxisType)
-    {
-        axisView = anAxisType == AxisType.X ? _dataArea.getAxisViewX() : _dataArea.getAxisViewY();
-        axis = axisView.getAxis();
-        axisIsLog = axis.isLog();
-        isShowGrid = axis.isShowGrid();
-        gridColor = axis.getGridColor();
-        gridStroke = axis.getGridStroke();
-        tickLineColor = AxisView.TICK_LINE_COLOR;
-        tickLength = axis.getTickLength();
+        super(aChartHelper);
     }
 
     /**
      * Paints chart axis lines.
      */
-    public void paintGridlines(Painter aPntr)
+    public void paintGridlines(Painter aPntr, DataArea aDataArea)
     {
         // Paint AxisX gridlines
-        updateForAxis(AxisType.X);
-        if (axisView != null);
+        AxisView axisViewX = aDataArea.getAxisViewX();
+        if (axisViewX != null) {
+            updateForAxisView(axisViewX);
             paintGridlinesX(aPntr);
+        }
 
         // Paint AxisY gridlines
-        updateForAxis(AxisType.Y);
-        if (axisView != null & axisView.isVisible())
+        AxisViewY axisViewY = aDataArea.getAxisViewY();
+        if (axisView != null & axisView.isVisible()) {
+            updateForAxisView(axisViewY);
             paintGridlinesY(aPntr);
+        }
     }
 
     /**
@@ -190,8 +135,7 @@ public class GridPainter {
         }
 
         // Paint tick
-        aPntr.setColor(tickLineColor);
-        aPntr.drawLine(dispX, areaMaxY - tickLength, dispX, areaMaxY);
+        paintTickX(aPntr, dispX);
     }
 
     /**
@@ -206,7 +150,64 @@ public class GridPainter {
         }
 
         // Paint tick
-        aPntr.setColor(tickLineColor);
+        paintTickY(aPntr, dispY);
+    }
+
+    /**
+     * Paints X axis tick line at given X in display coords
+     */
+    protected void paintTickX(Painter aPntr, double dispX)
+    {
+        aPntr.setColor(tickColor);
+        aPntr.drawLine(dispX, areaMaxY - tickLength, dispX, areaMaxY);
+    }
+
+    /**
+     * Paints Y axis tick line at given Y in display coords.
+     */
+    protected void paintTickY(Painter aPntr, double dispY)
+    {
+        aPntr.setColor(tickColor);
         aPntr.drawLine(areaX, dispY, areaX + tickLength, dispY);
+    }
+
+    /**
+     * Paints Axis tick marks.
+     */
+    public void paintAxisLineAndTicks(Painter aPntr, AxisView anAxisView)
+    {
+        updateForAxisView(anAxisView);
+
+        if (anAxisView.getAxisType().isAnyY())
+            paintAxisLineAndTicksY(aPntr, anAxisView);
+    }
+
+    /**
+     * Paints Axis tick marks.
+     */
+    public void paintAxisLineAndTicksY(Painter aPntr, AxisView anAxisView)
+    {
+        // Set Line Color, Stroke
+        aPntr.setColor(axisLineColor);
+        aPntr.setStroke(axisLineStroke);
+
+        // Paint axis line X
+        aPntr.drawLine(axisLineX, areaY, axisLineX, areaMaxY);
+
+        // Iterate over intervals and paint lines
+        Intervals ivals = axisView.getIntervals();
+        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
+
+            // Get interval X and paint gridline
+            double dataY = ivals.getInterval(i);
+            double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
+
+            // Paint Tick Y
+            aPntr.setColor(tickColor);
+            aPntr.drawLine(tickX, dispY, tickMaxX, dispY);
+
+            // If Log, paint log minor grid
+            //if (axisIsLog) paintMinorLogGridlinesY(aPntr, dataX);
+        }
     }
 }

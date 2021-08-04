@@ -1,6 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import java.text.DecimalFormat;
-
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.*;
@@ -189,12 +191,6 @@ public class PieDataArea extends DataArea {
             }
         }
     }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    public void paintBorder(Painter aPntr)  { }
 
     /**
      * Returns the X/Y point for given angle/radius.

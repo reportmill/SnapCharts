@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.Color;
@@ -36,132 +39,6 @@ public class PolarDataArea extends DataArea {
     {
         super(aChartHelper, aDataSet);
         _polarHelper = (PolarChartHelper) aChartHelper;
-    }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    public void paintBorder(Painter aPntr)  { }
-
-    /**
-     * Paints chart axis lines.
-     */
-    public void paintGridlines(Painter aPntr)
-    {
-        paintRadialLines(aPntr);
-        paintAngleLines(aPntr);
-    }
-
-    /**
-     * Paints chart radial axis lines.
-     */
-    protected void paintRadialLines(Painter aPntr)
-    {
-        // Get info X
-        AxisViewX axisViewX = getAxisViewX(); if (axisViewX==null) return;
-        Axis axisX = axisViewX.getAxis();
-
-        // Get info Y
-        AxisViewY axisViewY = getAxisViewY(); if (axisViewY==null) return;
-
-        // Set Grid Color/Stroke
-        Color gridColor = axisX.getGridColor(); //new Color("#d0"); //axisViewX.getGridColor().darker();
-        Stroke gridStroke = axisX.getGridStroke();
-        aPntr.setColor(gridColor);
-        aPntr.setStroke(gridStroke);
-
-        // Other info
-        Color tickLineColor = AxisView.TICK_LINE_COLOR;
-        double reveal = getReveal();
-
-        // Get area bounds
-        Rect areaBnds = _polarHelper.getPolarBounds();
-        double areaX = areaBnds.x;
-        double areaY = areaBnds.y;
-        double areaW = areaBnds.width;
-        double areaH = areaBnds.height;
-        double areaMidX = areaX + areaW/2;
-        double areaMidY = areaY + areaH/2;
-
-        // A shared arc
-        Arc arc = new Arc(areaX, areaY, areaW, areaH, 0, 360);
-
-        // Iterate over intervals and paint lines
-        Intervals ivals = axisViewX.getIntervals();
-        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
-
-            // Get something
-            double dataRad = ivals.getInterval(i);
-            double dispX = (int) Math.round(axisViewX.dataToView(dataRad));
-            double dispY = (int) Math.round(axisViewY.dataToView(dataRad));
-            double radLenX = dispX - areaMidX;
-            double radLenY = areaMidY - dispY;
-            radLenX *= reveal;
-            radLenY *= reveal;
-
-            // Draw radial
-            aPntr.setColor(gridColor);
-            double radX = areaMidX - radLenX;
-            double radY = areaMidY - radLenY;
-            arc.setRect(radX, radY, radLenX*2, radLenY*2);
-            arc.setStartAngle(0);
-            arc.setSweepAngle(-360 * reveal);
-            arc.setClosure(Arc.Closure.Open);
-            aPntr.draw(arc);
-
-            aPntr.setColor(tickLineColor);
-            arc.setStartAngle(-3);
-            arc.setSweepAngle(6);
-            arc.setClosure(Arc.Closure.Chord);
-            aPntr.draw(arc);
-        }
-    }
-
-    /**
-     * Paints chart angle axis lines.
-     */
-    protected void paintAngleLines(Painter aPntr)
-    {
-        // Get info X
-        AxisViewX axisViewX = getAxisViewX(); if (axisViewX == null) return;
-        Axis axis = axisViewX.getAxis();
-        double reveal = getReveal();
-
-        // Get info Y
-        AxisType axisTypeY = getAxisTypeY();
-
-        // Set Grid Color/Stroke
-        Color gridColor = axis.getGridColor();
-        Stroke gridStroke = axis.getGridStroke();
-        aPntr.setColor(gridColor);
-        aPntr.setStroke(gridStroke);
-
-        // Get area bounds
-        Rect areaBnds = _polarHelper.getPolarBounds();
-        double areaMidX = areaBnds.getMidX();
-        double areaMidY = areaBnds.getMidY();
-
-        // Get interval max
-        Intervals ivals = axisViewX.getIntervals();
-        double dataRad = ivals.getMax() * reveal;
-
-        // Iterate over intervals and paint lines
-        for (int i=0, iMax=360; i<iMax; i+=15) {
-            double angleRad = -Math.toRadians((i)) * (-reveal);
-            double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
-            double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);
-            aPntr.drawLine(areaMidX, areaMidY, dispX, dispY);
-        }
-
-        // Iterate over intervals and paint lines
-        aPntr.setColor(Color.BLACK);
-        for (int i : new int[] { 0, 90 }) {
-            double angleRad = Math.toRadians(i) * reveal;
-            double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
-            double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);
-            aPntr.drawLine(areaMidX, areaMidY, dispX, dispY);
-        }
     }
 
     /**

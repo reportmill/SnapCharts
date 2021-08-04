@@ -1,5 +1,9 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snap.geom.Rect;
+import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
@@ -84,6 +88,17 @@ public class PolarChartHelper extends ChartHelper {
 
         // Set/return
         return _polarBounds = new Rect(areaX, areaY, areaW, areaH);
+    }
+
+    /**
+     * Paints chart axis lines.
+     */
+    @Override
+    public void paintGridlines(Painter aPntr)
+    {
+        DataArea dataArea = getDataAreaForFirstAxisY();
+        PolarGridPainter gridPainter = new PolarGridPainter(this);
+        gridPainter.paintGridlines(aPntr, dataArea);
     }
 
     /**

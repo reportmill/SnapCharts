@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
 import snap.geom.Pos;
 import snap.geom.Side;
+import snap.gfx.Color;
+import snap.gfx.Painter;
+import snap.gfx.Stroke;
 import snap.util.ArrayUtils;
 import snap.view.RowView;
 import snap.view.ViewProxy;
@@ -69,48 +75,14 @@ public class AxisViewY extends AxisView<AxisY> {
     }
 
     /**
-     * Override to configure LegendGraphicRowView.
+     * Override to paint axis line and ticks.
      */
     @Override
-    protected void resetView()
+    protected void paintFront(Painter aPntr)
     {
-        // Do normal version
-        super.resetView();
-
-        // Configure LegendGraphicRowView
-        AxisY axisY = getAxis();
-        boolean showLegendGraphic = axisY.isShowLegendGraphic();
-        _legendGraphicBox.setVisible(showLegendGraphic);
-        if (showLegendGraphic) {
-            _legendGraphicRowView.removeChildren();
-            Legend legend = axisY.getChart().getLegend();
-            DataSet[] dataSets = getDataSetList().getDataSets();
-            for (DataSet dataSet : dataSets) {
-                if (dataSet.getAxisTypeY() == getAxisType()) {
-                    LegendEntryView legendEntryView = new LegendEntryView(legend, dataSet);
-                    legendEntryView.setShowText(false);
-                    legendEntryView.getGraphic().setPrefWidth(40);
-                    _legendGraphicRowView.addChild(legendEntryView);
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns a ViewProxy of AxisView to layout as RowView.
-     */
-    private ViewProxy<?> getViewProxy()
-    {
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
-        viewProxy.setSpacing(TITLE_TICKS_SPACING);
-
-        // If RightSide, reverse children
-        AxisY axisY = getAxis();
-        boolean isRightSide = axisY.getSide() == Side.RIGHT;
-        viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
-        if (isRightSide)
-            ArrayUtils.reverse(viewProxy.getChildren());
-        return viewProxy;
+        AxisY axis = getAxis();
+        Color lineColor = axis.getLineColor();
+        Stroke lineStroke = axis.getLineStroke();
     }
 
     /**
@@ -172,6 +144,51 @@ public class AxisViewY extends AxisView<AxisY> {
             double tickY = dispY - Math.round(tickH / 2);
             tickLabel.setAlign(ticksAlign);
             tickLabel.setBounds(0, tickY, ticksW, tickH);
+        }
+    }
+
+    /**
+     * Returns a ViewProxy of AxisView to layout as RowView.
+     */
+    private ViewProxy<?> getViewProxy()
+    {
+        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        viewProxy.setSpacing(TITLE_TICKS_SPACING);
+
+        // If RightSide, reverse children
+        AxisY axisY = getAxis();
+        boolean isRightSide = axisY.getSide() == Side.RIGHT;
+        viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+        if (isRightSide)
+            ArrayUtils.reverse(viewProxy.getChildren());
+        return viewProxy;
+    }
+
+    /**
+     * Override to configure LegendGraphicRowView.
+     */
+    @Override
+    protected void resetView()
+    {
+        // Do normal version
+        super.resetView();
+
+        // Configure LegendGraphicRowView
+        AxisY axisY = getAxis();
+        boolean showLegendGraphic = axisY.isShowLegendGraphic();
+        _legendGraphicBox.setVisible(showLegendGraphic);
+        if (showLegendGraphic) {
+            _legendGraphicRowView.removeChildren();
+            Legend legend = axisY.getChart().getLegend();
+            DataSet[] dataSets = getDataSetList().getDataSets();
+            for (DataSet dataSet : dataSets) {
+                if (dataSet.getAxisTypeY() == getAxisType()) {
+                    LegendEntryView legendEntryView = new LegendEntryView(legend, dataSet);
+                    legendEntryView.setShowText(false);
+                    legendEntryView.getGraphic().setPrefWidth(40);
+                    _legendGraphicRowView.addChild(legendEntryView);
+                }
+            }
         }
     }
 }

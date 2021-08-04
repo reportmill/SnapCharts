@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.view;
+package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
 import snapcharts.model.*;
-
+import snapcharts.view.DataArea;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class PointPainter {
 
     // The DataArea
-    private DataArea  _dataArea;
+    private DataArea _dataArea;
 
     // The Cached TagBoxes
     private TagBox[]  _tagBoxes;

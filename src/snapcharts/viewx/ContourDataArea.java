@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snap.gfx.*;
 import snap.util.PropChange;
@@ -32,7 +35,13 @@ public class ContourDataArea extends DataArea {
     @Override
     protected void paintDataArea(Painter aPntr)
     {
+        // Paint contour data
         _contourPainter.paintAll(aPntr);
+
+        // Repaint (semi-transparent) gridlines on top of contours
+        aPntr.setOpacity(.2);
+        _chartHelper.paintGridlines(aPntr);
+        aPntr.setOpacity(1);
     }
 
     /**

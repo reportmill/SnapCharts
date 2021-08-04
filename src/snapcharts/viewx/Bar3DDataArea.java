@@ -152,16 +152,4 @@ public class Bar3DDataArea extends BarDataArea {
      */
     @Override
     protected void paintDataArea(Painter aPntr)  { }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    public void paintBorder(Painter aPntr)  { }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    public void paintGridlines(Painter aPntr)  { }
 }

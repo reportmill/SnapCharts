@@ -1,8 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
-import snap.geom.Path;
-import snap.geom.Point;
-import snap.geom.Rect;
-import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.PropChange;
@@ -152,16 +151,4 @@ public class Line3DDataArea extends DataArea {
      */
     @Override
     protected void paintDataArea(Painter aPntr)  { }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    public void paintBorder(Painter aPntr)  { }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    public void paintGridlines(Painter aPntr)  { }
 }

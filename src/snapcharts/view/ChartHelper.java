@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
@@ -283,6 +286,16 @@ public abstract class ChartHelper {
                 return dataArea;
         return null;
     }
+
+    /**
+     * Paints chart axis lines.
+     */
+    public void paintGridlines(Painter aPntr)  { }
+
+    /**
+     * Paints chart border.
+     */
+    public void paintBorder(Painter aPntr)  { }
 
     /**
      * Creates the axis intervals for active datasets.
