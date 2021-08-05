@@ -74,6 +74,38 @@ public class Intervals {
     public double getDelta()  { return _delta; }
 
     /**
+     * Returns whether given interval is full (has same delta as others).
+     */
+    public boolean isFullInterval(int anIndex)
+    {
+        // Inner intervals
+        int count = getCount();
+        if (anIndex > 0 && anIndex < count - 1)
+            return true;
+
+        int index2 = anIndex == 0 ? anIndex + 1 : anIndex - 1;
+        double val1 = getInterval(anIndex);
+        double val2 = getInterval(index2);
+        double delta = Math.abs(val2 - val1);
+        return withinPercentTolerance(delta, _delta, .001);
+    }
+
+    /**
+     * Returns whether given values are within given percent (as ratio) of each other.
+     */
+    private boolean withinPercentTolerance(double aVal1, double aVal2, double aTolerance)
+    {
+        // Get ratio of difference to max val
+        double maxVal = Math.max(Math.abs(aVal1), Math.abs(aVal2));
+        double diffVal = Math.abs(aVal2 - aVal1);
+        double diffRatio = maxVal != 0 ? diffVal / maxVal : 0;
+
+        // If difference greater than .1%, return false, otherwise true
+        boolean withinTolerance = diffRatio < aTolerance;
+        return withinTolerance;
+    }
+
+    /**
      * Returns the divs.
      */
     public double[] getDivs()  { return _divs; }

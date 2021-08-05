@@ -68,7 +68,7 @@ public class TickPainter {
 
     // Constants
     private static final Stroke DEFAULT_TICK_STROKE = Stroke.Stroke1;
-    private static final Color DEFAULT_TICK_COLOR = Color.GRAY;
+    private static final Color DEFAULT_TICK_COLOR = Axis.DEFAULT_LINE_COLOR;
 
     /**
      * Constructor.
@@ -171,17 +171,19 @@ public class TickPainter {
         aPntr.setStroke(tickStroke);
 
         // Iterate over intervals and paint lines
-        Intervals ivals = axisView.getIntervals();
-        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
+        Intervals intervals = axisView.getIntervals();
+        for (int i=0, iMax=intervals.getCount(); i<iMax; i++) {
 
             // Get interval in data coords, convert to display
-            double dataX = ivals.getInterval(i);
+            double dataX = intervals.getInterval(i);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataX));
             if (isPolar)
                 dispX -= polarShift;
 
             // Paint tick
-            paintTickX(aPntr, dispX);
+            boolean isFullInterval = intervals.isFullInterval(i);
+            if (isFullInterval)
+                paintTickX(aPntr, dispX);
 
             // If Log, paint log minor grid
             if (axisIsLog)
@@ -204,15 +206,17 @@ public class TickPainter {
         aPntr.setStroke(tickStroke);
 
         // Iterate over intervals and paint ticks
-        Intervals ivals = axisView.getIntervals();
-        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
+        Intervals intervals = axisView.getIntervals();
+        for (int i=0, iMax=intervals.getCount(); i<iMax; i++) {
 
             // Get interval in data coords, convert to display
-            double dataY = ivals.getInterval(i);
+            double dataY = intervals.getInterval(i);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
 
             // Paint tick
-            paintTickY(aPntr, dispY);
+            boolean isFullInterval = intervals.isFullInterval(i);
+            if (isFullInterval)
+                paintTickY(aPntr, dispY);
 
             // If Log, paint log minor grid
             if (axisIsLog)

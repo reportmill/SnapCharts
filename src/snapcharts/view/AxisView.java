@@ -309,22 +309,18 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Iterate over intervals
         for (int i = 0; i < intervalCount; i++) {
-            double dataX = intervals.getInterval(i);
 
-            // If edge div too close to next div, skip
-            if (i == 0 || i + 1 == intervalCount) {
-                double nextX = intervals.getInterval(i == 0 ? 1 : intervalCount - 2);
-                double delta2 = i == 0 ? (nextX - dataX) : (dataX - nextX);
-                if (delta2 < delta * .99) {  // Was .67
-                    continue;
-                }
-            }
+            // If not full interval, skip
+            boolean fullInterval = intervals.isFullInterval(i);
+            if (!fullInterval)
+                continue;
+
+            // Get interval
+            double dataX = intervals.getInterval(i);
 
             // Create/config/add TickLabel
             TickLabel tickLabel = new TickLabel(this, dataX);
             String str = _tickFormat.format(dataX);
-            if (str.length() == 0)
-                continue;
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
             tickLabel.setTextFill(tickTextFill);
@@ -359,7 +355,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         // Get DataSet and pointCount
         DataSetList dsetList = getDataSetList();
-        DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
+        DataSet dset = dsetList.getDataSetCount() > 0 ? dsetList.getDataSet(0) : null;
         int pointCount = dsetList.getPointCount();
         TickLabel[] tickLabels = new TickLabel[pointCount];
 

@@ -49,13 +49,17 @@ public class XYGridPainter extends GridPainter {
         aPntr.setStroke(gridStroke);
 
         // Iterate over intervals and paint lines
-        Intervals ivals = axisView.getIntervals();
-        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
+        Intervals intervals = axisView.getIntervals();
+        for (int i = 0, iMax = intervals.getCount(); i < iMax; i++) {
 
-            // Get interval X and paint gridline
-            double dataX = ivals.getInterval(i);
+            // Get interval (data coords) and convert to display coords
+            double dataX = intervals.getInterval(i);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataX));
-            paintGridlineX(aPntr, dispX);
+
+            // If full interval, paint gridline
+            boolean isFullInterval = intervals.isFullInterval(i);
+            if (isFullInterval)
+                paintGridlineX(aPntr, dispX);
 
             // If Log, paint log minor grid
             if (axisIsLog)
@@ -73,13 +77,17 @@ public class XYGridPainter extends GridPainter {
         aPntr.setStroke(gridStroke);
 
         // Iterate over intervals and paint lines
-        Intervals ivals = axisView.getIntervals();
-        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
+        Intervals intervals = axisView.getIntervals();
+        for (int i = 0, iMax = intervals.getCount(); i < iMax; i++) {
 
-            // Get interval X and paint gridline
-            double dataY = ivals.getInterval(i);
+            // Get interval (data coords) and convert to display coords
+            double dataY = intervals.getInterval(i);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
-            paintGridlineY(aPntr, dispX);
+
+            // If full interval, paint gridline
+            boolean isFullInterval = intervals.isFullInterval(i);
+            if (isFullInterval)
+                paintGridlineY(aPntr, dispX);
 
             // If Log, paint log minor grid
             if (axisIsLog)
@@ -99,8 +107,12 @@ public class XYGridPainter extends GridPainter {
 
         // Iterate over extra 9 log ticks and paint
         for (int i=1; i<10; i++, datX+=incrX) {
+
+            // Get data val as log, convert to display coords
             double dataXLog = Math.log10(datX);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataXLog));
+
+            // Paint gridline (skip/return if outside bounds)
             if (dispX < areaX)
                 continue;
             if (dispX > areaMaxX)
@@ -121,8 +133,12 @@ public class XYGridPainter extends GridPainter {
 
         // Iterate over extra 9 log ticks and paint
         for (int i=1; i<10; i++, datY+=incrY) {
+
+            // Get data val as log, convert to display coords
             double datYLog = Math.log10(datY);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, datYLog));
+
+            // Paint gridline (skip/return if outside bounds)
             if (dispY > areaMaxY)
                 continue;
             if (dispY < areaY)

@@ -84,8 +84,9 @@ public abstract class Axis extends StyledChartPart {
     public static final String GridDash_Prop = "GridDash";
 
     // Constants for default values
-    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.GRAY.darker();
+    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
     public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
+    public static final int  DEFAULT_AXIS_TICK_LENGTH = 7;
     protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
     protected static Pos  DEFAULT_TITLE_ALIGN = Pos.CENTER;
     public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
@@ -103,7 +104,7 @@ public abstract class Axis extends StyledChartPart {
 
         // Set default property values
         _titleAlign = DEFAULT_TITLE_ALIGN;
-        _tickLength = 8;
+        _tickLength = DEFAULT_AXIS_TICK_LENGTH;
         _wrapMinMax = DEFAULT_WRAP_MINMAX;
         _showGrid = DEFAULT_SHOW_GRID;
         _gridColor = DEFAULT_GRID_COLOR;
