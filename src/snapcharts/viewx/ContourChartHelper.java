@@ -81,15 +81,6 @@ public class ContourChartHelper extends ChartHelper {
     }
 
     /**
-     * Paints chart border.
-     */
-    @Override
-    public void paintAxesLinesAndTicks(Painter aPntr)
-    {
-        XYChartHelper.paintAxesLinesAndTicksXY(this, aPntr);
-    }
-
-    /**
      * Called when a ChartPart changes.
      */
     @Override

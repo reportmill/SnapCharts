@@ -26,14 +26,14 @@ public class XYGridPainter extends GridPainter {
     {
         // Paint AxisX gridlines
         AxisView axisViewX = aDataArea.getAxisViewX();
-        if (axisViewX != null) {
+        if (axisViewX != null && axisViewX.getAxis().isShowGrid()) {
             updateForAxisView(axisViewX);
             paintGridlinesX(aPntr);
         }
 
         // Paint AxisY gridlines
         AxisViewY axisViewY = aDataArea.getAxisViewY();
-        if (axisView != null & axisView.isVisible()) {
+        if (axisViewY != null && axisViewY.isVisible() && axisViewY.getAxis().isShowGrid()) {
             updateForAxisView(axisViewY);
             paintGridlinesY(aPntr);
         }
@@ -45,6 +45,7 @@ public class XYGridPainter extends GridPainter {
     protected void paintGridlinesX(Painter aPntr)
     {
         // Set Grid Stroke
+        aPntr.setColor(gridColor);
         aPntr.setStroke(gridStroke);
 
         // Iterate over intervals and paint lines
@@ -67,7 +68,8 @@ public class XYGridPainter extends GridPainter {
      */
     protected void paintGridlinesY(Painter aPntr)
     {
-        // Set Grid Stroke
+        // Set Grid Color, Stroke
+        aPntr.setColor(gridColor);
         aPntr.setStroke(gridStroke);
 
         // Iterate over intervals and paint lines
@@ -90,9 +92,12 @@ public class XYGridPainter extends GridPainter {
      */
     protected void paintMinorLogGridlinesX(Painter aPntr, double dataX)
     {
+        // Get start and increment for log ticks
         double dataXFloor = Math.floor(dataX);
         double incrX = Math.pow(10, dataXFloor);
         double datX = incrX + incrX;
+
+        // Iterate over extra 9 log ticks and paint
         for (int i=1; i<10; i++, datX+=incrX) {
             double dataXLog = Math.log10(datX);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataXLog));
@@ -109,9 +114,12 @@ public class XYGridPainter extends GridPainter {
      */
     protected void paintMinorLogGridlinesY(Painter aPntr, double dataY)
     {
+        // Get start and increment for log ticks
         double dataYFloor = Math.floor(dataY);
         double incrY = Math.pow(10, dataYFloor);
         double datY = incrY + incrY;
+
+        // Iterate over extra 9 log ticks and paint
         for (int i=1; i<10; i++, datY+=incrY) {
             double datYLog = Math.log10(datY);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, datYLog));
@@ -124,90 +132,18 @@ public class XYGridPainter extends GridPainter {
     }
 
     /**
-     * Paints X axis grid line and/or tick at given X in display coords
+     * Paints X axis grid line at given X in display coords
      */
-    protected void paintGridlineX(Painter aPntr, double dispX)
+    private final void paintGridlineX(Painter aPntr, double dispX)
     {
-        // Paint line
-        if (isShowGrid) {
-            aPntr.setColor(gridColor);
-            aPntr.drawLine(dispX, areaY, dispX, areaMaxY);
-        }
-
-        // Paint tick
-        paintTickX(aPntr, dispX);
+        aPntr.drawLine(dispX, areaY, dispX, areaMaxY);
     }
 
     /**
-     * Paints Y axis grid line and/or tick at given Y in display coords.
+     * Paints Y axis grid line at given Y in display coords.
      */
-    protected void paintGridlineY(Painter aPntr, double dispY)
+    private final void paintGridlineY(Painter aPntr, double dispY)
     {
-        // Paint line
-        if (isShowGrid) {
-            aPntr.setColor(gridColor);
-            aPntr.drawLine(areaX, dispY, areaMaxX, dispY);
-        }
-
-        // Paint tick
-        paintTickY(aPntr, dispY);
-    }
-
-    /**
-     * Paints X axis tick line at given X in display coords
-     */
-    protected void paintTickX(Painter aPntr, double dispX)
-    {
-        aPntr.setColor(tickColor);
-        aPntr.drawLine(dispX, areaMaxY - tickLength, dispX, areaMaxY);
-    }
-
-    /**
-     * Paints Y axis tick line at given Y in display coords.
-     */
-    protected void paintTickY(Painter aPntr, double dispY)
-    {
-        aPntr.setColor(tickColor);
-        aPntr.drawLine(areaX, dispY, areaX + tickLength, dispY);
-    }
-
-    /**
-     * Paints Axis tick marks.
-     */
-    public void paintAxisLineAndTicks(Painter aPntr, AxisView anAxisView)
-    {
-        updateForAxisView(anAxisView);
-
-        if (anAxisView.getAxisType().isAnyY())
-            paintAxisLineAndTicksY(aPntr, anAxisView);
-    }
-
-    /**
-     * Paints Axis tick marks.
-     */
-    public void paintAxisLineAndTicksY(Painter aPntr, AxisView anAxisView)
-    {
-        // Set Line Color, Stroke
-        aPntr.setColor(axisLineColor);
-        aPntr.setStroke(axisLineStroke);
-
-        // Paint axis line X
-        aPntr.drawLine(axisLineX, areaY, axisLineX, areaMaxY);
-
-        // Iterate over intervals and paint lines
-        Intervals ivals = axisView.getIntervals();
-        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
-
-            // Get interval X and paint gridline
-            double dataY = ivals.getInterval(i);
-            double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
-
-            // Paint Tick Y
-            aPntr.setColor(tickColor);
-            aPntr.drawLine(tickX, dispY, tickMaxX, dispY);
-
-            // If Log, paint log minor grid
-            //if (axisIsLog) paintMinorLogGridlinesY(aPntr, dataX);
-        }
+        aPntr.drawLine(areaX, dispY, areaMaxX, dispY);
     }
 }

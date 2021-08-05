@@ -1,5 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
-import snap.geom.Line;
 import snap.geom.Point;
 import snap.gfx.*;
 import snap.util.PropChange;
@@ -209,6 +211,22 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * Returns AxisMax override value.
      */
     public double getAxisMaxOverride()  { return _maxOverride; }
+
+    /**
+     * Returns whether axis min value is fixed (as opposed to being able to adjust for intervals).
+     */
+    public boolean isAxisMinFixed()
+    {
+        return _minOverride != UNSET_DOUBLE || getAxis().getMinBound() != AxisBound.AUTO;
+    }
+
+    /**
+     * Returns whether axis max value is fixed (as opposed to being able to adjust for intervals).
+     */
+    public boolean isAxisMaxFixed()
+    {
+        return _maxOverride != AxisView.UNSET_DOUBLE || getAxis().getMaxBound() != AxisBound.AUTO;
+    }
 
     /**
      * Returns the axis length.
@@ -450,7 +468,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     /**
      * Override to paint axis line and ticks.
      */
-    protected void paintAxisLineAndTicks(Painter aPntr)  { }
+    protected void paintAxisLineAndTicks(Painter aPntr)
+    {
+        TickPainter tickPainter = new TickPainter(getChartHelper());
+        tickPainter.paintAxisLineAndTicks(aPntr, this);
+    }
 
     /**
      * Override to add support for this view properties.

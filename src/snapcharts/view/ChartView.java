@@ -393,7 +393,9 @@ public class ChartView extends ChartPartView<Chart> {
     {
         _reveal = aValue;
         _dataView.setReveal(aValue);
-        _dataView.repaint();
+
+        // Repaint DataView (expanded so adjacent AxisViews will repaint axis line and ticks)
+        _dataView.repaint(-20, -20, _dataView.getWidth() + 40, _dataView.getHeight() + 40);
     }
 
     /**

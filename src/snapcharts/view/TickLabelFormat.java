@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
 import snap.gfx.Font;
 import snap.util.FormatUtils;
@@ -12,7 +15,7 @@ import java.text.DecimalFormat;
 public class TickLabelFormat {
 
     // The AxisView
-    private AxisView  _axisView;
+    private AxisView<?>  _axisView;
 
     // The format pattern
     private String  _formatPattern;
@@ -175,6 +178,11 @@ public class TickLabelFormat {
      */
     private String[] getAutoFormatPatternForTickLabelsAndLongSample()
     {
+        // If Log axis, handle special
+        boolean isLog = _axisView.getAxis().isLog();
+        if (isLog)
+            return getAutoFormatPatternForTickLabelsAndLongSampleLog();
+
         // Get max value
         ChartHelper chartHelper = _axisView._chartHelper;
         double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
@@ -219,26 +227,42 @@ public class TickLabelFormat {
             maxSample = format(ivals.getMax() - delta / 3, format, delta);
         }
 
-        // Handle Log axis
-        boolean isLog = _axisView.getAxis().isLog();
-        if (isLog) {
-            double minVal = Math.floor(ivals.getMin());
-            minSample = formatLog(minVal);
-            double maxVal = Math.ceil(ivals.getMax());
-            maxSample = formatLog(maxVal);
-            for (int i=1; i<ivals.getCount()-1; i++) {
-                double loopVal = ivals.getInterval(i);
-                String sample = formatLog(loopVal);
-                if (sample.length() > minSample.length())
-                    minSample = sample;
-            }
-        }
-
         // Get long sample
         String longSample = minSample.length() > maxSample.length() ? minSample : maxSample;
 
         // Return pattern and long sample in array
         return new String[] { pattern, longSample };
+    }
+
+    /**
+     * Returns the suggested format pattern and a sample string that should represent the longest possible label string.
+     */
+    private String[] getAutoFormatPatternForTickLabelsAndLongSampleLog()
+    {
+        // Get ideal intervals
+        ChartHelper chartHelper = _axisView._chartHelper;
+        double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
+        double axisMax = chartHelper.getAxisMaxForIntervalCalc(_axisView);
+        boolean minFixed = _axisView.isAxisMinFixed();
+        boolean maxFixed = _axisView.isAxisMaxFixed();
+        Intervals ivals = Intervals.getIntervalsSimple(axisMin, axisMax, minFixed, maxFixed);
+        String longSample = "";
+
+        // Iterate over intervals
+        for (int i=0; i<ivals.getCount(); i++) {
+
+            // If loop value not int, skip (log axis only shows int (power of 10) values)
+            double val = ivals.getInterval(i);
+            if (val != (int) val)
+                continue;
+
+            // Get val as string and swap it in if longer
+            String valStr = formatLog(val);
+            if (valStr.length() > longSample.length())
+                longSample = valStr;
+        }
+
+        return new String[] { "#.###", longSample };
     }
 
     /**
@@ -265,12 +289,11 @@ public class TickLabelFormat {
 
         // If length has changed, relayout chart
         if (longSampleLen != _longSample.length()) {
+            _axisView.relayout();
             _axisView.relayoutParent();
             _formatPattern = patternAndSample[0];
             _longSample = longSample;
             _format = null;
-            //if (_axisView.getAxisType()== AxisType.Y)
-            //    System.out.println("PatternChange: " + getFormatPattern() + ", " + longSample);
         }
 
         // Reset runnable trigger

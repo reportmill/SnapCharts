@@ -111,7 +111,7 @@ public abstract class Axis extends StyledChartPart {
         _gridDash = DEFAULT_GRID_DASH;
 
         // Override default property values
-        _lineColor = Color.GREEN; //DEFAULT_AXIS_LINE_COLOR;
+        _lineColor = DEFAULT_AXIS_LINE_COLOR;
         _lineWidth = DEFAULT_AXIS_LINE_WIDTH;
         _textFill = DEFAULT_AXIS_TEXT_FILL;
     }

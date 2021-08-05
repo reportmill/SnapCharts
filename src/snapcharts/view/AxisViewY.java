@@ -2,12 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.view;
-import snap.geom.Line;
 import snap.geom.Pos;
 import snap.geom.Side;
-import snap.gfx.Color;
-import snap.gfx.Painter;
-import snap.gfx.Stroke;
 import snap.util.ArrayUtils;
 import snap.view.RowView;
 import snap.view.ViewProxy;
@@ -73,34 +69,11 @@ public class AxisViewY extends AxisView<AxisY> {
     }
 
     /**
-     * Override to paint axis line and ticks.
-     */
-    @Override
-    protected void paintAxisLineAndTicks(Painter aPntr)
-    {
-        // Get axis line style properties
-        Axis axis = getAxis();
-        Color lineColor = axis.getLineColor();
-        Stroke lineStroke = axis.getLineStroke();
-
-        // Get Axis line
-        double areaY = 0;
-        double areaMaxY = areaY + getHeight();
-        double lineX = getAxis().getSide() == Side.LEFT ? getWidth() : 0;
-        Line axisLine = new Line(lineX, areaY, lineX, areaMaxY);
-
-        // Paint Axis line
-        aPntr.setColor(lineColor);
-        aPntr.setStroke(lineStroke);
-        aPntr.draw(axisLine);
-    }
-
-    /**
      * Calculates the preferred width.
      */
     protected double getPrefWidthImpl(double aH)
     {
-        ViewProxy viewProxy = getViewProxy();
+        ViewProxy<?> viewProxy = getViewProxy();
         return RowView.getPrefWidthProxy(viewProxy, aH);
     }
 
@@ -110,7 +83,7 @@ public class AxisViewY extends AxisView<AxisY> {
     protected void layoutImpl()
     {
         // Layout as RowView
-        ViewProxy viewProxy = getViewProxy();
+        ViewProxy<?> viewProxy = getViewProxy();
         RowView.layoutProxy(viewProxy, false);
         viewProxy.setBoundsInClient();
 
@@ -132,17 +105,15 @@ public class AxisViewY extends AxisView<AxisY> {
 
         // Get TickLabels
         TickLabel[] tickLabels = getTickLabels();
-        int tickLabelCount = tickLabels.length;
 
         // Polar stuff
         boolean isPolar = getChartType().isPolarType();
         double shiftY = isPolar ? getY() - getDataView().getY() : 0;
 
         // Iterate over tick labels and set location
-        for (int i=0; i<tickLabelCount; i++) {
+        for (TickLabel tickLabel : tickLabels) {
 
             // Get Y in data and display coords and draw tick line
-            TickLabel tickLabel = tickLabels[i];
             double dataY = tickLabel.getCoord();
             double dispY = Math.round(dataToView(dataY));
 

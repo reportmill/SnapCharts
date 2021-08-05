@@ -1,12 +1,12 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
-import snap.geom.Line;
 import snap.geom.Pos;
-import snap.geom.Side;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.ColView;
 import snap.view.ViewProxy;
-import snapcharts.model.Axis;
 import snapcharts.model.AxisX;
 
 /**
@@ -33,29 +33,6 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     public AxisX getAxis()
     {
         return getChart().getAxisX();
-    }
-
-    /**
-     * Override to paint axis line and ticks.
-     */
-    @Override
-    protected void paintAxisLineAndTicks(Painter aPntr)
-    {
-        // Get axis line style properties
-        Axis axis = getAxis();
-        Color lineColor = axis.getLineColor();
-        Stroke lineStroke = axis.getLineStroke();
-
-        // Get Axis line
-        double areaX = 0;
-        double areaMaxX = areaX + getWidth();
-        double lineY = getAxis().getSide() == Side.TOP ? getHeight() : 0;
-        Line axisLine = new Line(areaX, lineY, areaMaxX, lineY);
-
-        // Paint Axis line
-        aPntr.setColor(lineColor);
-        aPntr.setStroke(lineStroke);
-        aPntr.draw(axisLine);
     }
 
     /**
@@ -108,15 +85,13 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     {
         // Get TickLabels and info
         TickLabel[] tickLabels = getTickLabels();
-        int tickLabelCount = tickLabels.length;
         boolean isPolar = getChartType().isPolarType();
         double shiftX = isPolar ? getX() - getDataView().getX() : 0;
 
         // Iterate over tick labels and set location
-        for (int i=0; i<tickLabelCount; i++) {
+        for (TickLabel tickLabel : tickLabels) {
 
             // Get X in data and display coords and draw tick line
-            TickLabel tickLabel = tickLabels[i];
             double dataX = tickLabel.getCoord();
             double dispX = Math.round(dataToView(dataX));
 

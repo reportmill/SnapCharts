@@ -132,9 +132,6 @@ public class DataView extends ChartPartView<DataSetList> {
 
         // Paint Chart Border
         _chartHelper.paintBorder(aPntr);
-
-        // Paint Axes lines and ticks
-        _chartHelper.paintAxesLinesAndTicks(aPntr);
     }
 
     /**

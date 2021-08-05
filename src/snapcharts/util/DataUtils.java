@@ -1,10 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.util;
-import snap.util.ListSel;
-import snap.util.SnapUtils;
-import snapcharts.model.DataSet;
 import snapcharts.model.DataType;
-import snapcharts.model.DataStore;
-
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,15 +43,19 @@ public class DataUtils {
      */
     public static String getStringForDoubleArray(double theValues[])
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        for (int i=0, iMax=theValues.length-1; ; i++) {
-            String str = _doubleFmt.format(theValues[i]);
-            sb.append(str);
-            if (i == iMax)
-                return sb.append(']').toString();
-            sb.append(", ");
-        }
+        // If empty, return empty array string
+        if (theValues.length == 0) return "[ ]";
+
+        // Create string with open bracket and first val
+        StringBuilder sb = new StringBuilder("[ ");
+        sb.append(_doubleFmt.format(theValues[0]));
+
+        // Iterate over remaining vals and add separator plus val for each
+        for (int i=1; i<theValues.length; i++)
+            sb.append(", ").append(_doubleFmt.format(theValues[i]));
+
+        // Return string with close bracket
+        return sb.append(" ]").toString();
     }
 
     /** Returns a String for an array of data values. */

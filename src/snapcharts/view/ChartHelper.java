@@ -298,11 +298,6 @@ public abstract class ChartHelper {
     public void paintBorder(Painter aPntr)  { }
 
     /**
-     * Paints axes lines and ticks.
-     */
-    public void paintAxesLinesAndTicks(Painter aPntr)  { }
-
-    /**
      * Creates the axis intervals for active datasets.
      */
     protected Intervals createIntervals(AxisView axisView)
@@ -328,8 +323,8 @@ public abstract class ChartHelper {
         double divLen = axisType == AxisType.X ? 40 : 30;
 
         // Get whether interval ends should be adjusted
-        boolean minFixed = axisView._minOverride != AxisView.UNSET_DOUBLE || axis.getMinBound() != AxisBound.AUTO;
-        boolean maxFixed = axisView._maxOverride != AxisView.UNSET_DOUBLE || axis.getMaxBound() != AxisBound.AUTO;
+        boolean minFixed = axisView.isAxisMinFixed();
+        boolean maxFixed = axisView.isAxisMaxFixed();
 
         // Handle Log: min/max are powers of 10, so we just want simple intervals from min to max by 1
         if (axis.isLog())

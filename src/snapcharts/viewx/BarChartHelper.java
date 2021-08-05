@@ -65,15 +65,6 @@ public class BarChartHelper extends ChartHelper {
     }
 
     /**
-     * Paints chart border.
-     */
-    @Override
-    public void paintAxesLinesAndTicks(Painter aPntr)
-    {
-        XYChartHelper.paintAxesLinesAndTicksXY(this, aPntr);
-    }
-
-    /**
      * Override for chart type.
      */
     public void resetView()

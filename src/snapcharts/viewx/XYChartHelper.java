@@ -3,7 +3,6 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Border;
-import snap.gfx.Color;
 import snap.gfx.Painter;
 import snapcharts.model.ChartType;
 import snapcharts.model.DataSet;
@@ -71,15 +70,6 @@ public class XYChartHelper extends ChartHelper {
     }
 
     /**
-     * Paints chart border.
-     */
-    @Override
-    public void paintAxesLinesAndTicks(Painter aPntr)
-    {
-        //paintAxesLinesAndTicksXY(this, aPntr);
-    }
-
-    /**
      * Paints chart axis lines.
      */
     public static void paintGridlinesXY(ChartHelper aChartHelper, Painter aPntr)
@@ -114,31 +104,6 @@ public class XYChartHelper extends ChartHelper {
         aPntr.setColor(border.getColor());
         aPntr.setStroke(border.getStroke());
         aPntr.drawRect(areaX, areaY, areaW, areaH);
-
-        // Enable antialiasing
-        aPntr.setAntialiasing(true);
-    }
-
-    /**
-     * Paints chart axis lines.
-     */
-    public static void paintAxesLinesAndTicksXY(ChartHelper aChartHelper, Painter aPntr)
-    {
-        // Get view area
-        DataView dataView = aChartHelper.getDataView();
-        double areaX = 0;
-        double areaY = 0;
-        double areaW = dataView.getWidth();
-        double areaH = dataView.getHeight();
-
-        // Disable antialiasing to get crisp lines
-        aPntr.setAntialiasing(false);
-
-        // Paint Axis lines
-        Color axisColor = Color.GRAY.darker();
-        aPntr.setColor(axisColor);
-        aPntr.drawLine(areaX, areaY, areaX, areaY + areaH);
-        aPntr.drawLine(areaX, areaY + areaH, areaX + areaW, areaY + areaH);
 
         // Enable antialiasing
         aPntr.setAntialiasing(true);
