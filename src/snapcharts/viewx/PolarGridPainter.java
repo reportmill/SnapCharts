@@ -95,12 +95,6 @@ public class PolarGridPainter extends GridPainter {
             arc.setSweepAngle(-360 * reveal);
             arc.setClosure(Arc.Closure.Open);
             aPntr.draw(arc);
-
-            aPntr.setColor(tickColor);
-            arc.setStartAngle(-3);
-            arc.setSweepAngle(6);
-            arc.setClosure(Arc.Closure.Chord);
-            aPntr.draw(arc);
         }
     }
 
@@ -124,15 +118,6 @@ public class PolarGridPainter extends GridPainter {
         // Iterate over intervals and paint lines
         for (int i=0, iMax=360; i<iMax; i+=15) {
             double angleRad = -Math.toRadians((i)) * (-reveal);
-            double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
-            double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);
-            aPntr.drawLine(areaMidX, areaMidY, dispX, dispY);
-        }
-
-        // Iterate over intervals and paint lines
-        aPntr.setColor(Color.BLACK);
-        for (int i : new int[] { 0, 90 }) {
-            double angleRad = Math.toRadians(i) * reveal;
             double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
             double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);
             aPntr.drawLine(areaMidX, areaMidY, dispX, dispY);

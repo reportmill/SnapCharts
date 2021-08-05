@@ -62,6 +62,10 @@ public class TickPainter {
     // Tick line MaxX, MaxY
     protected double  tickMaxX, tickMaxY;
 
+    // Polar stuff
+    protected boolean isPolar;
+    protected double polarShift;
+
     // Constants
     private static final Stroke DEFAULT_TICK_STROKE = Stroke.Stroke1;
     private static final Color DEFAULT_TICK_COLOR = Color.GRAY;
@@ -72,6 +76,10 @@ public class TickPainter {
     public TickPainter(ChartHelper aChartHelper)
     {
         _chartHelper = aChartHelper;
+
+        // Handle polar stuff
+        if (isPolar = _chartHelper.getChartType().isPolarType())
+            polarShift = _chartHelper.getDataView().getWidth() / 2;
     }
 
     /**
@@ -166,9 +174,13 @@ public class TickPainter {
         Intervals ivals = axisView.getIntervals();
         for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
 
-            // Get interval in data coords, convert to display, and paint tick
+            // Get interval in data coords, convert to display
             double dataX = ivals.getInterval(i);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataX));
+            if (isPolar)
+                dispX -= polarShift;
+
+            // Paint tick
             paintTickX(aPntr, dispX);
 
             // If Log, paint log minor grid
@@ -195,9 +207,11 @@ public class TickPainter {
         Intervals ivals = axisView.getIntervals();
         for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
 
-            // Get interval in data coords, convert to display, and paint tick
+            // Get interval in data coords, convert to display
             double dataY = ivals.getInterval(i);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, dataY));
+
+            // Paint tick
             paintTickY(aPntr, dispY);
 
             // If Log, paint log minor grid
@@ -218,8 +232,14 @@ public class TickPainter {
 
         // Iterate over extra 9 log ticks and paint
         for (int i=1; i<10; i++, datX+=incrX) {
+
+            // Get data val as log, convert to display coords (if polar, shift)
             double dataXLog = Math.log10(datX);
             double dispX = (int) Math.round(_chartHelper.dataToView(axisView, dataXLog));
+            if (isPolar)
+                dispX -= polarShift;
+
+            // Paint tick (skip/return if outside bounds)
             if (dispX < areaX)
                 continue;
             if (dispX > areaMaxX)
@@ -240,8 +260,12 @@ public class TickPainter {
 
         // Iterate over extra 9 log ticks and paint
         for (int i=1; i<10; i++, datY+=incrY) {
+
+            // Get data val as log, convert to display coords
             double datYLog = Math.log10(datY);
             double dispY = (int) Math.round(_chartHelper.dataToView(axisView, datYLog));
+
+            // Paint tick (skip/return if outside bounds)
             if (dispY > areaMaxY)
                 continue;
             if (dispY < areaY)
