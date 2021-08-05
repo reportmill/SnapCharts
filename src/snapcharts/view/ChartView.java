@@ -506,4 +506,15 @@ public class ChartView extends ChartPartView<Chart> {
     {
         _layout.layoutChart();
     }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        String str = "ChartView { Type:" + getChartType();
+        str += ", Bounds:" + getBounds();
+        return str + " }";
+    }
 }

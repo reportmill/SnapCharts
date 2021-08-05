@@ -36,9 +36,6 @@ public class ChartViewLayout {
     // The current inset for DataArea
     protected Insets _dataAreaInsets = new Insets(0, 0, 0, 0);
 
-    // The resulting DataArea bounds
-    protected Rect  _dataAreaBounds;
-
     // The maximum size that a side can be as ratio of chart size ( 30% )
     private final double MAX_SIDE_RATIO = .3;
 
@@ -60,23 +57,19 @@ public class ChartViewLayout {
     }
 
     /**
-     * Initializes chart proxies.
+     * Top level layout.
      */
-    private void init()
+    public void layoutChart()
     {
+        // Create/set ViewProxy for Chart and Children
         _chartProxy = new ViewProxy<>(_chartView);
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _contourProxy = _chartProxy.getChildForClass(ColorBarView.class);
         _dataAreaProxy = _chartProxy.getChildForClass(DataView.class);
-    }
 
-    /**
-     * Top level layout.
-     */
-    public void layoutChart()
-    {
-        init();
+        // Get PrefDataViewBounds
+        _prefDataBounds = _chartView.getPrefDataViewBounds();
 
         // Layout parts
         layoutTopSide();
@@ -85,24 +78,24 @@ public class ChartViewLayout {
         layoutRightSide();
 
         // Set DataAreaBounds (either from PrefDataAreaBounds or from resulting layout insets)
-        _dataAreaBounds = _prefDataBounds = _chartView.getPrefDataViewBounds();
-        if (_dataAreaBounds==null) {
-            _dataAreaBounds = _chartProxy.getBounds().clone();
-            _dataAreaBounds.inset(_dataAreaInsets);
+        Rect dataAreaBounds = _prefDataBounds;
+        if (dataAreaBounds == null) {
+            dataAreaBounds = new Rect(0, 0, _chartView.getWidth(), _chartView.getHeight());
+            dataAreaBounds.inset(_dataAreaInsets);
         }
 
         // Set DataArea.Bounds
-        _dataAreaProxy.setBounds(_dataAreaBounds);
+        _dataAreaProxy.setBounds(dataAreaBounds);
 
         // Adjust axes
         for (ViewProxy child : _chartProxy.getChildren()) {
             if (child.getView() instanceof AxisViewX) {
-                child.setX(_dataAreaBounds.x);
-                child.setWidth(_dataAreaBounds.width);
+                child.setX(dataAreaBounds.x);
+                child.setWidth(dataAreaBounds.width);
             }
             if (child.getView() instanceof AxisViewY) {
-                child.setY(_dataAreaBounds.y);
-                child.setHeight(_dataAreaBounds.height);
+                child.setY(dataAreaBounds.y);
+                child.setHeight(dataAreaBounds.height);
             }
         }
 
@@ -178,10 +171,10 @@ public class ChartViewLayout {
         bottomProxy.setSize(bottomBounds.width, bottomHeight);
         ColView.layoutProxy(bottomProxy, true);
 
-        // Shift views to sideBounds origin y
-        double sideY = _chartProxy.getHeight() - bottomHeight;
+        // Shift views to bottomBounds.y
+        double bottomY = _chartProxy.getHeight() - bottomHeight;
         for (ViewProxy proxy : bottomProxy.getChildren())
-            proxy.setY(proxy.getY() + sideY);
+            proxy.setY(proxy.getY() + bottomY);
 
         // Update insets
         _dataAreaInsets.bottom = bottomHeight;
@@ -271,10 +264,10 @@ public class ChartViewLayout {
         rightProxy.setSize(rightWidth, rightBounds.height);
         RowView.layoutProxy(rightProxy, true);
 
-        // Shift views to sideBounds origin x
-        double sideX = _chartProxy.getWidth() - rightWidth;
+        // Shift views to rightBounds.x
+        double rightX = _chartProxy.getWidth() - rightWidth;
         for (ViewProxy proxy : rightProxy.getChildren())
-            proxy.setX(proxy.getX() + sideX);
+            proxy.setX(proxy.getX() + rightX);
 
         // Update insets
         _dataAreaInsets.right = rightWidth;
@@ -396,7 +389,7 @@ public class ChartViewLayout {
     protected Rect getBoundsForSide(Side aSide)
     {
         // If PrefDataAreaBounds set, return bounds for side using that
-        if (_prefDataBounds !=null)
+        if (_prefDataBounds != null)
             return getBoundsForSideFixed(aSide);
 
         // Return bounds for side (size is MAX_SIDE_RATIO of chart size)
@@ -409,17 +402,15 @@ public class ChartViewLayout {
                 bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
                 break;
             case BOTTOM:
-                double maxY = bounds.getMaxY();
                 bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
-                bounds.y = maxY - bounds.height;
+                bounds.y = chartH - bounds.height;
                 break;
             case LEFT:
                 bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
                 break;
             case RIGHT:
-                double maxX = bounds.getMaxX();
                 bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
-                bounds.x = maxX - bounds.width;
+                bounds.x = chartW - bounds.width;
                 break;
             default: throw new RuntimeException("ChartViewLayout.getBoundsForSide: Unknown side" + aSide);
         }
@@ -459,11 +450,11 @@ public class ChartViewLayout {
      */
     private static <T> T[] getNonNullArray(T ... theItems)
     {
-        int len = 0; for (T item : theItems) if (item!=null) len++;
-        if (len==theItems.length) return theItems;
+        int len = 0; for (T item : theItems) if (item != null) len++;
+        if (len == theItems.length) return theItems;
         T[] items = Arrays.copyOf(theItems, len);
         for (int i=0, j=0; i<theItems.length; i++)
-            if (theItems[i]!=null) items[j++] = theItems[i];
+            if (theItems[i] != null) items[j++] = theItems[i];
         return items;
     }
 }
