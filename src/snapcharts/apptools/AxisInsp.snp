@@ -35,6 +35,17 @@
     </RowView>
   </RowView>
   <RowView Padding="4" Spacing="4">
+    <Label text="Tick Length:" />
+    <TextField Name="TickLengthText" Align="CENTER" PrefWidth="50" />
+    <Button Name="TickLengthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+      <font name="Arial" size="13" />
+    </Button>
+    <Button Name="TickLengthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+    <Button Name="TickLengthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
     <Label Name="AxisTickPos" text="Tick Position:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="TickPosInsideButton" MinWidth="46" Padding="2" text="Inside" Position="CENTER_LEFT" Selected="true" />
