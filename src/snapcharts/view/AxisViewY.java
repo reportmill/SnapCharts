@@ -85,7 +85,7 @@ public class AxisViewY extends AxisView<AxisY> {
     {
         // Layout as RowView
         ViewProxy<?> viewProxy = getViewProxy();
-        RowView.layoutProxy(viewProxy, false);
+        RowView.layoutProxy(viewProxy);
         viewProxy.setBoundsInClient();
 
         // Layout TickLabels

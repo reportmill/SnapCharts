@@ -129,7 +129,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as ColView
         topProxy.setSize(topBounds.width, topHeight);
-        ColView.layoutProxy(topProxy, true);
+        ColView.layoutProxy(topProxy);
 
         // Update insets
         _dataAreaInsets.top = topHeight;
@@ -145,6 +145,7 @@ public class ChartViewLayout {
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setPadding(new Insets(SIDE_MARGIN, SIDE_MARGIN, 0, SIDE_MARGIN));
+        viewProxy.setFillWidth(true);
         ViewProxy<?>[] topViews = getViewsForSide(Side.TOP);
         viewProxy.setChildren(topViews);
         return viewProxy;
@@ -169,7 +170,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as ColView
         bottomProxy.setSize(bottomBounds.width, bottomHeight);
-        ColView.layoutProxy(bottomProxy, true);
+        ColView.layoutProxy(bottomProxy);
 
         // Shift views to bottomBounds.y
         double bottomY = _chartProxy.getHeight() - bottomHeight;
@@ -189,6 +190,7 @@ public class ChartViewLayout {
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.TOP_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
+        viewProxy.setFillWidth(true);
         ViewProxy<?>[] bottomViews = getViewsForSide(Side.BOTTOM);
         viewProxy.setChildren(bottomViews);
 
@@ -218,7 +220,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as RowView
         leftProxy.setSize(leftWidth, leftBounds.height);
-        RowView.layoutProxy(leftProxy, true);
+        RowView.layoutProxy(leftProxy);
 
         // Update insets
         _dataAreaInsets.left = leftWidth;
@@ -235,6 +237,7 @@ public class ChartViewLayout {
         ViewProxy<?>[] leftViews = getViewsForSide(Side.LEFT);
         viewProxy.setChildren(leftViews);
         viewProxy.setSpacing(VIEW_SPACING);
+        viewProxy.setFillHeight(true);
 
         // Set ViewProxy.Insets, with special accommodation for AxisViewY (no inset)
         ViewProxy<?> leftViewN = leftViews.length > 0 ? leftViews[leftViews.length-1] : null;
@@ -262,7 +265,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as RowView
         rightProxy.setSize(rightWidth, rightBounds.height);
-        RowView.layoutProxy(rightProxy, true);
+        RowView.layoutProxy(rightProxy);
 
         // Shift views to rightBounds.x
         double rightX = _chartProxy.getWidth() - rightWidth;
@@ -284,6 +287,7 @@ public class ChartViewLayout {
         ViewProxy<?>[] rightViews = getViewsForSide(Side.RIGHT);
         viewProxy.setChildren(rightViews);
         viewProxy.setSpacing(VIEW_SPACING);
+        viewProxy.setFillHeight(true);
 
         // Set SideProxy.Insets, with special accommodation for AxisViewY (no inset)
         ViewProxy<?> rightViewN = rightViews.length > 0 ? rightViews[0] : null;

@@ -62,7 +62,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     {
         // Layout as ColView
         ViewProxy<?> viewProxy = getViewProxy();
-        ColView.layoutProxy(viewProxy, false);
+        ColView.layoutProxy(viewProxy);
         viewProxy.setBoundsInClient();
 
         // Layout TickLabels
