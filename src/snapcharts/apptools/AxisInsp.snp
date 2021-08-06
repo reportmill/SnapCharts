@@ -34,4 +34,13 @@
       <TextField Name="WrapMaxText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label Name="AxisTickPos" text="Tick Position:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Name="TickPosInsideButton" MinWidth="46" Padding="2" text="Inside" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="TickPosOutsideButton" MinWidth="46" Padding="2" text="Outside" Position="CENTER" />
+      <ToggleButton Name="TickPosAcrossButton" MinWidth="46" Padding="2" text="Across" Position="CENTER" />
+      <ToggleButton Name="TickPosOffButton" MinWidth="46" Padding="2" text="Off" Position="CENTER_RIGHT" />
+    </RowView>
+  </RowView>
 </ColView>

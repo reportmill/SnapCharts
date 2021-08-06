@@ -111,31 +111,44 @@ public class TickPainter {
         tickStroke = DEFAULT_TICK_STROKE;
         tickLength = axis.getTickLength();
 
+        // TickPos support
+        Axis.TickPos tickPos = axis.getTickPos();
+        double tickMult = tickPos == Axis.TickPos.Outside ? 1 : tickPos == Axis.TickPos.Across ? .5 : 0;
+        double tickShift = tickLength * tickMult;
+
         // Update Axis line coords and tick coords for X Axis
         if (axisType == AxisType.X) {
+
+            // Handle Top Axis
             if (axisSide == Side.TOP) {
                 axisLineY = areaH;
-                tickY = axisLineY;
-                tickMaxY = axisLineY + tickLength;
+                tickY = axisLineY - tickShift;
+                tickMaxY = axisLineY + tickLength - tickShift;
             }
+
+            // Handle Bottom Axis
             else {
                 axisLineY = 0;
-                tickY = axisLineY - tickLength;
-                tickMaxY = axisLineY;
+                tickY = axisLineY - tickLength + tickShift;
+                tickMaxY = axisLineY + tickShift;
             }
         }
 
         // Update Axis line coords and tick coords for X Axis
         else if (axisType.isAnyY()) {
+
+            // Handle Left Axis
             if (axis.getSide() == Side.LEFT) {
                 axisLineX = areaMaxX;
-                tickX = axisLineX;
-                tickMaxX = axisLineX + tickLength;
+                tickX = axisLineX - tickShift;
+                tickMaxX = axisLineX + tickLength - tickShift;
             }
+
+            // Handle Right Axis
             else {
                 axisLineX = areaX;
-                tickX = axisLineX - tickLength;
-                tickMaxX = axisLineX;
+                tickX = axisLineX - tickLength + tickShift;
+                tickMaxX = axisLineX + tickShift;
             }
         }
     }
@@ -165,6 +178,10 @@ public class TickPainter {
         aPntr.setColor(axisLineColor);
         aPntr.setStroke(axisLineStroke);
         aPntr.drawLine(areaX, axisLineY, areaMaxX, axisLineY);
+
+        // If TickPos == Off, just return
+        if (axis.getTickPos() == Axis.TickPos.Off)
+            return;
 
         // Set Tick Color, Stroke
         aPntr.setColor(tickColor);
@@ -200,6 +217,10 @@ public class TickPainter {
         aPntr.setColor(axisLineColor);
         aPntr.setStroke(axisLineStroke);
         aPntr.drawLine(axisLineX, areaY, axisLineX, areaMaxY);
+
+        // If TickPos == Off, just return
+        if (axis.getTickPos() == Axis.TickPos.Off)
+            return;
 
         // Set Tick Color, Stroke
         aPntr.setColor(tickColor);

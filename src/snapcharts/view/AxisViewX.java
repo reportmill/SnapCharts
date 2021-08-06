@@ -2,11 +2,14 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.view;
+import snap.geom.Insets;
 import snap.geom.Pos;
+import snap.geom.Side;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.ColView;
 import snap.view.ViewProxy;
+import snapcharts.model.Axis;
 import snapcharts.model.AxisX;
 
 /**
@@ -71,10 +74,27 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     private ViewProxy<?> getViewProxy()
     {
+        // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         ArrayUtils.reverse(viewProxy.getChildren());
         viewProxy.setSpacing(TITLE_TICKS_SPACING);
+
+        // If tick is 'Outside' or 'Accross', adjust padding to accommodate tick inside axis bounds
+        Axis axis = getAxis();
+        Side axisSide = axis.getSide();
+        Axis.TickPos tickPos = axis.getTickPos();
+        double tickLength = axis.getTickLength();
+        double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
+        if (tickIndent > 0) {
+            Insets padding = viewProxy.getPadding().clone();
+            if (axisSide == Side.TOP)
+                padding.bottom += tickIndent;
+            else padding.top += tickIndent;
+            viewProxy.setPadding(padding);
+        }
+
+        // Return ViewProxy
         return viewProxy;
     }
 

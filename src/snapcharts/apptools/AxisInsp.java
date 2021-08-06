@@ -113,6 +113,13 @@ public class AxisInsp extends ChartPartInsp {
             setViewValue("WrapMinText", axis.getWrapMinMax().getMin());
             setViewValue("WrapMaxText", axis.getWrapMinMax().getMax());
         }
+
+        // Reset TickPosInsideButton, TickPosOutsideButton, TickPosAcrossButton, TickPosOffButton
+        Axis.TickPos tickPos = axis.getTickPos();
+        setViewValue("TickPosInsideButton", tickPos == Axis.TickPos.Inside);
+        setViewValue("TickPosOutsideButton", tickPos == Axis.TickPos.Outside);
+        setViewValue("TickPosAcrossButton", tickPos == Axis.TickPos.Across);
+        setViewValue("TickPosOffButton", tickPos == Axis.TickPos.Off);
     }
 
     /**
@@ -182,6 +189,16 @@ public class AxisInsp extends ChartPartInsp {
             axis.setWrapMinMax(axis.getWrapMinMax().copyForMin(anEvent.getFloatValue()));
         if (anEvent.equals("WrapMaxText"))
             axis.setWrapMinMax(axis.getWrapMinMax().copyForMax(anEvent.getFloatValue()));
+
+        // Handle TickPosInsideButton, TickPosOutsideButton, TickPosAcrossButton, TickPosOffButton
+        if (anEvent.equals("TickPosInsideButton"))
+            axis.setTickPos(Axis.TickPos.Inside);
+        if (anEvent.equals("TickPosOutsideButton"))
+            axis.setTickPos(Axis.TickPos.Outside);
+        if (anEvent.equals("TickPosAcrossButton"))
+            axis.setTickPos(Axis.TickPos.Across);
+        if (anEvent.equals("TickPosOffButton"))
+            axis.setTickPos(Axis.TickPos.Off);
     }
 
     /**

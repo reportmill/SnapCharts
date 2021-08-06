@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.view;
+import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.Side;
 import snap.util.ArrayUtils;
@@ -133,12 +134,26 @@ public class AxisViewY extends AxisView<AxisY> {
      */
     private ViewProxy<?> getViewProxy()
     {
+        // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
         viewProxy.setSpacing(TITLE_TICKS_SPACING);
 
+        // If tick is 'Outside' or 'Accross', adjust padding to accommodate tick inside axis bounds
+        Axis axis = getAxis();
+        Side axisSide = axis.getSide();
+        Axis.TickPos tickPos = axis.getTickPos();
+        double tickLength = axis.getTickLength();
+        double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
+        if (tickIndent > 0) {
+            Insets padding = viewProxy.getPadding().clone();
+            if (axisSide == Side.LEFT)
+                padding.right += tickIndent;
+            else padding.left += tickIndent;
+            viewProxy.setPadding(padding);
+        }
+
         // If RightSide, reverse children
-        AxisY axisY = getAxis();
-        boolean isRightSide = axisY.getSide() == Side.RIGHT;
+        boolean isRightSide = axisSide == Side.RIGHT;
         viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
         if (isRightSide)
             ArrayUtils.reverse(viewProxy.getChildren());

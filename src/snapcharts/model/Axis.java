@@ -23,9 +23,6 @@ public abstract class Axis extends StyledChartPart {
     // The title rotation
     private double  _titleRot;
 
-    // The length of the vertical tick lines drawn from the X axis down twards it's labels and title
-    private double  _tickLength;
-
     // The Axis Min Bounding
     private AxisBound _minBound = AxisBound.AUTO;
 
@@ -65,6 +62,12 @@ public abstract class Axis extends StyledChartPart {
     // The grid line
     private double[]  _gridDash;
 
+    // The length of hash mark drawn perpendicular to the axis line for each interval
+    private double  _tickLength;
+
+    // The position of the tick
+    private TickPos  _tickPos;
+
     // Constants for properties
     public static final String Title_Prop = "Title";
     public static final String TitleAlign_Prop = "TitleAlign";
@@ -82,11 +85,12 @@ public abstract class Axis extends StyledChartPart {
     public static final String GridColor_Prop = "GridColor";
     public static final String GridWidth_Prop = "GridWidth";
     public static final String GridDash_Prop = "GridDash";
+    public static final String TickLength_Prop = "TickLength";
+    public static final String TickPos_Prop = "TickPos";
 
     // Constants for default values
     public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
     public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
-    public static final int  DEFAULT_AXIS_TICK_LENGTH = 7;
     protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
     protected static Pos  DEFAULT_TITLE_ALIGN = Pos.CENTER;
     public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
@@ -94,6 +98,11 @@ public abstract class Axis extends StyledChartPart {
     public static final Color  DEFAULT_GRID_COLOR = Color.get("#E6");
     public static final int  DEFAULT_GRID_WIDTH = 1;
     public static final double[]  DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
+    public static final int  DEFAULT_TICK_LENGTH = 7;
+    public static final TickPos  DEFAULT_TICK_POS = TickPos.Inside;
+
+    // Constants for Tick position
+    public enum TickPos { Inside, Outside, Across, Off };
 
     /**
      * Constructor.
@@ -104,12 +113,13 @@ public abstract class Axis extends StyledChartPart {
 
         // Set default property values
         _titleAlign = DEFAULT_TITLE_ALIGN;
-        _tickLength = DEFAULT_AXIS_TICK_LENGTH;
         _wrapMinMax = DEFAULT_WRAP_MINMAX;
         _showGrid = DEFAULT_SHOW_GRID;
         _gridColor = DEFAULT_GRID_COLOR;
         _gridWidth = DEFAULT_GRID_WIDTH;
         _gridDash = DEFAULT_GRID_DASH;
+        _tickLength = DEFAULT_TICK_LENGTH;
+        _tickPos = DEFAULT_TICK_POS;
 
         // Override default property values
         _lineColor = DEFAULT_AXIS_LINE_COLOR;
@@ -183,16 +193,6 @@ public abstract class Axis extends StyledChartPart {
         if (aValue == _titleRot) return;
         firePropChange(TitleRotate_Prop, _titleRot, _titleRot = aValue);
     }
-
-    /**
-     * Returns the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
-     */
-    public double getTickLength()  { return _tickLength; }
-
-    /**
-     * Sets the length of the vertical tick lines drawn from the X axis down twards it's labels and title.
-     */
-    public void setTickLength(double aValue)  { _tickLength = aValue; }
 
     /**
      * Returns the Axis Min Bound.
@@ -422,6 +422,34 @@ public abstract class Axis extends StyledChartPart {
     }
 
     /**
+     * Returns the length of hash mark drawn perpendicular to the axis line for each interval.
+     */
+    public double getTickLength()  { return _tickLength; }
+
+    /**
+     * Sets the length of hash mark drawn perpendicular to the axis line for each interval.
+     */
+    public void setTickLength(double aValue)
+    {
+        if (aValue == getTickLength()) return;
+        firePropChange(TickLength_Prop, _tickLength, _tickLength = aValue);
+    }
+
+    /**
+     * Returns the position of the tick mark (can be inside axis, ouside axis, across axis line, or off).
+     */
+    public TickPos getTickPos()  { return _tickPos; }
+
+    /**
+     * Sets the position of the tick mark (can be inside axis, ouside axis, across axis line, or off).
+     */
+    public void setTickPos(TickPos aValue)
+    {
+        if (aValue == getTickPos()) return;
+        firePropChange(TickPos_Prop, _tickPos, _tickPos = aValue);
+    }
+
+    /**
      * Returns the prop value keys.
      */
     @Override
@@ -448,6 +476,10 @@ public abstract class Axis extends StyledChartPart {
             case MinValue_Prop: return getMinValue();
             case MaxValue_Prop: return getMaxValue();
 
+            // TickLength, TickPos
+            case TickLength_Prop: return getTickLength();
+            case TickPos_Prop: return getTickPos();
+
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
         }
@@ -469,10 +501,15 @@ public abstract class Axis extends StyledChartPart {
             case MaxValue_Prop: setMaxValue(SnapUtils.doubleValue(aValue)); break;
 
             // Handle WrapMinMax
-            case WrapMinMax_Prop:
+            case WrapMinMax_Prop: {
                 MinMax minMax = MinMax.getMinMax(aValue);
                 setWrapMinMax(minMax);
                 break;
+            }
+
+            // TickLength, TickPos
+            case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
+            case TickPos_Prop: setTickPos((TickPos) aValue); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -500,6 +537,12 @@ public abstract class Axis extends StyledChartPart {
             case MaxBound_Prop: return AxisBound.AUTO;
             case MinValue_Prop: return 0;
             case MaxValue_Prop: return 5;
+
+            // TickLength, TichPos
+            case TickLength_Prop: return DEFAULT_TICK_LENGTH;
+            case TickPos_Prop: return DEFAULT_TICK_POS;
+
+            // Superclass properties
             default: return super.getPropDefault(aPropName);
         }
     }
@@ -547,6 +590,12 @@ public abstract class Axis extends StyledChartPart {
             String dashStr = Stroke.getDashArrayNameOrString(gridDash);
             e.add(GridDash_Prop, dashStr);
         }
+
+        // Archive TickLength, TickPos
+        if (!isPropDefault(TickLength_Prop))
+            e.add(TickLength_Prop, getTickLength());
+        if (!isPropDefault(TickPos_Prop))
+            e.add(TickPos_Prop, getTickPos());
 
         // Return element
         return e;
@@ -599,6 +648,12 @@ public abstract class Axis extends StyledChartPart {
             double[] dashArray = Stroke.getDashArray(dashStr);
             setGridDash(dashArray);
         }
+
+        // Unarchive TickLength, TickPos
+        if (anElement.hasAttribute(TickLength_Prop))
+            setTickLength(anElement.getAttributeDoubleValue(TickLength_Prop));
+        if (anElement.hasAttribute(TickPos_Prop))
+            setTickPos(anElement.getAttributeEnumValue(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS));
 
         // Return this part
         return this;
