@@ -573,10 +573,11 @@ public class DocPane extends ViewOwner {
         // Handle SaveButton
         if (anEvent.equals("SaveButton")) save();
 
-        // Handle CutButton, CopyButton, PasteButton
+        // Handle CutButton, CopyButton, PasteButton, DeleteButton
         if (anEvent.equals("CutButton")) cut();
         if (anEvent.equals("CopyButton")) copy();
         if (anEvent.equals("PasteButton")) paste();
+        if (anEvent.equals("DeleteButton")) delete();
 
         // Handle WebButton
         if (anEvent.equals("WebButton"))

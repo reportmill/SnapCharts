@@ -125,7 +125,7 @@ public class DataSetInsp extends ChartPartInsp {
             dataSet.setExprX(anEvent.getStringValue());
         if (anEvent.equals("ExprYText"))
             dataSet.setExprY(anEvent.getStringValue());
-        if (anEvent.equals("ExprXText"))
+        if (anEvent.equals("ExprZText"))
             dataSet.setExprZ(anEvent.getStringValue());
 
         // Handle StackedCheckBox: Set them all

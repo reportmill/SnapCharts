@@ -136,6 +136,16 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     }
 
     /**
+     * Removes given item.
+     */
+    public void removeItem(DocItem anItem)
+    {
+        int index = anItem.getIndex();
+        if (index >= 0)
+            removeItem(index);
+    }
+
+    /**
      * Returns the ChartPart represented by this item.
      */
     public ChartPart getChartPart()  { return null; }

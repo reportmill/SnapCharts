@@ -82,7 +82,7 @@ public class DocPaneCopyPaster {
 
         // Handle SNAP_XML: Get bytes, unarchive view and add
         if (cb.hasData(SNAPCHART_XML_TYPE)) {
-            byte bytes[] = cb.getDataBytes(SNAPCHART_XML_TYPE);
+            byte[] bytes = cb.getDataBytes(SNAPCHART_XML_TYPE);
             ChartPart chartPart = new ChartArchiver().getChartPartFromXMLSource(bytes);
             _docPane.addChartPart(chartPart);
         }
@@ -101,6 +101,10 @@ public class DocPaneCopyPaster {
      */
     public void delete()
     {
+        DocItem selItem = _docPane.getSelItem(); if (selItem == null) return;
+        DocItem parItem = selItem.getParent(); if (parItem == null) return;
+        _docPane.setSelItem(parItem);
+        parItem.removeItem(selItem);
     }
 
     /**

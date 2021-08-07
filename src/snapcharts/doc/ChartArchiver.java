@@ -67,6 +67,18 @@ public class ChartArchiver extends XMLArchiver {
         ChartPart cpart = (ChartPart)readFromXMLSource(anObj);
         return cpart;
     }
+
+    /**
+     * Override to set Chart.
+     */
+    @Override
+    public <T> T copy(T anObj)
+    {
+        if (anObj instanceof ChartPart)
+            setChart(((ChartPart) anObj).getChart());
+        return super.copy(anObj);
+    }
+
     /**
      * Creates the class map.
      */
