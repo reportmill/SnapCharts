@@ -1,5 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.model;
-
 import snap.util.ArrayUtils;
 
 /**

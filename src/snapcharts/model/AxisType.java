@@ -1,5 +1,11 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.model;
 
+/**
+ * This enum represents different Axis types.
+ */
 public enum AxisType {
 
     X,
