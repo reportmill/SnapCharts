@@ -103,7 +103,7 @@ public class DataSetPane extends DocItemPane {
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.setCellConfigure(c -> configureCell(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
-        setFirstFocus(_sheetView);
+        //setFirstFocus(_sheetView);
 
         // Add PasteAction
         addKeyActionHandler(Cut_Action, "Shortcut+X");

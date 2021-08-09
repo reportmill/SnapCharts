@@ -3,8 +3,11 @@ import snap.gfx.Image;
 import snap.util.XMLElement;
 import snap.view.*;
 import snapcharts.doc.ChartArchiver;
+import snapcharts.doc.DocItemDataSet;
+import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.doc.DocItem;
+import snapcharts.model.DataSet;
 
 /**
  * A CopyPaster implementation for Editor.
@@ -101,10 +104,23 @@ public class DocPaneCopyPaster {
      */
     public void delete()
     {
+        // Get selected item and parent (just return if either are null
         DocItem selItem = _docPane.getSelItem(); if (selItem == null) return;
         DocItem parItem = selItem.getParent(); if (parItem == null) return;
-        _docPane.setSelItem(parItem);
-        parItem.removeItem(selItem);
+
+        // Select best peer and remove item
+        _docPane.selectBestDocItemPeer(selItem);
+
+        // Handle DataSet type
+        if (selItem instanceof DocItemDataSet) {
+            DocItemDataSet docItemDataSet = (DocItemDataSet) selItem;
+            DataSet dataSet = docItemDataSet.getDataSet();
+            Chart chart = dataSet.getChart();
+            chart.getDataSetList().removeDataSet(dataSet);
+        }
+
+        // Handle anything else
+        else parItem.removeItem(selItem);
     }
 
     /**

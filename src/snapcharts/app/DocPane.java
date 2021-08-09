@@ -153,6 +153,27 @@ public class DocPane extends ViewOwner {
     }
 
     /**
+     * Selects the best peer for given docItem (assumes it is going away).
+     */
+    public void selectBestDocItemPeer(DocItem aDocItem)
+    {
+        // Get parent item and index of given item
+        DocItem parItem = aDocItem.getParent();
+        int index = aDocItem.getIndex();
+
+        // Best peer is first available of: 1) Next index, 2) previous index or 3) parent
+        DocItem nextItem = parItem;
+        if (index + 1 < parItem.getItemCount())
+            nextItem = parItem.getItem(index + 1);
+        else if (index > 0)
+            nextItem = parItem.getItem(index - 1);
+
+        // Select best peer
+        if (nextItem != null)
+            setSelItem(nextItem);
+    }
+
+    /**
      * Adds a chart part.
      */
     public void addChartPart(ChartPart aPart)
@@ -538,6 +559,11 @@ public class DocPane extends ViewOwner {
 
         // Add drag-drop support to open new files
         enableEvents(getUI(), DragEvents);
+
+        // Add key actions
+        addKeyActionHandler("DeleteAction", "DELETE");
+        addKeyActionHandler("DeleteAction", "BACK_SPACE");
+        addKeyActionHandler("EscapeAction", "ESCAPE");
     }
 
     /**
@@ -577,7 +603,10 @@ public class DocPane extends ViewOwner {
         if (anEvent.equals("CutButton")) cut();
         if (anEvent.equals("CopyButton")) copy();
         if (anEvent.equals("PasteButton")) paste();
-        if (anEvent.equals("DeleteButton")) delete();
+        if (anEvent.equals("DeleteButton") || anEvent.equals("DeleteAction")) {
+            delete();
+            anEvent.consume();
+        }
 
         // Handle WebButton
         if (anEvent.equals("WebButton"))
@@ -612,6 +641,14 @@ public class DocPane extends ViewOwner {
         // Handle DragEvents
         if (anEvent.isDragEvent())
             handleDragEvent(anEvent);
+
+        // Handle EscapeAction
+        if (anEvent.equals("EscapeAction")) {
+            DocItem docItem = getSelItem();
+            DocItem parItem = docItem != null ? docItem.getParent() : null;
+            if (parItem != null)
+                setSelItem(parItem);
+        }
     }
 
     /**
