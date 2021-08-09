@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
 import snap.geom.*;
 import snap.util.ArrayUtils;
@@ -15,6 +18,9 @@ public class LegendView extends ChartPartView<Legend> {
     // The ChildView (ColView or RowView) to hold Legend Entries
     private ChildView  _entryBox;
 
+    // The view to hold title text
+    private StringView  _titleView;
+
     // Constants
     private static Insets DEFAULT_MARGIN = new Insets(5, 5, 5, 5);
 
@@ -30,6 +36,10 @@ public class LegendView extends ChartPartView<Legend> {
         _scaleBox = new ScaleBox();
         _scaleBox.setKeepAspect(true);
         addChild(_scaleBox);
+
+        // Create/configure TitleView
+        _titleView = new StringView();
+        _titleView.setMargin(0, 0, 5, 0);
 
         // Register for click
         addEventHandler(e -> legendWasClicked(e), MouseRelease);
@@ -76,6 +86,11 @@ public class LegendView extends ChartPartView<Legend> {
         if (!showLegend)
             return;
 
+        // Handle Title.Text
+        String titleText = legend.getTitle().getText();
+        _titleView.setText(titleText);
+        _titleView.setVisible(titleText != null && titleText.length() > 0);
+
         // Handle Inside
         if (legend.isInside()) {
             ChartView chartView = getChartView();
@@ -120,6 +135,9 @@ public class LegendView extends ChartPartView<Legend> {
             _scaleBox.setContent(_entryBox = newEntryBox());
             _scaleBox.setAlign(Pos.CENTER);
         }
+
+        // Add TitleView
+        _entryBox.addChild(_titleView);
     }
 
     /**
@@ -159,6 +177,8 @@ public class LegendView extends ChartPartView<Legend> {
         // Get row/dataset index
         ParentView parentView = anEntryView.getParent();
         int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView);
+        if (_titleView.isVisible())
+            index--;
 
         // Get dataset and disable
         DataSetList dsetList = getDataSetList();

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.apptools;
 import snap.geom.Pos;
 import snap.gfx.Border;
@@ -44,6 +47,9 @@ public class LegendInsp extends ChartPartInsp {
         // Reset ShowLegendCheckBox
         setViewValue("ShowLegendCheckBox", legend.isShowLegend());
 
+        // Reset TitleText
+        setViewValue("TitleText", legend.getTitle().getText());
+
         // Reset AlignX buttons
         Pos align = legend.getPosition();
         if (!legend.isShowLegend()) align = Pos.CENTER;
@@ -74,9 +80,13 @@ public class LegendInsp extends ChartPartInsp {
         Legend legend = getChart().getLegend();
 
         // Handle ShowLegendCheckBox: Just used to turn off. Any other UI interaction turns legend on
-        if(anEvent.equals("ShowLegendCheckBox") && !anEvent.getBoolValue())
+        if (anEvent.equals("ShowLegendCheckBox") && !anEvent.getBoolValue())
             legend.setShowLegend(false);
         else legend.setShowLegend(true);
+
+        // Handle TitleText
+        if (anEvent.equals("TitleText"))
+            legend.getTitle().setText(anEvent.getStringValue());
 
         // Handle AlignX
         String name = anEvent.getName();

@@ -8,7 +8,7 @@ import snap.util.*;
 /**
  * A class to represent the Legend of chart.
  */
-public class Legend extends StyledChartPart {
+public class Legend extends ParentPart {
 
     // Whether legend is showing
     private boolean  _showLegend;
@@ -18,6 +18,9 @@ public class Legend extends StyledChartPart {
 
     // Whether legend is positioned inside
     private boolean  _inside;
+
+    // The ChartText to hold title text
+    private ChartText  _title;
 
     // Property constants
     public static final String ShowLegend_Prop = "ShowLegend";
@@ -31,6 +34,10 @@ public class Legend extends StyledChartPart {
     {
         super();
         _position = (Pos) getPropDefault(Position_Prop);
+
+        // Create/configure text
+        _title = new ChartText();
+        addChild(_title);
     }
 
     /**
@@ -43,7 +50,7 @@ public class Legend extends StyledChartPart {
      */
     public void setShowLegend(boolean aValue)
     {
-        if (aValue==isShowLegend()) return;
+        if (aValue == isShowLegend()) return;
         firePropChange(ShowLegend_Prop, _showLegend, _showLegend = aValue);
     }
 
@@ -57,7 +64,7 @@ public class Legend extends StyledChartPart {
      */
     public void setPosition(Pos aValue)
     {
-        if (aValue==getPosition() || aValue==null) return;
+        if (aValue == getPosition() || aValue == null) return;
         firePropChange(Position_Prop, _position, _position = aValue);
     }
 
@@ -71,9 +78,14 @@ public class Legend extends StyledChartPart {
      */
     public void setInside(boolean aValue)
     {
-        if (aValue==isInside()) return;
+        if (aValue == isInside()) return;
         firePropChange(Inside_Prop, _inside, _inside = aValue);
     }
+
+    /**
+     * Returns the Legend title ChartText.
+     */
+    public ChartText getTitle()  { return _title; }
 
     /**
      * Override to provide custom defaults for Legend (Position).
@@ -81,9 +93,14 @@ public class Legend extends StyledChartPart {
     @Override
     public Object getPropDefault(String aPropName)
     {
-        if (aPropName==Position_Prop)
-            return Pos.CENTER_RIGHT;
-        return super.getPropDefault(aPropName);
+        switch (aPropName) {
+
+            // Handle Position
+            case Position_Prop: return Pos.CENTER_RIGHT;
+
+            // Handle superclass properties
+            default: return super.getPropDefault(aPropName);
+        }
     }
 
     /**
@@ -102,6 +119,13 @@ public class Legend extends StyledChartPart {
             e.add(Position_Prop, getPosition());
         if (isInside())
             e.add(Inside_Prop, true);
+
+        // Archive Title
+        XMLElement titleXML = anArchiver.toXML(_title);
+        if (titleXML.getAttributeCount() > 0 || titleXML.getElementCount() > 0) {
+            titleXML.setName("Title");
+            e.addElement(titleXML);
+        }
 
         // Return element
         return e;
@@ -123,6 +147,11 @@ public class Legend extends StyledChartPart {
             setPosition(Pos.get(anElement.getAttributeValue(Position_Prop)));
         if (anElement.hasAttribute(Inside_Prop))
             setInside(anElement.getAttributeBoolValue(Inside_Prop));
+
+        // Unarchive Title
+        XMLElement titleXML = anElement.getElement("Title");
+        if (titleXML != null)
+            getTitle().fromXML(anArchiver, titleXML);
 
         // Return this part
         return this;
