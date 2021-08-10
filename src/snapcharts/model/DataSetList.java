@@ -44,9 +44,9 @@ public class DataSetList extends ChartPart {
     /**
      * Creates a DataSet for given ChartView.
      */
-    public DataSetList(Chart aChart)
+    public DataSetList()
     {
-        _chart = aChart;
+        super();
     }
 
     /**

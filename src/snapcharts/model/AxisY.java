@@ -22,10 +22,9 @@ public class AxisY extends Axis {
     /**
      * Constructor.
      */
-    public AxisY(Chart aChart, AxisType anAxisType)
+    public AxisY(AxisType anAxisType)
     {
         super();
-        _chart = aChart;
         _axisType = anAxisType;
 
         // Override default property values

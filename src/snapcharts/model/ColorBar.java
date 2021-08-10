@@ -11,10 +11,9 @@ public class ColorBar extends Axis {
     /**
      * Constructor.
      */
-    public ColorBar(Chart aChart)
+    public ColorBar()
     {
         super();
-        _chart = aChart;
     }
 
     /**

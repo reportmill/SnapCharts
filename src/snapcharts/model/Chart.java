@@ -15,7 +15,7 @@ import snapcharts.util.ChartUtils;
 public class Chart extends ParentPart {
 
     // The ChartDoc that owns this chart
-    private Doc _doc;
+    private Doc  _doc;
 
     // The chart type
     private ChartType  _type = DEFAULT_TYPE;
@@ -39,7 +39,7 @@ public class Chart extends ParentPart {
     private AxisY  _axisY4;
 
     // The Z Axis
-    private AxisZ _axisZ;
+    private AxisZ  _axisZ;
 
     // The ColorBar
     private ColorBar  _colorBar;
@@ -51,10 +51,10 @@ public class Chart extends ParentPart {
     private Legend  _legend;
 
     // The dataset colors
-    private Color[]  _colors = GT_COLORS;
+    private Color[]  _colors = ColorMap.GT_COLORS;
 
     // The object holding specific chart type properties
-    private DataStyleHpr _dataStyleHpr = new DataStyleHpr(this);
+    private DataStyleHpr  _dataStyleHpr = new DataStyleHpr(this);
 
     // Constants for properties
     public static final String Type_Prop = "Type";
@@ -63,94 +63,52 @@ public class Chart extends ParentPart {
     // Constants for property defaults
     public static final ChartType DEFAULT_TYPE = ChartType.SCATTER;
 
-    // Colors
-    private static Color[]  COLORS = new Color[] {
-        Color.get("#88B4E7"), Color.get("#434348"), Color.get("#A6EB8A"),
-        Color.get("#EBA769"), Color.get("#8185E2"), Color.get("#E06681"), Color.get("#E1D369"),
-        Color.get("#4A8E8E"), Color.get("#E26561")
-    };
-
-    // GTColors
-    private static Color[] GT_COLORS = new Color[] {
-            new Color(232,0,0),
-            new Color(0, 0, 255),
-            new Color(0,185,25),
-            new Color(255,0,255),
-            new Color(0,210,240),
-            new Color(153,5,190),
-            new Color(225,116,79),
-            new Color(255,0,140),
-            new Color(64,64,64),
-            new Color(199,199,0),
-            new Color(221,100,251),
-            new Color(0,127,127),
-            new Color(178,0,86),
-            new Color(255,200,0),
-            new Color(0,127,192),
-            new Color(179,21,21),
-            new Color(0,60,127),
-            new Color(60,191,145),
-            new Color(60,191,145),
-            new Color(252,182,239),
-            new Color(0,255,0),
-            new Color(58,122,80),
-            new Color(127,150,3),
-            new Color(255,255,0),
-            new Color(134,134,134)
-    };
-
     /**
      * Creates a ChartView.
      */
     public Chart()
     {
-        // Set chart
-        _chart = this;
-
         // Configure
         setFill((Paint) getPropDefault(Fill_Prop));
 
         // Create/set Header
         _header = new Header();
-        _header._chart = this;
         addChild(_header);
 
         // Create/set X Axis
         _axisX = new AxisX();
-        _axisX._chart = this;
         addChild(_axisX);
 
         // Create/set Y Axis
-        _axisY = new AxisY(this, AxisType.Y);
+        _axisY = new AxisY(AxisType.Y);
         addChild(_axisY);
 
         // Create/set Y2 Axis
-        _axisY2 = new AxisY(this, AxisType.Y2);
+        _axisY2 = new AxisY(AxisType.Y2);
         addChild(_axisY2);
 
         // Create/set Y3 Axis
-        _axisY3 = new AxisY(this, AxisType.Y3);
+        _axisY3 = new AxisY(AxisType.Y3);
         addChild(_axisY3);
 
         // Create/set Y Axis
-        _axisY4 = new AxisY(this, AxisType.Y4);
+        _axisY4 = new AxisY(AxisType.Y4);
         addChild(_axisY4);
 
         // Create/set Z Axis
-        _axisZ = new AxisZ(this);
+        _axisZ = new AxisZ();
         addChild(_axisZ);
 
         // Create/set ColorBar
-        _colorBar = new ColorBar(this);
+        _colorBar = new ColorBar();
         addChild(_colorBar);
 
         // Create/set Legend
         _legend = new Legend();
-        _legend._chart = this;
         addChild(_legend);
 
         // Start listening to DataSet changes
-        _dsetList = new DataSetList(this);
+        _dsetList = new DataSetList();
         addChild(_dsetList);
     }
 
@@ -283,8 +241,8 @@ public class Chart extends ParentPart {
     public Color getColor(int anIndex)
     {
         if (anIndex < _colors.length) return _colors[anIndex];
-        int index = (anIndex - _colors.length) % COLORS.length;
-        return COLORS[index];
+        int index = (anIndex - _colors.length) % ColorMap.COLORS.length;
+        return ColorMap.COLORS[index];
     }
 
     /**

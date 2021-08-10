@@ -11,10 +11,9 @@ public class AxisZ extends Axis {
     /**
      * Constructor.
      */
-    public AxisZ(Chart aChart)
+    public AxisZ()
     {
         super();
-        _chart = aChart;
     }
 
     /**
