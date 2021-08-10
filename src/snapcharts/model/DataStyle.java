@@ -12,9 +12,6 @@ import snap.util.XMLElement;
  */
 public class DataStyle extends ChartPart {
 
-    // The DataSet that owns the this style
-    protected ChartPart  _parent;
-
     // Whether to show line
     private boolean  _showLine = true;
 
@@ -72,23 +69,6 @@ public class DataStyle extends ChartPart {
         // Register listener for TagStyle, SymbolStyle prop changes
         _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
         _symbolStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
-    }
-
-    /**
-     * Override to return DataSet.
-     */
-    @Override
-    public ChartPart getParent()
-    {
-        return _parent;
-    }
-
-    /**
-     * Sets the parent.
-     */
-    protected void setParent(ChartPart aParent)
-    {
-        _parent = aParent;
     }
 
     /**

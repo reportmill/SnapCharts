@@ -41,15 +41,20 @@ public class ParentPart extends ChartPart {
      */
     public void addChild(ChartPart aChartPart, int anIndex)
     {
+        // Add Child to list
         _children = ArrayUtils.add(_children, aChartPart, anIndex);
+
+        // Set parent
         aChartPart._parent = this;
-        aChartPart.addPropChangeListener(pc -> childDidPropChange(aChartPart, pc));
+
+        // Listen for PropChange and forward to Chart
+        aChartPart.addPropChangeListener(pc -> childDidPropChange(pc));
     }
 
     /**
      * Called when a child has a property change.
      */
-    protected void childDidPropChange(ChartPart aChartPart, PropChange aPropChange)
+    protected void childDidPropChange(PropChange aPropChange)
     {
         Chart chart = getChart();
         chart.chartPartDidPropChange(aPropChange);

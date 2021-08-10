@@ -108,8 +108,6 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     {
         if (_chart != null)
             return _chart;
-        if (_parent instanceof Chart)
-            return (Chart) _parent;
         return _parent != null ? _parent.getChart() : null;
     }
 
@@ -133,13 +131,14 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     /**
      * Returns the parent part.
      */
-    public ChartPart getParent()
+    public ChartPart getParent()  { return _parent; }
+
+    /**
+     * Sets the parent.
+     */
+    protected void setParent(ChartPart aParent)
     {
-        if (_parent != null)
-            return _parent;
-        if (this instanceof Chart) return null;
-        if (this instanceof DataSet) return getDataSetList();
-        return getChart();
+        _parent = aParent;
     }
 
     /**
@@ -154,7 +153,13 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     /**
      * Returns the dataset.
      */
-    public DataSetList getDataSetList()  { return _chart.getDataSetList(); }
+    public DataSetList getDataSetList()
+    {
+        if (_parent instanceof DataSetList)
+            return (DataSetList) _parent;
+        Chart chart = getChart();
+        return chart != null ? chart.getDataSetList() : null;
+    }
 
     /**
      * Returns the name.

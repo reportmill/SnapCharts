@@ -12,7 +12,7 @@ import snapcharts.util.ChartUtils;
 /**
  * A view to render a chart.
  */
-public class Chart extends ChartPart {
+public class Chart extends ParentPart {
 
     // The ChartDoc that owns this chart
     private Doc _doc;
@@ -45,7 +45,7 @@ public class Chart extends ChartPart {
     private ColorBar  _colorBar;
 
     // The DataSet
-    private DataSetList _dsetList = new DataSetList(this);
+    private DataSetList  _dsetList;
 
     // The Legend
     private Legend  _legend;
@@ -113,44 +113,45 @@ public class Chart extends ChartPart {
         // Create/set Header
         _header = new Header();
         _header._chart = this;
-        _header.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_header);
 
         // Create/set X Axis
         _axisX = new AxisX();
         _axisX._chart = this;
-        _axisX.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_axisX);
 
         // Create/set Y Axis
         _axisY = new AxisY(this, AxisType.Y);
-        _axisY.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_axisY);
 
         // Create/set Y2 Axis
         _axisY2 = new AxisY(this, AxisType.Y2);
-        _axisY2.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_axisY2);
 
         // Create/set Y3 Axis
         _axisY3 = new AxisY(this, AxisType.Y3);
-        _axisY3.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_axisY3);
 
         // Create/set Y Axis
         _axisY4 = new AxisY(this, AxisType.Y4);
-        _axisY4.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_axisY4);
 
         // Create/set Z Axis
         _axisZ = new AxisZ(this);
-        _axisZ.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_axisZ);
 
         // Create/set ColorBar
         _colorBar = new ColorBar(this);
-        _colorBar.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_colorBar);
 
         // Create/set Legend
         _legend = new Legend();
         _legend._chart = this;
-        _legend.addPropChangeListener(pc -> chartPartDidPropChange(pc));
+        addChild(_legend);
 
         // Start listening to DataSet changes
-        _dsetList.addPropChangeListener(pc -> dataSetDidPropChange(pc));
+        _dsetList = new DataSetList(this);
+        addChild(_dsetList);
     }
 
     /**
@@ -164,6 +165,15 @@ public class Chart extends ChartPart {
     protected void setDoc(Doc aDoc)
     {
         _doc = aDoc;
+    }
+
+    /**
+     * Override to return this chart.
+     */
+    @Override
+    public Chart getChart()
+    {
+        return this;
     }
 
     /**
@@ -265,7 +275,6 @@ public class Chart extends ChartPart {
     public void setColors(Color ... theColors)
     {
         firePropChange(Colors_Prop, _colors, _colors = theColors);
-        //reloadContents(true);
     }
 
     /**
@@ -297,14 +306,6 @@ public class Chart extends ChartPart {
     }
 
     /**
-     * Called when dataset has prop change.
-     */
-    protected void dataSetDidPropChange(PropChange aPC)
-    {
-        _pcs.fireDeepChange(this, aPC);
-    }
-
-    /**
      * Returns the value for given key.
      */
     @Override
@@ -312,7 +313,11 @@ public class Chart extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
+
+            // Fill
             case Fill_Prop: return Color.WHITE;
+
+            // Do normal version
             default: return super.getPropDefault(aPropName);
         }
     }

@@ -17,9 +17,6 @@ import java.util.*;
  */
 public class DataSet extends ChartPart {
     
-    // The DataSetList that owns this dataset
-    protected DataSetList  _dsetList;
-
     // The index in data set
     protected int  _index;
 
@@ -82,22 +79,6 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the chart.
-     */
-    @Override
-    public Chart getChart()
-    {
-        if (_chart != null)
-            return _chart;
-        return _dsetList !=null ? _dsetList.getChart() : null;
-    }
-
-    /**
-     * Returns the dataset.
-     */
-    public DataSetList getDataSetList()  { return _dsetList; }
-
-    /**
      * Returns the index in dataset.
      */
     public int getIndex()  { return _index; }
@@ -115,9 +96,14 @@ public class DataSet extends ChartPart {
      */
     public void setDataType(DataType aDataType)
     {
-        if (aDataType==getDataType()) return;
+        // If already set, just return
+        if (aDataType == getDataType()) return;
+
+        // Forward to RawData
         DataType old = getDataType();
         _rawData.setDataType(aDataType);
+
+        // Clear cached data and firePropChange
         clearCachedData();
         firePropChange(DataType_Prop, old, aDataType);
     }
@@ -132,9 +118,14 @@ public class DataSet extends ChartPart {
      */
     public void setAxisTypeY(AxisType anAxisType)
     {
-        if (anAxisType==getAxisTypeY()) return;
+        // If already set, just return
+        if (anAxisType == getAxisTypeY()) return;
+
+        // If not Y AxisType, complain
         if (anAxisType==null || !anAxisType.isAnyY())
             throw new IllegalArgumentException("DataSet.setAxisTypeY: Unsupported AxisTypeY: " + anAxisType);
+
+        // Set and firePropChange
         firePropChange(AxisTypeY_Prop, _axisTypeY, _axisTypeY = anAxisType);
     }
 

@@ -50,6 +50,12 @@ public class DataSetList extends ChartPart {
     }
 
     /**
+     * Override to return this DataSetList.
+     */
+    @Override
+    public DataSetList getDataSetList()  { return this; }
+
+    /**
      * Returns the array of datasets.
      */
     public DataSet[] getDataSets()
@@ -117,7 +123,7 @@ public class DataSetList extends ChartPart {
     {
         // Add DataSet at index
         _dataSetsList.add(anIndex, aDataSet);
-        aDataSet._dsetList = this;
+        aDataSet._parent = this;
         aDataSet.addPropChangeListener(pc -> dataSetDidPropChange(pc));
 
         // Reset indexes
