@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * A class to represent a Chart Axis.
  */
-public abstract class Axis extends StyledChartPart {
+public abstract class Axis extends ChartPart {
 
     // The Title
     private String  _title;

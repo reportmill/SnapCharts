@@ -10,7 +10,7 @@ import snap.util.XMLElement;
 /**
  * This StyledChartPart subclass holds style attributes for data tags.
  */
-public class TagStyle extends StyledChartPart {
+public class TagStyle extends ChartPart {
 
     // The DataStyle that holds this SymbolStyle
     private DataStyle  _dataStyle;

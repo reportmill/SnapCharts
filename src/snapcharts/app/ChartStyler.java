@@ -5,7 +5,6 @@ import snap.util.Undoer;
 import snap.view.View;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
-import snapcharts.model.StyledChartPart;
 
 /**
  * ChartStyler.
@@ -28,8 +27,8 @@ public class ChartStyler extends Styler {
      */
     public Border getBorder()
     {
-        StyledChartPart chartPart = getSelPart();
-        return chartPart!=null ? chartPart.getBorder() : null;
+        ChartPart chartPart = getSelPart();
+        return chartPart != null ? chartPart.getBorder() : null;
     }
 
     /**
@@ -45,8 +44,8 @@ public class ChartStyler extends Styler {
      */
     public Paint getFill()
     {
-        StyledChartPart chartPart = getSelPart();
-        return chartPart!=null ? chartPart.getFill() : null;
+        ChartPart chartPart = getSelPart();
+        return chartPart != null ? chartPart.getFill() : null;
     }
 
     /**
@@ -62,8 +61,8 @@ public class ChartStyler extends Styler {
      */
     public Effect getEffect()
     {
-        StyledChartPart chartPart = getSelPart();
-        return chartPart!=null ? chartPart.getEffect() : null;
+        ChartPart chartPart = getSelPart();
+        return chartPart != null ? chartPart.getEffect() : null;
     }
 
     /**
@@ -79,8 +78,8 @@ public class ChartStyler extends Styler {
      */
     public double getOpacity()
     {
-        StyledChartPart chartPart = getSelPart();
-        return chartPart!=null ? chartPart.getOpacity() : 1;
+        ChartPart chartPart = getSelPart();
+        return chartPart != null ? chartPart.getOpacity() : 1;
     }
 
     /**
@@ -97,8 +96,8 @@ public class ChartStyler extends Styler {
      */
     public Font getFont()
     {
-        StyledChartPart chartPart = getSelPart();
-        return chartPart!=null ? chartPart.getFont() : Font.Arial12;
+        ChartPart chartPart = getSelPart();
+        return chartPart != null ? chartPart.getFont() : Font.Arial12;
     }
 
     /**
@@ -114,7 +113,7 @@ public class ChartStyler extends Styler {
      */
     public Color getTextColor()
     {
-        StyledChartPart chartPart = getSelPart();
+        ChartPart chartPart = getSelPart();
         Paint textFill = chartPart != null ? chartPart.getTextFill() : null;
         return textFill != null ? textFill.getColor() : null;
     }
@@ -124,7 +123,7 @@ public class ChartStyler extends Styler {
      */
     public void setTextColor(Color aColor)
     {
-        StyledChartPart chartPart = getSelPart();
+        ChartPart chartPart = getSelPart();
         if (chartPart != null)
             chartPart.setTextFill(aColor);
     }
@@ -137,12 +136,12 @@ public class ChartStyler extends Styler {
     /**
      * Returns the Selected ChartPart.
      */
-    private StyledChartPart getSelPart()
+    private ChartPart getSelPart()
     {
         ChartPart chartPart = _editor.getSelChartPart();
         if (chartPart instanceof DataSet)
             chartPart = ((DataSet) chartPart).getDataStyle();
-        return chartPart instanceof StyledChartPart ? (StyledChartPart) chartPart : null;
+        return chartPart;
     }
 
     /**

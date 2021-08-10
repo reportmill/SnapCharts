@@ -5,9 +5,9 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
+import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
-import snapcharts.model.StyledChartPart;
 import java.util.Objects;
 
 /**
@@ -206,7 +206,7 @@ public class DataView extends ChartPartView<DataSetList> {
      * Override to suppress Border.
      */
     @Override
-    protected void resetViewFromStyledChartPart(StyledChartPart aChartPart)
+    protected void resetViewFromStyledChartPart(ChartPart aChartPart)
     {
         setFont(aChartPart.getFont());
         setFill(aChartPart.getFill());

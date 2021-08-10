@@ -14,7 +14,7 @@ import snapcharts.util.MinMax;
 /**
  * A class to manage a list of DataSets.
  */
-public class DataSetList extends StyledChartPart {
+public class DataSetList extends ChartPart {
 
     // The list of datasets
     private List<DataSet> _dataSetsList = new ArrayList<>();

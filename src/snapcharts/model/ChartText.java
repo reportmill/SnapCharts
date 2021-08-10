@@ -8,9 +8,9 @@ import snap.util.XMLElement;
 import java.util.Objects;
 
 /**
- * This StyledChartPart subclass represents chart parts that are primarily text, like the Legend Title.
+ * This ChartPart subclass represents chart parts that are primarily text, like the Legend Title.
  */
-public class ChartText extends StyledChartPart {
+public class ChartText extends ChartPart {
 
     // The text
     private String  _text;

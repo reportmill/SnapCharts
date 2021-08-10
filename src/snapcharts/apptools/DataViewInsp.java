@@ -123,7 +123,7 @@ public class DataViewInsp extends ChartPartInsp {
             // Reset FillColorButton, FillColorResetButton
             Color fillColor = fill != null ? fill.getColor() : null;
             setViewValue("FillColorButton", fillColor);
-            setViewVisible("FillColorResetButton", !Objects.equals(fill, StyledChartPart.DEFAULT_FILL));
+            setViewVisible("FillColorResetButton", !Objects.equals(fill, ChartPart.DEFAULT_FILL));
         }
 
         // Reset ShowGridCheckBox
@@ -229,7 +229,7 @@ public class DataViewInsp extends ChartPartInsp {
             dataSetList.setFill(fillColor);
         }
         if (anEvent.equals("FillColorResetButton")) {
-            Paint fill = StyledChartPart.DEFAULT_FILL;
+            Paint fill = ChartPart.DEFAULT_FILL;
             dataSetList.setFill(fill);
         }
 

@@ -72,14 +72,13 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     {
         // Get ChartPart
         ChartPart chartPart = getChartPart();
-        if (chartPart instanceof StyledChartPart)
-            resetViewFromStyledChartPart((StyledChartPart) chartPart);
+        resetViewFromStyledChartPart(chartPart);
     }
 
     /**
      * Called to reset view paint style attributes from updated ChartPartPainted.
      */
-    protected void resetViewFromStyledChartPart(StyledChartPart aChartPart)
+    protected void resetViewFromStyledChartPart(ChartPart aChartPart)
     {
         // Update Font, Fill
         setFont(aChartPart.getFont());

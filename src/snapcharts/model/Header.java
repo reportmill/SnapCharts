@@ -10,7 +10,7 @@ import snap.util.XMLElement;
 /**
  * A ChartPart to represent Header.
  */
-public class Header extends StyledChartPart {
+public class Header extends ChartPart {
 
     // The title
     private String  _title;

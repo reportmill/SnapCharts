@@ -8,7 +8,7 @@ import snap.util.PropChange;
 /**
  * This ChartPart class can have child ChartParts.
  */
-public class ParentPart extends StyledChartPart {
+public class ParentPart extends ChartPart {
 
     // The children
     private ChartPart[]  _children = new ChartPart[0];

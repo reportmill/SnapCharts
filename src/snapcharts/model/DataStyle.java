@@ -10,7 +10,7 @@ import snap.util.XMLElement;
 /**
  * A class to represent properties to render data for a specific ChartType.
  */
-public class DataStyle extends StyledChartPart {
+public class DataStyle extends ChartPart {
 
     // The DataSet that owns the this style
     protected ChartPart  _parent;

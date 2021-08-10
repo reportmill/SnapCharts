@@ -7,9 +7,9 @@ import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
 /**
- * This StyledChartPart subclass holds style attributes for symbols.
+ * This ChartPart subclass holds style attributes for symbols.
  */
-public class SymbolStyle extends StyledChartPart {
+public class SymbolStyle extends ChartPart {
 
     // The DataStyle that holds this SymbolStyle
     private DataStyle  _dataStyle;
