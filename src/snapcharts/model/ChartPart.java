@@ -57,13 +57,13 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     protected Pos  _align;
 
     // The margin to be provided around this view
-    private Insets _margin;
+    protected Insets _margin;
 
     // The padding between the border and content in this view
-    private Insets  _padding;
+    protected Insets  _padding;
 
     // The spacing
-    private double  _spacing;
+    protected double  _spacing;
 
     // Constants for properties
     public static final String Name_Prop = "Name";

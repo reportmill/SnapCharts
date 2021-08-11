@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.geom.Insets;
 import snap.gfx.Font;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
@@ -26,7 +27,21 @@ public class Header extends ChartPart {
     public static final String Subtitle_Prop = "Subtitle";
 
     // Constants for defaults
-    public static final Font DEFAULT_TITLE_FONT = Font.Arial14.getBold();
+    public static final Insets  DEFAULT_HEADER_MARGIN = new Insets(0, 0, 8, 0);
+    public static final double  DEFAULT_HEADER_SPACING = 2;
+    public static final Font  DEFAULT_TITLE_FONT = Font.Arial14.getBold();
+
+    /**
+     * Constructor.
+     */
+    public Header()
+    {
+        super();
+
+        // Override defaults
+        _margin = DEFAULT_HEADER_MARGIN;
+        _spacing = DEFAULT_HEADER_SPACING;
+    }
 
     /**
      * Returns the title.
@@ -86,7 +101,15 @@ public class Header extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
+
+            // Handle Margin, Spacing
+            case Margin_Prop: return DEFAULT_HEADER_MARGIN;
+            case Spacing_Prop: return DEFAULT_HEADER_SPACING;
+
+            // Handle Font
             case Font_Prop: return DEFAULT_TITLE_FONT;
+
+            // Do normal version
             default: return super.getPropDefault(aPropName);
         }
     }
