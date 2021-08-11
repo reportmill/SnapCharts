@@ -21,16 +21,12 @@ public class LegendView extends ChartPartView<Legend> {
     // The view to hold title text
     private StringView  _titleView;
 
-    // Constants
-    private static Insets DEFAULT_MARGIN = new Insets(5, 5, 5, 5);
-
     /**
      * Constructor.
      */
     public LegendView()
     {
         super();
-        setMargin(DEFAULT_MARGIN);
 
         // Create/configure/add ScaleBox to hold EntryBox
         _scaleBox = new ScaleBox();
@@ -77,8 +73,13 @@ public class LegendView extends ChartPartView<Legend> {
         // Get info
         Legend legend = getLegend();
 
+        // Attributes
+        setMargin(legend.getMargin());
+        setPadding(legend.getPadding());
+
         // Reset EntryBox
         resetEntryBox();
+        _entryBox.setSpacing(_entryBox.getSpacing() + legend.getSpacing());
 
         // Handle visible
         boolean showLegend = legend.isShowLegend();
@@ -90,6 +91,7 @@ public class LegendView extends ChartPartView<Legend> {
         String titleText = legend.getTitle().getText();
         _titleView.setText(titleText);
         _titleView.setVisible(titleText != null && titleText.length() > 0);
+        _titleView.setLeanX(legend.getAlignX());
 
         // Handle Inside
         if (legend.isInside()) {

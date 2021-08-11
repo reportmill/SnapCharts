@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.util.*;
 
@@ -26,6 +27,10 @@ public class Legend extends ParentPart {
     public static final String ShowLegend_Prop = "ShowLegend";
     public static final String Position_Prop = "Position";
     public static final String Inside_Prop = "Inside";
+
+    // Constants for property defaults
+    private static Pos DEFAULT_LEGEND_ALIGN = Pos.TOP_LEFT;
+    private static Insets DEFAULT_LEGEND_MARGIN = new Insets(5, 5, 5, 5);
 
     /**
      * Constructor.
@@ -95,6 +100,10 @@ public class Legend extends ParentPart {
     {
         switch (aPropName) {
 
+            // Align, Margin
+            case Align_Prop: return DEFAULT_LEGEND_ALIGN;
+            case Margin_Prop: return DEFAULT_LEGEND_MARGIN;
+
             // Handle Position
             case Position_Prop: return Pos.CENTER_RIGHT;
 
@@ -115,7 +124,7 @@ public class Legend extends ParentPart {
         // Archive ShowLegend, Position, Inside
         if (isShowLegend())
             e.add(ShowLegend_Prop, isShowLegend());
-        if (getPosition()!=getPropDefault(Position_Prop))
+        if (!isPropDefault(Position_Prop))
             e.add(Position_Prop, getPosition());
         if (isInside())
             e.add(Inside_Prop, true);

@@ -114,10 +114,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         _effect = DEFAULT_EFFECT;
         _opacity = DEFAULT_OPACTIY;
         _textFill = DEFAULT_TEXT_FILL;
-        _align = DEFAULT_ALIGN;
-        _margin = DEFAULT_MARGIN;
-        _padding = DEFAULT_PADDING;
-        _spacing = DEFAULT_SPACING;
+        _align = (Pos) getPropDefault(Align_Prop);
+        _margin = (Insets) getPropDefault(Margin_Prop);
+        _padding = (Insets) getPropDefault(Padding_Prop);
+        _spacing = getPropDefaultDouble(Spacing_Prop);
     }
 
     /**
@@ -599,20 +599,15 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     /**
      * Returns whether give prop is set to default.
      */
+    @Override
     public boolean isPropDefault(String aPropName)
     {
-        switch (aPropName) {
+        // Border
+        if (aPropName == Border_Prop)
+            return _border == UNSET_BORDER;
 
-            // Border
-            case Border_Prop: return _border == UNSET_BORDER;
-
-            // Default
-            default: {
-                Object propValue = getPropValue(aPropName);
-                Object propDefault = getPropDefault(aPropName);
-                return Objects.equals(propValue, propDefault);
-            }
-        }
+        // Do normal version
+        return super.isPropDefault(aPropName);
     }
 
     /**
