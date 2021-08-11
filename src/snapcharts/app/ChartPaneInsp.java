@@ -54,7 +54,7 @@ public class ChartPaneInsp extends ViewOwner {
     private DataStyleInsp _dataStyleInsp;
 
     // The array of ChartPartInsp
-    private ChartPartInsp  _allInspectors[];
+    private ChartPartInsp[]  _allInspectors;
 
     // The StylerPane
     private StylerPane  _stylerPane;
@@ -151,7 +151,7 @@ public class ChartPaneInsp extends ViewOwner {
         //_inspColView.addChild(_stylerPane.getUI());
 
         // Create/set MiscInsp
-        _miscInsp = new MiscInsp();
+        _miscInsp = new MiscInsp(_chartPane);
     }
 
     /**

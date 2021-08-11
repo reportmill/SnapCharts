@@ -2,6 +2,10 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.geom.HPos;
+import snap.geom.Insets;
+import snap.geom.Pos;
+import snap.geom.VPos;
 import snap.gfx.*;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
@@ -49,6 +53,18 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     // The Text Fill
     protected Paint  _textFill;
 
+    // Content alignment (text or children)
+    protected Pos  _align;
+
+    // The margin to be provided around this view
+    private Insets _margin;
+
+    // The padding between the border and content in this view
+    private Insets  _padding;
+
+    // The spacing
+    private double  _spacing;
+
     // Constants for properties
     public static final String Name_Prop = "Name";
     public static final String Border_Prop = "Border";
@@ -60,6 +76,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public static final String Opacity_Prop = "Opacity";
     public static final String Font_Prop = "Font";
     public static final String TextFill_Prop = "TextFill";
+    public static final String Align_Prop = "Align";
+    public static final String Margin_Prop = "Margin";
+    public static final String Padding_Prop = "Padding";
+    public static final String Spacing_Prop = "Spacing";
 
     // Constants for defaults
     public static final Border DEFAULT_BORDER = null;
@@ -71,6 +91,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public static final double DEFAULT_OPACTIY = 1;
     public static final Font DEFAULT_FONT = Font.Arial12;
     public static final Color DEFAULT_TEXT_FILL = Color.BLACK;
+    public static final Pos DEFAULT_ALIGN = Pos.TOP_CENTER;
+    public static final Insets DEFAULT_MARGIN = Insets.EMPTY;
+    public static final Insets DEFAULT_PADDING = Insets.EMPTY;
+    public static final double DEFAULT_SPACING = 0;
 
     // Constant for unset border
     private static Border UNSET_BORDER = new Borders.NullBorder();
@@ -90,6 +114,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         _effect = DEFAULT_EFFECT;
         _opacity = DEFAULT_OPACTIY;
         _textFill = DEFAULT_TEXT_FILL;
+        _align = DEFAULT_ALIGN;
+        _margin = DEFAULT_MARGIN;
+        _padding = DEFAULT_PADDING;
+        _spacing = DEFAULT_SPACING;
     }
 
     /**
@@ -397,6 +425,95 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
+     * Returns the alignment of content when applicable (text or children).
+     */
+    public Pos getAlign()  { return _align; }
+
+    /**
+     * Sets the alignment of content when applicable (text or children).
+     */
+    public void setAlign(Pos aValue)
+    {
+        if (Objects.equals(aValue, _align)) return;
+        firePropChange(Align_Prop, _align, _align = aValue);
+    }
+
+    /**
+     * Returns the horizontal alignment of content when applicable (text or children).
+     */
+    public HPos getAlignX()  { return getAlign().getHPos(); }
+
+    /**
+     * Sets the horizontal alignment of content when applicable (text or children).
+     */
+    public void setAlignX(HPos aValue)
+    {
+        Pos align = Pos.get(aValue, getAlignY());
+        setAlign(align);
+    }
+
+    /**
+     * Returns the vertical alignment of content when applicable (text or children).
+     */
+    public VPos getAlignY()  { return getAlign().getVPos(); }
+
+    /**
+     * Sets the vertical alignment of content when applicable (text or children).
+     */
+    public void setAlignY(VPos aValue)
+    {
+        Pos align = Pos.get(getAlignX(), aValue);
+        setAlign(align);
+    }
+
+    /**
+     * Returns the spacing insets requested between parent/neighbors and the border of this view.
+     */
+    public Insets getMargin()  { return _margin; }
+
+    /**
+     * Sets the spacing insets requested between parent/neighbors and the border of this view.
+     */
+    public void setMargin(Insets theIns)
+    {
+        // If value already set, just return
+        if (theIns == null) theIns = DEFAULT_MARGIN;
+        if (SnapUtils.equals(theIns, _margin)) return;
+
+        // Set value, fire prop change, relayout parent
+        firePropChange(Padding_Prop, _margin, _margin = theIns);
+    }
+
+    /**
+     * Returns the spacing insets between the border of this view and it's content.
+     */
+    public Insets getPadding()  { return _padding; }
+
+    /**
+     * Sets the spacing insets between the border of this view and it's content.
+     */
+    public void setPadding(Insets theIns)
+    {
+        if (theIns == null) theIns = DEFAULT_PADDING;
+        if (Objects.equals(theIns, _padding)) return;
+        firePropChange(Padding_Prop, _padding, _padding = theIns);
+    }
+
+    /**
+     * Returns the spacing for views that support it (Label, Button, ColView, RowView etc.).
+     */
+    public double getSpacing()  { return _spacing; }
+
+    /**
+     * Sets the spacing for views that support it (Label, Button, ColView, RowView etc.).
+     */
+    public void setSpacing(double aValue)
+    {
+        if (aValue == _spacing) return;
+        firePropChange(Spacing_Prop, _spacing, _spacing = aValue);
+    }
+
+    /**
      * Returns whether border is supported.
      */
     public boolean isBorderSupported()  { return true; }
@@ -440,6 +557,12 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             case LineWidth_Prop: return getLineWidth();
             case LineDash_Prop: return getLineDash();
 
+            // Align, Margin, Padding, Spacing
+            case Align_Prop: return getAlign();
+            case Margin_Prop: return getMargin();
+            case Padding_Prop: return getPadding();
+            case Spacing_Prop: return getSpacing();
+
             // Handle super class properties (or unknown)
             default: System.err.println("ChartPart.getPropValue: Unknown prop: " + aPropName); return null;
         }
@@ -461,6 +584,12 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             case LineColor_Prop: setLineColor((Color) aValue); break;
             case LineWidth_Prop: setLineWidth(SnapUtils.intValue(aValue)); break;
             case LineDash_Prop: setLineDash((double[]) aValue); break;
+
+            // Align, Margin, Padding, Spacing
+            case Align_Prop: setAlign((Pos) aValue); break;
+            case Margin_Prop: setMargin((Insets) aValue); break;
+            case Padding_Prop: setPadding((Insets) aValue); break;
+            case Spacing_Prop: setSpacing(SnapUtils.doubleValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: System.err.println("ChartPart.setPropValue: Unknown prop: " + aPropName);
@@ -513,6 +642,12 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             // Font, TextFill
             case Font_Prop: return DEFAULT_FONT;
             case TextFill_Prop: return DEFAULT_TEXT_FILL;
+
+            // Align, Margin, Padding, Spacing
+            case Align_Prop: return DEFAULT_ALIGN;
+            case Margin_Prop: return DEFAULT_MARGIN;
+            case Padding_Prop: return DEFAULT_PADDING;
+            case Spacing_Prop: return DEFAULT_SPACING;
 
             // Superclass props
             default: System.err.println("ChartPart.getPropDefault: Unknown prop: " + aPropName); return null;
@@ -581,6 +716,16 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             XMLElement textFillXML = textFill.toXML(anArchiver);
             e.add(TextFill_Prop, textFillXML);
         }
+
+        // Archive Align, Margin, Padding, Spacing
+        if (!isPropDefault(Align_Prop))
+            e.add(Align_Prop, getAlign());
+        if (!isPropDefault(Margin_Prop))
+            e.add(Margin_Prop, getMargin().getString());
+        if (!isPropDefault(Padding_Prop))
+            e.add(Padding_Prop, getPadding().getString());
+        if (!isPropDefault(Spacing_Prop))
+            e.add(Spacing_Prop, getSpacing());
 
         // Return element
         return e;
@@ -654,6 +799,16 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             Paint textFill = (Paint) anArchiver.fromXML(textFillXML, null);
             setTextFill(textFill);
         }
+
+        // Unarchive Align, Margin, Padding, Spacing
+        if (anElement.hasAttribute(Align_Prop))
+            setAlign(anElement.getAttributeEnumValue(Align_Prop, Pos.class, DEFAULT_ALIGN));
+        if (anElement.hasAttribute(Margin_Prop))
+            setMargin(Insets.get(anElement.getAttributeValue(Margin_Prop)));
+        if (anElement.hasAttribute(Padding_Prop))
+            setPadding(Insets.get(anElement.getAttributeValue(Padding_Prop)));
+        if (anElement.hasAttribute(Spacing_Prop))
+            setSpacing(anElement.getAttributeDoubleValue(Spacing_Prop));
 
         // Return this part
         return this;
