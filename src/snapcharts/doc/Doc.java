@@ -18,6 +18,14 @@ public class Doc extends DocItemGroup {
     public static final String CHARTS_FILE_EXTENSION = "charts";
 
     /**
+     * Constructor.
+     */
+    public Doc()
+    {
+        super();
+    }
+
+    /**
      * Returns the Source URL.
      */
     public WebURL getSourceURL()  { return _srcURL; }

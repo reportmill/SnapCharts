@@ -562,8 +562,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         super.initPropDefaults(aPropDefaults);
 
         // Add Props
-        aPropDefaults.addProps(Name_Prop, Border_Prop, LineColor_Prop, LineWidth_Prop, LineDash_Prop,
-                Fill_Prop, Effect_Prop, Opacity_Prop, Font_Prop, TextFill_Prop,
+        aPropDefaults.addProps(Name_Prop,
+                Border_Prop, Fill_Prop, Effect_Prop, Opacity_Prop,
+                LineColor_Prop, LineWidth_Prop, LineDash_Prop,
+                Font_Prop, TextFill_Prop,
                 Align_Prop, Margin_Prop, Padding_Prop, Spacing_Prop);
     }
 
@@ -576,13 +578,23 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         // Handle properties
         switch (aPropName) {
 
-            // Handle Name Prop
+            // Handle Name
             case Name_Prop: return getName();
+
+            // Border, Fill, Effect, Opacity
+            case Border_Prop: return getBorder();
+            case Fill_Prop: return getFill();
+            case Effect_Prop: return getEffect();
+            case Opacity_Prop: return getOpacity();
 
             // LineColor, LineWidth, LineDash
             case LineColor_Prop: return getLineColor();
             case LineWidth_Prop: return getLineWidth();
             case LineDash_Prop: return getLineDash();
+
+            // Font, TextFill
+            case Font_Prop: return getFont();
+            case TextFill_Prop: return getTextFill();
 
             // Align, Margin, Padding, Spacing
             case Align_Prop: return getAlign();
@@ -607,10 +619,20 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             // Handle Name
             case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
 
+            // Border, Fill, Effect, Opacity
+            case Border_Prop: setBorder((Border) aValue); break;
+            case Fill_Prop: setFill((Paint) aValue); break;
+            case Effect_Prop: setEffect((Effect) aValue); break;
+            case Opacity_Prop: setOpacity(SnapUtils.doubleValue(aValue)); break;
+
             // LineColor, LineWidth, LineDash
             case LineColor_Prop: setLineColor((Color) aValue); break;
             case LineWidth_Prop: setLineWidth(SnapUtils.intValue(aValue)); break;
             case LineDash_Prop: setLineDash((double[]) aValue); break;
+
+            // Font, TextFill
+            case Font_Prop: setFont((Font) aValue); break;
+            case TextFill_Prop: setTextFill((Paint) aValue); break;
 
             // Align, Margin, Padding, Spacing
             case Align_Prop: setAlign((Pos) aValue); break;

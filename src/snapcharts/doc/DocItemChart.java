@@ -30,19 +30,6 @@ public class DocItemChart extends DocItem<Chart> {
     }
 
     /**
-     * Override to provide prop/relation names.
-     */
-    @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
-    {
-        // Do normal version
-        super.initPropDefaults(aPropDefaults);
-
-        // Remove Items so DocItemDataSets don't get archived (they are archived with chart)
-        aPropDefaults.removeRelations(Items_Prop);
-    }
-
-    /**
      * Returns the chart.
      */
     public Chart getChart()  { return _content; }
@@ -100,5 +87,18 @@ public class DocItemChart extends DocItem<Chart> {
                 addItem(new DocItemDataSet(newVal));
             else removeItem(ind);
         }
+    }
+
+    /**
+     * Override to provide prop/relation names.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Remove Items so DocItemDataSets don't get archived (they are archived with chart)
+        aPropDefaults.removeRelations(Items_Prop);
     }
 }

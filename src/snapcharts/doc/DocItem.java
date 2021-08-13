@@ -3,6 +3,7 @@ import snap.util.*;
 import snapcharts.model.ChartPart;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents an item in a doc that holds other items.
@@ -37,17 +38,6 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     }
 
     /**
-     * Override to provide prop/relation names.
-     */
-    @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
-    {
-        super.initPropDefaults(aPropDefaults);
-        aPropDefaults.addProps(Name_Prop);
-        aPropDefaults.addRelations(Content_Rel, Items_Prop);
-    }
-
-    /**
      * Returns the doc.
      */
     public Doc getDoc()
@@ -65,7 +55,8 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
      */
     public void setName(String aName)
     {
-        _name = aName;
+        if (Objects.equals(aName, _name)) return;
+        firePropChange(Name_Prop, _name, _name = aName);
     }
 
     /**
@@ -175,6 +166,29 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
         if (par != null)
             return par.addChartPart(aChartPart, this);
         return null;
+    }
+
+    /**
+     * Override to forward to PropSheet - for now.
+     */
+    @Override
+    protected void firePropChange(PropChange aPC)
+    {
+        super.firePropChange(aPC);
+
+        // Forward to PropSheet because accessors aren't doing this
+        getPropSheet().setPropValue(aPC.getPropName(), aPC.getNewValue());
+    }
+
+    /**
+     * Override to provide prop/relation names.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        super.initPropDefaults(aPropDefaults);
+        aPropDefaults.addProps(Name_Prop);
+        aPropDefaults.addRelations(Content_Rel, Items_Prop);
     }
 
     /**

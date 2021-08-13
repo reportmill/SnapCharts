@@ -18,6 +18,14 @@ public class DocItemPane extends ViewOwner {
     private boolean  _showInsp = true;
 
     /**
+     * Constructor.
+     */
+    public DocItemPane()
+    {
+        super();
+    }
+
+    /**
      * Returns the DocPane.
      */
     public DocPane getDocPane()  { return _docPane; }

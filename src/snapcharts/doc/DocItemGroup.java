@@ -1,8 +1,5 @@
 package snapcharts.doc;
-import snap.util.MathUtils;
-import snap.util.PropObject;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
+import snap.util.*;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
@@ -19,19 +16,25 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
     private boolean  _portrait = true;
 
     // How pages should be displayed (Single, Continuous).
-    private PageDisplay _pageDisplay = PageDisplay.SINGLE;
+    private PageDisplay  _pageDisplay = PageDisplay.SINGLE;
 
     // The number of items to show per page
-    private int _itemsPerPage = 2;
+    private int  _itemsPerPage = 2;
 
     // The relative scale of the charts to emphasize text vs data
-    private double _chartScale = CHART_SCALE_NATURAL;
+    private double  _chartScale = CHART_SCALE_NATURAL;
 
     // Constants for properties
     public static final String Portrait_Prop = "Portrait";
     public static final String PageDisplay_Prop = "PageDisplay";
     public static final String ItemsPerPage_Prop = "ItemsPerPage";
     public static final String ChartScale_Prop = "ChartScale";
+
+    // Constants for property defaults
+    private static final boolean  DEFAULT_PORTRAIT = true;
+    private static final PageDisplay  DEFAULT_PAGE_DISPLAY = PageDisplay.SINGLE;
+    private static final int DEFAULT_ITEMS_PER_PAGE = 2;
+    private static final double DEFAULT_CHART_SCALE = 1;
 
     // Constants for ChartScale
     public static final double CHART_SCALE_LARGEST_TEXT = .5;
@@ -65,7 +68,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
     /**
      * Returns how pages should be displayed (Single, Continuous).
      */
-    public PageDisplay  getPageDisplay()  { return _pageDisplay; }
+    public PageDisplay getPageDisplay()  { return _pageDisplay; }
 
     /**
      * Sets how pages should be displayed (Single, Continuous).
@@ -127,7 +130,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
     /**
      * Sets the scale of charts to either emphasize text (.5 - <1), emphasize data (>1 - 1.5) or balanced (1).
      */
-    public  void setChartScale(double aValue)
+    public void setChartScale(double aValue)
     {
         if (MathUtils.equals(aValue, getChartScale())) return;
         firePropChange(ChartScale_Prop, _chartScale, _chartScale = aValue);
@@ -194,6 +197,62 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
     public boolean isParent()  { return true; }
 
     /**
+     * Override to provide prop/relation names.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        super.initPropDefaults(aPropDefaults);
+
+        // Add properties
+        aPropDefaults.addProps(Portrait_Prop, PageDisplay_Prop, ItemsPerPage_Prop, ChartScale_Prop);
+
+        // Set defaults
+        aPropDefaults.setPropDefault(Portrait_Prop, DEFAULT_PORTRAIT);
+        aPropDefaults.setPropDefault(PageDisplay_Prop, DEFAULT_PAGE_DISPLAY);
+        aPropDefaults.setPropDefault(ItemsPerPage_Prop, DEFAULT_ITEMS_PER_PAGE);
+        aPropDefaults.setPropDefault(ChartScale_Prop, DEFAULT_CHART_SCALE);
+    }
+
+    /**
+     * Override for DocItem properties.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        switch (aPropName) {
+
+            // Portrait, PageDisplay_Prop, ItemsPerPage, ChartScale
+            case Portrait_Prop: return isPortrait();
+            case PageDisplay_Prop: return getPageDisplay();
+            case ItemsPerPage_Prop: return getItemsPerPage();
+            case ChartScale_Prop: return getChartScale();
+
+            // Do normal version
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Override for DocItem properties.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        switch (aPropName) {
+
+            // Portrait, PageDisplay_Prop, ItemsPerPage, ChartScale
+            case Portrait_Prop: setPortrait(SnapUtils.boolValue(aValue)); break;
+            case PageDisplay_Prop: setPageDisplay(SnapUtils.enumValue(PageDisplay.class, aValue)); break;
+            case ItemsPerPage_Prop: setItemsPerPage(SnapUtils.intValue(aValue)); break;
+            case ChartScale_Prop: setChartScale(SnapUtils.doubleValue(aValue)); break;
+
+            // Do normal version
+            default: super.setPropValue(aPropName, aValue);
+        }
+    }
+
+    /**
      * Archival.
      */
     @Override
@@ -202,7 +261,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
         // Do normal version
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive Portrait, ItemsPerPage, ChartScale_Prop
+        // Archive Portrait, ItemsPerPage, ChartScale
         if (!isPortrait())
             e.add(Portrait_Prop, isPortrait());
         if (getItemsPerPage() != 2)
@@ -232,7 +291,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
         // Do normal version
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive Portrait, ItemsPerPage, ChartScale_Prop
+        // Unarchive Portrait, ItemsPerPage, ChartScale
         if(anElement.hasAttribute(Portrait_Prop))
             setPortrait(anElement.getAttributeBoolValue(Portrait_Prop));
         if(anElement.hasAttribute(ItemsPerPage_Prop))
