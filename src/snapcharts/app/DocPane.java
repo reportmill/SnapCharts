@@ -6,9 +6,9 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.gfx.GFXEnv;
 import snap.gfx.Image;
-import snap.util.FilePathUtils;
-import snap.util.SnapUtils;
+import snap.util.*;
 import snap.view.*;
 import snap.viewx.*;
 import snap.web.WebFile;
@@ -17,6 +17,8 @@ import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.appmisc.SamplesPane;
 import snapcharts.doc.*;
 import snapcharts.model.*;
+
+import java.io.File;
 import java.util.*;
 
 /**
@@ -25,16 +27,16 @@ import java.util.*;
 public class DocPane extends ViewOwner {
 
     // The ChartDoc
-    private Doc _doc;
+    private Doc  _doc;
 
     // The selected DocItem
-    private DocItem _selItem;
+    private DocItem  _selItem;
 
     // The DocMenuBar
     private DocPaneMenuBar  _menuBar;
 
     // The SplitView
-    private SplitView _splitView;
+    private SplitView  _splitView;
 
     // The ChartDoc tree
     private TreeView<DocItem>  _treeView;
@@ -564,6 +566,7 @@ public class DocPane extends ViewOwner {
         addKeyActionHandler("DeleteAction", "DELETE");
         addKeyActionHandler("DeleteAction", "BACK_SPACE");
         addKeyActionHandler("EscapeAction", "ESCAPE");
+        addKeyActionHandler("PropArchiverAction", "H");
     }
 
     /**
@@ -649,6 +652,9 @@ public class DocPane extends ViewOwner {
             if (parItem != null)
                 setSelItem(parItem);
         }
+
+        if (anEvent.equals("PropArchiverAction"))
+            performPropArchiverTest();
     }
 
     /**
@@ -789,6 +795,26 @@ public class DocPane extends ViewOwner {
             setDoc(doc);
     }
 
+    /**
+     * Writes the doc to a file and opens in editor.
+     */
+    private void performPropArchiverTest()
+    {
+        Doc doc = getDoc();
+        PropArchiver propArchiver = new PropArchiver();
+        PropNode propNode = propArchiver.propObjectToPropNode(doc);
+        XMLElement xml = propNode.getXML("Doc");
+        byte[] xmlBytes = xml.getBytes();
+        File file = new File("/tmp/PropArchTest.charts");
+        try {
+            FileUtils.writeBytes(file, xmlBytes);
+            GFXEnv.getEnv().openTextFile(file);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Constants for images
     private static Image ICON_PLAIN = Image.get(DocPane.class, "PlainFile.png");
     private static Image ICON_DIR = Image.get(ViewUtils.class, "DirFile.png");
@@ -816,7 +842,8 @@ public class DocPane extends ViewOwner {
         @Override
         public DocItem[] getChildren(DocItem aParent)
         {
-            return aParent.getItems().toArray(new DocItem[0]);
+            List<DocItem> docItems = aParent.getItems();
+            return docItems.toArray(new DocItem[0]);
         }
 
         @Override

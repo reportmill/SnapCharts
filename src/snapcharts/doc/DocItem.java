@@ -1,16 +1,13 @@
 package snapcharts.doc;
-import snap.gfx.Image;
 import snap.util.*;
-import snap.view.ViewUtils;
 import snapcharts.model.ChartPart;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents an item in a doc that holds other items.
  */
-public abstract class DocItem implements XMLArchiver.Archivable {
+public abstract class DocItem<T extends PropObject> extends PropObject implements XMLArchiver.Archivable {
 
     // The DocItem that holds this item
     private DocItem  _parent;
@@ -18,22 +15,17 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     // The name
     private String  _name;
 
+    // The content
+    protected T  _content;
+
     // The child items
-    private List<DocItem> _items = new ArrayList<>();
-
-    // The image to use as icon
-    private Image  _iconImage;
-
-    // PropertyChangeSupport
-    protected PropChangeSupport _pcs = PropChangeSupport.EMPTY;
-
-    // Constants for images
-    protected static Image ICON_PLAIN = Image.get(ViewUtils.class, "PlainFile.png");
-    protected static Image ICON_DATA = Image.get(ViewUtils.class, "TableFile.png");
-    protected static Image ICON_DOC = Image.get(DocItem.class, "TableFile.png");
+    private List<DocItem<?>>  _items = new ArrayList<>();
 
     // Constants for properties
     public static final String Name_Prop = "Name";
+
+    // Constants for relation properties
+    public static final String Content_Rel = "Content";
     public static final String Items_Prop = "Items";
 
     /**
@@ -41,7 +33,18 @@ public abstract class DocItem implements XMLArchiver.Archivable {
      */
     public DocItem()
     {
+        super();
+    }
 
+    /**
+     * Override to provide prop/relation names.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        super.initPropDefaults(aPropDefaults);
+        aPropDefaults.addProps(Name_Prop);
+        aPropDefaults.addRelations(Content_Rel, Items_Prop);
     }
 
     /**
@@ -49,7 +52,7 @@ public abstract class DocItem implements XMLArchiver.Archivable {
      */
     public Doc getDoc()
     {
-        return _parent!=null ? _parent.getDoc() : null;
+        return _parent != null ? _parent.getDoc() : null;
     }
 
     /**
@@ -63,6 +66,19 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     public void setName(String aName)
     {
         _name = aName;
+    }
+
+    /**
+     * Returns the content of the item (Chart, DataSet, etc.).
+     */
+    public T getContent()  { return _content; }
+
+    /**
+     * Sets the content of the item (Chart, DataSet, etc.).
+     */
+    public void setContent(T theContent)
+    {
+        _content = theContent;
     }
 
     /**
@@ -88,14 +104,14 @@ public abstract class DocItem implements XMLArchiver.Archivable {
      */
     public int getIndex()
     {
-        List<DocItem> items = getParent()!=null ? getParent().getItems() : null;
-        return items!=null ? items.indexOf(this) : -1;
+        List<DocItem> items = getParent() != null ? getParent().getItems() : null;
+        return items != null ? items.indexOf(this) : -1;
     }
 
     /**
      * Returns the items.
      */
-    public List<DocItem> getItems()  { return _items; }
+    public List<DocItem<?>> getItems()  { return _items; }
 
     /**
      * Returns the number of items.
@@ -156,52 +172,50 @@ public abstract class DocItem implements XMLArchiver.Archivable {
     public DocItem addChartPart(ChartPart aChartPart, DocItem anItem)
     {
         DocItem par = getParent();
-        if (par!=null)
+        if (par != null)
             return par.addChartPart(aChartPart, this);
         return null;
     }
 
-    protected Image createIconImage()
+    /**
+     * Override for DocItem properties.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
     {
-        return Image.get(ViewUtils.class, "PlainFile.png");
+        switch (aPropName) {
+
+            // Name
+            case Name_Prop: return getName();
+
+            // Content, Items
+            case Content_Rel: return getContent();
+            case Items_Prop: return getItems();
+
+            // Do normal version
+            default: return super.getPropValue(aPropName);
+        }
     }
 
     /**
-     * Add listener.
+     * Override for DocItem properties.
      */
-    public void addPropChangeListener(PropChangeListener aPCL)
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
     {
-        if(_pcs== PropChangeSupport.EMPTY) _pcs = new PropChangeSupport(this);
-        _pcs.addPropChangeListener(aPCL);
+        switch (aPropName) {
+
+            // Name
+            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+
+            // Content, Items
+            //case Content_Rel: return getContent();
+            //case Items_Prop: return getItems();
+
+            // Do normal version
+            default: super.setPropValue(aPropName, aValue);
+        }
     }
-
-    /**
-     * Remove listener.
-     */
-    public void removePropChangeListener(PropChangeListener aPCL)  { _pcs.removePropChangeListener(aPCL); }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal)
-    {
-        if(!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal));
-    }
-
-    /**
-     * Fires a property change for given property name, old value, new value and index.
-     */
-    protected void firePropChange(String aProp, Object oldVal, Object newVal, int anIndex)
-    {
-        if(!_pcs.hasListener(aProp)) return;
-        firePropChange(new PropChange(this, aProp, oldVal, newVal, anIndex));
-    }
-
-    /**
-     * Fires a given property change.
-     */
-    protected void firePropChange(PropChange aPC)  { _pcs.firePropChange(aPC); }
 
     /**
      * Archival.
@@ -214,7 +228,8 @@ public abstract class DocItem implements XMLArchiver.Archivable {
         XMLElement e = new XMLElement(cname);
 
         // Archive name
-        if(getName()!=null && getName().length()>0) e.add(Name_Prop, getName());
+        if(getName() != null && getName().length() > 0)
+            e.add(Name_Prop, getName());
 
         // Return element
         return e;

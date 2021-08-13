@@ -1,5 +1,6 @@
 package snapcharts.doc;
 import snap.util.PropChange;
+import snap.util.PropDefaults;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
@@ -8,10 +9,7 @@ import snapcharts.model.DataSetList;
 /**
  * A DocItem subclass to hold a chart.
  */
-public class DocItemChart extends DocItem {
-
-    // The Chart
-    private Chart _chart;
+public class DocItemChart extends DocItem<Chart> {
 
     /**
      * Constructor.
@@ -19,22 +17,35 @@ public class DocItemChart extends DocItem {
     public DocItemChart(Chart aChart)
     {
         // Set Chart
-        _chart = aChart;
+        _content = aChart;
 
         // Add Items for DataSets
-        DataSetList dsetList = _chart.getDataSetList();
+        DataSetList dsetList = _content.getDataSetList();
         for (DataSet dset : dsetList.getDataSets())
             addItem(new DocItemDataSet(dset));
 
         // Start listening to prop changes
-        _chart.addPropChangeListener(aPC -> chartDidPropChange(aPC));
-        _chart.addDeepChangeListener((obj,aPC) -> chartDidPropChange(aPC));
+        _content.addPropChangeListener(aPC -> chartDidPropChange(aPC));
+        _content.addDeepChangeListener((obj,aPC) -> chartDidPropChange(aPC));
+    }
+
+    /**
+     * Override to provide prop/relation names.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Remove Items so DocItemDataSets don't get archived (they are archived with chart)
+        aPropDefaults.removeRelations(Items_Prop);
     }
 
     /**
      * Returns the chart.
      */
-    public Chart getChart()  { return _chart; }
+    public Chart getChart()  { return _content; }
 
     /**
      * Override to return true.

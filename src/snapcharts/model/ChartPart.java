@@ -541,6 +541,33 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
+     * Override to forward to PropSheet - for now.
+     */
+    @Override
+    protected void firePropChange(PropChange aPC)
+    {
+        super.firePropChange(aPC);
+
+        // Forward to PropSheet because accessors aren't doing this
+        getPropSheet().setPropValue(aPC.getPropName(), aPC.getNewValue());
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(Name_Prop, Border_Prop, LineColor_Prop, LineWidth_Prop, LineDash_Prop,
+                Fill_Prop, Effect_Prop, Opacity_Prop, Font_Prop, TextFill_Prop,
+                Align_Prop, Margin_Prop, Padding_Prop, Spacing_Prop);
+    }
+
+    /**
      * Returns the prop value for given key.
      */
     @Override

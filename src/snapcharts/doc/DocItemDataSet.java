@@ -1,28 +1,24 @@
 package snapcharts.doc;
-
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
 
 /**
  * A DocItem subclass to hold a chart.
  */
-public class DocItemDataSet extends DocItem {
-
-    // The DataSet
-    private DataSet _dset;
+public class DocItemDataSet extends DocItem<DataSet> {
 
     /**
      * Constructor.
      */
     public DocItemDataSet(DataSet aDataSet)
     {
-        _dset = aDataSet;
+        _content = aDataSet;
     }
 
     /**
      * Returns the DataSet.
      */
-    public DataSet getDataSet()  { return _dset; }
+    public DataSet getDataSet()  { return _content; }
 
     /**
      * Override to return DataSet name.

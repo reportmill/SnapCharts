@@ -141,13 +141,22 @@ public class ChartSetPane extends DocItemPane {
      */
     private List<DocItemChart> getChartDocItems()
     {
+        // Get doc items and create ChartItems array
+        List<DocItem<?>> docItems = _docItem.getItems();
         List<DocItemChart> chartItems = new ArrayList<>();
-        for (DocItem docItem : _docItem.getItems()) {
+
+        // Iterate over doc items
+        for (DocItem docItem : docItems) {
+
+            // Handle DocItemGroup: Get charts inside
             if (docItem instanceof DocItemGroup) {
-                for (DocItem ditem : ((DocItemGroup)docItem).getItems())
+                List<DocItem<?>> groupItems = docItem.getItems();
+                for (DocItem<?> ditem : groupItems)
                     if (ditem instanceof DocItemChart)
                         chartItems.add((DocItemChart) ditem);
             }
+
+            // Handle DocItemChart
             else if (docItem instanceof DocItemChart)
                 chartItems.add((DocItemChart) docItem);
         }

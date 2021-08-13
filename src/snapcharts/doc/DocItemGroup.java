@@ -1,19 +1,19 @@
 package snapcharts.doc;
 import snap.util.MathUtils;
+import snap.util.PropObject;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
 import snapcharts.model.PageDisplay;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A DocItem subclass that has child items.
  */
-public class DocItemGroup extends DocItem {
+public class DocItemGroup<T extends PropObject> extends DocItem<T> {
 
     // Whether group pages should be portrait
     private boolean  _portrait = true;
@@ -139,7 +139,7 @@ public class DocItemGroup extends DocItem {
     public List<Chart> getCharts()
     {
         List<Chart> charts = new ArrayList<>();
-        for (DocItem item : getItems())
+        for (DocItem<?> item : getItems())
             if (item instanceof DocItemChart)
                 charts.add(((DocItemChart)item).getChart());
         return charts;
@@ -148,7 +148,7 @@ public class DocItemGroup extends DocItem {
     /**
      * Adds a chart.
      */
-    public DocItem addChart(Chart aChart)
+    public DocItemChart addChart(Chart aChart)
     {
         DocItemChart chartDocItem = new DocItemChart(aChart);
         addItem(chartDocItem);
@@ -158,7 +158,7 @@ public class DocItemGroup extends DocItem {
     /**
      * Adds a chart at given index.
      */
-    public DocItem addChart(Chart aChart, int anIndex)
+    public DocItemChart addChart(Chart aChart, int anIndex)
     {
         DocItemChart chartDocItem = new DocItemChart(aChart);
         addItem(chartDocItem, anIndex);

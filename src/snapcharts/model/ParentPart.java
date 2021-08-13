@@ -4,6 +4,7 @@
 package snapcharts.model;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
+import snap.util.PropDefaults;
 
 /**
  * This ChartPart class can have child ChartParts.
@@ -12,6 +13,9 @@ public class ParentPart extends ChartPart {
 
     // The children
     private ChartPart[]  _children = new ChartPart[0];
+
+    // Constants for property relations
+    private static final String Children_Rel = "Children";
 
     /**
      * Returns the children.
@@ -58,5 +62,34 @@ public class ParentPart extends ChartPart {
     {
         Chart chart = getChart();
         chart.chartPartDidPropChange(aPropChange);
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addRelations(Children_Rel);
+    }
+
+    /**
+     * Override for Chart properties.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        switch (aPropName) {
+
+            // Children
+            case Children_Rel: return getChildren();
+
+            // Do normal version
+            default: return super.getPropValue(aPropName);
+        }
     }
 }

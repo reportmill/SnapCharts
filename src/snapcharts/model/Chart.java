@@ -60,6 +60,9 @@ public class Chart extends ParentPart {
     public static final String Type_Prop = "Type";
     public static final String Colors_Prop = "Colors";
 
+    // Constants for relations
+    public static final String AxisX_Rel = "AxisX";
+
     // Constants for property defaults
     public static final ChartType DEFAULT_TYPE = ChartType.SCATTER;
 
@@ -261,6 +264,35 @@ public class Chart extends ParentPart {
     protected void chartPartDidPropChange(PropChange aPC)
     {
         _pcs.fireDeepChange(this, aPC);
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(Type_Prop);
+    }
+
+    /**
+     * Override for Chart properties.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        switch (aPropName) {
+
+            // Type
+            case Type_Prop: return getType();
+
+            // Do normal version
+            default: return super.getPropValue(aPropName);
+        }
     }
 
     /**
