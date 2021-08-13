@@ -16,10 +16,7 @@ import java.util.List;
 /**
  * A ViewOwner to handle display of whole ChartDoc.
  */
-public class ChartSetPane extends DocItemPane {
-
-    // The DocItem that this class displays
-    private DocItemGroup _docItem;
+public class ChartSetPane extends DocItemPane<DocItemGroup> {
 
     // The list of charts
     private List<Chart>  _charts = new ArrayList<>();
@@ -46,17 +43,11 @@ public class ChartSetPane extends DocItemPane {
     public static Color BACK_FILL = new Color(226, 232, 246);
 
     /**
-     * Returns the DocItem that this ChartSetPane displays.
+     * Constructor.
      */
-    public DocItemGroup getDocItem()  { return _docItem; }
-
-    /**
-     * Sets the DocItem that this ChartSetPane displays.
-     */
-    public void setDocItem(DocItemGroup anItem)
+    public ChartSetPane(DocItemGroup aDocItem)
     {
-        _docItem = anItem;
-        _docItem.addPropChangeListener(pc -> docItemDidPropChange(pc));
+        super(aDocItem);
     }
 
     /**
@@ -115,16 +106,16 @@ public class ChartSetPane extends DocItemPane {
     /**
      * Called when DocItem has prop change.
      */
-    private void docItemDidPropChange(PropChange aPC)
+    protected void docItemDidPropChange(PropChange aPC)
     {
         // Get PropChange.PropName
         String propName = aPC.getPropName();
 
         // Handle Items
-        if (propName== DocItem.Items_Prop)
+        if (propName == DocItem.Items_Prop)
             resetCharts();
-        if (propName==DocItemGroup.Portrait_Prop || propName==DocItemGroup.PageDisplay_Prop ||
-            propName==DocItemGroup.ItemsPerPage_Prop || propName==DocItemGroup.ChartScale_Prop)
+        if (propName == DocItemGroup.Portrait_Prop || propName == DocItemGroup.PageDisplay_Prop ||
+            propName == DocItemGroup.ItemsPerPage_Prop || propName == DocItemGroup.ChartScale_Prop)
                 resetCharts();
 
         // Reset UI
@@ -142,7 +133,8 @@ public class ChartSetPane extends DocItemPane {
     private List<DocItemChart> getChartDocItems()
     {
         // Get doc items and create ChartItems array
-        List<DocItem<?>> docItems = _docItem.getItems();
+        DocItemGroup docItemGroup = getDocItem();
+        List<DocItem<?>> docItems = docItemGroup.getItems();
         List<DocItemChart> chartItems = new ArrayList<>();
 
         // Iterate over doc items

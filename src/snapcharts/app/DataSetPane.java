@@ -1,5 +1,4 @@
 package snapcharts.app;
-
 import snap.geom.HPos;
 import snap.util.FormatUtils;
 import snap.util.ListSel;
@@ -7,6 +6,7 @@ import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.appmisc.SheetView;
+import snapcharts.doc.DocItemDataSet;
 import snapcharts.model.DataChan;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataStore;
@@ -17,13 +17,13 @@ import snapcharts.util.DataUtils;
 /**
  * A ViewOwner to handle display of whole ChartDoc.
  */
-public class DataSetPane extends DocItemPane {
+public class DataSetPane extends DocItemPane<DocItemDataSet> {
 
     // The DataSet
-    private DataSet  _dset;
+    private DataSet  _dataSet;
 
     // The SheetView
-    private SheetView _sheetView;
+    private SheetView  _sheetView;
 
     // Constants for actions
     private final String Cut_Action = "CutAction";
@@ -32,19 +32,29 @@ public class DataSetPane extends DocItemPane {
     private final String Delete_Action = "DeleteAction";
 
     /**
+     * Constructor.
+     */
+    public DataSetPane(DocItemDataSet aDataSet)
+    {
+        super(aDataSet);
+
+        setDataSet(aDataSet.getDataSet());
+    }
+
+    /**
      * Returns the DataSet.
      */
-    public DataSet getDataSet()  { return _dset; }
+    public DataSet getDataSet()  { return _dataSet; }
 
     /**
      * Sets the DataSet.
      */
     public void setDataSet(DataSet aDS)
     {
-        _dset = aDS;
+        _dataSet = aDS;
 
         // Start listening to changes
-        _dset.addPropChangeListener(pc -> dataSetDidChange(pc));
+        _dataSet.addPropChangeListener(pc -> dataSetDidChange(pc));
     }
 
     /**

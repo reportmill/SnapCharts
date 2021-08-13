@@ -8,6 +8,9 @@ import snap.util.PropChange;
 import snap.util.PropChangeListener;
 import snap.util.Undoer;
 import snap.view.*;
+import snapcharts.doc.DocItem;
+import snapcharts.doc.DocItemChart;
+import snapcharts.doc.DocItemDataSet;
 import snapcharts.model.Chart;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.ChartPart;
@@ -20,7 +23,7 @@ import snapcharts.view.DataView;
 /**
  * A class to manage charts/data in a ChartBook.
  */
-public class ChartPane extends DocItemPane {
+public class ChartPane extends DocItemPane<DocItem> {
 
     // The chartView
     private ChartView  _chartView;
@@ -62,9 +65,30 @@ public class ChartPane extends DocItemPane {
     /**
      * Constructor.
      */
-    public ChartPane()
+    public ChartPane(DocItem aDocItem)
     {
-        super();
+        super(aDocItem);
+    }
+
+    /**
+     * Override.
+     */
+    @Override
+    protected void setDocItem(DocItem aDocItem)
+    {
+        super.setDocItem(aDocItem);
+
+        // Handle DocItemChart
+        if (aDocItem instanceof DocItemChart) {
+            DocItemChart docItemChart = (DocItemChart) aDocItem;
+            setChart(docItemChart.getChart());
+        }
+
+        // Handle DocItemDataSet
+        else if (aDocItem instanceof DocItemDataSet) {
+            DocItemDataSet docItemDataSet = (DocItemDataSet) aDocItem;
+            setDataSet(docItemDataSet.getDataSet());
+        }
     }
 
     /**
@@ -323,9 +347,13 @@ public class ChartPane extends DocItemPane {
         // Make sure TabView has DataSetPane UI view (not Label placeholder)
         int selTabIndex = _tabView.getSelIndex();
         if (selTabIndex>=0 && _tabView.getTabContent(selTabIndex) instanceof Label) {
-            DataSet dset = getDataSetList().getDataSet(selTabIndex);
-            DataSetPane dsetPane = new DataSetPane();
-            dsetPane.setDataSet(dset);
+
+            // Get DataSet and create DataSetPane
+            DataSet dataSet = getDataSetList().getDataSet(selTabIndex);
+            DocItemDataSet docItemDataSet = new DocItemDataSet(dataSet);
+            DataSetPane dsetPane = new DataSetPane(docItemDataSet);
+
+            // Set TabView content
             _tabView.setTabContent(dsetPane.getUI(), selTabIndex);
         }
 

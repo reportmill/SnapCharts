@@ -1,15 +1,14 @@
 package snapcharts.doc;
 import snap.util.FilePathUtils;
+import snap.util.PropObject;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snap.web.PathUtils;
 import snap.web.WebURL;
-import snapcharts.model.Chart;
 
 /**
  * A class to hold multiple chart objects.
  */
-public class Doc extends DocItemGroup {
+public class Doc<T extends PropObject> extends DocItemGroup<T> {
 
     // The Source URL
     private WebURL  _srcURL;

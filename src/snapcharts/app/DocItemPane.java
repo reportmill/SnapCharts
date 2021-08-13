@@ -2,17 +2,22 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.app;
+import snap.util.PropChange;
 import snap.view.View;
 import snap.view.ViewAnimUtils;
 import snap.view.ViewOwner;
+import snapcharts.doc.DocItem;
 
 /**
  * The base class for DocItem editors.
  */
-public class DocItemPane extends ViewOwner {
+public class DocItemPane<T extends DocItem> extends ViewOwner {
 
     // The DocPane that holds this DocItemPane
     private DocPane  _docPane;
+
+    // The DocItem shown in this pane
+    private T  _docItem;
 
     // Whether inspector is showing
     private boolean  _showInsp = true;
@@ -20,9 +25,11 @@ public class DocItemPane extends ViewOwner {
     /**
      * Constructor.
      */
-    public DocItemPane()
+    public DocItemPane(T aDocItem)
     {
         super();
+
+        setDocItem(aDocItem);
     }
 
     /**
@@ -36,6 +43,22 @@ public class DocItemPane extends ViewOwner {
     public void setDocPane(DocPane aDP)
     {
         _docPane = aDP;
+    }
+
+    /**
+     * Returns the DocItem.
+     */
+    public T getDocItem()  { return _docItem; }
+
+    /**
+     * Sets the DocItem.
+     */
+    protected void setDocItem(T aDocItem)
+    {
+        _docItem = aDocItem;
+
+        // Add PropChange listeners
+        _docItem.addPropChangeListener(pc -> docItemDidPropChange(pc));
     }
 
     /**
@@ -71,4 +94,12 @@ public class DocItemPane extends ViewOwner {
      * Returns the inspector.
      */
     public ViewOwner getInspector()  { return null; }
+
+    /**
+     * Called when DocItem has change.
+     */
+    protected void docItemDidPropChange(PropChange aPC)
+    {
+
+    }
 }

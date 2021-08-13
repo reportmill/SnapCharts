@@ -12,7 +12,7 @@ public class DocItemDataSet extends DocItem<DataSet> {
      */
     public DocItemDataSet(DataSet aDataSet)
     {
-        _content = aDataSet;
+        super(aDataSet);
     }
 
     /**

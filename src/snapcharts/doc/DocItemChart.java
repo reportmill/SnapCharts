@@ -16,8 +16,7 @@ public class DocItemChart extends DocItem<Chart> {
      */
     public DocItemChart(Chart aChart)
     {
-        // Set Chart
-        _content = aChart;
+        super(aChart);
 
         // Add Items for DataSets
         DataSetList dsetList = _content.getDataSetList();

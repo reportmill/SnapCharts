@@ -48,7 +48,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
      */
     public DocItemGroup()
     {
-        super();
+        super(null);
     }
 
     /**

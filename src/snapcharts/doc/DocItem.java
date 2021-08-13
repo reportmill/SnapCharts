@@ -32,9 +32,12 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     /**
      * Constructor.
      */
-    public DocItem()
+    public DocItem(T aContent)
     {
         super();
+
+        if (aContent != null)
+            setContent(aContent);
     }
 
     /**

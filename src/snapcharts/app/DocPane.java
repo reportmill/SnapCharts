@@ -403,27 +403,16 @@ public class DocPane extends ViewOwner {
     protected DocItemPane createItemPane(DocItem anItem)
     {
         // Handle DocItemChart
-        if (anItem instanceof DocItemChart) {
-            Chart chart = ((DocItemChart)anItem).getChart();
-            ChartPane pane = new ChartPane();
-            pane.setChart(chart);
-            return pane;
-        }
+        if (anItem instanceof DocItemChart)
+            return new ChartPane(anItem);
 
         // Handle DocItemDataSet
-        if (anItem instanceof DocItemDataSet) {
-            DataSet dset = ((DocItemDataSet)anItem).getDataSet();
-            ChartPane pane = new ChartPane();
-            pane.setDataSet(dset);
-            return pane;
-        }
+        if (anItem instanceof DocItemDataSet)
+            return new ChartPane(anItem);
 
         // Handle DocItemGroup
-        if (anItem instanceof DocItemGroup) {
-            ChartSetPane pane = new ChartSetPane();
-            pane.setDocItem((DocItemGroup)anItem);
-            return pane;
-        }
+        if (anItem instanceof DocItemGroup)
+            return new ChartSetPane((DocItemGroup) anItem);
 
         // Complain (bitterly)
         throw new RuntimeException("DocItemPane.createItemPane: Unknown item: " + anItem);
