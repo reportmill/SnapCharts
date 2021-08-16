@@ -60,8 +60,8 @@ public class DocItemChart extends DocItem<Chart> {
     {
         // Handle add DataSet
         if (aChartPart instanceof DataSet) {
-            DataSet dset = (DataSet)aChartPart;
-            int ind = aChildItem!=null ? aChildItem.getIndex() + 1 : getItemCount();
+            DataSet dset = (DataSet) aChartPart;
+            int ind = aChildItem != null ? aChildItem.getIndex() + 1 : getItemCount();
             getChart().getDataSetList().addDataSet(dset, ind);
             return getItem(ind);
         }
@@ -79,10 +79,10 @@ public class DocItemChart extends DocItem<Chart> {
         String propName = aPC.getPropName();
 
         // Handle DataSet add/remove
-        if (propName==DataSetList.DataSet_Prop) {
-            int ind = aPC.getIndex(); if (ind<0) return;
-            DataSet newVal = (DataSet)aPC.getNewValue();
-            if (newVal!=null)
+        if (propName == DataSetList.DataSet_Prop) {
+            int ind = aPC.getIndex(); if (ind < 0) return;
+            DataSet newVal = (DataSet) aPC.getNewValue();
+            if (newVal != null)
                 addItem(new DocItemDataSet(newVal));
             else removeItem(ind);
         }

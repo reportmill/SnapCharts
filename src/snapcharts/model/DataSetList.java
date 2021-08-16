@@ -318,8 +318,8 @@ public class DataSetList extends ChartPart {
      */
     public void setStartValue(int aValue)
     {
-        if (aValue== _startValue) return;
-        firePropChange(StartValue_Prop, _startValue, _startValue =aValue);
+        if (aValue == _startValue) return;
+        firePropChange(StartValue_Prop, _startValue, _startValue = aValue);
     }
 
     /**
@@ -350,7 +350,7 @@ public class DataSetList extends ChartPart {
     {
         DataSet[] dataSets = getEnabledDataSets();
         for (DataSet dset : dataSets)
-            if (dset.getPoint(anIndex).getValueY()!=null)
+            if (dset.getPoint(anIndex).getValueY() != null)
                 return false;
         return true;
     }
@@ -363,9 +363,9 @@ public class DataSetList extends ChartPart {
         clearCachedValues();
 
         // Handle Disabled: if Pie chart, clear other
-        String prop = aPC.getPropName();
-        if (prop==DataSet.Disabled_Prop) {
-            DataSet dset = (DataSet)aPC.getSource();
+        String propName = aPC.getPropName();
+        if (propName == DataSet.Disabled_Prop) {
+            DataSet dset = (DataSet) aPC.getSource();
             boolean isPie = getChart().getType() == ChartType.PIE;
             if (isPie && !dset.isDisabled()) {
                 for (DataSet ds : getDataSets())

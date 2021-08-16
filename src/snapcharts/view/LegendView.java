@@ -178,9 +178,7 @@ public class LegendView extends ChartPartView<Legend> {
     {
         // Get row/dataset index
         ParentView parentView = anEntryView.getParent();
-        int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView);
-        if (_titleView.isVisible())
-            index--;
+        int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView) - 1;
 
         // Get dataset and disable
         DataSetList dsetList = getDataSetList();
