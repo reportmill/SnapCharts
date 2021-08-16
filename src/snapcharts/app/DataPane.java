@@ -129,7 +129,7 @@ public class DataPane extends ViewOwner {
         // Get value
         Double val = dset.getValueY(col-1);
         aCell.setText(val!=null? StringUtils.toString(val) : null);
-        aCell.setAlign(HPos.RIGHT);
+        aCell.setAlignX(HPos.RIGHT);
     }
 
     /**
@@ -146,7 +146,7 @@ public class DataPane extends ViewOwner {
         if (col==0) {
             Label hdr = aCol.getHeader();
             hdr.setText("DataSet Name");
-            hdr.setAlign(HPos.LEFT);
+            hdr.setAlignX(HPos.LEFT);
             aCol.setPrefWidth(-1);
             return;
         }

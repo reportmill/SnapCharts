@@ -232,7 +232,7 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
         Object val = dset.getValueForChannelIndex(col, row);
         String valStr = SnapUtils.stringValue(val);
         aCell.setText(valStr);
-        aCell.setAlign(HPos.RIGHT);
+        aCell.setAlignX(HPos.RIGHT);
     }
 
     /**

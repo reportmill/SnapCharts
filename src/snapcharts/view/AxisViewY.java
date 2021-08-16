@@ -138,7 +138,7 @@ public class AxisViewY extends AxisView<AxisY> {
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
         viewProxy.setSpacing(TITLE_TICKS_SPACING);
 
-        // If tick is 'Outside' or 'Accross', adjust padding to accommodate tick inside axis bounds
+        // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Axis axis = getAxis();
         Side axisSide = axis.getSide();
         Axis.TickPos tickPos = axis.getTickPos();
@@ -169,11 +169,20 @@ public class AxisViewY extends AxisView<AxisY> {
         // Do normal version
         super.resetView();
 
-        // Configure LegendGraphicRowView
+        // Configure TitleViewBox
         AxisY axisY = getAxis();
+        Pos align = axisY.getAlign();
+        _titleViewBox.setAlign(align);
+
+        // Configure LegendGraphicBox, LegendGraphicRowView
         boolean showLegendGraphic = axisY.isShowLegendGraphic();
         _legendGraphicBox.setVisible(showLegendGraphic);
         if (showLegendGraphic) {
+
+            // Set LegendGraphicBox align
+            _legendGraphicBox.setAlignY(axisY.getAlignY());
+
+            // Remove/add LegendEntryViews to LegendGraphicRowView
             _legendGraphicRowView.removeChildren();
             Legend legend = axisY.getChart().getLegend();
             DataSet[] dataSets = getDataSetList().getDataSets();

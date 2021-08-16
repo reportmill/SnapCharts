@@ -76,12 +76,17 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     {
         // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
-        viewProxy.setAlign(Pos.BOTTOM_CENTER);
-        ArrayUtils.reverse(viewProxy.getChildren());
+
+        // Configure Align, Spacing
+        Axis axis = getAxis();
+        Pos align = axis.getAlign();
+        viewProxy.setAlign(align);
         viewProxy.setSpacing(TITLE_TICKS_SPACING);
 
+        // Reverse children (assumes Side == Bottom)
+        ArrayUtils.reverse(viewProxy.getChildren());
+
         // If tick is 'Outside' or 'Accross', adjust padding to accommodate tick inside axis bounds
-        Axis axis = getAxis();
         Side axisSide = axis.getSide();
         Axis.TickPos tickPos = axis.getTickPos();
         double tickLength = axis.getTickLength();

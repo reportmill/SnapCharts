@@ -148,7 +148,7 @@ public class SheetView extends TableView <Object> {
                 col.setPrefWidth(colWidth);
                 col.setWidth(colWidth);
                 Label header = col.getHeader();
-                header.setAlign(HPos.CENTER);
+                header.setAlignX(HPos.CENTER);
                 addCol(col);
             }
         }

@@ -20,17 +20,14 @@ public abstract class Axis extends ChartPart {
     // The Title
     private String  _title;
 
-    // The title alignment
-    private Pos  _titleAlign;
-
     // The title rotation
     private double  _titleRot;
 
     // The Axis Min Bounding
-    private AxisBound _minBound = AxisBound.AUTO;
+    private AxisBound  _minBound = AxisBound.AUTO;
 
     // The Axis Min Bounding
-    private AxisBound _maxBound = AxisBound.AUTO;
+    private AxisBound  _maxBound = AxisBound.AUTO;
 
     // The Axis Min Value (if MinBounding is VALUE)
     private double  _minValue;
@@ -73,7 +70,6 @@ public abstract class Axis extends ChartPart {
 
     // Constants for properties
     public static final String Title_Prop = "Title";
-    public static final String TitleAlign_Prop = "TitleAlign";
     public static final String TitleRotate_Prop = "TitleRotate";
     public static final String MinBound_Prop = "MinBound";
     public static final String MaxBound_Prop = "MaxBound";
@@ -94,8 +90,8 @@ public abstract class Axis extends ChartPart {
     // Constants for default values
     public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
     public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
+    public static final Pos  DEFAULT_AXIS_ALIGN = Pos.CENTER;
     protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
-    protected static Pos  DEFAULT_TITLE_ALIGN = Pos.CENTER;
     public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
     public static final boolean  DEFAULT_SHOW_GRID = true;
     public static final Color  DEFAULT_GRID_COLOR = Color.get("#E6");
@@ -115,7 +111,6 @@ public abstract class Axis extends ChartPart {
         super();
 
         // Set default property values
-        _titleAlign = DEFAULT_TITLE_ALIGN;
         _wrapMinMax = DEFAULT_WRAP_MINMAX;
         _showGrid = DEFAULT_SHOW_GRID;
         _gridColor = DEFAULT_GRID_COLOR;
@@ -128,6 +123,7 @@ public abstract class Axis extends ChartPart {
         _lineColor = DEFAULT_AXIS_LINE_COLOR;
         _lineWidth = DEFAULT_AXIS_LINE_WIDTH;
         _textFill = DEFAULT_AXIS_TEXT_FILL;
+        _align = DEFAULT_AXIS_ALIGN;
     }
 
     /**
@@ -148,40 +144,6 @@ public abstract class Axis extends ChartPart {
         if (Objects.equals(aStr, _title)) return;
         firePropChange(Title_Prop, _title, _title =aStr);
     }
-
-    /**
-     * Returns the title alignment.
-     */
-    public Pos getTitleAlign()  { return _titleAlign; }
-
-    /**
-     * Sets the title alignment.
-     */
-    public void setTitleAlign(Pos aPos)
-    {
-        if (aPos == _titleAlign) return;
-        firePropChange(TitleAlign_Prop, _titleAlign, _titleAlign = aPos);
-    }
-
-    /**
-     * Returns the title alignment.
-     */
-    public HPos getTitleAlignX()  { return _titleAlign.getHPos(); }
-
-    /**
-     * Sets the title alignment.
-     */
-    public void setTitleAlignX(HPos aPos)  { setTitleAlign(Pos.get(aPos, getTitleAlignY())); }
-
-    /**
-     * Returns the title alignment.
-     */
-    public VPos getTitleAlignY()  { return _titleAlign.getVPos(); }
-
-    /**
-     * Sets the title alignment.
-     */
-    public void setTitleAlignY(VPos aPos)  { setTitleAlign(Pos.get(getTitleAlignX(), aPos)); }
 
     /**
      * Returns the title rotation in degrees.
@@ -535,13 +497,16 @@ public abstract class Axis extends ChartPart {
             // TextFill
             case TextFill_Prop: return DEFAULT_AXIS_TEXT_FILL;
 
+            // Align
+            case Align_Prop: return DEFAULT_AXIS_ALIGN;
+
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return AxisBound.AUTO;
             case MaxBound_Prop: return AxisBound.AUTO;
             case MinValue_Prop: return 0;
             case MaxValue_Prop: return 5;
 
-            // TickLength, TichPos
+            // TickLength, TickPos
             case TickLength_Prop: return DEFAULT_TICK_LENGTH;
             case TickPos_Prop: return DEFAULT_TICK_POS;
 
@@ -559,11 +524,9 @@ public abstract class Axis extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive Title, TitleAlign, TitleRotate
+        // Archive Title, TitleRotate
         if (getTitle() != null && getTitle().length() > 0)
             e.add(Title_Prop, getTitle());
-        if (getTitleAlign() != DEFAULT_TITLE_ALIGN)
-            e.add(TitleAlign_Prop, getTitleAlign());
         if (getTitleRotate() != 0)
             e.add(TitleRotate_Prop, getTitleRotate());
 
@@ -613,11 +576,9 @@ public abstract class Axis extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive Title, TitleAlign, TitleRotate
+        // Unarchive Title, TitleRotate
         if (anElement.hasAttribute(Title_Prop))
             setTitle(anElement.getAttributeValue(Title_Prop));
-        if (anElement.hasAttribute(TitleAlign_Prop))
-            setTitleAlign(Pos.get(anElement.getAttributeValue(TitleAlign_Prop, DEFAULT_TITLE_ALIGN.toString())));
         if (anElement.hasAttribute(TitleRotate_Prop))
             setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
 
