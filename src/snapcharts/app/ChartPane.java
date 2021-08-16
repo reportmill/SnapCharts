@@ -23,7 +23,10 @@ import snapcharts.view.DataView;
 /**
  * A class to manage charts/data in a ChartBook.
  */
-public class ChartPane extends DocItemPane<DocItem> {
+public class ChartPane<T extends DocItem> extends DocItemPane<T> {
+
+    // The Chart
+    private Chart  _chart;
 
     // The chartView
     private ChartView  _chartView;
@@ -50,10 +53,10 @@ public class ChartPane extends DocItemPane<DocItem> {
     private ChartStyler  _styler = new ChartStyler(this);
 
     // The PropChangeListener
-    private PropChangeListener _pcl = pc -> chartPartDidPropChange(pc);
+    private PropChangeListener  _pcl = pc -> chartPartDidPropChange(pc);
 
     // The DeepChangeListener
-    private DeepChangeListener _dcl = (src, pc) -> chartPartDidPropChange(pc);
+    private DeepChangeListener  _dcl = (src, pc) -> chartPartDidPropChange(pc);
 
     // The undoer
     private Undoer  _undoer;
@@ -65,7 +68,7 @@ public class ChartPane extends DocItemPane<DocItem> {
     /**
      * Constructor.
      */
-    public ChartPane(DocItem aDocItem)
+    public ChartPane(T aDocItem)
     {
         super(aDocItem);
     }
@@ -74,21 +77,59 @@ public class ChartPane extends DocItemPane<DocItem> {
      * Override.
      */
     @Override
-    protected void setDocItem(DocItem aDocItem)
+    protected void setDocItem(T aDocItem)
     {
         super.setDocItem(aDocItem);
 
         // Handle DocItemChart
         if (aDocItem instanceof DocItemChart) {
             DocItemChart docItemChart = (DocItemChart) aDocItem;
-            setChart(docItemChart.getChart());
+            Chart chart = docItemChart.getChart();
+            setChart(chart);
         }
 
         // Handle DocItemDataSet
         else if (aDocItem instanceof DocItemDataSet) {
             DocItemDataSet docItemDataSet = (DocItemDataSet) aDocItem;
-            setDataSet(docItemDataSet.getDataSet());
+            DataSet dataSet = docItemDataSet.getDataSet();
+            setChartForSingleDataSet(dataSet);
         }
+    }
+
+    /**
+     * Returns the chart.
+     */
+    public Chart getChart()  { return _chart; }
+
+    /**
+     * Sets the Chart.
+     */
+    private void setChart(Chart aChart)
+    {
+        _chart = aChart;
+    }
+
+    /**
+     * Sets the DataSet, with chart.
+     */
+    private void setChartForSingleDataSet(DataSet aDataSet)
+    {
+        // Put ChartPane in 'DataSetMode'
+        _dataSetMode = true;
+
+        // Copy DataSet chart
+        Chart chart = aDataSet.getChart();
+        Chart chartCopy = new ChartArchiver().copy(chart);
+        DataSetList dataSetList = chartCopy.getDataSetList();
+        while (dataSetList.getDataSetCount() > 0)
+            dataSetList.removeDataSet(0);
+
+        // Copy DataSet and add to ChartCopy
+        DataSet dataSetCopy = new ChartArchiver().copy(aDataSet);
+        dataSetList.addDataSet(dataSetCopy);
+
+        // Set Chart
+        setChart(chartCopy);
     }
 
     /**
@@ -112,28 +153,6 @@ public class ChartPane extends DocItemPane<DocItem> {
     public ChartPaneInsp getInspector()  { return _insp; }
 
     /**
-     * Returns the chart.
-     */
-    public Chart getChart()
-    {
-        return _chartView.getChart();
-    }
-
-    /**
-     * Sets the Chart.
-     */
-    public void setChart(Chart aChart)
-    {
-        getUI();
-        _chartView.setChart(aChart);
-        resetLater();
-
-        // Start listening to changes
-        aChart.addPropChangeListener(_pcl);
-        aChart.addDeepChangeListener(_dcl);
-    }
-
-    /**
      * Returns the ChartHelper.
      */
     public ChartHelper getChartHelper()  { return _chartView.getChartHelper(); }
@@ -152,27 +171,11 @@ public class ChartPane extends DocItemPane<DocItem> {
      */
     public DataSet getDataSet()
     {
-        int selIndex = _tabView!=null ? _tabView.getSelIndex() : -1;
         DataSetList dataSetList = getDataSetList();
-        if (selIndex<0 || selIndex>=dataSetList.getDataSetCount())
+        int selIndex = _tabView != null ? _tabView.getSelIndex() : -1;
+        if (selIndex < 0 || selIndex >= dataSetList.getDataSetCount())
             return null;
         return dataSetList.getDataSet(selIndex);
-    }
-
-    /**
-     * Sets the DataSet, with chart.
-     */
-    public void setDataSet(DataSet aDataSet)
-    {
-        _dataSetMode = true;
-        Chart chart = aDataSet.getChart();
-        Chart chart2 = new ChartArchiver().copy(chart);
-        DataSetList dataSetList = chart2.getDataSetList();
-        while (dataSetList.getDataSetCount()>0)
-            dataSetList.removeDataSet(0);
-        DataSet dset2 = new ChartArchiver().copy(aDataSet);
-        dataSetList.addDataSet(dset2);
-        setChart(chart2);
     }
 
     /**
@@ -314,6 +317,14 @@ public class ChartPane extends DocItemPane<DocItem> {
 
         // Register for EscapeAction
         addKeyActionHandler("EscapeAction", "ESCAPE");
+
+        // Set Chart in ChartView
+        Chart chart = getChart();
+        _chartView.setChart(chart);
+
+        // Start listening to Chart PropChanges
+        chart.addPropChangeListener(_pcl);
+        chart.addDeepChangeListener(_dcl);
     }
 
     /**
