@@ -38,6 +38,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
 
         if (aContent != null)
             setContent(aContent);
+
+        // Hack until accessors are done with PropSheet, so firePropChange() always gets called
+        _pcs = new PropChangeSupport(this);
     }
 
     /**

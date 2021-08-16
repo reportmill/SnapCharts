@@ -3,7 +3,9 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
-import snap.gfx.Font;
+import snap.geom.Pos;
+import snap.gfx.*;
+import snap.util.PropDefaults;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -91,6 +93,55 @@ public class Header extends ChartPart {
     public void setSubtitleFont(Font aFont)
     {
         _subtitleFont = aFont;
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(Title_Prop, Subtitle_Prop);
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // Handle Title, Subtitle
+            case Title_Prop: return getTitle();
+            case Subtitle_Prop: return getSubtitle();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // Handle Title, Subtitle
+            case Title_Prop: setTitle(SnapUtils.stringValue(aValue)); break;
+            case Subtitle_Prop: setSubtitle(SnapUtils.stringValue(aValue)); break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue);
+        }
     }
 
     /**
