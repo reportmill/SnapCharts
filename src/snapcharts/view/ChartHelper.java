@@ -415,9 +415,11 @@ public abstract class ChartHelper {
             double min = Double.MAX_VALUE;
             double max = -Double.MAX_VALUE;
             for (DataArea dataArea : dataAreas) {
-                DataStore stagedData = dataArea.getStagedData();
-                min = Math.min(min, stagedData.getMinX());
-                max = Math.max(max, stagedData.getMaxX());
+                if (!dataArea.isDataSetDisabled()) {
+                    DataStore stagedData = dataArea.getStagedData();
+                    min = Math.min(min, stagedData.getMinX());
+                    max = Math.max(max, stagedData.getMaxX());
+                }
             }
             return new MinMax(min, max);
         }
@@ -427,13 +429,13 @@ public abstract class ChartHelper {
             double min = Double.MAX_VALUE;
             double max = -Double.MAX_VALUE;
             for (DataArea dataArea : dataAreas) {
-                if (anAxisType == dataArea.getAxisTypeY()) {
+                if (anAxisType == dataArea.getAxisTypeY() && !dataArea.isDataSetDisabled()) {
                     DataStore stagedData = dataArea.getStagedData();
                     min = Math.min(min, stagedData.getMinY());
                     max = Math.max(max, stagedData.getMaxY());
                 }
             }
-            if (min==Double.MAX_VALUE)
+            if (min == Double.MAX_VALUE)
                 return new MinMax(0, 5);
             return new MinMax(min, max);
         }
