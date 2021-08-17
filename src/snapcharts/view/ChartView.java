@@ -33,6 +33,9 @@ public class ChartView extends ChartPartView<Chart> {
     // The view that shows contour color bar scale
     private ColorBarView  _colorBarView;
 
+    // The MarkerViews
+    private MarkerView[]  _markerViews;
+
     // The amount of the chart to show horizontally (0-1)
     private double  _reveal = 1;
 
@@ -64,7 +67,7 @@ public class ChartView extends ChartPartView<Chart> {
     private Runnable  _resetViewRunShared = () -> { resetView(); _resetViewRun = null; };
 
     // The PropChangeListener
-    private PropChangeListener  _pcl = pc -> chartDidPropChange();
+    private PropChangeListener  _pcl = pc -> chartDidPropChange(pc);
     
     // The DeepChangeListener
     private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange(pc);
@@ -234,6 +237,29 @@ public class ChartView extends ChartPartView<Chart> {
      * Returns the ColorBarView.
      */
     public ColorBarView getColorBarView()  { return _colorBarView; }
+
+    /**
+     * Returns the MarkerViews.
+     */
+    public MarkerView[] getMarkerViews()
+    {
+        // If already set, just return
+        if (_markerViews != null) return _markerViews;
+
+        // Get array of markers and create array for MarkerViews
+        Chart chart = getChart();
+        Marker[] markers = chart.getMarkers();
+        MarkerView[] markerViews = new MarkerView[markers.length];
+
+        // Iterate over Markers and create MarkerView for each
+        for (int i = 0; i < markers.length; i++) {
+            Marker marker = markers[i];
+            markerViews[i] = new MarkerView(marker);
+        }
+
+        // Set and return
+        return _markerViews = markerViews;
+    }
 
     /**
      * Called to reset view from Chart.
@@ -464,8 +490,15 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Called when Chart has a PropChange.
      */
-    protected void chartDidPropChange()
+    protected void chartDidPropChange(PropChange aPC)
     {
+        String propName = aPC.getPropName();
+        if (propName == Chart.Markers_Rel) {
+            _markerViews = null;
+            relayout();
+        }
+
+        // Trigger reset
         resetLater();
     }
 
@@ -507,6 +540,20 @@ public class ChartView extends ChartPartView<Chart> {
     protected void layoutImpl()
     {
         _layout.layoutChart();
+
+        layoutMarkers();
+    }
+
+    /**
+     * Does layout for Chart Markers.
+     */
+    protected void layoutMarkers()
+    {
+        MarkerView[] markerViews = getMarkerViews();
+        for (MarkerView markerView : markerViews) {
+            Rect bnds = markerView.getPrefBounds();
+            markerView.setBounds(bnds);
+        }
     }
 
     /**

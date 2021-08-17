@@ -7,6 +7,9 @@ import snapcharts.model.*;
  */
 public abstract class ChartPartView<T extends ChartPart> extends ParentView {
 
+    // The ChartPart
+    protected T  _chartPart;
+
     /**
      * Constructor.
      */
@@ -16,9 +19,18 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     }
 
     /**
+     * Constructor.
+     */
+    public ChartPartView(T aChartPart)
+    {
+        super();
+        _chartPart = aChartPart;
+    }
+
+    /**
      * Returns the ChartPart.
      */
-    public abstract T getChartPart();
+    public T getChartPart()  { return _chartPart; }
 
     /**
      * Returns the chart.
