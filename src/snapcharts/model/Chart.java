@@ -50,6 +50,9 @@ public class Chart extends ParentPart {
     // The Legend
     private Legend  _legend;
 
+    // Array of marker objects used to highlight or annotate an area on the chart
+    private Marker[]  _markers = new Marker[0];
+
     // The dataset colors
     private Color[]  _colors = ColorMap.GT_COLORS;
 
@@ -62,6 +65,9 @@ public class Chart extends ParentPart {
 
     // Constants for relations
     public static final String AxisX_Rel = "AxisX";
+    public static final String AxisY_Rel = "AxisY";
+    public static final String Legend_Rel = "Legend";
+    public static final String Markers_Rel = "Markers";
 
     // Constants for property defaults
     public static final ChartType DEFAULT_TYPE = ChartType.SCATTER;
@@ -213,6 +219,54 @@ public class Chart extends ParentPart {
     public Legend getLegend()  { return _legend; }
 
     /**
+     * Returns array of marker objects used to highlight or annotate an area on the chart.
+     */
+    public Marker[] getMarkers()  { return _markers; }
+
+    /**
+     * Returns the marker at given index.
+     */
+    public Marker getMarker(int anIndex)  { return _markers[anIndex]; }
+
+    /**
+     * Adds a marker object.
+     */
+    public void addMarker(Marker aMarker)
+    {
+        addMarker(aMarker, getMarkers().length);
+    }
+
+    /**
+     * Adds a marker object at given index.
+     */
+    public void addMarker(Marker aMarker, int anIndex)
+    {
+        _markers = ArrayUtils.add(_markers, aMarker, anIndex);
+        firePropChange(Markers_Rel, null, aMarker, anIndex);
+    }
+
+    /**
+     * Removes the marker at given index.
+     */
+    public Marker removeMarker(int anIndex)
+    {
+        Marker marker = getMarker(anIndex);
+        _markers = ArrayUtils.remove(_markers, anIndex);
+        firePropChange(Markers_Rel, marker, null, anIndex);
+        return marker;
+    }
+
+    /**
+     * Removes the given marker.
+     */
+    public void removeMarker(Marker aMarker)
+    {
+        int index = ArrayUtils.indexOfId(_markers, aMarker);
+        if (index >= 0)
+            removeMarker(index);
+    }
+
+    /**
      * Returns the DataSetList.
      */
     public DataSetList getDataSetList()  { return _dsetList; }
@@ -275,8 +329,9 @@ public class Chart extends ParentPart {
         // Do normal version
         super.initPropDefaults(aPropDefaults);
 
-        // Add Props
+        // Add Props and relations
         aPropDefaults.addProps(Type_Prop);
+        aPropDefaults.addRelations(AxisX_Rel, AxisY_Rel, Legend_Rel, Markers_Rel);
     }
 
     /**
@@ -289,6 +344,12 @@ public class Chart extends ParentPart {
 
             // Type
             case Type_Prop: return getType();
+
+            // AxisX, AxisY, Legend, Markers
+            case AxisX_Rel: return getAxisX();
+            case AxisY_Rel: return getAxisY();
+            case Legend_Rel: return getLegend();
+            case Markers_Rel: return getMarkers();
 
             // Do normal version
             default: return super.getPropValue(aPropName);
