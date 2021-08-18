@@ -529,7 +529,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         double lineWidth = getLineWidth(); if (lineWidth <= 0) return null;
         Color lineColor = getLineColor();
         System.err.println(getClass().getSimpleName() + ".getBorder: Should probably call line prop methods instead");
-        return Border.createLineBorder(lineColor, lineWidth);
+        return new Borders.LineBorder(lineColor, getLineStroke());
     }
 
     /**

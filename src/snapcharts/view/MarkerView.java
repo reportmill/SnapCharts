@@ -14,7 +14,11 @@ public class MarkerView extends ChartPartView<Marker> {
     public MarkerView(Marker aMarker)
     {
         super(aMarker);
+        setFill(aMarker.getFill());
+        setBorder(aMarker.getBorder());
+        setOpacity(aMarker.getOpacity());
         setManaged(false);
+        setPaintable(false);
     }
 
     /**
@@ -27,6 +31,7 @@ public class MarkerView extends ChartPartView<Marker> {
      */
     public Rect getPrefBounds()
     {
+        ChartHelper chartHelper = getChartHelper();
         Marker marker = getMarker();
         double markX;
         double markY;
@@ -41,9 +46,9 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceX Axis
         if (axisTypeX != null) {
-            DataArea dataArea = getChartHelper().getDataAreas()[0];
-            double dataX0 = getX();
-            double dataX1 = dataX0 + getWidth();
+            DataArea dataArea = chartHelper.getDataAreas()[0];
+            double dataX0 = marker.getX();
+            double dataX1 = dataX0 + marker.getWidth();
             if (isFractionalX) {
                 double dataMin = dataArea.getStagedData().getMinX();
                 double dataMax = dataArea.getStagedData().getMaxX();
@@ -56,9 +61,9 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceX DataBounds
         else if (coordSpaceX == Marker.CoordSpace.DataBounds) {
-            DataView dataView = getChartHelper().getDataView();
-            markX = getX();
-            markW = getWidth();
+            DataView dataView = chartHelper.getDataView();
+            markX = marker.getX();
+            markW = marker.getWidth();
             if (isFractionalX) {
                 double dispMin = 0;
                 double dispMax = dataView.getWidth();
@@ -70,8 +75,8 @@ public class MarkerView extends ChartPartView<Marker> {
         // Handle CoordSpaceX ChartBounds
         else if (coordSpaceX == Marker.CoordSpace.ChartBounds) {
             ChartView chartView = getChartView();
-            markX = getX();
-            markW = getWidth();
+            markX = marker.getX();
+            markW = marker.getWidth();
             if (isFractionalX) {
                 double dispMin = 0;
                 double dispMax = chartView.getWidth();
@@ -87,9 +92,9 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceY Axis
         if (axisTypeY != null) {
-            DataArea dataArea = getChartHelper().getDataAreaForAxisTypeY(axisTypeY);
-            double dataY0 = getY();
-            double dataY1 = dataY0 + getHeight();
+            DataArea dataArea = chartHelper.getDataAreaForAxisTypeY(axisTypeY);
+            double dataY0 = marker.getY();
+            double dataY1 = dataY0 + marker.getHeight();
             if (isFractionalY) {
                 double dataMin = dataArea.getStagedData().getMinY();
                 double dataMax = dataArea.getStagedData().getMaxY();
@@ -97,14 +102,14 @@ public class MarkerView extends ChartPartView<Marker> {
                 dataY1 = dataMin + dataY1 * (dataMax - dataMin);
             }
             markY = dataArea.dataToViewY(dataY0);
-            markH = dataArea.dataToViewY(dataY1) - markY;
+            markH = markY - dataArea.dataToViewY(dataY1) ;
         }
 
         // Handle CoordSpaceY DataBounds
         else if (coordSpaceY == Marker.CoordSpace.DataBounds) {
-            DataView dataView = getChartHelper().getDataView();
-            markY = getY();
-            markH = getHeight();
+            DataView dataView = chartHelper.getDataView();
+            markY = marker.getY();
+            markH = marker.getHeight();
             if (isFractionalY) {
                 double dispMin = 0;
                 double dispMax = dataView.getHeight();
@@ -116,8 +121,8 @@ public class MarkerView extends ChartPartView<Marker> {
         // Handle CoordSpaceY ChartBounds
         else if (coordSpaceY == Marker.CoordSpace.ChartBounds) {
             ChartView chartView = getChartView();
-            markY = getY();
-            markH = getHeight();
+            markY = marker.getY();
+            markH = marker.getHeight();
             if (isFractionalY) {
                 double dispMin = 0;
                 double dispMax = chartView.getHeight();

@@ -11,11 +11,8 @@ import snap.view.*;
 import snapcharts.doc.DocItem;
 import snapcharts.doc.DocItemChart;
 import snapcharts.doc.DocItemDataSet;
-import snapcharts.model.Chart;
+import snapcharts.model.*;
 import snapcharts.doc.ChartArchiver;
-import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
@@ -317,6 +314,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
         // Register for EscapeAction
         addKeyActionHandler("EscapeAction", "ESCAPE");
+        addKeyActionHandler("AddTestMarkerAction", "M");
 
         // Set Chart in ChartView
         Chart chart = getChart();
@@ -413,6 +411,30 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle EscapeAction
         if (anEvent.equals("EscapeAction"))
             getSel().popSelection();
+
+        // Handle AddTestMarkerAction
+        if (anEvent.equals("AddTestMarkerAction"))
+            addTestMarker();
+    }
+
+    /**
+     * Add a test data marker.
+     */
+    private void addTestMarker()
+    {
+        Chart chart = getChart();
+        Marker marker = new Marker();
+        marker.setCoordSpaceX(Marker.CoordSpace.X);
+        marker.setCoordSpaceY(Marker.CoordSpace.Y);
+        marker.setFractionalX(true);
+        marker.setFractionalY(true);
+        marker.setBounds(.45, .45, .1, .1);
+        marker.setFill(Color.RED);
+        marker.setLineColor(Color.RED);
+        marker.setLineWidth(3);
+        marker.setLineDash(Stroke.DASH_DASH);
+        marker.setOpacity(.2);
+        chart.addMarker(marker);
     }
 
     /**

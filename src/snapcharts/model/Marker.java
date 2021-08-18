@@ -116,6 +116,17 @@ public class Marker extends ChartPart {
     }
 
     /**
+     * Sets the bounds.
+     */
+    public void setBounds(double aX, double aY, double aW, double aH)
+    {
+        setX(aX);
+        setY(aY);
+        setWidth(aW);
+        setHeight(aH);
+    }
+
+    /**
      * Returns the CoordSpace of X/Width properties.
      */
     public CoordSpace getCoordSpaceX()  { return _coordSpaceX; }
@@ -169,6 +180,12 @@ public class Marker extends ChartPart {
     {
         if (aValue == isFractionalY()) return;
         firePropChange(FractionalY_Prop, _fractionalY, _fractionalY = aValue);
+    }
+
+    @Override
+    public boolean isBorderSupported()
+    {
+        return false;
     }
 
     /**

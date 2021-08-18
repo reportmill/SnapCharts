@@ -254,7 +254,9 @@ public class ChartView extends ChartPartView<Chart> {
         // Iterate over Markers and create MarkerView for each
         for (int i = 0; i < markers.length; i++) {
             Marker marker = markers[i];
-            markerViews[i] = new MarkerView(marker);
+            MarkerView markerView = markerViews[i] = new MarkerView(marker);
+            markerView.setVisible(false);
+            addChild(markerView);
         }
 
         // Set and return

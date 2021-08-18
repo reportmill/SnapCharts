@@ -5,6 +5,7 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
+import snap.view.ViewUtils;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataPoint;
 import snapcharts.model.DataSetList;
@@ -132,6 +133,14 @@ public class DataView extends ChartPartView<DataSetList> {
 
         // Paint Chart Border
         _chartHelper.paintBorder(aPntr);
+
+        // Paint markers
+        MarkerView[] markerViews = getChartView().getMarkerViews();
+        for (MarkerView markerView : markerViews) {
+            aPntr.translate(markerView.getX(), markerView.getY());
+            ViewUtils.paintAll(markerView, aPntr);
+            aPntr.translate(-markerView.getX(), -markerView.getY());
+        }
     }
 
     /**
