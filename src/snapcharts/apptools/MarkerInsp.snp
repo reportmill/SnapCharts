@@ -27,7 +27,7 @@
     <CheckBox Name="FractionalXCheckBox" Margin="0,0,0,8" Spacing="5" text="Fractional" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label Spacing="4" text="X:" />
+    <Label Spacing="4" text="Y:" />
     <TextField Name="YText" ColCount="6" />
     <Label Margin="0,0,0,10" Spacing="4" text="H:" />
     <TextField Name="HText" ColCount="6" />

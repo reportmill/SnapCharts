@@ -28,7 +28,7 @@ public class Marker extends ChartPart {
     public enum CoordSpace  {
 
         // The constants
-        ChartBounds, DataBounds, X, Y, Y2, Y3, Y4;
+        X, Y, Y2, Y3, Y4, DataView, ChartView;
 
         // Map to AxisType
         public AxisType getAxisType()  { return getAxisTypeForCoordSpace(this); }
@@ -45,7 +45,7 @@ public class Marker extends ChartPart {
     public static final String FractionalY_Prop = "FractionalY";
 
     // Constants for defaults
-    private static final CoordSpace  DEFAULT_COORD_SPACE = CoordSpace.DataBounds;
+    private static final CoordSpace  DEFAULT_COORD_SPACE = CoordSpace.DataView;
 
     /**
      * Constructor.
@@ -251,7 +251,7 @@ public class Marker extends ChartPart {
             case CoordSpaceY_Prop: return DEFAULT_COORD_SPACE;
 
             // Do normal version
-            default: return super.getPropValue(aPropName);
+            default: return super.getPropDefault(aPropName);
         }
     }
 

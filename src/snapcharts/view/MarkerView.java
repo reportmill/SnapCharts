@@ -27,17 +27,22 @@ public class MarkerView extends ChartPartView<Marker> {
     public Marker getMarker()  { return _chartPart; }
 
     /**
-     * Returns the appropriate bounds for MarkerView.
+     * Returns the appropriate bounds for MarkerView in ChartView coords.
      */
-    public Rect getPrefBounds()
+    public Rect getPrefBoundsInChartViewCoords()
     {
         ChartHelper chartHelper = getChartHelper();
+        DataView dataView = chartHelper.getDataView();
         Marker marker = getMarker();
         double markX;
         double markY;
         double markW;
         double markH;
         markX = markY = markW = markH = 0;
+
+        // Get first DataArea
+        DataArea[] dataAreas = chartHelper.getDataAreas();
+        DataArea dataArea0 = dataAreas.length > 0 ? dataAreas[0] : null;
 
         // Get CoordSpace info for X
         Marker.CoordSpace coordSpaceX = marker.getCoordSpaceX();
@@ -46,7 +51,7 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceX Axis
         if (axisTypeX != null) {
-            DataArea dataArea = chartHelper.getDataAreas()[0];
+            DataArea dataArea = dataArea0;
             double dataX0 = marker.getX();
             double dataX1 = dataX0 + marker.getWidth();
             if (isFractionalX) {
@@ -60,8 +65,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceX DataBounds
-        else if (coordSpaceX == Marker.CoordSpace.DataBounds) {
-            DataView dataView = chartHelper.getDataView();
+        else if (coordSpaceX == Marker.CoordSpace.DataView) {
             markX = marker.getX();
             markW = marker.getWidth();
             if (isFractionalX) {
@@ -73,7 +77,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceX ChartBounds
-        else if (coordSpaceX == Marker.CoordSpace.ChartBounds) {
+        else if (coordSpaceX == Marker.CoordSpace.ChartView) {
             ChartView chartView = getChartView();
             markX = marker.getX();
             markW = marker.getWidth();
@@ -93,6 +97,10 @@ public class MarkerView extends ChartPartView<Marker> {
         // Handle CoordSpaceY Axis
         if (axisTypeY != null) {
             DataArea dataArea = chartHelper.getDataAreaForAxisTypeY(axisTypeY);
+            if (dataArea == null) {
+                System.err.println("MarkerView.getPrefBoundsInChartViewCoords: Invalid Y axis: " + axisTypeY);
+                dataArea = dataArea0;
+            }
             double dataY0 = marker.getY();
             double dataY1 = dataY0 + marker.getHeight();
             if (isFractionalY) {
@@ -106,8 +114,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceY DataBounds
-        else if (coordSpaceY == Marker.CoordSpace.DataBounds) {
-            DataView dataView = chartHelper.getDataView();
+        else if (coordSpaceY == Marker.CoordSpace.DataView) {
             markY = marker.getY();
             markH = marker.getHeight();
             if (isFractionalY) {
@@ -119,7 +126,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceY ChartBounds
-        else if (coordSpaceY == Marker.CoordSpace.ChartBounds) {
+        else if (coordSpaceY == Marker.CoordSpace.ChartView) {
             ChartView chartView = getChartView();
             markY = marker.getY();
             markH = marker.getHeight();
@@ -131,7 +138,9 @@ public class MarkerView extends ChartPartView<Marker> {
             }
         }
 
-        // Return rect
+        // Convert X/Y from DataView to ChartView coords and return rect
+        markX += dataView.getX();
+        markY += dataView.getY();
         return new Rect(markX, markY, markW, markH);
     }
 }

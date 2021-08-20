@@ -6,9 +6,8 @@ import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
-import snapcharts.model.ChartPart;
-import snapcharts.model.DataPoint;
-import snapcharts.model.DataSetList;
+import snapcharts.model.*;
+
 import java.util.Objects;
 
 /**
@@ -137,9 +136,32 @@ public class DataView extends ChartPartView<DataSetList> {
         // Paint markers
         MarkerView[] markerViews = getChartView().getMarkerViews();
         for (MarkerView markerView : markerViews) {
-            aPntr.translate(markerView.getX(), markerView.getY());
+
+            // Save GState
+            aPntr.save();
+
+            // If either set of marker coords in Axis space, clip to DataView bounds
+            Marker marker = markerView.getMarker();
+            AxisType axisTypeX = marker.getCoordSpaceX().getAxisType();
+            AxisType axisTypeY = marker.getCoordSpaceY().getAxisType();
+            if (axisTypeX != null || axisTypeY != null) {
+                double clipX = axisTypeX != null ? 0 : -getX();
+                double clipY = axisTypeY != null ? 0 : -getY();
+                double clipW = axisTypeX != null ? getWidth() : _chartView.getWidth();
+                double clipH = axisTypeY != null ? getHeight() : _chartView.getHeight();
+                aPntr.clipRect(clipX, clipY, clipW, clipH);
+            }
+
+            // Translate paint space to marker origin in DataView coords
+            double markerX = markerView.getX() - getX();
+            double markerY = markerView.getY() - getY();
+            aPntr.translate(markerX, markerY);
+
+            // Paint MarkerView
             ViewUtils.paintAll(markerView, aPntr);
-            aPntr.translate(-markerView.getX(), -markerView.getY());
+
+            // Restore graphics state
+            aPntr.restore();
         }
     }
 

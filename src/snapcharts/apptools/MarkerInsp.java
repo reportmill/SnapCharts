@@ -2,15 +2,11 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
-import snap.geom.Pos;
-import snap.gfx.Border;
-import snap.gfx.Color;
-import snap.util.StringUtils;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
-import snapcharts.model.Legend;
 import snapcharts.model.Marker;
+import snapcharts.view.ChartView;
 import snapcharts.view.MarkerView;
 
 /**
@@ -38,15 +34,19 @@ public class MarkerInsp extends ChartPartInsp {
     @Override
     public ChartPart getChartPart()
     {
+        // If selected ChartPart is marker, return it
         ChartPane chartPane = getChartPane();
         ChartPart selPart = chartPane.getSelChartPart();
         if (selPart instanceof Marker)
             return selPart;
 
-        MarkerView[] markerViews = chartPane.getChartView().getMarkerViews();
+        // If there are any markers, return first
+        ChartView chartView = chartPane.getChartView();
+        MarkerView[] markerViews = chartView.getMarkerViews();
         if (markerViews.length > 0)
             return markerViews[0].getMarker();
 
+        // Return null since no markers are available
         return null;
     }
 
@@ -65,8 +65,8 @@ public class MarkerInsp extends ChartPartInsp {
         // Reset XSpaceXButton, XSpaceDataButton, XSpaceChartButton
         Marker.CoordSpace coordSpaceX = marker.getCoordSpaceX();
         setViewValue("XSpaceXButton", coordSpaceX == Marker.CoordSpace.X);
-        setViewValue("XSpaceDataButton", coordSpaceX == Marker.CoordSpace.DataBounds);
-        setViewValue("XSpaceChartButton", coordSpaceX == Marker.CoordSpace.ChartBounds);
+        setViewValue("XSpaceDataButton", coordSpaceX == Marker.CoordSpace.DataView);
+        setViewValue("XSpaceChartButton", coordSpaceX == Marker.CoordSpace.ChartView);
 
         // Reset YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
         Marker.CoordSpace coordSpaceY = marker.getCoordSpaceY();
@@ -74,8 +74,8 @@ public class MarkerInsp extends ChartPartInsp {
         setViewValue("YSpaceY2Button", coordSpaceY == Marker.CoordSpace.Y2);
         setViewValue("YSpaceY3Button", coordSpaceY == Marker.CoordSpace.Y3);
         setViewValue("YSpaceY4Button", coordSpaceY == Marker.CoordSpace.Y4);
-        setViewValue("YSpaceDataButton", coordSpaceY == Marker.CoordSpace.DataBounds);
-        setViewValue("YSpaceChartButton", coordSpaceY == Marker.CoordSpace.ChartBounds);
+        setViewValue("YSpaceDataButton", coordSpaceY == Marker.CoordSpace.DataView);
+        setViewValue("YSpaceChartButton", coordSpaceY == Marker.CoordSpace.ChartView);
 
         // Reset XText, WText, FractionalXCheckBox
         setViewValue("XText", marker.getX());
@@ -104,9 +104,9 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("XSpaceXButton"))
             marker.setCoordSpaceX(Marker.CoordSpace.X);
         if (anEvent.equals("XSpaceDataButton"))
-            marker.setCoordSpaceX(Marker.CoordSpace.DataBounds);
+            marker.setCoordSpaceX(Marker.CoordSpace.DataView);
         if (anEvent.equals("XSpaceChartButton"))
-            marker.setCoordSpaceX(Marker.CoordSpace.ChartBounds);
+            marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
 
         // Reset YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
         if (anEvent.equals("YSpaceYButton"))
@@ -118,9 +118,9 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("YSpaceY4Button"))
             marker.setCoordSpaceY(Marker.CoordSpace.Y4);
         if (anEvent.equals("YSpaceDataButton"))
-            marker.setCoordSpaceY(Marker.CoordSpace.DataBounds);
+            marker.setCoordSpaceY(Marker.CoordSpace.DataView);
         if (anEvent.equals("XSpaceChartButton"))
-            marker.setCoordSpaceY(Marker.CoordSpace.ChartBounds);
+            marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
 
         // Reset XText, WText, FractionalXCheckBox
         if (anEvent.equals("XText"))

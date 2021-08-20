@@ -249,10 +249,9 @@ public class ChartPaneSel {
     {
         // Check Markers first
         MarkerView[] markerViews = _chartView.getMarkerViews();
-        DataView dataView = _chartView.getDataView();
         for (MarkerView markerView : markerViews) {
-            double markX = aX - dataView.getX() - markerView.getX();
-            double markY = aY - dataView.getY() - markerView.getY();
+            double markX = aX - markerView.getX();
+            double markY = aY - markerView.getY();
             if (markerView.contains(markX, markY))
                 return markerView;
         }
