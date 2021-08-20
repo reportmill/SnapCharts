@@ -1,7 +1,10 @@
 package snapcharts.view;
 import snap.geom.Rect;
 import snapcharts.model.AxisType;
+import snapcharts.model.DataSet;
+import snapcharts.model.DataStore;
 import snapcharts.model.Marker;
+import snapcharts.util.MinMax;
 
 /**
  * This ChartPartView subclass renders a Chart Marker.
@@ -14,17 +17,27 @@ public class MarkerView extends ChartPartView<Marker> {
     public MarkerView(Marker aMarker)
     {
         super(aMarker);
-        setFill(aMarker.getFill());
-        setBorder(aMarker.getBorder());
-        setOpacity(aMarker.getOpacity());
         setManaged(false);
         setPaintable(false);
+
+        resetPaintProperties();
     }
 
     /**
      * Returns the Marker.
      */
     public Marker getMarker()  { return _chartPart; }
+
+    /**
+     * Resets the paint properties from Marker in view.
+     */
+    public void resetPaintProperties()
+    {
+        Marker marker = getMarker();
+        setFill(marker.getFill());
+        setBorder(marker.getBorder());
+        setOpacity(marker.getOpacity());
+    }
 
     /**
      * Returns the appropriate bounds for MarkerView in ChartView coords.
@@ -104,13 +117,15 @@ public class MarkerView extends ChartPartView<Marker> {
             double dataY0 = marker.getY();
             double dataY1 = dataY0 + marker.getHeight();
             if (isFractionalY) {
-                double dataMin = dataArea.getStagedData().getMinY();
-                double dataMax = dataArea.getStagedData().getMaxY();
+                MinMax dataMinMax = getStagedDataMinMaxYForAxisY(axisTypeY);
+                double dataMin = dataMinMax.getMin();
+                double dataMax = dataMinMax.getMax();
                 dataY0 = dataMin + dataY0 * (dataMax - dataMin);
                 dataY1 = dataMin + dataY1 * (dataMax - dataMin);
             }
-            markY = dataArea.dataToViewY(dataY0);
-            markH = markY - dataArea.dataToViewY(dataY1) ;
+            markY = dataArea.dataToViewY(dataY1);
+            double markMaxY = dataArea.dataToViewY(dataY0);
+            markH = markMaxY - markY;
         }
 
         // Handle CoordSpaceY DataBounds
@@ -142,5 +157,27 @@ public class MarkerView extends ChartPartView<Marker> {
         markX += dataView.getX();
         markY += dataView.getY();
         return new Rect(markX, markY, markW, markH);
+    }
+
+    /**
+     * Returns the MinMax for all StagedData on given axis.
+     */
+    private MinMax getStagedDataMinMaxYForAxisY(AxisType anAxisType)
+    {
+        ChartHelper chartHelper = getChartHelper();
+        DataArea[] dataAreas = chartHelper.getDataAreas();
+        double min = Float.MAX_VALUE;
+        double max = -Float.MAX_VALUE;
+        for (DataArea dataArea : dataAreas) {
+            DataSet dataSet = dataArea.getDataSet();
+            if (dataSet.getAxisTypeY() != anAxisType || dataSet.isDisabled())
+                continue;
+            DataStore stagedData = dataArea.getStagedData();
+            min = Math.min(min, stagedData.getMinY());
+            max = Math.max(max, stagedData.getMaxY());
+        }
+        if (min == Float.MAX_VALUE)
+            return new MinMax(0, 1);
+        return new MinMax(min, max);
     }
 }
