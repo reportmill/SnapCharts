@@ -242,6 +242,7 @@ public class Chart extends ParentPart {
     public void addMarker(Marker aMarker, int anIndex)
     {
         _markers = ArrayUtils.add(_markers, aMarker, anIndex);
+        addChild(aMarker);
         firePropChange(Markers_Rel, null, aMarker, anIndex);
     }
 

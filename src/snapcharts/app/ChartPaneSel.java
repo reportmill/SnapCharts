@@ -158,6 +158,13 @@ public class ChartPaneSel {
         if (aChartPart instanceof Legend)
             return _chartView.getLegendView();
 
+        // Handle Marker
+        if (aChartPart instanceof Marker) {
+            for (MarkerView markerView : _chartView.getMarkerViews())
+                if (markerView.getMarker() == aChartPart)
+                    return markerView;
+        }
+
         // Handle DataStyle
         if (aChartPart instanceof DataSetList || aChartPart instanceof DataSet)
             return _chartView.getDataView();
@@ -240,6 +247,16 @@ public class ChartPaneSel {
      */
     private ChartPartView getChartPartViewForXY(double aX, double aY)
     {
+        // Check Markers first
+        MarkerView[] markerViews = _chartView.getMarkerViews();
+        DataView dataView = _chartView.getDataView();
+        for (MarkerView markerView : markerViews) {
+            double markX = aX - dataView.getX() - markerView.getX();
+            double markY = aY - dataView.getY() - markerView.getY();
+            if (markerView.contains(markX, markY))
+                return markerView;
+        }
+
         // Get deepest selectable view for X/Y
         View view = ViewUtils.getDeepestChildAt(_chartView, aX, aY, ChartPartView.class);
 
@@ -256,7 +273,8 @@ public class ChartPaneSel {
      */
     private boolean isSelectableView(View aView)
     {
-        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView || aView instanceof DataView;
+        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView ||
+                aView instanceof DataView || aView instanceof MarkerView;
     }
 
     /**

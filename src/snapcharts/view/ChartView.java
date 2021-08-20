@@ -255,7 +255,6 @@ public class ChartView extends ChartPartView<Chart> {
         for (int i = 0; i < markers.length; i++) {
             Marker marker = markers[i];
             MarkerView markerView = markerViews[i] = new MarkerView(marker);
-            markerView.setVisible(false);
             addChild(markerView);
         }
 
@@ -511,6 +510,11 @@ public class ChartView extends ChartPartView<Chart> {
     {
         // Forward to ChartHelper
         _chartHelper.chartPartDidChange(aPC);
+
+        // Handle Marker change
+        if (aPC.getSource() instanceof Marker) {
+            relayout();
+        }
 
         // Trigger reset
         resetLater();

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
+  <RowView Padding="4" Spacing="4">
+    <Label Spacing="4" text="Space X:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Name="XSpaceXButton" Padding="2,4,2,4" text="X" Position="CENTER_LEFT" />
+      <ToggleButton Name="XSpaceDataButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
+      <ToggleButton Name="XSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_RIGHT" />
+    </RowView>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label Spacing="4" text="Space Y:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Name="YSpaceYButton" Padding="2,4,2,4" text="Y" Position="CENTER_LEFT" />
+      <ToggleButton Name="YSpaceY2Button" Padding="2,4,2,4" text="Y2" Position="CENTER" />
+      <ToggleButton Name="YSpaceY3Button" Padding="2,4,2,4" text="Y3" Position="CENTER" />
+      <ToggleButton Name="YSpaceY4Button" Padding="2,4,2,4" text="Y4" Position="CENTER" />
+      <ToggleButton Name="YSpaceDataButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
+      <ToggleButton Name="YSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_RIGHT" />
+    </RowView>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label Spacing="4" text="X:" />
+    <TextField Name="XText" ColCount="6" />
+    <Label Margin="0,0,0,10" Spacing="4" text="W:" />
+    <TextField Name="WText" ColCount="6" />
+    <CheckBox Name="FractionalXCheckBox" Margin="0,0,0,8" Spacing="5" text="Fractional" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label Spacing="4" text="X:" />
+    <TextField Name="YText" ColCount="6" />
+    <Label Margin="0,0,0,10" Spacing="4" text="H:" />
+    <TextField Name="HText" ColCount="6" />
+    <CheckBox Name="FractionalYCheckBox" Margin="0,0,0,8" Spacing="5" text="Fractional" />
+  </RowView>
+  <RowView Padding="4" Spacing="4" />
+</ColView>

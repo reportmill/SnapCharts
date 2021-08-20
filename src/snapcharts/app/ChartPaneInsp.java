@@ -44,6 +44,9 @@ public class ChartPaneInsp extends ViewOwner {
     // The LegendInsp
     private LegendInsp  _legendInsp;
 
+    // The MarkerInsp
+    private MarkerInsp  _markerInsp;
+
     // The DataViewInsp
     private DataViewInsp  _dataViewInsp;
 
@@ -124,6 +127,10 @@ public class ChartPaneInsp extends ViewOwner {
             _legendInsp = new LegendInsp(_chartPane);
             addInspector(_legendInsp, false);
 
+            // Create/add MarkerInsp
+            _markerInsp = new MarkerInsp(_chartPane);
+            addInspector(_markerInsp, false);
+
             // Create/add DataViewInsp
             _dataViewInsp = new DataViewInsp(_chartPane);
             addInspector(_dataViewInsp, false);
@@ -139,7 +146,7 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp,
-                _dataViewInsp, _dataStyleInsp, _dsetInsp };
+                _markerInsp, _dataViewInsp, _dataStyleInsp, _dsetInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _dsetInsp };
 
@@ -244,6 +251,8 @@ public class ChartPaneInsp extends ViewOwner {
             return _axisYInsp;
         if (aChartPart instanceof Legend)
             return _legendInsp;
+        if (aChartPart instanceof Marker)
+            return _markerInsp;
         if (aChartPart instanceof DataSetList)
             return _dataViewInsp;
         if (aChartPart instanceof DataSet)
