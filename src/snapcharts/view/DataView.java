@@ -133,17 +133,32 @@ public class DataView extends ChartPartView<DataSetList> {
         // Paint Chart Border
         _chartHelper.paintBorder(aPntr);
 
-        // Paint markers
+        // Paint Chart Markers
+        paintMarkers(aPntr);
+    }
+
+    /**
+     * Paints Chart Markers (ChartView.MarkerViews).
+     */
+    private void paintMarkers(Painter aPntr)
+    {
+        // Get MarkerViews
         MarkerView[] markerViews = getChartView().getMarkerViews();
+        if (markerViews.length == 0)
+            return;
+
+        // Paint markers
         for (MarkerView markerView : markerViews) {
 
             // Save GState
             aPntr.save();
 
-            // If either set of marker coords in Axis space, clip to DataView bounds
+            // Get Marker and X/Y axis (if either X/Y is in axis space)
             Marker marker = markerView.getMarker();
             AxisType axisTypeX = marker.getCoordSpaceX().getAxisType();
             AxisType axisTypeY = marker.getCoordSpaceY().getAxisType();
+
+            // If either set of marker coords in Axis space, clip to DataView bounds
             if (axisTypeX != null || axisTypeY != null) {
                 double clipX = axisTypeX != null ? 0 : -getX();
                 double clipY = axisTypeY != null ? 0 : -getY();

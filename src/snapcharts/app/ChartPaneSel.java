@@ -248,13 +248,9 @@ public class ChartPaneSel {
     private ChartPartView getChartPartViewForXY(double aX, double aY)
     {
         // Check Markers first
-        MarkerView[] markerViews = _chartView.getMarkerViews();
-        for (MarkerView markerView : markerViews) {
-            double markX = aX - markerView.getX();
-            double markY = aY - markerView.getY();
-            if (markerView.contains(markX, markY))
-                return markerView;
-        }
+        MarkerView markerView = getMarkerViewForXY(aX, aY);
+        if (markerView != null)
+            return markerView;
 
         // Get deepest selectable view for X/Y
         View view = ViewUtils.getDeepestChildAt(_chartView, aX, aY, ChartPartView.class);
@@ -265,6 +261,40 @@ public class ChartPaneSel {
 
         // If as ChartPartView (or null)
         return view instanceof ChartPartView ? (ChartPartView) view : null;
+    }
+
+    /**
+     * Returns the MarkerView for given point XY in ChartView coords.
+     */
+    private MarkerView getMarkerViewForXY(double aX, double aY)
+    {
+        // Check Markers first
+        MarkerView[] markerViews = _chartView.getMarkerViews();
+        for (MarkerView markerView : markerViews) {
+
+            // Get MarkerView bounds
+            double markX = markerView.getX();
+            double markY = markerView.getY();
+            double markW = markerView.getWidth();
+            double markH = markerView.getHeight();
+
+            // Constrain min bounds width/height to 10 (centered) so we can still select line or thin markers
+            if (markW < 10) {
+                int markMidX = (int) Math.round(markX + markW / 2);
+                markX = markMidX - 5; markW = 10;
+            }
+            if (markH < 10) {
+                int markMidY = (int) Math.round(markY + markH / 2);
+                markY = markMidY - 5; markH = 10;
+            }
+
+            // If MarkerView bounds contains XY, return it
+            if (Rect.contains(markX, markY, markW, markH, aX, aY))
+                return markerView;
+        }
+
+        // Return null since no MarkerView at point
+        return null;
     }
 
     /**
