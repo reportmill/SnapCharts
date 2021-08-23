@@ -1,6 +1,8 @@
 package snapcharts.model;
 import snap.util.SnapUtils;
 
+import java.util.Objects;
+
 /**
  * This ChartPart subclass is used to highlight or annotate an area on the chart.
  */
@@ -24,6 +26,15 @@ public class Marker extends ChartPart {
     // Whether X coordinates are provided as a fraction of CoordSpace.Max - CoordSpace.Min
     private boolean  _fractionalY;
 
+    // The Text for the marker
+    private String  _text;
+
+    // Whether Text is positioned outside bounds X
+    private boolean  _textOutsideX;
+
+    // Whether Text is positioned outside bounds Y
+    private boolean  _textOutsideY;
+
     // Constant for coordinate space
     public enum CoordSpace  {
 
@@ -43,6 +54,9 @@ public class Marker extends ChartPart {
     public static final String CoordSpaceY_Prop = "CoordSpaceY";
     public static final String FractionalX_Prop = "FractionalX";
     public static final String FractionalY_Prop = "FractionalY";
+    public static final String Text_Prop = "Text";
+    public static final String TextOutsideX_Prop = "TextOutsideX";
+    public static final String TextOutsideY_Prop = "TextOutsideY";
 
     // Constants for defaults
     private static final CoordSpace  DEFAULT_COORD_SPACE = CoordSpace.DataView;
@@ -182,6 +196,51 @@ public class Marker extends ChartPart {
         firePropChange(FractionalY_Prop, _fractionalY, _fractionalY = aValue);
     }
 
+    /**
+     * Returns text to be shown for this marker.
+     */
+    public String getText()  { return _text; }
+
+    /**
+     * Sets text to be shown for this marker.
+     */
+    public void setText(String aString)
+    {
+        if (Objects.equals(aString, _text)) return;
+        firePropChange(Text_Prop, _text, _text = aString);
+    }
+
+    /**
+     * Returns whether text is positioned outside bounds X.
+     */
+    public boolean isTextOutsideX()  { return _textOutsideX; }
+
+    /**
+     * Sets whether text is positioned outside bounds X.
+     */
+    public void setTextOutsideX(boolean aValue)
+    {
+        if (aValue == _textOutsideX) return;
+        firePropChange(TextOutsideX_Prop, _textOutsideX, _textOutsideX = aValue);
+    }
+
+    /**
+     * Returns whether text is positioned outside bounds Y.
+     */
+    public boolean isTextOutsideY()  { return _textOutsideY; }
+
+    /**
+     * Sets whether text is positioned outside bounds Y.
+     */
+    public void setTextOutsideY(boolean aValue)
+    {
+        if (aValue == _textOutsideY) return;
+        firePropChange(TextOutsideY_Prop, _textOutsideY, _textOutsideY = aValue);
+    }
+
+    /**
+     * Override so ChartPart will get/set Marker border from line properties.
+     */
     @Override
     public boolean isBorderSupported()
     {
@@ -208,6 +267,11 @@ public class Marker extends ChartPart {
             case FractionalX_Prop: return isFractionalX();
             case FractionalY_Prop: return isFractionalY();
 
+            // Text, TextOutsideX, TextOutsideY
+            case Text_Prop: return getText();
+            case TextOutsideX_Prop: return isTextOutsideX();
+            case TextOutsideY_Prop: return isTextOutsideY();
+
             // Do normal version
             default: return super.getPropValue(aPropName);
         }
@@ -232,6 +296,11 @@ public class Marker extends ChartPart {
             case CoordSpaceY_Prop: setCoordSpaceY((CoordSpace) aValue); break;
             case FractionalX_Prop: setFractionalX(SnapUtils.boolValue(aValue)); break;
             case FractionalY_Prop: setFractionalY(SnapUtils.boolValue(aValue)); break;
+
+            // Text, TextOutsideX, TextOutsideY
+            case Text_Prop: setText(SnapUtils.stringValue(aValue)); break;
+            case TextOutsideX_Prop: setTextOutsideX(SnapUtils.boolValue(aValue)); break;
+            case TextOutsideY_Prop: setTextOutsideY(SnapUtils.boolValue(aValue)); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);
