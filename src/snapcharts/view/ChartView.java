@@ -289,6 +289,11 @@ public class ChartView extends ChartPartView<Chart> {
         // Reset ColorBar
         _colorBarView.resetView();
 
+        // Reset MarkerViews
+        MarkerView[] markerViews = getMarkerViews();
+        for (MarkerView markerView : markerViews)
+            markerView.resetView();
+
         // Reset ChartHelper
         chartHelper.resetView();
 

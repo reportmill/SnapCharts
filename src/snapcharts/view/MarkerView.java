@@ -1,5 +1,10 @@
 package snapcharts.view;
+import snap.geom.HPos;
+import snap.geom.Insets;
 import snap.geom.Rect;
+import snap.geom.VPos;
+import snap.gfx.Color;
+import snap.view.TextArea;
 import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataStore;
@@ -11,6 +16,9 @@ import snapcharts.util.MinMax;
  */
 public class MarkerView extends ChartPartView<Marker> {
 
+    // The TextView to show Marker text
+    private TextArea  _textArea;
+
     /**
      * Constructor.
      */
@@ -19,6 +27,12 @@ public class MarkerView extends ChartPartView<Marker> {
         super(aMarker);
         setManaged(false);
         setPaintable(false);
+
+        // Create/add TextArea
+        _textArea = new TextArea();
+        _textArea.setPlainText(true);
+        _textArea.setBorder(Color.PINK, 1);
+        addChild(_textArea);
 
         resetPaintProperties();
     }
@@ -29,6 +43,17 @@ public class MarkerView extends ChartPartView<Marker> {
     public Marker getMarker()  { return _chartPart; }
 
     /**
+     * Override for MarkerView.
+     */
+    @Override
+    protected void resetView()
+    {
+        super.resetView();
+
+        resetPaintProperties();
+    }
+
+    /**
      * Resets the paint properties from Marker in view.
      */
     public void resetPaintProperties()
@@ -37,6 +62,57 @@ public class MarkerView extends ChartPartView<Marker> {
         setFill(marker.getFill());
         setBorder(marker.getBorder());
         setOpacity(marker.getOpacity());
+        setPadding(marker.getPadding());
+
+        // Update TextArea
+        String text = marker.getText();
+        if (text == null || text.length() == 0) {
+            _textArea.setVisible(false);
+            return;
+        }
+
+        // Update TextArea
+        _textArea.setText(text);
+        _textArea.setFont(marker.getFont());
+        _textArea.setVisible(true);
+        _textArea.setWrapLines(true);
+        _textArea.setAlign(marker.getAlign());
+
+        // Layout TextView
+        Insets ins = getInsetsAll();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = getWidth() - ins.getWidth();
+        double areaH = getHeight() - ins.getHeight();
+        if (areaW < 50)
+            areaW = 50;
+        if (areaH < _textArea.getPrefHeight())
+            areaH = _textArea.getPrefHeight();
+        _textArea.setBounds(areaX, areaY, areaW, areaH);
+
+        // Handle TextOutsideX
+        if (marker.isTextOutsideX()) {
+            if (marker.getAlignX() == HPos.LEFT) {
+                _textArea.setX(-getWidth());
+                _textArea.setAlignX(HPos.RIGHT);
+            }
+            else if (marker.getAlignX() == HPos.RIGHT) {
+                _textArea.setX(getWidth());
+                _textArea.setAlignX(HPos.LEFT);
+            }
+        }
+
+        // Handle TextOutsideY
+        if (marker.isTextOutsideY()) {
+            if (marker.getAlignY() == VPos.TOP) {
+                _textArea.setY(-getHeight());
+                _textArea.setAlignY(VPos.BOTTOM);
+            }
+            else if (marker.getAlignY() == VPos.BOTTOM) {
+                _textArea.setY(getHeight());
+                _textArea.setAlignY(VPos.TOP);
+            }
+        }
     }
 
     /**

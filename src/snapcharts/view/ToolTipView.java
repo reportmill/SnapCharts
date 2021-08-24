@@ -1,6 +1,7 @@
 package snapcharts.view;
 import snap.geom.*;
 import snap.gfx.*;
+import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.*;
 
@@ -73,6 +74,13 @@ public class ToolTipView extends ColView {
                 addChild(createToolTipEntry("Col: " + dataPoint.getColIndex()));
             }
             addChild(createToolTipEntry("Index: " + pointIndex));
+        }
+
+        // This is probably bogus - for wrapped datasets
+        if (pointIndex >= dataSet.getPointCount()) {
+            SnapUtils.printlnOnce(System.err, "ToolTipView.reloadContentsNow: Need to handle wrapped datasets better");
+            int pointCount = dataSet.getPointCount(); if (pointCount == 0) return;
+            pointIndex = pointIndex % pointCount;
         }
 
         // Add children
