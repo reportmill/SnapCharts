@@ -9,6 +9,8 @@ import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
 import snapcharts.util.ChartUtils;
 
+import java.util.Objects;
+
 /**
  * A view to render a chart.
  */
@@ -260,11 +262,24 @@ public class Chart extends ParentPart {
     /**
      * Removes the given marker.
      */
-    public void removeMarker(Marker aMarker)
+    public int removeMarker(Marker aMarker)
     {
         int index = ArrayUtils.indexOfId(_markers, aMarker);
         if (index >= 0)
             removeMarker(index);
+        return index;
+    }
+
+    /**
+     * Returns the marker with given name.
+     */
+    public Marker getMarker(String aName)
+    {
+        Marker[] markers = getMarkers();
+        for (Marker marker : markers)
+            if (Objects.equals(marker.getName(), aName))
+                return marker;
+        return null;
     }
 
     /**

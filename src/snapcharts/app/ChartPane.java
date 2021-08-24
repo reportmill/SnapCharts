@@ -314,7 +314,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
         // Register for EscapeAction
         addKeyActionHandler("EscapeAction", "ESCAPE");
-        addKeyActionHandler("AddTestMarkerAction", "M");
 
         // Set Chart in ChartView
         Chart chart = getChart();
@@ -411,29 +410,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle EscapeAction
         if (anEvent.equals("EscapeAction"))
             getSel().popSelection();
-
-        // Handle AddTestMarkerAction
-        if (anEvent.equals("AddTestMarkerAction"))
-            addTestMarker();
-    }
-
-    /**
-     * Add a test data marker.
-     */
-    private void addTestMarker()
-    {
-        Chart chart = getChart();
-        Marker marker = new Marker();
-        marker.setCoordSpaceX(Marker.CoordSpace.X);
-        marker.setCoordSpaceY(Marker.CoordSpace.Y);
-        marker.setFractionalX(true);
-        marker.setFractionalY(true);
-        marker.setBounds(.45, .45, .1, .1);
-        marker.setFill(Color.RED.copyForAlpha(.2));
-        marker.setLineColor(Color.RED.copyForAlpha(.2));
-        marker.setLineWidth(3);
-        marker.setLineDash(Stroke.DASH_DASH);
-        chart.addMarker(marker);
     }
 
     /**

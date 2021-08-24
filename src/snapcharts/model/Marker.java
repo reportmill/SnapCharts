@@ -1,12 +1,14 @@
 package snapcharts.model;
 import snap.util.SnapUtils;
-
 import java.util.Objects;
 
 /**
  * This ChartPart subclass is used to highlight or annotate an area on the chart.
  */
 public class Marker extends ChartPart {
+
+    // The name of marker
+    private String  _name;
 
     // The marker location
     private double  _x, _y;
@@ -46,6 +48,7 @@ public class Marker extends ChartPart {
     }
 
     // Constants for properties
+    public static final String Name_Prop = "Name";
     public static final String X_Prop = "X";
     public static final String Y_Prop = "Y";
     public static final String Width_Prop = "Width";
@@ -71,6 +74,20 @@ public class Marker extends ChartPart {
         // Set default values
         _coordSpaceX = DEFAULT_COORD_SPACE;
         _coordSpaceY = DEFAULT_COORD_SPACE;
+    }
+
+    /**
+     * Returns the name of marker.
+     */
+    public String getName()  { return _name; }
+
+    /**
+     * Sets the name of marker.
+     */
+    public void setName(String aString)
+    {
+        if (Objects.equals(aString, _name)) return;
+        firePropChange(Name_Prop, _name, _name = aString);
     }
 
     /**
@@ -255,6 +272,9 @@ public class Marker extends ChartPart {
     {
         switch (aPropName) {
 
+            // Name
+            case Name_Prop: return getName();
+
             // X, Y, Width, Height
             case X_Prop: return getX();
             case Y_Prop: return getY();
@@ -284,6 +304,9 @@ public class Marker extends ChartPart {
     public void setPropValue(String aPropName, Object aValue)
     {
         switch (aPropName) {
+
+            // Name
+            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
 
             // X, Y, Width, Height
             case X_Prop: setX(SnapUtils.doubleValue(aValue)); break;
