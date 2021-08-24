@@ -34,4 +34,14 @@
     <CheckBox Name="FractionalYCheckBox" Margin="0,0,0,8" Spacing="5" text="Fractional" />
   </RowView>
   <RowView Padding="4" Spacing="4" />
+  <RowView Padding="4" Spacing="4" GrowWidth="true">
+    <Label Spacing="4" text="Text:" />
+    <TextField Name="TextText" GrowWidth="true" />
+  </RowView>
+  <RowView Padding="4" Spacing="4" GrowWidth="true">
+    <CheckBox Name="TextOutsideXCheckBox" Spacing="5" text="Text Outside X" />
+  </RowView>
+  <RowView Padding="4" Spacing="4" GrowWidth="true">
+    <CheckBox Name="TextOutsideYCheckBox" Spacing="5" text="Text Outside Y" />
+  </RowView>
 </ColView>

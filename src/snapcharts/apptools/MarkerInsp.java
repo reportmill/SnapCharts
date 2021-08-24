@@ -86,6 +86,11 @@ public class MarkerInsp extends ChartPartInsp {
         setViewValue("YText", marker.getY());
         setViewValue("HText", marker.getHeight());
         setViewValue("FractionalYCheckBox", marker.isFractionalY());
+
+        // Reset TextText, TextOutsideXCheckBox, TextOutsideYCheckBox
+        setViewValue("TextText", marker.getText());
+        setViewValue("TextOutsideXCheckBox", marker.isTextOutsideX());
+        setViewValue("TextOutsideYCheckBox", marker.isTextOutsideY());
     }
 
     /**
@@ -108,7 +113,7 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("XSpaceChartButton"))
             marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
 
-        // Reset YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
+        // Handle YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
         if (anEvent.equals("YSpaceYButton"))
             marker.setCoordSpaceY(Marker.CoordSpace.Y);
         if (anEvent.equals("YSpaceY2Button"))
@@ -122,7 +127,7 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("XSpaceChartButton"))
             marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
 
-        // Reset XText, WText, FractionalXCheckBox
+        // Handle XText, WText, FractionalXCheckBox
         if (anEvent.equals("XText"))
             marker.setX(anEvent.getFloatValue());
         if (anEvent.equals("WText"))
@@ -130,12 +135,20 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("FractionalXCheckBox"))
             marker.setFractionalX(anEvent.getBoolValue());
 
-        // Reset YText, HText, FractionalYCheckBox
+        // Handle YText, HText, FractionalYCheckBox
         if (anEvent.equals("YText"))
             marker.setY(anEvent.getFloatValue());
         if (anEvent.equals("HText"))
             marker.setHeight(anEvent.getFloatValue());
         if (anEvent.equals("FractionalYCheckBox"))
             marker.setFractionalY(anEvent.getBoolValue());
+
+        // Handle TextText, TextOutsideXCheckBox, TextOutsideYCheckBox
+        if (anEvent.equals("TextText"))
+            marker.setText(anEvent.getStringValue());
+        if (anEvent.equals("TextOutsideXCheckBox"))
+            marker.setTextOutsideX(anEvent.getBoolValue());
+        if (anEvent.equals("TextOutsideYCheckBox"))
+            marker.setTextOutsideY(anEvent.getBoolValue());
     }
 }
