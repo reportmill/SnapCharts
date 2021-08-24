@@ -1,4 +1,5 @@
 package snapcharts.model;
+import snap.geom.Pos;
 import snap.util.SnapUtils;
 import java.util.Objects;
 
@@ -62,6 +63,7 @@ public class Marker extends ChartPart {
     public static final String TextOutsideY_Prop = "TextOutsideY";
 
     // Constants for defaults
+    private static final Pos DEFAULT_MARKER_ALIGN = Pos.CENTER;
     private static final CoordSpace  DEFAULT_COORD_SPACE = CoordSpace.DataView;
 
     /**
@@ -70,6 +72,9 @@ public class Marker extends ChartPart {
     public Marker()
     {
         super();
+
+        // Override default property values
+        _align = DEFAULT_MARKER_ALIGN;
 
         // Set default values
         _coordSpaceX = DEFAULT_COORD_SPACE;
@@ -337,6 +342,9 @@ public class Marker extends ChartPart {
     public Object getPropDefault(String aPropName)
     {
         switch (aPropName) {
+
+            // Align
+            case Align_Prop: return DEFAULT_MARKER_ALIGN;
 
             // CoordSpaceX, CoordSpaceY
             case CoordSpaceX_Prop: return DEFAULT_COORD_SPACE;

@@ -33,8 +33,6 @@ public class MarkerView extends ChartPartView<Marker> {
         _textArea.setPlainText(true);
         _textArea.setBorder(Color.PINK, 1);
         addChild(_textArea);
-
-        resetPaintProperties();
     }
 
     /**
@@ -48,23 +46,17 @@ public class MarkerView extends ChartPartView<Marker> {
     @Override
     protected void resetView()
     {
+        // Do normal version
         super.resetView();
 
-        resetPaintProperties();
-    }
-
-    /**
-     * Resets the paint properties from Marker in view.
-     */
-    public void resetPaintProperties()
-    {
+        // Update MarkerView paint properties
         Marker marker = getMarker();
         setFill(marker.getFill());
         setBorder(marker.getBorder());
         setOpacity(marker.getOpacity());
         setPadding(marker.getPadding());
 
-        // Update TextArea
+        // Update TextArea properties
         String text = marker.getText();
         if (text == null || text.length() == 0) {
             _textArea.setVisible(false);
@@ -75,43 +67,71 @@ public class MarkerView extends ChartPartView<Marker> {
         _textArea.setText(text);
         _textArea.setFont(marker.getFont());
         _textArea.setVisible(true);
-        _textArea.setWrapLines(true);
-        _textArea.setAlign(marker.getAlign());
 
-        // Layout TextView
+        // Layout TextArea
+        layoutTextArea();
+    }
+
+    /**
+     * Resets the paint properties from Marker in view.
+     */
+    private void layoutTextArea()
+    {
+        // Get marker size
+        double markerW = getWidth();
+        double markerH = getHeight();
+
+        // Get marker area bounds
         Insets ins = getInsetsAll();
         double areaX = ins.left;
         double areaY = ins.top;
-        double areaW = getWidth() - ins.getWidth();
-        double areaH = getHeight() - ins.getHeight();
-        if (areaW < 50)
-            areaW = 50;
-        if (areaH < _textArea.getPrefHeight())
-            areaH = _textArea.getPrefHeight();
-        _textArea.setBounds(areaX, areaY, areaW, areaH);
+        double areaW = markerW - ins.getWidth();
+        double areaH = markerH - ins.getHeight();
+
+        // If area width or height less than zero, center bounds
+        if (areaW < 0) {
+            areaX = markerW / 2;
+            areaW = 0;
+        }
+        if (areaH < 0) {
+            areaY = markerH / 2;
+            areaH = 0;
+        }
+
+        // Calculate TextArea bounds
+        double textX = areaX;
+        double textY = areaY;
+        double textW = _textArea.getPrefWidth();
+        double textH = _textArea.getPrefHeight();
+
+        // If there is extra space, shift by content
+        Marker marker = getMarker();
+        double extraX = areaW - textW;
+        double extraY = areaH - textH;
+        if (extraX != 0 || extraY != 0) {
+            double alignX = marker.getAlignX().doubleValue();
+            double alignY = marker.getAlignY().doubleValue();
+            textX += alignX * extraX;
+            textY += alignY * extraY;
+        }
+
+        // Set bounds
+        _textArea.setBounds(textX, textY, textW, textH);
 
         // Handle TextOutsideX
         if (marker.isTextOutsideX()) {
-            if (marker.getAlignX() == HPos.LEFT) {
-                _textArea.setX(-getWidth());
-                _textArea.setAlignX(HPos.RIGHT);
-            }
-            else if (marker.getAlignX() == HPos.RIGHT) {
-                _textArea.setX(getWidth());
-                _textArea.setAlignX(HPos.LEFT);
-            }
+            if (marker.getAlignX() == HPos.LEFT)
+                _textArea.setX(-textW - ins.right);
+            else if (marker.getAlignX() == HPos.RIGHT)
+                _textArea.setX(markerW + ins.left);
         }
 
         // Handle TextOutsideY
         if (marker.isTextOutsideY()) {
-            if (marker.getAlignY() == VPos.TOP) {
-                _textArea.setY(-getHeight());
-                _textArea.setAlignY(VPos.BOTTOM);
-            }
-            else if (marker.getAlignY() == VPos.BOTTOM) {
-                _textArea.setY(getHeight());
-                _textArea.setAlignY(VPos.TOP);
-            }
+            if (marker.getAlignY() == VPos.TOP)
+                _textArea.setY(-textH - ins.bottom);
+            else if (marker.getAlignY() == VPos.BOTTOM)
+                _textArea.setY(markerH + ins.top);
         }
     }
 
@@ -121,13 +141,13 @@ public class MarkerView extends ChartPartView<Marker> {
     public Rect getPrefBoundsInChartViewCoords()
     {
         ChartHelper chartHelper = getChartHelper();
+        ChartView chartView = getChartView();
         DataView dataView = chartHelper.getDataView();
         Marker marker = getMarker();
-        double markX;
-        double markY;
-        double markW;
-        double markH;
-        markX = markY = markW = markH = 0;
+        double markX = marker.getX();
+        double markY = marker.getY();
+        double markW = marker.getWidth();
+        double markH = marker.getHeight();
 
         // Get first DataArea
         DataArea[] dataAreas = chartHelper.getDataAreas();
@@ -155,8 +175,6 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceX DataBounds
         else if (coordSpaceX == Marker.CoordSpace.DataView) {
-            markX = marker.getX();
-            markW = marker.getWidth();
             if (isFractionalX) {
                 double dispMin = 0;
                 double dispMax = dataView.getWidth();
@@ -167,9 +185,6 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceX ChartBounds
         else if (coordSpaceX == Marker.CoordSpace.ChartView) {
-            ChartView chartView = getChartView();
-            markX = marker.getX();
-            markW = marker.getWidth();
             if (isFractionalX) {
                 double dispMin = 0;
                 double dispMax = chartView.getWidth();
@@ -206,8 +221,6 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceY DataBounds
         else if (coordSpaceY == Marker.CoordSpace.DataView) {
-            markY = marker.getY();
-            markH = marker.getHeight();
             if (isFractionalY) {
                 double dispMin = 0;
                 double dispMax = dataView.getHeight();
@@ -218,9 +231,6 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Handle CoordSpaceY ChartBounds
         else if (coordSpaceY == Marker.CoordSpace.ChartView) {
-            ChartView chartView = getChartView();
-            markY = marker.getY();
-            markH = marker.getHeight();
             if (isFractionalY) {
                 double dispMin = 0;
                 double dispMax = chartView.getHeight();

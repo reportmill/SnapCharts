@@ -51,7 +51,7 @@ public class ChartPaneInsp extends ViewOwner {
     private DataViewInsp  _dataViewInsp;
 
     // The DataSet Inspector
-    private DataSetInsp _dsetInsp;
+    private DataSetInsp _dataSetInsp;
 
     // The DataStyleInsp
     private DataStyleInsp _dataStyleInsp;
@@ -137,8 +137,8 @@ public class ChartPaneInsp extends ViewOwner {
         }
 
         // Add DataSetInsp
-        _dsetInsp = new DataSetInsp(_chartPane);
-        addInspector(_dsetInsp, false);
+        _dataSetInsp = new DataSetInsp(_chartPane);
+        addInspector(_dataSetInsp, false);
 
         // Create/add DataStyleInsp
         _dataStyleInsp = new DataStyleInsp(_chartPane);
@@ -146,9 +146,9 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp,
-                _markerInsp, _dataViewInsp, _dataStyleInsp, _dsetInsp };
+                _markerInsp, _dataViewInsp, _dataStyleInsp, _dataSetInsp};
         if (!chartMode)
-            _allInspectors = new ChartPartInsp[] { _dsetInsp };
+            _allInspectors = new ChartPartInsp[] {_dataSetInsp};
 
         // Trigger initial open panel
         runLater(() -> chartPaneSelChanged());
@@ -201,10 +201,10 @@ public class ChartPaneInsp extends ViewOwner {
         // Reset DataSetInsp
         boolean isDataSetSelected = chartPane.getDataSet()!=null;
         if (isDataSetSelected) {
-            _dsetInsp.getUI().setVisible(true);
-            _dsetInsp.resetLater();
+            _dataSetInsp.getUI().setVisible(true);
+            _dataSetInsp.resetLater();
         }
-        else _dsetInsp.getUI().setVisible(false);
+        else _dataSetInsp.getUI().setVisible(false);
 
         // Reset Styler
         if (_stylerPane.isShowing())
@@ -256,7 +256,7 @@ public class ChartPaneInsp extends ViewOwner {
         if (aChartPart instanceof DataSetList)
             return _dataViewInsp;
         if (aChartPart instanceof DataSet)
-            return _dsetInsp;
+            return _dataSetInsp;
         return _chartInsp;
     }
 
@@ -291,7 +291,7 @@ public class ChartPaneInsp extends ViewOwner {
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
             boolean isSelected = insp == selPartInsp ||
-                (insp == _dataStyleInsp && selPartInsp == _dsetInsp);
+                (insp == _dataStyleInsp && selPartInsp == _dataSetInsp);
             insp.setSelected(isSelected);
             if (isSelected)
                 insp.resetLater();

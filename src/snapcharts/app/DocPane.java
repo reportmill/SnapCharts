@@ -555,7 +555,7 @@ public class DocPane extends ViewOwner {
         addKeyActionHandler("DeleteAction", "DELETE");
         addKeyActionHandler("DeleteAction", "BACK_SPACE");
         addKeyActionHandler("EscapeAction", "ESCAPE");
-        addKeyActionHandler("PropArchiverAction", "H");
+        //addKeyActionHandler("PropArchiverAction", "H");
     }
 
     /**

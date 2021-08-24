@@ -528,7 +528,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     {
         double lineWidth = getLineWidth(); if (lineWidth <= 0) return null;
         Color lineColor = getLineColor();
-        System.err.println(getClass().getSimpleName() + ".getBorder: Should probably call line prop methods instead");
+        SnapUtils.printlnOnce(System.err, getClass().getSimpleName() + ".getBorder: Should probably call line prop methods instead");
         return new Borders.LineBorder(lineColor, getLineStroke());
     }
 
@@ -540,7 +540,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         Color lineColor = aBorder != null ? aBorder.getColor() : null;
         int lineWidth = aBorder != null ? (int) Math.round(aBorder.getWidth()) : 0;
         setLineColor(lineColor); setLineWidth(lineWidth);
-        System.err.println(getClass().getSimpleName() + ".setBorder: Should probably call line prop methods instead");
+        SnapUtils.printlnOnce(System.err, getClass().getSimpleName() + ".setBorder: Should probably call line prop methods instead");
     }
 
     /**
