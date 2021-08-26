@@ -126,11 +126,12 @@ public class MarkerInsp extends ChartPartInsp {
         setViewValue("HText", marker.getHeight());
         setViewValue("FractionalYCheckBox", marker.isFractionalY());
 
-        // Reset TextText, TextOutsideXCheckBox, TextOutsideYCheckBox, FitTextToBoundsCheckBox
+        // Reset TextText, TextOutsideXCheckBox, TextOutsideYCheckBox, FitTextToBoundsCheckBox, ShowTextInAxisCheckBox
         setViewValue("TextText", marker.getText());
         setViewValue("TextOutsideXCheckBox", marker.isTextOutsideX());
         setViewValue("TextOutsideYCheckBox", marker.isTextOutsideY());
         setViewValue("FitTextToBoundsCheckBox", marker.isFitTextToBounds());
+        setViewValue("ShowTextInAxisCheckBox", marker.isShowTextInAxis());
     }
 
     /**
@@ -200,7 +201,7 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("FractionalYCheckBox"))
             marker.setFractionalY(anEvent.getBoolValue());
 
-        // Handle TextText, TextOutsideXCheckBox, TextOutsideYCheckBox, FitTextToBoundsCheckBox
+        // Handle TextText, TextOutsideXCheckBox, TextOutsideYCheckBox, FitTextToBoundsCheckBox, ShowTextInAxisCheckBox
         if (anEvent.equals("TextText"))
             marker.setText(anEvent.getStringValue());
         if (anEvent.equals("TextOutsideXCheckBox"))
@@ -209,6 +210,8 @@ public class MarkerInsp extends ChartPartInsp {
             marker.setTextOutsideY(anEvent.getBoolValue());
         if (anEvent.equals("FitTextToBoundsCheckBox"))
             marker.setFitTextToBounds(anEvent.getBoolValue());
+        if (anEvent.equals("ShowTextInAxisCheckBox"))
+            marker.setShowTextInAxis(anEvent.getBoolValue());
     }
 
     /**
