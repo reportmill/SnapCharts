@@ -59,4 +59,7 @@
   <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
     <CheckBox Name="TextOutsideYCheckBox" Spacing="5" text="Text Outside Y" />
   </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+    <CheckBox Name="FitTextToBoundsCheckBox" Spacing="5" text="Fit Text to Marker Bounds" />
+  </RowView>
 </ColView>

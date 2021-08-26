@@ -3,7 +3,6 @@ import snap.geom.HPos;
 import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.geom.VPos;
-import snap.gfx.Color;
 import snap.view.TextArea;
 import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
@@ -31,7 +30,6 @@ public class MarkerView extends ChartPartView<Marker> {
         // Create/add TextArea
         _textArea = new TextArea();
         _textArea.setPlainText(true);
-        _textArea.setBorder(Color.PINK, 1);
         addChild(_textArea);
     }
 
@@ -67,6 +65,7 @@ public class MarkerView extends ChartPartView<Marker> {
         _textArea.setText(text);
         _textArea.setFont(marker.getFont());
         _textArea.setVisible(true);
+        _textArea.setWrapLines(marker.isFitTextToBounds());
 
         // Layout TextArea
         layoutTextArea();
@@ -77,6 +76,13 @@ public class MarkerView extends ChartPartView<Marker> {
      */
     private void layoutTextArea()
     {
+        // Handle simple FitTextToBounds
+        Marker marker = getMarker();
+        if (marker.isFitTextToBounds()) {
+            layoutTextAreaFitToBounds();
+            return;
+        }
+
         // Get marker size
         double markerW = getWidth();
         double markerH = getHeight();
@@ -105,7 +111,6 @@ public class MarkerView extends ChartPartView<Marker> {
         double textH = _textArea.getPrefHeight();
 
         // If there is extra space, shift by content
-        Marker marker = getMarker();
         double extraX = areaW - textW;
         double extraY = areaH - textH;
         if (extraX != 0 || extraY != 0) {
@@ -133,6 +138,38 @@ public class MarkerView extends ChartPartView<Marker> {
             else if (marker.getAlignY() == VPos.BOTTOM)
                 _textArea.setY(markerH + ins.top);
         }
+    }
+
+    /**
+     * Layout Text area for FitTextToBounds: Fit in bounds.
+     */
+    private void layoutTextAreaFitToBounds()
+    {
+        // Get marker size
+        double markerW = getWidth();
+        double markerH = getHeight();
+
+        // Get marker area bounds
+        Insets ins = getInsetsAll();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = markerW - ins.getWidth();
+        double areaH = markerH - ins.getHeight();
+
+        // If impossibly small, just hide TextArea
+        if (areaW < 5 || areaH < 5) {
+            _textArea.setVisible(false);
+            return;
+        }
+
+        // Otherwise just put text in bounds
+        _textArea.setBounds(areaX, areaY, areaW, areaH);
+
+        // Set Align and make sure text fits
+        Marker marker = getMarker();
+        _textArea.setAlign(marker.getAlign());
+        _textArea.setFontScale(1);
+        _textArea.scaleTextToFit();
     }
 
     /**
@@ -188,7 +225,7 @@ public class MarkerView extends ChartPartView<Marker> {
             if (isFractionalX) {
                 double dispMin = 0;
                 double dispMax = chartView.getWidth();
-                markX = dispMin + markX * (dispMax - dispMin);
+                markX = dispMin + markX * (dispMax - dispMin) - dataView.getX();
                 markW = markW * (dispMax - dispMin);
             }
         }
@@ -234,7 +271,7 @@ public class MarkerView extends ChartPartView<Marker> {
             if (isFractionalY) {
                 double dispMin = 0;
                 double dispMax = chartView.getHeight();
-                markY = dispMin + markY * (dispMax - dispMin);
+                markY = dispMin + markY * (dispMax - dispMin) - dataView.getY();
                 markH = markH * (dispMax - dispMin);
             }
         }

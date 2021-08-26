@@ -38,6 +38,9 @@ public class Marker extends ChartPart {
     // Whether Text is positioned outside bounds Y
     private boolean  _textOutsideY;
 
+    // Whether to fit/wrap text inside marker bounds
+    private boolean  _fitTextToBounds;
+
     // Constant for coordinate space
     public enum CoordSpace  {
 
@@ -61,6 +64,7 @@ public class Marker extends ChartPart {
     public static final String Text_Prop = "Text";
     public static final String TextOutsideX_Prop = "TextOutsideX";
     public static final String TextOutsideY_Prop = "TextOutsideY";
+    public static final String FitTextToBounds_Prop = "FitTextToBounds";
 
     // Constants for defaults
     private static final Pos DEFAULT_MARKER_ALIGN = Pos.CENTER;
@@ -261,6 +265,20 @@ public class Marker extends ChartPart {
     }
 
     /**
+     * Returns whether to fit/wrap text inside marker bounds.
+     */
+    public boolean isFitTextToBounds()  { return _fitTextToBounds; }
+
+    /**
+     * Sets whether to fit/wrap text inside marker bounds.
+     */
+    public void setFitTextToBounds(boolean aValue)
+    {
+        if (aValue == _fitTextToBounds) return;
+        firePropChange(FitTextToBounds_Prop, _fitTextToBounds, _fitTextToBounds = aValue);
+    }
+
+    /**
      * Override so ChartPart will get/set Marker border from line properties.
      */
     @Override
@@ -292,10 +310,11 @@ public class Marker extends ChartPart {
             case FractionalX_Prop: return isFractionalX();
             case FractionalY_Prop: return isFractionalY();
 
-            // Text, TextOutsideX, TextOutsideY
+            // Text, TextOutsideX, TextOutsideY, FitTextToBounds
             case Text_Prop: return getText();
             case TextOutsideX_Prop: return isTextOutsideX();
             case TextOutsideY_Prop: return isTextOutsideY();
+            case FitTextToBounds_Prop: return isFitTextToBounds();
 
             // Do normal version
             default: return super.getPropValue(aPropName);
@@ -325,10 +344,11 @@ public class Marker extends ChartPart {
             case FractionalX_Prop: setFractionalX(SnapUtils.boolValue(aValue)); break;
             case FractionalY_Prop: setFractionalY(SnapUtils.boolValue(aValue)); break;
 
-            // Text, TextOutsideX, TextOutsideY
+            // Text, TextOutsideX, TextOutsideY, FitTextToBounds
             case Text_Prop: setText(SnapUtils.stringValue(aValue)); break;
             case TextOutsideX_Prop: setTextOutsideX(SnapUtils.boolValue(aValue)); break;
             case TextOutsideY_Prop: setTextOutsideY(SnapUtils.boolValue(aValue)); break;
+            case FitTextToBounds_Prop: setFitTextToBounds(SnapUtils.boolValue(aValue)); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);
