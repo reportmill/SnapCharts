@@ -28,6 +28,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // Set Padding
         setPadding(AXIS_MARGIN, 0, AXIS_MARGIN, 0);
         _tickLabelBox.setGrowWidth(true);
+        _markersBox.setGrowWidth(true);
     }
 
     /**
@@ -67,6 +68,10 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
         // Layout TickLabels
         layoutTickLabels();
+
+        // Layout MarkerLabels
+        if (_markersBox.isVisible())
+            layoutMarkerLabels();
     }
 
     /**
@@ -81,12 +86,19 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         Axis axis = getAxis();
         Pos align = axis.getAlign();
         viewProxy.setAlign(align);
-        viewProxy.setSpacing(TITLE_TICKS_SPACING);
+        viewProxy.setSpacing(TITLE_TICKS_SPACING + axis.getSpacing());
+
+        // If MarkersBox is visible, use margins instead
+        if (_markersBox.isVisible()) {
+            viewProxy.setSpacing(axis.getSpacing());
+            ViewProxy markersBoxProxy = viewProxy.getChildForClass(MarkersBox.class);
+            markersBoxProxy.setMargin(new Insets(2, 0, TITLE_TICKS_SPACING -2, 0));
+        }
 
         // Reverse children (assumes Side == Bottom)
         ArrayUtils.reverse(viewProxy.getChildren());
 
-        // If tick is 'Outside' or 'Accross', adjust padding to accommodate tick inside axis bounds
+        // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Side axisSide = axis.getSide();
         Axis.TickPos tickPos = axis.getTickPos();
         double tickLength = axis.getTickLength();
@@ -116,7 +128,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // Iterate over tick labels and set location
         for (TickLabel tickLabel : tickLabels) {
 
-            // Get X in data and display coords and draw tick line
+            // Get X in data and display coords
             double dataX = tickLabel.getCoord();
             double dispX = Math.round(dataToView(dataX));
 
@@ -128,6 +140,29 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
             double tickH = tickLabel.getPrefHeight();
             double tickX = dispX - Math.round(tickW / 2);
             tickLabel.setBounds(tickX, 0, tickW, tickH);
+        }
+    }
+
+    /**
+     * Layout MarkerLabels.
+     */
+    private void layoutMarkerLabels()
+    {
+        // Get MarkerLabels and info
+        TickLabel[] markerLabels = getMarkerLabels();
+
+        // Iterate over marker labels and set location
+        for (TickLabel markerLabel : markerLabels) {
+
+            // Get X in data and display coords
+            double dataX = markerLabel.getCoord();
+            double dispX = Math.round(dataToView(dataX));
+
+            // Get/set TickLabel bounds
+            double tickW = markerLabel.getPrefWidth();
+            double tickH = markerLabel.getPrefHeight();
+            double tickX = dispX - Math.round(tickW / 2);
+            markerLabel.setBounds(tickX, 0, tickW, tickH);
         }
     }
 }

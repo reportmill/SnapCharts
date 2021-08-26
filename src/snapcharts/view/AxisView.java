@@ -11,6 +11,9 @@ import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A View to display an axis.
@@ -29,6 +32,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // The Title view
     protected StringView  _titleView;
 
+    // The view that holds text for markers configured with ShowTextInAxis
+    protected ChildView  _markersBox;
+
     // The view that holds TickLabels
     protected ChildView  _tickLabelBox;
 
@@ -43,6 +49,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // The tick labels as StringBoxes
     private TickLabel[]  _tickLabels;
+
+    // The marker labels as StringBoxes
+    private TickLabel[]  _markerLabels;
 
     // A helper to do tick label formatting
     private TickLabelFormat _tickFormat;
@@ -75,6 +84,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView = new StringView();
         _titleView.setShrinkToFit(true);
         addChild(_titleView);
+
+        // Create/configure MarkersBox
+        _markersBox = new MarkersBox();
+        addChild(_markersBox);
 
         // Create TickLabelBox
         _tickLabelBox = new TickLabelBox();
@@ -264,8 +277,26 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             _tickLabels = null;
         }
 
+        // Remove/clear MarkerLabels
+        if (_markerLabels != null) {
+            _markersBox.removeChildren();
+            _markerLabels = null;
+        }
+
         // Register for check to see if tick format has changed
         _tickFormat.checkForFormatChange();
+    }
+
+    /**
+     * Clears the Markers when axis markers change.
+     */
+    public void clearMarkers()
+    {
+        // Remove/clear MarkerLabels
+        if (_markerLabels != null) {
+            _markersBox.removeChildren();
+            _markerLabels = null;
+        }
     }
 
     /**
@@ -297,7 +328,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Get Intervals info
         Intervals intervals = getIntervals();
         int intervalCount = intervals.getCount();
-        double delta = intervals.getDelta();
 
         // Get TickLabel attributes
         Axis axis = getAxis();
@@ -332,6 +362,67 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the array of Marker TickLabel.
+     */
+    protected TickLabel[] getMarkerLabels()
+    {
+        // If already set, just return
+        if (_markerLabels != null) return _markerLabels;
+
+        // Create MarkerLabels
+        _markerLabels = createMarkerLabels();
+
+        // Add MarkerLabels to MarkersBox
+        for (StringView markerView : _markerLabels)
+            _markersBox.addChild(markerView);
+
+        // Return
+        return _markerLabels;
+    }
+
+    /**
+     * Returns the array of Marker TickLabel.
+     */
+    protected TickLabel[] createMarkerLabels()
+    {
+        // Get Markers
+        Chart chart = getChart();
+        Marker[] markers = chart.getMarkers();
+        AxisType axisType = getAxisType();
+        if (markers.length == 0 || axisType != AxisType.X)
+            return new TickLabel[0];
+
+        // Get count for Markers for Axis
+        int count = 0;
+        for (Marker marker : markers)
+            if (marker.isShowTextInAxis() && marker.getCoordSpaceX().getAxisType() == axisType)
+                count++;
+        if (count == 0)
+            return new TickLabel[0];
+
+        // Get Markers for axis
+        Predicate<Marker> filter = m -> m.isShowTextInAxis() && m.getCoordSpaceX().getAxisType() == axisType;
+        Marker[] axisMarkers = Stream.of(markers).filter(filter).collect(Collectors.toList()).toArray(new Marker[0]);
+
+        // Get Marker paint properties
+        Font markerFont = getFont();
+        Paint markerFill = getAxis().getTextFill();
+
+        // Get MarkerLabels
+        TickLabel[] markerLabels = new TickLabel[count];
+        for (int i = 0; i < count; i++) {
+            Marker marker = axisMarkers[i];
+            TickLabel markerLabel = markerLabels[i] = new TickLabel(this, marker.getX());
+            markerLabel.setText(marker.getText());
+            markerLabel.setFont(markerFont);
+            markerLabel.setTextFill(markerFill);
+        }
+
+        // Create/return array of TickLabels
+        return markerLabels;
+    }
+
+    /**
      * Returns whether axis is a bar axis (labels represent bin indexs, not axis values).
      */
     private boolean isBarAxis()
@@ -342,9 +433,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             return true;
 
         // Also treat IY and CY Data sets as Bar axis types
-        DataSetList dsetList = getDataSetList();
-        DataSet dset = dsetList.getDataSetCount() > 0 ? dsetList.getDataSet(0) : null;
-        DataType dataType = dset != null ? dset.getDataType() : null;
+        DataSetList dataSetList = getDataSetList();
+        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
+        DataType dataType = dataSet != null ? dataSet.getDataType() : null;
         return dataType == DataType.IY || dataType == DataType.CY;
     }
 
@@ -354,9 +445,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     private TickLabel[] createTickLabelsForBarAxis()
     {
         // Get DataSet and pointCount
-        DataSetList dsetList = getDataSetList();
-        DataSet dset = dsetList.getDataSetCount() > 0 ? dsetList.getDataSet(0) : null;
-        int pointCount = dsetList.getPointCount();
+        DataSetList dataSetList = getDataSetList();
+        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
+        int pointCount = dataSetList.getPointCount();
         TickLabel[] tickLabels = new TickLabel[pointCount];
 
         // Get TickLabel attributes
@@ -367,7 +458,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Iterate over points and create/set TickLabel
         for (int i = 0; i < pointCount; i++) {
             TickLabel tickLabel = tickLabels[i] = new TickLabel(this, i + .5);
-            String str = dset.getString(i); // was getC(i)
+            String str = dataSet.getString(i); // was getC(i)
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
             tickLabel.setTextFill(tickTextFill);
@@ -518,6 +609,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView.setVisible(titleVisible);
         if (_titleView.getParent() != this)
             _titleView.getParent().setVisible(titleVisible);
+
+        // If no MarkerLabels, make MarkersBox not visible
+        TickLabel[] markerLabels = getMarkerLabels();
+        _markersBox.setVisible(markerLabels.length > 0);
     }
 
     /**
@@ -535,9 +630,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     protected void chartPartDidChange(PropChange aPC)
     {
         Object src = aPC.getSource();
+        String propName = aPC.getPropName();
         if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
             clearIntervals();
         }
+
+        // Handle Marker changes
+        if (src instanceof Marker || propName == Chart.Markers_Rel)
+            clearMarkers();
     }
 
     /**
@@ -566,6 +666,41 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      * A container view to hold TickLabels.
      */
     protected static class TickLabelBox extends ChildView {
+
+        /**
+         * Override to return TickLabels.MaxWidth for AxisViewY.
+         */
+        @Override
+        protected double getPrefWidthImpl(double aH)
+        {
+            ParentView parent = getParent();
+            if (parent instanceof AxisViewY) {
+                return ((AxisViewY) parent).getTickLabelsMaxWidth();
+            }
+            return 200;
+        }
+
+        /**
+         * Override to return text height for AxisViewX.
+         */
+        @Override
+        protected double getPrefHeightImpl(double aW)
+        {
+            ParentView parent = getParent();
+            if (parent instanceof AxisViewX) {
+                Font font = getFont();
+                int ascent = (int) Math.ceil(font.getAscent());
+                int descent = (int) Math.ceil(font.getDescent());
+                return ascent + descent;
+            }
+            return 200;
+        }
+    }
+
+    /**
+     * A container view to hold text for Markers configured with ShowTextInAxis.
+     */
+    protected static class MarkersBox extends ChildView {
 
         /**
          * Override to return TickLabels.MaxWidth for AxisViewY.

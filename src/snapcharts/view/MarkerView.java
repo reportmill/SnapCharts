@@ -54,6 +54,12 @@ public class MarkerView extends ChartPartView<Marker> {
         setOpacity(marker.getOpacity());
         setPadding(marker.getPadding());
 
+        // If showing text in axis, just return
+        if (marker.isShowTextInAxis()) {
+            _textArea.setVisible(false);
+            return;
+        }
+
         // Update TextArea properties
         String text = marker.getText();
         if (text == null || text.length() == 0) {
