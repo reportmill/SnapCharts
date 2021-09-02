@@ -5,10 +5,7 @@ package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
-import snap.util.ArrayUtils;
-import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
+import snap.util.*;
 import snapcharts.util.MinMax;
 import java.util.Objects;
 
@@ -47,7 +44,7 @@ public abstract class Axis extends ChartPart {
     // The wrap min/max value
     private MinMax  _wrapMinMax;
 
-    // The Side this axis
+    // The Side this axis is on
     protected Side  _side;
 
     // Whether to show grid lines
@@ -61,6 +58,12 @@ public abstract class Axis extends ChartPart {
 
     // The grid line
     private double[]  _gridDash;
+
+    // The amount of space separating gridlines (in axis data coords)
+    private double  _gridSpacing;
+
+    // The base location of first grid line (usually zero)
+    private double  _gridBase;
 
     // The length of hash mark drawn perpendicular to the axis line for each interval
     private double  _tickLength;
@@ -84,8 +87,14 @@ public abstract class Axis extends ChartPart {
     public static final String GridColor_Prop = "GridColor";
     public static final String GridWidth_Prop = "GridWidth";
     public static final String GridDash_Prop = "GridDash";
+    public static final String GridSpacing_Prop = "GridSpacing";
+    public static final String GridBase_Prop = "GridBase";
     public static final String TickLength_Prop = "TickLength";
     public static final String TickPos_Prop = "TickPos";
+
+    // Constant for GridBase special values
+    public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
+    public static final double GRID_BASE_DATA_MAX = Float.MAX_VALUE;
 
     // Constants for default values
     public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
@@ -387,6 +396,34 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns the base location of first grid line (usually zero).
+     */
+    public double getGridBase()  { return _gridBase; }
+
+    /**
+     * Returns the base location of first grid line (usually zero).
+     */
+    public void setGridBase(double aValue)
+    {
+        if (MathUtils.equals(aValue, _gridBase)) return;
+        firePropChange(GridBase_Prop, _gridBase, _gridBase = aValue);
+    }
+
+    /**
+     * Returns the amount of space separating gridlines (in axis data coords).
+     */
+    public double getGridSpacing()  { return _gridSpacing; }
+
+    /**
+     * Returns the amount of space separating gridlines (in axis data coords).
+     */
+    public void setGridSpacing(double aValue)
+    {
+        if (MathUtils.equals(aValue, _gridSpacing)) return;
+        firePropChange(GridSpacing_Prop, _gridSpacing, _gridSpacing = aValue);
+    }
+
+    /**
      * Returns the length of hash mark drawn perpendicular to the axis line for each interval.
      */
     public double getTickLength()  { return _tickLength; }
@@ -441,6 +478,10 @@ public abstract class Axis extends ChartPart {
             case MinValue_Prop: return getMinValue();
             case MaxValue_Prop: return getMaxValue();
 
+            // GridSpacing, GridBase
+            case GridSpacing_Prop: return getGridSpacing();
+            case GridBase_Prop: return getGridBase();
+
             // TickLength, TickPos
             case TickLength_Prop: return getTickLength();
             case TickPos_Prop: return getTickPos();
@@ -471,6 +512,10 @@ public abstract class Axis extends ChartPart {
                 setWrapMinMax(minMax);
                 break;
             }
+
+            // GridSpacing, GridBase
+            case GridSpacing_Prop: setGridSpacing(SnapUtils.doubleValue(aValue)); break;
+            case GridBase_Prop: setGridBase(SnapUtils.doubleValue(aValue)); break;
 
             // TickLength, TickPos
             case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
@@ -505,6 +550,10 @@ public abstract class Axis extends ChartPart {
             case MaxBound_Prop: return AxisBound.AUTO;
             case MinValue_Prop: return 0;
             case MaxValue_Prop: return 5;
+
+            // GridSpacing, GridBase
+            case GridSpacing_Prop: return 0;
+            case GridBase_Prop: return 0;
 
             // TickLength, TickPos
             case TickLength_Prop: return DEFAULT_TICK_LENGTH;
@@ -556,6 +605,12 @@ public abstract class Axis extends ChartPart {
             String dashStr = Stroke.getDashArrayNameOrString(gridDash);
             e.add(GridDash_Prop, dashStr);
         }
+
+        // Archive GridSpacing, GridBase
+        if (!isPropDefault(GridSpacing_Prop))
+            e.add(GridSpacing_Prop, getGridSpacing());
+        if (!isPropDefault(GridBase_Prop))
+            e.add(GridBase_Prop, getGridBase());
 
         // Archive TickLength, TickPos
         if (!isPropDefault(TickLength_Prop))
@@ -612,6 +667,12 @@ public abstract class Axis extends ChartPart {
             double[] dashArray = Stroke.getDashArray(dashStr);
             setGridDash(dashArray);
         }
+
+        // Unarchive GridSpacing, GridBase
+        if (anElement.hasAttribute(GridSpacing_Prop))
+            setGridSpacing(anElement.getAttributeDoubleValue(GridSpacing_Prop));
+        if (anElement.hasAttribute(GridBase_Prop))
+            setGridBase(anElement.getAttributeDoubleValue(GridBase_Prop));
 
         // Unarchive TickLength, TickPos
         if (anElement.hasAttribute(TickLength_Prop))

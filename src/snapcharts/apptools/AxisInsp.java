@@ -1,5 +1,6 @@
 package snapcharts.apptools;
 import snap.view.Label;
+import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
@@ -65,6 +66,16 @@ public class AxisInsp extends ChartPartInsp {
     public ChartPart getChartPart()  { return getAxis(); }
 
     /**
+     * Initialize UI.
+     */
+    @Override
+    protected void initUI()
+    {
+        getView("GridSpacingText", TextField.class).setPromptText("Data Coords");
+        getView("GridBaseText", TextField.class).setPromptText("0");
+    }
+
+    /**
      * Reset UI.
      */
     protected void resetUI()
@@ -124,6 +135,12 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("TickPosOutsideButton", tickPos == Axis.TickPos.Outside);
         setViewValue("TickPosAcrossButton", tickPos == Axis.TickPos.Across);
         setViewValue("TickPosOffButton", tickPos == Axis.TickPos.Off);
+
+        // Reset GridSpacingText, GridBaseText
+        double gridSpacing = axis.getGridSpacing();
+        double gridBase = axis.getGridBase();
+        setViewValue("GridSpacingText", gridSpacing != 0 ? gridSpacing : null);
+        setViewValue("GridBaseText", gridBase != 0 ? gridBase : null);
     }
 
     /**
@@ -213,6 +230,12 @@ public class AxisInsp extends ChartPartInsp {
             axis.setTickPos(Axis.TickPos.Across);
         if (anEvent.equals("TickPosOffButton"))
             axis.setTickPos(Axis.TickPos.Off);
+
+        // Handle GridSpacingText, GridBaseText
+        if (anEvent.equals("GridSpacingText"))
+            axis.setGridSpacing(anEvent.getFloatValue());
+        if (anEvent.equals("GridBaseText"))
+            axis.setGridBase(anEvent.getFloatValue());
     }
 
     /**

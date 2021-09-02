@@ -193,23 +193,12 @@ public class TickLabelFormat {
         double delta = ivals.getDelta();
         int wholeDigitCount = getWholeDigitCount(delta);
 
-        // This is the old feature that supported fractional end labels if room was available
-        boolean NO_FRATIONAL_END_LABELS = true;
-
         // Handle anything above 10 (since intervals will be factor 10 and ends factor of 1)
-        String pattern;
-        if (wholeDigitCount >= 2) {
-            pattern = "#";
-        }
-
-        // Handle anything straddling whole/fractional boundary
-        else if (wholeDigitCount > 0) {
-            pattern = NO_FRATIONAL_END_LABELS ? "#" : "#.#";
-        }
+        String pattern = "#";
 
         // Handle fractions
-        else {
-            int fractDigitCount = getFractionDigitCount(delta); if (!NO_FRATIONAL_END_LABELS) fractDigitCount++;
+        if (wholeDigitCount <= 0) {
+            int fractDigitCount = getFractionDigitCount(delta);
             String str = "#.#";
             for (int i = 1; i < fractDigitCount; i++) str += '#';
             pattern = str;
@@ -220,14 +209,8 @@ public class TickLabelFormat {
 
         // Get format, format min/max inset by delta/3 (to get repeating .33) and get longer string
         DecimalFormat format = FormatUtils.getDecimalFormat(pattern);
-        String minSample = format(ivals.getMin() - delta, format, delta);
-        String maxSample = format(ivals.getMax() + delta, format, delta);
-        if (!NO_FRATIONAL_END_LABELS) {
-            minSample = format(ivals.getMin() + delta / 3, format, delta);
-            maxSample = format(ivals.getMax() - delta / 3, format, delta);
-        }
-
-        // Get long sample
+        String minSample = format(ivals.getMin(), format, delta);
+        String maxSample = format(ivals.getMax(), format, delta);
         String longSample = minSample.length() > maxSample.length() ? minSample : maxSample;
 
         // Return pattern and long sample in array

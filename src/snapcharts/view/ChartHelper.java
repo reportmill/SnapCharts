@@ -304,17 +304,10 @@ public abstract class ChartHelper {
     {
         // Get info
         AxisType axisType = axisView.getAxisType();
-        Axis axis = axisView.getAxis();
 
         // Special case, bar
-        if (axisType == AxisType.X) {
-            boolean isBar = getChartType().isBarType();
-            DataSetList dsetList = getDataSetList();
-            DataSet dset = dsetList.getDataSetCount()>0 ? dsetList.getDataSet(0) : null;
-            DataType dataType = dset != null ? dset.getDataType() : null;
-            if (isBar || dataType==DataType.IY || dataType==DataType.CY)
-                return createIntervalsForBarAxis();
-        }
+        if (isCategoryAxis(axisType))
+            return createIntervalsForBarAxis();
 
         // Get axis min, max, display length
         double min = getAxisMinForIntervalCalc(axisView);
@@ -327,11 +320,45 @@ public abstract class ChartHelper {
         boolean maxFixed = axisView.isAxisMaxFixed();
 
         // Handle Log: min/max are powers of 10, so we just want simple intervals from min to max by 1
+        Axis axis = axisView.getAxis();
         if (axis.isLog())
             return Intervals.getIntervalsSimple(min, max, minFixed, maxFixed);
 
+        // Calculate intervals
+        Intervals intervals = Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
+
+        // If user configured GridSpacing is defined (non-zero), change intervals to be based on GridSpacing/GridBase
+        double gridSpacing = axis.getGridSpacing();
+        if (gridSpacing != 0)
+            intervals = Intervals.getIntervalsForSpacingAndBase(intervals, gridSpacing, axis.getGridBase(), minFixed, maxFixed);
+
         // Return intervals
-        return Intervals.getIntervalsForMinMaxLen(min, max, axisLen, divLen, minFixed, maxFixed);
+        return intervals;
+    }
+
+    /**
+     * Returns whether given axis is category axis.
+     */
+    private boolean isCategoryAxis(AxisType axisType)
+    {
+        // If not X axis, return false
+        if (axisType != AxisType.X)
+            return false;
+
+        // If ChartType Bar, return true
+        boolean isBar = getChartType().isBarType();
+        if (isBar)
+            return true;
+
+        // If DataSet is IY or CY, return true
+        DataSetList dataSetList = getDataSetList();
+        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
+        DataType dataType = dataSet != null ? dataSet.getDataType() : null;
+        if (dataType == DataType.IY || dataType == DataType.CY)
+            return true;
+
+        // Return false
+        return false;
     }
 
     /**

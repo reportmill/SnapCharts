@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="4" Spacing="4">
-    <Label text="Axis Title:" />
+    <Label Spacing="4" text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label Name="AxisMinText" PrefWidth="50" text="Axis Min:" />
+    <Label Name="AxisMinText" PrefWidth="50" Spacing="4" text="Axis Min:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="MinBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
       <ToggleButton Name="MinBoundDataButton" Padding="2" text="Data" Position="CENTER" />
@@ -14,7 +14,7 @@
     <TextField Name="MinBoundText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label Name="AxisMinText" PrefWidth="50" text="Axis Max:" />
+    <Label Name="AxisMinText" PrefWidth="50" Spacing="4" text="Axis Max:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="MaxBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
       <ToggleButton Name="MaxBoundDataButton" Padding="2" text="Data" Position="CENTER" />
@@ -22,21 +22,21 @@
     </RowView>
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
-  <CheckBox Name="ZeroRequiredCheckBox" Padding="4" text="Always Include Zero" />
-  <CheckBox Name="LogCheckBox" Padding="4" text="Logarithmic" />
-  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="4" text="Show Legend Graphic" />
-  <RowView Name="WrapAxisBox" GrowWidth="true" Spacing="4">
-    <CheckBox Name="WrapCheckBox" Padding="4" text="Wrap Axis" />
-    <RowView Name="WrapMinMaxBox" GrowWidth="true" Spacing="4">
-      <Label text="Min:" />
+  <CheckBox Name="ZeroRequiredCheckBox" Padding="4" Spacing="5" text="Always Include Zero" />
+  <CheckBox Name="LogCheckBox" Padding="4" Spacing="5" text="Logarithmic" />
+  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="4" Spacing="5" text="Show Legend Graphic" />
+  <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
+    <CheckBox Name="WrapCheckBox" Padding="4" Spacing="5" text="Wrap Axis" />
+    <RowView Name="WrapMinMaxBox" Spacing="4" GrowWidth="true">
+      <Label Spacing="4" text="Min:" />
       <TextField Name="WrapMinText" Align="CENTER" ColCount="7" />
-      <Label text="Max:" />
+      <Label Spacing="4" text="Max:" />
       <TextField Name="WrapMaxText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="Tick Length:" />
-    <TextField Name="TickLengthText" Align="CENTER" PrefWidth="50" />
+    <Label Spacing="4" text="Tick Length:" />
+    <TextField Name="TickLengthText" PrefWidth="50" Align="CENTER" />
     <Button Name="TickLengthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
       <font name="Arial" size="13" />
     </Button>
@@ -46,12 +46,20 @@
     </Button>
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label Name="AxisTickPos" text="Tick Position:" />
+    <Label Name="AxisTickPos" Spacing="4" text="Tick Position:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="TickPosInsideButton" MinWidth="46" Padding="2" text="Inside" Position="CENTER_LEFT" Selected="true" />
       <ToggleButton Name="TickPosOutsideButton" MinWidth="46" Padding="2" text="Outside" Position="CENTER" />
       <ToggleButton Name="TickPosAcrossButton" MinWidth="46" Padding="2" text="Across" Position="CENTER" />
       <ToggleButton Name="TickPosOffButton" MinWidth="46" Padding="2" text="Off" Position="CENTER_RIGHT" />
+    </RowView>
+  </RowView>
+  <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
+    <RowView Name="WrapMinMaxBox" Padding="4" Spacing="4" GrowWidth="true">
+      <Label Spacing="4" text="Grid Spacing:" />
+      <TextField Name="GridSpacingText" Align="CENTER" ColCount="7" />
+      <Label Margin="0,0,0,9" Spacing="4" text="Base:" />
+      <TextField Name="GridBaseText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
 </ColView>

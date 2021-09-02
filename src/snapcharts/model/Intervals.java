@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.util.ArrayUtils;
 import snap.util.MathUtils;
 import snapcharts.util.DataUtils;
 
@@ -25,10 +26,10 @@ public class Intervals {
     private int  _count;
 
     // The array of interval division values
-    private double  _divs[];
+    private double[]  _divs;
 
     // An array of pleasing increments
-    private static final double PLEASING_INCREMENTS[] = { .1, .2, .5, 1, 2, 5, 10 };
+    private static final double[] PLEASING_INCREMENTS = { .1, .2, .5, 1, 2, 5, 10 };
 
     /**
      * Constructor.
@@ -211,7 +212,7 @@ public class Intervals {
         ivals._maxVal = aMax;
 
         // Calculate intervals and cache Count
-        double divs[] = getDivsFor(aMin, aMax, axisLen, divLen, minFixed, maxFixed);
+        double[] divs = getDivsFor(aMin, aMax, axisLen, divLen, minFixed, maxFixed);
         int count = divs.length;
         ivals._divs = divs;
         ivals._count = count;
@@ -229,6 +230,66 @@ public class Intervals {
 
         // Return
         return ivals;
+    }
+
+    /**
+     * Returns intervals for given GridSpacing and GridBase.
+     */
+    public static Intervals getIntervalsForSpacingAndBase(Intervals theIntervals, double aSpacing, double aBase, boolean minFixed, boolean maxFixed)
+    {
+        // Get Spacing (if less than zero, treat it as interval count (negated))
+        double spacing = aSpacing;
+        double min = theIntervals.getMin();
+        double max = theIntervals.getMax();
+        double rangeLength = max - min;
+        if (spacing < 0) {
+            spacing = rangeLength / -spacing;
+            aBase = Axis.GRID_BASE_DATA_MIN;
+        }
+
+        // If more than 100 divs, cap it at 100
+        double divCount = rangeLength / spacing;
+        if (divCount > 100) {
+            System.err.println("Intervals.getIntervalsForSpacingAndBase: Too many intervals (" + divCount + ")");
+            spacing = rangeLength / 100;
+        }
+
+        // Create divs
+        double[] divs = new double[0];
+
+        // If GridBase is DATA_MIN, add divs
+        if (aBase <= Axis.GRID_BASE_DATA_MIN) {
+            double div = min;
+            while (div <= max) {
+                divs = ArrayUtils.add(divs, div);
+                div += spacing;
+            }
+            if (MathUtils.equals(div, max, .001))
+                divs = ArrayUtils.add(divs, div);
+        }
+
+        // If GridBase is DATA_MAX, add divs
+        else if (aBase >= Axis.GRID_BASE_DATA_MAX) {
+            double div = max;
+            while (div >= min) {
+                divs = ArrayUtils.add(divs, div, 0);
+                div -= spacing;
+            }
+            if (MathUtils.equals(div, min, .001))
+                divs = ArrayUtils.add(divs, div, 0);
+        }
+
+        // Otherwise, add divs
+        else {
+            divs = getDivsForMinMaxIncr(min, max, spacing, aBase, minFixed, maxFixed);
+        }
+
+        // Update/return intervals
+        theIntervals._divs = divs;
+        int count = divs.length;
+        theIntervals._count = count;
+        theIntervals._delta = count >= 4 ? divs[2] - divs[1] : Math.max(divs[1] - divs[0], divs[count - 1] - divs[count - 2]);
+        return theIntervals;
     }
 
     /**
@@ -274,7 +335,7 @@ public class Intervals {
             if (steps<15 && MathUtils.gte(stepSize, divLen))
             {
                 // Get simple intervals for increment
-                double ivals[] = getDivsForMinMaxIncr(aMin, aMax, incr, minFixed, maxFixed);
+                double[] ivals = getDivsForMinMaxIncr(aMin, aMax, incr, 0, minFixed, maxFixed);
 
                 // If only 3 intervals and StepSize is less than half original MinSize, use ends instead
                 if (ivals.length==3 && stepSize<divLen/2)
@@ -326,23 +387,23 @@ public class Intervals {
     /**
      * Returns simple intervals double array from given min, max and increment.
      */
-    private static double[] getDivsForMinMaxIncr(double aMin, double aMax, double anIncr, boolean minFixed, boolean maxFixed)
+    private static double[] getDivsForMinMaxIncr(double aMin, double aMax, double anIncr, double aBase, boolean minFixed, boolean maxFixed)
     {
         // Get steps to ends and step count
-        int stepMin = getStepBeforeValueForBaseAndIncrement(aMin, 0, anIncr);
-        int stepMax = getStepAfterValueForBaseAndIncrement(aMax, 0, anIncr);
+        int stepMin = getStepBeforeValueForBaseAndIncrement(aMin, aBase, anIncr);
+        int stepMax = getStepAfterValueForBaseAndIncrement(aMax, aBase, anIncr);
         int stepCount = stepMax - stepMin + 1;
 
         // Create array, fill with intervals
-        double divs[] = new double[stepCount];
-        for (int i=0,step=stepMin; i<stepCount; i++,step++)
-            divs[i] = step*anIncr;
+        double[] divs = new double[stepCount];
+        for (int i = 0,step = stepMin; i < stepCount; i++, step++)
+            divs[i] = step * anIncr;
 
         // Adjust edges if Min/Max Fixed
         if (minFixed)
             divs[0] = aMin;
         if (maxFixed)
-            divs[divs.length-1] = aMax;
+            divs[divs.length - 1] = aMax;
 
         // Return divs
         return divs;
