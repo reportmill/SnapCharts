@@ -5,7 +5,7 @@ package snapcharts.view;
 import snap.gfx.Font;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
-import snap.view.ViewUpdater;
+import snapcharts.model.Axis;
 import snapcharts.model.Intervals;
 import java.text.DecimalFormat;
 
@@ -17,20 +17,26 @@ public class TickLabelFormat {
     // The AxisView
     private AxisView<?>  _axisView;
 
+    // The Axis
+    private Axis  _axis;
+
+    // Whether axis is log
+    private boolean  _isLog;
+
+    // The intervals to format
+    private Intervals  _intervals;
+
+    // The DecimalFormat
+    private DecimalFormat  _format;
+
     // The format pattern
     private String  _formatPattern;
 
     // The long sample
     private String  _longSample;
 
-    // The DecimalFormat
-    private DecimalFormat  _format;
-
-    // Runnable to trigger check if default tick format has changed
-    private Runnable  _checkForRelayout, CHECK_FOR_RELAYOUT = () -> checkForTickFormatChangeImpl();
-
     // Shared log/generic format
-    private static DecimalFormat TICKS_FORMAT = new DecimalFormat("#.###");
+    private static DecimalFormat LOG_FORMAT = new DecimalFormat("#.###");
 
     /**
      * Constructor.
@@ -38,6 +44,51 @@ public class TickLabelFormat {
     public TickLabelFormat(AxisView anAxisView)
     {
         _axisView = anAxisView;
+        _axis = anAxisView.getAxis();
+        _isLog = _axis.isLog();
+    }
+
+    /**
+     * Returns the intervals to format.
+     */
+    public Intervals getIntervals()
+    {
+        // If already set, just return
+        if (_intervals != null) return _intervals;
+
+        // Get intervals
+        ChartHelper chartHelper = _axisView._chartHelper;
+        double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
+        double axisMax = chartHelper.getAxisMaxForIntervalCalc(_axisView);
+        boolean minFixed = _axisView.isAxisMinFixed();
+        boolean maxFixed = _axisView.isAxisMaxFixed();
+
+        // Handle Log
+        if (_isLog)
+            return _intervals = Intervals.getIntervalsSimple(axisMin, axisMax, minFixed, maxFixed);
+
+        // Handle normal
+        Intervals intervals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, false, false);
+
+        // If user configured GridSpacing is defined (non-zero), change intervals to be based on GridSpacing/GridBase
+        double gridSpacing = _axis.getGridSpacing();
+        if (gridSpacing != 0) {
+            double gridBase = _axis.getGridBase();
+            intervals = Intervals.getIntervalsForSpacingAndBase(intervals, gridSpacing, gridBase, false, false);
+        }
+
+        // Set/return intervals
+        return _intervals = intervals;
+    }
+
+    /**
+     * Returns the DecimalFormat.
+     */
+    public DecimalFormat getFormat()
+    {
+        if (_format != null) return _format;
+        String formatPattern = getFormatPattern();
+        return _format = FormatUtils.getDecimalFormat(formatPattern);
     }
 
     /**
@@ -45,7 +96,7 @@ public class TickLabelFormat {
      */
     public String getFormatPattern()
     {
-        if (_formatPattern!=null) return _formatPattern;
+        if (_formatPattern != null) return _formatPattern;
         setPatternAndSample();
         return _formatPattern;
     }
@@ -58,16 +109,6 @@ public class TickLabelFormat {
         if (_longSample != null) return _longSample;
         setPatternAndSample();
         return _longSample;
-    }
-
-    /**
-     * Returns the DecimalFormat.
-     */
-    public DecimalFormat getFormat()
-    {
-        if (_format == null)
-            _format = FormatUtils.getDecimalFormat(getFormatPattern());
-        return _format;
     }
 
     /**
@@ -94,11 +135,10 @@ public class TickLabelFormat {
     /**
      * Returns a formatted value.
      */
-    public String format(double aValue, DecimalFormat aFormat, double aDelta)
+    private String format(double aValue, DecimalFormat aFormat, double aDelta)
     {
         // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
-        boolean isLog = _axisView.getAxis().isLog();
-        if (isLog)
+        if (_isLog)
             return formatLog(aValue);
 
         // If large delta, format with exponent
@@ -132,7 +172,7 @@ public class TickLabelFormat {
             return getFormatWithExponent(value, value);
 
         // Return
-        return TICKS_FORMAT.format(value);
+        return LOG_FORMAT.format(value);
     }
 
     /**
@@ -164,33 +204,21 @@ public class TickLabelFormat {
     }
 
     /**
-     * Returns the suggested format pattern.
+     * Returns the suggested format pattern and a sample string that should represent the longest possible label string.
      */
     private void setPatternAndSample()
     {
-        String[] patternAndSample = getAutoFormatPatternForTickLabelsAndLongSample();
-        _formatPattern = patternAndSample[0];
-        _longSample = patternAndSample[1];
-    }
-
-    /**
-     * Returns the suggested format pattern and a sample string that should represent the longest possible label string.
-     */
-    private String[] getAutoFormatPatternForTickLabelsAndLongSample()
-    {
         // If Log axis, handle special
-        boolean isLog = _axisView.getAxis().isLog();
-        if (isLog)
-            return getAutoFormatPatternForTickLabelsAndLongSampleLog();
+        if (_isLog) {
+            setPatternAndSampleLog();
+            return;
+        }
 
-        // Get max value
-        ChartHelper chartHelper = _axisView._chartHelper;
-        double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
-        double axisMax = chartHelper.getAxisMaxForIntervalCalc(_axisView);
+        // Get intervals and interval delta
+        Intervals intervals = getIntervals();
+        double delta = intervals.getDelta();
 
-        // Get ideal intervals, interval delta and its number of whole digits
-        Intervals ivals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, false, false);
-        double delta = ivals.getDelta();
+        // Get number of whole digits in interval delta
         int wholeDigitCount = getWholeDigitCount(delta);
 
         // Handle anything above 10 (since intervals will be factor 10 and ends factor of 1)
@@ -209,33 +237,29 @@ public class TickLabelFormat {
 
         // Get format, format min/max inset by delta/3 (to get repeating .33) and get longer string
         DecimalFormat format = FormatUtils.getDecimalFormat(pattern);
-        String minSample = format(ivals.getMin(), format, delta);
-        String maxSample = format(ivals.getMax(), format, delta);
+        String minSample = format(intervals.getMin(), format, delta);
+        String maxSample = format(intervals.getMax(), format, delta);
         String longSample = minSample.length() > maxSample.length() ? minSample : maxSample;
 
-        // Return pattern and long sample in array
-        return new String[] { pattern, longSample };
+        // Set pattern and long sample
+        _formatPattern = pattern;
+        _longSample = longSample;
     }
 
     /**
-     * Returns the suggested format pattern and a sample string that should represent the longest possible label string.
+     * Sets the appropriate format pattern and a sample string that should represent the longest possible label string.
      */
-    private String[] getAutoFormatPatternForTickLabelsAndLongSampleLog()
+    private void setPatternAndSampleLog()
     {
         // Get ideal intervals
-        ChartHelper chartHelper = _axisView._chartHelper;
-        double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
-        double axisMax = chartHelper.getAxisMaxForIntervalCalc(_axisView);
-        boolean minFixed = _axisView.isAxisMinFixed();
-        boolean maxFixed = _axisView.isAxisMaxFixed();
-        Intervals ivals = Intervals.getIntervalsSimple(axisMin, axisMax, minFixed, maxFixed);
-        String longSample = "";
+        Intervals intervals = getIntervals();
 
-        // Iterate over intervals
-        for (int i=0; i<ivals.getCount(); i++) {
+        // Iterate over intervals to find LongSample
+        String longSample = "";
+        for (int i = 0; i < intervals.getCount(); i++) {
 
             // If loop value not int, skip (log axis only shows int (power of 10) values)
-            double val = ivals.getInterval(i);
+            double val = intervals.getInterval(i);
             if (val != (int) val)
                 continue;
 
@@ -245,42 +269,9 @@ public class TickLabelFormat {
                 longSample = valStr;
         }
 
-        return new String[] { "#.###", longSample };
-    }
-
-    /**
-     * Called when intervals change to see if default tick label format has changed (which triggers full chart relayout).
-     */
-    public void checkForFormatChange()
-    {
-        if (_checkForRelayout == null && _formatPattern != null) {
-            ViewUpdater updater = _axisView.getUpdater();
-            if (updater != null)
-                updater.runBeforeUpdate(_checkForRelayout = CHECK_FOR_RELAYOUT);
-        }
-    }
-
-    /**
-     * Called when intervals change to see if default tick label format has changed (which triggers full chart relayout).
-     */
-    private void checkForTickFormatChangeImpl()
-    {
-        // Get new longest tick label sample string and its length
-        String[] patternAndSample = getAutoFormatPatternForTickLabelsAndLongSample();
-        String longSample = patternAndSample[1];
-        int longSampleLen = longSample.length();
-
-        // If length has changed, relayout chart
-        if (longSampleLen != _longSample.length()) {
-            _axisView.relayout();
-            _axisView.relayoutParent();
-            _formatPattern = patternAndSample[0];
-            _longSample = longSample;
-            _format = null;
-        }
-
-        // Reset runnable trigger
-        _checkForRelayout = null;
+        // Set pattern and long sample
+        _formatPattern = "#.###";
+        _longSample = longSample;
     }
 
     /**
@@ -288,8 +279,7 @@ public class TickLabelFormat {
      */
     private int getWholeDigitCount(double aValue)
     {
-        if (aValue<1)
-            return 0;
+        if (aValue < 1) return 0;
         double log10 = Math.log10(aValue);
         return (int) Math.floor(log10) + 1;
     }

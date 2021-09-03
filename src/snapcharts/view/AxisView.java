@@ -96,9 +96,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // Enable events
         enableEvents(MouseEvents);
         enableEvents(Scroll);
-
-        // Create TickFormatter
-        _tickFormat = new TickLabelFormat(this);
     }
 
     /**
@@ -283,8 +280,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             _markerLabels = null;
         }
 
-        // Register for check to see if tick format has changed
-        _tickFormat.checkForFormatChange();
+        // Clear TickFormat
+        _tickFormat = null;
     }
 
     /**
@@ -333,6 +330,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         Axis axis = getAxis();
         Font tickLabelFont = getFont();
         Paint tickTextFill = axis.getTextFill();
+        TickLabelFormat tickFormat = getTickLabelFormat();
 
         // Create list
         List<TickLabel> tickLabels = new ArrayList<>(intervalCount);
@@ -350,7 +348,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
             // Create/config/add TickLabel
             TickLabel tickLabel = new TickLabel(this, dataX);
-            String str = _tickFormat.format(dataX);
+            String str = tickFormat.format(dataX);
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
             tickLabel.setTextFill(tickTextFill);
@@ -469,11 +467,21 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the TickLabelFormat.
+     */
+    protected TickLabelFormat getTickLabelFormat()
+    {
+        if (_tickFormat != null) return _tickFormat;
+        return _tickFormat = new TickLabelFormat(this);
+    }
+
+    /**
      * Returns the max label width.
      */
     protected double getTickLabelsMaxWidth()
     {
-        return _tickFormat.getLongSampleStringWidth();
+        TickLabelFormat tickFormat = getTickLabelFormat();
+        return tickFormat.getLongSampleStringWidth();
     }
 
     /**
