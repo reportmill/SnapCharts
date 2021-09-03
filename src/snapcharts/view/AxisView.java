@@ -315,6 +315,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Clear TickFormat
         _tickFormat = null;
+
+        // Make sure to register for relayout (TickLabelBox could be empty)
+        relayout();
+        relayoutParent();
     }
 
     /**

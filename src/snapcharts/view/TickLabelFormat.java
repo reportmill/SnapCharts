@@ -91,7 +91,67 @@ public class TickLabelFormat {
     {
         if (theIntervals == _intervals) return;
         _intervals = theIntervals;
-        setPatternAndSample();
+        updateFormatForIntervals();
+    }
+
+    /**
+     * Updates the format for current intervals.
+     */
+    private void updateFormatForIntervals()
+    {
+        // If Log axis, handle special
+        if (_isLog) {
+            updateFormatForIntervalsLog();
+            return;
+        }
+
+        // Get intervals and interval delta
+        Intervals intervals = getIntervals();
+        double delta = intervals.getDelta();
+
+        // Get number of whole digits in interval delta
+        int wholeDigitCount = getWholeDigitCount(delta);
+
+        // Handle anything above 10 (since intervals will be factor 10 and ends factor of 1)
+        String pattern = "0";
+
+        // Handle weird delta (e.g. user configured GridSpacing)
+        if (delta != (int) delta) {
+            pattern = "#.#";
+            int significantDigits = getSignificantDigitsAfterDecimal(delta, 3);
+            for (int i = 1; i < significantDigits; i++)
+                pattern += '#';
+        }
+
+        // Handle fractional delta
+        else if (wholeDigitCount <= 0) {
+            int fractDigitCount = getFractionDigitCount(delta);
+            String str = "0.0";
+            for (int i = 1; i < fractDigitCount; i++) str += '0';
+            pattern = str;
+        }
+
+        // Set new pattern
+        _formatPattern = pattern;
+        _format = null;
+
+        // Set new LongSample
+        String longSample = getLongSampleCalculated();
+        setLongSample(longSample);
+    }
+
+    /**
+     * Updates the format for current intervals (Log axis).
+     */
+    private void updateFormatForIntervalsLog()
+    {
+        // Set new pattern
+        _formatPattern = "#.###";
+        _format = null;
+
+        // Set new LongSample
+        String longSample = getLongSampleCalculated();
+        setLongSample(longSample);
     }
 
     /**
@@ -110,7 +170,7 @@ public class TickLabelFormat {
     public String getFormatPattern()
     {
         if (_formatPattern != null) return _formatPattern;
-        setPatternAndSample();
+        updateFormatForIntervals();
         return _formatPattern;
     }
 
@@ -120,8 +180,51 @@ public class TickLabelFormat {
     public String getLongSample()
     {
         if (_longSample != null) return _longSample;
-        setPatternAndSample();
+        updateFormatForIntervals();
         return _longSample;
+    }
+
+    /**
+     * Sets the longest tick label for current intervals and format.
+     */
+    private void setLongSample(String aString)
+    {
+        // If sample is longer than previous estimate, trigger relayout
+        if (_longSample != null && _longSample.length() < aString.length()) {
+            _axisView.relayout();
+            _axisView.relayoutParent();
+        }
+
+        // Set value
+        _longSample = aString;
+    }
+
+    /**
+     * Returns the long sample for current intervals and format. Calculated, not cached.
+     */
+    private String getLongSampleCalculated()
+    {
+        // Get current intervals
+        Intervals intervals = getIntervals();
+        int intervalCount = intervals.getCount();
+
+        // Iterate over intervals to find LongSample
+        String longSample = "";
+        for (int i = 0; i < intervalCount; i++) {
+
+            // If not full interval, just skip
+            if (!intervals.isFullInterval(i))
+                continue;
+
+            // Get val as string and swap it in if longer
+            double val = intervals.getInterval(i);
+            String valStr = format(val);
+            if (valStr.length() > longSample.length())
+                longSample = valStr;
+        }
+
+        // Return
+        return longSample;
     }
 
     /**
@@ -155,7 +258,7 @@ public class TickLabelFormat {
 
         // If large value, format with exponent
         if (Math.abs(aValue) >= 1000)
-            return getFormatWithExponent(aValue);
+            return formatWithExponent(aValue);
 
         // Return formatted value
         try {
@@ -181,7 +284,7 @@ public class TickLabelFormat {
         // Get value
         double value = Math.pow(10, aValue);
         if (value >= 1000)
-            return getFormatWithExponent(value);
+            return formatWithExponent(value);
 
         // Return
         return LOG_FORMAT.format(value);
@@ -190,7 +293,7 @@ public class TickLabelFormat {
     /**
      * Does format with exponents.
      */
-    private String getFormatWithExponent(double aValue)
+    private String formatWithExponent(double aValue)
     {
         // Get absolute value
         double absVal = Math.abs(aValue);
@@ -219,86 +322,16 @@ public class TickLabelFormat {
     }
 
     /**
-     * Returns the suggested format pattern and a sample string that should represent the longest possible label string.
+     * Standard toString implementation.
      */
-    private void setPatternAndSample()
+    @Override
+    public String toString()
     {
-        // If Log axis, handle special
-        if (_isLog) {
-            setPatternAndSampleLog();
-            return;
-        }
-
-        // Get intervals and interval delta
-        Intervals intervals = getIntervals();
-        double delta = intervals.getDelta();
-
-        // Get number of whole digits in interval delta
-        int wholeDigitCount = getWholeDigitCount(delta);
-
-        // Handle anything above 10 (since intervals will be factor 10 and ends factor of 1)
-        String pattern = "#";
-
-        // Handle fractions
-        if (wholeDigitCount <= 0) {
-            int fractDigitCount = getFractionDigitCount(delta);
-            String str = "#.#";
-            for (int i = 1; i < fractDigitCount; i++) str += '#';
-            pattern = str;
-        }
-
-        // We really want zero string
-        pattern = pattern.replace('#', '0');
-
-        // Get format for pattern
-        DecimalFormat format = FormatUtils.getDecimalFormat(pattern);
-
-        // Iterate over intervals to find LongSample
-        String longSample = "";
-        for (int i = 0; i < intervals.getCount(); i++) {
-
-            // If partial interval, skip
-            if (!intervals.isFullInterval(i))
-                continue;
-
-            // Get val as string and swap it in if longer
-            double val = intervals.getInterval(i);
-            String valStr = format(val, format);
-            if (valStr.length() > longSample.length())
-                longSample = valStr;
-        }
-
-        // Set pattern and long sample
-        _formatPattern = pattern;
-        _longSample = longSample;
-    }
-
-    /**
-     * Sets the appropriate format pattern and a sample string that should represent the longest possible label string.
-     */
-    private void setPatternAndSampleLog()
-    {
-        // Get ideal intervals
-        Intervals intervals = getIntervals();
-
-        // Iterate over intervals to find LongSample
-        String longSample = "";
-        for (int i = 0; i < intervals.getCount(); i++) {
-
-            // If loop value not int, skip (log axis only shows int (power of 10) values)
-            double val = intervals.getInterval(i);
-            if (val != (int) val)
-                continue;
-
-            // Get val as string and swap it in if longer
-            String valStr = formatLog(val);
-            if (valStr.length() > longSample.length())
-                longSample = valStr;
-        }
-
-        // Set pattern and long sample
-        _formatPattern = "#.###";
-        _longSample = longSample;
+        return "TickLabelFormat { Axis=" + _axis.getType() +
+                ", Format='" + _formatPattern + '\'' +
+                ", LongSample='" + _longSample + '\'' +
+                ", Log=" + _isLog +
+                '}';
     }
 
     /**
@@ -319,5 +352,19 @@ public class TickLabelFormat {
         if (aValue >= 1) return 0;
         double log10 = Math.log10(aValue);
         return (int) Math.round(Math.abs(log10));
+    }
+
+    /**
+     * Returns the number of significant digits up to a maximum.
+     */
+    private int getSignificantDigitsAfterDecimal(double aValue, int aMax)
+    {
+        int count = 0;
+        double value = aValue - (int) aValue;
+        while (value != (int) value && count < aMax) {
+            count++;
+            value *= 10;
+        }
+        return count;
     }
 }
