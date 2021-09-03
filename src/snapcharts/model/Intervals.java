@@ -88,7 +88,7 @@ public class Intervals {
         double val1 = getInterval(anIndex);
         double val2 = getInterval(index2);
         double delta = Math.abs(val2 - val1);
-        return withinPercentTolerance(delta, _delta, .001);
+        return withinPercentTolerance(delta, _delta, .0001);
     }
 
     /**

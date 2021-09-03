@@ -39,7 +39,7 @@ public class TickLabelFormat {
     private static DecimalFormat LOG_FORMAT = new DecimalFormat("#.###");
 
     // Format to round values
-    private static DecimalFormat ROUND_FORMAT = new DecimalFormat("#.######");
+    private static DecimalFormat ROUND_FORMAT = new DecimalFormat("#.####");
 
     /**
      * Constructor.
