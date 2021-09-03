@@ -38,6 +38,9 @@ public class TickLabelFormat {
     // Shared log/generic format
     private static DecimalFormat LOG_FORMAT = new DecimalFormat("#.###");
 
+    // Format to round values
+    private static DecimalFormat ROUND_FORMAT = new DecimalFormat("#.######");
+
     /**
      * Constructor.
      */
@@ -74,11 +77,21 @@ public class TickLabelFormat {
         double gridSpacing = _axis.getGridSpacing();
         if (gridSpacing != 0) {
             double gridBase = _axis.getGridBase();
-            intervals = Intervals.getIntervalsForSpacingAndBase(intervals, gridSpacing, gridBase, false, false);
+            intervals = Intervals.getIntervalsForSpacingAndBase(intervals, gridSpacing, gridBase, minFixed, maxFixed);
         }
 
         // Set/return intervals
         return _intervals = intervals;
+    }
+
+    /**
+     * Sets the intervals.
+     */
+    public void setIntervals(Intervals theIntervals)
+    {
+        if (theIntervals == _intervals) return;
+        _intervals = theIntervals;
+        setPatternAndSample();
     }
 
     /**
@@ -128,22 +141,21 @@ public class TickLabelFormat {
     public String format(double aValue)
     {
         DecimalFormat fmt = getFormat();
-        double delta = _axisView.getIntervals().getDelta();
-        return format(aValue, fmt, delta);
+        return format(aValue, fmt);
     }
 
     /**
      * Returns a formatted value.
      */
-    private String format(double aValue, DecimalFormat aFormat, double aDelta)
+    private String format(double aValue, DecimalFormat aFormat)
     {
         // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
         if (_isLog)
             return formatLog(aValue);
 
-        // If large delta, format with exponent
-        if (aDelta >= 1000)
-            return getFormatWithExponent(aValue, aDelta);
+        // If large value, format with exponent
+        if (Math.abs(aValue) >= 1000)
+            return getFormatWithExponent(aValue);
 
         // Return formatted value
         try {
@@ -169,7 +181,7 @@ public class TickLabelFormat {
         // Get value
         double value = Math.pow(10, aValue);
         if (value >= 1000)
-            return getFormatWithExponent(value, value);
+            return getFormatWithExponent(value);
 
         // Return
         return LOG_FORMAT.format(value);
@@ -178,29 +190,32 @@ public class TickLabelFormat {
     /**
      * Does format with exponents.
      */
-    private String getFormatWithExponent(double aValue, double aDelta)
+    private String getFormatWithExponent(double aValue)
     {
-        // Handle case where delta is in the trillions
-        if (aDelta >= 1000000000000L) {
-            int val = (int) Math.round(aValue / 1000000000000L);
-            return val + "T";
+        // Get absolute value
+        double absVal = Math.abs(aValue);
+
+        // Handle case of value in the trillions
+        if (absVal >= 1000000000000L) {
+            String valStr = ROUND_FORMAT.format(aValue / 1000000000000L);
+            return valStr + "T";
         }
 
-        // Handle case where delta is in the billions
-        if (aDelta >= 1000000000) {
-            int val = (int) Math.round(aValue / 1000000000);
-            return val + "B";
+        // Handle case of value in the billions
+        if (absVal >= 1000000000) {
+            String valStr = ROUND_FORMAT.format(aValue / 1000000000);
+            return valStr + "B";
         }
 
-        // Handle case where delta is in the millions
-        if (aDelta >= 1000000) {
-            int val = (int) Math.round(aValue / 1000000);
-            return val + "M";
+        // Handle case of value in the millions
+        if (absVal >= 1000000) {
+            String valStr = ROUND_FORMAT.format(aValue / 1000000);
+            return valStr + "M";
         }
 
-        // Handle case where delta is in the thousands
-        int val = (int) Math.round(aValue / 1000);
-        return val + "k";
+        // Handle case of value in the thousands
+        String valStr = ROUND_FORMAT.format(aValue / 1000);
+        return valStr + "k";
     }
 
     /**
@@ -235,11 +250,23 @@ public class TickLabelFormat {
         // We really want zero string
         pattern = pattern.replace('#', '0');
 
-        // Get format, format min/max inset by delta/3 (to get repeating .33) and get longer string
+        // Get format for pattern
         DecimalFormat format = FormatUtils.getDecimalFormat(pattern);
-        String minSample = format(intervals.getMin(), format, delta);
-        String maxSample = format(intervals.getMax(), format, delta);
-        String longSample = minSample.length() > maxSample.length() ? minSample : maxSample;
+
+        // Iterate over intervals to find LongSample
+        String longSample = "";
+        for (int i = 0; i < intervals.getCount(); i++) {
+
+            // If partial interval, skip
+            if (!intervals.isFullInterval(i))
+                continue;
+
+            // Get val as string and swap it in if longer
+            double val = intervals.getInterval(i);
+            String valStr = format(val, format);
+            if (valStr.length() > longSample.length())
+                longSample = valStr;
+        }
 
         // Set pattern and long sample
         _formatPattern = pattern;

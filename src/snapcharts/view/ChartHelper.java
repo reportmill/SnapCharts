@@ -305,9 +305,10 @@ public abstract class ChartHelper {
         // Get info
         AxisType axisType = axisView.getAxisType();
 
-        // Special case, bar
-        if (isCategoryAxis(axisType))
-            return createIntervalsForBarAxis();
+        // Handle Category axis special
+        boolean isCategoryAxis = axisView.isCategoryAxis();
+        if (isCategoryAxis)
+            return createIntervalsForCategoryAxis();
 
         // Get axis min, max, display length
         double min = getAxisMinForIntervalCalc(axisView);
@@ -337,38 +338,13 @@ public abstract class ChartHelper {
     }
 
     /**
-     * Returns whether given axis is category axis.
-     */
-    private boolean isCategoryAxis(AxisType axisType)
-    {
-        // If not X axis, return false
-        if (axisType != AxisType.X)
-            return false;
-
-        // If ChartType Bar, return true
-        boolean isBar = getChartType().isBarType();
-        if (isBar)
-            return true;
-
-        // If DataSet is IY or CY, return true
-        DataSetList dataSetList = getDataSetList();
-        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
-        DataType dataType = dataSet != null ? dataSet.getDataType() : null;
-        if (dataType == DataType.IY || dataType == DataType.CY)
-            return true;
-
-        // Return false
-        return false;
-    }
-
-    /**
      * Creates the axis intervals for discrete X axis, like bar or indexed value axis.
      */
-    protected Intervals createIntervalsForBarAxis()
+    protected Intervals createIntervalsForCategoryAxis()
     {
         boolean isBar = getChartType().isBarType();
-        DataSetList dsetList = getDataSetList();
-        int pointCount = dsetList.getPointCount();
+        DataSetList dataSetList = getDataSetList();
+        int pointCount = dataSetList.getPointCount();
         int maxX = isBar ? pointCount : pointCount - 1;
         return Intervals.getIntervalsSimple(0, maxX);
     }

@@ -249,16 +249,49 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns whether given axis is category axis.
+     */
+    public boolean isCategoryAxis()
+    {
+        // If not X axis, return false
+        AxisType axisType = getAxisType();
+        if (axisType != AxisType.X)
+            return false;
+
+        // If ChartType Bar, return true
+        boolean isBar = getChartType().isBarType();
+        if (isBar)
+            return true;
+
+        // If DataSet is IY or CY, return true
+        DataSetList dataSetList = getDataSetList();
+        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
+        DataType dataType = dataSet != null ? dataSet.getDataType() : null;
+        if (dataType == DataType.IY || dataType == DataType.CY)
+            return true;
+
+        // Return false
+        return false;
+    }
+
+    /**
      * Returns the axis intervals for active datasets.
      */
     public Intervals getIntervals()
     {
         // If already set, just return
-        if (_intervals!=null) return _intervals;
+        if (_intervals != null) return _intervals;
 
-        // Create, set and return
-        Intervals ivals = _chartHelper.createIntervals(this);
-        return _intervals = ivals;
+        // Create, set
+        Intervals intervals = _chartHelper.createIntervals(this);
+        _intervals = intervals;
+
+        // Update TickFormat for actual intervals
+        TickLabelFormat tickFormat = getTickLabelFormat();
+        tickFormat.setIntervals(intervals);
+
+        // Return intervals
+        return _intervals;
     }
 
     /**
@@ -304,10 +337,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If already set, just return
         if (_tickLabels != null) return _tickLabels;
 
-        // Special case, bar
-        if (isBarAxis())
-            _tickLabels = createTickLabelsForBarAxis();
-        else _tickLabels = createTickLabels();
+        // Create TickLabels
+        _tickLabels = createTickLabels();
 
         // Add TickLabels to TickLabelBox
         for (TickLabel tickLabel : _tickLabels)
@@ -322,6 +353,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     protected TickLabel[] createTickLabels()
     {
+        // Handle Category axis special
+        if (isCategoryAxis())
+            return createTickLabelsForCategoryAxis();
+
         // Get Intervals info
         Intervals intervals = getIntervals();
         int intervalCount = intervals.getCount();
@@ -357,6 +392,35 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Create/return array of TickLabels
         return tickLabels.toArray(new TickLabel[0]);
+    }
+
+    /**
+     * Creates TickLabels for Category Axis (e.g. for Bar charts).
+     */
+    private TickLabel[] createTickLabelsForCategoryAxis()
+    {
+        // Get DataSet and pointCount
+        DataSetList dataSetList = getDataSetList();
+        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
+        int pointCount = dataSetList.getPointCount();
+        TickLabel[] tickLabels = new TickLabel[pointCount];
+
+        // Get TickLabel attributes
+        Axis axis = getAxis();
+        Font tickLabelFont = getFont();
+        Paint tickTextFill = axis.getTextFill();
+
+        // Iterate over points and create/set TickLabel
+        for (int i = 0; i < pointCount; i++) {
+            TickLabel tickLabel = tickLabels[i] = new TickLabel(this, i + .5);
+            String str = dataSet.getString(i); // was getC(i)
+            tickLabel.setText(str);
+            tickLabel.setFont(tickLabelFont);
+            tickLabel.setTextFill(tickTextFill);
+        }
+
+        // Return TickLabels
+        return tickLabels;
     }
 
     /**
@@ -418,52 +482,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Create/return array of TickLabels
         return markerLabels;
-    }
-
-    /**
-     * Returns whether axis is a bar axis (labels represent bin indexs, not axis values).
-     */
-    private boolean isBarAxis()
-    {
-        if (getAxisType() != AxisType.X)
-            return false;
-        if (getChartType().isBarType())
-            return true;
-
-        // Also treat IY and CY Data sets as Bar axis types
-        DataSetList dataSetList = getDataSetList();
-        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
-        DataType dataType = dataSet != null ? dataSet.getDataType() : null;
-        return dataType == DataType.IY || dataType == DataType.CY;
-    }
-
-    /**
-     * Creates Bar Axis Labels.
-     */
-    private TickLabel[] createTickLabelsForBarAxis()
-    {
-        // Get DataSet and pointCount
-        DataSetList dataSetList = getDataSetList();
-        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
-        int pointCount = dataSetList.getPointCount();
-        TickLabel[] tickLabels = new TickLabel[pointCount];
-
-        // Get TickLabel attributes
-        Axis axis = getAxis();
-        Font tickLabelFont = getFont();
-        Paint tickTextFill = axis.getTextFill();
-
-        // Iterate over points and create/set TickLabel
-        for (int i = 0; i < pointCount; i++) {
-            TickLabel tickLabel = tickLabels[i] = new TickLabel(this, i + .5);
-            String str = dataSet.getString(i); // was getC(i)
-            tickLabel.setText(str);
-            tickLabel.setFont(tickLabelFont);
-            tickLabel.setTextFill(tickTextFill);
-        }
-
-        // Return TickLabels
-        return tickLabels;
     }
 
     /**
