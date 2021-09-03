@@ -676,9 +676,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     @Override
     public void setWidth(double aValue)
     {
-        if (aValue==getWidth()) return;
+        if (aValue == getWidth()) return;
         super.setWidth(aValue);
-        clearIntervals();
+        if (this instanceof AxisViewX)
+            clearIntervals();
     }
 
     /**
@@ -689,7 +690,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         if (aValue == getHeight()) return;
         super.setHeight(aValue);
-        clearIntervals();
+        if (this instanceof AxisViewY)
+            clearIntervals();
     }
 
     /**

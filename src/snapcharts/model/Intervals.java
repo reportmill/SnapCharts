@@ -279,16 +279,25 @@ public class Intervals {
                 divs = ArrayUtils.add(divs, div, 0);
         }
 
-        // Otherwise, add divs
+        // Otherwise, get simple divs from min to max by spacing
         else {
-            divs = getDivsForMinMaxIncr(min, max, spacing, aBase, minFixed, maxFixed);
+
+            // Get simple divs
+            double min2 = min - aBase;
+            double max2 = max - aBase;
+            divs = getDivsForMinMaxIncr(min2, max2, spacing, 0, minFixed, maxFixed);
+
+            // If Base is set, reset divs by Base amount
+            if (aBase != 0) {
+                for (int i = 0; i < divs.length; i++)
+                    divs[i] += aBase;
+            }
         }
 
         // Update/return intervals
         theIntervals._divs = divs;
-        int count = divs.length;
-        theIntervals._count = count;
-        theIntervals._delta = count >= 4 ? divs[2] - divs[1] : Math.max(divs[1] - divs[0], divs[count - 1] - divs[count - 2]);
+        theIntervals._count = divs.length;
+        theIntervals._delta = spacing;
         return theIntervals;
     }
 

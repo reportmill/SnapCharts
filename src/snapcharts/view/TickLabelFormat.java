@@ -35,9 +35,6 @@ public class TickLabelFormat {
     // The long sample
     private String  _longSample;
 
-    // Shared log/generic format
-    private static DecimalFormat LOG_FORMAT = new DecimalFormat("#.###");
-
     // Format to round values
     private static DecimalFormat ROUND_FORMAT = new DecimalFormat("#.####");
 
@@ -70,8 +67,8 @@ public class TickLabelFormat {
         if (_isLog)
             return _intervals = Intervals.getIntervalsSimple(axisMin, axisMax, minFixed, maxFixed);
 
-        // Handle normal
-        Intervals intervals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, false, false);
+        // Get ideal intervals (i.e., for chart with plenty of room)
+        Intervals intervals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, minFixed, maxFixed);
 
         // If user configured GridSpacing is defined (non-zero), change intervals to be based on GridSpacing/GridBase
         double gridSpacing = _axis.getGridSpacing();
@@ -99,54 +96,19 @@ public class TickLabelFormat {
      */
     private void updateFormatForIntervals()
     {
-        // If Log axis, handle special
-        if (_isLog) {
-            updateFormatForIntervalsLog();
-            return;
-        }
-
-        // Get intervals and interval delta
-        Intervals intervals = getIntervals();
-        double delta = intervals.getDelta();
-
-        // Get number of whole digits in interval delta
-        int wholeDigitCount = getWholeDigitCount(delta);
-
-        // Handle anything above 10 (since intervals will be factor 10 and ends factor of 1)
+        // Basic pattern for whole number intervals is just "0"
         String pattern = "0";
 
-        // Handle weird delta (e.g. user configured GridSpacing)
-        if (delta != (int) delta) {
+        // If fractional digits, add fractional digits to pattern
+        int fractionDigits = getFractionDigitsMaxForIntervals();
+        if (fractionDigits > 0) {
             pattern = "#.#";
-            int significantDigits = getSignificantDigitsAfterDecimal(delta, 3);
-            for (int i = 1; i < significantDigits; i++)
+            for (int i = 1; i < fractionDigits; i++)
                 pattern += '#';
-        }
-
-        // Handle fractional delta
-        else if (wholeDigitCount <= 0) {
-            int fractDigitCount = getFractionDigitCount(delta);
-            String str = "0.0";
-            for (int i = 1; i < fractDigitCount; i++) str += '0';
-            pattern = str;
         }
 
         // Set new pattern
         _formatPattern = pattern;
-        _format = null;
-
-        // Set new LongSample
-        String longSample = getLongSampleCalculated();
-        setLongSample(longSample);
-    }
-
-    /**
-     * Updates the format for current intervals (Log axis).
-     */
-    private void updateFormatForIntervalsLog()
-    {
-        // Set new pattern
-        _formatPattern = "#.###";
         _format = null;
 
         // Set new LongSample
@@ -189,14 +151,16 @@ public class TickLabelFormat {
      */
     private void setLongSample(String aString)
     {
-        // If sample is longer than previous estimate, trigger relayout
-        if (_longSample != null && _longSample.length() < aString.length()) {
-            _axisView.relayout();
-            _axisView.relayoutParent();
-        }
+        // If first time, just set
+        if (_longSample == null)
+            _longSample = aString;
 
-        // Set value
-        _longSample = aString;
+        // If sample is longer than previous estimate, update and trigger relayout
+        else if (_longSample != null && _longSample.length() < aString.length()) {
+            _longSample = aString;
+            _axisView._tickLabelBox.relayout();
+            _axisView._tickLabelBox.relayoutParent();
+        }
     }
 
     /**
@@ -243,51 +207,26 @@ public class TickLabelFormat {
      */
     public String format(double aValue)
     {
-        DecimalFormat fmt = getFormat();
-        return format(aValue, fmt);
-    }
-
-    /**
-     * Returns a formatted value.
-     */
-    private String format(double aValue, DecimalFormat aFormat)
-    {
-        // Handle Log axis: Only show text for  values that are a factor of 10 (1[0]* or 0.[0]*1)
+        // Get value (if log, convert to original data scale)
+        double value = aValue;
         if (_isLog)
-            return formatLog(aValue);
+            value = Math.pow(10, value);
 
         // If large value, format with exponent
-        if (Math.abs(aValue) >= 1000)
-            return formatWithExponent(aValue);
+        if (Math.abs(value) >= 1000)
+            return formatWithExponent(value);
 
         // Return formatted value
+        DecimalFormat format = getFormat();
         try {
-            return aFormat.format(aValue);
+            return format.format(value);
         }
 
         // TeaVM 0.6.0 threw an exception here
         catch (RuntimeException e) {
-            System.err.println("Failed to format with: " + aFormat.toPattern() + ", value: " + aValue);
-            return FormatUtils.formatNum(aValue);
+            System.err.println("Failed to format with: " + format.toPattern() + ", value: " + value);
+            return FormatUtils.formatNum(value);
         }
-    }
-
-    /**
-     * Formats a log value.
-     */
-    private String formatLog(double aValue)
-    {
-        // If not whole number, return empty string
-        if (!MathUtils.equals(aValue, (int) aValue))
-            return "";
-
-        // Get value
-        double value = Math.pow(10, aValue);
-        if (value >= 1000)
-            return formatWithExponent(value);
-
-        // Return
-        return LOG_FORMAT.format(value);
     }
 
     /**
@@ -322,6 +261,37 @@ public class TickLabelFormat {
     }
 
     /**
+     * Returns the maximum number of significant digits after decimal for current intervals.
+     */
+    private int getFractionDigitsMaxForIntervals()
+    {
+        // Get intervals
+        Intervals intervals = getIntervals();
+        int intervalCount = intervals.getCount();
+        int digitsMax = 0;
+
+        // Iterate over intervals to find max fraction digits
+        for (int i = 0; i < intervalCount; i++) {
+
+            // If partial interval, skip
+            if (!intervals.isFullInterval(i))
+                continue;
+
+            // Get interval value (if Log axis, convert to data value)
+            double value = intervals.getInterval(i);
+            if (_isLog)
+                value = Math.pow(10, value);
+
+            // Get number of fraction digits and combine with digitsMax
+            int digitsCount = getFractionDigits(value, 6);
+            digitsMax = Math.max(digitsMax, digitsCount);
+        }
+
+        // Return digitsMax
+        return digitsMax;
+    }
+
+    /**
      * Standard toString implementation.
      */
     @Override
@@ -335,36 +305,25 @@ public class TickLabelFormat {
     }
 
     /**
-     * Return the number of digits before decimal point in given value.
+     * Returns the number of fractional digits up to a maximum.
      */
-    private int getWholeDigitCount(double aValue)
+    private static int getFractionDigits(double aValue, int aMax)
     {
-        if (aValue < 1) return 0;
-        double log10 = Math.log10(aValue);
-        return (int) Math.floor(log10) + 1;
-    }
+        // Get simple decimal value (strip sign and integer digits)
+        double value = Math.abs(aValue);
+        value = value - (int) value;
 
-    /**
-     * Return the number of digits after decimal point in given value.
-     */
-    private int getFractionDigitCount(double aValue)
-    {
-        if (aValue >= 1) return 0;
-        double log10 = Math.log10(aValue);
-        return (int) Math.round(Math.abs(log10));
-    }
+        // Calculate equals() tolerance (should be below whatever Max fraction digits allows)
+        double tolerance = 1 / Math.pow(10, aMax + 1);
 
-    /**
-     * Returns the number of significant digits up to a maximum.
-     */
-    private int getSignificantDigitsAfterDecimal(double aValue, int aMax)
-    {
+        // Iterate through value most significant digit until it doesn't match
         int count = 0;
-        double value = aValue - (int) aValue;
-        while (value != (int) value && count < aMax) {
+        while (!MathUtils.equals(value, (int) value, tolerance) && count < aMax) {
             count++;
             value *= 10;
         }
+
+        // Return count
         return count;
     }
 }
