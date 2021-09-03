@@ -234,8 +234,13 @@ public class AxisInsp extends ChartPartInsp {
         // Handle GridSpacingText, GridBaseText
         if (anEvent.equals("GridSpacingText"))
             axis.setGridSpacing(anEvent.getFloatValue());
-        if (anEvent.equals("GridBaseText"))
-            axis.setGridBase(anEvent.getFloatValue());
+        if (anEvent.equals("GridBaseText")) {
+            String valStr = anEvent.getStringValue();
+            double val = anEvent.getFloatValue();
+            if (valStr.equalsIgnoreCase("min")) val = Axis.GRID_BASE_DATA_MIN;
+            else if (valStr.equalsIgnoreCase("max")) val = Axis.GRID_BASE_DATA_MAX;
+            axis.setGridBase(val);
+        }
     }
 
     /**

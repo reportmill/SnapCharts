@@ -283,7 +283,7 @@ public class TickLabelFormat {
                 value = Math.pow(10, value);
 
             // Get number of fraction digits and combine with digitsMax
-            int digitsCount = getFractionDigits(value, 6);
+            int digitsCount = getFractionDigits(value, 5);
             digitsMax = Math.max(digitsMax, digitsCount);
         }
 

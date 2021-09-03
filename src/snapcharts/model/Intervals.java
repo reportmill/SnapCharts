@@ -264,8 +264,8 @@ public class Intervals {
                 divs = ArrayUtils.add(divs, div);
                 div += spacing;
             }
-            if (MathUtils.equals(div, max, .001))
-                divs = ArrayUtils.add(divs, div);
+            if (!MathUtils.equals(divs[divs.length - 1], max, .001))
+                divs = ArrayUtils.add(divs, max);
         }
 
         // If GridBase is DATA_MAX, add divs
@@ -275,8 +275,8 @@ public class Intervals {
                 divs = ArrayUtils.add(divs, div, 0);
                 div -= spacing;
             }
-            if (MathUtils.equals(div, min, .001))
-                divs = ArrayUtils.add(divs, div, 0);
+            if (!MathUtils.equals(divs[0], min, .001))
+                divs = ArrayUtils.add(divs, min, 0);
         }
 
         // Otherwise, get simple divs from min to max by spacing
