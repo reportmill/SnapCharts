@@ -71,6 +71,15 @@ public abstract class Axis extends ChartPart {
     // The position of the tick
     private TickPos  _tickPos;
 
+    // Whether to show TickLabels
+    private boolean  _showTickLabels;
+
+    // The format pattern string for tick labels
+    private String  _tickLabelFormat;
+
+    // The exponent style for tick labels
+    private ExpStyle  _tickLabelExpStyle;
+
     // Constants for properties
     public static final String Title_Prop = "Title";
     public static final String TitleRotate_Prop = "TitleRotate";
@@ -91,6 +100,9 @@ public abstract class Axis extends ChartPart {
     public static final String GridBase_Prop = "GridBase";
     public static final String TickLength_Prop = "TickLength";
     public static final String TickPos_Prop = "TickPos";
+    public static final String ShowTickLabels_Prop = "ShowTickLabels";
+    public static final String TickLabelFormat_Prop = "TickLabelFormat";
+    public static final String TickLabelExpStyle_Prop = "TickLabelExpStyle";
 
     // Constant for GridBase special values
     public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
@@ -108,9 +120,14 @@ public abstract class Axis extends ChartPart {
     public static final double[]  DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
     public static final int  DEFAULT_TICK_LENGTH = 7;
     public static final TickPos  DEFAULT_TICK_POS = TickPos.Inside;
+    public static final boolean  DEFAULT_SHOW_TICK_LABELS = true;
+    public static final ExpStyle  DEFAULT_EXP_STYLE = ExpStyle.Financial;
 
     // Constants for Tick position
-    public enum TickPos { Inside, Outside, Across, Off };
+    public enum TickPos { Inside, Outside, Across, Off }
+
+    // Constants for Tick Label exponent style
+    public enum ExpStyle { None, Scientific, Financial, AutoScientific }
 
     /**
      * Constructor.
@@ -127,6 +144,8 @@ public abstract class Axis extends ChartPart {
         _gridDash = DEFAULT_GRID_DASH;
         _tickLength = DEFAULT_TICK_LENGTH;
         _tickPos = DEFAULT_TICK_POS;
+        _showTickLabels = DEFAULT_SHOW_TICK_LABELS;
+        _tickLabelExpStyle = DEFAULT_EXP_STYLE;
 
         // Override default property values
         _lineColor = DEFAULT_AXIS_LINE_COLOR;
@@ -452,6 +471,48 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns whether to show Tick labels.
+     */
+    public boolean isShowTickLabels()  { return _showTickLabels; }
+
+    /**
+     * Sets whether to show tick labels.
+     */
+    public void setShowTickLabels(boolean aValue)
+    {
+        if (aValue == isShowTickLabels()) return;
+        firePropChange(ShowTickLabels_Prop, _showTickLabels, _showTickLabels = aValue);
+    }
+
+    /**
+     * Returns the tick label format pattern string (see Java DecimalFormat).
+     */
+    public String getTickLabelFormat()  { return _tickLabelFormat; }
+
+    /**
+     * Sets the tick label format pattern string (see Java DecimalFormat).
+     */
+    public void setTickLabelFormat(String aString)
+    {
+        if (Objects.equals(aString, getTickLabelFormat())) return;
+        firePropChange(TickLabelFormat_Prop, _tickLabelFormat, _tickLabelFormat = aString);
+    }
+
+    /**
+     * Returns the tick label exponent style (None, Scientific, Financial, ...).
+     */
+    public ExpStyle getTickLabelExpStyle()  { return _tickLabelExpStyle; }
+
+    /**
+     * Sets the tick label exponent style (None, Scientific, Financial, ...).
+     */
+    public void setTickLabelExpStyle(ExpStyle aValue)
+    {
+        if (aValue == getTickLabelExpStyle()) return;
+        firePropChange(TickLabelExpStyle_Prop, _tickLabelExpStyle, _tickLabelExpStyle = aValue);
+    }
+
+    /**
      * Returns the prop value keys.
      */
     @Override
@@ -485,6 +546,11 @@ public abstract class Axis extends ChartPart {
             // TickLength, TickPos
             case TickLength_Prop: return getTickLength();
             case TickPos_Prop: return getTickPos();
+
+            // ShowTickLabels, TickLabelFormat, TickLabelExpStyle
+            case ShowTickLabels_Prop: return isShowTickLabels();
+            case TickLabelFormat_Prop: return getTickLabelFormat();
+            case TickLabelExpStyle_Prop: return getTickLabelExpStyle();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -520,6 +586,11 @@ public abstract class Axis extends ChartPart {
             // TickLength, TickPos
             case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
             case TickPos_Prop: setTickPos((TickPos) aValue); break;
+
+            // ShowTickLabels, TickLabelFormat, TickLabelExpStyle
+            case ShowTickLabels_Prop: setShowTickLabels(SnapUtils.boolValue(aValue)); break;
+            case TickLabelFormat_Prop: setTickLabelFormat(SnapUtils.stringValue(aValue)); break;
+            case TickLabelExpStyle_Prop: setTickLabelExpStyle(SnapUtils.enumValue(ExpStyle.class, aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -558,6 +629,10 @@ public abstract class Axis extends ChartPart {
             // TickLength, TickPos
             case TickLength_Prop: return DEFAULT_TICK_LENGTH;
             case TickPos_Prop: return DEFAULT_TICK_POS;
+
+            // ShowTickLabels, TickLabelExpStyle
+            case ShowTickLabels_Prop: return DEFAULT_SHOW_TICK_LABELS;
+            case TickLabelExpStyle_Prop: return DEFAULT_EXP_STYLE;
 
             // Superclass properties
             default: return super.getPropDefault(aPropName);
@@ -617,6 +692,14 @@ public abstract class Axis extends ChartPart {
             e.add(TickLength_Prop, getTickLength());
         if (!isPropDefault(TickPos_Prop))
             e.add(TickPos_Prop, getTickPos());
+
+        // Archive ShowTickLabels, TickLabelFormat, TickLabelExpStyle
+        if (!isPropDefault(ShowTickLabels_Prop))
+            e.add(ShowTickLabels_Prop, isShowTickLabels());
+        if (!isPropDefault(TickLabelFormat_Prop))
+            e.add(TickLabelFormat_Prop, getTickLabelFormat());
+        if (!isPropDefault(TickLabelExpStyle_Prop))
+            e.add(TickLabelExpStyle_Prop, getTickLabelExpStyle());
 
         // Return element
         return e;
@@ -679,6 +762,14 @@ public abstract class Axis extends ChartPart {
             setTickLength(anElement.getAttributeDoubleValue(TickLength_Prop));
         if (anElement.hasAttribute(TickPos_Prop))
             setTickPos(anElement.getAttributeEnumValue(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS));
+
+        // Unarchive ShowTickLabels, TickLabelFormat, TickLabelExpStyle
+        if (anElement.hasAttribute(ShowTickLabels_Prop))
+            setShowTickLabels(anElement.getAttributeBoolValue(ShowTickLabels_Prop));
+        if (anElement.hasAttribute(TickLabelFormat_Prop))
+            setTickLabelFormat(anElement.getAttributeValue(TickLabelFormat_Prop));
+        if (anElement.hasAttribute(TickLabelExpStyle_Prop))
+            setTickLabelExpStyle(anElement.getAttributeEnumValue(TickLabelExpStyle_Prop, ExpStyle.class, DEFAULT_EXP_STYLE));
 
         // Return this part
         return this;
