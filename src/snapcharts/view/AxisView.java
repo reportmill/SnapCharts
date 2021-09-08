@@ -640,6 +640,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_titleView.getParent() != this)
             _titleView.getParent().setVisible(titleVisible);
 
+        // Configure TickLabelBox.Visible
+        _tickLabelBox.setVisible(axis.isShowTickLabels());
+
         // If no MarkerLabels, make MarkersBox not visible
         TickLabel[] markerLabels = getMarkerLabels();
         _markersBox.setVisible(markerLabels.length > 0);

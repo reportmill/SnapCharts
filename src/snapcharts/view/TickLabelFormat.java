@@ -32,11 +32,17 @@ public class TickLabelFormat {
     // The format pattern
     private String  _formatPattern;
 
+    // The Exponent Style
+    private Axis.ExpStyle  _expStyle;
+
     // The long sample
     private String  _longSample;
 
     // Format to round values
-    private static DecimalFormat ROUND_FORMAT = new DecimalFormat("#.####");
+    private static String ROUND_FORMAT = "#.######";
+
+    // Format for ExpStyle.Scientific
+    private static DecimalFormat EXP_FORMAT = new DecimalFormat("#.##");
 
     /**
      * Constructor.
@@ -110,6 +116,21 @@ public class TickLabelFormat {
         // Set new pattern
         _formatPattern = pattern;
         _format = null;
+
+        // If Axis defines TickLabelFormat, use that instead
+        String axisFormat = _axis.getTickLabelFormat();
+        if (axisFormat != null) {
+            _formatPattern = axisFormat;
+        }
+
+        // Set Exponent Style
+        _expStyle = _axis.getTickLabelExpStyle();
+        if (axisFormat == null) {
+            switch (_expStyle) {
+                case Financial: _formatPattern = ROUND_FORMAT; break;
+                default: break;
+            }
+        }
 
         // Set new LongSample
         String longSample = getLongSampleCalculated();
@@ -212,52 +233,100 @@ public class TickLabelFormat {
         if (_isLog)
             value = Math.pow(10, value);
 
-        // If large value, format with exponent
-        if (Math.abs(value) >= 1000)
-            return formatWithExponent(value);
-
-        // Return formatted value
-        DecimalFormat format = getFormat();
-        try {
-            return format.format(value);
-        }
-
-        // TeaVM 0.6.0 threw an exception here
-        catch (RuntimeException e) {
-            System.err.println("Failed to format with: " + format.toPattern() + ", value: " + value);
-            return FormatUtils.formatNum(value);
+        // Handle exponent styles
+        switch (_expStyle) {
+            case Financial: return formatFinancial(value);
+            case Scientific: return formatScientific(value);
+            case AutoScientific: return formatAutoScientific(value);
+            default: return formatBasic(value);
         }
     }
 
     /**
-     * Does format with exponents.
+     * Returns a formatted value.
      */
-    private String formatWithExponent(double aValue)
+    private String formatBasic(double aValue)
+    {
+        // Return formatted value
+        DecimalFormat format = getFormat();
+        try {
+            return format.format(aValue);
+        }
+
+        // TeaVM 0.6.0 threw an exception here
+        catch (RuntimeException e) {
+            System.err.println("Failed to format with: " + format.toPattern() + ", value: " + aValue);
+            return FormatUtils.formatNum(aValue);
+        }
+    }
+
+    /**
+     * Does format with financial exponents (k, M, B, T).
+     */
+    private String formatFinancial(double aValue)
     {
         // Get absolute value
         double absVal = Math.abs(aValue);
+        long divisor = 1;
+        String suffix = "";
 
         // Handle case of value in the trillions
         if (absVal >= 1000000000000L) {
-            String valStr = ROUND_FORMAT.format(aValue / 1000000000000L);
-            return valStr + "T";
+            divisor = 1000000000000L;
+            suffix = "T";
         }
 
         // Handle case of value in the billions
-        if (absVal >= 1000000000) {
-            String valStr = ROUND_FORMAT.format(aValue / 1000000000);
-            return valStr + "B";
+        else if (absVal >= 1000000000) {
+            divisor = 1000000000;
+            suffix = "B";
         }
 
         // Handle case of value in the millions
-        if (absVal >= 1000000) {
-            String valStr = ROUND_FORMAT.format(aValue / 1000000);
-            return valStr + "M";
+        else if (absVal >= 1000000) {
+            divisor = 1000000;
+            suffix = "M";
         }
 
         // Handle case of value in the thousands
-        String valStr = ROUND_FORMAT.format(aValue / 1000);
-        return valStr + "k";
+        else if (absVal >= 1000) {
+            divisor = 1000;
+            suffix = "k";
+        }
+
+        // Handle case of value in the thousands
+        String valStr = formatBasic(aValue / divisor);
+        return valStr + suffix;
+    }
+
+    /**
+     * Does format with Scientific notation.
+     */
+    private String formatScientific(double aValue)
+    {
+        // Get absolute value - just return formatBasic if in reasonable range
+        double absValue = Math.abs(aValue);
+        if (absValue < 1000 && absValue > .001 || absValue == 0)
+            return formatBasic(aValue);
+
+        double logValue = Math.log10(absValue);
+        int exp = (int) logValue;
+
+        double baseValue = aValue / Math.pow(10, exp);
+        String baseStr = EXP_FORMAT.format(baseValue);
+        String expStr = baseStr + "x10^" + exp;
+        return expStr;
+    }
+
+    /**
+     * Does format with Scientific notation if exponent would be more than +/-5.
+     */
+    private String formatAutoScientific(double aValue)
+    {
+        double value = Math.abs(aValue);
+        if (value > 1e5 || value < 1e-5)
+            return formatScientific(aValue);
+        return formatBasic(aValue);
     }
 
     /**
