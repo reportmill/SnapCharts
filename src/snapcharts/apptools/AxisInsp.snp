@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <RowView Padding="4" Spacing="4">
+  <RowView Padding="2,4,2,4" Spacing="4">
     <Label Spacing="4" text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
-  <RowView Padding="4" Spacing="4">
+  <RowView Padding="2,4,2,4" Spacing="4">
     <Label Name="AxisMinText" PrefWidth="50" Spacing="4" text="Axis Min:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="MinBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
@@ -13,7 +13,7 @@
     </RowView>
     <TextField Name="MinBoundText" GrowWidth="true" />
   </RowView>
-  <RowView Padding="4" Spacing="4">
+  <RowView Padding="2,4,2,4" Spacing="4">
     <Label Name="AxisMinText" PrefWidth="50" Spacing="4" text="Axis Max:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="MaxBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
@@ -22,9 +22,9 @@
     </RowView>
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
-  <CheckBox Name="ZeroRequiredCheckBox" Padding="4" Spacing="5" text="Always Include Zero" />
-  <CheckBox Name="LogCheckBox" Padding="4" Spacing="5" text="Logarithmic" />
-  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="4" Spacing="5" text="Show Legend Graphic" />
+  <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Spacing="5" text="Always Include Zero" />
+  <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
+  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Legend Graphic" />
   <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
     <CheckBox Name="WrapCheckBox" Padding="4" Spacing="5" text="Wrap Axis" />
     <RowView Name="WrapMinMaxBox" Spacing="4" GrowWidth="true">
@@ -34,7 +34,7 @@
       <TextField Name="WrapMaxText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
-  <RowView Padding="4" Spacing="4">
+  <RowView Padding="2,4,2,4" Spacing="4">
     <Label Spacing="4" text="Tick Length:" />
     <TextField Name="TickLengthText" PrefWidth="50" Align="CENTER" />
     <Button Name="TickLengthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
@@ -45,7 +45,7 @@
       <font name="Arial" size="12" />
     </Button>
   </RowView>
-  <RowView Padding="4" Spacing="4">
+  <RowView Padding="2,4,2,4" Spacing="4">
     <Label Name="AxisTickPos" Spacing="4" text="Tick Position:" />
     <RowView GrowWidth="true">
       <ToggleButton Name="TickPosInsideButton" MinWidth="46" Padding="2" text="Inside" Position="CENTER_LEFT" Selected="true" />
@@ -55,11 +55,25 @@
     </RowView>
   </RowView>
   <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
-    <RowView Name="WrapMinMaxBox" Padding="4" Spacing="4" GrowWidth="true">
+    <RowView Name="WrapMinMaxBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
       <Label Spacing="4" text="Grid Spacing:" />
       <TextField Name="GridSpacingText" Align="CENTER" ColCount="7" />
       <Label Margin="0,0,0,9" Spacing="4" text="Base:" />
       <TextField Name="GridBaseText" Align="CENTER" ColCount="7" />
+    </RowView>
+  </RowView>
+  <CheckBox Name="ShowTickLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Tick Labels" />
+  <RowView Name="WrapMinMaxBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+    <Label Spacing="4" text="Ticks Format:" />
+    <TextField Name="TickFormatText" Align="CENTER" GrowWidth="true" ColCount="7" />
+  </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Name="AxisTickPos" Spacing="4" text="Ticks Exponent:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Name="ExpNoneButton" MinWidth="40" Padding="2" text="None" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="ExpFinancialButton" MinWidth="40" Padding="2" text="Financial" Position="CENTER" />
+      <ToggleButton Name="ExpSciButton" MinWidth="40" Padding="2" text="Sci" Position="CENTER" />
+      <ToggleButton Name="ExpAutoSciButton" MinWidth="40" Padding="2" text="Auto Sci" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
 </ColView>

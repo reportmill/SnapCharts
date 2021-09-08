@@ -71,8 +71,6 @@ public class AxisInsp extends ChartPartInsp {
     @Override
     protected void initUI()
     {
-        getView("GridSpacingText", TextField.class).setPromptText("Data Coords");
-        getView("GridBaseText", TextField.class).setPromptText("0");
     }
 
     /**
@@ -141,6 +139,17 @@ public class AxisInsp extends ChartPartInsp {
         double gridBase = axis.getGridBase();
         setViewValue("GridSpacingText", gridSpacing != 0 ? gridSpacing : null);
         setViewValue("GridBaseText", gridBase != 0 ? gridBase : null);
+
+        // Reset ShowTickLabelsCheckBox, TickFormatText
+        setViewValue("ShowTickLabelsCheckBox", axis.isShowTickLabels());
+        setViewValue("TickFormatText", axis.getTickLabelFormat());
+
+        // Reset ExpNoneButton, ExpFinancialButton, ExpSciButton, ExpAutoSciButton
+        Axis.ExpStyle expStyle = axis.getTickLabelExpStyle();
+        setViewValue("ExpNoneButton", expStyle == Axis.ExpStyle.None);
+        setViewValue("ExpFinancialButton", expStyle == Axis.ExpStyle.Financial);
+        setViewValue("ExpSciButton", expStyle == Axis.ExpStyle.Scientific);
+        setViewValue("ExpAutoSciButton", expStyle == Axis.ExpStyle.AutoScientific);
     }
 
     /**
@@ -241,6 +250,22 @@ public class AxisInsp extends ChartPartInsp {
             else if (valStr.equalsIgnoreCase("max")) val = Axis.GRID_BASE_DATA_MAX;
             axis.setGridBase(val);
         }
+
+        // Handle ShowTickLabelsCheckBox, TickFormatText
+        if (anEvent.equals("ShowTickLabelsCheckBox"))
+            axis.setShowTickLabels(anEvent.getBoolValue());
+        if (anEvent.equals("TickFormatText"))
+            axis.setTickLabelFormat(anEvent.getStringValue());
+
+        // Handle ExpNoneButton, ExpFinancialButton, ExpSciButton, ExpAutoSciButton
+        if (anEvent.equals("ExpNoneButton"))
+            axis.setTickLabelExpStyle(Axis.ExpStyle.None);
+        if (anEvent.equals("ExpFinancialButton"))
+            axis.setTickLabelExpStyle(Axis.ExpStyle.Financial);
+        if (anEvent.equals("ExpSciButton"))
+            axis.setTickLabelExpStyle(Axis.ExpStyle.Scientific);
+        if (anEvent.equals("ExpAutoSciButton"))
+            axis.setTickLabelExpStyle(Axis.ExpStyle.AutoScientific);
     }
 
     /**
