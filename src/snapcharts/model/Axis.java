@@ -127,7 +127,7 @@ public abstract class Axis extends ChartPart {
     public enum TickPos { Inside, Outside, Across, Off }
 
     // Constants for Tick Label exponent style
-    public enum ExpStyle { None, Scientific, Financial, AutoScientific }
+    public enum ExpStyle { None, Scientific, Financial }
 
     /**
      * Constructor.

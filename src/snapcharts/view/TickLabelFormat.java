@@ -237,7 +237,6 @@ public class TickLabelFormat {
         switch (_expStyle) {
             case Financial: return formatFinancial(value);
             case Scientific: return formatScientific(value);
-            case AutoScientific: return formatAutoScientific(value);
             default: return formatBasic(value);
         }
     }
@@ -304,11 +303,12 @@ public class TickLabelFormat {
      */
     private String formatScientific(double aValue)
     {
-        // Get absolute value - just return formatBasic if in reasonable range
+        // Get absolute value - just return formatBasic if in reasonable range (no more than 3 zeros in value)
         double absValue = Math.abs(aValue);
-        if (absValue < 1000 && absValue > .001 || absValue == 0)
+        if (absValue < 10000 && absValue >= .0001 || absValue == 0)
             return formatBasic(aValue);
 
+        // Calculate exponent
         double logValue = Math.log10(absValue);
         int exp = (int) logValue;
 
@@ -316,17 +316,6 @@ public class TickLabelFormat {
         String baseStr = EXP_FORMAT.format(baseValue);
         String expStr = baseStr + "x10^" + exp;
         return expStr;
-    }
-
-    /**
-     * Does format with Scientific notation if exponent would be more than +/-5.
-     */
-    private String formatAutoScientific(double aValue)
-    {
-        double value = Math.abs(aValue);
-        if (value > 1e5 || value < 1e-5)
-            return formatScientific(aValue);
-        return formatBasic(aValue);
     }
 
     /**

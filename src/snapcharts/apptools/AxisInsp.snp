@@ -70,10 +70,9 @@
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Name="AxisTickPos" Spacing="4" text="Ticks Exponent:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="ExpNoneButton" MinWidth="40" Padding="2" text="None" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="ExpFinancialButton" MinWidth="40" Padding="2" text="Financial" Position="CENTER" />
-      <ToggleButton Name="ExpSciButton" MinWidth="40" Padding="2" text="Sci" Position="CENTER" />
-      <ToggleButton Name="ExpAutoSciButton" MinWidth="40" Padding="2" text="Auto Sci" Position="CENTER_RIGHT" />
+      <ToggleButton Name="ExpNoneButton" MinWidth="46" Padding="2" text="None" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="ExpSciButton" MinWidth="46" Padding="2" text="Scientific" Position="CENTER" />
+      <ToggleButton Name="ExpFinancialButton" MinWidth="46" Padding="2" text="Financial" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
 </ColView>

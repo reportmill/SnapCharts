@@ -144,12 +144,11 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("ShowTickLabelsCheckBox", axis.isShowTickLabels());
         setViewValue("TickFormatText", axis.getTickLabelFormat());
 
-        // Reset ExpNoneButton, ExpFinancialButton, ExpSciButton, ExpAutoSciButton
+        // Reset ExpNoneButton, ExpSciButton, ExpFinancialButton
         Axis.ExpStyle expStyle = axis.getTickLabelExpStyle();
         setViewValue("ExpNoneButton", expStyle == Axis.ExpStyle.None);
-        setViewValue("ExpFinancialButton", expStyle == Axis.ExpStyle.Financial);
         setViewValue("ExpSciButton", expStyle == Axis.ExpStyle.Scientific);
-        setViewValue("ExpAutoSciButton", expStyle == Axis.ExpStyle.AutoScientific);
+        setViewValue("ExpFinancialButton", expStyle == Axis.ExpStyle.Financial);
     }
 
     /**
@@ -257,15 +256,13 @@ public class AxisInsp extends ChartPartInsp {
         if (anEvent.equals("TickFormatText"))
             axis.setTickLabelFormat(anEvent.getStringValue());
 
-        // Handle ExpNoneButton, ExpFinancialButton, ExpSciButton, ExpAutoSciButton
+        // Handle ExpNoneButton, ExpSciButton, ExpFinancialButton
         if (anEvent.equals("ExpNoneButton"))
             axis.setTickLabelExpStyle(Axis.ExpStyle.None);
-        if (anEvent.equals("ExpFinancialButton"))
-            axis.setTickLabelExpStyle(Axis.ExpStyle.Financial);
         if (anEvent.equals("ExpSciButton"))
             axis.setTickLabelExpStyle(Axis.ExpStyle.Scientific);
-        if (anEvent.equals("ExpAutoSciButton"))
-            axis.setTickLabelExpStyle(Axis.ExpStyle.AutoScientific);
+        if (anEvent.equals("ExpFinancialButton"))
+            axis.setTickLabelExpStyle(Axis.ExpStyle.Financial);
     }
 
     /**
