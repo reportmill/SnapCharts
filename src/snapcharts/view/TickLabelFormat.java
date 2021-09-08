@@ -61,6 +61,7 @@ public class TickLabelFormat {
         _axisView = anAxisView;
         _axis = anAxisView.getAxis();
         _isLog = _axis.isLog();
+        _expStyle = _axis.getTickLabelExpStyle();
     }
 
     /**
@@ -101,50 +102,21 @@ public class TickLabelFormat {
      */
     public void setIntervals(Intervals theIntervals)
     {
+        // If already set, just return
         if (theIntervals == _intervals) return;
-        _intervals = theIntervals;
-        updateFormatForIntervals();
-    }
 
-    /**
-     * Updates the format for current intervals.
-     */
-    private void updateFormatForIntervals()
-    {
-        // Basic pattern for whole number intervals is just "0"
-        String pattern = "0";
-
-        // If fractional digits, add fractional digits to pattern
-        int fractionDigits = getFractionDigitsMaxForIntervals();
-        if (fractionDigits > 0) {
-            pattern = "#.#";
-            for (int i = 1; i < fractionDigits; i++)
-                pattern += '#';
-        }
-
-        // Set new pattern
-        _formatPattern = pattern;
+        // Clear format
+        _formatPattern = null;
         _format = null;
         _intervalsExponent = null;
 
-        // If Axis defines TickLabelFormat, use that instead
-        String axisFormat = _axis.getTickLabelFormat();
-        if (axisFormat != null) {
-            _formatPattern = axisFormat;
-        }
+        // Clear FormatPattern, Format and IntervalsExponent
+        _formatPattern = null;
+        _format = null;
+        _intervalsExponent = null;
 
-        // Set Exponent Style
-        _expStyle = _axis.getTickLabelExpStyle();
-        if (axisFormat == null) {
-            switch (_expStyle) {
-                case Financial: _formatPattern = ROUND_FORMAT; break;
-                default: break;
-            }
-        }
-
-        // Set new LongSample
-        String longSample = getLongSampleCalculated();
-        setLongSample(longSample);
+        // Update LongSample
+        updateLongSample();
     }
 
     /**
@@ -162,9 +134,41 @@ public class TickLabelFormat {
      */
     public String getFormatPattern()
     {
+        // If already set, just return
         if (_formatPattern != null) return _formatPattern;
-        updateFormatForIntervals();
-        return _formatPattern;
+
+        // Get pattern, set and return
+        String pattern = getFormatPatternImpl();
+        return _formatPattern = pattern;
+    }
+
+    /**
+     * Returns the best basic decimal format pattern for current intervals
+     */
+    private String getFormatPatternImpl()
+    {
+        // If Axis defines TickLabelFormat, use that
+        String axisFormat = _axis.getTickLabelFormat();
+        if (axisFormat != null)
+            return axisFormat;
+
+        // If financial, use standard
+        if (_expStyle == Axis.ExpStyle.Financial || _expStyle == Axis.ExpStyle.Scientific)
+            return ROUND_FORMAT;
+
+        // Basic pattern for whole number intervals is just "0"
+        String pattern = "0";
+
+        // If fractional digits, add fractional digits to pattern
+        int fractionDigits = getFractionDigitsMaxForIntervals();
+        if (fractionDigits > 0) {
+            pattern = "#.#";
+            for (int i = 1; i < fractionDigits; i++)
+                pattern += '#';
+        }
+
+        // Return pattern
+        return pattern;
     }
 
     /**
@@ -172,26 +176,12 @@ public class TickLabelFormat {
      */
     public String getLongSample()
     {
+        // If already set, just return
         if (_longSample != null) return _longSample;
-        updateFormatForIntervals();
-        return _longSample;
-    }
 
-    /**
-     * Sets the longest tick label for current intervals and format.
-     */
-    private void setLongSample(String aString)
-    {
-        // If first time, just set
-        if (_longSample == null)
-            _longSample = aString;
-
-        // If sample is longer than previous estimate, update and trigger relayout
-        else if (_longSample != null && _longSample.length() < aString.length()) {
-            _longSample = aString;
-            _axisView._tickLabelBox.relayout();
-            _axisView._tickLabelBox.relayoutParent();
-        }
+        // Get, set and return longSample for current intervals
+        String longSample = getLongSampleCalculated();
+        return _longSample = longSample;
     }
 
     /**
@@ -220,6 +210,23 @@ public class TickLabelFormat {
 
         // Return
         return longSample;
+    }
+
+    /**
+     * Updates the longest tick label for current intervals and format.
+     */
+    private void updateLongSample()
+    {
+        // If not yet set, just return
+        if (_longSample == null) return;
+
+        // If longSample for current intervals is longer, set and trigger axis relayout
+        String longSample = getLongSampleCalculated();
+        if (_longSample.length() < longSample.length()) {
+            _longSample = longSample;
+            _axisView._tickLabelBox.relayout();
+            _axisView._tickLabelBox.relayoutParent();
+        }
     }
 
     /**
@@ -328,7 +335,7 @@ public class TickLabelFormat {
 
         // Format value for exponent
         double baseValue = aValue / Math.pow(10, exp);
-        String baseStr = EXP_FORMAT.format(baseValue);
+        String baseStr = formatBasicDecimal(baseValue);
         String expStr = baseStr + "x10^" + exp;
         return expStr;
     }
