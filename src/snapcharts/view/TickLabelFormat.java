@@ -35,6 +35,9 @@ public class TickLabelFormat {
     // The Exponent Style
     private Axis.ExpStyle  _expStyle;
 
+    // The best exponent for current intervals
+    private Integer  _intervalsExponent;
+
     // The long sample
     private String  _longSample;
 
@@ -43,6 +46,12 @@ public class TickLabelFormat {
 
     // Format for ExpStyle.Scientific
     private static DecimalFormat EXP_FORMAT = new DecimalFormat("#.##");
+
+    // Constant for upper value at which ExpStyle.Scientific starts formatting in Scientific notation
+    private static final double SCI_UPPER_START = 10000;
+
+    // Constant for lower value at which ExpStyle.Scientific starts formatting in Scientific notation
+    private static final double SCI_LOWER_START = .001;
 
     /**
      * Constructor.
@@ -116,6 +125,7 @@ public class TickLabelFormat {
         // Set new pattern
         _formatPattern = pattern;
         _format = null;
+        _intervalsExponent = null;
 
         // If Axis defines TickLabelFormat, use that instead
         String axisFormat = _axis.getTickLabelFormat();
@@ -237,14 +247,14 @@ public class TickLabelFormat {
         switch (_expStyle) {
             case Financial: return formatFinancial(value);
             case Scientific: return formatScientific(value);
-            default: return formatBasic(value);
+            default: return formatBasicDecimal(value);
         }
     }
 
     /**
      * Returns a formatted value.
      */
-    private String formatBasic(double aValue)
+    private String formatBasicDecimal(double aValue)
     {
         // Return formatted value
         DecimalFormat format = getFormat();
@@ -294,7 +304,7 @@ public class TickLabelFormat {
         }
 
         // Handle case of value in the thousands
-        String valStr = formatBasic(aValue / divisor);
+        String valStr = formatBasicDecimal(aValue / divisor);
         return valStr + suffix;
     }
 
@@ -303,19 +313,63 @@ public class TickLabelFormat {
      */
     private String formatScientific(double aValue)
     {
-        // Get absolute value - just return formatBasic if in reasonable range (no more than 3 zeros in value)
-        double absValue = Math.abs(aValue);
-        if (absValue < 10000 && absValue >= .0001 || absValue == 0)
-            return formatBasic(aValue);
+        // Zero is special case, just format as basic decimal
+        if (aValue == 0)
+            return formatBasicDecimal(0);
 
-        // Calculate exponent
-        double logValue = Math.log10(absValue);
-        int exp = (int) logValue;
+        // Get exponent for intervals (if log axis, get for value since tick labels aren't linearly spaced)
+        int exp = getExponentForIntervals();
+        if (_isLog)
+            exp = getExponentForValue(aValue);
 
+        // If exponent is zero, just format as basic decimal
+        if (exp == 0)
+            return formatBasicDecimal(aValue);
+
+        // Format value for exponent
         double baseValue = aValue / Math.pow(10, exp);
         String baseStr = EXP_FORMAT.format(baseValue);
         String expStr = baseStr + "x10^" + exp;
         return expStr;
+    }
+
+    /**
+     * Returns the exponent for intervals.
+     */
+    private int getExponentForIntervals()
+    {
+        // If already set, just return
+        if (_intervalsExponent != null) return _intervalsExponent;
+
+        // Get max value of interval range (only use full intervals)
+        Intervals intervals = getIntervals();
+        int intervalCount = intervals.getCount();
+        double intervalMin = intervalCount > 3 && !intervals.isFullInterval(0) ? intervals.getInterval(1) : intervals.getMin();
+        double intervalMax = intervalCount > 3 && !intervals.isFullInterval(intervalCount - 1) ? intervals.getInterval(intervalCount - 2) : intervals.getMax();
+        double maxValue = Math.max(Math.abs(intervalMin), intervalMax);
+
+        // Get, set and return exponent
+        int exp = getExponentForValue(maxValue);
+        return _intervalsExponent = exp;
+    }
+
+    /**
+     * Returns the exponent for given value.
+     */
+    private int getExponentForValue(double aValue)
+    {
+        // If value in reasonable range, just format as decimal (if no more than 3 zeros of magnitude in value)
+        if (aValue < SCI_UPPER_START && aValue >= SCI_LOWER_START)
+            return 0;
+
+        // Calculate exponent from magnitude of maxValue (if negative, bump by -1 so 1 <= maxValue <= 10)
+        double logValue = Math.log10(aValue);
+        int exp = (int) logValue;
+        if (logValue < 0 && logValue != (int) logValue)
+            exp--;
+
+        // Return exponent
+        return exp;
     }
 
     /**
