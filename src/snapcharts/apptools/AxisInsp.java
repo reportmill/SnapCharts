@@ -1,4 +1,5 @@
 package snapcharts.apptools;
+import snap.text.NumberFormat;
 import snap.view.Label;
 import snap.view.TextField;
 import snap.view.ViewEvent;
@@ -145,10 +146,10 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("TickFormatText", axis.getTickLabelFormat());
 
         // Reset ExpNoneButton, ExpSciButton, ExpFinancialButton
-        Axis.ExpStyle expStyle = axis.getTickLabelExpStyle();
-        setViewValue("ExpNoneButton", expStyle == Axis.ExpStyle.None);
-        setViewValue("ExpSciButton", expStyle == Axis.ExpStyle.Scientific);
-        setViewValue("ExpFinancialButton", expStyle == Axis.ExpStyle.Financial);
+        NumberFormat.ExpStyle expStyle = axis.getTickLabelExpStyle();
+        setViewValue("ExpNoneButton", expStyle == NumberFormat.ExpStyle.None);
+        setViewValue("ExpSciButton", expStyle == NumberFormat.ExpStyle.Scientific);
+        setViewValue("ExpFinancialButton", expStyle == NumberFormat.ExpStyle.Financial);
     }
 
     /**
@@ -258,11 +259,11 @@ public class AxisInsp extends ChartPartInsp {
 
         // Handle ExpNoneButton, ExpSciButton, ExpFinancialButton
         if (anEvent.equals("ExpNoneButton"))
-            axis.setTickLabelExpStyle(Axis.ExpStyle.None);
+            axis.setTickLabelExpStyle(NumberFormat.ExpStyle.None);
         if (anEvent.equals("ExpSciButton"))
-            axis.setTickLabelExpStyle(Axis.ExpStyle.Scientific);
+            axis.setTickLabelExpStyle(NumberFormat.ExpStyle.Scientific);
         if (anEvent.equals("ExpFinancialButton"))
-            axis.setTickLabelExpStyle(Axis.ExpStyle.Financial);
+            axis.setTickLabelExpStyle(NumberFormat.ExpStyle.Financial);
     }
 
     /**

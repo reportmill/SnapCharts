@@ -5,6 +5,7 @@ package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
+import snap.text.NumberFormat.ExpStyle;
 import snap.util.*;
 import snapcharts.util.MinMax;
 import java.util.Objects;
@@ -125,9 +126,6 @@ public abstract class Axis extends ChartPart {
 
     // Constants for Tick position
     public enum TickPos { Inside, Outside, Across, Off }
-
-    // Constants for Tick Label exponent style
-    public enum ExpStyle { None, Scientific, Financial }
 
     /**
      * Constructor.

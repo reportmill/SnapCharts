@@ -3,16 +3,18 @@
  */
 package snapcharts.view;
 import snap.gfx.Font;
+import snap.text.NumberFormat;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
 import snapcharts.model.Axis;
 import snapcharts.model.Intervals;
-import java.text.DecimalFormat;
 
 /**
- * A class to format tick labels.
+ * This NumberFormat subclass assists tick label formatting.
+ *
+ * Main features are to determine maximum label size and to provide consistent exponent for Scientific format.
  */
-public class TickLabelFormat {
+public class TickLabelFormat extends NumberFormat {
 
     // The AxisView
     private AxisView<?>  _axisView;
@@ -26,42 +28,24 @@ public class TickLabelFormat {
     // The intervals to format
     private Intervals  _intervals;
 
-    // The DecimalFormat
-    private DecimalFormat  _format;
-
-    // The format pattern
-    private String  _formatPattern;
-
-    // The Exponent Style
-    private Axis.ExpStyle  _expStyle;
-
     // The best exponent for current intervals
     private Integer  _intervalsExponent;
 
     // The long sample
     private String  _longSample;
 
-    // Format to round values
-    private static String ROUND_FORMAT = "#.######";
-
-    // Format for ExpStyle.Scientific
-    private static DecimalFormat EXP_FORMAT = new DecimalFormat("#.##");
-
-    // Constant for upper value at which ExpStyle.Scientific starts formatting in Scientific notation
-    private static final double SCI_UPPER_START = 10000;
-
-    // Constant for lower value at which ExpStyle.Scientific starts formatting in Scientific notation
-    private static final double SCI_LOWER_START = .001;
-
     /**
      * Constructor.
      */
     public TickLabelFormat(AxisView anAxisView)
     {
+        super(null);
         _axisView = anAxisView;
         _axis = anAxisView.getAxis();
         _isLog = _axis.isLog();
-        _expStyle = _axis.getTickLabelExpStyle();
+
+        setPattern(_axis.getTickLabelFormat());
+        setExpStyle(_axis.getTickLabelExpStyle());
     }
 
     /**
@@ -72,6 +56,16 @@ public class TickLabelFormat {
         // If already set, just return
         if (_intervals != null) return _intervals;
 
+        // Get, set and return intervals
+        Intervals intervals = getIntervalsImpl();
+        return _intervals = intervals;
+    }
+
+    /**
+     * Returns the intervals to format.
+     */
+    private Intervals getIntervalsImpl()
+    {
         // Get intervals
         ChartHelper chartHelper = _axisView._chartHelper;
         double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
@@ -93,8 +87,8 @@ public class TickLabelFormat {
             intervals = Intervals.getIntervalsForSpacingAndBase(intervals, gridSpacing, gridBase, minFixed, maxFixed);
         }
 
-        // Set/return intervals
-        return _intervals = intervals;
+        // Return intervals
+        return intervals;
     }
 
     /**
@@ -105,13 +99,8 @@ public class TickLabelFormat {
         // If already set, just return
         if (theIntervals == _intervals) return;
 
-        // Clear format
-        _formatPattern = null;
-        _format = null;
-        _intervalsExponent = null;
-
-        // Clear FormatPattern, Format and IntervalsExponent
-        _formatPattern = null;
+        // Clear Pattern, Format and IntervalsExponent
+        _pattern = null;
         _format = null;
         _intervalsExponent = null;
 
@@ -120,32 +109,22 @@ public class TickLabelFormat {
     }
 
     /**
-     * Returns the DecimalFormat.
-     */
-    public DecimalFormat getFormat()
-    {
-        if (_format != null) return _format;
-        String formatPattern = getFormatPattern();
-        return _format = FormatUtils.getDecimalFormat(formatPattern);
-    }
-
-    /**
      * Returns the format pattern.
      */
-    public String getFormatPattern()
+    public String getPattern()
     {
         // If already set, just return
-        if (_formatPattern != null) return _formatPattern;
+        if (_pattern != null) return _pattern;
 
         // Get pattern, set and return
-        String pattern = getFormatPatternImpl();
-        return _formatPattern = pattern;
+        String pattern = getPatternImpl();
+        return _pattern = pattern;
     }
 
     /**
      * Returns the best basic decimal format pattern for current intervals
      */
-    private String getFormatPatternImpl()
+    private String getPatternImpl()
     {
         // If Axis defines TickLabelFormat, use that
         String axisFormat = _axis.getTickLabelFormat();
@@ -153,19 +132,13 @@ public class TickLabelFormat {
             return axisFormat;
 
         // If financial, use standard
-        if (_expStyle == Axis.ExpStyle.Financial || _expStyle == Axis.ExpStyle.Scientific)
-            return ROUND_FORMAT;
+        ExpStyle expStyle = getExpStyle();
+        if (expStyle == ExpStyle.Financial || expStyle == ExpStyle.Scientific)
+            return NULL_PATTERN;
 
-        // Basic pattern for whole number intervals is just "0"
-        String pattern = "0";
-
-        // If fractional digits, add fractional digits to pattern
+        // Get pattern for number of fraction digits
         int fractionDigits = getFractionDigitsMaxForIntervals();
-        if (fractionDigits > 0) {
-            pattern = "#.#";
-            for (int i = 1; i < fractionDigits; i++)
-                pattern += '#';
-        }
+        String pattern = fractionDigits > 0 ? FormatUtils.getPatternForFractionDigits(fractionDigits) : "0";
 
         // Return pattern
         return pattern;
@@ -241,7 +214,7 @@ public class TickLabelFormat {
     }
 
     /**
-     * Returns a formatted value.
+     * Override to support Axis isLog.
      */
     public String format(double aValue)
     {
@@ -250,94 +223,21 @@ public class TickLabelFormat {
         if (_isLog)
             value = Math.pow(10, value);
 
-        // Handle exponent styles
-        switch (_expStyle) {
-            case Financial: return formatFinancial(value);
-            case Scientific: return formatScientific(value);
-            default: return formatBasicDecimal(value);
-        }
+        // Do normal version
+        return super.format(value);
     }
 
     /**
-     * Returns a formatted value.
+     * Override to return standard exponent for all tick labels.
      */
-    private String formatBasicDecimal(double aValue)
+    protected int getExponentForValue(double aValue)
     {
-        // Return formatted value
-        DecimalFormat format = getFormat();
-        try {
-            return format.format(aValue);
-        }
-
-        // TeaVM 0.6.0 threw an exception here
-        catch (RuntimeException e) {
-            System.err.println("Failed to format with: " + format.toPattern() + ", value: " + aValue);
-            return FormatUtils.formatNum(aValue);
-        }
-    }
-
-    /**
-     * Does format with financial exponents (k, M, B, T).
-     */
-    private String formatFinancial(double aValue)
-    {
-        // Get absolute value
-        double absVal = Math.abs(aValue);
-        long divisor = 1;
-        String suffix = "";
-
-        // Handle case of value in the trillions
-        if (absVal >= 1000000000000L) {
-            divisor = 1000000000000L;
-            suffix = "T";
-        }
-
-        // Handle case of value in the billions
-        else if (absVal >= 1000000000) {
-            divisor = 1000000000;
-            suffix = "B";
-        }
-
-        // Handle case of value in the millions
-        else if (absVal >= 1000000) {
-            divisor = 1000000;
-            suffix = "M";
-        }
-
-        // Handle case of value in the thousands
-        else if (absVal >= 1000) {
-            divisor = 1000;
-            suffix = "k";
-        }
-
-        // Handle case of value in the thousands
-        String valStr = formatBasicDecimal(aValue / divisor);
-        return valStr + suffix;
-    }
-
-    /**
-     * Does format with Scientific notation.
-     */
-    private String formatScientific(double aValue)
-    {
-        // Zero is special case, just format as basic decimal
-        if (aValue == 0)
-            return formatBasicDecimal(0);
-
-        // Get exponent for intervals (if log axis, get for value since tick labels aren't linearly spaced)
-        int exp = getExponentForIntervals();
+        // If Axis.isLog, do normal version
         if (_isLog)
-            exp = getExponentForValue(aValue);
+            return super.getExponentForValue(aValue);
 
-        // If exponent is zero, just format as basic decimal
-        if (exp == 0)
-            return formatBasicDecimal(aValue);
-
-        // Format value for exponent
-        double baseValue = aValue / Math.pow(10, exp);
-        String baseStr = formatBasicDecimal(baseValue);
-        String expStr = baseStr + "x10^" + exp;
-        return expStr;
+        // Otherwise, return consistent exponent for current intervals
+        return getExponentForIntervals();
     }
 
     /**
@@ -356,27 +256,8 @@ public class TickLabelFormat {
         double maxValue = Math.max(Math.abs(intervalMin), intervalMax);
 
         // Get, set and return exponent
-        int exp = getExponentForValue(maxValue);
+        int exp = super.getExponentForValue(maxValue);
         return _intervalsExponent = exp;
-    }
-
-    /**
-     * Returns the exponent for given value.
-     */
-    private int getExponentForValue(double aValue)
-    {
-        // If value in reasonable range, just format as decimal (if no more than 3 zeros of magnitude in value)
-        if (aValue < SCI_UPPER_START && aValue >= SCI_LOWER_START)
-            return 0;
-
-        // Calculate exponent from magnitude of maxValue (if negative, bump by -1 so 1 <= maxValue <= 10)
-        double logValue = Math.log10(aValue);
-        int exp = (int) logValue;
-        if (logValue < 0 && logValue != (int) logValue)
-            exp--;
-
-        // Return exponent
-        return exp;
     }
 
     /**
@@ -417,7 +298,8 @@ public class TickLabelFormat {
     public String toString()
     {
         return "TickLabelFormat { Axis=" + _axis.getType() +
-                ", Format='" + _formatPattern + '\'' +
+                ", Format='" + getPattern() + '\'' +
+                ", ExpStyle='" + getExpStyle() + '\'' +
                 ", LongSample='" + _longSample + '\'' +
                 ", Log=" + _isLog +
                 '}';
