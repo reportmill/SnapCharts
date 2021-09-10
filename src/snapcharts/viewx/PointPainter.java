@@ -4,6 +4,7 @@
 package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
+import snap.text.NumberFormat;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
 import snapcharts.model.*;
@@ -68,6 +69,7 @@ public class PointPainter {
         double tagBorderWidth = tagStyle.getLineWidth();
         Border tagBorder = tagBorderWidth > 0 ? Border.createLineBorder(tagBorderColor, tagBorderWidth) : null;
         Font tagFont = tagStyle.getFont();
+        NumberFormat tagFormat = NumberFormat.getFormat(tagStyle.getTextFormat());
         Pos tagPos = Pos.TOP_CENTER;
         double tagOffset = TAG_OFFSET + Math.round(symbolSize / 2);
         Rect dataBounds = _dataArea.getBoundsLocal();
@@ -116,7 +118,10 @@ public class PointPainter {
 
                 // Get StringBox for string, X/Y and TagPos
                 double val = hasZ ? procData.getZ(index) : procData.getY(index);
-                String valStr = FormatUtils.formatNum(val);
+                String valStr;
+                if (tagFormat != null)
+                    valStr = tagFormat.format(val);
+                else valStr = FormatUtils.formatNum(val);
 
                 // Create/add TagBox
                 if (dataBounds.contains(dispX, dispY)) {

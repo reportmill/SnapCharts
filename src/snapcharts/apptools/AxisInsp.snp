@@ -55,7 +55,7 @@
     </RowView>
   </RowView>
   <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
-    <RowView Name="WrapMinMaxBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+    <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
       <Label Spacing="4" text="Grid Spacing:" />
       <TextField Name="GridSpacingText" Align="CENTER" ColCount="7" />
       <Label Margin="0,0,0,9" Spacing="4" text="Base:" />
@@ -63,7 +63,7 @@
     </RowView>
   </RowView>
   <CheckBox Name="ShowTickLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Tick Labels" />
-  <RowView Name="WrapMinMaxBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+  <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
     <Label Spacing="4" text="Ticks Format:" />
     <TextField Name="TickFormatText" Align="CENTER" GrowWidth="true" ColCount="7" />
   </RowView>

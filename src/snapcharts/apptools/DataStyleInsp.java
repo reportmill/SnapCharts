@@ -2,6 +2,7 @@ package snapcharts.apptools;
 import snap.geom.Line;
 import snap.geom.Shape;
 import snap.gfx.*;
+import snap.text.NumberFormat;
 import snap.util.FormatUtils;
 import snap.util.SnapUtils;
 import snap.util.StringUtils;
@@ -291,6 +292,17 @@ public class DataStyleInsp extends ChartPartInsp {
             double tagLineWidth = tagStyle.getLineWidth();
             setViewValue("TagBorderWidthText", tagLineWidth);
             setViewVisible("TagBorderWidthResetButton", tagLineWidth != TagStyle.DEFAULT_TAG_BORDER_WIDTH);
+
+            // Reset TickFormatText
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(tagStyle.getTextFormat());
+            String numFormatPattern = numFormat.isPatternSet() ? numFormat.getPattern() : null;
+            setViewValue("TickFormatText", numFormatPattern);
+
+            // Reset ExpNoneButton, ExpSciButton, ExpFinancialButton
+            NumberFormat.ExpStyle expStyle = numFormat.getExpStyle();
+            setViewValue("ExpNoneButton", expStyle == NumberFormat.ExpStyle.None);
+            setViewValue("ExpSciButton", expStyle == NumberFormat.ExpStyle.Scientific);
+            setViewValue("ExpFinancialButton", expStyle == NumberFormat.ExpStyle.Financial);
         }
 
         // Reset PointSpacing UI
@@ -486,6 +498,26 @@ public class DataStyleInsp extends ChartPartInsp {
             tagStyle.setLineWidth(Math.max(tagStyle.getLineWidth() - 1, 0));
         if (anEvent.equals("TagBorderWidthResetButton"))
             tagStyle.setLineWidth(TagStyle.DEFAULT_TAG_BORDER_WIDTH);
+
+        // Handle TickFormatText
+        if (anEvent.equals("TickFormatText")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(tagStyle.getTextFormat());
+            tagStyle.setTextFormat(numFormat.copyForProps(NumberFormat.Pattern_Prop, anEvent.getStringValue()));
+        }
+
+        // Handle ExpNoneButton, ExpSciButton, ExpFinancialButton
+        if (anEvent.equals("ExpNoneButton")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(tagStyle.getTextFormat());
+            tagStyle.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.None));
+        }
+        if (anEvent.equals("ExpSciButton")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(tagStyle.getTextFormat());
+            tagStyle.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Scientific));
+        }
+        if (anEvent.equals("ExpFinancialButton")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(tagStyle.getTextFormat());
+            tagStyle.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Financial));
+        }
 
         // Handle PointSpacingText, PointSpacingAdd1Button, PointSpacingSub1Button, PointSpacingResetButton
         if (anEvent.equals("PointSpacingText"))
