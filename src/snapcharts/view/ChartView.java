@@ -5,6 +5,7 @@ import snap.util.PropChange;
 import snap.util.PropChangeListener;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.app.AppEnv;
 import snapcharts.model.*;
 import snapcharts.viewx.EmptyChartHelper;
 
@@ -123,6 +124,9 @@ public class ChartView extends ChartPartView<Chart> {
         //setTitle("Sample Growth by Sector, 2012-2018");
         //getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
         resetLater();
+
+        //
+        addEventFilter(e -> chartViewDidMouseRelease(e), MouseRelease);
     }
 
     /**
@@ -565,6 +569,16 @@ public class ChartView extends ChartPartView<Chart> {
             Rect bnds = markerView.getPrefBoundsInChartViewCoords();
             markerView.setBounds(bnds);
             markerView.resetView();
+        }
+    }
+
+    /**
+     * Debug feature to open chart in browser.
+     */
+    private void chartViewDidMouseRelease(ViewEvent anEvent)
+    {
+        if (anEvent.getX() > getWidth() - 50 && anEvent.getY() < 50 && anEvent.isShiftDown()) {
+            AppEnv.getEnv().openChartInBrowser(getChart(), anEvent.isControlDown());
         }
     }
 

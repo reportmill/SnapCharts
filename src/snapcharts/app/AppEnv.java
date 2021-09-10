@@ -1,13 +1,14 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.app;
-
 import snap.gfx.GFXEnv;
 import snap.util.FileUtils;
 import snap.util.SnapUtils;
-import snap.view.ViewOwner;
 import snap.view.ViewUtils;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
-
+import snapcharts.model.Chart;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,12 +27,22 @@ public class AppEnv {
     /**
      * Open a chart doc in browser.
      */
-    public void openChartsDocInBrowser(Doc aDoc)
+    public void openChartsDocInBrowser(Doc aDoc, boolean isLocal)
     {
         String filename = "OpenInSnapCharts.html";
-        String htmlString = getHTMLString(aDoc);
+        String htmlString = getHTMLString(aDoc, isLocal);
         byte[] htmlBytes = htmlString.getBytes();
         openFilenameBytes(filename, htmlBytes);
+    }
+
+    /**
+     * Open a chart doc in browser.
+     */
+    public void openChartInBrowser(Chart aChart, boolean isLocal)
+    {
+        Doc doc = new Doc();
+        doc.addChart(aChart);
+        openChartsDocInBrowser(doc, isLocal);
     }
 
     /**
@@ -65,12 +76,10 @@ public class AppEnv {
     /**
      * Returns the HTML to open UI in SnapBuilder web.
      */
-    private String getHTMLString(Doc aDoc)
+    private String getHTMLString(Doc aDoc, boolean isLocal)
     {
         // Get URL string for SnapCharts script
-        String urls = SNAPCHARTS_URL;
-        if (ViewUtils.isAltDown())
-            urls = SNAPCHARTS_URL_LOCAL;
+        String urls = isLocal ? SNAPCHARTS_URL_LOCAL : SNAPCHARTS_URL;
 
         // Get SelOwner and XML string
         String docFilename = aDoc.getFilename();

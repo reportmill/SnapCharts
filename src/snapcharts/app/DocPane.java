@@ -601,8 +601,10 @@ public class DocPane extends ViewOwner {
         }
 
         // Handle WebButton
-        if (anEvent.equals("WebButton"))
-            AppEnv.getEnv().openChartsDocInBrowser(getDoc());
+        if (anEvent.equals("WebButton")) {
+            boolean isLocal = ViewUtils.isAltDown();
+            AppEnv.getEnv().openChartsDocInBrowser(getDoc(), isLocal);
+        }
 
         // Handle InspectorButton
         if (anEvent.equals("InspectorButton")) {
