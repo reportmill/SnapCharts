@@ -44,8 +44,9 @@ public class TickLabelFormat extends NumberFormat {
         _axis = anAxisView.getAxis();
         _isLog = _axis.isLog();
 
-        setPattern(_axis.getTickLabelFormat());
-        setExpStyle(_axis.getTickLabelExpStyle());
+        NumberFormat numFormat = NumberFormat.getFormatOrDefault(_axis.getTextFormat());
+        setPattern(numFormat.isPatternSet() ? numFormat.getPattern() : null);
+        setExpStyle(numFormat.getExpStyle());
     }
 
     /**
@@ -127,7 +128,8 @@ public class TickLabelFormat extends NumberFormat {
     private String getPatternImpl()
     {
         // If Axis defines TickLabelFormat, use that
-        String axisFormat = _axis.getTickLabelFormat();
+        NumberFormat numFormat = NumberFormat.getFormatOrDefault(_axis.getTextFormat());
+        String axisFormat = numFormat.isPatternSet() ? numFormat.getPattern() : null;
         if (axisFormat != null)
             return axisFormat;
 

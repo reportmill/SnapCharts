@@ -7,6 +7,7 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.VPos;
 import snap.gfx.*;
+import snap.text.TextFormat;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
@@ -53,6 +54,9 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     // The Text Fill
     protected Paint  _textFill;
 
+    // The Text Format
+    protected TextFormat  _textFormat;
+
     // Content alignment (text or children)
     protected Pos  _align;
 
@@ -76,6 +80,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public static final String Opacity_Prop = "Opacity";
     public static final String Font_Prop = "Font";
     public static final String TextFill_Prop = "TextFill";
+    public static final String TextFormat_Prop = "TextFormat";
     public static final String Align_Prop = "Align";
     public static final String Margin_Prop = "Margin";
     public static final String Padding_Prop = "Padding";
@@ -91,6 +96,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public static final double DEFAULT_OPACTIY = 1;
     public static final Font DEFAULT_FONT = Font.Arial12;
     public static final Color DEFAULT_TEXT_FILL = Color.BLACK;
+    public static final TextFormat DEFAULT_TEXT_FORMAT = null;
     public static final Pos DEFAULT_ALIGN = Pos.TOP_CENTER;
     public static final Insets DEFAULT_MARGIN = Insets.EMPTY;
     public static final Insets DEFAULT_PADDING = Insets.EMPTY;
@@ -414,17 +420,31 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the fill of ChartPart text.
+     * Returns the fill for ChartPart text.
      */
     public Paint getTextFill()  { return _textFill; }
 
     /**
-     * Sets the fill of ChartPart text.
+     * Sets the fill for ChartPart text.
      */
     public void setTextFill(Paint aFill)
     {
         if (Objects.equals(aFill, _textFill)) return;
         firePropChange(TextFill_Prop, _textFill, _textFill = aFill);
+    }
+
+    /**
+     * Returns the format for ChartPart text.
+     */
+    public TextFormat getTextFormat()  { return _textFormat; }
+
+    /**
+     * Sets the format for ChartPart text.
+     */
+    public void setTextFormat(TextFormat aTextFormat)
+    {
+        if (Objects.equals(aTextFormat, _textFormat)) return;
+        firePropChange(TextFormat_Prop, _textFormat, _textFormat = aTextFormat);
     }
 
     /**
@@ -570,6 +590,9 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
                 LineColor_Prop, LineWidth_Prop, LineDash_Prop,
                 Font_Prop, TextFill_Prop,
                 Align_Prop, Margin_Prop, Padding_Prop, Spacing_Prop);
+
+        // Add Relations
+        aPropDefaults.addRelations(TextFormat_Prop);
     }
 
     /**
@@ -581,7 +604,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         // Handle properties
         switch (aPropName) {
 
-            // Handle Name
+            // Name
             case Name_Prop: return getName();
 
             // Border, Fill, Effect, Opacity
@@ -595,9 +618,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             case LineWidth_Prop: return getLineWidth();
             case LineDash_Prop: return getLineDash();
 
-            // Font, TextFill
+            // Font, TextFill, TextFormat
             case Font_Prop: return getFont();
             case TextFill_Prop: return getTextFill();
+            case TextFormat_Prop: return getTextFormat();
 
             // Align, Margin, Padding, Spacing
             case Align_Prop: return getAlign();
@@ -619,7 +643,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         // Handle properties
         switch (aPropName) {
 
-            // Handle Name
+            // Name
             case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
 
             // Border, Fill, Effect, Opacity
@@ -633,9 +657,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             case LineWidth_Prop: setLineWidth(SnapUtils.intValue(aValue)); break;
             case LineDash_Prop: setLineDash((double[]) aValue); break;
 
-            // Font, TextFill
+            // Font, TextFill, TextFormat
             case Font_Prop: setFont((Font) aValue); break;
             case TextFill_Prop: setTextFill((Paint) aValue); break;
+            case TextFormat_Prop: setTextFormat((TextFormat) aValue); break;
 
             // Align, Margin, Padding, Spacing
             case Align_Prop: setAlign((Pos) aValue); break;
@@ -689,6 +714,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             // Font, TextFill
             case Font_Prop: return DEFAULT_FONT;
             case TextFill_Prop: return DEFAULT_TEXT_FILL;
+            case TextFormat_Prop: return DEFAULT_TEXT_FORMAT;
 
             // Align, Margin, Padding, Spacing
             case Align_Prop: return DEFAULT_ALIGN;
@@ -762,6 +788,13 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
             Paint textFill = getTextFill();
             XMLElement textFillXML = textFill.toXML(anArchiver);
             e.add(TextFill_Prop, textFillXML);
+        }
+
+        // Archive TextFormat
+        if (!isPropDefault(TextFormat_Prop)) {
+            TextFormat textFormat = getTextFormat();
+            XMLElement textFormatXML = textFormat.toXML(anArchiver);
+            e.add(TextFormat_Prop, textFormatXML);
         }
 
         // Archive Align, Margin, Padding, Spacing
@@ -845,6 +878,13 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         if (textFillXML != null) {
             Paint textFill = (Paint) anArchiver.fromXML(textFillXML, null);
             setTextFill(textFill);
+        }
+
+        // Unarchive TextFormat
+        XMLElement textFormatXML = anElement.get(TextFormat_Prop);
+        if (textFormatXML != null) {
+            TextFormat textFormat = (TextFormat) anArchiver.fromXML(textFormatXML, null);
+            setTextFormat(textFormat);
         }
 
         // Unarchive Align, Margin, Padding, Spacing

@@ -1,5 +1,6 @@
 package snapcharts.doc;
 import snap.gfx.*;
+import snap.text.NumberFormat;
 import snap.util.XMLArchiver;
 import snap.web.WebURL;
 import snapcharts.model.*;
@@ -100,11 +101,12 @@ public class ChartArchiver extends XMLArchiver {
         cmap.put(Header.class.getSimpleName(), Header.class);
         cmap.put(Legend.class.getSimpleName(), Legend.class);
 
-        // Add Graphics classes (Border, Paint, Font, Effect)
+        // Add Graphics classes (Border, Paint, Font, NumberFormat, Effect)
         cmap.put("color", Color.class);
         cmap.put("Color", Color.class);
         cmap.put("font", Font.class);
         cmap.put("Font", Font.class);
+        cmap.put("NumberFormat", NumberFormat.class);
         cmap.put("EmptyBorder", Borders.EmptyBorder.class);
         cmap.put("BevelBorder", Borders.BevelBorder.class);
         cmap.put("EtchBorder", Borders.EtchBorder.class);

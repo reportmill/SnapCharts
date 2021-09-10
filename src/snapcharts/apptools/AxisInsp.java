@@ -1,7 +1,6 @@
 package snapcharts.apptools;
 import snap.text.NumberFormat;
 import snap.view.Label;
-import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
@@ -141,12 +140,16 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("GridSpacingText", gridSpacing != 0 ? gridSpacing : null);
         setViewValue("GridBaseText", gridBase != 0 ? gridBase : null);
 
-        // Reset ShowTickLabelsCheckBox, TickFormatText
+        // Reset ShowTickLabelsCheckBox
         setViewValue("ShowTickLabelsCheckBox", axis.isShowTickLabels());
-        setViewValue("TickFormatText", axis.getTickLabelFormat());
+
+        // Reset TickFormatText
+        NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
+        String numFormatPattern = numFormat.isPatternSet() ? numFormat.getPattern() : null;
+        setViewValue("TickFormatText", numFormatPattern);
 
         // Reset ExpNoneButton, ExpSciButton, ExpFinancialButton
-        NumberFormat.ExpStyle expStyle = axis.getTickLabelExpStyle();
+        NumberFormat.ExpStyle expStyle = numFormat.getExpStyle();
         setViewValue("ExpNoneButton", expStyle == NumberFormat.ExpStyle.None);
         setViewValue("ExpSciButton", expStyle == NumberFormat.ExpStyle.Scientific);
         setViewValue("ExpFinancialButton", expStyle == NumberFormat.ExpStyle.Financial);
@@ -251,19 +254,29 @@ public class AxisInsp extends ChartPartInsp {
             axis.setGridBase(val);
         }
 
-        // Handle ShowTickLabelsCheckBox, TickFormatText
+        // Handle ShowTickLabelsCheckBox
         if (anEvent.equals("ShowTickLabelsCheckBox"))
             axis.setShowTickLabels(anEvent.getBoolValue());
-        if (anEvent.equals("TickFormatText"))
-            axis.setTickLabelFormat(anEvent.getStringValue());
+
+        // Handle TickFormatText
+        if (anEvent.equals("TickFormatText")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
+            axis.setTextFormat(numFormat.copyForProps(NumberFormat.Pattern_Prop, anEvent.getStringValue()));
+        }
 
         // Handle ExpNoneButton, ExpSciButton, ExpFinancialButton
-        if (anEvent.equals("ExpNoneButton"))
-            axis.setTickLabelExpStyle(NumberFormat.ExpStyle.None);
-        if (anEvent.equals("ExpSciButton"))
-            axis.setTickLabelExpStyle(NumberFormat.ExpStyle.Scientific);
-        if (anEvent.equals("ExpFinancialButton"))
-            axis.setTickLabelExpStyle(NumberFormat.ExpStyle.Financial);
+        if (anEvent.equals("ExpNoneButton")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
+            axis.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.None));
+        }
+        if (anEvent.equals("ExpSciButton")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
+            axis.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Scientific));
+        }
+        if (anEvent.equals("ExpFinancialButton")) {
+            NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
+            axis.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Financial));
+        }
     }
 
     /**
