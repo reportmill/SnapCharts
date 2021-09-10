@@ -1,6 +1,5 @@
 package snapcharts.apptools;
 import snap.text.NumberFormat;
-import snap.view.Label;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
@@ -14,30 +13,19 @@ import snapcharts.view.ChartPartView;
  */
 public class AxisInsp extends ChartPartInsp {
 
-    // The Axis type
-    private AxisType  _axisType;
-
     /**
      * Constructor.
      */
-    public AxisInsp(ChartPane aChartPane, AxisType anAxisType)
+    public AxisInsp(ChartPane aChartPane)
     {
         super(aChartPane);
-        _axisType = anAxisType;
     }
 
     /**
      * Returns the name.
      */
     @Override
-    public String getName()
-    {
-        switch (_axisType) {
-            case X: return "X Axis Settings";
-            case Y: return "Y Axis Settings";
-            default: return null;
-        }
-    }
+    public String getName()  { return "Axis Settings"; }
 
     /**
      * Returns the axis.
@@ -45,7 +33,7 @@ public class AxisInsp extends ChartPartInsp {
     public Axis getAxis()
     {
         ChartPart chartPart = getChartPane().getSelChartPart();
-        Axis axis = chartPart instanceof Axis ? (Axis) chartPart : getChart().getAxisForType(_axisType);
+        Axis axis = chartPart instanceof Axis ? (Axis) chartPart : null;
         return axis;
     }
 
@@ -63,7 +51,15 @@ public class AxisInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getAxis(); }
+    public ChartPart getChartPart()
+    {
+        Axis axis = getAxis();
+        if (axis != null)
+            return axis;
+
+        Chart chart = getChart();
+        return chart.getAxisX();
+    }
 
     /**
      * Initialize UI.
@@ -78,16 +74,27 @@ public class AxisInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get Axis, AxisView (just return if null)
-        Axis axis = getAxis();
+        // Get Axis, AxisType (just return if null)
+        Axis axis = getAxis(); if (axis == null) return;
+        AxisType axisType = axis.getType();
+
+        // Reset XAxisButton, YAxisButton, Y2AxisButton, Y3AxisButton, Y3AxisButton
+        ChartHelper chartHelper = getChartPane().getChartHelper();
+        setViewValue("XAxisButton", axisType == AxisType.X);
+        setViewValue("YAxisButton", axisType == AxisType.Y);
+        setViewValue("Y2AxisButton", axisType == AxisType.Y2);
+        setViewValue("Y3AxisButton", axisType == AxisType.Y3);
+        setViewValue("Y4AxisButton", axisType == AxisType.Y4);
+        setViewEnabled("XAxisButton", chartHelper.getAxisView(AxisType.X) != null);
+        setViewEnabled("YAxisButton", chartHelper.getAxisView(AxisType.Y) != null);
+        setViewEnabled("Y2AxisButton", chartHelper.getAxisView(AxisType.Y2) != null);
+        setViewEnabled("Y3AxisButton", chartHelper.getAxisView(AxisType.Y3) != null);
+        setViewEnabled("Y4AxisButton", chartHelper.getAxisView(AxisType.Y4) != null);
+
+        // Get AxisView
         AxisView axisView = getAxisView();
         if (axisView == null)
             return;
-
-        // Reset Collapser.Text
-        String title = axis.getType().toString() + " Axis Settings";
-        Label label = getCollapser().getLabel();
-        label.setText(title);
 
         // Reset TitleText
         setViewValue("TitleText", axis.getTitle());
@@ -165,6 +172,18 @@ public class AxisInsp extends ChartPartInsp {
         AxisView axisView = getAxisView();
         if (axisView == null)
             return;
+
+        // Handle AxisButtons
+        String name = anEvent.getName();
+        if (name != null && name.endsWith("AxisButton")) {
+            String axisName = name.replace("AxisButton", "");
+            AxisType axisType = AxisType.valueOf(axisName);
+            ChartHelper chartHelper = axisView.getChartHelper();
+            Axis axis2 = chartHelper.getAxisView(axisType).getAxis();
+            ChartPane chartPane = getChartPane();
+            chartPane.getSel().setSelChartPart(axis2);
+            return;
+        }
 
         // Handle TitleText
         if (anEvent.equals("TitleText"))
@@ -276,20 +295,6 @@ public class AxisInsp extends ChartPartInsp {
         if (anEvent.equals("ExpFinancialButton")) {
             NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
             axis.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Financial));
-        }
-    }
-
-    /**
-     * Override to reset inspector label to generic "Y Axis Settings"
-     */
-    @Override
-    public void setSelected(boolean aValue)
-    {
-        if (aValue == isSelected()) return;
-        super.setSelected(aValue);
-        if (!aValue && _axisType.isAnyY()) {
-            Label label = getCollapser().getLabel();
-            label.setText("Y Axis Settings");
         }
     }
 }

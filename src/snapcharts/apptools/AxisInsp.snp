@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
+<ColView MinWidth="0" Padding="2,10,4,10" Spacing="4" FillWidth="true">
+  <RowView Align="CENTER" Padding="0,4,2,4">
+    <ToggleButton Name="XAxisButton" MinWidth="40" MinHeight="0" Padding="2" text="X" Position="CENTER_LEFT">
+      <font name="Arial" size="14" />
+    </ToggleButton>
+    <ToggleButton Name="YAxisButton" MinWidth="40" Padding="2" text="Y" Position="CENTER">
+      <font name="Arial" size="14" />
+    </ToggleButton>
+    <ToggleButton Name="Y2AxisButton" MinWidth="40" Padding="2" text="Y2" Position="CENTER">
+      <font name="Arial" size="14" />
+    </ToggleButton>
+    <ToggleButton Name="Y3AxisButton" MinWidth="40" Padding="2" text="Y3" Position="CENTER">
+      <font name="Arial" size="14" />
+    </ToggleButton>
+    <ToggleButton Name="Y4AxisButton" MinWidth="40" Padding="2" text="Y4" Position="CENTER_RIGHT">
+      <font name="Arial" size="14" />
+    </ToggleButton>
+  </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Spacing="4" text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
@@ -26,7 +43,7 @@
   <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
   <CheckBox Name="ShowLegendGraphicCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Legend Graphic" />
   <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
-    <CheckBox Name="WrapCheckBox" Padding="4" Spacing="5" text="Wrap Axis" />
+    <CheckBox Name="WrapCheckBox" Padding="2,4,2,4" Spacing="5" text="Wrap Axis" />
     <RowView Name="WrapMinMaxBox" Spacing="4" GrowWidth="true">
       <Label Spacing="4" text="Min:" />
       <TextField Name="WrapMinText" Align="CENTER" ColCount="7" />

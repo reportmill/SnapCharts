@@ -36,10 +36,7 @@ public class ChartPaneInsp extends ViewOwner {
     private HeaderInsp _headerInsp;
 
     // The AxisInsp
-    private AxisInsp  _axisXInsp;
-
-    // The AxisInsp
-    private AxisInsp  _axisYInsp;
+    private AxisInsp  _axisInsp;
 
     // The LegendInsp
     private LegendInsp  _legendInsp;
@@ -115,13 +112,9 @@ public class ChartPaneInsp extends ViewOwner {
             _headerInsp = new HeaderInsp(_chartPane);
             addInspector(_headerInsp, false);
 
-            // Create/add AxisXInsp
-            _axisXInsp = new AxisInsp(_chartPane, AxisType.X);
-            addInspector(_axisXInsp, false);
-
-            // Create/add AxisYInsp
-            _axisYInsp = new AxisInsp(_chartPane, AxisType.Y);
-            addInspector(_axisYInsp, false);
+            // Create/add AxisInsp
+            _axisInsp = new AxisInsp(_chartPane);
+            addInspector(_axisInsp, false);
 
             // Create/add LegendInsp
             _legendInsp = new LegendInsp(_chartPane);
@@ -145,7 +138,7 @@ public class ChartPaneInsp extends ViewOwner {
         addInspector(_dataStyleInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisXInsp, _axisYInsp, _legendInsp,
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _legendInsp,
                 _markerInsp, _dataViewInsp, _dataStyleInsp, _dataSetInsp};
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] {_dataSetInsp};
@@ -245,10 +238,8 @@ public class ChartPaneInsp extends ViewOwner {
     {
         if (aChartPart instanceof Header)
             return _headerInsp;
-        if (aChartPart instanceof AxisX)
-            return _axisXInsp;
-        if (aChartPart instanceof AxisY)
-            return _axisYInsp;
+        if (aChartPart instanceof Axis)
+            return _axisInsp;
         if (aChartPart instanceof Legend)
             return _legendInsp;
         if (aChartPart instanceof Marker)
