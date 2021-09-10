@@ -3,6 +3,8 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.util.PropDefaults;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
@@ -110,6 +112,55 @@ public class SymbolStyle extends ChartPart {
     public boolean isBorderSupported()  { return false; }
 
     /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(SymbolSize_Prop, SymbolId_Prop);
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // SymbolSize, SymbolId
+            case SymbolSize_Prop: return getSymbolSize();
+            case SymbolId_Prop: return getSymbolId();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // SymbolSize, SymbolId
+            case SymbolSize_Prop: setSymbolSize(SnapUtils.intValue(aValue)); break;
+            case SymbolId_Prop: setSymbolId(SnapUtils.intValue(aValue)); break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue); break;
+        }
+    }
+
+    /**
      * Override to provide SymbolStyle defaults.
      */
     @Override
@@ -119,6 +170,10 @@ public class SymbolStyle extends ChartPart {
 
             // LineColor_Prop
             case LineColor_Prop: return getDefaultLineColor();
+
+            // SymbolSize, SymbolId
+            case SymbolSize_Prop: return DEFAULT_SYMBOL_SIZE;
+            case SymbolId_Prop: return 0;
 
             // Fill_Prop
             case Fill_Prop: return getDefaultFillColor();
@@ -136,14 +191,13 @@ public class SymbolStyle extends ChartPart {
     {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
-        e.setName("SymbolStyle");
 
         // Archive SymbolSize
-        if (getSymbolSize() != getPropDefaultInt(SymbolSize_Prop))
+        if (!isPropDefault(SymbolSize_Prop))
             e.add(SymbolSize_Prop, getSymbolSize());
 
         // Archive SymbolId
-        if (getSymbolId() != 0)
+        if (!isPropDefault(SymbolSize_Prop))
             e.add(SymbolId_Prop, getSymbolId());
 
         // Return xml

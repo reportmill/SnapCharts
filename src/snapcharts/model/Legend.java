@@ -31,6 +31,7 @@ public class Legend extends ParentPart {
     // Constants for property defaults
     private static Pos DEFAULT_LEGEND_ALIGN = Pos.TOP_LEFT;
     private static Insets DEFAULT_LEGEND_MARGIN = new Insets(5, 5, 5, 5);
+    private static Pos DEFAULT_POSITION = Pos.CENTER_RIGHT;
 
     /**
      * Constructor.
@@ -93,6 +94,57 @@ public class Legend extends ParentPart {
     public ChartText getTitle()  { return _title; }
 
     /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(ShowLegend_Prop, Position_Prop, Inside_Prop);
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // ShowLegend, Position, Inside
+            case ShowLegend_Prop: return isShowLegend();
+            case Position_Prop: return getPosition();
+            case Inside_Prop: return isInside();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // ShowLegend, Position, Inside
+            case ShowLegend_Prop: setShowLegend(SnapUtils.boolValue(aValue)); break;
+            case Position_Prop: setPosition((Pos) aValue); break;
+            case Inside_Prop: setInside(SnapUtils.boolValue(aValue)); break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue); break;
+        }
+    }
+
+    /**
      * Override to provide custom defaults for Legend (Position).
      */
     @Override
@@ -105,7 +157,7 @@ public class Legend extends ParentPart {
             case Margin_Prop: return DEFAULT_LEGEND_MARGIN;
 
             // Handle Position
-            case Position_Prop: return Pos.CENTER_RIGHT;
+            case Position_Prop: return DEFAULT_POSITION;
 
             // Handle superclass properties
             default: return super.getPropDefault(aPropName);
@@ -149,7 +201,7 @@ public class Legend extends ParentPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive ShowLegend, Position
+        // Unarchive ShowLegend, Position, Inside
         if (anElement.hasAttribute(ShowLegend_Prop))
             setShowLegend(anElement.getAttributeBoolValue(ShowLegend_Prop));
         if (anElement.hasAttribute(Position_Prop))
