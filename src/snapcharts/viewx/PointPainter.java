@@ -13,12 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class to handle painting DataArea.DataSet data tags.
+ * A class to handle painting DataArea.DataSet data symbols and tags.
  */
 public class PointPainter {
 
     // The DataArea
-    private DataArea _dataArea;
+    private DataArea  _dataArea;
+
+    // The Cached Symbol points
+    private Point[]  _symbolPoints;
 
     // The Cached TagBoxes
     private TagBox[]  _tagBoxes;
@@ -35,30 +38,27 @@ public class PointPainter {
     }
 
     /**
-     * Paints symbols.
+     * Returns the array of Symbol points.
      */
-    public void paintSymbols(Painter aPntr)
+    public Point[] getSymbolPoints()  { return _symbolPoints; }
+
+    /**
+     * Returns the array of tag boxes.
+     */
+    public TagBox[] getTagBoxes()  { return _tagBoxes; }
+
+    /**
+     * Caches Symbol points and Tag boxes..
+     */
+    public void paintSymbolsAndTagsPrep()
     {
-        // Get info
+        // Get ShowSymbol info
         DataStyle dataStyle = _dataArea.getDataStyle();
+        boolean showSymbols = dataStyle.isShowSymbols();
         SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
-        Symbol symbol = symbolStyle.getSymbol();
-        Color symbolColor = symbolStyle.getFillColor();  //color.darker().darker()
-        Shape symbolShape = symbol.getShape();
         int symbolSize = symbolStyle.getSymbolSize();
         double symbolShift = symbolSize / 2d;
-
-        // Get Symbol border info
-        Color symbolBorderColor = symbolStyle.getLineColor();
-        double symbolBorderWidth = symbolStyle.getLineWidth();
-
-        // Get whether showing points only
-        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
-        if (symbolBorderWidth == 0 && pointsOnly)
-            symbolBorderWidth = 1;
-
-        // Get SymbolBorderStroke
-        Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
+        List<Point> symbolPointList = new ArrayList<>();
 
         // Get ShowTag info because TagBoxes are created
         boolean showTags = dataStyle.isShowTags();
@@ -150,9 +150,57 @@ public class PointPainter {
                 lastDispY = dispY;
             }
 
+            // Get disp X/Y of symbol origin add to SymbolPointList
+            if (showSymbols) {
+                double symbX = dispX - symbolShift;
+                double symbY = dispY - symbolShift;
+                symbolPointList.add(new Point(symbX, symbY));
+            }
+
+            // Calculate next index
+            if (incrementReal > 1) {
+                indexReal += incrementReal;
+                index = (int) Math.round(indexReal);
+            }
+            else index++;
+        }
+
+        // Reset SymbolPoints, TagBoxes
+        _symbolPoints = symbolPointList.toArray(new Point[0]);
+        _tagBoxes = tagBoxList.toArray(new TagBox[0]);
+    }
+
+    /**
+     * Paints symbols.
+     */
+    public void paintSymbols(Painter aPntr)
+    {
+        // Get info
+        DataStyle dataStyle = _dataArea.getDataStyle();
+        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        Symbol symbol = symbolStyle.getSymbol();
+        Color symbolColor = symbolStyle.getFillColor();  //color.darker().darker()
+        Shape symbolShape = symbol.getShape();
+
+        // Get Symbol border info
+        Color symbolBorderColor = symbolStyle.getLineColor();
+        double symbolBorderWidth = symbolStyle.getLineWidth();
+
+        // Get whether showing points only
+        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
+        if (symbolBorderWidth == 0 && pointsOnly)
+            symbolBorderWidth = 1;
+
+        // Get SymbolBorderStroke
+        Stroke symbolBorderStroke = symbolBorderWidth > 0 ? Stroke.getStroke(symbolBorderWidth) : null;
+
+        // Iterate over SymbolPoints and paint
+        Point[] symbolPoints = getSymbolPoints();
+        for (Point symbolPoint : symbolPoints) {
+
             // Get disp X/Y of symbol origin and translate there
-            double symbX = dispX - symbolShift;
-            double symbY = dispY - symbolShift;
+            double symbX = symbolPoint.x;
+            double symbY = symbolPoint.y;
             aPntr.translate(symbX, symbY);
 
             // Set color and fill symbol shape
@@ -168,23 +216,8 @@ public class PointPainter {
 
             // Translate back
             aPntr.translate(-symbX, -symbY);
-
-            // Calculate next index
-            if (incrementReal > 1) {
-                indexReal += incrementReal;
-                index = (int) Math.round(indexReal);
-            }
-            else index++;
         }
-
-        // Reset TagBoxes
-        _tagBoxes = tagBoxList.toArray(new TagBox[0]);
     }
-
-    /**
-     * Returns the array of tag boxes.
-     */
-    public TagBox[] getTagBoxes()  { return _tagBoxes; }
 
     /**
      * Paints the data tags.

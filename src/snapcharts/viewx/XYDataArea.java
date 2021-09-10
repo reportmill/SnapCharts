@@ -148,6 +148,11 @@ public class XYDataArea extends DataArea {
         if (isSelected)
             paintSelDataPoint(aPntr);
 
+        // If ShowSymbols or ShowTags
+        boolean showTags = dataStyle.isShowTags();
+        if (showSymbols || showTags)
+            _pointPainter.paintSymbolsAndTagsPrep();
+
         // If ShowSymbols, paint symbols
         if (showSymbols)
             paintSymbols(aPntr);
