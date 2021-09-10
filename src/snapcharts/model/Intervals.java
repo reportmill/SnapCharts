@@ -132,7 +132,7 @@ public class Intervals {
         ivals._maxVal = aMax;
         int len = aMax - aMin + 1;
         ivals._divs = new double[len];
-        for (int i=0; i<len; i++) ivals._divs[i] = aMin + i;
+        for (int i = 0; i < len; i++) ivals._divs[i] = aMin + i;
         ivals._delta = 1;
         ivals._count = len;
         return ivals;
@@ -152,7 +152,7 @@ public class Intervals {
         // Create/fill divs from min to max
         int len = max - min + 1;
         double[] divs = new double[len];
-        for (int i=0; i<len; i++)
+        for (int i = 0; i < len; i++)
             divs[i] = min + i;
 
         // Update ends
@@ -173,34 +173,6 @@ public class Intervals {
     }
 
     /**
-     * Return the factor of 10 below given value.
-     */
-    private static double minFactor(double aValue)
-    {
-        // Start at max factor and shrink by factor of 10
-        double factor = 10000;
-        while (true) {
-            if (factor < aValue || factor<.1)
-                return factor;
-            factor /= 10;
-        }
-    }
-
-    /**
-     * Return the factor of 10 above given value.
-     */
-    private static double maxFactor(double aValue)
-    {
-        // Start at min factor and group by factor of 10
-        double factor = 1;
-        while (true) {
-            if (factor >= aValue)
-                return factor;
-            factor *= 10;
-        }
-    }
-
-    /**
      * Returns pleasing intervals given a min value, a max value and an axis length.
      * For instance, (1,4) returns (1,2,3,4,5), while (17,242) would return (50,100,150,200,250). Useful for graphing.
      */
@@ -217,16 +189,17 @@ public class Intervals {
         ivals._divs = divs;
         ivals._count = count;
 
-        // Bogus - get rid of this when you figure it out
+        // Bogus - get rid of this when you figure it out. I think I fixed it by changing getStepXXX to return long.
         if (count < 2) {
             getDivsFor(aMin, aMax, axisLen, divLen, minFixed, maxFixed);
             System.err.println("Intervals: getIntevalsForMinMaxLen: How can this happen?");
             ivals._divs = divs = new double[] { aMin, aMax };
             ivals._count = count = divs.length;
+            ivals._delta = aMax - aMin;
         }
 
         // Cache delta: If plenty of divs, use difference of second set, otherwise use max of first/last sets
-        ivals._delta = count>=4 ? divs[2] - divs[1] : Math.max(divs[1] - divs[0], divs[count-1] - divs[count-2]);
+        ivals._delta = count >= 4 ? divs[2] - divs[1] : Math.max(divs[1] - divs[0], divs[count-1] - divs[count-2]);
 
         // Return
         return ivals;
@@ -308,7 +281,7 @@ public class Intervals {
     private static double[] getDivsFor(double aMin, double aMax, double axisLen, double divLen, boolean minFixed, boolean maxFixed)
     {
         // Fix some edge cases
-        if (aMin>0 && aMin<1 && MathUtils.equals(aMin/(aMax - aMin), 0))
+        if (aMin > 0 && aMin < 1 && MathUtils.equals(aMin/(aMax - aMin), 0))
             aMin = 0;
         if (Double.isInfinite(aMin))
             aMin = -Double.MIN_VALUE;
@@ -316,21 +289,22 @@ public class Intervals {
             aMax = Double.MAX_VALUE;
 
         // Find largest factor of 10 that is below range (must be a better way to do this)
-        if (aMin==aMax) aMax++;
+        if (aMin == aMax) aMax++;
         double rangeLen = aMax - aMin;
-        int pow = (int) Math.round(Math.log10(rangeLen));
+        double rangeLenLog = Math.log10(rangeLen);
+        int pow = (int) Math.round(rangeLenLog);
         double factor = Math.pow(10, pow);
-        while (factor*1.1>rangeLen) factor /= 10;
+        while (factor * 1.1 > rangeLen) factor /= 10;
 
         // Make sure axisLen is reasonable
-        if (axisLen<divLen*2)
-            axisLen = divLen*1.5;
+        if (axisLen < divLen * 2)
+            axisLen = divLen * 1.5;
 
         // Iterate over increments to find one that results in reasonable length for increment
         for (double val : PLEASING_INCREMENTS)
         {
             // Get candidate increment from nice list times factor
-            double incr = val*factor;
+            double incr = val * factor;
 
             // Get step just before MinVal and step after MaxVal
             double stepMin = minFixed ? getStepsToValueWithIncrement(aMin, incr) :
@@ -340,14 +314,14 @@ public class Intervals {
             double steps = stepMax - stepMin;
 
             // If step size greater than or equal MinSize, return simple intervals for increment
-            double stepSize = axisLen/steps;
+            double stepSize = axisLen / steps;
             if (steps<15 && MathUtils.gte(stepSize, divLen))
             {
                 // Get simple intervals for increment
                 double[] ivals = getDivsForMinMaxIncr(aMin, aMax, incr, 0, minFixed, maxFixed);
 
                 // If only 3 intervals and StepSize is less than half original MinSize, use ends instead
-                if (ivals.length==3 && stepSize<divLen/2)
+                if (ivals.length == 3 && stepSize < divLen / 2)
                 {
                     ivals = new double[] { ivals[0], ivals[ivals.length - 1] };
                 }
@@ -367,7 +341,7 @@ public class Intervals {
      */
     private static double getStepsToValueWithIncrement(double aValue, double anIncr)
     {
-        double steps = aValue/anIncr;
+        double steps = aValue / anIncr;
         if (MathUtils.equals(steps, (int) steps))
             steps = (int) steps;
         return steps;
@@ -376,20 +350,20 @@ public class Intervals {
     /**
      * Returns number of steps to get before given value (or to, if on step) from given base with given increment.
      */
-    private static int getStepBeforeValueForBaseAndIncrement(double aValue, double aBase, double anIncr)
+    private static long getStepBeforeValueForBaseAndIncrement(double aValue, double aBase, double anIncr)
     {
         double range = aValue - aBase;
-        int steps = (int) Math.floor(range/anIncr + .0000001);
+        long steps = (long) Math.floor(range / anIncr + .0000001);
         return steps;
     }
 
     /**
      * Returns number of steps to get beyond given value (or to, if on step) from given base with given increment.
      */
-    private static int getStepAfterValueForBaseAndIncrement(double aValue, double aBase, double anIncr)
+    private static long getStepAfterValueForBaseAndIncrement(double aValue, double aBase, double anIncr)
     {
         double range = aValue - aBase;
-        int steps = (int) Math.ceil(range/anIncr - .0000001);
+        long steps = (long) Math.ceil(range / anIncr - .0000001);
         return steps;
     }
 
@@ -399,13 +373,13 @@ public class Intervals {
     private static double[] getDivsForMinMaxIncr(double aMin, double aMax, double anIncr, double aBase, boolean minFixed, boolean maxFixed)
     {
         // Get steps to ends and step count
-        int stepMin = getStepBeforeValueForBaseAndIncrement(aMin, aBase, anIncr);
-        int stepMax = getStepAfterValueForBaseAndIncrement(aMax, aBase, anIncr);
-        int stepCount = stepMax - stepMin + 1;
+        long stepMin = getStepBeforeValueForBaseAndIncrement(aMin, aBase, anIncr);
+        long stepMax = getStepAfterValueForBaseAndIncrement(aMax, aBase, anIncr);
+        int stepCount = (int) (stepMax - stepMin + 1);
 
         // Create array, fill with intervals
         double[] divs = new double[stepCount];
-        for (int i = 0,step = stepMin; i < stepCount; i++, step++)
+        for (int i = 0, step = (int) stepMin; i < stepCount; i++, step++)
             divs[i] = step * anIncr;
 
         // Adjust edges if Min/Max Fixed

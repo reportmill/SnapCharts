@@ -577,7 +577,7 @@ public class ChartView extends ChartPartView<Chart> {
      */
     private void chartViewDidMouseRelease(ViewEvent anEvent)
     {
-        if (anEvent.getX() > getWidth() - 50 && anEvent.getY() < 50 && anEvent.isShiftDown()) {
+        if (anEvent.getX() > getWidth() - 90 && anEvent.getY() < 90 && anEvent.isShiftDown()) {
             AppEnv.getEnv().openChartInBrowser(getChart(), anEvent.isControlDown());
         }
     }
