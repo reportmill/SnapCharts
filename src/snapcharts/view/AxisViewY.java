@@ -6,6 +6,7 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.Side;
 import snap.util.ArrayUtils;
+import snap.view.Cursor;
 import snap.view.RowView;
 import snap.view.ViewProxy;
 import snapcharts.model.*;
@@ -34,6 +35,7 @@ public class AxisViewY extends AxisView<AxisY> {
     {
         super();
         setVertical(true);
+        setCursor(Cursor.N_RESIZE);
 
         _axisType = anAxisTypeY;
 

@@ -8,6 +8,7 @@ import snap.geom.Side;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.ColView;
+import snap.view.Cursor;
 import snap.view.ViewProxy;
 import snapcharts.model.Axis;
 import snapcharts.model.AxisX;
@@ -24,6 +25,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     {
         super();
         setFont(Font.Arial12);
+        setCursor(Cursor.E_RESIZE);
 
         // Set Padding
         setPadding(AXIS_MARGIN, 0, AXIS_MARGIN, 0);

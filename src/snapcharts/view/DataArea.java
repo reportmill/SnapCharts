@@ -6,6 +6,7 @@ import snap.geom.Point;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
+import snap.view.Cursor;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
 import snapcharts.util.DataStoreUtils;
@@ -39,6 +40,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public DataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super();
+        setCursor(Cursor.MOVE);
 
         // Set ivars
         _chartHelper = aChartHelper;

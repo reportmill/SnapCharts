@@ -4,6 +4,7 @@
 package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
+import snap.view.Cursor;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
@@ -34,7 +35,8 @@ public class DataView extends ChartPartView<DataSetList> {
     {
         _chartView = aChartView;
 
-        // Create/set PanZoomer
+        // Config
+        setCursor(Cursor.MOVE);
         enableEvents(MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
     }
 
