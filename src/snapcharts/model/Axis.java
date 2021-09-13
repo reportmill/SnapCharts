@@ -718,7 +718,7 @@ public abstract class Axis extends ChartPart {
                 setWrapMinMax(minMax);
         }
 
-        // Unarchive ShowLine, LineColor
+        // Unarchive ShowGrid, GridColor
         if (anElement.hasAttribute(ShowGrid_Prop))
             setShowGrid(anElement.getAttributeBoolValue(ShowGrid_Prop));
         if (anElement.hasAttribute(GridColor_Prop)) {
@@ -728,7 +728,7 @@ public abstract class Axis extends ChartPart {
 
         // Unarchive GridWidth, GridDash
         if (anElement.hasAttribute(GridWidth_Prop))
-            setGridWidth(anElement.getAttributeIntValue(ShowGrid_Prop));
+            setGridWidth(anElement.getAttributeIntValue(GridWidth_Prop));
         if (anElement.hasAttribute(GridDash_Prop)) {
             String dashStr = anElement.getAttributeValue(GridDash_Prop);
             double[] dashArray = Stroke.getDashArray(dashStr);
