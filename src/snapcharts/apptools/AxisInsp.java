@@ -130,6 +130,12 @@ public class AxisInsp extends ChartPartInsp {
             setViewValue("WrapMaxText", axis.getWrapMinMax().getMax());
         }
 
+        // Reset GridSpacingText, GridBaseText
+        double gridSpacing = axis.getGridSpacing();
+        double gridBase = axis.getGridBase();
+        setViewValue("GridSpacingText", gridSpacing != 0 ? gridSpacing : null);
+        setViewValue("GridBaseText", gridBase != 0 ? gridBase : null);
+
         // Reset TickLengthText, TickLengthResetButton
         setViewValue("TickLengthText", axis.getTickLength());
         setViewVisible("TickLengthResetButton", axis.getTickLength() != Axis.DEFAULT_TICK_LENGTH);
@@ -140,12 +146,6 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("TickPosOutsideButton", tickPos == Axis.TickPos.Outside);
         setViewValue("TickPosAcrossButton", tickPos == Axis.TickPos.Across);
         setViewValue("TickPosOffButton", tickPos == Axis.TickPos.Off);
-
-        // Reset GridSpacingText, GridBaseText
-        double gridSpacing = axis.getGridSpacing();
-        double gridBase = axis.getGridBase();
-        setViewValue("GridSpacingText", gridSpacing != 0 ? gridSpacing : null);
-        setViewValue("GridBaseText", gridBase != 0 ? gridBase : null);
 
         // Reset ShowTickLabelsCheckBox
         setViewValue("ShowTickLabelsCheckBox", axis.isShowTickLabels());
@@ -160,6 +160,14 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("ExpNoneButton", expStyle == NumberFormat.ExpStyle.None);
         setViewValue("ExpSciButton", expStyle == NumberFormat.ExpStyle.Scientific);
         setViewValue("ExpFinancialButton", expStyle == NumberFormat.ExpStyle.Financial);
+
+        // Reset AutoAngleButton, 30AngleButton, 45AngleButton, 60AngleButton, 90AngleButton
+        double ticksAngle = axis.getTickLabelAngle();
+        setViewValue("AutoAngleButton", ticksAngle >= 1000);
+        setViewValue("30AngleButton", ticksAngle == 30);
+        setViewValue("45AngleButton", ticksAngle == 45);
+        setViewValue("60AngleButton", ticksAngle == 60);
+        setViewValue("90AngleButton", ticksAngle == 90);
     }
 
     /**
@@ -242,6 +250,17 @@ public class AxisInsp extends ChartPartInsp {
         if (anEvent.equals("WrapMaxText"))
             axis.setWrapMinMax(axis.getWrapMinMax().copyForMax(anEvent.getFloatValue()));
 
+        // Handle GridSpacingText, GridBaseText
+        if (anEvent.equals("GridSpacingText"))
+            axis.setGridSpacing(anEvent.getFloatValue());
+        if (anEvent.equals("GridBaseText")) {
+            String valStr = anEvent.getStringValue();
+            double val = anEvent.getFloatValue();
+            if (valStr.equalsIgnoreCase("min")) val = Axis.GRID_BASE_DATA_MIN;
+            else if (valStr.equalsIgnoreCase("max")) val = Axis.GRID_BASE_DATA_MAX;
+            axis.setGridBase(val);
+        }
+
         // Handle TickLengthText, TickLengthResetButton
         if (anEvent.equals("TickLengthText"))
             axis.setTickLength(Math.min(Math.max(anEvent.getIntValue(), 1), 100));
@@ -261,17 +280,6 @@ public class AxisInsp extends ChartPartInsp {
             axis.setTickPos(Axis.TickPos.Across);
         if (anEvent.equals("TickPosOffButton"))
             axis.setTickPos(Axis.TickPos.Off);
-
-        // Handle GridSpacingText, GridBaseText
-        if (anEvent.equals("GridSpacingText"))
-            axis.setGridSpacing(anEvent.getFloatValue());
-        if (anEvent.equals("GridBaseText")) {
-            String valStr = anEvent.getStringValue();
-            double val = anEvent.getFloatValue();
-            if (valStr.equalsIgnoreCase("min")) val = Axis.GRID_BASE_DATA_MIN;
-            else if (valStr.equalsIgnoreCase("max")) val = Axis.GRID_BASE_DATA_MAX;
-            axis.setGridBase(val);
-        }
 
         // Handle ShowTickLabelsCheckBox
         if (anEvent.equals("ShowTickLabelsCheckBox"))
@@ -296,5 +304,17 @@ public class AxisInsp extends ChartPartInsp {
             NumberFormat numFormat = NumberFormat.getFormatOrDefault(axis.getTextFormat());
             axis.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Financial));
         }
+
+        // Handle AutoAngleButton, 30AngleButton, 45AngleButton, 60AngleButton, 90AngleButton
+        if (anEvent.equals("AutoAngleButton"))
+            axis.setTickLabelAngle(1000);
+        if (anEvent.equals("30AngleButton"))
+            axis.setTickLabelAngle(30);
+        if (anEvent.equals("45AngleButton"))
+            axis.setTickLabelAngle(45);
+        if (anEvent.equals("60AngleButton"))
+            axis.setTickLabelAngle(60);
+        if (anEvent.equals("90AngleButton"))
+            axis.setTickLabelAngle(90);
     }
 }

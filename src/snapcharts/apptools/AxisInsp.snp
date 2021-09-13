@@ -42,13 +42,21 @@
   <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Spacing="5" text="Always Include Zero" />
   <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
   <CheckBox Name="ShowLegendGraphicCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Legend Graphic" />
-  <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
-    <CheckBox Name="WrapCheckBox" Padding="2,4,2,4" Spacing="5" text="Wrap Axis" />
+  <RowView Name="WrapAxisBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+    <CheckBox Name="WrapCheckBox" Padding="0" Spacing="5" text="Wrap Axis" />
     <RowView Name="WrapMinMaxBox" Spacing="4" GrowWidth="true">
-      <Label Spacing="4" text="Min:" />
+      <Label Padding="2,0,0,0" Spacing="4" text="Min:" />
       <TextField Name="WrapMinText" Align="CENTER" ColCount="7" />
-      <Label Spacing="4" text="Max:" />
+      <Label Padding="2,0,0,0" Spacing="4" text="Max:" />
       <TextField Name="WrapMaxText" Align="CENTER" ColCount="7" />
+    </RowView>
+  </RowView>
+  <RowView Spacing="4" GrowWidth="true">
+    <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+      <Label Spacing="4" text="Grid Spacing:" />
+      <TextField Name="GridSpacingText" Align="CENTER" ColCount="7" />
+      <Label Margin="0,0,0,9" Spacing="4" text="Base:" />
+      <TextField Name="GridBaseText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
@@ -71,14 +79,6 @@
       <ToggleButton Name="TickPosOffButton" MinWidth="46" Padding="2" text="Off" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
-  <RowView Name="WrapAxisBox" Spacing="4" GrowWidth="true">
-    <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-      <Label Spacing="4" text="Grid Spacing:" />
-      <TextField Name="GridSpacingText" Align="CENTER" ColCount="7" />
-      <Label Margin="0,0,0,9" Spacing="4" text="Base:" />
-      <TextField Name="GridBaseText" Align="CENTER" ColCount="7" />
-    </RowView>
-  </RowView>
   <CheckBox Name="ShowTickLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Tick Labels" />
   <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
     <Label Spacing="4" text="Ticks Format:" />
@@ -90,6 +90,16 @@
       <ToggleButton Name="ExpNoneButton" MinWidth="46" Padding="2" text="None" Position="CENTER_LEFT" Selected="true" />
       <ToggleButton Name="ExpSciButton" MinWidth="46" Padding="2" text="Scientific" Position="CENTER" />
       <ToggleButton Name="ExpFinancialButton" MinWidth="46" Padding="2" text="Financial" Position="CENTER_RIGHT" />
+    </RowView>
+  </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Name="AxisTickPos" Spacing="4" text="Ticks Angle:" />
+    <RowView GrowWidth="true">
+      <ToggleButton Name="AutoAngleButton" MinWidth="46" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="30AngleButton" MinWidth="35" Padding="2" text="30&#176;" Position="CENTER" />
+      <ToggleButton Name="45AngleButton" MinWidth="35" Padding="2" text="45&#176;" Position="CENTER" />
+      <ToggleButton Name="60AngleButton" MinWidth="35" Padding="2" text="60&#176;" Position="CENTER" />
+      <ToggleButton Name="90AngleButton" MinWidth="35" Padding="2" text="90&#176;" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
 </ColView>

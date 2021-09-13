@@ -76,6 +76,9 @@ public abstract class Axis extends ChartPart {
     // Whether to show TickLabels
     private boolean  _showTickLabels;
 
+    // The angle of the TickLabels
+    private double  _tickLabelAngle;
+
     // Constants for properties
     public static final String Title_Prop = "Title";
     public static final String TitleRotate_Prop = "TitleRotate";
@@ -97,6 +100,7 @@ public abstract class Axis extends ChartPart {
     public static final String TickLength_Prop = "TickLength";
     public static final String TickPos_Prop = "TickPos";
     public static final String ShowTickLabels_Prop = "ShowTickLabels";
+    public static final String TickLabelAngle_Prop = "TickLabelAngle";
 
     // Constant for GridBase special values
     public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
@@ -476,15 +480,36 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
-     * Returns the prop value keys.
+     * Returns the angle of the tick labels in degrees.
+     */
+    public double getTickLabelAngle()
+    {
+        return _tickLabelAngle;
+    }
+
+    /**
+     * Sets the angle of the tick labels in degrees.
+     */
+    public void setTickLabelAngle(double anAngle)
+    {
+        if (anAngle == _tickLabelAngle) return;
+        firePropChange(TickLabelAngle_Prop, _tickLabelAngle, _tickLabelAngle = anAngle);
+    }
+
+    /**
+     * Override to register props.
      */
     @Override
-    protected String[] getPropKeysLocal()
+    protected void initPropDefaults(PropDefaults aPropDefaults)
     {
-        return new String[] {
-                MinBound_Prop, MaxBound_Prop,
-                MinValue_Prop, MaxValue_Prop
-        };
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(MinBound_Prop, MaxBound_Prop, MinValue_Prop, MaxValue_Prop,
+            GridSpacing_Prop, GridBase_Prop,
+            TickLength_Prop, TickPos_Prop,
+            ShowTickLabels_Prop, TickLabelAngle_Prop);
     }
 
     /**
@@ -510,8 +535,9 @@ public abstract class Axis extends ChartPart {
             case TickLength_Prop: return getTickLength();
             case TickPos_Prop: return getTickPos();
 
-            // ShowTickLabels
+            // ShowTickLabels, TickLabelAngle
             case ShowTickLabels_Prop: return isShowTickLabels();
+            case TickLabelAngle_Prop: return getTickLabelAngle();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -548,8 +574,9 @@ public abstract class Axis extends ChartPart {
             case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
             case TickPos_Prop: setTickPos((TickPos) aValue); break;
 
-            // ShowTickLabels
+            // ShowTickLabels, TickLabelAngle
             case ShowTickLabels_Prop: setShowTickLabels(SnapUtils.boolValue(aValue)); break;
+            case TickLabelAngle_Prop: setTickLabelAngle(SnapUtils.doubleValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -652,9 +679,11 @@ public abstract class Axis extends ChartPart {
         if (!isPropDefault(TickPos_Prop))
             e.add(TickPos_Prop, getTickPos());
 
-        // Archive ShowTickLabels
+        // Archive ShowTickLabels, TickLabelAngle
         if (!isPropDefault(ShowTickLabels_Prop))
             e.add(ShowTickLabels_Prop, isShowTickLabels());
+        if (!isPropDefault(TickLabelAngle_Prop))
+            e.add(TickLabelAngle_Prop, getTickLabelAngle());
 
         // Return element
         return e;
@@ -718,9 +747,11 @@ public abstract class Axis extends ChartPart {
         if (anElement.hasAttribute(TickPos_Prop))
             setTickPos(anElement.getAttributeEnumValue(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS));
 
-        // Unarchive ShowTickLabels
+        // Unarchive ShowTickLabels, TickLabelAngle
         if (anElement.hasAttribute(ShowTickLabels_Prop))
             setShowTickLabels(anElement.getAttributeBoolValue(ShowTickLabels_Prop));
+        if (anElement.hasAttribute(TickLabelAngle_Prop))
+            setTickLabelAngle(anElement.getAttributeDoubleValue(TickLabelAngle_Prop));
 
         // Return this part
         return this;
