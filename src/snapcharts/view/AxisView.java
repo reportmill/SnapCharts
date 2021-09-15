@@ -504,7 +504,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     protected double getTickLabelsMaxWidth()
     {
         TickLabelFormat tickFormat = getTickLabelFormat();
-        return tickFormat.getLongSampleStringWidth();
+        return tickFormat.getMaxLabelStringWidth();
     }
 
     /**
@@ -535,10 +535,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Calculate rotated size and return
         double radA = Math.toRadians(tickAngle);
-        double sinA = Math.sin(radA);
-        double cosA = Math.cos(radA);
-        double rotW = Math.ceil(ticksW * cosA) + Math.ceil(ticksH * sinA);
-        double rotH = Math.ceil(ticksW * sinA) + Math.ceil(ticksH * cosA);
+        double sinA = Math.abs(Math.sin(radA));
+        double cosA = Math.abs(Math.cos(radA));
+        double rotW = Math.ceil(ticksW * cosA + ticksH * sinA - .1);
+        double rotH = Math.ceil(ticksW * sinA + ticksH * cosA - .1);
         return new Size(rotW, rotH);
     }
 
@@ -549,7 +549,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         // Set rotation (just return if zero)
         tickLabel.setRotate(tickRot);
-        tickLabel.setBorder(Color.PINK, 1);
         if (tickRot == 0)
             return;
 

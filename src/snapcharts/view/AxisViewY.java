@@ -99,13 +99,12 @@ public class AxisViewY extends AxisView<AxisY> {
      */
     private void layoutTickLabels()
     {
-        // Get tick labels width
-        double ticksW = getTickLabelsMaxWidth();
+        // Get width of TickBox
+        double tickBoxW = _tickLabelBox.getWidth();
 
         // Get TickLabel.Align (if Side RIGHT, align left)
         Axis axis = getAxis();
         boolean isRightSide = axis.getSide() == Side.RIGHT;
-        Pos ticksAlign = isRightSide ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
 
         // Get TickLabels
         TickLabel[] tickLabels = getTickLabels();
@@ -129,10 +128,11 @@ public class AxisViewY extends AxisView<AxisY> {
                 dispY -= shiftY;
 
             // Get/set TickLabel bounds
+            double tickW = tickLabel.getPrefWidth();
             double tickH = tickLabel.getPrefHeight();
+            double tickX = isRightSide ? 0 : tickBoxW - tickW;
             double tickY = dispY - Math.round(tickH / 2);
-            tickLabel.setAlign(ticksAlign);
-            tickLabel.setBounds(0, tickY, ticksW, tickH);
+            tickLabel.setBounds(tickX, tickY, tickW, tickH);
 
             // Set tick label rotation
             setTickLabelRotation(tickLabel, tickRot);

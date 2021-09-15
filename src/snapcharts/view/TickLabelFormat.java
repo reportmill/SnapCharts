@@ -31,8 +31,11 @@ public class TickLabelFormat extends NumberFormat {
     // The best exponent for current intervals
     private Integer  _intervalsExponent;
 
-    // The long sample
-    private String  _longSample;
+    // The width of the longest label
+    private int  _maxLabelWidth = -1;
+
+    // Whether format already tried going smaller once (don't want to get in endless back-and-forth with opposing axes)
+    private boolean  _wentSmallerOnce;
 
     /**
      * Constructor.
@@ -100,13 +103,16 @@ public class TickLabelFormat extends NumberFormat {
         // If already set, just return
         if (theIntervals == _intervals) return;
 
+        // Set intervals
+        _intervals = theIntervals;
+
         // Clear Pattern, Format and IntervalsExponent
         _pattern = null;
         _format = null;
         _intervalsExponent = null;
 
-        // Update LongSample
-        updateLongSample();
+        // Update MaxLabelWidth
+        updateMaxLabelWidth();
     }
 
     /**
@@ -147,22 +153,47 @@ public class TickLabelFormat extends NumberFormat {
     }
 
     /**
-     * Returns the long sample.
+     * Returns the maximum label string width.
      */
-    public String getLongSample()
+    public int getMaxLabelStringWidth()
     {
-        // If already set, just return
-        if (_longSample != null) return _longSample;
-
-        // Get, set and return longSample for current intervals
-        String longSample = getLongSampleCalculated();
-        return _longSample = longSample;
+        if (_maxLabelWidth >= 0) return _maxLabelWidth;
+        return _maxLabelWidth = getMaxLabelStringWidthImpl();
     }
 
     /**
-     * Returns the long sample for current intervals and format. Calculated, not cached.
+     * Returns the maximum label string width.
      */
-    private String getLongSampleCalculated()
+    private int getMaxLabelStringWidthImpl()
+    {
+        String longLabel = getLongestLabel();
+        Font font = _axisView.getFont();
+        int labelW = (int) Math.ceil(font.getStringAdvance(longLabel));
+        return labelW;
+    }
+
+    /**
+     * Updates the MaxLabelWidth for current intervals and format.
+     */
+    private void updateMaxLabelWidth()
+    {
+        // If not yet set, just return
+        if (_maxLabelWidth < 0) return;
+
+        // If max width increased or decreased (for the first time), update and relayout
+        int newMaxW = getMaxLabelStringWidthImpl();
+        if (newMaxW > _maxLabelWidth || (newMaxW < _maxLabelWidth && !_wentSmallerOnce)) {
+            _wentSmallerOnce |= newMaxW < _maxLabelWidth;
+            _maxLabelWidth = newMaxW;
+            _axisView._tickLabelBox.relayout();
+            _axisView._tickLabelBox.relayoutParent();
+        }
+    }
+
+    /**
+     * Returns the longest tick label for current intervals and format.
+     */
+    private String getLongestLabel()
     {
         // Get current intervals
         Intervals intervals = getIntervals();
@@ -185,34 +216,6 @@ public class TickLabelFormat extends NumberFormat {
 
         // Return
         return longSample;
-    }
-
-    /**
-     * Updates the longest tick label for current intervals and format.
-     */
-    private void updateLongSample()
-    {
-        // If not yet set, just return
-        if (_longSample == null) return;
-
-        // If longSample for current intervals is longer, set and trigger axis relayout
-        String longSample = getLongSampleCalculated();
-        if (_longSample.length() < longSample.length()) {
-            _longSample = longSample;
-            _axisView._tickLabelBox.relayout();
-            _axisView._tickLabelBox.relayoutParent();
-        }
-    }
-
-    /**
-     * Returns the max label width.
-     */
-    public double getLongSampleStringWidth()
-    {
-        String tickStr = getLongSample();
-        Font font = _axisView.getFont();
-        int tickW = (int) Math.ceil(font.getStringAdvance(tickStr));
-        return tickW;
     }
 
     /**
@@ -302,7 +305,7 @@ public class TickLabelFormat extends NumberFormat {
         return "TickLabelFormat { Axis=" + _axis.getType() +
                 ", Format='" + getPattern() + '\'' +
                 ", ExpStyle='" + getExpStyle() + '\'' +
-                ", LongSample='" + _longSample + '\'' +
+                ", MaxLabelWidth='" + _maxLabelWidth + '\'' +
                 ", Log=" + _isLog +
                 '}';
     }
