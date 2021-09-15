@@ -27,7 +27,7 @@ public class TickLabelFormat extends NumberFormat {
     private boolean  _isLog;
 
     // The intervals to format
-    private Intervals  _intervals;
+    protected Intervals  _intervals;
 
     // The best exponent for current intervals
     private Integer  _intervalsExponent;

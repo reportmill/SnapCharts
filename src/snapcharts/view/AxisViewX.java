@@ -130,7 +130,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
 
         // Get tick rotation
         double tickAngle = axis.getTickLabelRotation();
-        double tickRot = Math.abs(tickAngle) <= 360 ? -tickAngle : 0;
+        double tickRot = -tickAngle;
 
         // Iterate over tick labels and set location
         for (TickLabel tickLabel : tickLabels) {

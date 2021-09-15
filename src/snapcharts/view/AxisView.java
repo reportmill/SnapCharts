@@ -254,8 +254,18 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     protected double getDivLen()
     {
+        // If TickFormat not yet set, just provide reasonable value
         AxisType axisType = getAxisType();
-        return axisType == AxisType.X ? 40 : 30;
+        if (_tickFormat == null || _tickFormat._intervals == null)
+            return axisType == AxisType.X ? 40 : 30;
+
+        // Get max label size
+        Size maxTicksSize = getTickLabelsMaxRotatedSize();
+        double divLen;
+        if (axisType == AxisType.X)
+            divLen = Math.max(maxTicksSize.width + 16, 40);
+        else divLen = Math.max(maxTicksSize.height + 16, 30);
+        return divLen;
     }
 
     /**
@@ -538,7 +548,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // If not rotated, just return size
         Axis axis = getAxis();
-        double tickAngle = axis.getTickLabelRotation(); if (Math.abs(tickAngle) >= 360) tickAngle = 0;
+        double tickAngle = axis.getTickLabelRotation();
         if (tickAngle == 0)
             return new Size(ticksW, ticksH);
 
