@@ -129,7 +129,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double shiftX = isPolar ? getX() - getDataView().getX() : 0;
 
         // Get tick rotation
-        double tickAngle = axis.getTickLabelAngle();
+        double tickAngle = axis.getTickLabelRotation();
         double tickRot = Math.abs(tickAngle) <= 360 ? -tickAngle : 0;
 
         // Iterate over tick labels and set location

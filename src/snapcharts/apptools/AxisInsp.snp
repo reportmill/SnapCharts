@@ -94,12 +94,13 @@
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Name="AxisTickPos" Spacing="4" text="Ticks Angle:" />
-    <RowView GrowWidth="true">
-      <ToggleButton Name="AutoAngleButton" MinWidth="46" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="30AngleButton" MinWidth="35" Padding="2" text="30&#176;" Position="CENTER" />
-      <ToggleButton Name="45AngleButton" MinWidth="35" Padding="2" text="45&#176;" Position="CENTER" />
-      <ToggleButton Name="60AngleButton" MinWidth="35" Padding="2" text="60&#176;" Position="CENTER" />
-      <ToggleButton Name="90AngleButton" MinWidth="35" Padding="2" text="90&#176;" Position="CENTER_RIGHT" />
+    <RowView>
+      <ToggleButton Name="AutoAngleButton" MinWidth="38" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="30AngleButton" MinWidth="30" Padding="2" text="30&#176;" Position="CENTER" />
+      <ToggleButton Name="45AngleButton" MinWidth="30" Padding="2" text="45&#176;" Position="CENTER" />
+      <ToggleButton Name="60AngleButton" MinWidth="30" Padding="2" text="60&#176;" Position="CENTER" />
+      <ToggleButton Name="90AngleButton" MinWidth="30" Padding="2" text="90&#176;" Position="CENTER_RIGHT" />
     </RowView>
+    <TextField Name="TickLabelRotationText" Align="CENTER" GrowWidth="true" />
   </RowView>
 </ColView>

@@ -538,7 +538,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // If not rotated, just return size
         Axis axis = getAxis();
-        double tickAngle = axis.getTickLabelAngle(); if (Math.abs(tickAngle) >= 360) tickAngle = 0;
+        double tickAngle = axis.getTickLabelRotation(); if (Math.abs(tickAngle) >= 360) tickAngle = 0;
         if (tickAngle == 0)
             return new Size(ticksW, ticksH);
 

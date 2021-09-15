@@ -161,13 +161,15 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("ExpSciButton", expStyle == NumberFormat.ExpStyle.Scientific);
         setViewValue("ExpFinancialButton", expStyle == NumberFormat.ExpStyle.Financial);
 
-        // Reset AutoAngleButton, 30AngleButton, 45AngleButton, 60AngleButton, 90AngleButton
-        double ticksAngle = axis.getTickLabelAngle();
-        setViewValue("AutoAngleButton", ticksAngle >= 1000);
+        // Reset AutoAngleButton, 30AngleButton, 45AngleButton, 60AngleButton, 90AngleButton, TickLabelRotationText
+        boolean ticksAutoRotate = axis.isTickLabelAutoRotate();
+        double ticksAngle = axis.getTickLabelRotation();
+        setViewValue("AutoAngleButton", ticksAutoRotate);
         setViewValue("30AngleButton", ticksAngle == 30);
         setViewValue("45AngleButton", ticksAngle == 45);
         setViewValue("60AngleButton", ticksAngle == 60);
         setViewValue("90AngleButton", ticksAngle == 90);
+        setViewValue("TickLabelRotationText", ticksAngle);
     }
 
     /**
@@ -305,16 +307,30 @@ public class AxisInsp extends ChartPartInsp {
             axis.setTextFormat(numFormat.copyForProps(NumberFormat.ExpStyle_Prop, NumberFormat.ExpStyle.Financial));
         }
 
-        // Handle AutoAngleButton, 30AngleButton, 45AngleButton, 60AngleButton, 90AngleButton
-        if (anEvent.equals("AutoAngleButton"))
-            axis.setTickLabelAngle(1000);
-        if (anEvent.equals("30AngleButton"))
-            axis.setTickLabelAngle(30);
-        if (anEvent.equals("45AngleButton"))
-            axis.setTickLabelAngle(45);
-        if (anEvent.equals("60AngleButton"))
-            axis.setTickLabelAngle(60);
-        if (anEvent.equals("90AngleButton"))
-            axis.setTickLabelAngle(90);
+        // Handle AutoAngleButton, 30AngleButton, 45AngleButton, 60AngleButton, 90AngleButton, TickLabelRotationText
+        if (anEvent.equals("AutoAngleButton")) {
+            axis.setTickLabelAutoRotate(true);
+            axis.setTickLabelRotation(0);
+        }
+        if (anEvent.equals("30AngleButton")) {
+            axis.setTickLabelRotation(30);
+            axis.setTickLabelAutoRotate(false);
+        }
+        if (anEvent.equals("45AngleButton")) {
+            axis.setTickLabelRotation(45);
+            axis.setTickLabelAutoRotate(false);
+        }
+        if (anEvent.equals("60AngleButton")) {
+            axis.setTickLabelRotation(60);
+            axis.setTickLabelAutoRotate(false);
+        }
+        if (anEvent.equals("90AngleButton")) {
+            axis.setTickLabelRotation(90);
+            axis.setTickLabelAutoRotate(false);
+        }
+        if (anEvent.equals("TickLabelRotationText")) {
+            axis.setTickLabelRotation(anEvent.getFloatValue());
+            axis.setTickLabelAutoRotate(false);
+        }
     }
 }

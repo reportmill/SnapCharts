@@ -114,7 +114,7 @@ public class AxisViewY extends AxisView<AxisY> {
         double shiftY = isPolar ? getY() - getDataView().getY() : 0;
 
         // Get tick rotation
-        double tickAngle = axis.getTickLabelAngle();
+        double tickAngle = axis.getTickLabelRotation();
         double tickRot = Math.abs(tickAngle) <= 360 ? -tickAngle : 0;
 
         // Iterate over tick labels and set location

@@ -76,8 +76,11 @@ public abstract class Axis extends ChartPart {
     // Whether to show TickLabels
     private boolean  _showTickLabels;
 
+    // Whether TickLabels auto rotate
+    private boolean  _tickLabelAutoRotate;
+
     // The angle of the TickLabels
-    private double  _tickLabelAngle;
+    private double _tickLabelRotation;
 
     // Constants for properties
     public static final String Title_Prop = "Title";
@@ -100,7 +103,8 @@ public abstract class Axis extends ChartPart {
     public static final String TickLength_Prop = "TickLength";
     public static final String TickPos_Prop = "TickPos";
     public static final String ShowTickLabels_Prop = "ShowTickLabels";
-    public static final String TickLabelAngle_Prop = "TickLabelAngle";
+    public static final String TickLabelAutoRotate_Prop = "TickLabelAutoRotate";
+    public static final String TickLabelRotation_Prop = "TickLabelRotation";
 
     // Constant for GridBase special values
     public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
@@ -119,6 +123,7 @@ public abstract class Axis extends ChartPart {
     public static final int  DEFAULT_TICK_LENGTH = 7;
     public static final TickPos  DEFAULT_TICK_POS = TickPos.Inside;
     public static final boolean  DEFAULT_SHOW_TICK_LABELS = true;
+    public static final boolean  DEFAULT_TICK_LABEL_AUTO_ROTATE = true;
     public static final NumberFormat  DEFAULT_AXIS_TEXT_FORMAT = new NumberFormat(null, ExpStyle.Financial);
 
     // Constants for Tick position
@@ -480,20 +485,48 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns whether tick labels auto rotate.
+     */
+    public boolean isTickLabelAutoRotate()
+    {
+        return _tickLabelAutoRotate;
+    }
+
+    /**
+     * Sets whether tick labels auto rotate.
+     */
+    public void setTickLabelAutoRotate(boolean aValue)
+    {
+        if (aValue == _tickLabelAutoRotate) return;
+        firePropChange(TickLabelAutoRotate_Prop, _tickLabelAutoRotate, _tickLabelAutoRotate = aValue);
+    }
+
+    /**
+     * Returns the auto rotation angle.
+     */
+    public double getTickLabelAutoRotation()
+    {
+        return 0;
+    }
+
+    /**
      * Returns the angle of the tick labels in degrees.
      */
-    public double getTickLabelAngle()
+    public double getTickLabelRotation()
     {
-        return _tickLabelAngle;
+        if (isTickLabelAutoRotate())
+            return getTickLabelAutoRotation();
+
+        return _tickLabelRotation;
     }
 
     /**
      * Sets the angle of the tick labels in degrees.
      */
-    public void setTickLabelAngle(double anAngle)
+    public void setTickLabelRotation(double anAngle)
     {
-        if (anAngle == _tickLabelAngle) return;
-        firePropChange(TickLabelAngle_Prop, _tickLabelAngle, _tickLabelAngle = anAngle);
+        if (anAngle == _tickLabelRotation) return;
+        firePropChange(TickLabelRotation_Prop, _tickLabelRotation, _tickLabelRotation = anAngle);
     }
 
     /**
@@ -509,7 +542,7 @@ public abstract class Axis extends ChartPart {
         aPropDefaults.addProps(MinBound_Prop, MaxBound_Prop, MinValue_Prop, MaxValue_Prop,
             GridSpacing_Prop, GridBase_Prop,
             TickLength_Prop, TickPos_Prop,
-            ShowTickLabels_Prop, TickLabelAngle_Prop);
+            ShowTickLabels_Prop, TickLabelRotation_Prop);
     }
 
     /**
@@ -535,9 +568,10 @@ public abstract class Axis extends ChartPart {
             case TickLength_Prop: return getTickLength();
             case TickPos_Prop: return getTickPos();
 
-            // ShowTickLabels, TickLabelAngle
+            // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
             case ShowTickLabels_Prop: return isShowTickLabels();
-            case TickLabelAngle_Prop: return getTickLabelAngle();
+            case TickLabelAutoRotate_Prop: return isTickLabelAutoRotate();
+            case TickLabelRotation_Prop: return getTickLabelRotation();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -574,9 +608,10 @@ public abstract class Axis extends ChartPart {
             case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
             case TickPos_Prop: setTickPos((TickPos) aValue); break;
 
-            // ShowTickLabels, TickLabelAngle
+            // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
             case ShowTickLabels_Prop: setShowTickLabels(SnapUtils.boolValue(aValue)); break;
-            case TickLabelAngle_Prop: setTickLabelAngle(SnapUtils.doubleValue(aValue)); break;
+            case TickLabelAutoRotate_Prop: setTickLabelAutoRotate(SnapUtils.boolValue(aValue)); break;
+            case TickLabelRotation_Prop: setTickLabelRotation(SnapUtils.doubleValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -617,8 +652,10 @@ public abstract class Axis extends ChartPart {
             case TickLength_Prop: return DEFAULT_TICK_LENGTH;
             case TickPos_Prop: return DEFAULT_TICK_POS;
 
-            // ShowTickLabels
+            // ShowTickLabels, TickLabelAutoRotate. TickLabelRotation_Prop
             case ShowTickLabels_Prop: return DEFAULT_SHOW_TICK_LABELS;
+            case TickLabelAutoRotate_Prop: return DEFAULT_TICK_LABEL_AUTO_ROTATE;
+            case TickLabelRotation_Prop: return isTickLabelAutoRotate() ? getTickLabelRotation() : 0;
 
             // Superclass properties
             default: return super.getPropDefault(aPropName);
@@ -679,11 +716,13 @@ public abstract class Axis extends ChartPart {
         if (!isPropDefault(TickPos_Prop))
             e.add(TickPos_Prop, getTickPos());
 
-        // Archive ShowTickLabels, TickLabelAngle
+        // Archive ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
         if (!isPropDefault(ShowTickLabels_Prop))
             e.add(ShowTickLabels_Prop, isShowTickLabels());
-        if (!isPropDefault(TickLabelAngle_Prop))
-            e.add(TickLabelAngle_Prop, getTickLabelAngle());
+        if (!isPropDefault(TickLabelAutoRotate_Prop))
+            e.add(TickLabelAutoRotate_Prop, isTickLabelAutoRotate());
+        if (!isPropDefault(TickLabelRotation_Prop))
+            e.add(TickLabelRotation_Prop, getTickLabelRotation());
 
         // Return element
         return e;
@@ -747,11 +786,13 @@ public abstract class Axis extends ChartPart {
         if (anElement.hasAttribute(TickPos_Prop))
             setTickPos(anElement.getAttributeEnumValue(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS));
 
-        // Unarchive ShowTickLabels, TickLabelAngle
+        // Unarchive ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
         if (anElement.hasAttribute(ShowTickLabels_Prop))
             setShowTickLabels(anElement.getAttributeBoolValue(ShowTickLabels_Prop));
-        if (anElement.hasAttribute(TickLabelAngle_Prop))
-            setTickLabelAngle(anElement.getAttributeDoubleValue(TickLabelAngle_Prop));
+        if (anElement.hasAttribute(TickLabelAutoRotate_Prop))
+            setTickLabelAutoRotate(anElement.getAttributeBoolValue(TickLabelAutoRotate_Prop));
+        if (anElement.hasAttribute(TickLabelRotation_Prop))
+            setTickLabelRotation(anElement.getAttributeDoubleValue(TickLabelRotation_Prop));
 
         // Return this part
         return this;
