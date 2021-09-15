@@ -250,6 +250,15 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the recommended grid spacing size.
+     */
+    protected double getDivLen()
+    {
+        AxisType axisType = getAxisType();
+        return axisType == AxisType.X ? 40 : 30;
+    }
+
+    /**
      * Returns whether given axis is category axis.
      */
     public boolean isCategoryAxis()

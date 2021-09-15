@@ -302,23 +302,24 @@ public abstract class ChartHelper {
      */
     protected Intervals createIntervals(AxisView axisView)
     {
-        // Get info
-        AxisType axisType = axisView.getAxisType();
-
         // Handle Category axis special
         boolean isCategoryAxis = axisView.isCategoryAxis();
         if (isCategoryAxis)
             return createIntervalsForCategoryAxis();
 
-        // Get axis min, max, display length
+        // Get axis min and max
         double min = getAxisMinForIntervalCalc(axisView);
         double max = getAxisMaxForIntervalCalc(axisView);
-        double axisLen = axisView.getAxisLen();
-        double divLen = axisType == AxisType.X ? 40 : 30;
 
         // Get whether interval ends should be adjusted
         boolean minFixed = axisView.isAxisMinFixed();
         boolean maxFixed = axisView.isAxisMaxFixed();
+
+        // Get axis length and suggested div length (if axis len is zero, reset to something reasonable)
+        double axisLen = axisView.getAxisLen();
+        double divLen = axisView.getDivLen();
+        if (axisLen <= 0)
+            axisLen = divLen * 10;
 
         // Handle Log: min/max are powers of 10, so we just want simple intervals from min to max by 1
         Axis axis = axisView.getAxis();

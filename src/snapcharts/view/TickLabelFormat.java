@@ -7,6 +7,7 @@ import snap.text.NumberFormat;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
 import snapcharts.model.Axis;
+import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
 
 /**
@@ -61,38 +62,9 @@ public class TickLabelFormat extends NumberFormat {
         if (_intervals != null) return _intervals;
 
         // Get, set and return intervals
-        Intervals intervals = getIntervalsImpl();
-        return _intervals = intervals;
-    }
-
-    /**
-     * Returns the intervals to format.
-     */
-    private Intervals getIntervalsImpl()
-    {
-        // Get intervals
         ChartHelper chartHelper = _axisView._chartHelper;
-        double axisMin = chartHelper.getAxisMinForIntervalCalc(_axisView);
-        double axisMax = chartHelper.getAxisMaxForIntervalCalc(_axisView);
-        boolean minFixed = _axisView.isAxisMinFixed();
-        boolean maxFixed = _axisView.isAxisMaxFixed();
-
-        // Handle Log
-        if (_isLog)
-            return _intervals = Intervals.getIntervalsSimple(axisMin, axisMax, minFixed, maxFixed);
-
-        // Get ideal intervals (i.e., for chart with plenty of room)
-        Intervals intervals = Intervals.getIntervalsForMinMaxLen(axisMin, axisMax, 200, 10, minFixed, maxFixed);
-
-        // If user configured GridSpacing is defined (non-zero), change intervals to be based on GridSpacing/GridBase
-        double gridSpacing = _axis.getGridSpacing();
-        if (gridSpacing != 0) {
-            double gridBase = _axis.getGridBase();
-            intervals = Intervals.getIntervalsForSpacingAndBase(intervals, gridSpacing, gridBase, minFixed, maxFixed);
-        }
-
-        // Return intervals
-        return intervals;
+        Intervals intervals = chartHelper.createIntervals(_axisView);
+        return _intervals = intervals;
     }
 
     /**
