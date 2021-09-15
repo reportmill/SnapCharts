@@ -103,7 +103,8 @@ public class AxisViewY extends AxisView<AxisY> {
         double ticksW = getTickLabelsMaxWidth();
 
         // Get TickLabel.Align (if Side RIGHT, align left)
-        boolean isRightSide = getAxis().getSide() == Side.RIGHT;
+        Axis axis = getAxis();
+        boolean isRightSide = axis.getSide() == Side.RIGHT;
         Pos ticksAlign = isRightSide ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
 
         // Get TickLabels
@@ -112,6 +113,10 @@ public class AxisViewY extends AxisView<AxisY> {
         // Polar stuff
         boolean isPolar = getChartType().isPolarType();
         double shiftY = isPolar ? getY() - getDataView().getY() : 0;
+
+        // Get tick rotation
+        double tickAngle = axis.getTickLabelAngle();
+        double tickRot = Math.abs(tickAngle) <= 360 ? -tickAngle : 0;
 
         // Iterate over tick labels and set location
         for (TickLabel tickLabel : tickLabels) {
@@ -128,6 +133,9 @@ public class AxisViewY extends AxisView<AxisY> {
             double tickY = dispY - Math.round(tickH / 2);
             tickLabel.setAlign(ticksAlign);
             tickLabel.setBounds(0, tickY, ticksW, tickH);
+
+            // Set tick label rotation
+            setTickLabelRotation(tickLabel, tickRot);
         }
     }
 

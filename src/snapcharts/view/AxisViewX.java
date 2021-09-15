@@ -124,8 +124,13 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     {
         // Get TickLabels and info
         TickLabel[] tickLabels = getTickLabels();
+        Axis axis = getAxis();
         boolean isPolar = getChartType().isPolarType();
         double shiftX = isPolar ? getX() - getDataView().getX() : 0;
+
+        // Get tick rotation
+        double tickAngle = axis.getTickLabelAngle();
+        double tickRot = Math.abs(tickAngle) <= 360 ? -tickAngle : 0;
 
         // Iterate over tick labels and set location
         for (TickLabel tickLabel : tickLabels) {
@@ -141,7 +146,11 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
             double tickW = tickLabel.getPrefWidth();
             double tickH = tickLabel.getPrefHeight();
             double tickX = dispX - Math.round(tickW / 2);
-            tickLabel.setBounds(tickX, 0, tickW, tickH);
+            double tickY = 0;
+            tickLabel.setBounds(tickX, tickY, tickW, tickH);
+
+            // Set tick label rotation
+            setTickLabelRotation(tickLabel, tickRot);
         }
     }
 

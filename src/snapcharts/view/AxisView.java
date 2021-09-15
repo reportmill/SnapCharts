@@ -3,6 +3,7 @@
  */
 package snapcharts.view;
 import snap.geom.Point;
+import snap.geom.Size;
 import snap.gfx.*;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
@@ -507,6 +508,77 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
+     * Returns the tick labels height.
+     */
+    protected double getTickLabelsMaxHeight()
+    {
+        Font font = getFont();
+        int ascent = (int) Math.ceil(font.getAscent());
+        int descent = (int) Math.ceil(font.getDescent());
+        return ascent + descent;
+    }
+
+    /**
+     * Returns the tick labels maximum rotated size.
+     */
+    protected Size getTickLabelsMaxRotatedSize()
+    {
+        // Get non rotated max width/height
+        double ticksW = getTickLabelsMaxWidth();
+        double ticksH = getTickLabelsMaxHeight();
+
+        // If not rotated, just return size
+        Axis axis = getAxis();
+        double tickAngle = axis.getTickLabelAngle(); if (Math.abs(tickAngle) >= 360) tickAngle = 0;
+        if (tickAngle == 0)
+            return new Size(ticksW, ticksH);
+
+        // Calculate rotated size and return
+        double radA = Math.toRadians(tickAngle);
+        double sinA = Math.sin(radA);
+        double cosA = Math.cos(radA);
+        double rotW = Math.ceil(ticksW * cosA) + Math.ceil(ticksH * sinA);
+        double rotH = Math.ceil(ticksW * sinA) + Math.ceil(ticksH * cosA);
+        return new Size(rotW, rotH);
+    }
+
+    /**
+     * Sets the rotation of a TickLabel such that it is also positioned correctly.
+     */
+    protected void setTickLabelRotation(TickLabel tickLabel, double tickRot)
+    {
+        // Set rotation (just return if zero)
+        tickLabel.setRotate(tickRot);
+        tickLabel.setBorder(Color.PINK, 1);
+        if (tickRot == 0)
+            return;
+
+        // Get point on label perimeter that we sync to with no rotation (in label parent coords)
+        boolean vertical = this instanceof AxisViewY;
+        double tickW = tickLabel.getWidth();
+        double tickH = tickLabel.getHeight();
+        double anchor1X = tickLabel.getX() + (vertical ? tickW : tickW / 2);
+        double anchor1Y = tickLabel.getY() + (vertical ? tickH / 2 : 0);
+
+        // Get angle of label bounds perimeter point radial that we want to sync to
+        // If vertical graph and angle less than 60, just zero it out
+        // If horizontal, we want to sync to 12 o'clock position instead of 3 o'clock position
+        double angle = -tickRot;
+        //if(vertical && Math.abs(angle) <= 60) angle = 0;
+        if(!vertical)
+            angle -= 90;
+
+        // Get point on label perimeter that we sync to for given label rotation (in label parent coords)
+        Point anchor2 = tickLabel.getBoundsLocal().getPerimeterPointForRadial(angle, true);
+        anchor2 = tickLabel.localToParent(anchor2.x, anchor2.y);
+
+        // Offset label location from original anchor location to new anchor location
+        double transX = anchor1X - anchor2.x;
+        double transY = anchor1Y - anchor2.y;
+        tickLabel.setXY(tickLabel.getX() + transX, tickLabel.getY() + transY);
+    }
+
+    /**
      * Converts an value from dataset coords to view coords.
      */
     public double dataToView(double dataXY)
@@ -708,11 +780,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         @Override
         protected double getPrefWidthImpl(double aH)
         {
-            ParentView parent = getParent();
-            if (parent instanceof AxisViewY) {
-                return ((AxisViewY) parent).getTickLabelsMaxWidth();
-            }
-            return 200;
+            // If X axis, just return 200 (X axis doesn't have a PrefWidth)
+            AxisView axisView = (AxisView) getParent();
+            if (axisView instanceof AxisViewX)
+                return 200;
+
+            // Get/return max ticks size width
+            Size maxTicksSize = axisView.getTickLabelsMaxRotatedSize();
+            return maxTicksSize.width;
         }
 
         /**
@@ -721,14 +796,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         @Override
         protected double getPrefHeightImpl(double aW)
         {
-            ParentView parent = getParent();
-            if (parent instanceof AxisViewX) {
-                Font font = getFont();
-                int ascent = (int) Math.ceil(font.getAscent());
-                int descent = (int) Math.ceil(font.getDescent());
-                return ascent + descent;
-            }
-            return 200;
+            // If Y axis, just return 200 (Y axis doesn't have a PrefHeight)
+            AxisView axisView = (AxisView) getParent();
+            if (axisView instanceof AxisViewY)
+                return 200;
+
+            // Get/return max ticks size height
+            Size maxTicksSize = axisView.getTickLabelsMaxRotatedSize();
+            return maxTicksSize.height;
         }
     }
 
