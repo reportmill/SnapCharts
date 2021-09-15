@@ -7,7 +7,6 @@ import snap.text.NumberFormat;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
 import snapcharts.model.Axis;
-import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
 
 /**

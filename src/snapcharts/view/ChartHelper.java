@@ -370,7 +370,7 @@ public abstract class ChartHelper {
             min = getMinMaxForAxisStagedData(axisType).getMin();
 
         // If ZeroRequired and min greater than zero, reset min
-        if (axis.isZeroRequired() && min>0)
+        if (axis.isZeroRequired() && min > 0)
             min = 0;
 
         // Return min

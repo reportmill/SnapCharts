@@ -110,15 +110,20 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("MinBoundAutoButton", minBound == AxisBound.AUTO);
         setViewValue("MinBoundDataButton", minBound == AxisBound.DATA);
         setViewValue("MinBoundValueButton", minBound == AxisBound.VALUE);
-        MinMax minMax = axisView.getAxisMinMax();
-        setViewValue("MinBoundText", minMax.getMin());
+        double minVal = axisView.getChartHelper().getAxisMinForIntervalCalc(axisView);
+        setViewValue("MinBoundText", minVal);
+        setViewVisible("MinBoundText", minBound != AxisBound.AUTO);
+        setViewEnabled("MinBoundText", minBound == AxisBound.VALUE);
 
         // Reset MaxBoundAutoButton, MaxBoundDataButton, MaxBoundValueButton, MaxBoundText
         AxisBound maxBound = axis.getMaxBound();
         setViewValue("MaxBoundAutoButton", maxBound == AxisBound.AUTO);
         setViewValue("MaxBoundDataButton", maxBound == AxisBound.DATA);
         setViewValue("MaxBoundValueButton", maxBound == AxisBound.VALUE);
-        setViewValue("MaxBoundText", minMax.getMax());
+        double maxVal = axisView.getChartHelper().getAxisMaxForIntervalCalc(axisView);
+        setViewValue("MaxBoundText", maxVal);
+        setViewVisible("MaxBoundText", maxBound != AxisBound.AUTO);
+        setViewEnabled("MaxBoundText", maxBound == AxisBound.VALUE);
 
         // Reset WrapCheckBox, WrapMinMaxBox, WrapMinText, WrapMaxText
         getView("WrapAxisBox").setVisible(axis.getType() == AxisType.X);
