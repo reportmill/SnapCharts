@@ -40,12 +40,13 @@ public class TickLabelFormat extends NumberFormat {
     /**
      * Constructor.
      */
-    public TickLabelFormat(AxisView anAxisView)
+    public TickLabelFormat(AxisView anAxisView, Intervals theIntervals)
     {
         super(null);
         _axisView = anAxisView;
         _axis = anAxisView.getAxis();
         _isLog = _axis.isLog();
+        _intervals = theIntervals;
 
         NumberFormat numFormat = NumberFormat.getFormatOrDefault(_axis.getTextFormat());
         setPattern(numFormat.isPatternSet() ? numFormat.getPattern() : null);

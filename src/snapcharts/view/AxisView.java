@@ -320,7 +320,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     protected TickLabelFormat getTickLabelFormat()
     {
         if (_tickFormat != null) return _tickFormat;
-        return _tickFormat = new TickLabelFormat(this);
+        return _tickFormat = new TickLabelFormat(this, _intervals);
     }
 
     /**
@@ -415,7 +415,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_tickLabels != null) return _tickLabels;
 
         // Create TickLabels
-        _tickLabels = createTickLabels();
+        _tickLabels = TickLabelUtils.createTickLabels(this, getIntervals());
 
         // Add TickLabels to TickLabelBox
         for (TickLabel tickLabel : _tickLabels)
@@ -423,81 +423,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Return
         return _tickLabels;
-    }
-
-    /**
-     * Returns the array of tick label StringBoxes.
-     */
-    protected TickLabel[] createTickLabels()
-    {
-        // Handle Category axis special
-        if (isCategoryAxis())
-            return createTickLabelsForCategoryAxis();
-
-        // Get Intervals info
-        Intervals intervals = getIntervals();
-        int intervalCount = intervals.getCount();
-
-        // Get TickLabel attributes
-        Axis axis = getAxis();
-        Font tickLabelFont = getFont();
-        Paint tickTextFill = axis.getTextFill();
-        TickLabelFormat tickFormat = getTickLabelFormat();
-
-        // Create list
-        List<TickLabel> tickLabels = new ArrayList<>(intervalCount);
-
-        // Iterate over intervals
-        for (int i = 0; i < intervalCount; i++) {
-
-            // If not full interval, skip
-            boolean fullInterval = intervals.isFullInterval(i);
-            if (!fullInterval)
-                continue;
-
-            // Get interval
-            double dataX = intervals.getInterval(i);
-
-            // Create/config/add TickLabel
-            TickLabel tickLabel = new TickLabel(this, dataX);
-            String str = tickFormat.format(dataX);
-            tickLabel.setText(str);
-            tickLabel.setFont(tickLabelFont);
-            tickLabel.setTextFill(tickTextFill);
-            tickLabels.add(tickLabel);
-        }
-
-        // Create/return array of TickLabels
-        return tickLabels.toArray(new TickLabel[0]);
-    }
-
-    /**
-     * Creates TickLabels for Category Axis (e.g. for Bar charts).
-     */
-    private TickLabel[] createTickLabelsForCategoryAxis()
-    {
-        // Get DataSet and pointCount
-        DataSetList dataSetList = getDataSetList();
-        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
-        int pointCount = dataSetList.getPointCount();
-        TickLabel[] tickLabels = new TickLabel[pointCount];
-
-        // Get TickLabel attributes
-        Axis axis = getAxis();
-        Font tickLabelFont = getFont();
-        Paint tickTextFill = axis.getTextFill();
-
-        // Iterate over points and create/set TickLabel
-        for (int i = 0; i < pointCount; i++) {
-            TickLabel tickLabel = tickLabels[i] = new TickLabel(this, i + .5);
-            String str = dataSet.getString(i); // was getC(i)
-            tickLabel.setText(str);
-            tickLabel.setFont(tickLabelFont);
-            tickLabel.setTextFill(tickTextFill);
-        }
-
-        // Return TickLabels
-        return tickLabels;
     }
 
     /**
@@ -559,41 +484,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Create/return array of TickLabels
         return markerLabels;
-    }
-
-    /**
-     * Sets the rotation of a TickLabel such that it is also positioned correctly.
-     */
-    protected void setTickLabelRotation(TickLabel tickLabel, double tickRot)
-    {
-        // Set rotation (just return if zero)
-        tickLabel.setRotate(tickRot);
-        if (tickRot == 0)
-            return;
-
-        // Get point on label perimeter that we sync to with no rotation (in label parent coords)
-        boolean vertical = this instanceof AxisViewY;
-        double tickW = tickLabel.getWidth();
-        double tickH = tickLabel.getHeight();
-        double anchor1X = tickLabel.getX() + (vertical ? tickW : tickW / 2);
-        double anchor1Y = tickLabel.getY() + (vertical ? tickH / 2 : 0);
-
-        // Get angle of label bounds perimeter point radial that we want to sync to
-        // If vertical graph and angle less than 60, just zero it out
-        // If horizontal, we want to sync to 12 o'clock position instead of 3 o'clock position
-        double angle = -tickRot;
-        //if(vertical && Math.abs(angle) <= 60) angle = 0;
-        if(!vertical)
-            angle -= 90;
-
-        // Get point on label perimeter that we sync to for given label rotation (in label parent coords)
-        Point anchor2 = tickLabel.getBoundsLocal().getPerimeterPointForRadial(angle, true);
-        anchor2 = tickLabel.localToParent(anchor2.x, anchor2.y);
-
-        // Offset label location from original anchor location to new anchor location
-        double transX = anchor1X - anchor2.x;
-        double transY = anchor1Y - anchor2.y;
-        tickLabel.setXY(tickLabel.getX() + transX, tickLabel.getY() + transY);
     }
 
     /**
@@ -788,58 +678,16 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * A container view to hold TickLabels.
-     */
-    protected static class TickLabelBox extends ChildView {
-
-        /**
-         * Override to return TickLabels.MaxWidth for AxisViewY.
-         */
-        @Override
-        protected double getPrefWidthImpl(double aH)
-        {
-            // If X axis, just return 200 (X axis doesn't have a PrefWidth)
-            AxisView axisView = (AxisView) getParent();
-            if (axisView instanceof AxisViewX)
-                return 200;
-
-            // Get/return max ticks size width
-            Size maxTicksSize = axisView.getMaxTickLabelRotatedSize();
-            return maxTicksSize.width;
-        }
-
-        /**
-         * Override to return text height for AxisViewX.
-         */
-        @Override
-        protected double getPrefHeightImpl(double aW)
-        {
-            // If Y axis, just return 200 (Y axis doesn't have a PrefHeight)
-            AxisView axisView = (AxisView) getParent();
-            if (axisView instanceof AxisViewY)
-                return 200;
-
-            // Get/return max ticks size height
-            Size maxTicksSize = axisView.getMaxTickLabelRotatedSize();
-            return maxTicksSize.height;
-        }
-    }
-
-    /**
      * A container view to hold text for Markers configured with ShowTextInAxis.
      */
     protected static class MarkersBox extends ChildView {
 
         /**
-         * Override to return TickLabels.MaxWidth for AxisViewY.
+         * Override to return something.
          */
         @Override
         protected double getPrefWidthImpl(double aH)
         {
-            ParentView parent = getParent();
-            if (parent instanceof AxisViewY) {
-                return ((AxisViewY) parent).getMaxTickLabelWidth();
-            }
             return 200;
         }
 
