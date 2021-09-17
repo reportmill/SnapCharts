@@ -240,35 +240,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the axis length.
-     */
-    public double getAxisLen()
-    {
-        if (this instanceof AxisViewX)
-            return getWidth();
-        return getHeight();
-    }
-
-    /**
-     * Returns the recommended grid spacing size.
-     */
-    protected double getDivLen()
-    {
-        // If TickFormat not yet set, just provide reasonable value
-        AxisType axisType = getAxisType();
-        if (_tickFormat == null || _tickFormat._intervals == null)
-            return axisType == AxisType.X ? 40 : 30;
-
-        // Get max label size
-        Size maxTicksSize = getTickLabelsMaxRotatedSize();
-        double divLen;
-        if (axisType == AxisType.X)
-            divLen = Math.max(maxTicksSize.width + 16, 40);
-        else divLen = Math.max(maxTicksSize.height + 16, 30);
-        return divLen;
-    }
-
-    /**
      * Returns whether given axis is category axis.
      */
     public boolean isCategoryAxis()
@@ -312,6 +283,88 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Return intervals
         return _intervals;
+    }
+
+    /**
+     * Returns the axis length.
+     */
+    protected double getAxisLen()
+    {
+        if (this instanceof AxisViewX)
+            return getWidth();
+        return getHeight();
+    }
+
+    /**
+     * Returns the recommended grid spacing size.
+     */
+    protected double getDivLen()
+    {
+        // If TickFormat not yet set, just provide reasonable value
+        AxisType axisType = getAxisType();
+        if (_tickFormat == null || _tickFormat._intervals == null)
+            return axisType == AxisType.X ? 40 : 30;
+
+        // Get max label size
+        Size maxTicksSize = getMaxTickLabelRotatedSize();
+        double divLen;
+        if (axisType == AxisType.X)
+            divLen = Math.max(maxTicksSize.width + 16, 40);
+        else divLen = Math.max(maxTicksSize.height + 16, 30);
+        return divLen;
+    }
+
+    /**
+     * Returns the TickLabelFormat.
+     */
+    protected TickLabelFormat getTickLabelFormat()
+    {
+        if (_tickFormat != null) return _tickFormat;
+        return _tickFormat = new TickLabelFormat(this);
+    }
+
+    /**
+     * Returns the max label width.
+     */
+    protected double getMaxTickLabelWidth()
+    {
+        TickLabelFormat tickFormat = getTickLabelFormat();
+        return tickFormat.getMaxLabelWidth();
+    }
+
+    /**
+     * Returns the tick labels height.
+     */
+    protected double getMaxTickLabelHeight()
+    {
+        Font font = getFont();
+        int ascent = (int) Math.ceil(font.getAscent());
+        int descent = (int) Math.ceil(font.getDescent());
+        return ascent + descent;
+    }
+
+    /**
+     * Returns the tick labels maximum rotated size.
+     */
+    protected Size getMaxTickLabelRotatedSize()
+    {
+        // Get non rotated max width/height
+        double ticksW = getMaxTickLabelWidth();
+        double ticksH = getMaxTickLabelHeight();
+
+        // If not rotated, just return size
+        Axis axis = getAxis();
+        double tickAngle = axis.getTickLabelRotation();
+        if (tickAngle == 0)
+            return new Size(ticksW, ticksH);
+
+        // Calculate rotated size and return
+        double radA = Math.toRadians(tickAngle);
+        double sinA = Math.abs(Math.sin(radA));
+        double cosA = Math.abs(Math.cos(radA));
+        double rotW = Math.ceil(ticksW * cosA + ticksH * sinA - .1);
+        double rotH = Math.ceil(ticksW * sinA + ticksH * cosA - .1);
+        return new Size(rotW, rotH);
     }
 
     /**
@@ -506,59 +559,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Create/return array of TickLabels
         return markerLabels;
-    }
-
-    /**
-     * Returns the TickLabelFormat.
-     */
-    protected TickLabelFormat getTickLabelFormat()
-    {
-        if (_tickFormat != null) return _tickFormat;
-        return _tickFormat = new TickLabelFormat(this);
-    }
-
-    /**
-     * Returns the max label width.
-     */
-    protected double getTickLabelsMaxWidth()
-    {
-        TickLabelFormat tickFormat = getTickLabelFormat();
-        return tickFormat.getMaxLabelStringWidth();
-    }
-
-    /**
-     * Returns the tick labels height.
-     */
-    protected double getTickLabelsMaxHeight()
-    {
-        Font font = getFont();
-        int ascent = (int) Math.ceil(font.getAscent());
-        int descent = (int) Math.ceil(font.getDescent());
-        return ascent + descent;
-    }
-
-    /**
-     * Returns the tick labels maximum rotated size.
-     */
-    protected Size getTickLabelsMaxRotatedSize()
-    {
-        // Get non rotated max width/height
-        double ticksW = getTickLabelsMaxWidth();
-        double ticksH = getTickLabelsMaxHeight();
-
-        // If not rotated, just return size
-        Axis axis = getAxis();
-        double tickAngle = axis.getTickLabelRotation();
-        if (tickAngle == 0)
-            return new Size(ticksW, ticksH);
-
-        // Calculate rotated size and return
-        double radA = Math.toRadians(tickAngle);
-        double sinA = Math.abs(Math.sin(radA));
-        double cosA = Math.abs(Math.cos(radA));
-        double rotW = Math.ceil(ticksW * cosA + ticksH * sinA - .1);
-        double rotH = Math.ceil(ticksW * sinA + ticksH * cosA - .1);
-        return new Size(rotW, rotH);
     }
 
     /**
@@ -804,7 +804,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
                 return 200;
 
             // Get/return max ticks size width
-            Size maxTicksSize = axisView.getTickLabelsMaxRotatedSize();
+            Size maxTicksSize = axisView.getMaxTickLabelRotatedSize();
             return maxTicksSize.width;
         }
 
@@ -820,7 +820,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
                 return 200;
 
             // Get/return max ticks size height
-            Size maxTicksSize = axisView.getTickLabelsMaxRotatedSize();
+            Size maxTicksSize = axisView.getMaxTickLabelRotatedSize();
             return maxTicksSize.height;
         }
     }
@@ -838,7 +838,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         {
             ParentView parent = getParent();
             if (parent instanceof AxisViewY) {
-                return ((AxisViewY) parent).getTickLabelsMaxWidth();
+                return ((AxisViewY) parent).getMaxTickLabelWidth();
             }
             return 200;
         }

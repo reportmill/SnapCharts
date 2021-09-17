@@ -126,16 +126,16 @@ public class TickLabelFormat extends NumberFormat {
     /**
      * Returns the maximum label string width.
      */
-    public int getMaxLabelStringWidth()
+    public int getMaxLabelWidth()
     {
         if (_maxLabelWidth >= 0) return _maxLabelWidth;
-        return _maxLabelWidth = getMaxLabelStringWidthImpl();
+        return _maxLabelWidth = getMaxLabelWidthImpl();
     }
 
     /**
      * Returns the maximum label string width.
      */
-    private int getMaxLabelStringWidthImpl()
+    private int getMaxLabelWidthImpl()
     {
         String longLabel = getLongestLabel();
         Font font = _axisView.getFont();
@@ -152,7 +152,7 @@ public class TickLabelFormat extends NumberFormat {
         if (_maxLabelWidth < 0) return;
 
         // If max width increased or decreased (for the first time), update and relayout
-        int newMaxW = getMaxLabelStringWidthImpl();
+        int newMaxW = getMaxLabelWidthImpl();
         if (newMaxW > _maxLabelWidth || (newMaxW < _maxLabelWidth && !_wentSmallerOnce)) {
             _wentSmallerOnce |= newMaxW < _maxLabelWidth;
             _maxLabelWidth = newMaxW;
