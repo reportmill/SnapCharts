@@ -10,8 +10,6 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,6 +46,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // The intervals for axis
     private Intervals  _intervals;
 
+    // The MaxTickLabelRotatedSize
+    private Size  _maxTickLabelRotatedSize;
+
     // The tick labels as StringBoxes
     private TickLabel[]  _tickLabels;
 
@@ -56,6 +57,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // A helper to do tick label formatting
     private TickLabelFormat _tickFormat;
+
+    // The intervals last used (because axis interval generation is kind of an iterative chicken and egg thing)
+    private Intervals  _lastIntervals = STARTER_INTERVALS;
 
     // Constants for Properties
     public static final String AxisMin_Prop = "AxisMin";
@@ -68,8 +72,15 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // Grid Constants
     public static Color TICK_LINE_COLOR = Color.GRAY;
 
-    // Other constants
+    // Constants for Min/MaxOverride to indicate not set
     public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
+
+    // Constant for starter intervals (because axis interval generation is kind of an iterative chicken and egg thing)
+    private static Intervals STARTER_INTERVALS = Intervals.getIntervalsSimple(0, 1);
+
+    // Constants for minimum interval div length X and Y
+    private static int MIN_DIV_LEN_X = 40;
+    private static int MIN_DIV_LEN_Y = 30;
 
     /**
      * Constructor.
@@ -273,13 +284,22 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If already set, just return
         if (_intervals != null) return _intervals;
 
+        // Set last intervals
+        _intervals = _lastIntervals;
+        Size maxLabelSize = getMaxTickLabelRotatedSize();
+        _maxTickLabelRotatedSize = null;
+
         // Create, set
         Intervals intervals = _chartHelper.createIntervals(this);
         _intervals = intervals;
+        _maxTickLabelRotatedSize = null;
 
-        // Update TickFormat for actual intervals
-        TickLabelFormat tickFormat = getTickLabelFormat();
-        tickFormat.setIntervals(intervals);
+        // If MaxTickLabelRotatedSize changes, trigger relayout
+        Size maxLabelSize2 = getMaxTickLabelRotatedSize();
+        if (!maxLabelSize2.equals(maxLabelSize)) {
+            _tickLabelBox.relayout();
+            _tickLabelBox.relayoutParent();
+        }
 
         // Return intervals
         return _intervals;
@@ -300,18 +320,32 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     protected double getDivLen()
     {
-        // If TickFormat not yet set, just provide reasonable value
-        AxisType axisType = getAxisType();
-        if (_tickFormat == null || _tickFormat._intervals == null)
-            return axisType == AxisType.X ? 40 : 30;
-
         // Get max label size
         Size maxTicksSize = getMaxTickLabelRotatedSize();
+
+        // Add reasonable buffer space, constrain to X/Y minimum and return
+        AxisType axisType = getAxisType();
         double divLen;
         if (axisType == AxisType.X)
-            divLen = Math.max(maxTicksSize.width + 16, 40);
-        else divLen = Math.max(maxTicksSize.height + 16, 30);
+            divLen = Math.max(maxTicksSize.width + 16, MIN_DIV_LEN_X);
+        else divLen = Math.max(maxTicksSize.height + 16, MIN_DIV_LEN_Y);
         return divLen;
+    }
+
+    /**
+     * Returns the tick labels maximum rotated size.
+     */
+    protected Size getMaxTickLabelRotatedSize()
+    {
+        // If already set, just return
+        if (_maxTickLabelRotatedSize != null) return _maxTickLabelRotatedSize;
+
+        // Get latest intervals
+        Intervals intervals = getIntervals();
+
+        // Get max label size, set and return
+        Size maxLabelSize = TickLabelUtils.getMaxTickLabelRotatedSize(this, intervals);
+        return _maxTickLabelRotatedSize = maxLabelSize;
     }
 
     /**
@@ -320,51 +354,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     protected TickLabelFormat getTickLabelFormat()
     {
         if (_tickFormat != null) return _tickFormat;
-        return _tickFormat = new TickLabelFormat(this, _intervals);
-    }
-
-    /**
-     * Returns the max label width.
-     */
-    protected double getMaxTickLabelWidth()
-    {
-        TickLabelFormat tickFormat = getTickLabelFormat();
-        return tickFormat.getMaxLabelWidth();
-    }
-
-    /**
-     * Returns the tick labels height.
-     */
-    protected double getMaxTickLabelHeight()
-    {
-        Font font = getFont();
-        int ascent = (int) Math.ceil(font.getAscent());
-        int descent = (int) Math.ceil(font.getDescent());
-        return ascent + descent;
-    }
-
-    /**
-     * Returns the tick labels maximum rotated size.
-     */
-    protected Size getMaxTickLabelRotatedSize()
-    {
-        // Get non rotated max width/height
-        double ticksW = getMaxTickLabelWidth();
-        double ticksH = getMaxTickLabelHeight();
-
-        // If not rotated, just return size
-        Axis axis = getAxis();
-        double tickAngle = axis.getTickLabelRotation();
-        if (tickAngle == 0)
-            return new Size(ticksW, ticksH);
-
-        // Calculate rotated size and return
-        double radA = Math.toRadians(tickAngle);
-        double sinA = Math.abs(Math.sin(radA));
-        double cosA = Math.abs(Math.cos(radA));
-        double rotW = Math.ceil(ticksW * cosA + ticksH * sinA - .1);
-        double rotH = Math.ceil(ticksW * sinA + ticksH * cosA - .1);
-        return new Size(rotW, rotH);
+        Intervals intervals = getIntervals();
+        return _tickFormat = new TickLabelFormat(this, intervals);
     }
 
     /**
@@ -372,7 +363,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
      */
     public void clearIntervals()
     {
+        // If already clear, just return
+        if (_intervals == null) return;
+
+        // Cache last intervals and clear
+        _lastIntervals = _intervals;
         _intervals = null;
+        _maxTickLabelRotatedSize = null;
+        _tickFormat = null;
 
         // Remove/clear TickLabels
         if (_tickLabels != null) {
@@ -385,9 +383,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             _markersBox.removeChildren();
             _markerLabels = null;
         }
-
-        // Clear TickFormat
-        _tickFormat = null;
 
         // Make sure to register for relayout (TickLabelBox could be empty)
         relayout();
@@ -414,8 +409,9 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If already set, just return
         if (_tickLabels != null) return _tickLabels;
 
-        // Create TickLabels
-        _tickLabels = TickLabelUtils.createTickLabels(this, getIntervals());
+        // Create TickLabels for intervals
+        Intervals intervals = getIntervals();
+        _tickLabels = TickLabelUtils.createTickLabels(this, intervals);
 
         // Add TickLabels to TickLabelBox
         for (TickLabel tickLabel : _tickLabels)

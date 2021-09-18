@@ -2,8 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.view;
-import snap.gfx.Font;
 import snap.text.NumberFormat;
+import snap.text.TextFormat;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
 import snapcharts.model.Axis;
@@ -15,9 +15,6 @@ import snapcharts.model.Intervals;
  * Main features are to determine maximum label size and to provide consistent exponent for Scientific format.
  */
 public class TickLabelFormat extends NumberFormat {
-
-    // The AxisView
-    private AxisView<?>  _axisView;
 
     // The Axis
     private Axis  _axis;
@@ -34,58 +31,27 @@ public class TickLabelFormat extends NumberFormat {
     // The width of the longest label
     private int  _maxLabelWidth = -1;
 
-    // Whether format already tried going smaller once (don't want to get in endless back-and-forth with opposing axes)
-    private boolean  _wentSmallerOnce;
-
     /**
      * Constructor.
      */
     public TickLabelFormat(AxisView anAxisView, Intervals theIntervals)
     {
         super(null);
-        _axisView = anAxisView;
         _axis = anAxisView.getAxis();
         _isLog = _axis.isLog();
         _intervals = theIntervals;
 
-        NumberFormat numFormat = NumberFormat.getFormatOrDefault(_axis.getTextFormat());
-        setPattern(numFormat.isPatternSet() ? numFormat.getPattern() : null);
+        TextFormat textFormat = _axis.getTextFormat();
+        NumberFormat numFormat = NumberFormat.getFormatOrDefault(textFormat);
+        String pattern = numFormat.isPatternSet() ? numFormat.getPattern() : null;
+        setPattern(pattern);
         setExpStyle(numFormat.getExpStyle());
     }
 
     /**
      * Returns the intervals to format.
      */
-    public Intervals getIntervals()
-    {
-        // If already set, just return
-        if (_intervals != null) return _intervals;
-
-        // Get, set and return intervals
-        ChartHelper chartHelper = _axisView._chartHelper;
-        Intervals intervals = chartHelper.createIntervals(_axisView);
-        return _intervals = intervals;
-    }
-
-    /**
-     * Sets the intervals.
-     */
-    public void setIntervals(Intervals theIntervals)
-    {
-        // If already set, just return
-        if (theIntervals == _intervals) return;
-
-        // Set intervals
-        _intervals = theIntervals;
-
-        // Clear Pattern, Format and IntervalsExponent
-        _pattern = null;
-        _format = null;
-        _intervalsExponent = null;
-
-        // Update MaxLabelWidth
-        updateMaxLabelWidth();
-    }
+    public Intervals getIntervals()  { return _intervals; }
 
     /**
      * Returns the format pattern.
@@ -122,72 +88,6 @@ public class TickLabelFormat extends NumberFormat {
 
         // Return pattern
         return pattern;
-    }
-
-    /**
-     * Returns the maximum label string width.
-     */
-    public int getMaxLabelWidth()
-    {
-        if (_maxLabelWidth >= 0) return _maxLabelWidth;
-        return _maxLabelWidth = getMaxLabelWidthImpl();
-    }
-
-    /**
-     * Returns the maximum label string width.
-     */
-    private int getMaxLabelWidthImpl()
-    {
-        String longLabel = getLongestLabel();
-        Font font = _axisView.getFont();
-        int labelW = (int) Math.ceil(font.getStringAdvance(longLabel));
-        return labelW;
-    }
-
-    /**
-     * Updates the MaxLabelWidth for current intervals and format.
-     */
-    private void updateMaxLabelWidth()
-    {
-        // If not yet set, just return
-        if (_maxLabelWidth < 0) return;
-
-        // If max width increased or decreased (for the first time), update and relayout
-        int newMaxW = getMaxLabelWidthImpl();
-        if (newMaxW > _maxLabelWidth || (newMaxW < _maxLabelWidth && !_wentSmallerOnce)) {
-            _wentSmallerOnce |= newMaxW < _maxLabelWidth;
-            _maxLabelWidth = newMaxW;
-            _axisView._tickLabelBox.relayout();
-            _axisView._tickLabelBox.relayoutParent();
-        }
-    }
-
-    /**
-     * Returns the longest tick label for current intervals and format.
-     */
-    private String getLongestLabel()
-    {
-        // Get current intervals
-        Intervals intervals = getIntervals();
-        int intervalCount = intervals.getCount();
-
-        // Iterate over intervals to find LongSample
-        String longSample = "";
-        for (int i = 0; i < intervalCount; i++) {
-
-            // If not full interval, just skip
-            if (!intervals.isFullInterval(i))
-                continue;
-
-            // Get val as string and swap it in if longer
-            double val = intervals.getInterval(i);
-            String valStr = format(val);
-            if (valStr.length() > longSample.length())
-                longSample = valStr;
-        }
-
-        // Return
-        return longSample;
     }
 
     /**
