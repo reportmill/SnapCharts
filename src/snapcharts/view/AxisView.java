@@ -56,10 +56,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     private TickLabel[]  _markerLabels;
 
     // A helper to do tick label formatting
-    private TickLabelFormat _tickFormat;
-
-    // The intervals last used (because axis interval generation is kind of an iterative chicken and egg thing)
-    private Intervals  _lastIntervals = STARTER_INTERVALS;
+    private TickLabelFormat  _tickFormat;
 
     // Constants for Properties
     public static final String AxisMin_Prop = "AxisMin";
@@ -74,9 +71,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     // Constants for Min/MaxOverride to indicate not set
     public static double  UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
-
-    // Constant for starter intervals (because axis interval generation is kind of an iterative chicken and egg thing)
-    private static Intervals STARTER_INTERVALS = Intervals.getIntervalsSimple(0, 1);
 
     // Constants for minimum interval div length X and Y
     private static int MIN_DIV_LEN_X = 40;
@@ -278,27 +272,36 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     /**
      * Returns the axis intervals for active datasets.
+     *
+     * This is tricky because of chicken-and-egg:
+     *
+     *     - Intervals depends on DivLen
+     *     - DivLen depends on MaxTickLabelRotatedSize
+     *     - MaxTickLabelRotatedSize depends on largest label determined by Intervals
      */
     public Intervals getIntervals()
     {
         // If already set, just return
         if (_intervals != null) return _intervals;
 
-        // Set last intervals
-        _intervals = _lastIntervals;
-        Size maxLabelSize = getMaxTickLabelRotatedSize();
-        _maxTickLabelRotatedSize = null;
+        // Get intervals for Min_Div_Len
+        _maxTickLabelRotatedSize = new Size();
+        double divLen = getDivLen();
+        _intervals = _chartHelper.createIntervals(this);
 
-        // Create, set
-        Intervals intervals = _chartHelper.createIntervals(this);
-        _intervals = intervals;
+        // Get new DivLen for new intervals (must clear MaxTickLabelRotatedSize for this)
         _maxTickLabelRotatedSize = null;
+        double divLen2 = getDivLen();
 
-        // If MaxTickLabelRotatedSize changes, trigger relayout
-        Size maxLabelSize2 = getMaxTickLabelRotatedSize();
-        if (!maxLabelSize2.equals(maxLabelSize)) {
-            _tickLabelBox.relayout();
-            _tickLabelBox.relayoutParent();
+        // Iterate until DivLen stabilizes (only let it go smaller once to avoid possible back-and-forth)
+        boolean wentSmallerOnce = false;
+        while (divLen2 > divLen || (divLen2 < divLen && !wentSmallerOnce)) {
+            if (divLen2 < divLen)
+                wentSmallerOnce = true;
+            _intervals = _chartHelper.createIntervals(this);
+            divLen = divLen2;
+            _maxTickLabelRotatedSize = null;
+            divLen2 = getDivLen();
         }
 
         // Return intervals
@@ -340,11 +343,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If already set, just return
         if (_maxTickLabelRotatedSize != null) return _maxTickLabelRotatedSize;
 
-        // Get latest intervals
-        Intervals intervals = getIntervals();
-
         // Get max label size, set and return
-        Size maxLabelSize = TickLabelUtils.getMaxTickLabelRotatedSize(this, intervals);
+        Size maxLabelSize = TickLabelUtils.getMaxTickLabelRotatedSize(this);
         return _maxTickLabelRotatedSize = maxLabelSize;
     }
 
@@ -367,7 +367,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_intervals == null) return;
 
         // Cache last intervals and clear
-        _lastIntervals = _intervals;
         _intervals = null;
         _maxTickLabelRotatedSize = null;
         _tickFormat = null;
@@ -410,8 +409,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_tickLabels != null) return _tickLabels;
 
         // Create TickLabels for intervals
-        Intervals intervals = getIntervals();
-        _tickLabels = TickLabelUtils.createTickLabels(this, intervals);
+        _tickLabels = TickLabelUtils.createTickLabels(this);
 
         // Add TickLabels to TickLabelBox
         for (TickLabel tickLabel : _tickLabels)

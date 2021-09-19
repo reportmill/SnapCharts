@@ -21,10 +21,10 @@ public class TickLabelUtils {
     /**
      * Returns the widest tick labels.
      */
-    public static TickLabel getMaxTickLabel(AxisView axisView, Intervals intervals)
+    private static TickLabel getMaxTickLabel(AxisView axisView)
     {
         // Get tickLabels
-        TickLabel[] tickLabels = createTickLabels(axisView, intervals);
+        TickLabel[] tickLabels = createTickLabels(axisView);
         TickLabel longLabel = null;
 
         for (TickLabel tickLabel : tickLabels) {
@@ -36,23 +36,14 @@ public class TickLabelUtils {
     }
 
     /**
-     * Returns the tick labels maximum size.
-     */
-    public static Size getMaxTickLabelSize(AxisView axisView, Intervals intervals)
-    {
-        TickLabel maxLabel = getMaxTickLabel(axisView, intervals);
-        return new Size(maxLabel.getPrefWidth(), maxLabel.getPrefHeight());
-    }
-
-    /**
      * Returns the tick labels maximum rotated size.
      */
-    public static Size getMaxTickLabelRotatedSize(AxisView axisView, Intervals intervals)
+    public static Size getMaxTickLabelRotatedSize(AxisView axisView)
     {
         // Get non rotated max width/height
-        Size maxLabelSize = getMaxTickLabelSize(axisView, intervals);
-        double ticksW = maxLabelSize.width;
-        double ticksH = maxLabelSize.height;
+        TickLabel maxLabel = getMaxTickLabel(axisView);
+        double ticksW = maxLabel.getPrefWidth();
+        double ticksH = maxLabel.getPrefHeight();
 
         // If not rotated, just return size
         Axis axis = axisView.getAxis();
@@ -72,13 +63,14 @@ public class TickLabelUtils {
     /**
      * Returns the array of tick label StringBoxes.
      */
-    public static TickLabel[] createTickLabels(AxisView axisView, Intervals intervals)
+    public static TickLabel[] createTickLabels(AxisView axisView)
     {
         // Handle Category axis special
         if (axisView.isCategoryAxis())
             return createTickLabelsForCategoryAxis(axisView);
 
         // Get Intervals info
+        Intervals intervals = axisView.getIntervals();
         int intervalCount = intervals.getCount();
 
         // Get TickLabel attributes
