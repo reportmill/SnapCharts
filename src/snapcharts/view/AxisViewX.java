@@ -150,7 +150,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
             tickLabel.setBounds(tickX, tickY, tickW, tickH);
 
             // Set tick label rotation
-            TickLabelUtils.setTickLabelRotation(this, tickLabel, tickRot);
+            TickLabelBox.setTickLabelRotation(this, tickLabel, tickRot);
         }
     }
 

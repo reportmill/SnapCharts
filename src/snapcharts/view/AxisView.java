@@ -172,7 +172,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public void setAxisMin(double aValue)
     {
         // If already set, just return
-        if (aValue==_minOverride) return;
+        if (aValue == _minOverride) return;
 
         // Set value, firePropChange, clear intervals
         firePropChange(AxisMin_Prop, _minOverride, _minOverride = aValue);
@@ -197,7 +197,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public void setAxisMax(double aValue)
     {
         // If already set, just return
-        if (aValue==_maxOverride) return;
+        if (aValue == _maxOverride) return;
 
         // Set value, clear intervals
         firePropChange(AxisMax_Prop, _maxOverride, _maxOverride = aValue);
@@ -320,16 +320,14 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
     /**
      * Returns the recommended grid spacing size.
+     * This is based on MaxTickLabelRotatedSize, but constrained to a min size.
      */
     protected double getDivLen()
     {
-        // Get max label size
+        // Get max label size, add reasonable buffer space, constrain to X/Y minimum and return
         Size maxTicksSize = getMaxTickLabelRotatedSize();
-
-        // Add reasonable buffer space, constrain to X/Y minimum and return
-        AxisType axisType = getAxisType();
         double divLen;
-        if (axisType == AxisType.X)
+        if (this instanceof AxisViewX)
             divLen = Math.max(maxTicksSize.width + 16, MIN_DIV_LEN_X);
         else divLen = Math.max(maxTicksSize.height + 16, MIN_DIV_LEN_Y);
         return divLen;
@@ -344,7 +342,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_maxTickLabelRotatedSize != null) return _maxTickLabelRotatedSize;
 
         // Get max label size, set and return
-        Size maxLabelSize = TickLabelUtils.getMaxTickLabelRotatedSize(this);
+        Size maxLabelSize = TickLabelBox.getMaxTickLabelRotatedSize(this);
         return _maxTickLabelRotatedSize = maxLabelSize;
     }
 
@@ -409,7 +407,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_tickLabels != null) return _tickLabels;
 
         // Create TickLabels for intervals
-        _tickLabels = TickLabelUtils.createTickLabels(this);
+        _tickLabels = TickLabelBox.createTickLabels(this);
 
         // Add TickLabels to TickLabelBox
         for (TickLabel tickLabel : _tickLabels)
