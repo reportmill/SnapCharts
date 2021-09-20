@@ -1,14 +1,10 @@
 package snapcharts.view;
 import snap.geom.*;
-import snap.util.DeepChangeListener;
-import snap.util.PropChange;
-import snap.util.PropChangeListener;
-import snap.util.SnapUtils;
+import snap.util.*;
 import snap.view.*;
 import snapcharts.app.AppEnv;
 import snapcharts.model.*;
 import snapcharts.viewx.EmptyChartHelper;
-
 import java.util.Objects;
 
 /**
@@ -554,7 +550,15 @@ public class ChartView extends ChartPartView<Chart> {
     @Override
     protected void layoutImpl()
     {
+        // Get whether this is first pass
+        DataView dataView = getDataView();
+        boolean firstPass = dataView.getWidth() == 0 && dataView.getHeight() == 0;
+
         _layout.layoutChart();
+
+        // If first pass, try again so AxisView can do a better job of getting intervals
+        if (firstPass)
+            _layout.layoutChart();
 
         layoutMarkers();
     }

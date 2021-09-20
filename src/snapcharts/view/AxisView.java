@@ -273,11 +273,13 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     /**
      * Returns the axis intervals for active datasets.
      *
-     * This is tricky because of chicken-and-egg:
+     * This is tricky because of chicken-and-egg between Intervals and DivLen:
      *
      *     - Intervals depends on DivLen
      *     - DivLen depends on MaxTickLabelRotatedSize
      *     - MaxTickLabelRotatedSize depends on largest label determined by Intervals
+     *
+     *     Even worse, when/if X axis gets taller, it shrinks Y axis and visa-versa.
      */
     public Intervals getIntervals()
     {
@@ -382,8 +384,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         }
 
         // Make sure to register for relayout (TickLabelBox could be empty)
-        relayout();
-        relayoutParent();
+        _tickLabelBox.relayout();
+        _tickLabelBox.relayoutParent();
     }
 
     /**

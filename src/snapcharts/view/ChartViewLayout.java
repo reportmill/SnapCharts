@@ -37,7 +37,7 @@ public class ChartViewLayout {
     protected Insets _dataAreaInsets = new Insets(0, 0, 0, 0);
 
     // The maximum size that a side can be as ratio of chart size ( 30% )
-    private final double MAX_SIDE_RATIO = .3;
+    private final double MAX_SIDE_RATIO = .4;
 
     // The default side padding size
     private final int SIDE_MARGIN = 10;
