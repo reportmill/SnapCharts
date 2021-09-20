@@ -28,6 +28,9 @@ public class AxisViewY extends AxisView<AxisY> {
     // The AxisType
     private AxisType  _axisType;
 
+    // Default Title Rotation
+    private static final double DEFAULT_TITLE_ROTATION = -90;
+
     /**
      * Constructor.
      */
@@ -40,7 +43,7 @@ public class AxisViewY extends AxisView<AxisY> {
         _axisType = anAxisTypeY;
 
         // Create configure TitleView
-        _titleView.setRotate(270);
+        _titleView.setRotate(DEFAULT_TITLE_ROTATION);
         _titleViewBox = new WrapView(_titleView);
         _titleViewBox.setGrowHeight(true);
         addChild(_titleViewBox, 0);
@@ -48,7 +51,7 @@ public class AxisViewY extends AxisView<AxisY> {
         // Create/configure LegendGraphicBox
         _legendGraphicRowView = new RowView();
         _legendGraphicRowView.setSpacing(10);
-        _legendGraphicRowView.setRotate(270);
+        _legendGraphicRowView.setRotate(DEFAULT_TITLE_ROTATION);
         _legendGraphicBox = new WrapView(_legendGraphicRowView);
         _legendGraphicBox.setGrowHeight(true);
         addChild(_legendGraphicBox, 1);
@@ -179,8 +182,12 @@ public class AxisViewY extends AxisView<AxisY> {
         // Do normal version
         super.resetView();
 
-        // Configure TitleViewBox
+        // Configure TitleView
         AxisY axisY = getAxis();
+        double titleRotation = DEFAULT_TITLE_ROTATION + axisY.getTitleRotation();
+        _titleView.setRotate(titleRotation);
+
+        // Configure TitleViewBox
         Pos align = axisY.getAlign();
         _titleViewBox.setAlign(align);
 

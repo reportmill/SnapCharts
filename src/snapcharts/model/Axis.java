@@ -20,7 +20,7 @@ public abstract class Axis extends ChartPart {
     private String  _title;
 
     // The title rotation
-    private double  _titleRot;
+    private double  _titleRotation;
 
     // The Axis Min Bounding
     private AxisBound  _minBound = AxisBound.AUTO;
@@ -84,7 +84,7 @@ public abstract class Axis extends ChartPart {
 
     // Constants for properties
     public static final String Title_Prop = "Title";
-    public static final String TitleRotate_Prop = "TitleRotate";
+    public static final String TitleRotation_Prop = "TitleRotation";
     public static final String MinBound_Prop = "MinBound";
     public static final String MaxBound_Prop = "MaxBound";
     public static final String MinValue_Prop = "MinValue";
@@ -176,15 +176,15 @@ public abstract class Axis extends ChartPart {
     /**
      * Returns the title rotation in degrees.
      */
-    public double getTitleRotate()  { return _titleRot; }
+    public double getTitleRotation()  { return _titleRotation; }
 
     /**
      * Sets the title rotation in degrees.
      */
-    public void setTitleRotate(double aValue)
+    public void setTitleRotation(double aValue)
     {
-        if (aValue == _titleRot) return;
-        firePropChange(TitleRotate_Prop, _titleRot, _titleRot = aValue);
+        if (aValue == _titleRotation) return;
+        firePropChange(TitleRotation_Prop, _titleRotation, _titleRotation = aValue);
     }
 
     /**
@@ -674,8 +674,8 @@ public abstract class Axis extends ChartPart {
         // Archive Title, TitleRotate
         if (getTitle() != null && getTitle().length() > 0)
             e.add(Title_Prop, getTitle());
-        if (getTitleRotate() != 0)
-            e.add(TitleRotate_Prop, getTitleRotate());
+        if (getTitleRotation() != 0)
+            e.add(TitleRotation_Prop, getTitleRotation());
 
         // Archive ZeroRequired, Log
         if (isZeroRequired())
@@ -740,8 +740,8 @@ public abstract class Axis extends ChartPart {
         // Unarchive Title, TitleRotate
         if (anElement.hasAttribute(Title_Prop))
             setTitle(anElement.getAttributeValue(Title_Prop));
-        if (anElement.hasAttribute(TitleRotate_Prop))
-            setTitleRotate(anElement.getAttributeDoubleValue(TitleRotate_Prop));
+        if (anElement.hasAttribute(TitleRotation_Prop))
+            setTitleRotation(anElement.getAttributeDoubleValue(TitleRotation_Prop));
 
         // Unachive ZeroRequired
         if (anElement.hasAttribute(ZeroRequired_Prop))
