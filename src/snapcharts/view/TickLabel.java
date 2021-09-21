@@ -6,19 +6,21 @@ import snap.view.StringView;
  */
 public class TickLabel extends StringView {
 
-    // The AxisView that holds this TickLabel
-    private AxisView  _axisView;
-
     // The coordinate of the label
     private double  _coord;
+
+    // Constants for defaults
+    private static final boolean DEFAULT_TICK_FONT_SIZING = false;
 
     /**
      * Constructor.
      */
-    public TickLabel(AxisView anAxisView, double aCoord)
+    public TickLabel(double aCoord)
     {
-        _axisView = anAxisView;
         _coord = aCoord;
+
+        // Override defaults
+        _fontSizing = DEFAULT_TICK_FONT_SIZING;
     }
 
     /**

@@ -470,7 +470,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         TickLabel[] markerLabels = new TickLabel[count];
         for (int i = 0; i < count; i++) {
             Marker marker = axisMarkers[i];
-            TickLabel markerLabel = markerLabels[i] = new TickLabel(this, marker.getX());
+            TickLabel markerLabel = markerLabels[i] = new TickLabel(marker.getX());
             markerLabel.setText(marker.getText());
             markerLabel.setFont(markerFont);
             markerLabel.setTextFill(markerFill);

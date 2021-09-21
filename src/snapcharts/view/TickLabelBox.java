@@ -131,7 +131,7 @@ public class TickLabelBox extends ChildView {
             double dataX = intervals.getInterval(i);
 
             // Create/config/add TickLabel
-            TickLabel tickLabel = new TickLabel(axisView, dataX);
+            TickLabel tickLabel = new TickLabel(dataX);
             String str = tickFormat.format(dataX);
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
@@ -161,7 +161,7 @@ public class TickLabelBox extends ChildView {
 
         // Iterate over points and create/set TickLabel
         for (int i = 0; i < pointCount; i++) {
-            TickLabel tickLabel = tickLabels[i] = new TickLabel(axisView, i + .5);
+            TickLabel tickLabel = tickLabels[i] = new TickLabel(i + .5);
             String str = dataSet.getString(i); // was getC(i)
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
