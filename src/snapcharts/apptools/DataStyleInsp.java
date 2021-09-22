@@ -123,6 +123,10 @@ public class DataStyleInsp extends ChartPartInsp {
                 configureLineDashButton(lineDashButton, dashArray);
         }
 
+        // Configure PointJointComboBox
+        ComboBox<PointJoin> pointJoinComboBox = getView("PointJoinComboBox", ComboBox.class);
+        pointJoinComboBox.setItems(PointJoin.values());
+
         // Hide ShowAreaBox
         setViewVisible("ShowAreaBox", false);
 
@@ -194,6 +198,9 @@ public class DataStyleInsp extends ChartPartInsp {
             // Reset LineDashBox
             View lineDashBox = getView("LineDashBox");
             ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
+
+            // Reset PointJoinComboBox
+            setViewSelItem("PointJoinComboBox", dataStyle.getPointJoin());
         }
 
         // Reset ShowAreaCheckBox
@@ -373,6 +380,10 @@ public class DataStyleInsp extends ChartPartInsp {
             double[] dashArray = Stroke.DASHES_ALL[id];
             dataStyle.setLineDash(dashArray);
         }
+
+        // Handle PointJoinComboBox
+        if (anEvent.equals("PointJoinComboBox"))
+            dataStyle.setPointJoin((PointJoin) anEvent.getSelItem());
 
         // Handle ShowAreaCheckBox, FillModeComboBox
         if (anEvent.equals("ShowAreaCheckBox")) {
