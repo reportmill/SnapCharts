@@ -117,6 +117,9 @@ public class XYDataAreaShapes {
         // The index
         protected int _index;
 
+        // Whether is spline
+        protected boolean _isSpline;
+
         /**
          * Constructor.
          */
@@ -136,6 +139,10 @@ public class XYDataAreaShapes {
             _startIndex = !isShowAll ? aDataArea.getDispDataStartOutsideIndex() : 0;
             _endIndex = !isShowAll ? aDataArea.getDispDataEndOutsideIndex() : (dispData.getPointCount() - 1);
             _count = _endIndex - _startIndex + 1;
+
+            // Set PointJoin
+            PointJoin pointJoin = _dataArea.getDataStyle().getPointJoin();
+            _isSpline = pointJoin == PointJoin.Spline;
         }
 
         /**
@@ -160,6 +167,12 @@ public class XYDataAreaShapes {
             // First segment is moveTo, then lineTos
             if (_index++ == 0)
                 return moveTo(dispX, dispY, coords);
+
+            if (_isSpline) {
+                double lastX = _dispX[_startIndex + _index - 2];
+                double lastY = _dispY[_startIndex + _index - 2];
+                return cubicTo(dispX, lastY, lastX, dispY, dispX, dispY, coords);
+            }
             return lineTo(dispX, dispY, coords);
         }
     }
@@ -189,6 +202,12 @@ public class XYDataAreaShapes {
 
             // Increment index, return lineTo
             _index++;
+
+            if (_isSpline) {
+                double lastX = _dispX[_endIndex - _index + 1];
+                double lastY = _dispY[_endIndex - _index + 1];
+                return cubicTo(dispX, lastY, lastX, dispY, dispX, dispY, coords);
+            }
             return lineTo(dispX, dispY, coords);
         }
     }
