@@ -79,6 +79,8 @@ public class TickLabelBox extends ChildView {
     {
         // Get non rotated max width/height
         TickLabel maxLabel = getMaxTickLabel(axisView);
+        if (maxLabel == null)
+            return new Size();
         double ticksW = maxLabel.getPrefWidth();
         double ticksH = maxLabel.getPrefHeight();
 

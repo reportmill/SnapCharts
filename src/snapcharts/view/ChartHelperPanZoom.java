@@ -307,7 +307,7 @@ public class ChartHelperPanZoom {
     private void scaleAxesMinMaxForViewAndEvent(View aView, ViewEvent anEvent)
     {
         // Get scale for Event
-        boolean isModDown = anEvent.isShiftDown() || anEvent.isAltDown() || anEvent.isShortcutDown();
+        boolean isModDown = anEvent.isAltDown();
         double scale = isModDown ? 2 : .5;
 
         // Get Axes for View
