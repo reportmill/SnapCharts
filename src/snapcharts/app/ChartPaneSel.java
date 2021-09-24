@@ -311,6 +311,10 @@ public class ChartPaneSel {
      */
     protected void paintSelection(Painter aPntr, View aHostView)
     {
+        // If MouseDown, just skip (because shadow render is kinda slow)
+        if (ViewUtils.isMouseDown())
+            return;
+
         // If SelView set, paint it
         View selView = getSelView();
         if (selView != null && selView != _chartView) {
