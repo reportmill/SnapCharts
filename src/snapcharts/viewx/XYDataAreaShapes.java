@@ -65,32 +65,15 @@ public class XYDataAreaShapes {
         @Override
         public PathIter getPathIter(Transform aT)
         {
-            // Get normal PathIter and PointJoint - if PointJoin.Line, just return
-            DataLinePathIter pathIter = new DataLinePathIter(aT, _dataArea, _includeAll);
-            if (_pointJoin == PointJoin.Line)
-                return pathIter;
+            // Get normal PathIter for data line
+            PathIter pathIter = new DataLinePathIter(aT, _dataArea, _includeAll);
 
-            // Otherwise return PathIter wrapped in modifier for PointJoin
-            return getPathIterForPointJoin(pathIter);
-        }
+            // Apply PointJoin PathIter, if needed
+            if (_pointJoin != PointJoin.Line)
+                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter);
 
-        /**
-         * Returns the PathIter for a PointJoin.
-         */
-        protected PathIter getPathIterForPointJoin(PathIter pathIter)
-        {
-            // For Other PointJoints, wrap in special PathIter to turn line segments into specified join
-            switch (_pointJoin) {
-                case Line: return pathIter;
-                case HV: return new HVPathIter(pathIter);
-                case VH: return new VHPathIter(pathIter);
-                case HVH: return new HVHPathIter(pathIter);
-                case VHV: return new VHVPathIter(pathIter);
-                case Spline: return new SplinePathIter(pathIter);
-                default:
-                    System.err.println("DataLineShape.getPathIter: Unknown PointJoint: " + _pointJoin);
-                    return pathIter;
-            }
+            // Return PathIter
+            return pathIter;
         }
     }
 
@@ -117,15 +100,17 @@ public class XYDataAreaShapes {
             boolean isStacked = _dataArea.getDataSet().isStacked();
             if (isStacked) {
                 DataArea previousStackedDataArea = _dataArea.getPreviousStackedDataArea();
-                if (previousStackedDataArea != null) {
-                    PathIter pathIter = new DataAreaToNextPathIter(aT, _dataArea);
-                    return getPathIterForPointJoin(pathIter);
-                }
+                if (previousStackedDataArea != null)
+                    return new DataAreaToNextPathIter(aT, _dataArea);
             }
 
-            // Otherwise, just return DataAreaToZeroPathIter
+            // Otherwise, just create DataAreaToZeroPathIter
             PathIter pathIter = new DataAreaToZeroPathIter(aT, _dataArea);
-            return getPathIterForPointJoin(pathIter);
+
+            // Apply PointJoin PathIter, if needed, and return
+            if (_pointJoin != PointJoin.Line)
+                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter);
+            return pathIter;
         }
     }
 
@@ -219,8 +204,9 @@ public class XYDataAreaShapes {
             double dispX = _dispX[_endIndex - _index];
             double dispY = _dispY[_endIndex - _index];
 
-            // Increment index, return lineTo
-            _index++;
+            // First segment is moveTo, then lineTos
+            if (_index++ == 0)
+                return moveTo(dispX, dispY, coords);
             return lineTo(dispX, dispY, coords);
         }
     }
@@ -298,13 +284,19 @@ public class XYDataAreaShapes {
     /**
      * This DataLinePathIter subclass adds additional segments to create a closed area path to adjacent DataArea.DataLine.
      */
-    private static class DataAreaToNextPathIter extends DataLinePathIter {
+    private static class DataAreaToNextPathIter extends PathIter {
+
+        // The primary DataArea
+        private DataArea _dataArea;
+
+        // The PathIter to draw data line DataArea (may be wrapped in PointJoin PathIter)
+        private PathIter _dataAreaPathIter;
 
         // The adjacent DataArea
         private DataArea _nextDataArea;
 
-        // The adjacent DataArea
-        private ReversedDataLinePathIter _nextDataAreaPathIter;
+        // The PathIter to draw data line for adjacent DataArea (reversed to create shape)
+        private PathIter _nextDataAreaPathIter;
 
         // Whether data line iter is done
         private boolean _dataLineDone;
@@ -317,7 +309,16 @@ public class XYDataAreaShapes {
          */
         public DataAreaToNextPathIter(Transform aTrans, DataArea aDataArea)
         {
-            super(aTrans, aDataArea, false);
+            super(aTrans);
+            _dataArea = aDataArea;
+
+            // Get ThisDataAreaPathIter
+            _dataAreaPathIter = new DataLinePathIter(aTrans, aDataArea, false);
+
+            // Apply PointJoint PathIter, if needed
+            PointJoin pointJoin = _dataArea.getDataStyle().getPointJoin();
+            if (pointJoin != PointJoin.Line)
+                _dataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataAreaPathIter);
 
             // Get next data area
             _nextDataArea = _dataArea.getPreviousStackedDataArea();
@@ -330,7 +331,7 @@ public class XYDataAreaShapes {
         public boolean hasNext()
         {
             // If still iterating over DataLine, return true
-            if (super.hasNext())
+            if (_dataAreaPathIter.hasNext())
                 return true;
 
             // Mark DataLineDone
@@ -352,14 +353,29 @@ public class XYDataAreaShapes {
         {
             // If still iterating over DataLine, do normal version
             if (!_dataLineDone)
-                return super.getNext(coords);
+                return _dataAreaPathIter.getNext(coords);
 
             // If starting NextDataArea, create its PathIter, and add connecting LineTo to its end point
             if (_nextDataAreaPathIter == null) {
-                _nextDataAreaPathIter = new ReversedDataLinePathIter(_trans, _nextDataArea);
+
+                // Create/set NextDataAreaPathIter
+                ReversedDataLinePathIter nextDataAreaPathIter = new ReversedDataLinePathIter(_trans, _nextDataArea);
+                _nextDataAreaPathIter = nextDataAreaPathIter;
+
+                // Apply PointJoin if needed
+                PointJoin pointJoin = _nextDataArea.getDataStyle().getPointJoin();
+                PointJoin pointJoinReverse = pointJoin.getReverse(); // Turns HV to VH
+                if (pointJoinReverse != PointJoin.Line)
+                    _nextDataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoinReverse, _nextDataAreaPathIter);
+
+                // Eat first segment (MoveTo)
+                if (_nextDataAreaPathIter.hasNext())
+                    _nextDataAreaPathIter.getNext(coords);
+
+                // Handle lineTo connecting line between data sets
                 int endIndex = _nextDataArea.getDispDataEndOutsideIndex();
-                double dispX = _nextDataAreaPathIter._dispX[endIndex];
-                double dispY = _nextDataAreaPathIter._dispY[endIndex];
+                double dispX = nextDataAreaPathIter._dispX[endIndex];
+                double dispY = nextDataAreaPathIter._dispY[endIndex];
                 return lineTo(dispX, dispY, coords);
             }
 
@@ -370,252 +386,6 @@ public class XYDataAreaShapes {
             // Mark all done and return close path
             _allDone = true;
             return close();
-        }
-    }
-
-    /**
-     * A PathIter for PointJoin.HV that turns LineTos into two segments.
-     */
-    private static class HVPathIter extends PathIter {
-
-        // The original PathIter
-        protected PathIter _pathIter;
-
-        // Next segment
-        protected Seg  _nextSeg;
-
-        // Next segment coords
-        protected double[]  _nextCoords = new double[6];
-
-        // Next segment step
-        protected int  _stepCount;
-
-        // The last X/Y
-        protected double  _lastX, _lastY;
-
-        // The next X/Y
-        protected double  _nextX, _nextY;
-
-        /**
-         * Constructor.
-         */
-        public HVPathIter(PathIter aPathIter)
-        {
-            _pathIter = aPathIter;
-        }
-
-        /**
-         * Override for HVPathIter.
-         */
-        @Override
-        public boolean hasNext()
-        {
-            // If still processing NextSeg, return true
-            if (_nextSeg != null)
-                return true;
-
-            // Get original HasNext - if false, just return false
-            boolean hasNext = _pathIter.hasNext();
-            if (!hasNext)
-                return false;
-
-            // Otherwise get next seg
-            _nextSeg = _pathIter.getNext(_nextCoords);
-            _nextX = _nextCoords[0];
-            _nextY = _nextCoords[1];
-            _stepCount = 0;
-            return true;
-        }
-
-        /**
-         * Override.
-         */
-        @Override
-        public Seg getNext(double[] coords)
-        {
-            // Handle LineTo (expected/common case)
-            if (_nextSeg == Seg.LineTo) {
-
-                // If first derived step, bump step count and return H line
-                if (_stepCount == 0) {
-                    _stepCount++;
-                    return lineTo(_nextX, _lastY, coords);
-                }
-
-                // Otherwise clear NextSeg, update LastX/Y, and return line to original LineTo point
-                _nextSeg = null;
-                return lineTo(_lastX = _nextX, _lastY = _nextY, coords);
-            }
-
-            // If MoveTo, just pass along
-            if (_nextSeg == Seg.MoveTo) {
-                _nextSeg = null;
-                return moveTo(_lastX = _nextCoords[0], _lastY = _nextCoords[1], coords);
-            }
-
-            // If Close, just pass along
-            if (_nextSeg == Seg.Close) {
-                _nextSeg = null;
-                return close();
-            }
-
-            // Otherwise complain but forward on (should never happen)
-            System.err.println("HVPathIter.getNext: Unexpected Seg Type: " + _nextSeg);
-            Seg nextSeg = _nextSeg;
-            _nextSeg = null;
-            int segCount = nextSeg.getCount();
-            System.arraycopy(_nextCoords, 0, coords, 0, segCount * 2);
-            _lastX = coords[segCount * 2 - 2];
-            _lastY = coords[segCount * 2 - 1];
-            return nextSeg;
-        }
-    }
-
-    /**
-     * A PathIter for PointJoin.VH that turns LineTos into two segments.
-     */
-    private static class VHPathIter extends HVPathIter {
-
-        /**
-         * Constructor.
-         */
-        public VHPathIter(PathIter aPathIter)
-        {
-            super(aPathIter);
-        }
-
-        /**
-         * Override.
-         */
-        @Override
-        public Seg getNext(double[] coords)
-        {
-            // If LineTo, just pass along
-            if (_nextSeg == Seg.LineTo) {
-
-                // If first derived step, bump step count and return H line
-                if (_stepCount == 0) {
-                    _stepCount++;
-                    return lineTo(_lastX, _nextY, coords);
-                }
-            }
-
-            // Do normal version
-            return super.getNext(coords);
-        }
-    }
-
-    /**
-     * A PathIter for PointJoin.HVH that turns LineTos into three segments.
-     */
-    private static class HVHPathIter extends HVPathIter {
-
-        /**
-         * Constructor.
-         */
-        public HVHPathIter(PathIter aPathIter)
-        {
-            super(aPathIter);
-        }
-
-        /**
-         * Override.
-         */
-        @Override
-        public Seg getNext(double[] coords)
-        {
-            // If LineTo, just pass along
-            if (_nextSeg == Seg.LineTo) {
-
-                // If first derived step, bump step count and return H line to mid point
-                if (_stepCount == 0) {
-                    _stepCount++;
-                    double midX = _lastX + (_nextX - _lastX) / 2;
-                    return lineTo(_lastX = midX, _lastY, coords);
-                }
-
-                // If second derived step, bump step count and return V line to mid point
-                if (_stepCount == 1) {
-                    _stepCount++;
-                    return lineTo(_lastX, _nextY, coords);
-                }
-            }
-
-            // Do normal version
-            return super.getNext(coords);
-        }
-    }
-
-    /**
-     * A PathIter for PointJoin.VHV that turns LineTos into three segments.
-     */
-    private static class VHVPathIter extends HVPathIter {
-
-        /**
-         * Constructor.
-         */
-        public VHVPathIter(PathIter aPathIter)
-        {
-            super(aPathIter);
-        }
-
-        /**
-         * Override.
-         */
-        @Override
-        public Seg getNext(double[] coords)
-        {
-            // If LineTo, just pass along
-            if (_nextSeg == Seg.LineTo) {
-
-                // If first derived step, bump step count and return H line to mid point
-                if (_stepCount == 0) {
-                    _stepCount++;
-                    double midY = _lastY + (_nextY - _lastY) / 2;
-                    return lineTo(_lastX, _lastY = midY, coords);
-                }
-
-                // If second derived step, bump step count and return V line to mid point
-                if (_stepCount == 1) {
-                    _stepCount++;
-                    return lineTo(_nextX, _lastY, coords);
-                }
-            }
-
-            // Do normal version
-            return super.getNext(coords);
-        }
-    }
-
-    /**
-     * A PathIter for PointJoin.Spline that turns LineTos into CurveTo segments.
-     */
-    private static class SplinePathIter extends HVPathIter {
-
-        /**
-         * Constructor.
-         */
-        public SplinePathIter(PathIter aPathIter)
-        {
-            super(aPathIter);
-        }
-
-        /**
-         * Override.
-         */
-        @Override
-        public Seg getNext(double[] coords)
-        {
-            // If LineTo, Create/return spline
-            if (_nextSeg == Seg.LineTo) {
-                _nextSeg = null;
-                double lastX = _lastX; _lastX = _nextX;
-                double lastY = _lastY; _lastY = _nextY;
-                return cubicTo(_nextX, lastY, lastX, _nextY, _nextX, _nextY, coords);
-            }
-
-            // Do normal version
-            return super.getNext(coords);
         }
     }
 }

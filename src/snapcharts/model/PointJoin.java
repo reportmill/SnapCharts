@@ -16,7 +16,17 @@ public enum PointJoin {
 
     VH,
 
-    HVH,
+    HVH;
 
-    VHV
+    /**
+     * Returns the reverse of this PointJoin.
+     */
+    public PointJoin getReverse()
+    {
+        if (this == HV)
+            return VH;
+        if (this == VH)
+            return HV;
+        return this;
+    }
 }
