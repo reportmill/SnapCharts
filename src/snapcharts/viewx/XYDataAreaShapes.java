@@ -105,12 +105,7 @@ public class XYDataAreaShapes {
             }
 
             // Otherwise, just create DataAreaToZeroPathIter
-            PathIter pathIter = new DataAreaToZeroPathIter(aT, _dataArea);
-
-            // Apply PointJoin PathIter, if needed, and return
-            if (_pointJoin != PointJoin.Line)
-                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter);
-            return pathIter;
+            return new DataAreaToZeroPathIter(aT, _dataArea);
         }
     }
 
@@ -153,6 +148,16 @@ public class XYDataAreaShapes {
             _startIndex = !isShowAll ? aDataArea.getDispDataStartOutsideIndex() : 0;
             _endIndex = !isShowAll ? aDataArea.getDispDataEndOutsideIndex() : (dispData.getPointCount() - 1);
             _count = _endIndex - _startIndex + 1;
+
+            // If PointJoin.Spline, we might need extra point to prevent jumping
+            PointJoin pointJoin = aDataArea.getDataStyle().getPointJoin();
+            if (pointJoin == PointJoin.Spline) {
+                if (_startIndex > 0)
+                    _startIndex--;
+                if (_endIndex < dispData.getPointCount() - 1)
+                    _endIndex++;
+                _count = _endIndex - _startIndex + 1;
+            }
         }
 
         /**
@@ -214,26 +219,45 @@ public class XYDataAreaShapes {
     /**
      * This DataLinePathIter subclass adds additional segments to create a closed path down to zero Y.
      */
-    private static class DataAreaToZeroPathIter extends DataLinePathIter {
+    private static class DataAreaToZeroPathIter extends PathIter {
+
+        // The PathIter for the DataLine
+        private PathIter  _dataLinePathIter;
 
         // Whether data line iter is done
-        private boolean _dataLineDone;
+        private boolean  _dataLineDone;
 
         // The ZeroPath index
-        private int _tozeroPathIndex;
+        private int  _tozeroPathIndex;
+
+        // The X value in display coords at start and end of DataLine
+        private double  _startDispX, _endDispX;
 
         // The y value in display coords for dataY == 0
-        private double _zeroDispY;
+        private double  _zeroDispY;
 
         /**
          * Constructor.
          */
         public DataAreaToZeroPathIter(Transform aTrans, DataArea aDataArea)
         {
-            super(aTrans, aDataArea, false);
+            super(aTrans);
+
+            // Get DataLinePathIter for DataArea
+            DataLinePathIter dataLinePathIter = new DataLinePathIter(aTrans, aDataArea, false);
+            _dataLinePathIter = dataLinePathIter;
+
+            // Apply PointJoint PathIter, if needed
+            PointJoin pointJoin = aDataArea.getDataStyle().getPointJoin();
+            if (pointJoin != PointJoin.Line)
+                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter);
+
+            // Get StartDispX, EndDispX
+            _startDispX = dataLinePathIter._dispX[dataLinePathIter._startIndex];
+            _endDispX = dataLinePathIter._dispX[dataLinePathIter._endIndex];
 
             // Calculate display Y for data Y == 0
-            _zeroDispY = _dataArea.dataToViewY(0);
+            _zeroDispY = aDataArea.dataToViewY(0);
         }
 
         /**
@@ -243,7 +267,7 @@ public class XYDataAreaShapes {
         public boolean hasNext()
         {
             // Try normal version
-            if (super.hasNext())
+            if (_dataLinePathIter.hasNext())
                 return true;
 
             // Otherwise, mark DataLineDone and return whether there are remaining toZeroPath segments
@@ -259,21 +283,19 @@ public class XYDataAreaShapes {
         {
             // If still iterating over DataLine, do normal version
             if (!_dataLineDone)
-                return super.getNext(coords);
+                return _dataLinePathIter.getNext(coords);
 
             // Bump the counter for area segments
             _tozeroPathIndex++;
 
             // Handle ToZero segment 1: Drop down with line to ZeroDispY
             if (_tozeroPathIndex == 1) {
-                double dispX = _dispX[_endIndex];
-                return lineTo(dispX, _zeroDispY, coords);
+                return lineTo(_endDispX, _zeroDispY, coords);
             }
 
             // Handle ToZero segment 2: Move left with line to StartIndex.x
             if (_tozeroPathIndex == 2) {
-                double dispX = _dispX[_startIndex];
-                return lineTo(dispX, _zeroDispY, coords);
+                return lineTo(_startDispX, _zeroDispY, coords);
             }
 
             // Handle ToZero segment 3: Just close
@@ -287,22 +309,22 @@ public class XYDataAreaShapes {
     private static class DataAreaToNextPathIter extends PathIter {
 
         // The primary DataArea
-        private DataArea _dataArea;
+        private DataArea  _dataArea;
 
         // The PathIter to draw data line DataArea (may be wrapped in PointJoin PathIter)
-        private PathIter _dataAreaPathIter;
+        private PathIter  _dataLinePathIter;
 
         // The adjacent DataArea
-        private DataArea _nextDataArea;
+        private DataArea  _nextDataArea;
 
         // The PathIter to draw data line for adjacent DataArea (reversed to create shape)
-        private PathIter _nextDataAreaPathIter;
+        private PathIter  _nextDataAreaPathIter;
 
         // Whether data line iter is done
-        private boolean _dataLineDone;
+        private boolean  _dataLineDone;
 
         // Whether data area iter is done
-        private boolean _allDone;
+        private boolean  _allDone;
 
         /**
          * Constructor.
@@ -312,13 +334,13 @@ public class XYDataAreaShapes {
             super(aTrans);
             _dataArea = aDataArea;
 
-            // Get ThisDataAreaPathIter
-            _dataAreaPathIter = new DataLinePathIter(aTrans, aDataArea, false);
+            // Get DataLinePathIter for DataArea
+            _dataLinePathIter = new DataLinePathIter(aTrans, aDataArea, false);
 
             // Apply PointJoint PathIter, if needed
             PointJoin pointJoin = _dataArea.getDataStyle().getPointJoin();
             if (pointJoin != PointJoin.Line)
-                _dataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataAreaPathIter);
+                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter);
 
             // Get next data area
             _nextDataArea = _dataArea.getPreviousStackedDataArea();
@@ -331,7 +353,7 @@ public class XYDataAreaShapes {
         public boolean hasNext()
         {
             // If still iterating over DataLine, return true
-            if (_dataAreaPathIter.hasNext())
+            if (_dataLinePathIter.hasNext())
                 return true;
 
             // Mark DataLineDone
@@ -353,7 +375,7 @@ public class XYDataAreaShapes {
         {
             // If still iterating over DataLine, do normal version
             if (!_dataLineDone)
-                return _dataAreaPathIter.getNext(coords);
+                return _dataLinePathIter.getNext(coords);
 
             // If starting NextDataArea, create its PathIter, and add connecting LineTo to its end point
             if (_nextDataAreaPathIter == null) {
