@@ -1,6 +1,7 @@
 package snapcharts.viewx;
 import snap.geom.*;
 import snapcharts.model.PointJoin;
+import snapcharts.view.DataArea;
 
 /**
  * This class holds PathIters for PointJoins
@@ -10,15 +11,16 @@ public class XYPointJoins {
     /**
      * Returns the PathIter for a PointJoin.
      */
-    public static PathIter getPathIterForPointJoin(PointJoin pointJoin, PathIter pathIter)
+    public static PathIter getPathIterForPointJoin(PointJoin pointJoin, PathIter pathIter, DataArea aDataArea)
     {
         // For Other PointJoints, wrap in special PathIter to turn line segments into specified join
         switch (pointJoin) {
             case Line: return pathIter;
-            case HV: return new HVPathIter(pathIter);
-            case VH: return new VHPathIter(pathIter);
-            case HVH: return new HVHPathIter(pathIter);
+            case StepHV: return new StepHVPathIter(pathIter);
+            case StepVH: return new StepVHPathIter(pathIter);
+            case StepHVH: return new StepHVHPathIter(pathIter);
             case Spline: return new SplinePathIter(pathIter);
+            case Y0Between: return new Y0BetweenPathIter(pathIter, aDataArea);
             default:
                 System.err.println("DataLineShape.getPathIter: Unknown PointJoint: " + pointJoin);
                 return pathIter;
@@ -28,7 +30,7 @@ public class XYPointJoins {
     /**
      * A PathIter for PointJoin.HV that turns LineTos into two segments.
      */
-    public static class HVPathIter extends PathIter {
+    public static class StepHVPathIter extends PathIter {
 
         // The original PathIter
         protected PathIter _pathIter;
@@ -51,7 +53,7 @@ public class XYPointJoins {
         /**
          * Constructor.
          */
-        public HVPathIter(PathIter aPathIter)
+        public StepHVPathIter(PathIter aPathIter)
         {
             _pathIter = aPathIter;
         }
@@ -126,12 +128,12 @@ public class XYPointJoins {
     /**
      * A PathIter for PointJoin.VH that turns LineTos into two segments.
      */
-    public static class VHPathIter extends HVPathIter {
+    public static class StepVHPathIter extends StepHVPathIter {
 
         /**
          * Constructor.
          */
-        public VHPathIter(PathIter aPathIter)
+        public StepVHPathIter(PathIter aPathIter)
         {
             super(aPathIter);
         }
@@ -160,12 +162,12 @@ public class XYPointJoins {
     /**
      * A PathIter for PointJoin.HVH that turns LineTos into three segments.
      */
-    public static class HVHPathIter extends HVPathIter {
+    public static class StepHVHPathIter extends StepHVPathIter {
 
         /**
          * Constructor.
          */
-        public HVHPathIter(PathIter aPathIter)
+        public StepHVHPathIter(PathIter aPathIter)
         {
             super(aPathIter);
         }
@@ -190,6 +192,57 @@ public class XYPointJoins {
                 if (_stepCount == 1) {
                     _stepCount++;
                     return lineTo(_lastX, _nextY, coords);
+                }
+            }
+
+            // Do normal version
+            return super.getNext(coords);
+        }
+    }
+
+    /**
+     * A PathIter for PointJoin.Y0Between that turns LineTos into three segments.
+     */
+    public static class Y0BetweenPathIter extends StepHVPathIter {
+
+        // The y value in display coords for dataY == 0
+        private double  _zeroDispY;
+
+        /**
+         * Constructor.
+         */
+        public Y0BetweenPathIter(PathIter aPathIter, DataArea aDataArea)
+        {
+            super(aPathIter);
+
+            // Calculate display Y for data Y == 0
+            _zeroDispY = aDataArea.dataToViewY(0);
+            Transform xfm = aPathIter.getTransform();
+            if (xfm != null && !xfm.isIdentity())
+                _zeroDispY = xfm.transformY(0, _zeroDispY);
+        }
+
+        /**
+         * Override.
+         */
+        @Override
+        public Seg getNext(double[] coords)
+        {
+            // If LineTo, just pass along
+            if (_nextSeg == Seg.LineTo) {
+
+                // If first derived step, lineTo 25% next X and zero Y
+                if (_stepCount == 0) {
+                    _stepCount++;
+                    double f25 = _lastX + (_nextX - _lastX) * .25;
+                    return lineTo(f25, _zeroDispY, coords);
+                }
+
+                // If second derived step, lineTo 25% next X and zero Y
+                if (_stepCount == 1) {
+                    _stepCount++;
+                    double f75 = _lastX + (_nextX - _lastX) * .75;
+                    return lineTo(f75, _zeroDispY, coords);
                 }
             }
 

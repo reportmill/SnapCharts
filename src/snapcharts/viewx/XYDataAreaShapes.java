@@ -63,14 +63,14 @@ public class XYDataAreaShapes {
          * Return DataLinePathIter.
          */
         @Override
-        public PathIter getPathIter(Transform aT)
+        public PathIter getPathIter(Transform aTransform)
         {
             // Get normal PathIter for data line
-            PathIter pathIter = new DataLinePathIter(aT, _dataArea, _includeAll);
+            PathIter pathIter = new DataLinePathIter(aTransform, _dataArea, _includeAll);
 
             // Apply PointJoin PathIter, if needed
             if (_pointJoin != PointJoin.Line)
-                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter);
+                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter, _dataArea);
 
             // Return PathIter
             return pathIter;
@@ -94,18 +94,18 @@ public class XYDataAreaShapes {
          * Override to return DataAreaPathIter.
          */
         @Override
-        public PathIter getPathIter(Transform aT)
+        public PathIter getPathIter(Transform aTransform)
         {
             // If Stacked and there is a PreviousStackedDataArea, return DataAreaToNextPathIter
             boolean isStacked = _dataArea.getDataSet().isStacked();
             if (isStacked) {
                 DataArea previousStackedDataArea = _dataArea.getPreviousStackedDataArea();
                 if (previousStackedDataArea != null)
-                    return new DataAreaToNextPathIter(aT, _dataArea);
+                    return new DataAreaToNextPathIter(aTransform, _dataArea);
             }
 
             // Otherwise, just create DataAreaToZeroPathIter
-            return new DataAreaToZeroPathIter(aT, _dataArea);
+            return new DataAreaToZeroPathIter(aTransform, _dataArea);
         }
     }
 
@@ -250,7 +250,7 @@ public class XYDataAreaShapes {
             // Apply PointJoint PathIter, if needed
             PointJoin pointJoin = aDataArea.getDataStyle().getPointJoin();
             if (pointJoin != PointJoin.Line)
-                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter);
+                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aDataArea);
 
             // Get StartDispX, EndDispX
             _startDispX = dataLinePathIter._dispX[dataLinePathIter._startIndex];
@@ -340,7 +340,7 @@ public class XYDataAreaShapes {
             // Apply PointJoint PathIter, if needed
             PointJoin pointJoin = _dataArea.getDataStyle().getPointJoin();
             if (pointJoin != PointJoin.Line)
-                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter);
+                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aDataArea);
 
             // Get next data area
             _nextDataArea = _dataArea.getPreviousStackedDataArea();
@@ -388,7 +388,7 @@ public class XYDataAreaShapes {
                 PointJoin pointJoin = _nextDataArea.getDataStyle().getPointJoin();
                 PointJoin pointJoinReverse = pointJoin.getReverse(); // Turns HV to VH
                 if (pointJoinReverse != PointJoin.Line)
-                    _nextDataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoinReverse, _nextDataAreaPathIter);
+                    _nextDataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoinReverse, _nextDataAreaPathIter, _nextDataArea);
 
                 // Eat first segment (MoveTo)
                 if (_nextDataAreaPathIter.hasNext())

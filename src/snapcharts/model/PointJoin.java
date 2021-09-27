@@ -12,21 +12,23 @@ public enum PointJoin {
 
     Spline,
 
-    HV,
+    StepHV,
 
-    VH,
+    StepVH,
 
-    HVH;
+    StepHVH,
+
+    Y0Between;
 
     /**
      * Returns the reverse of this PointJoin.
      */
     public PointJoin getReverse()
     {
-        if (this == HV)
-            return VH;
-        if (this == VH)
-            return HV;
+        if (this == StepHV)
+            return StepVH;
+        if (this == StepVH)
+            return StepHV;
         return this;
     }
 }
