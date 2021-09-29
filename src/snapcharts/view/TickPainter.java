@@ -4,8 +4,10 @@
 package snapcharts.view;
 import snap.geom.Side;
 import snap.gfx.Color;
+import snap.gfx.Font;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
+import snap.view.StringView;
 import snapcharts.model.Axis;
 import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
@@ -74,6 +76,12 @@ public class TickPainter {
     // Polar stuff
     protected boolean isPolar;
     protected double polarShift;
+
+    // StringView for ShowLogMinorLabels
+    protected StringView  stringView;
+
+    // StringView XY for ShowLogMinorLabels
+    protected double  stringViewX, stringViewY;
 
     // Constants
     private static final Stroke DEFAULT_TICK_STROKE = Stroke.Stroke1;
@@ -173,6 +181,24 @@ public class TickPainter {
                 tickMinorMaxX = axisLineX + tickMinorShift;
             }
         }
+
+        // If isLog and ShowLogMinorLabels, create StringView
+        if (axisIsLog && axis.isShowLogMinorLabels()) {
+            stringView = new StringView();
+            Font font = axis.getFont();
+            int fontSize = (int) Math.round(font.getSize() * .75);
+            Font font2 = font.deriveFont(fontSize);
+            stringView.setFont(font2);
+            stringView.setFontSizing(false);
+            stringViewX = axis.getSide() == Side.LEFT ? Math.min(tickX, tickMaxX) - 4 : Math.max(tickX, tickMaxX) + 4;
+            stringViewY = Math.max(tickY, tickMaxY) + 4;
+
+            // If There really isn't room for labels, clear StringView
+            int intervalsCount = axisView.getIntervals().getCount();
+            if (axisType == AxisType.X && areaW / intervalsCount < 90 ||
+                axisType.isAnyY() && areaH / intervalsCount < 90)
+                stringView = null;
+        }
     }
 
     /**
@@ -254,8 +280,11 @@ public class TickPainter {
         aPntr.setColor(tickColor);
         aPntr.setStroke(tickStroke);
 
-        // Iterate over intervals and paint ticks
+        // Get intervals and count
         Intervals intervals = axisView.getIntervals();
+        int intervalsCount = intervals.getCount();
+
+        // Iterate over intervals and paint ticks
         for (int i = 0, iMax = intervals.getCount(); i < iMax; i++) {
 
             // Get interval in data coords, convert to display
@@ -342,7 +371,7 @@ public class TickPainter {
         double datX = incrX + incrX;
 
         // Iterate over extra 9 log ticks and paint
-        for (int i = 1; i < 10; i++, datX += incrX) {
+        for (int i = 2; i < 10; i++, datX += incrX) {
 
             // Get data val as log, convert to display coords (if polar, shift)
             double dataXLog = Math.log10(datX);
@@ -356,6 +385,14 @@ public class TickPainter {
             if (dispX > areaMaxX)
                 return;
             paintTickX(aPntr, dispX);
+
+            // If ShowLogMinorLabels, configure StringView and paint
+            if (stringView != null) {
+                stringView.setText(String.valueOf(i));
+                stringView.setSizeToPrefSize();
+                stringView.setXY(dispX - stringView.getWidth() / 2, stringViewY);
+                stringView.paintStringView(aPntr);
+            }
         }
     }
 
@@ -370,7 +407,7 @@ public class TickPainter {
         double datY = incrY + incrY;
 
         // Iterate over extra 9 log ticks and paint
-        for (int i = 1; i < 10; i++, datY += incrY) {
+        for (int i = 2; i < 10; i++, datY += incrY) {
 
             // Get data val as log, convert to display coords
             double datYLog = Math.log10(datY);
@@ -382,6 +419,17 @@ public class TickPainter {
             if (dispY < areaY)
                 return;
             paintTickY(aPntr, dispY);
+
+            // If ShowLogMinorLabels, configure StringView and paint
+            if (stringView != null) {
+                stringView.setText(String.valueOf(i));
+                stringView.setSizeToPrefSize();
+                double strViewX = stringViewX;
+                if (axis.getSide() == Side.LEFT)
+                    strViewX -= stringView.getWidth();
+                stringView.setXY(strViewX, dispY - stringView.getHeight() / 2);
+                stringView.paintStringView(aPntr);
+            }
         }
     }
 
@@ -399,5 +447,16 @@ public class TickPainter {
     private void paintTickY(Painter aPntr, double dispY)
     {
         aPntr.drawLine(tickX, dispY, tickMaxX, dispY);
+    }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        return "TickPainter { " +
+                "AxisType=" + axis.getType() +
+                " }";
     }
 }
