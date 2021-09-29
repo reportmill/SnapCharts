@@ -99,12 +99,6 @@ public class AxisInsp extends ChartPartInsp {
         // Reset TitleText
         setViewValue("TitleText", axis.getTitle());
 
-        // Reset ZeroRequiredCheckBox, LogCheckBox
-        setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
-        setViewValue("LogCheckBox", axis.isLog());
-        setViewValue("ShowLegendGraphicCheckBox", axis instanceof AxisY && ((AxisY) axis).isShowLegendGraphic());
-        setViewVisible("ShowLegendGraphicCheckBox", axis instanceof AxisY);
-
         // Reset MinBoundAutoButton, MinBoundDataButton, MinBoundValueButton, MinBoundText
         AxisBound minBound = axis.getMinBound();
         setViewValue("MinBoundAutoButton", minBound == AxisBound.AUTO);
@@ -124,6 +118,14 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("MaxBoundText", maxVal);
         setViewVisible("MaxBoundText", maxBound != AxisBound.AUTO);
         setViewEnabled("MaxBoundText", maxBound == AxisBound.VALUE);
+
+        // Reset ZeroRequiredCheckBox, LogCheckBox, ShowLogMinorLabelsCheckBox, ShowLegendGraphicCheckBox
+        setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
+        setViewValue("LogCheckBox", axis.isLog());
+        setViewValue("ShowLogMinorLabelsCheckBox", axis.isShowLogMinorLabels());
+        setViewVisible("ShowLogMinorLabelsCheckBox", axis.isLog());
+        setViewValue("ShowLegendGraphicCheckBox", axis instanceof AxisY && ((AxisY) axis).isShowLegendGraphic());
+        setViewVisible("ShowLegendGraphicCheckBox", axis instanceof AxisY);
 
         // Reset WrapCheckBox, WrapMinMaxBox, WrapMinText, WrapMaxText
         getView("WrapAxisBox").setVisible(axis.getType() == AxisType.X);
@@ -175,6 +177,9 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("60AngleButton", ticksAngle == 60);
         setViewValue("90AngleButton", ticksAngle == 90);
         setViewValue("TickLabelRotationText", ticksAngle);
+
+        // Reset MinorTickCountText
+        setViewValue("MinorTickCountText", axis.getMinorTickCount());
     }
 
     /**
@@ -234,11 +239,13 @@ public class AxisInsp extends ChartPartInsp {
             axis.setMaxValue(val);
         }
 
-        // Handle ZeroRequiredCheckBox, LogCheckBox, ShowLegendGraphic
+        // Handle ZeroRequiredCheckBox, LogCheckBox, ShowLogMinorLabelsCheckBox, ShowLegendGraphic
         if (anEvent.equals("ZeroRequiredCheckBox"))
             axis.setZeroRequired(anEvent.getBoolValue());
         if (anEvent.equals("LogCheckBox"))
             axis.setLog(anEvent.getBoolValue());
+        if (anEvent.equals("ShowLogMinorLabelsCheckBox"))
+            axis.setShowLogMinorLabels(anEvent.getBoolValue());
         if (anEvent.equals("ShowLegendGraphicCheckBox"))
             ((AxisY) axis).setShowLegendGraphic(anEvent.getBoolValue());
 
@@ -337,5 +344,9 @@ public class AxisInsp extends ChartPartInsp {
             axis.setTickLabelRotation(anEvent.getFloatValue());
             axis.setTickLabelAutoRotate(false);
         }
+
+        // Handle MinorTickCountText
+        if (anEvent.equals("MinorTickCountText"))
+            axis.setMinorTickCount(anEvent.getIntValue());
     }
 }

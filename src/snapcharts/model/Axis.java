@@ -40,6 +40,9 @@ public abstract class Axis extends ChartPart {
     // Whether axis is log10 based
     private boolean  _log;
 
+    // Whether axis should show log minor labels
+    private boolean  _showLogMinorLabels;
+
     // Whether axis repeats/wraps values
     private boolean  _wrapAxis;
 
@@ -73,6 +76,9 @@ public abstract class Axis extends ChartPart {
     // The position of the tick
     private TickPos  _tickPos;
 
+    // The number of minor tick marks between major ticks
+    private int  _minorTickCount;
+
     // Whether to show TickLabels
     private boolean  _showTickLabels;
 
@@ -91,6 +97,7 @@ public abstract class Axis extends ChartPart {
     public static final String MaxValue_Prop = "MaxValue";
     public static final String ZeroRequired_Prop = "ZeroRequired";
     public static final String Log_Prop = "Logarithmic";
+    public static final String ShowLogMinorLabels_Prop = "ShowLogMinorLabels";
     public static final String Side_Prop = "Side";
     public static final String WrapAxis_Prop = "WrapAxis";
     public static final String WrapMinMax_Prop = "WrapMinMax";
@@ -102,6 +109,7 @@ public abstract class Axis extends ChartPart {
     public static final String GridBase_Prop = "GridBase";
     public static final String TickLength_Prop = "TickLength";
     public static final String TickPos_Prop = "TickPos";
+    public static final String MinorTickCount_Prop = "MinorTickCount";
     public static final String ShowTickLabels_Prop = "ShowTickLabels";
     public static final String TickLabelAutoRotate_Prop = "TickLabelAutoRotate";
     public static final String TickLabelRotation_Prop = "TickLabelRotation";
@@ -122,6 +130,7 @@ public abstract class Axis extends ChartPart {
     public static final double[]  DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
     public static final int  DEFAULT_TICK_LENGTH = 7;
     public static final TickPos  DEFAULT_TICK_POS = TickPos.Inside;
+    public static final int  DEFAULT_MINOR_TICK_COUNT = 0;
     public static final boolean  DEFAULT_SHOW_TICK_LABELS = true;
     public static final boolean  DEFAULT_TICK_LABEL_AUTO_ROTATE = true;
     public static final NumberFormat  DEFAULT_AXIS_TEXT_FORMAT = new NumberFormat(null, ExpStyle.Financial);
@@ -279,6 +288,20 @@ public abstract class Axis extends ChartPart {
     {
         if (aValue == isLog()) return;
         firePropChange(Log_Prop, _log, _log = aValue);
+    }
+
+    /**
+     * Returns whether axis should show log minor labels.
+     */
+    public boolean isShowLogMinorLabels()  { return _showLogMinorLabels; }
+
+    /**
+     * Sets whether axis should show log minor labels.
+     */
+    public void setShowLogMinorLabels(boolean aValue)
+    {
+        if (aValue == _showLogMinorLabels) return;
+        firePropChange(ShowLogMinorLabels_Prop, _showLogMinorLabels, _showLogMinorLabels = aValue);
     }
 
     /**
@@ -471,6 +494,20 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
+     * Returns the number of minor tick marks between major ticks.
+     */
+    public int getMinorTickCount()  { return _minorTickCount; }
+
+    /**
+     * Sets the number of minor tick marks between major ticks.
+     */
+    public void setMinorTickCount(int aValue)
+    {
+        if (aValue == _minorTickCount) return;
+        firePropChange(MinorTickCount_Prop, _minorTickCount, _minorTickCount = aValue);
+    }
+
+    /**
      * Returns whether to show Tick labels.
      */
     public boolean isShowTickLabels()  { return _showTickLabels; }
@@ -560,13 +597,18 @@ public abstract class Axis extends ChartPart {
             case MinValue_Prop: return getMinValue();
             case MaxValue_Prop: return getMaxValue();
 
+            // Log, ShowLogMinorLabels
+            case Log_Prop: return isLog();
+            case ShowLogMinorLabels_Prop: return isShowLogMinorLabels();
+
             // GridSpacing, GridBase
             case GridSpacing_Prop: return getGridSpacing();
             case GridBase_Prop: return getGridBase();
 
-            // TickLength, TickPos
+            // TickLength, TickPos, MinorTickCount
             case TickLength_Prop: return getTickLength();
             case TickPos_Prop: return getTickPos();
+            case MinorTickCount_Prop: return getMinorTickCount();
 
             // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
             case ShowTickLabels_Prop: return isShowTickLabels();
@@ -600,6 +642,10 @@ public abstract class Axis extends ChartPart {
                 break;
             }
 
+            // Log, ShowLogMinorLabels
+            case Log_Prop: setLog(SnapUtils.boolValue(aValue)); break;
+            case ShowLogMinorLabels_Prop: setShowLogMinorLabels(SnapUtils.boolValue(aValue)); break;
+
             // GridSpacing, GridBase
             case GridSpacing_Prop: setGridSpacing(SnapUtils.doubleValue(aValue)); break;
             case GridBase_Prop: setGridBase(SnapUtils.doubleValue(aValue)); break;
@@ -607,6 +653,7 @@ public abstract class Axis extends ChartPart {
             // TickLength, TickPos
             case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
             case TickPos_Prop: setTickPos((TickPos) aValue); break;
+            case MinorTickCount_Prop: setMinorTickCount(SnapUtils.intValue(aValue)); break;
 
             // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
             case ShowTickLabels_Prop: setShowTickLabels(SnapUtils.boolValue(aValue)); break;
@@ -644,13 +691,18 @@ public abstract class Axis extends ChartPart {
             case MinValue_Prop: return 0;
             case MaxValue_Prop: return 5;
 
+            // Log, ShowLogMinorLabels
+            case Log_Prop: return false;
+            case ShowLogMinorLabels_Prop: return false;
+
             // GridSpacing, GridBase
             case GridSpacing_Prop: return 0;
             case GridBase_Prop: return 0;
 
-            // TickLength, TickPos
+            // TickLength, TickPos, MinorTickCount
             case TickLength_Prop: return DEFAULT_TICK_LENGTH;
             case TickPos_Prop: return DEFAULT_TICK_POS;
+            case MinorTickCount_Prop: return DEFAULT_MINOR_TICK_COUNT;
 
             // ShowTickLabels, TickLabelAutoRotate. TickLabelRotation_Prop
             case ShowTickLabels_Prop: return DEFAULT_SHOW_TICK_LABELS;
@@ -671,17 +723,19 @@ public abstract class Axis extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive Title, TitleRotate
+        // Archive Title, TitleRotation
         if (getTitle() != null && getTitle().length() > 0)
             e.add(Title_Prop, getTitle());
         if (getTitleRotation() != 0)
             e.add(TitleRotation_Prop, getTitleRotation());
 
-        // Archive ZeroRequired, Log
+        // Archive ZeroRequired, Log, ShowLogMinorLabels
         if (isZeroRequired())
             e.add(ZeroRequired_Prop, true);
-        if (isLog())
-            e.add(Log_Prop, true);
+        if (isPropDefault(Log_Prop))
+            e.add(Log_Prop, isLog());
+        if (isPropDefault(ShowLogMinorLabels_Prop))
+            e.add(ShowLogMinorLabels_Prop, isShowLogMinorLabels());
 
         // Archive WrapAxis, WrapMinMax
         if (isWrapAxis()) {
@@ -710,11 +764,13 @@ public abstract class Axis extends ChartPart {
         if (!isPropDefault(GridBase_Prop))
             e.add(GridBase_Prop, getGridBase());
 
-        // Archive TickLength, TickPos
+        // Archive TickLength, TickPos, MinorTickCount
         if (!isPropDefault(TickLength_Prop))
             e.add(TickLength_Prop, getTickLength());
         if (!isPropDefault(TickPos_Prop))
             e.add(TickPos_Prop, getTickPos());
+        if (!isPropDefault(MinorTickCount_Prop))
+            e.add(MinorTickCount_Prop, getMinorTickCount());
 
         // Archive ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
         if (!isPropDefault(ShowTickLabels_Prop))
@@ -743,11 +799,13 @@ public abstract class Axis extends ChartPart {
         if (anElement.hasAttribute(TitleRotation_Prop))
             setTitleRotation(anElement.getAttributeDoubleValue(TitleRotation_Prop));
 
-        // Unachive ZeroRequired
+        // Unachive ZeroRequired, Log, ShowLogMinorLabels
         if (anElement.hasAttribute(ZeroRequired_Prop))
             setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop, false));
         if (anElement.hasAttribute(Log_Prop))
             setLog(anElement.getAttributeBoolValue(Log_Prop));
+        if (anElement.hasAttribute(ShowLogMinorLabels_Prop))
+            setShowLogMinorLabels(anElement.getAttributeBoolValue(ShowLogMinorLabels_Prop));
 
         // Unarchive WrapAxis, WrapMinMax
         boolean isWrapAxis = anElement.getAttributeBoolValue(WrapAxis_Prop, false);
@@ -780,11 +838,13 @@ public abstract class Axis extends ChartPart {
         if (anElement.hasAttribute(GridBase_Prop))
             setGridBase(anElement.getAttributeDoubleValue(GridBase_Prop));
 
-        // Unarchive TickLength, TickPos
+        // Unarchive TickLength, TickPos, MinorTickCount
         if (anElement.hasAttribute(TickLength_Prop))
             setTickLength(anElement.getAttributeDoubleValue(TickLength_Prop));
         if (anElement.hasAttribute(TickPos_Prop))
             setTickPos(anElement.getAttributeEnumValue(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS));
+        if (anElement.hasAttribute(MinorTickCount_Prop))
+            setMinorTickCount(anElement.getAttributeIntValue(MinorTickCount_Prop));
 
         // Unarchive ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
         if (anElement.hasAttribute(ShowTickLabels_Prop))

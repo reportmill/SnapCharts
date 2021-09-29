@@ -40,7 +40,10 @@
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
   <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Spacing="5" text="Always Include Zero" />
-  <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
+  <RowView Spacing="6">
+    <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
+    <CheckBox Name="ShowLogMinorLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Minor Labels" />
+  </RowView>
   <CheckBox Name="ShowLegendGraphicCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Legend Graphic" />
   <RowView Name="WrapAxisBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
     <CheckBox Name="WrapCheckBox" Padding="0" Spacing="5" text="Wrap Axis" />
@@ -102,5 +105,11 @@
       <ToggleButton Name="90AngleButton" MinWidth="30" Padding="2" text="90&#176;" Position="CENTER_RIGHT" />
     </RowView>
     <TextField Name="TickLabelRotationText" Align="CENTER" GrowWidth="true" />
+  </RowView>
+  <RowView Spacing="4" GrowWidth="true">
+    <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+      <Label Spacing="4" text="Minor Tick Count:" />
+      <TextField Name="MinorTickCountText" Align="CENTER" ColCount="5" />
+    </RowView>
   </RowView>
 </ColView>
