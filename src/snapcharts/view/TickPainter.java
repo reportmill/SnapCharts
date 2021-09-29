@@ -53,6 +53,9 @@ public class TickPainter {
     // TickLength
     protected double  tickLength;
 
+    // Minor tick count
+    protected int  minorTickCount;
+
     // Axis line X, Y
     protected double  axisLineX, axisLineY;
 
@@ -61,6 +64,12 @@ public class TickPainter {
 
     // Tick line MaxX, MaxY
     protected double  tickMaxX, tickMaxY;
+
+    // Minor tick line X, Y
+    protected double  tickMinorX, tickMinorY;
+
+    // Minor tick line MaxX, MaxY
+    protected double  tickMinorMaxX, tickMinorMaxY;
 
     // Polar stuff
     protected boolean isPolar;
@@ -110,11 +119,16 @@ public class TickPainter {
         tickColor = DEFAULT_TICK_COLOR;
         tickStroke = DEFAULT_TICK_STROKE;
         tickLength = axis.getTickLength();
+        minorTickCount = axis.getMinorTickCount();
 
         // TickPos support
         Axis.TickPos tickPos = axis.getTickPos();
         double tickMult = tickPos == Axis.TickPos.Outside ? 1 : tickPos == Axis.TickPos.Across ? .5 : 0;
         double tickShift = tickLength * tickMult;
+
+        // Tick Minor
+        double tickMinorLength = Math.round(tickLength / 2);
+        double tickMinorShift = tickMinorLength * tickMult;
 
         // Update Axis line coords and tick coords for X Axis
         if (axisType == AxisType.X) {
@@ -124,6 +138,8 @@ public class TickPainter {
                 axisLineY = areaH;
                 tickY = axisLineY - tickShift;
                 tickMaxY = axisLineY + tickLength - tickShift;
+                tickMinorY = axisLineY - tickMinorShift;
+                tickMinorMaxY = axisLineY + tickMinorLength - tickMinorShift;
             }
 
             // Handle Bottom Axis
@@ -131,6 +147,8 @@ public class TickPainter {
                 axisLineY = 0;
                 tickY = axisLineY - tickLength + tickShift;
                 tickMaxY = axisLineY + tickShift;
+                tickMinorY = axisLineY - tickMinorLength + tickMinorShift;
+                tickMinorMaxY = axisLineY + tickMinorShift;
             }
         }
 
@@ -142,6 +160,8 @@ public class TickPainter {
                 axisLineX = areaMaxX;
                 tickX = axisLineX - tickShift;
                 tickMaxX = axisLineX + tickLength - tickShift;
+                tickMinorX = axisLineX - tickMinorShift;
+                tickMinorMaxX = axisLineX + tickMinorLength - tickMinorShift;
             }
 
             // Handle Right Axis
@@ -149,6 +169,8 @@ public class TickPainter {
                 axisLineX = areaX;
                 tickX = axisLineX - tickLength + tickShift;
                 tickMaxX = axisLineX + tickShift;
+                tickMinorX = axisLineX - tickMinorLength + tickMinorShift;
+                tickMinorMaxX = axisLineX + tickMinorShift;
             }
         }
     }
@@ -189,7 +211,7 @@ public class TickPainter {
 
         // Iterate over intervals and paint lines
         Intervals intervals = axisView.getIntervals();
-        for (int i=0, iMax=intervals.getCount(); i<iMax; i++) {
+        for (int i = 0, iMax = intervals.getCount(); i < iMax; i++) {
 
             // Get interval in data coords, convert to display
             double dataX = intervals.getInterval(i);
@@ -205,6 +227,12 @@ public class TickPainter {
             // If Log, paint log minor grid
             if (axisIsLog)
                 paintMinorLogTicksX(aPntr, dataX);
+
+            // If MinorTickCount, paint minor ticks
+            else if (minorTickCount > 0) {
+                double datX = i != 0 ? dataX : intervals.getFullInterval(0);
+                paintMinorTicksX(aPntr, datX);
+            }
         }
     }
 
@@ -228,7 +256,7 @@ public class TickPainter {
 
         // Iterate over intervals and paint ticks
         Intervals intervals = axisView.getIntervals();
-        for (int i=0, iMax=intervals.getCount(); i<iMax; i++) {
+        for (int i = 0, iMax = intervals.getCount(); i < iMax; i++) {
 
             // Get interval in data coords, convert to display
             double dataY = intervals.getInterval(i);
@@ -242,6 +270,64 @@ public class TickPainter {
             // If Log, paint log minor grid
             if (axisIsLog)
                 paintMinorLogTicksY(aPntr, dataY);
+
+            // If MinorTickCount, paint minor ticks
+            else if (minorTickCount > 0) {
+                double datY = i != 0 ? dataY : intervals.getFullInterval(0);
+                paintMinorTicksY(aPntr, datY);
+            }
+        }
+    }
+
+    /**
+     * Paints minor ticks for X axis.
+     */
+    protected void paintMinorTicksX(Painter aPntr, double dataX)
+    {
+        // Get start and increment for minor ticks
+        Intervals intervals = axisView.getIntervals();
+        double delta = intervals.getDelta();
+        double incrX = delta / (minorTickCount + 1);
+        double datX = dataX + incrX;
+
+        // Iterate to MinorTickCount and paint
+        for (int i = 0; i < minorTickCount; i++, datX += incrX) {
+
+            // Get data value in display coords
+            double dispX = (int) Math.round(_chartHelper.dataToView(axisView, datX));
+
+            // Paint tick (skip/return if outside bounds)
+            if (dispX < areaX)
+                continue;
+            if (dispX > areaMaxX)
+                return;
+            aPntr.drawLine(dispX, tickMinorY, dispX, tickMinorMaxY);
+        }
+    }
+
+    /**
+     * Paints minor ticks for Y axis.
+     */
+    protected void paintMinorTicksY(Painter aPntr, double dataY)
+    {
+        // Get start and increment for minor ticks
+        Intervals intervals = axisView.getIntervals();
+        double delta = intervals.getDelta();
+        double incrY = delta / (minorTickCount + 1);
+        double datY = dataY + incrY;
+
+        // Iterate to MinorTickCount and paint
+        for (int i = 0; i < minorTickCount; i++, datY += incrY) {
+
+            // Get data value in display coords
+            double dispY = (int) Math.round(_chartHelper.dataToView(axisView, datY));
+
+            // Paint tick (skip/return if outside bounds)
+            if (dispY > areaMaxY)
+                continue;
+            if (dispY < areaY)
+                return;
+            aPntr.drawLine(tickMinorX, dispY, tickMinorMaxX, dispY);
         }
     }
 
@@ -256,7 +342,7 @@ public class TickPainter {
         double datX = incrX + incrX;
 
         // Iterate over extra 9 log ticks and paint
-        for (int i=1; i<10; i++, datX+=incrX) {
+        for (int i = 1; i < 10; i++, datX += incrX) {
 
             // Get data val as log, convert to display coords (if polar, shift)
             double dataXLog = Math.log10(datX);
@@ -284,7 +370,7 @@ public class TickPainter {
         double datY = incrY + incrY;
 
         // Iterate over extra 9 log ticks and paint
-        for (int i=1; i<10; i++, datY+=incrY) {
+        for (int i = 1; i < 10; i++, datY += incrY) {
 
             // Get data val as log, convert to display coords
             double datYLog = Math.log10(datY);

@@ -107,6 +107,18 @@ public class Intervals {
     }
 
     /**
+     * Returns the full interval value for index.
+     */
+    public double getFullInterval(int anIndex)
+    {
+        if (anIndex == 0)
+            return getInterval(anIndex + 1) - getDelta();
+        if (anIndex == getCount() - 1)
+            return getInterval(anIndex - 1) + getDelta();
+        return getInterval(anIndex);
+    }
+
+    /**
      * Returns the divs.
      */
     public double[] getDivs()  { return _divs; }
