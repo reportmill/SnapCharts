@@ -12,8 +12,8 @@ import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import snapcharts.viewx.*;
-
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * A class to help customize ChartView for specific ChartType.
@@ -270,7 +270,7 @@ public abstract class ChartHelper {
         for (AxisType axisType : axisTypes) {
             if (!axisType.isAnyY()) continue;
             DataArea dataArea = getDataAreaForAxisTypeY(axisType);
-            if (dataArea!=null)
+            if (dataArea != null)
                 return dataArea;
         }
         return null;
@@ -285,6 +285,30 @@ public abstract class ChartHelper {
             if (dataArea.getAxisTypeY() == anAxisType)
                 return dataArea;
         return null;
+    }
+
+    /**
+     * Returns the DataAreas for axis type.
+     */
+    public DataArea[] getDataAreasForAxisType(AxisType anAxisType, boolean includeDisabled)
+    {
+        // Get DataAreas
+        DataArea[] dataAreas = getDataAreas();
+
+        // Handle AxisType X
+        if (anAxisType == AxisType.X) {
+            if (!includeDisabled)
+                dataAreas = ArrayUtils.filter(dataAreas, da -> !da.isDataSetDisabled());
+        }
+
+        // Handle AxisType Y
+        else if (anAxisType.isAnyY()) {
+            Predicate<DataArea> filter = da -> da.getAxisTypeY() == anAxisType && (includeDisabled || !da.isDataSetDisabled());
+            dataAreas = ArrayUtils.filter(dataAreas, filter);
+        }
+
+        // Return DataAreas
+        return dataAreas;
     }
 
     /**
@@ -409,43 +433,29 @@ public abstract class ChartHelper {
      */
     private MinMax getMinMaxForAxisStagedData(AxisType anAxisType)
     {
-        // If empty, just return silly range
-        DataArea[] dataAreas = getDataAreas();
+        // Get active DataAreas for given AxisType (if none, just return silly MinMax)
+        DataArea[] dataAreas = getDataAreasForAxisType(anAxisType, false);
         if (dataAreas.length == 0)
             return new MinMax(0, 5);
 
-        // Handle X
-        if (anAxisType == AxisType.X) {
-            double min = Double.MAX_VALUE;
-            double max = -Double.MAX_VALUE;
-            for (DataArea dataArea : dataAreas) {
-                if (!dataArea.isDataSetDisabled()) {
-                    DataStore stagedData = dataArea.getStagedData();
-                    min = Math.min(min, stagedData.getMinX());
-                    max = Math.max(max, stagedData.getMaxX());
-                }
-            }
-            return new MinMax(min, max);
+        // Get Data channel
+        boolean isX = anAxisType == AxisType.X;
+        if (!isX && !anAxisType.isAnyY())
+            throw new RuntimeException("ChartHelper.getMinMaxForAxis: Unknown axis: " + anAxisType);
+
+        // Get Min/Max
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        for (DataArea dataArea : dataAreas) {
+            DataStore stagedData = dataArea.getStagedData();
+            double minVal = isX ? stagedData.getMinX() : stagedData.getMinY();
+            double maxVal = isX ? stagedData.getMaxX() : stagedData.getMaxY();
+            min = Math.min(min, minVal);
+            max = Math.max(max, maxVal);
         }
 
-        // Handle Y
-        if (anAxisType.isAnyY()) {
-            double min = Double.MAX_VALUE;
-            double max = -Double.MAX_VALUE;
-            for (DataArea dataArea : dataAreas) {
-                if (anAxisType == dataArea.getAxisTypeY() && !dataArea.isDataSetDisabled()) {
-                    DataStore stagedData = dataArea.getStagedData();
-                    min = Math.min(min, stagedData.getMinY());
-                    max = Math.max(max, stagedData.getMaxY());
-                }
-            }
-            if (min == Double.MAX_VALUE)
-                return new MinMax(0, 5);
-            return new MinMax(min, max);
-        }
-
-        // Complain
-        throw new RuntimeException("ChartHelper.getMinMaxForAxis: Unknown axis: " + anAxisType);
+        // Return MinMax
+        return new MinMax(min, max);
     }
 
     /**
