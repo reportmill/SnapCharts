@@ -65,10 +65,12 @@ public class ChartInsp extends ChartPartInsp {
         // Handle BarChartButton, LineChartButton, PieChartButton
         if (anEvent.equals("LineChartButton"))
             ChartUtils.setScatterType(chart, ChartUtils.ScatterType.LINE);
-        if (anEvent.equals("AreaChartButton"))
-            ChartUtils.setScatterType(chart, ChartUtils.ScatterType.AREA);
         if (anEvent.equals("ScatterChartButton"))
             ChartUtils.setScatterType(chart, ChartUtils.ScatterType.SCATTER);
+        if (anEvent.equals("AreaChartButton"))
+            ChartUtils.setScatterType(chart, ChartUtils.ScatterType.AREA);
+        if (anEvent.equals("StackedAreaChartButton"))
+            ChartUtils.setScatterType(chart, ChartUtils.ScatterType.STACKED_AREA);
         if (anEvent.equals("BarChartButton"))
             chart.setType(ChartType.BAR);
         if (anEvent.equals("PieChartButton"))

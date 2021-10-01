@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="4" Spacing="4">
-    <Label text="Name:" />
+    <Label Spacing="4" text="Name:" />
     <TextField Name="NameText" GrowWidth="true" />
   </RowView>
   <TitleView MinWidth="120" MinHeight="60" GrowWidth="true" Text="Chart Type">
-    <RowView Padding="4,10,5,10" GrowWidth="true" FillHeight="true">
-      <ColView Spacing="4">
-        <RadioButton Name="LineChartButton" PrefWidth="80" PrefHeight="22" text="Line" Selected="true" Group="bg0" />
-        <RadioButton Name="AreaChartButton" PrefWidth="80" PrefHeight="22" text="Area" Group="bg0" />
-        <RadioButton Name="ScatterChartButton" PrefWidth="80" PrefHeight="22" text="Scatter" Group="bg0" />
-        <RadioButton Name="ContourChartButton" PrefWidth="80" PrefHeight="22" text="Contour" Group="bg0" />
+    <RowView Padding="6,10,5,15" GrowWidth="true" FillHeight="true">
+      <ColView MinWidth="120" Spacing="4">
+        <RadioButton Name="LineChartButton" PrefHeight="22" Spacing="5" text="Line" Selected="true" Group="bg0" />
+        <RadioButton Name="AreaChartButton" PrefHeight="22" Spacing="5" text="Area" Group="bg0" />
+        <RadioButton Name="BarChartButton" PrefWidth="80" PrefHeight="22" Spacing="5" text="Bar" Group="bg0" />
+        <RadioButton Name="PieChartButton" PrefHeight="22" Spacing="5" text="Pie" Group="bg0" />
+        <RadioButton Name="PolarChartButton" PrefHeight="22" Spacing="5" text="Polar" Group="bg0" />
+        <RadioButton Name="ContourChartButton" PrefHeight="22" Spacing="5" text="Contour" Group="bg0" />
       </ColView>
-      <ColView Spacing="4">
-        <RadioButton Name="BarChartButton" PrefWidth="80" PrefHeight="22" text="Bar" Group="bg0" />
-        <RadioButton Name="PieChartButton" PrefWidth="80" PrefHeight="22" text="Pie" Group="bg0" />
-        <RadioButton Name="PolarChartButton" PrefWidth="80" PrefHeight="22" text="Polar" Group="bg0" />
-        <RadioButton Name="PolarContourChartButton" PrefWidth="90" PrefHeight="22" text="Polar Contour" Group="bg0" />
-      </ColView>
-      <ColView Spacing="4">
-        <RadioButton Name="Bar3DChartButton" PrefWidth="90" PrefHeight="22" text="Bar 3D" Group="bg0" />
-        <RadioButton Name="Pie3DChartButton" PrefWidth="80" PrefHeight="22" text="Pie 3D" Group="bg0" />
-        <RadioButton Name="Line3DChartButton" PrefWidth="80" PrefHeight="22" text="Line 3D" Group="bg0" />
+      <ColView MinWidth="100" Spacing="4">
+        <RadioButton Name="ScatterChartButton" PrefHeight="22" Spacing="5" text="Scatter" Group="bg0" />
+        <RadioButton Name="StackedAreaChartButton" PrefHeight="22" Spacing="5" text="Stacked Area" Group="bg0" />
+        <RadioButton Name="Bar3DChartButton" PrefHeight="22" Spacing="5" text="Bar 3D" Group="bg0" />
+        <RadioButton Name="Pie3DChartButton" PrefHeight="22" Spacing="5" text="Pie 3D" Group="bg0" />
+        <RadioButton Name="PolarContourChartButton" PrefHeight="22" Spacing="5" text="Polar Contour" Group="bg0" />
+        <RadioButton Name="Line3DChartButton" PrefHeight="22" Spacing="5" text="Line 3D" Group="bg0" />
       </ColView>
     </RowView>
   </TitleView>
