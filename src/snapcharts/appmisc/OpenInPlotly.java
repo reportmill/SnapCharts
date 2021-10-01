@@ -1,5 +1,7 @@
 package snapcharts.appmisc;
 import snap.geom.Side;
+import snap.text.NumberFormat;
+import snap.text.TextFormat;
 import snap.util.FileUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
@@ -36,7 +38,7 @@ public class OpenInPlotly {
      */
     public String getHtmlFileString(List<Chart> theCharts)
     {
-        writeHtmlHeader();
+        writeHtmlHeader(theCharts.size() == 1);
         writeHtmlBody(theCharts);
         for (int i=0; i<theCharts.size(); i++)
             writeChart(theCharts.get(i), i);
@@ -47,12 +49,18 @@ public class OpenInPlotly {
     /**
      * Writes the HTML header.
      */
-    private void writeHtmlHeader()
+    private void writeHtmlHeader(boolean isSingle)
     {
         _sb.append("<!DOCTYPE html>\n");
         _sb.append("<html lang='en' class=''>\n");
         _sb.append("<head>\n");
         _sb.append("<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>\n");
+        if (isSingle) {
+            _sb.append("<style type='text/css'>\n");
+            _sb.append("html { height: 100%; }\n");
+            _sb.append("body { height: 95%; }\n");
+            _sb.append("</style>\n\n");
+        }
         _sb.append("</head>\n\n");
     }
 
@@ -63,6 +71,11 @@ public class OpenInPlotly {
     {
         String style = "min-width:310px;max-width:640px;height:480px;margin-top:30px;margin-left:30px;box-shadow:1px 1px 6px grey;";
         _sb.append("<body>\n");
+
+        // If only one chart, make it grow
+        if (theCharts.size() == 1) {
+            style = "width:75%;height:60%;margin-top:30px;margin-left:30px;box-shadow:1px 1px 6px grey;";
+        }
 
         for (int i=0; i<theCharts.size(); i++)
             _sb.append("<div id='chartDiv").append(i).append("' style='").append(style).append("'></div>\n");
@@ -107,6 +120,7 @@ public class OpenInPlotly {
         _sb.append("var config = {\n");
         _sb.append("  showLink: true,\n");
         _sb.append("  scrollZoom: true,\n");
+        _sb.append("  responsive: true,\n");
         _sb.append("  plotlyServerURL: 'https://chart-studio.plotly.com'\n");
         _sb.append("};\n\n");
 
@@ -205,9 +219,29 @@ public class OpenInPlotly {
             }
         }
 
+        // Add exponentformat
+        TextFormat textFormat = axis.getTextFormat();
+        if (textFormat instanceof NumberFormat) {
+            NumberFormat numberFormat = (NumberFormat) textFormat;
+            if (numberFormat.getExpStyle() == NumberFormat.ExpStyle.Scientific)
+                axisJS.addKeyValue("exponentformat", "power");
+        }
+
         // Add log support
         if (axis.isLog())
             axisJS.addKeyValue("type", "log");
+
+        // Add tickangle support
+        if (!axis.isTickLabelAutoRotate()) {
+            double angle = axis.getTickLabelRotation();
+            axisJS.addKeyValue("tickangle", -angle);
+        }
+
+        // Add TickFont family, size
+        JSONNode tickfontJS = new JSONNode();
+        tickfontJS.addKeyValue("family", axis.getFont().getFamily());
+        tickfontJS.addKeyValue("size", axis.getFont().getSize());
+        axisJS.addKeyValue("tickfont", tickfontJS);
 
         // Add Axis json node to layout node (if needed)
         if (axisJS.getNodeCount() > 0)
