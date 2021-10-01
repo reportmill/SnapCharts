@@ -333,13 +333,13 @@ public class Intervals {
                 double[] ivals = getDivsForMinMaxIncr(aMin, aMax, incr, 0, minFixed, maxFixed);
 
                 // If only 3 intervals and StepSize is less than half original MinSize, use ends instead
-                if (ivals.length == 3 && stepSize < divLen / 2)
-                {
-                    ivals = new double[] { ivals[0], ivals[ivals.length - 1] };
-                }
+                //if (ivals.length == 3 && stepSize < divLen / 2)
+                //    ivals = new double[] { ivals[0], ivals[ivals.length - 1] };
 
-                // Return intervals
-                return ivals;
+                // If at least 1 full interval, return intervals
+                int fullDivCount = ivals.length - (minFixed ? 1 : 0) - (maxFixed ? 1 : 0);
+                if (fullDivCount > 1)
+                    return ivals;
             }
         }
 
