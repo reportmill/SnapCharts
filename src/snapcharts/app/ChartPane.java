@@ -40,6 +40,9 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     // The Inspector
     protected ChartPaneInsp  _insp;
 
+    // A helper for Marker tools
+    protected ChartPaneTools  _chartPaneTools;
+
     // Whether this ChartPane is in DataSet mode
     protected boolean  _dataSetMode;
 
@@ -315,6 +318,10 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Register for EscapeAction
         addKeyActionHandler("EscapeAction", "ESCAPE");
 
+        // Add ChartPaneTools
+        _chartPaneTools = new ChartPaneTools(this);
+        _chartPaneTools.addChartPaneTools();
+
         // Set Chart in ChartView
         Chart chart = getChart();
         _chartView.setChart(chart);
@@ -410,6 +417,10 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle EscapeAction
         if (anEvent.equals("EscapeAction"))
             getSel().popSelection();
+
+        // Handle EditButton
+        if (anEvent.equals("EditButton"))
+            _chartPaneTools.respondEditButton(anEvent);
     }
 
     /**
