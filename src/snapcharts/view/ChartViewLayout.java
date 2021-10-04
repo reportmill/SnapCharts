@@ -105,10 +105,6 @@ public class ChartViewLayout {
 
         // Copy back to views
         _chartProxy.setBoundsInClient();
-
-        // Clear PrefDataAreaBounds
-        _prefDataBounds = null;
-        _chartView.setPrefDataViewBounds(null);
     }
 
     /**

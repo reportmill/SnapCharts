@@ -54,9 +54,13 @@ public class PageViewLayout {
         layoutChartsInGrid();
 
         // Force charts to layout their children
-        for (View child : _page.getChildren())
-            if (child instanceof ChartView)
-                ((ChartView)child).layout();
+        for (View child : _page.getChildren()) {
+            if (child instanceof ChartView) {
+                ChartView chartView = (ChartView) child;
+                chartView.setPrefDataViewBounds(null);
+                chartView.layout();
+            }
+        }
 
         // Set DataViews children in ChartView proxies
         for (ViewProxy<ChartView> chartProxy : _chartProxies) {
