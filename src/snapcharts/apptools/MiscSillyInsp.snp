@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4,10,4,10" FillWidth="true">
+  <RowView Padding="4,2,4,2" Spacing="4">
+    <Label text="Points of Interest:" />
+  </RowView>
+  <RowView Padding="4,2,4,2" Spacing="4">
+    <ListView Name="ListView" MinWidth="120" MinHeight="60" GrowWidth="true" GrowHeight="true">
+      <LineBorder Color="#c0c0c0" />
+    </ListView>
+  </RowView>
+</ColView>
