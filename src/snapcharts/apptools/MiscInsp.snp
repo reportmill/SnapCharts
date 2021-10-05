@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ColView Padding="3,0,0,0" Spacing="4" FillWidth="true">
+<ColView FillWidth="true">
   <ScrollView Name="ContentBox" GrowHeight="true">
     <ColView Name="InspColView" FillWidth="true" />
   </ScrollView>

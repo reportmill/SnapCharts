@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
+import snap.gfx.Font;
 import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.appmisc.Collapser;
@@ -51,11 +52,13 @@ public class MiscInsp extends ViewOwner {
         _layoutInsp = new LayoutInsp(_chartPane);
         addInspector(_layoutInsp, true);
         _layoutInsp.setSelected(true);
+        _layoutInsp.getLabel().setFont(Font.Arial14);
 
         // Create/add MiscSillyInsp
         _sillyInsp = new MiscSillyInsp(_chartPane);
         addInspector(_sillyInsp, true);
         _sillyInsp.setSelected(true);
+        _sillyInsp.getLabel().setFont(Font.Arial14);
     }
 
     /**
