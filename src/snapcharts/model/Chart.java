@@ -2,13 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.geom.Insets;
 import snap.gfx.Color;
-import snap.gfx.Paint;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
 import snapcharts.util.ChartUtils;
-
 import java.util.Objects;
 
 /**
@@ -72,15 +71,18 @@ public class Chart extends ParentPart {
     public static final String Markers_Rel = "Markers";
 
     // Constants for property defaults
-    public static final ChartType DEFAULT_TYPE = ChartType.SCATTER;
+    public static final ChartType  DEFAULT_TYPE = ChartType.SCATTER;
+    public static final Color  DEFAULT_CHART_FILL = Color.WHITE;
+    public static Insets  DEFAULT_CHART_PADDING = new Insets(5);
 
     /**
      * Creates a ChartView.
      */
     public Chart()
     {
-        // Configure
-        setFill((Paint) getPropDefault(Fill_Prop));
+        // Set default property values
+        _fill = DEFAULT_CHART_FILL;
+        _padding = DEFAULT_CHART_PADDING;
 
         // Create/set Header
         _header = new Header();
@@ -373,6 +375,22 @@ public class Chart extends ParentPart {
     }
 
     /**
+     * Override for Chart properties.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        switch (aPropName) {
+
+            // Type
+            case Type_Prop: setType((ChartType) aValue); break;
+
+            // Do normal version
+            default: super.setPropValue(aPropName, aValue); break;
+        }
+    }
+
+    /**
      * Returns the value for given key.
      */
     @Override
@@ -381,8 +399,9 @@ public class Chart extends ParentPart {
         // Handle properties
         switch (aPropName) {
 
-            // Fill
-            case Fill_Prop: return Color.WHITE;
+            // Fill, Padding
+            case Fill_Prop: return DEFAULT_CHART_FILL;
+            case Padding_Prop: return DEFAULT_CHART_PADDING;
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

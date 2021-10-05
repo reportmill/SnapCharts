@@ -56,8 +56,7 @@ public class AxisViewY extends AxisView<AxisY> {
         _legendGraphicBox.setGrowHeight(true);
         addChild(_legendGraphicBox, 1);
 
-        // Set Padding
-        setPadding(0, AXIS_MARGIN, 0, AXIS_MARGIN);
+        // Config TickLabelBox for vertical
         _tickLabelBox.setGrowHeight(true);
     }
 
@@ -149,7 +148,6 @@ public class AxisViewY extends AxisView<AxisY> {
     {
         // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
-        viewProxy.setSpacing(TITLE_TICKS_SPACING);
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Axis axis = getAxis();

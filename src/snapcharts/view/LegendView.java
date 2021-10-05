@@ -73,11 +73,6 @@ public class LegendView extends ChartPartView<Legend> {
         // Get info
         Legend legend = getLegend();
 
-        // Attributes
-        setMargin(legend.getMargin());
-        setPadding(legend.getPadding());
-
-        // Reset EntryBox
         resetEntryBox();
         _entryBox.setSpacing(_entryBox.getSpacing() + legend.getSpacing());
 

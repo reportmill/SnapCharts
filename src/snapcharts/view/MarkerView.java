@@ -47,12 +47,8 @@ public class MarkerView extends ChartPartView<Marker> {
         // Do normal version
         super.resetView();
 
-        // Update MarkerView paint properties
+        // Get Marker
         Marker marker = getMarker();
-        setFill(marker.getFill());
-        setBorder(marker.getBorder());
-        setOpacity(marker.getOpacity());
-        setPadding(marker.getPadding());
 
         // If showing text in axis, just return
         if (marker.isShowTextInAxis()) {

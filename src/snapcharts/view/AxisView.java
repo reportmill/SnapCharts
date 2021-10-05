@@ -62,10 +62,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public static final String AxisMin_Prop = "AxisMin";
     public static final String AxisMax_Prop = "AxisMax";
 
-    // Constants for layout
-    protected final int AXIS_MARGIN = 5;
-    protected final int TITLE_TICKS_SPACING = 8;
-
     // Grid Constants
     public static Color TICK_LINE_COLOR = Color.GRAY;
 
@@ -82,9 +78,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public AxisView()
     {
         super();
-
-        // Set font
-        setFont(Font.Arial12);
 
         // Create configure TitleView
         _titleView = new StringView();

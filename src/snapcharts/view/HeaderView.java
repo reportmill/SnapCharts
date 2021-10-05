@@ -49,12 +49,6 @@ public class HeaderView extends ChartPartView<Header> {
         Chart chart = getChart();
         Header header = chart.getHeader();
 
-        // Reset Align, Margin, Padding
-        setAlign(header.getAlign());
-        setMargin(header.getMargin());
-        setPadding(header.getPadding());
-        setSpacing(header.getSpacing());
-
         // Reset Title
         String title = header.getTitle();
         _titleView.setText(title);

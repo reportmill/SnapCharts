@@ -254,10 +254,11 @@ public class DataView extends ChartPartView<DataSetList> {
      * Override to suppress Border.
      */
     @Override
-    protected void resetViewFromStyledChartPart(ChartPart aChartPart)
+    protected void resetView()
     {
-        setFont(aChartPart.getFont());
-        setFill(aChartPart.getFill());
-        setEffect(aChartPart.getEffect());
+        ChartPart chartPart = getChartPart();
+        setFont(chartPart.getFont());
+        setFill(chartPart.getFill());
+        setEffect(chartPart.getEffect());
     }
 }

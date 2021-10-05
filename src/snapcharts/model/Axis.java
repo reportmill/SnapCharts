@@ -114,10 +114,6 @@ public abstract class Axis extends ChartPart {
     public static final String TickLabelAutoRotate_Prop = "TickLabelAutoRotate";
     public static final String TickLabelRotation_Prop = "TickLabelRotation";
 
-    // Constant for GridBase special values
-    public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
-    public static final double GRID_BASE_DATA_MAX = Float.MAX_VALUE;
-
     // Constants for default values
     public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
     public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
@@ -134,6 +130,14 @@ public abstract class Axis extends ChartPart {
     public static final boolean  DEFAULT_SHOW_TICK_LABELS = true;
     public static final boolean  DEFAULT_TICK_LABEL_AUTO_ROTATE = true;
     public static final NumberFormat  DEFAULT_AXIS_TEXT_FORMAT = new NumberFormat(null, ExpStyle.Financial);
+
+    // Constants for layout
+    protected static final int DEFAULT_AXIS_PAD = 5;
+    protected static final double DEFAULT_AXIS_SPACING = 8;
+
+    // Constant for GridBase special values
+    public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
+    public static final double GRID_BASE_DATA_MAX = Float.MAX_VALUE;
 
     // Constants for Tick position
     public enum TickPos { Inside, Outside, Across, Off }
@@ -682,8 +686,9 @@ public abstract class Axis extends ChartPart {
             case TextFill_Prop: return DEFAULT_AXIS_TEXT_FILL;
             case TextFormat_Prop: return DEFAULT_AXIS_TEXT_FORMAT;
 
-            // Align
+            // Align, Spacing
             case Align_Prop: return DEFAULT_AXIS_ALIGN;
+            case Spacing_Prop: return DEFAULT_AXIS_SPACING;
 
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return AxisBound.AUTO;

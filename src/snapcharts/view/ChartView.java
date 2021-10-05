@@ -303,6 +303,17 @@ public class ChartView extends ChartPartView<Chart> {
     }
 
     /**
+     * Override for ChartView.
+     */
+    @Override
+    protected boolean isResetProp(String aPropName)
+    {
+        if (aPropName == ChartPart.Border_Prop || aPropName == ChartPart.Effect_Prop)
+            return false;
+        return super.isResetProp(aPropName);
+    }
+
+    /**
      * Registers view to reset later.
      */
     public void resetLater()

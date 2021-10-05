@@ -76,12 +76,19 @@ public class MiscInsp extends ViewOwner {
         setViewValue("AlignMiddleButton", alignY == VPos.CENTER);
         setViewValue("AlignBottomButton", alignY == VPos.BOTTOM);
 
-        // Update MarginText, PadText, SpacingText
+        // Update MarginText, MarginResetButton
         setViewValue("MarginLabel", getInsetsSelStringForTextFieldName("MarginText"));
         setViewValue("MarginText", getInsetsString(selPart.getMargin()));
+        setViewVisible("MarginResetButton", !selPart.isPropDefault(ChartPart.Margin_Prop));
+
+        // Update PadText, PadResetButton
         setViewValue("PadLabel", getInsetsSelStringForTextFieldName("PadText"));
         setViewValue("PadText", getInsetsString(selPart.getPadding()));
+        setViewVisible("PadResetButton", !selPart.isPropDefault(ChartPart.Padding_Prop));
+
+        // Update SpacingText, SpacingResetButton
         setViewValue("SpacingText", selPart.getSpacing());
+        setViewVisible("SpacingResetButton", !selPart.isPropDefault(ChartPart.Spacing_Prop));
     }
 
     /**
@@ -115,19 +122,28 @@ public class MiscInsp extends ViewOwner {
         if (anEvent.equals("MarginText")) selPart.setMargin(Insets.get(anEvent.getStringValue()));
         if (anEvent.equals("MarginAdd1Button")) adjustMargin(selPart, 1);
         if (anEvent.equals("MarginSub1Button")) adjustMargin(selPart, -1);
-        if (anEvent.equals("MarginResetButton")) selPart.setMargin(ChartPart.DEFAULT_MARGIN);
+        if (anEvent.equals("MarginResetButton")) {
+            Insets defaultMargin = (Insets) selPart.getPropDefault(ChartPart.Margin_Prop);
+            selPart.setMargin(defaultMargin);
+        }
 
         // Handle PadText, PadAdd1Button, PadSub1Button, PadResetButton
         if (anEvent.equals("PadText")) selPart.setPadding(Insets.get(anEvent.getStringValue()));
         if (anEvent.equals("PadAdd1Button")) adjustPadding(selPart, 1);
         if (anEvent.equals("PadSub1Button")) adjustPadding(selPart, -1);
-        if (anEvent.equals("PadResetButton")) selPart.setPadding(ChartPart.DEFAULT_PADDING);
+        if (anEvent.equals("PadResetButton")) {
+            Insets defaultPadding = (Insets) selPart.getPropDefault(ChartPart.Padding_Prop);
+            selPart.setPadding(defaultPadding);
+        }
 
         // Handle SpacingText, SpacingAdd5Button, SpacingResetButton
         if (anEvent.equals("SpacingText")) selPart.setSpacing(anEvent.getFloatValue());
-        if (anEvent.equals("SpacingAdd1Button")) selPart.setSpacing(selPart.getSpacing()+1);
-        if (anEvent.equals("SpacingSub1Button")) selPart.setSpacing(selPart.getSpacing()-1);
-        if (anEvent.equals("SpacingResetButton")) selPart.setSpacing(0);
+        if (anEvent.equals("SpacingAdd1Button")) selPart.setSpacing(selPart.getSpacing() + 1);
+        if (anEvent.equals("SpacingSub1Button")) selPart.setSpacing(selPart.getSpacing() - 1);
+        if (anEvent.equals("SpacingResetButton")) {
+            double defaultSpacing = selPart.getPropDefaultDouble(ChartPart.Spacing_Prop);
+            selPart.setSpacing(defaultSpacing);
+        }
     }
 
     /**

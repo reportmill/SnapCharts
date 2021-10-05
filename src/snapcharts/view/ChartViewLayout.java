@@ -39,9 +39,6 @@ public class ChartViewLayout {
     // The maximum size that a side can be as ratio of chart size ( 30% )
     private final double MAX_SIDE_RATIO = .4;
 
-    // The default side padding size
-    private final int SIDE_MARGIN = 10;
-
     // The default spacing between views
     private final int VIEW_SPACING = 8;
 
@@ -140,7 +137,7 @@ public class ChartViewLayout {
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
-        viewProxy.setPadding(new Insets(SIDE_MARGIN, SIDE_MARGIN, 0, SIDE_MARGIN));
+        viewProxy.setPadding(getPaddingForSide(Side.TOP));
         viewProxy.setFillWidth(true);
         ViewProxy<?>[] topViews = getViewsForSide(Side.TOP);
         viewProxy.setChildren(topViews);
@@ -189,11 +186,7 @@ public class ChartViewLayout {
         viewProxy.setFillWidth(true);
         ViewProxy<?>[] bottomViews = getViewsForSide(Side.BOTTOM);
         viewProxy.setChildren(bottomViews);
-
-        // Set ViewProxy.Insets, with special accommodation for AxisViewX (no inset)
-        ViewProxy bottomView0 = bottomViews.length > 0 ? bottomViews[0] : null;
-        double insTop = bottomView0 != null && bottomView0.getView() instanceof AxisViewX ? 0 : SIDE_MARGIN;
-        viewProxy.setPadding(new Insets(insTop, SIDE_MARGIN, SIDE_MARGIN, SIDE_MARGIN));
+        viewProxy.setPadding(getPaddingForSide(Side.BOTTOM));
         return viewProxy;
     }
 
@@ -234,11 +227,7 @@ public class ChartViewLayout {
         viewProxy.setChildren(leftViews);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setFillHeight(true);
-
-        // Set ViewProxy.Insets, with special accommodation for AxisViewY (no inset)
-        ViewProxy<?> leftViewN = leftViews.length > 0 ? leftViews[leftViews.length-1] : null;
-        double insRight = leftViewN != null && leftViewN.getView() instanceof AxisView ? 0 : SIDE_MARGIN;
-        viewProxy.setPadding(new Insets(_dataAreaInsets.top, insRight, _dataAreaInsets.bottom, SIDE_MARGIN));
+        viewProxy.setPadding(getPaddingForSide(Side.LEFT));
         return viewProxy;
     }
 
@@ -284,11 +273,7 @@ public class ChartViewLayout {
         viewProxy.setChildren(rightViews);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setFillHeight(true);
-
-        // Set SideProxy.Insets, with special accommodation for AxisViewY (no inset)
-        ViewProxy<?> rightViewN = rightViews.length > 0 ? rightViews[0] : null;
-        double insLeft = rightViewN != null && (rightViewN.getView() instanceof AxisView) ? 0 : SIDE_MARGIN;
-        viewProxy.setPadding(new Insets(_dataAreaInsets.top, SIDE_MARGIN, _dataAreaInsets.bottom, insLeft));
+        viewProxy.setPadding(getPaddingForSide(Side.RIGHT));
         return viewProxy;
     }
 
@@ -443,6 +428,42 @@ public class ChartViewLayout {
             default: throw new RuntimeException("ChartViewLayout.getBoundsForSideFixed: Unknown side: " + aSide);
         }
         return bounds;
+    }
+
+    /**
+     * Returns the padding for side.
+     */
+    private Insets getPaddingForSide(Side aSide)
+    {
+        // Start with ChartView.Padding
+        Insets padding = _chartView.getPadding().clone();
+
+        // Adjust for side
+        switch (aSide) {
+
+            // Handle TOP
+            case TOP: padding.bottom = 0; break;
+
+            // Handle BOTTOM
+            case BOTTOM: padding.top = 0; break;
+
+            // Handle LEFT
+            case LEFT:
+                padding.top = _dataAreaInsets.top;
+                padding.bottom = _dataAreaInsets.bottom;
+                padding.right = 0;
+                break;
+
+            // Handle RIGHT
+            case RIGHT:
+                padding.top = _dataAreaInsets.top;
+                padding.bottom = _dataAreaInsets.bottom;
+                padding.left = 0;
+                break;
+        }
+
+        // Return padding
+        return padding;
     }
 
     /**

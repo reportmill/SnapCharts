@@ -3,9 +3,7 @@
  */
 package snapcharts.view;
 import snap.geom.Insets;
-import snap.geom.Pos;
 import snap.geom.Side;
-import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.view.ColView;
 import snap.view.Cursor;
@@ -24,11 +22,9 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     public AxisViewX()
     {
         super();
-        setFont(Font.Arial12);
+
         setCursor(Cursor.E_RESIZE);
 
-        // Set Padding
-        setPadding(AXIS_MARGIN, 0, AXIS_MARGIN, 0);
         _tickLabelBox.setGrowWidth(true);
         _markersBox.setGrowWidth(true);
     }
@@ -84,17 +80,15 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
 
-        // Configure Align, Spacing
+        // Get Axis
         Axis axis = getAxis();
-        Pos align = axis.getAlign();
-        viewProxy.setAlign(align);
-        viewProxy.setSpacing(TITLE_TICKS_SPACING + axis.getSpacing());
 
         // If MarkersBox is visible, use margins instead
         if (_markersBox.isVisible()) {
-            viewProxy.setSpacing(axis.getSpacing());
+            viewProxy.setSpacing(0);
             ViewProxy markersBoxProxy = viewProxy.getChildForClass(MarkersBox.class);
-            markersBoxProxy.setMargin(new Insets(2, 0, TITLE_TICKS_SPACING -2, 0));
+            double axisSpacing = axis.getSpacing();
+            markersBoxProxy.setMargin(new Insets(2, 0, axisSpacing - 2, 0));
         }
 
         // Reverse children (assumes Side == Bottom)

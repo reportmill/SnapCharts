@@ -84,22 +84,35 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     {
         // Get ChartPart
         ChartPart chartPart = getChartPart();
-        resetViewFromStyledChartPart(chartPart);
+
+        // Update Border, Fill, Effect, Font
+        if (isResetProp(ChartPart.Border_Prop))
+            setBorder(chartPart.getBorder());
+        if (isResetProp(ChartPart.Fill_Prop))
+            setFill(chartPart.getFill());
+        if (isResetProp(ChartPart.Effect_Prop))
+            setEffect(chartPart.getEffect());
+        if (isResetProp(ChartPart.Opacity_Prop))
+            setOpacity(chartPart.getOpacity());
+        if (isResetProp(ChartPart.Font_Prop))
+            setFont(chartPart.getFont());
+
+        // Update Align, Margin, Padding, Spacing
+        if (isResetProp(ChartPart.Align_Prop))
+            setAlign(chartPart.getAlign());
+        if (isResetProp(ChartPart.Margin_Prop))
+            setMargin(chartPart.getMargin());
+        if (isResetProp(ChartPart.Padding_Prop))
+            setPadding(chartPart.getPadding());
+        if (isResetProp(ChartPart.Spacing_Prop))
+            setSpacing(chartPart.getSpacing());
     }
 
     /**
-     * Called to reset view paint style attributes from updated ChartPartPainted.
+     * Returns whether a given property should be updated.
      */
-    protected void resetViewFromStyledChartPart(ChartPart aChartPart)
+    protected boolean isResetProp(String aPropName)
     {
-        // Update Font, Fill
-        setFont(aChartPart.getFont());
-        setFill(aChartPart.getFill());
-
-        // Update Border, Effect
-        if (!(this instanceof ChartView)) {
-            setBorder(aChartPart.getBorder());
-            setEffect(aChartPart.getEffect());
-        }
+        return true;
     }
 }

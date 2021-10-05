@@ -2,8 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.geom.Insets;
+import snap.util.PropDefaults;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
+import snapcharts.util.MinMax;
 
 /**
  * A class to represent a Chart Axis.
@@ -18,6 +22,10 @@ public class AxisY extends Axis {
 
     // Constants for properties
     public static final String ShowLegendGraphic_Prop = "ShowLegendGraphic";
+
+    // Constants for default values
+    private static final boolean DEFAULT_SHOW_LEGEND_GRAPHIC = false;
+    public static final Insets DEFAULT_AXIS_Y_PADDING = new Insets(0, DEFAULT_AXIS_PAD, 0, DEFAULT_AXIS_PAD);
 
     /**
      * Constructor.
@@ -51,6 +59,73 @@ public class AxisY extends Axis {
     }
 
     /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(ShowLegendGraphic_Prop);
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // ShowLegendGraphic
+            case ShowLegendGraphic_Prop: return isShowLegendGraphic();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // ShowLegendGraphic
+            case ShowLegendGraphic_Prop: setShowLegendGraphic(SnapUtils.boolValue(aValue)); break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue);
+        }
+    }
+
+    /**
+     * Returns the prop default value for given key.
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // ShowLegendGraphic
+            case ShowLegendGraphic_Prop: return DEFAULT_SHOW_LEGEND_GRAPHIC;
+
+            // Padding
+            case Padding_Prop: return DEFAULT_AXIS_Y_PADDING;
+
+            // Superclass properties
+            default: return super.getPropDefault(aPropName);
+        }
+    }
+
+    /**
      * Archival.
      */
     @Override
@@ -60,7 +135,7 @@ public class AxisY extends Axis {
         XMLElement e = super.toXML(anArchiver);
 
         // Archive ShowLegendGraphic
-        if (isShowLegendGraphic())
+        if (!isPropDefault(ShowLegendGraphic_Prop))
             e.add(ShowLegendGraphic_Prop, true);
 
         // Return xml
@@ -76,7 +151,7 @@ public class AxisY extends Axis {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unuarchive ShowLegendGraphic
+        // Unarchive ShowLegendGraphic
         if (anElement.hasAttribute(ShowLegendGraphic_Prop))
             setShowLegendGraphic(anElement.getAttributeBoolValue(ShowLegendGraphic_Prop));
 
