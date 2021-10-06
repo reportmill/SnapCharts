@@ -1,6 +1,7 @@
 package snapcharts.view;
 import snap.gfx.Font;
 import snap.gfx.Painter;
+import snap.text.TextRun;
 import snap.view.StringView;
 
 /**
@@ -11,8 +12,8 @@ public class TickLabel extends StringView {
     // The coordinate of the label
     private double  _coord;
 
-    // A StringView to handle exponents if needed
-    private StringView  _expView;
+    // A TextRun to handle exponents if needed
+    private TextRun  _expText;
 
     /**
      * Constructor.
@@ -36,7 +37,7 @@ public class TickLabel extends StringView {
     @Override
     public void setText(String aValue)
     {
-        // If exponent is detected, Create ExpView to size/paint
+        // If exponent is detected, Create ExpText to size/paint
         int index = aValue.indexOf("x10^");
         if (index > 0) {
 
@@ -44,10 +45,10 @@ public class TickLabel extends StringView {
             String str = aValue.substring(0, index + 3);
             super.setText(str);
 
-            // Get exponent string and create exponent StringView (ExpView)
+            // Get exponent string and create exponent TextRun (ExpText)
             String expStr = aValue.substring(index + 4);
-            _expView = new StringView(expStr);
-            _expView.setFontSizing(false);
+            _expText = new TextRun(expStr);
+            _expText.setFontSizing(false);
 
             // Add bogus padding
             setPadding(4, 0, 4, 0);
@@ -58,28 +59,27 @@ public class TickLabel extends StringView {
     }
 
     /**
-     * Override to add ExpView if label has exponent.
+     * Override to add ExpText if label has exponent.
      */
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        // Do normal version and just return if no ExpView
+        // Do normal version and just return if no ExpText
         double prefW = super.getPrefWidthImpl(aH);
-        if (_expView == null)
+        if (_expText == null)
             return prefW;
 
-        // Update ExpView and add ExpView.Width to PrefW
+        // Update ExpText and add ExpText.Width to PrefW
         Font font = getFont();
         Font expFont = font.deriveFont(Math.round(font.getSize()) * .7);
-        _expView.setFont(expFont);
-        _expView.setTextFill(getTextFill());
-        _expView.setSizeToPrefSize();
-        prefW += _expView.getWidth() + 1;
+        _expText.setFont(expFont);
+        _expText.setTextFill(getTextFill());
+        prefW += _expText.getTextWidth() + 1;
         return prefW;
     }
 
     /**
-     * Override to paint ExpView if set.
+     * Override to paint ExpText if set.
      */
     @Override
     protected void paintString(Painter aPntr)
@@ -87,12 +87,11 @@ public class TickLabel extends StringView {
         // Do normal version
         super.paintString(aPntr);
 
-        // If ExpView, update XY and paint it
-        if (_expView != null) {
+        // If ExpText, update XY and paint it
+        if (_expText != null) {
             double expX = getTextWidth() + 1;
-            double expY = getPadding().top + Math.round(getAscent() * .5) - _expView.getHeight();
-            _expView.setXY(expX, expY);
-            _expView.paintStringView(aPntr);
+            double expY = getPadding().top + Math.round(getAscent() * .5);
+            _expText.paintString(aPntr, expX, expY);
         }
     }
 }
