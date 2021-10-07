@@ -75,7 +75,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     /**
      * Returns a ViewProxy for AxisView to layout as ColView.
      */
-    private ViewProxy<?> getViewProxy()
+    protected ViewProxy<?> getViewProxy()
     {
         // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);

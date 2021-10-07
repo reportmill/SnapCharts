@@ -144,7 +144,7 @@ public class AxisViewY extends AxisView<AxisY> {
     /**
      * Returns a ViewProxy of AxisView to layout as RowView.
      */
-    private ViewProxy<?> getViewProxy()
+    protected ViewProxy<?> getViewProxy()
     {
         // Create ViewProxy for AxisView
         ViewProxy<?> viewProxy = new ViewProxy<>(this);
