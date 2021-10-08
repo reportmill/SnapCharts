@@ -144,7 +144,7 @@ public class LegendView extends ChartPartView<Legend> {
     {
         // Handle Vertical: create/return ColView
         if (isVertical()) {
-            ColView colView = new ColView();
+            ChildView colView = new ColView(); //new LegendViewBoxV();
             return colView;
         }
 
@@ -214,5 +214,21 @@ public class LegendView extends ChartPartView<Legend> {
         double areaW = getWidth() - ins.getWidth();
         double areaH = getHeight() - ins.getHeight();
         _scaleBox.setBounds(areaX, areaY, areaW, areaH);
+    }
+
+    @Override
+    public void setWidth(double aValue)
+    {
+        if (aValue == getWidth()) return;
+        super.setWidth(aValue);
+        _entryBox.relayoutParent();
+    }
+
+    @Override
+    public void setHeight(double aValue)
+    {
+        if (aValue == getHeight()) return;
+        super.setHeight(aValue);
+        _entryBox.relayoutParent();
     }
 }

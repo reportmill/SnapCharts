@@ -68,9 +68,17 @@ public class ChartViewLayout {
         // Get PrefDataViewBounds
         _prefDataBounds = _chartView.getPrefDataViewBounds();
 
-        // Layout parts
+        //_legendProxy.getView().setHeight(Math.round(_chartView.getHeight() * 2));
+
+        // Layout top, bottom
         layoutTopSide();
         layoutBottomSide();
+
+        // Resize legend to DataAreaHeight
+        //double legendH = _chartView.getHeight() - _dataAreaInsets.getHeight();
+        //_legendProxy.getView().setHeight(legendH);
+
+        // Layout left side, right side
         layoutLeftSide();
         layoutRightSide();
 
