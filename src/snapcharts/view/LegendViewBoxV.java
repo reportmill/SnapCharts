@@ -1,7 +1,6 @@
 package snapcharts.view;
+import snap.geom.Insets;
 import snap.view.*;
-import snapcharts.model.Chart;
-
 import java.util.Arrays;
 
 /**
@@ -9,8 +8,11 @@ import java.util.Arrays;
  */
 public class LegendViewBoxV extends ChildView {
 
-    // The number of rows/cols after layout
-    private int  _rowCount, _colCount;
+    // The ChartView height for cached PrefSize + Layout info
+    private double  _chartH;
+
+    // The number of cols after layout
+    private int  _colCount;
 
     // The Max X/Y after layout
     private double  _maxX, _maxY;
@@ -19,66 +21,65 @@ public class LegendViewBoxV extends ChildView {
     private ViewProxy<?>[]  _layoutChildren;
 
     /**
-     * Custom getPrefWidthImpl() method.
+     * Override getPrefWidth() instead of Impl() to bypass normal view PrefSize caching.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    public double getPrefWidth(double aH)
     {
+        // Get ChartHeight - EntryBox really uses this for PrefSize+Layout
+        ChartView chartView = getParent(ChartView.class);
+        double chartH = chartView.getHeight();
+        if (chartH == _chartH)
+            return _maxX;
+
+        // Set ChartHeight
+        _chartH = chartH;
+
         // If no children, just return
         if (getChildCount() == 0) return 0;
+
+        // Relayout ScaleBox
+        getParent().relayout();
 
         // Get ViewProxy
         ViewProxy<?> viewProxy = getViewProxy();
 
-        // Get LegendView
-        ParentView legendView = getParent();
-        boolean inLegendLayout = legendView.isInLayout();
-        boolean firstPass = !inLegendLayout;
+        // If ChartHeight will definitely result in 5+ cols, bump ChartHeight to at least that
+        int entryCount = getChildCount();
+        double entryH = getChild(0).getPrefHeight() + getSpacing();
+        double minColH = Math.ceil(entryCount / 5d) * entryH;
+        if (chartH < minColH)
+            chartH = Math.ceil(minColH);
 
-        // If firstPass, use ChartView.Height
-        if (firstPass) {
+        // Run our first layout
+        viewProxy.setSize(-1, chartH);
+        layoutProxy(viewProxy);
+        _layoutChildren = viewProxy.getChildren();
 
-            // Start legend layout with ChartView.Height. If it bleeds over LegendView.Height, it will scale back down
-            ChartView chartView = getParent(ChartView.class);
-            double chartH = chartView.getHeight();
+        // If multi-column, see if scale up to 150% will eliminate a column
+        if (_colCount > 1) {
+            int colCount = _colCount;
+            double maxX = _maxX;
+            double maxY = _maxY;
 
-            // If ChartHeight will definitely result in 5+ cols, bump ChartHeight to at least that
-            int entryCount = getChildCount();
-            double entryH = getChild(0).getPrefHeight() + getSpacing();
-            double minColH = Math.ceil(entryCount / 5d) * entryH;
-            if (chartH < minColH)
-                chartH = Math.ceil(minColH);
-
-            // Run our first layout
-            viewProxy.setSize(-1, chartH);
-            layoutProxy(viewProxy);
-            _layoutChildren = viewProxy.getChildren();
-
-            // If multi-column, see if scale up to 150% will eliminate a column
-            if (_colCount > 1) {
-                int colCount = _colCount;
-                double maxX = _maxX;
-                double maxY = _maxY;
-
-                // Iterate up to 150% by 5% increments
-                for (int i = 1; i <= 10; i++) {
-                    double scaleFactor = 1 + i / 20d;
-                    double adjustedChartH = Math.round(chartH * scaleFactor);
-                    viewProxy.setSize(-1, adjustedChartH);
-                    viewProxy.setChildren(null);
-                    layoutProxy(viewProxy);
-                    if (_colCount < colCount && (_maxX < _maxY || i + 1 == 10)) {
-                        _layoutChildren = viewProxy.getChildren();
-                        colCount = _colCount;
-                        maxX = _maxX;
-                        maxY = _maxY;
-                        break;
-                    }
+            // Iterate up to 150% by 5% increments
+            for (int i = 1; i <= 10; i++) {
+                double scaleFactor = 1 + i / 20d;
+                double adjustedChartH = Math.round(chartH * scaleFactor);
+                viewProxy.setSize(-1, adjustedChartH);
+                viewProxy.setChildren(null);
+                layoutProxy(viewProxy);
+                if (_colCount < colCount && (_maxX < _maxY || i + 1 == 10)) {
+                    _layoutChildren = viewProxy.getChildren();
+                    colCount = _colCount;
+                    maxX = _maxX;
+                    maxY = _maxY;
+                    break;
                 }
-                _colCount = colCount;
-                _maxX = maxX;
-                _maxY = maxY;
             }
+            _colCount = colCount;
+            _maxX = maxX;
+            _maxY = maxY;
         }
 
         // Return MaxX
@@ -86,10 +87,10 @@ public class LegendViewBoxV extends ChildView {
     }
 
     /**
-     * Custom getPrefWidthImpl() method.
+     * Override getPrefHeight() instead of Impl() to bypass normal view PrefSize caching.
      */
     @Override
-    protected double getPrefHeightImpl(double aW)
+    public double getPrefHeight(double aW)
     {
         return _maxY;
     }
@@ -114,9 +115,26 @@ public class LegendViewBoxV extends ChildView {
         ViewProxy<?>[] childrenAll = viewProxy.getChildren();
         double childX = 0;
 
-        // Reset row/col count and max X/Y
-        _rowCount = _colCount = 0;
+        // Reset col count and max X/Y
+        _colCount = 0;
         _maxX = _maxY = 0;
+
+        // If has Title entry, handle that special
+        LegendView legendView = getParent(LegendView.class);
+        if (legendView._titleView.isVisible()) {
+
+            // Set ViewProxy.Children to TitleViewProxy, layout and update MaxX, MaxY for used space
+            ViewProxy<?> titleViewProxy = childrenAll[0];
+            viewProxy.setChildren(new ViewProxy<?>[] { titleViewProxy });
+            viewProxy.setPadding(null);
+            ColView.layoutProxy(viewProxy);
+            _maxX = titleViewProxy.getMaxX();
+            _maxY = titleViewProxy.getMaxY();
+
+            // Set ViewProxy.Padding to reserve TitleView space and set ViewProxy.Children to remaining children
+            viewProxy.setPadding(new Insets(_maxY + getSpacing(), 0, 0, 0));
+            viewProxy.setChildren(Arrays.copyOfRange(childrenAll, 1, childrenAll.length));
+        }
 
         // Do layout till all children set
         while (true) {
@@ -132,8 +150,7 @@ public class LegendViewBoxV extends ChildView {
             ViewProxy<?>[] childrenIn = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, 0, indexOutOfBounds) : children;
             ViewProxy<?>[] childrenOut = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, indexOutOfBounds, children.length) : new ViewProxy<?>[0];
 
-            // Update Row/col counts
-            _rowCount = Math.max(_rowCount, childrenIn.length);
+            // Update col count
             _colCount++;
 
             // Update Max X/Y

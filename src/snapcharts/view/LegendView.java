@@ -19,7 +19,7 @@ public class LegendView extends ChartPartView<Legend> {
     private ChildView  _entryBox;
 
     // The view to hold title text
-    private StringView  _titleView;
+    protected StringView  _titleView;
 
     /**
      * Constructor.
@@ -73,9 +73,6 @@ public class LegendView extends ChartPartView<Legend> {
         // Get info
         Legend legend = getLegend();
 
-        resetEntryBox();
-        _entryBox.setSpacing(_entryBox.getSpacing() + legend.getSpacing());
-
         // Handle visible
         boolean showLegend = legend.isShowLegend();
         setVisible(showLegend);
@@ -94,13 +91,20 @@ public class LegendView extends ChartPartView<Legend> {
             ViewUtils.moveToFront(chartView, this);
         }
 
+        // Reset EntryBox
+        resetEntryBox();
+        _entryBox.setSpacing(_entryBox.getSpacing() + legend.getSpacing());
+
         // Iterate over DataSets and add entries
         DataSetList dataSetList = getDataSetList();
         DataSet[] dataSets = dataSetList.getDataSets();
-        for (int i=0; i<dataSets.length; i++) {
-            DataSet dataSet = dataSets[i];
+        for (DataSet dataSet : dataSets) {
+
+            // If not DataSet.ShowLegendEntry, just continue
             if (!dataSet.isShowLegendEntry())
                 continue;
+
+            // Create, add LegendEntryView for DataSet
             View entryView = new LegendEntryView(legend, dataSet);
             _entryBox.addChild(entryView);
 
@@ -115,21 +119,23 @@ public class LegendView extends ChartPartView<Legend> {
     private void resetEntryBox()
     {
         // Get position and update View.Vertical
+        Legend legend = getLegend();
         Pos pos = getPosition();
         boolean isVer = !(pos == Pos.TOP_CENTER || pos == Pos.BOTTOM_CENTER);
         setVertical(isVer);
 
+        // Create new EntryBox and add to ScaleBox
+        _entryBox = newEntryBox();
+        _scaleBox.setContent(_entryBox);
+
         // Handle Vertical layout
         if (isVer) {
-            setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
-            _scaleBox.setContent(_entryBox = newEntryBox());
-            _scaleBox.setAlign(Pos.get(HPos.CENTER, pos.getVPos()));
+            _scaleBox.setAlignX(legend.getAlignX());
+            _scaleBox.setAlignY(pos.getVPos());
         }
 
         // Handle Horizontal layout
         else {
-            setAlign(Pos.TOP_CENTER);
-            _scaleBox.setContent(_entryBox = newEntryBox());
             _scaleBox.setAlign(Pos.CENTER);
         }
 
@@ -144,7 +150,7 @@ public class LegendView extends ChartPartView<Legend> {
     {
         // Handle Vertical: create/return ColView
         if (isVertical()) {
-            ChildView colView = new ColView(); //new LegendViewBoxV();
+            ChildView colView = new LegendViewBoxV();
             return colView;
         }
 
@@ -183,23 +189,31 @@ public class LegendView extends ChartPartView<Legend> {
     }
 
     /**
-     * Override to use ColView layout.
+     * Override main version to bypass LegendView, ScaleBox and EntryBox PrefSize caching.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    public double getPrefWidth(double aH)
     {
+        // Get from EntryBox to bypass ScaleBox PrefSize caching. EntryBox does special PrefSize caching.
+        double prefW = _entryBox.getPrefWidth();
+
+        // Return EntryBox.PrefWidth + Insets.Width
         Insets ins = getInsetsAll();
-        return _scaleBox.getPrefWidth() + ins.getWidth();
+        return prefW + ins.getWidth();
     }
 
     /**
-     * Override to use ColView layout.
+     * Override main version to bypass LegendView, ScaleBox and EntryBox PrefSize caching.
      */
     @Override
     protected double getPrefHeightImpl(double aW)
     {
+        // Get from EntryBox to bypass ScaleBox PrefSize caching. EntryBox does special PrefSize caching.
+        double prefH = _entryBox.getPrefHeight();
+
+        // Return EntryBox.PrefHeight + Insets.Height
         Insets ins = getInsetsAll();
-        return _scaleBox.getPrefHeight() + ins.getHeight();
+        return prefH + ins.getHeight();
     }
 
     /**
