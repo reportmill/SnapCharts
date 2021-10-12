@@ -1,5 +1,6 @@
 package snapcharts.appmisc;
 import snap.geom.Side;
+import snap.gfx.Color;
 import snap.text.NumberFormat;
 import snap.text.TextFormat;
 import snap.util.FileUtils;
@@ -262,6 +263,9 @@ public class OpenInPlotly {
         // Create new TraceJSON
         JSONNode traceJS = new JSONNode();
 
+        // Set the trace name
+        traceJS.addKeyValue("name", aDataSet.getName());
+
         // Add: type : 'scatter'
         switch (_chart.getType()) {
             case BAR:
@@ -288,11 +292,29 @@ public class OpenInPlotly {
 
         // If ChartType.SCATTER, add: mode: 'markers'
         if (_chart.getType() == ChartType.SCATTER) {
+
+            // Set mode: lines | markers | lines+markers
             boolean isShowLine = dataStyle.isShowLine();
             boolean isShowSymbols = dataStyle.isShowSymbols();
             String modeStr = isShowLine && isShowSymbols ? "lines+markers" :
                     isShowLine ? "lines" : isShowSymbols ? "markers" : "";
             traceJS.addKeyValue("mode", modeStr);
+
+            // Configure scatter plot line node
+            if (isShowLine) {
+
+                // Create line node and add to trace
+                JSONNode lineJS = new JSONNode("line", null);
+                traceJS.addKeyValue("line", lineJS);
+
+                // Set the line.color
+                Color color = dataStyle.getLineColor();
+                String colorStr = getPlotlyColorString(color);
+                lineJS.addKeyValue("color", colorStr);
+
+                // Set the line.width
+                lineJS.addKeyValue("width", dataStyle.getLineWidth());
+            }
         }
 
         // If ChartType.CONTOUR, add: colorscale: 'Jet'
@@ -422,6 +444,23 @@ public class OpenInPlotly {
         if (side == Side.RIGHT)
             return 1 - count * .15;
         return count * .15;
+    }
+
+    /**
+     * Returns a Plotly color string for given color.
+     */
+    private String getPlotlyColorString(Color aColor)
+    {
+        boolean hasAlpha = aColor.getAlpha() < 1;
+        String prefix = hasAlpha ? "rgba(" : "rgb(";
+        StringBuffer sb = new StringBuffer(prefix);
+        sb.append(aColor.getRedInt()).append(',');
+        sb.append(aColor.getGreenInt()).append(',');
+        sb.append(aColor.getBlueInt());
+        if (hasAlpha)
+            sb.append(aColor.getAlpha());
+        sb.append(')');
+        return sb.toString();
     }
 
     /**
