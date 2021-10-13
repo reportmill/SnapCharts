@@ -188,7 +188,12 @@ public class OpenInPlotly {
         axisJS.addKeyValue("ticks", "inside");
         axisJS.addKeyValue("mirror", true);
 
-        // If X Axis, see if we need to add domain entry
+        // If explicit axis range is set, configure axis.range
+        JSONNode axisRangeJS = getAxisRange(axis);
+        if (axisRangeJS != null)
+            axisJS.addKeyValue("range", axisRangeJS);
+
+        // If X Axis, see if we need to add domain entry so additional axes don't overlap data area
         if (anAxisType == AxisType.X) {
             JSONNode domain = getXAxisDomain(aChart);
             if (domain != null)
@@ -405,7 +410,24 @@ public class OpenInPlotly {
     }
 
     /**
-     * Returns the suggested domain for a chart - which is a start/end values
+     * Returns the range for an axis if explicitly set (null, otherwise).
+     */
+    private JSONNode getAxisRange(Axis anAxis)
+    {
+        if (anAxis.getMinBound() != AxisBound.VALUE || anAxis.getMaxBound() != AxisBound.VALUE)
+            return null;
+        double axisMin = anAxis.getMinValue();
+        double axisMax = anAxis.getMaxValue();
+        JSONNode node = new JSONNode();
+        node.addValue(axisMin);
+        node.addValue(axisMax);
+        return node;
+    }
+
+    /**
+     * Returns the suggested area range for a chart (default 0 - 1), which might need to be pulled in if additional axes are present.
+     *
+     * It's rather lame that Plotly doesn't handle this kind of layout automatically.
      */
     private JSONNode getXAxisDomain(Chart aChart)
     {

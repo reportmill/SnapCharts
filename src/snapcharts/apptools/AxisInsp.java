@@ -1,5 +1,7 @@
 package snapcharts.apptools;
+import snap.gfx.Color;
 import snap.text.NumberFormat;
+import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
@@ -215,11 +217,12 @@ public class AxisInsp extends ChartPartInsp {
         if (anEvent.equals("MinBoundDataButton"))
             axis.setMinBound(AxisBound.DATA);
         if (anEvent.equals("MinBoundValueButton")) {
+            double axisMin = axisView.getAxisMin();
             axis.setMinBound(AxisBound.VALUE);
-            axis.setMinValue(getViewFloatValue("MinBoundText"));
+            axis.setMinValue(axisMin);
         }
         if (anEvent.equals("MinBoundText")) {
-            double val = Math.min(anEvent.getFloatValue(), getViewFloatValue("MaxBoundText"));
+            double val = anEvent.getFloatValue();
             axis.setMinBound(AxisBound.VALUE);
             axis.setMinValue(val);
         }
@@ -230,11 +233,12 @@ public class AxisInsp extends ChartPartInsp {
         if (anEvent.equals("MaxBoundDataButton"))
             axis.setMaxBound(AxisBound.DATA);
         if (anEvent.equals("MaxBoundValueButton")) {
+            double axisMax = axisView.getAxisMax();
             axis.setMaxBound(AxisBound.VALUE);
-            axis.setMaxValue(getViewFloatValue("MaxBoundText"));
+            axis.setMaxValue(axisMax);
         }
         if (anEvent.equals("MaxBoundText")) {
-            double val = Math.max(anEvent.getFloatValue(), getViewFloatValue("MinBoundText"));
+            double val = anEvent.getFloatValue();
             axis.setMaxBound(AxisBound.VALUE);
             axis.setMaxValue(val);
         }
