@@ -1,7 +1,10 @@
 package snapcharts.view;
+import snap.geom.Insets;
 import snap.view.ChildView;
 import snap.view.RowView;
 import snap.view.ViewProxy;
+import snapcharts.model.Chart;
+import snapcharts.model.Legend;
 
 import java.util.Arrays;
 
@@ -34,7 +37,7 @@ public class LegendViewBoxH extends ChildView {
         double chartW = chartView.getWidth();
         if (chartW != _chartW) {
             System.out.println("LegendViewBoxH.getPrefW: Surprised that ChartWidth has changed");
-            getPrefSizeImpl(chartW);
+            getPrefSizeImpl(chartView, chartW);
         }
 
         // Return MaxX
@@ -51,7 +54,7 @@ public class LegendViewBoxH extends ChildView {
         ChartView chartView = getParent(ChartView.class);
         double chartW = chartView.getWidth();
         if (chartW != _chartW)
-            getPrefSizeImpl(chartW);
+            getPrefSizeImpl(chartView, chartW);
 
         // Return MaxY
         return _maxY;
@@ -60,7 +63,7 @@ public class LegendViewBoxH extends ChildView {
     /**
      * Get PrefSize.
      */
-    private void getPrefSizeImpl(double chartW)
+    private void getPrefSizeImpl(ChartView chartView, double chartW)
     {
         // Set ChartWidth
         _chartW = chartW;
@@ -73,6 +76,15 @@ public class LegendViewBoxH extends ChildView {
 
         // Get ViewProxy
         ViewProxy<?> viewProxy = getViewProxy();
+
+        // Remove Chart Padding, Legend Margin
+        Chart chart = chartView.getChart();
+        Legend legend = chart.getLegend();
+        Insets chartPadding = chart.getPadding();
+        Insets legendMargin = legend.getMargin();
+        double insLeft = Math.max(chartPadding.left, legendMargin.left);
+        double insRight = Math.max(chartPadding.right, legendMargin.right);
+        chartW -= insLeft + insRight;
 
         // If ChartWidth will definitely result in 5+ rows, bump ChartWidth to at least that
         int entryCount = getChildCount();
@@ -87,7 +99,7 @@ public class LegendViewBoxH extends ChildView {
         _layoutChildren = viewProxy.getChildren();
 
         // If multi-row, see if scale up to 150% will eliminate a column
-        if (_rowCount > 1) {
+        if (_rowCount > 3) {
             int rowCount = _rowCount;
             double maxX = _maxX;
             double maxY = _maxY;
