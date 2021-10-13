@@ -1,4 +1,5 @@
 package snapcharts.appmisc;
+import snap.geom.Pos;
 import snap.geom.Side;
 import snap.gfx.Color;
 import snap.text.NumberFormat;
@@ -155,6 +156,9 @@ public class OpenInPlotly {
         AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
         for (AxisType axisType : axisTypes)
             writeChartAxisLayout(aChart, axisType, layoutJS);
+
+        // Write the legend layout
+        writeChartLegendLayout(aChart, layoutJS);
 
         // Write layout
         _sb.append("var layout").append(" = ");
@@ -390,6 +394,31 @@ public class OpenInPlotly {
         String traceString = traceJS.toString();
         _sb.append(traceString);
         _sb.append(";\n\n");
+    }
+
+    /**
+     * Writes chart legend layout declaration.
+     */
+    private void writeChartLegendLayout(Chart aChart, JSONNode layoutJS)
+    {
+        Legend legend = aChart.getLegend();
+        if (!legend.isShowLegend()) return;
+        JSONNode legendJS = new JSONNode();
+
+        Pos legendPos = legend.getPosition();
+        if (legendPos == Pos.TOP_CENTER) {
+            legendJS.addKeyValue("orientation", "h");
+            legendJS.addKeyValue("yanchor", "bottom");
+            legendJS.addKeyValue("y", 1.008);
+        }
+        else if (legendPos == Pos.BOTTOM_CENTER) {
+            legendJS.addKeyValue("orientation", "h");
+            legendJS.addKeyValue("y", -.2);
+        }
+
+        // Add to layout node
+        if (legendJS.getNodeCount() > 0)
+            layoutJS.addKeyValue("legend", legendJS);
     }
 
     /**
