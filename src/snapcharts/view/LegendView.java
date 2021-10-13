@@ -155,7 +155,7 @@ public class LegendView extends ChartPartView<Legend> {
         }
 
         // Handle Horizontal: Create/return RowView
-        RowView rowView = new RowView();
+        ChildView rowView = new LegendViewBoxH();
         rowView.setSpacing(5);
         return rowView;
     }
@@ -206,7 +206,7 @@ public class LegendView extends ChartPartView<Legend> {
      * Override main version to bypass LegendView, ScaleBox and EntryBox PrefSize caching.
      */
     @Override
-    protected double getPrefHeightImpl(double aW)
+    public double getPrefHeight(double aW)
     {
         // Get from EntryBox to bypass ScaleBox PrefSize caching. EntryBox does special PrefSize caching.
         double prefH = _entryBox.getPrefHeight();
