@@ -90,8 +90,8 @@ public class LegendViewBoxH extends ChildView {
         int entryCount = getChildCount();
         double entryW = getAverageWidth(viewProxy.getChildren()) + getSpacing();
         double minRowW = Math.ceil(entryCount / 5d) * entryW;
-        if (chartW < minRowW)
-            chartW = Math.ceil(minRowW);
+        //if (chartW < minRowW)
+        //    chartW = Math.ceil(minRowW);
 
         // Run our first layout
         viewProxy.setSize(chartW, -1);
@@ -99,19 +99,31 @@ public class LegendViewBoxH extends ChildView {
         _layoutChildren = viewProxy.getChildren();
 
         // If multi-row, see if scale up to 150% will eliminate a column
-        if (_rowCount > 3) {
+        if (_rowCount > 1) {
+
+            //
             int rowCount = _rowCount;
             double maxX = _maxX;
             double maxY = _maxY;
 
+            //
+            double scaleFactorMax = 1.6;
+            switch (rowCount) {
+                case 2: scaleFactorMax = 1.1; break;
+                case 3: scaleFactorMax = 1.2; break;
+                case 4: scaleFactorMax = 1.3; break;
+                case 5: scaleFactorMax = 1.4; break;
+                case 6: scaleFactorMax = 1.5; break;
+                default: scaleFactorMax = 1.6; break;
+            }
+
             // Iterate up to 150% by 5% increments
-            for (int i = 1; i <= 10; i++) {
-                double scaleFactor = 1 + i / 20d;
+            for (double scaleFactor = 1 + .05; scaleFactor <= scaleFactorMax; scaleFactor += .05) {
                 double adjustedChartW = Math.round(chartW * scaleFactor);
                 viewProxy.setSize(adjustedChartW, -1);
                 viewProxy.setChildren(null);
                 layoutProxy(viewProxy);
-                if (_rowCount < rowCount && (_maxY < _maxX || i + 1 == 10)) {
+                if (_rowCount < rowCount && (_maxY < _maxX || scaleFactor + .05 > scaleFactorMax)) {
                     _layoutChildren = viewProxy.getChildren();
                     rowCount = _rowCount;
                     maxX = _maxX;
