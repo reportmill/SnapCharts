@@ -1,7 +1,6 @@
 package snapcharts.view;
-import snap.view.ColView;
+import snap.view.ColViewProxy;
 import snap.view.StringView;
-import snap.view.ViewProxy;
 import snapcharts.model.Chart;
 import snapcharts.model.Header;
 
@@ -70,8 +69,8 @@ public class HeaderView extends ChartPartView<Header> {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        return ColView.getPrefWidthProxy(viewProxy, aH);
+        ColViewProxy<?> viewProxy = getViewProxy();
+        return viewProxy.getPrefWidth(aH);
     }
 
     /**
@@ -80,8 +79,8 @@ public class HeaderView extends ChartPartView<Header> {
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        return ColView.getPrefHeightProxy(viewProxy, aW);
+        ColViewProxy<?> viewProxy = getViewProxy();
+        return viewProxy.getPrefHeight(aW);
     }
 
     /**
@@ -90,17 +89,16 @@ public class HeaderView extends ChartPartView<Header> {
     @Override
     protected void layoutImpl()
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        ColView.layoutProxy(viewProxy);
-        viewProxy.setBoundsInClient();
+        ColViewProxy<?> viewProxy = getViewProxy();
+        viewProxy.layoutView();
     }
 
     /**
      * Returns the ViewProxy to layout this HeaderView.
      */
-    protected ViewProxy<?> getViewProxy()
+    protected ColViewProxy<?> getViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        ColViewProxy<?> viewProxy = new ColViewProxy<>(this);
         return viewProxy;
     }
 }

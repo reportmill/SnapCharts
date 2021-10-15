@@ -1,11 +1,10 @@
 package snapcharts.view;
 import snap.geom.Insets;
 import snap.view.ChildView;
-import snap.view.RowView;
+import snap.view.RowViewProxy;
 import snap.view.ViewProxy;
 import snapcharts.model.Chart;
 import snapcharts.model.Legend;
-
 import java.util.Arrays;
 
 /**
@@ -75,7 +74,7 @@ public class LegendViewBoxH extends ChildView {
         getParent().relayout();
 
         // Get ViewProxy
-        ViewProxy<?> viewProxy = getViewProxy();
+        RowViewProxy<?> viewProxy = getViewProxy();
 
         // Remove Chart Padding, Legend Margin
         Chart chart = chartView.getChart();
@@ -151,7 +150,7 @@ public class LegendViewBoxH extends ChildView {
     /**
      * Real layout method.
      */
-    protected void layoutProxy(ViewProxy<?> viewProxy)
+    protected void layoutProxy(RowViewProxy<?> viewProxy)
     {
         // Get all children array and declare variable for current column X location
         ViewProxy<?>[] childrenAll = viewProxy.getChildren();
@@ -165,7 +164,7 @@ public class LegendViewBoxH extends ChildView {
         while (true) {
 
             // Layout entries
-            RowView.layoutProxy(viewProxy);
+            viewProxy.layoutProxy();
 
             // Get index of first child below bottom bounds
             int indexOutOfBounds = getIndexOutOfBoundsX(viewProxy);
@@ -201,9 +200,9 @@ public class LegendViewBoxH extends ChildView {
     /**
      * Returns ViewProxy to layout legend entries.
      */
-    protected ViewProxy<?> getViewProxy()
+    protected RowViewProxy<?> getViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        RowViewProxy<?> viewProxy = new RowViewProxy<>(this);
         return viewProxy;
     }
 
@@ -222,7 +221,7 @@ public class LegendViewBoxH extends ChildView {
     /**
      * Returns the index of first child below bottom bounds.
      */
-    private static int getIndexOutOfBoundsX(ViewProxy viewProxy)
+    private static int getIndexOutOfBoundsX(ViewProxy<?> viewProxy)
     {
         double boundsW = viewProxy.getWidth();
         ViewProxy<?>[] children = viewProxy.getChildren();

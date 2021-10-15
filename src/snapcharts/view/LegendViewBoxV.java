@@ -42,7 +42,7 @@ public class LegendViewBoxV extends ChildView {
         getParent().relayout();
 
         // Get ViewProxy
-        ViewProxy<?> viewProxy = getViewProxy();
+        ColViewProxy<?> viewProxy = getViewProxy();
 
         // If ChartHeight will definitely result in 5+ cols, bump ChartHeight to at least that
         int entryCount = getChildCount();
@@ -109,7 +109,7 @@ public class LegendViewBoxV extends ChildView {
     /**
      * Real layout method.
      */
-    protected void layoutProxy(ViewProxy<?> viewProxy)
+    protected void layoutProxy(ColViewProxy<?> viewProxy)
     {
         // Get all children array and declare variable for current column X location
         ViewProxy<?>[] childrenAll = viewProxy.getChildren();
@@ -127,7 +127,7 @@ public class LegendViewBoxV extends ChildView {
             ViewProxy<?> titleViewProxy = childrenAll[0];
             viewProxy.setChildren(new ViewProxy<?>[] { titleViewProxy });
             viewProxy.setPadding(null);
-            ColView.layoutProxy(viewProxy);
+            viewProxy.layoutProxy();
             _maxX = titleViewProxy.getMaxX();
             _maxY = titleViewProxy.getMaxY();
 
@@ -140,7 +140,7 @@ public class LegendViewBoxV extends ChildView {
         while (true) {
 
             // Layout entries
-            ColView.layoutProxy(viewProxy);
+            viewProxy.layoutProxy();
 
             // Get index of first child below bottom bounds
             int indexOutOfBounds = getIndexOutOfBoundsY(viewProxy);
@@ -176,16 +176,16 @@ public class LegendViewBoxV extends ChildView {
     /**
      * Returns ViewProxy to layout legend entries.
      */
-    protected ViewProxy<?> getViewProxy()
+    protected ColViewProxy<?> getViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        ColViewProxy<?> viewProxy = new ColViewProxy<>(this);
         return viewProxy;
     }
 
     /**
      * Returns the index of first child below bottom bounds.
      */
-    private int getIndexOutOfBoundsY(ViewProxy viewProxy)
+    private int getIndexOutOfBoundsY(ViewProxy<?> viewProxy)
     {
         ViewProxy<?>[] children = viewProxy.getChildren();
         for (int i = 0; i < children.length; i++) {

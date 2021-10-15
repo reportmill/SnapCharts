@@ -5,7 +5,7 @@ package snapcharts.view;
 import snap.geom.Insets;
 import snap.geom.Side;
 import snap.util.ArrayUtils;
-import snap.view.ColView;
+import snap.view.ColViewProxy;
 import snap.view.Cursor;
 import snap.view.ViewProxy;
 import snapcharts.model.Axis;
@@ -50,8 +50,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     protected double getPrefHeightImpl(double aW)
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        return ColView.getPrefHeightProxy(viewProxy, aW);
+        ColViewProxy<?> viewProxy = getViewProxy();
+        return viewProxy.getPrefHeight(aW);
     }
 
     /**
@@ -60,9 +60,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     protected void layoutImpl()
     {
         // Layout as ColView
-        ViewProxy<?> viewProxy = getViewProxy();
-        ColView.layoutProxy(viewProxy);
-        viewProxy.setBoundsInClient();
+        ColViewProxy<?> viewProxy = getViewProxy();
+        viewProxy.layoutView();
 
         // Layout TickLabels
         layoutTickLabels();
@@ -75,10 +74,10 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     /**
      * Returns a ViewProxy for AxisView to layout as ColView.
      */
-    protected ViewProxy<?> getViewProxy()
+    protected ColViewProxy<?> getViewProxy()
     {
         // Create ViewProxy for AxisView
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
+        ColViewProxy<?> viewProxy = new ColViewProxy<>(this);
 
         // Get Axis
         Axis axis = getAxis();

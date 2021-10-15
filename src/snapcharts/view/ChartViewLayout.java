@@ -1,9 +1,7 @@
 package snapcharts.view;
 import snap.geom.*;
 import snap.gfx.Border;
-import snap.view.ColView;
-import snap.view.RowView;
-import snap.view.ViewProxy;
+import snap.view.*;
 import snapcharts.viewx.PolarChartHelper;
 import java.util.Arrays;
 
@@ -93,7 +91,7 @@ public class ChartViewLayout {
         _dataAreaProxy.setBounds(dataAreaBounds);
 
         // Adjust axes
-        for (ViewProxy child : _chartProxy.getChildren()) {
+        for (ViewProxy<?> child : _chartProxy.getChildren()) {
             if (child.getView() instanceof AxisViewX) {
                 child.setX(dataAreaBounds.x);
                 child.setWidth(dataAreaBounds.width);
@@ -118,19 +116,19 @@ public class ChartViewLayout {
     protected void layoutTopSide()
     {
         // Create view proxy for layout of chart top
-        ViewProxy<?> topProxy = getTopViewProxy();
+        ColViewProxy<?> topProxy = getTopViewProxy();
 
         // Get top Width/Height for proxy: If no, PrefDataBounds, use proxy PrefHeight
         Rect topBounds = getBoundsForSide(Side.TOP);
         double topHeight = topBounds.height;
         if (_prefDataBounds == null) {
-            double prefHeight = ColView.getPrefHeightProxy(topProxy, topBounds.width);
+            double prefHeight = topProxy.getPrefHeight(topBounds.width);
             topHeight = Math.min(prefHeight, topHeight);
         }
 
         // Set proxy size and layout as ColView
         topProxy.setSize(topBounds.width, topHeight);
-        ColView.layoutProxy(topProxy);
+        topProxy.layoutProxy();
 
         // Update insets
         _dataAreaInsets.top = topHeight;
@@ -139,9 +137,9 @@ public class ChartViewLayout {
     /**
      * Returns the ViewProxy to layout chart top.
      */
-    private ViewProxy<?> getTopViewProxy()
+    private ColViewProxy<?> getTopViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(_chartView);
+        ColViewProxy<?> viewProxy = new ColViewProxy<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
@@ -158,24 +156,24 @@ public class ChartViewLayout {
     protected void layoutBottomSide()
     {
         // Create view proxy for layout of chart bottom
-        ViewProxy<?> bottomProxy = getBottomViewProxy();
+        ColViewProxy<?> bottomProxy = getBottomViewProxy();
 
         // Get/set bottomHeight for proxy: If no, PrefDataBounds, use proxy PrefHeight
         Rect bottomBounds = getBoundsForSide(Side.BOTTOM);
         double bottomHeight = bottomBounds.height;
         if (_prefDataBounds == null) {
-            double prefHeight = ColView.getPrefHeightProxy(bottomProxy, bottomBounds.width);
+            double prefHeight = bottomProxy.getPrefHeight(bottomBounds.width);
             prefHeight = Math.max(prefHeight, RIGHT_MARGIN_MIN);
             bottomHeight = Math.min(prefHeight, bottomHeight);
         }
 
         // Set proxy size and layout as ColView
         bottomProxy.setSize(bottomBounds.width, bottomHeight);
-        ColView.layoutProxy(bottomProxy);
+        bottomProxy.layoutProxy();
 
         // Shift views to bottomBounds.y
         double bottomY = _chartProxy.getHeight() - bottomHeight;
-        for (ViewProxy proxy : bottomProxy.getChildren())
+        for (ViewProxy<?> proxy : bottomProxy.getChildren())
             proxy.setY(proxy.getY() + bottomY);
 
         // Update insets
@@ -185,9 +183,9 @@ public class ChartViewLayout {
     /**
      * Returns the ViewProxy to layout chart bottom.
      */
-    private ViewProxy<?> getBottomViewProxy()
+    private ColViewProxy<?> getBottomViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(_chartView);
+        ColViewProxy<?> viewProxy = new ColViewProxy<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.TOP_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
@@ -204,20 +202,20 @@ public class ChartViewLayout {
     protected void layoutLeftSide()
     {
         // Create view proxy for layout of chart left side
-        ViewProxy<?> leftProxy = getLeftViewProxy();
+        RowViewProxy<?> leftProxy = getLeftViewProxy();
 
         // Get/set leftWidth for proxy: If no, PrefDataBounds, use proxy PrefWidth
         Rect leftBounds = getBoundsForSide(Side.LEFT);
         double leftWidth = leftBounds.width;
         if (_prefDataBounds == null) {
-            double prefWidth = RowView.getPrefWidthProxy(leftProxy, -1);
+            double prefWidth = leftProxy.getPrefWidth(-1);
             prefWidth = Math.max(prefWidth, RIGHT_MARGIN_MIN);
             leftWidth = Math.min(prefWidth, leftWidth);
         }
 
         // Set proxy size and layout as RowView
         leftProxy.setSize(leftWidth, leftBounds.height);
-        RowView.layoutProxy(leftProxy);
+        leftProxy.layoutProxy();
 
         // Update insets
         _dataAreaInsets.left = leftWidth;
@@ -226,9 +224,9 @@ public class ChartViewLayout {
     /**
      * Returns the ViewProxy to layout chart left side.
      */
-    private ViewProxy<?> getLeftViewProxy()
+    private RowViewProxy<?> getLeftViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(_chartView);
+        RowViewProxy<?> viewProxy = new RowViewProxy<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_RIGHT);
         ViewProxy<?>[] leftViews = getViewsForSide(Side.LEFT);
@@ -245,24 +243,24 @@ public class ChartViewLayout {
     protected void layoutRightSide()
     {
         // Create view proxy for layout of chart right side
-        ViewProxy<?> rightProxy = getRightViewProxy();
+        RowViewProxy<?> rightProxy = getRightViewProxy();
 
         // Get/set rightWidth for proxy: If no, PrefDataBounds, use proxy PrefWidth
         Rect rightBounds = getBoundsForSide(Side.RIGHT);
         double rightWidth = rightBounds.width;
         if (_prefDataBounds == null) {
-            double prefWidth = RowView.getPrefWidthProxy(rightProxy, -1);
+            double prefWidth = rightProxy.getPrefWidth(-1);
             prefWidth = Math.max(prefWidth, RIGHT_MARGIN_MIN);
             rightWidth = Math.min(prefWidth, rightWidth);
         }
 
         // Set proxy size and layout as RowView
         rightProxy.setSize(rightWidth, rightBounds.height);
-        RowView.layoutProxy(rightProxy);
+        rightProxy.layoutProxy();
 
         // Shift views to rightBounds.x
         double rightX = _chartProxy.getWidth() - rightWidth;
-        for (ViewProxy proxy : rightProxy.getChildren())
+        for (ViewProxy<?> proxy : rightProxy.getChildren())
             proxy.setX(proxy.getX() + rightX);
 
         // Update insets
@@ -272,9 +270,9 @@ public class ChartViewLayout {
     /**
      * Returns the ViewProxy to layout chart right side.
      */
-    private ViewProxy<?> getRightViewProxy()
+    private RowViewProxy<?> getRightViewProxy()
     {
-        ViewProxy<?> viewProxy = new ViewProxy<>(_chartView);
+        RowViewProxy<?> viewProxy = new RowViewProxy<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_LEFT);
         ViewProxy<?>[] rightViews = getViewsForSide(Side.RIGHT);
@@ -321,9 +319,9 @@ public class ChartViewLayout {
     protected ViewProxy<?>[] getViewsForSide(Side aSide)
     {
         // Get Axes
-        ViewProxy[] axes = getAxesForSide(aSide);
-        ViewProxy axis1 = axes.length > 0 ? axes[0] : null;
-        ViewProxy axis2 = axes.length > 1 ? axes[1] : null;
+        ViewProxy<?>[] axes = getAxesForSide(aSide);
+        ViewProxy<?> axis1 = axes.length > 0 ? axes[0] : null;
+        ViewProxy<?> axis2 = axes.length > 1 ? axes[1] : null;
 
         // Get Legend if on given side.
         LegendView legendView = _legendProxy!=null ? _legendProxy.getView() : null;
@@ -352,7 +350,7 @@ public class ChartViewLayout {
     /**
      * Returns the axes for given side.
      */
-    public ViewProxy[] getAxesForSide(Side aSide)
+    public ViewProxy<?>[] getAxesForSide(Side aSide)
     {
         // Handle ChartHelperPolar
         if (_chartView.getChartHelper() instanceof PolarChartHelper)

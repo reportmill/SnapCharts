@@ -8,7 +8,7 @@ import snap.geom.Side;
 import snap.util.ArrayUtils;
 import snap.view.Cursor;
 import snap.view.RowView;
-import snap.view.ViewProxy;
+import snap.view.RowViewProxy;
 import snapcharts.model.*;
 
 /**
@@ -78,8 +78,8 @@ public class AxisViewY extends AxisView<AxisY> {
      */
     protected double getPrefWidthImpl(double aH)
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        return RowView.getPrefWidthProxy(viewProxy, aH);
+        RowViewProxy<?> viewProxy = getViewProxy();
+        return viewProxy.getPrefWidth(aH);
     }
 
     /**
@@ -88,12 +88,41 @@ public class AxisViewY extends AxisView<AxisY> {
     protected void layoutImpl()
     {
         // Layout as RowView
-        ViewProxy<?> viewProxy = getViewProxy();
-        RowView.layoutProxy(viewProxy);
-        viewProxy.setBoundsInClient();
+        RowViewProxy<?> viewProxy = getViewProxy();
+        viewProxy.layoutView();
 
         // Layout TickLabels
         layoutTickLabels();
+    }
+
+    /**
+     * Returns a ViewProxy of AxisView to layout as RowView.
+     */
+    protected RowViewProxy<?> getViewProxy()
+    {
+        // Create ViewProxy for AxisView
+        RowViewProxy<?> viewProxy = new RowViewProxy<>(this);
+
+        // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
+        Axis axis = getAxis();
+        Side axisSide = axis.getSide();
+        Axis.TickPos tickPos = axis.getTickPos();
+        double tickLength = axis.getTickLength();
+        double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
+        if (tickIndent > 0) {
+            Insets padding = viewProxy.getPadding().clone();
+            if (axisSide == Side.LEFT)
+                padding.right += tickIndent;
+            else padding.left += tickIndent;
+            viewProxy.setPadding(padding);
+        }
+
+        // If RightSide, reverse children
+        boolean isRightSide = axisSide == Side.RIGHT;
+        viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+        if (isRightSide)
+            ArrayUtils.reverse(viewProxy.getChildren());
+        return viewProxy;
     }
 
     /**
@@ -139,36 +168,6 @@ public class AxisViewY extends AxisView<AxisY> {
             // Set tick label rotation
             TickLabelBox.setTickLabelRotation(this, tickLabel, tickRot);
         }
-    }
-
-    /**
-     * Returns a ViewProxy of AxisView to layout as RowView.
-     */
-    protected ViewProxy<?> getViewProxy()
-    {
-        // Create ViewProxy for AxisView
-        ViewProxy<?> viewProxy = new ViewProxy<>(this);
-
-        // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
-        Axis axis = getAxis();
-        Side axisSide = axis.getSide();
-        Axis.TickPos tickPos = axis.getTickPos();
-        double tickLength = axis.getTickLength();
-        double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
-        if (tickIndent > 0) {
-            Insets padding = viewProxy.getPadding().clone();
-            if (axisSide == Side.LEFT)
-                padding.right += tickIndent;
-            else padding.left += tickIndent;
-            viewProxy.setPadding(padding);
-        }
-
-        // If RightSide, reverse children
-        boolean isRightSide = axisSide == Side.RIGHT;
-        viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
-        if (isRightSide)
-            ArrayUtils.reverse(viewProxy.getChildren());
-        return viewProxy;
     }
 
     /**
