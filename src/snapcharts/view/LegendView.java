@@ -177,6 +177,12 @@ public class LegendView extends ChartPartView<Legend> {
      */
     private void entryWasClicked(ViewEvent anEvent, View anEntryView)
     {
+        // If not double-click, just ignore
+        if (anEvent.getClickCount() != 2) {
+            anEvent.consume();
+            return;
+        }
+
         // Get row/dataset index
         ParentView parentView = anEntryView.getParent();
         int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView) - 1;
