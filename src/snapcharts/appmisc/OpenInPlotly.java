@@ -197,6 +197,10 @@ public class OpenInPlotly {
         if (axisRangeJS != null)
             axisJS.addKeyValue("range", axisRangeJS);
 
+        // Otherwise, if ZeroRequired add rangemode = 'tozero'
+        else if (axis.isZeroRequired())
+            axisJS.addKeyValue("rangemode", "tozero");
+
         // If X Axis, see if we need to add domain entry so additional axes don't overlap data area
         if (anAxisType == AxisType.X) {
             JSONNode domain = getXAxisDomain(aChart);
