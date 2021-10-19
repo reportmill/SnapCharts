@@ -121,8 +121,9 @@ public class AxisInsp extends ChartPartInsp {
         setViewVisible("MaxBoundText", maxBound != AxisBound.AUTO);
         setViewEnabled("MaxBoundText", maxBound == AxisBound.VALUE);
 
-        // Reset ZeroRequiredCheckBox, LogCheckBox, ShowLogMinorLabelsCheckBox, ShowLegendGraphicCheckBox
+        // Reset ZeroRequiredCheckBox, ShowZeroLineCheckBox, LogCheckBox, ShowLogMinorLabelsCheckBox, ShowLegendGraphicCheckBox
         setViewValue("ZeroRequiredCheckBox", axis.isZeroRequired());
+        setViewValue("ShowZeroLineCheckBox", axis.isShowZeroLine());
         setViewValue("LogCheckBox", axis.isLog());
         setViewValue("ShowLogMinorLabelsCheckBox", axis.isShowLogMinorLabels());
         setViewVisible("ShowLogMinorLabelsCheckBox", axis.isLog());
@@ -243,9 +244,11 @@ public class AxisInsp extends ChartPartInsp {
             axis.setMaxValue(val);
         }
 
-        // Handle ZeroRequiredCheckBox, LogCheckBox, ShowLogMinorLabelsCheckBox, ShowLegendGraphic
+        // Handle ZeroRequiredCheckBox, ShowZeroLineCheckBox, LogCheckBox, ShowLogMinorLabelsCheckBox, ShowLegendGraphic
         if (anEvent.equals("ZeroRequiredCheckBox"))
             axis.setZeroRequired(anEvent.getBoolValue());
+        if (anEvent.equals("ShowZeroLineCheckBox"))
+            axis.setShowZeroLine(anEvent.getBoolValue());
         if (anEvent.equals("LogCheckBox"))
             axis.setLog(anEvent.getBoolValue());
         if (anEvent.equals("ShowLogMinorLabelsCheckBox"))

@@ -34,8 +34,11 @@ public abstract class Axis extends ChartPart {
     // The Axis Max Value (if MaxBounding is VALUE)
     private double  _maxValue;
 
-    // Whether Zero should always be included
+    // Whether Zero should always be included in auto range
     private boolean  _zeroRequired;
+
+    // Whether to paint Zero line in distinct color when in range
+    private boolean  _showZeroLine;
 
     // Whether axis is log10 based
     private boolean  _log;
@@ -96,6 +99,7 @@ public abstract class Axis extends ChartPart {
     public static final String MinValue_Prop = "MinValue";
     public static final String MaxValue_Prop = "MaxValue";
     public static final String ZeroRequired_Prop = "ZeroRequired";
+    public static final String ShowZeroLine_Prop = "ShowZeroLine";
     public static final String Log_Prop = "Logarithmic";
     public static final String ShowLogMinorLabels_Prop = "ShowLogMinorLabels";
     public static final String Side_Prop = "Side";
@@ -115,10 +119,10 @@ public abstract class Axis extends ChartPart {
     public static final String TickLabelRotation_Prop = "TickLabelRotation";
 
     // Constants for default values
-    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
-    public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
-    public static final Pos  DEFAULT_AXIS_ALIGN = Pos.CENTER;
-    protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
+    public static final boolean  DEFAULT_ZERO_REQUIRED = false;
+    public static final boolean  DEFAULT_SHOW_ZERO_LINE = true;
+    public static final boolean  DEFAULT_LOG = false;
+    public static final boolean  DEFAULT_SHOW_LOG_MINOR_LABELS = false;
     public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
     public static final boolean  DEFAULT_SHOW_GRID = true;
     public static final Color  DEFAULT_GRID_COLOR = Color.get("#E6");
@@ -129,6 +133,12 @@ public abstract class Axis extends ChartPart {
     public static final int  DEFAULT_MINOR_TICK_COUNT = 0;
     public static final boolean  DEFAULT_SHOW_TICK_LABELS = true;
     public static final boolean  DEFAULT_TICK_LABEL_AUTO_ROTATE = true;
+
+    // Constants for default overrides
+    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
+    public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
+    public static final Pos  DEFAULT_AXIS_ALIGN = Pos.CENTER;
+    protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
     public static final NumberFormat  DEFAULT_AXIS_TEXT_FORMAT = new NumberFormat(null, ExpStyle.Financial);
 
     // Constants for layout
@@ -267,17 +277,31 @@ public abstract class Axis extends ChartPart {
     }
 
     /**
-     * Returns whether Zero should always be included.
+     * Returns whether Zero should always be included in auto range.
      */
     public boolean isZeroRequired()  { return _zeroRequired; }
 
     /**
-     * Sets whether Zero should always be included.
+     * Sets whether Zero should always be included in auto range.
      */
     public void setZeroRequired(boolean aValue)
     {
         if (aValue == isZeroRequired()) return;
-        firePropChange(ZeroRequired_Prop, _zeroRequired, _zeroRequired=aValue);
+        firePropChange(ZeroRequired_Prop, _zeroRequired, _zeroRequired = aValue);
+    }
+
+    /**
+     * Returns whether Zero line should be painted with distinct style when in visible range.
+     */
+    public boolean isShowZeroLine()  { return _showZeroLine; }
+
+    /**
+     * Sets whether Zero line should be painted with distinct style when in visible range.
+     */
+    public void setShowZeroLine(boolean aValue)
+    {
+        if (aValue == isShowZeroLine()) return;
+        firePropChange(ShowZeroLine_Prop, _showZeroLine, _showZeroLine = aValue);
     }
 
     /**
@@ -601,7 +625,9 @@ public abstract class Axis extends ChartPart {
             case MinValue_Prop: return getMinValue();
             case MaxValue_Prop: return getMaxValue();
 
-            // Log, ShowLogMinorLabels
+            // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
+            case ZeroRequired_Prop: return isZeroRequired();
+            case ShowZeroLine_Prop: return isShowZeroLine();
             case Log_Prop: return isLog();
             case ShowLogMinorLabels_Prop: return isShowLogMinorLabels();
 
@@ -646,7 +672,9 @@ public abstract class Axis extends ChartPart {
                 break;
             }
 
-            // Log, ShowLogMinorLabels
+            // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
+            case ZeroRequired_Prop: setZeroRequired(SnapUtils.boolValue(aValue));
+            case ShowZeroLine_Prop: setShowZeroLine(SnapUtils.boolValue(aValue));
             case Log_Prop: setLog(SnapUtils.boolValue(aValue)); break;
             case ShowLogMinorLabels_Prop: setShowLogMinorLabels(SnapUtils.boolValue(aValue)); break;
 
@@ -696,9 +724,11 @@ public abstract class Axis extends ChartPart {
             case MinValue_Prop: return 0;
             case MaxValue_Prop: return 5;
 
-            // Log, ShowLogMinorLabels
-            case Log_Prop: return false;
-            case ShowLogMinorLabels_Prop: return false;
+            // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
+            case ZeroRequired_Prop: return DEFAULT_ZERO_REQUIRED;
+            case ShowZeroLine_Prop: return DEFAULT_SHOW_ZERO_LINE;
+            case Log_Prop: return DEFAULT_LOG;
+            case ShowLogMinorLabels_Prop: return DEFAULT_SHOW_LOG_MINOR_LABELS;
 
             // GridSpacing, GridBase
             case GridSpacing_Prop: return 0;
@@ -734,12 +764,14 @@ public abstract class Axis extends ChartPart {
         if (getTitleRotation() != 0)
             e.add(TitleRotation_Prop, getTitleRotation());
 
-        // Archive ZeroRequired, Log, ShowLogMinorLabels
-        if (isZeroRequired())
+        // Archive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
+        if (!isPropDefault(ZeroRequired_Prop))
             e.add(ZeroRequired_Prop, true);
-        if (isPropDefault(Log_Prop))
+        if (!isPropDefault(ShowZeroLine_Prop))
+            e.add(ShowZeroLine_Prop, isShowZeroLine());
+        if (!isPropDefault(Log_Prop))
             e.add(Log_Prop, isLog());
-        if (isPropDefault(ShowLogMinorLabels_Prop))
+        if (!isPropDefault(ShowLogMinorLabels_Prop))
             e.add(ShowLogMinorLabels_Prop, isShowLogMinorLabels());
 
         // Archive WrapAxis, WrapMinMax
@@ -804,9 +836,11 @@ public abstract class Axis extends ChartPart {
         if (anElement.hasAttribute(TitleRotation_Prop))
             setTitleRotation(anElement.getAttributeDoubleValue(TitleRotation_Prop));
 
-        // Unachive ZeroRequired, Log, ShowLogMinorLabels
+        // Unachive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
         if (anElement.hasAttribute(ZeroRequired_Prop))
-            setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop, false));
+            setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop));
+        if (anElement.hasAttribute(ShowZeroLine_Prop))
+            setShowZeroLine(anElement.getAttributeBoolValue(ShowZeroLine_Prop));
         if (anElement.hasAttribute(Log_Prop))
             setLog(anElement.getAttributeBoolValue(Log_Prop));
         if (anElement.hasAttribute(ShowLogMinorLabels_Prop))

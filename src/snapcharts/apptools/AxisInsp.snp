@@ -39,7 +39,8 @@
     </RowView>
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
-  <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Spacing="5" text="Always Include Zero" />
+  <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Spacing="5" text="Always Include Zero in Auto Range" />
+  <CheckBox Name="ShowZeroLineCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Zero Line Bold" />
   <RowView Spacing="6">
     <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
     <CheckBox Name="ShowLogMinorLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Minor Labels" />

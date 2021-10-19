@@ -65,6 +65,13 @@ public class XYGridPainter extends GridPainter {
             if (axisIsLog)
                 paintMinorLogGridlinesX(aPntr, dataX);
         }
+
+        // If includes zero, paint that
+        if (axis.isShowZeroLine() && intervals.getMin() <= 0 && 0 <= intervals.getMax()) {
+            aPntr.setColor(gridColor.darker());
+            double dispX0 = (int) Math.round(_chartHelper.dataToView(axisView, 0));
+            paintGridlineX(aPntr, dispX0);
+        }
     }
 
     /**
@@ -92,6 +99,13 @@ public class XYGridPainter extends GridPainter {
             // If Log, paint log minor grid
             if (axisIsLog)
                 paintMinorLogGridlinesY(aPntr, dataY);
+        }
+
+        // If includes zero, paint that
+        if (axis.isShowZeroLine() && intervals.getMin() <= 0 && 0 <= intervals.getMax()) {
+            aPntr.setColor(gridColor.darker());
+            double dispY0 = (int) Math.round(_chartHelper.dataToView(axisView, 0));
+            paintGridlineY(aPntr, dispY0);
         }
     }
 
