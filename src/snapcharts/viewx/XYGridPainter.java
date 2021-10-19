@@ -120,7 +120,7 @@ public class XYGridPainter extends GridPainter {
         double datX = incrX + incrX;
 
         // Iterate over extra 9 log ticks and paint
-        for (int i=1; i<10; i++, datX+=incrX) {
+        for (int i = 1; i < 10; i++, datX += incrX) {
 
             // Get data val as log, convert to display coords
             double dataXLog = Math.log10(datX);
@@ -146,7 +146,7 @@ public class XYGridPainter extends GridPainter {
         double datY = incrY + incrY;
 
         // Iterate over extra 9 log ticks and paint
-        for (int i=1; i<10; i++, datY+=incrY) {
+        for (int i = 1; i < 10; i++, datY += incrY) {
 
             // Get data val as log, convert to display coords
             double datYLog = Math.log10(datY);

@@ -120,7 +120,7 @@ public abstract class Axis extends ChartPart {
 
     // Constants for default values
     public static final boolean  DEFAULT_ZERO_REQUIRED = false;
-    public static final boolean  DEFAULT_SHOW_ZERO_LINE = true;
+    public static final boolean  DEFAULT_SHOW_ZERO_LINE = false;
     public static final boolean  DEFAULT_LOG = false;
     public static final boolean  DEFAULT_SHOW_LOG_MINOR_LABELS = false;
     public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
