@@ -516,7 +516,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         // Get DataX
         double[] dataX = null;
         XMLElement dataX_XML = anElement.get("DataX");
-        if (dataX_XML!=null) {
+        if (dataX_XML != null) {
             String dataXStr = dataX_XML.getValue();
             dataX = DataUtils.getDoubleArrayForString(dataXStr);
         }
@@ -524,7 +524,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         // Get DataY
         double[] dataY = null;
         XMLElement dataY_XML = anElement.get("DataY");
-        if (dataY_XML!=null) {
+        if (dataY_XML != null) {
             String dataYStr = dataY_XML.getValue();
             dataY = DataUtils.getDoubleArrayForString(dataYStr);
         }
@@ -532,7 +532,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         // Get DataZ
         double[] dataZ = null;
         XMLElement dataZ_XML = anElement.get("DataZ");
-        if (dataZ_XML!=null) {
+        if (dataZ_XML != null) {
             String dataZStr = dataZ_XML.getValue();
             dataZ = DataUtils.getDoubleArrayForString(dataZStr);
         }
@@ -540,7 +540,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         // Get DataC
         String[] dataC = null;
         XMLElement dataC_XML = anElement.get("DataC");
-        if (dataC_XML!=null) {
+        if (dataC_XML != null) {
             String dataCStr = dataC_XML.getValue();
             dataC = DataUtils.getStringArrayForString(dataCStr);
         }
@@ -548,7 +548,8 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         // Add Data points
         if (dataType == DataType.XYZZ)
             DataStoreUtils.addDataPointsXYZZ(this, dataX, dataY, dataZ);
-        else DataStoreUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
+        else if (dataType != DataType.UNKNOWN)
+            DataStoreUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
 
         // Return this part
         return this;

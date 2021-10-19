@@ -25,6 +25,8 @@ public class DataStoreUtils {
         int zlen = dataZ != null ? dataZ.length : Integer.MAX_VALUE;
         int clen = dataC != null ? dataC.length : Integer.MAX_VALUE;
         int len = Math.min(xlen, Math.min(ylen, Math.min(zlen, clen)));
+        if (len == Integer.MAX_VALUE)
+            return;
 
         // Iterate over data arrays and add to DataSet
         for (int i=0; i<len; i++) {
