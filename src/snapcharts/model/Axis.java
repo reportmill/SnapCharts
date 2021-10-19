@@ -377,7 +377,7 @@ public abstract class Axis extends ChartPart {
         if (aSide == getSide()) return;
 
         // If trying to set to invalid side, complain
-        if (aSide == null || aSide.isHorizontal() != getSideDefault().isHorizontal())
+        if (aSide == null || aSide.isLeftOrRight() != getSideDefault().isLeftOrRight())
             throw new IllegalArgumentException("Axis.setSide: Can't set Axis side to " + aSide);
 
         // Set and firePropChange

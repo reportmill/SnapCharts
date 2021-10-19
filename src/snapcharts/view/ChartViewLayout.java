@@ -90,7 +90,7 @@ public class ChartViewLayout {
         // Set DataArea.Bounds
         _dataAreaProxy.setBounds(dataAreaBounds);
 
-        // Adjust axes
+        // Adjust axes for DataAreaBounds
         for (ViewProxy<?> child : _chartProxy.getChildren()) {
             if (child.getView() instanceof AxisViewX) {
                 child.setX(dataAreaBounds.x);
@@ -102,9 +102,20 @@ public class ChartViewLayout {
             }
         }
 
-        // If Legend.Inside, Layout Legend special
-        if (_legendProxy != null && _legendProxy.isVisible() && _legendProxy.getView().isInside())
-            layoutLegendInside();
+        // Adjust legend for DataAreaBounds
+        if (_legendProxy != null && _legendProxy.isVisible()) {
+
+            // If Inside, layout special
+            LegendView legendView = _legendProxy.getView();
+            if (legendView.isInside())
+                layoutLegendInside();
+
+            // If Position is Top/Bottom, restrict to DataAreaBounds
+            else if (legendView.getPosition().getSide().isTopOrBottom()) {
+                _legendProxy.setX(dataAreaBounds.x);
+                _legendProxy.setWidth(dataAreaBounds.width);
+            }
+        }
 
         // Copy back to views
         _chartProxy.setBoundsInClient();

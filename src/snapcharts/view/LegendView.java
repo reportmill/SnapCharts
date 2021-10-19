@@ -136,7 +136,8 @@ public class LegendView extends ChartPartView<Legend> {
 
         // Handle Horizontal layout
         else {
-            _scaleBox.setAlign(Pos.CENTER);
+            _scaleBox.setAlignX(legend.getAlignX());
+            _scaleBox.setAlignY(VPos.CENTER);
         }
 
         // Add TitleView
