@@ -467,7 +467,13 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         @Override
         protected void paintAbove(Painter aPntr)
         {
-            getSel().paintSelection(aPntr, this);
+            if (_chartPaneTools.getCurrentTool() != null)
+                _chartPaneTools.paintTool(aPntr, this);
+
+            else {
+                ChartPaneSel chartSel = getSel();
+                chartSel.paintSelection(aPntr, this);
+            }
         }
     }
 }

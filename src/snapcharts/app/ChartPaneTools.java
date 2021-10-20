@@ -2,9 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.app;
+import snap.geom.Point;
 import snap.gfx.Image;
+import snap.gfx.Painter;
 import snap.view.RowView;
 import snap.view.ToggleButton;
+import snap.view.View;
 import snap.view.ViewEvent;
 
 /**
@@ -15,14 +18,11 @@ public class ChartPaneTools {
     // The ChartPane
     protected ChartPane  _chartPane;
 
-    // Whether currently editing
-    private boolean  _editing;
-
     // The current MarkerTool
     private MarkerTool  _currentTool;
 
     // The RectTool
-    private MarkerToolRect  _rectTool = new MarkerToolRect();
+    private MarkerToolRect  _rectTool;
 
     /**
      * Constructor.
@@ -30,6 +30,7 @@ public class ChartPaneTools {
     public ChartPaneTools(ChartPane aChartPane)
     {
         _chartPane = aChartPane;
+        _rectTool = new MarkerToolRect(this);
     }
 
     /**
@@ -56,6 +57,20 @@ public class ChartPaneTools {
     {
         if (_currentTool != null) {
             _currentTool.processMouseEvent(anEvent);
+        }
+    }
+
+    /**
+     * Called when ChartPane repaints.
+     */
+    public void paintTool(Painter aPntr, View aHostView)
+    {
+        if (_currentTool != null) {
+            aPntr.save();
+            Point chartViewXY = _chartPane.getChartView().localToParent(0, 0, aHostView);
+            aPntr.translate(chartViewXY.x, chartViewXY.y);
+            _currentTool.paintTool(aPntr);
+            aPntr.restore();
         }
     }
 

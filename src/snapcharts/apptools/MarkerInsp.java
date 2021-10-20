@@ -8,6 +8,7 @@ import snap.view.ListView;
 import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
+import snapcharts.app.MarkerTool;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Marker;
@@ -220,7 +221,7 @@ public class MarkerInsp extends ChartPartInsp {
     private void addMarker()
     {
         // Create new marker
-        Marker marker = createDefaultMarker();
+        Marker marker = MarkerTool.createDefaultMarker(getChart());
 
         // Add to chart
         Chart chart = getChart();
@@ -264,34 +265,5 @@ public class MarkerInsp extends ChartPartInsp {
             ChartPane chartPane = getChartPane();
             chartPane.getSel().setSelChartPart(newSelPart);
         }
-    }
-
-    /**
-     * Creates a new marker.
-     */
-    private Marker createDefaultMarker()
-    {
-        Marker marker = new Marker();
-        marker.setCoordSpaceX(Marker.CoordSpace.X);
-        marker.setCoordSpaceY(Marker.CoordSpace.Y);
-        marker.setFractionalX(true);
-        marker.setFractionalY(true);
-        marker.setBounds(.45, .45, .1, .1);
-        marker.setFill(Color.RED.copyForAlpha(.2));
-        marker.setLineColor(Color.RED.copyForAlpha(.2));
-        marker.setLineWidth(3);
-        marker.setLineDash(Stroke.DASH_DASH);
-
-        // Set name
-        for (int i = 1; true; i++) {
-            String name = "Marker " + i;
-            if (getChart().getMarker(name) == null) {
-                marker.setName(name);
-                break;
-            }
-        }
-
-        // Return marker
-        return marker;
     }
 }
