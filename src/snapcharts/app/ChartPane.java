@@ -321,6 +321,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Add ChartPaneTools
         _chartPaneTools = new ChartPaneTools(this);
         _chartPaneTools.addChartPaneTools();
+        _chartBox.addEventFilter(e -> _chartPaneTools.processMouseEvent(e), MouseEvents);
 
         // Set Chart in ChartView
         Chart chart = getChart();

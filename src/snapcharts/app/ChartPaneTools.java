@@ -13,10 +13,16 @@ import snap.view.ViewEvent;
 public class ChartPaneTools {
 
     // The ChartPane
-    private ChartPane  _chartPane;
+    protected ChartPane  _chartPane;
 
     // Whether currently editing
     private boolean  _editing;
+
+    // The current MarkerTool
+    private MarkerTool  _currentTool;
+
+    // The RectTool
+    private MarkerToolRect  _rectTool = new MarkerToolRect();
 
     /**
      * Constructor.
@@ -27,20 +33,30 @@ public class ChartPaneTools {
     }
 
     /**
-     * Returns whether editing.
+     * Returns current tool.
      */
-    public boolean isEditing()  { return _editing; }
+    public MarkerTool getCurrentTool()  { return _currentTool; }
 
     /**
-     * Sets whether editing.
+     * Sets current tool.
      */
-    public void setEditing(boolean aValue)
+    public void setCurrentTool(MarkerTool aMarkerTool)
     {
         // If already set, just return
-        if (aValue == _editing) return;
+        if (aMarkerTool == _currentTool) return;
 
         // Set value
-        _editing = aValue;
+        _currentTool = aMarkerTool;
+    }
+
+    /**
+     * Called when ChartPane.ChartBox gets mouse event.
+     */
+    public void processMouseEvent(ViewEvent anEvent)
+    {
+        if (_currentTool != null) {
+            _currentTool.processMouseEvent(anEvent);
+        }
     }
 
     /**
@@ -48,7 +64,7 @@ public class ChartPaneTools {
      */
     public void respondEditButton(ViewEvent anEvent)
     {
-        setEditing(anEvent.getBoolValue());
+        setCurrentTool(_rectTool);
     }
 
     /**
