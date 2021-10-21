@@ -1,5 +1,6 @@
 package snapcharts.util;
 import snap.util.FormatUtils;
+import snap.util.MathUtils;
 import snap.util.SnapUtils;
 
 /**
@@ -51,6 +52,14 @@ public class MinMax implements Cloneable {
     public double getRangeLength()
     {
         return _max - _min;
+    }
+
+    /**
+     * Returns the given fractional value expressed in range 0 to 1 mapped to this MinMax range.
+     */
+    public double mapFractional(double aValue)
+    {
+        return MathUtils.mapFractionalToRange(aValue, _min, _max);
     }
 
     /**

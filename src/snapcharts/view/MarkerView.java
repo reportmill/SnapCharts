@@ -3,6 +3,7 @@ import snap.geom.HPos;
 import snap.geom.Insets;
 import snap.geom.Rect;
 import snap.geom.VPos;
+import snap.util.MathUtils;
 import snap.view.TextArea;
 import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
@@ -26,6 +27,7 @@ public class MarkerView extends ChartPartView<Marker> {
         super(aMarker);
         setManaged(false);
         setPaintable(false);
+        setPickable(false);
 
         // Create/add TextArea
         _textArea = new TextArea();
@@ -179,9 +181,14 @@ public class MarkerView extends ChartPartView<Marker> {
      */
     public Rect getPrefBoundsInChartViewCoords()
     {
+        // Get ChartView, DataView
         ChartHelper chartHelper = getChartHelper();
         ChartView chartView = getChartView();
         DataView dataView = chartHelper.getDataView();
+        double dataViewX = dataView.getX();
+        double dataViewY = dataView.getY();
+
+        // Get Marker and Marker bounds
         Marker marker = getMarker();
         double markX = marker.getX();
         double markY = marker.getY();
@@ -205,11 +212,12 @@ public class MarkerView extends ChartPartView<Marker> {
             if (isFractionalX) {
                 double dataMin = dataArea.getStagedData().getMinX();
                 double dataMax = dataArea.getStagedData().getMaxX();
-                dataX0 = dataMin + dataX0 * (dataMax - dataMin);
-                dataX1 = dataMin + dataX1 * (dataMax - dataMin);
+                dataX0 = MathUtils.mapFractionalToRange(dataX0, dataMin, dataMax);
+                dataX1 = MathUtils.mapFractionalToRange(dataX1, dataMin, dataMax);
             }
             markX = dataArea.dataToViewX(dataX0);
             markW = dataArea.dataToViewX(dataX1) - markX;
+            markX += dataViewX;
         }
 
         // Handle CoordSpaceX DataBounds
@@ -220,6 +228,7 @@ public class MarkerView extends ChartPartView<Marker> {
                 markX = dispMin + markX * (dispMax - dispMin);
                 markW = markW * (dispMax - dispMin);
             }
+            markX += dataViewX;
         }
 
         // Handle CoordSpaceX ChartBounds
@@ -227,7 +236,7 @@ public class MarkerView extends ChartPartView<Marker> {
             if (isFractionalX) {
                 double dispMin = 0;
                 double dispMax = chartView.getWidth();
-                markX = dispMin + markX * (dispMax - dispMin) - dataView.getX();
+                markX = dispMin + markX * (dispMax - dispMin);
                 markW = markW * (dispMax - dispMin);
             }
         }
@@ -248,14 +257,13 @@ public class MarkerView extends ChartPartView<Marker> {
             double dataY1 = dataY0 + marker.getHeight();
             if (isFractionalY) {
                 MinMax dataMinMax = getStagedDataMinMaxYForAxisY(axisTypeY);
-                double dataMin = dataMinMax.getMin();
-                double dataMax = dataMinMax.getMax();
-                dataY0 = dataMin + dataY0 * (dataMax - dataMin);
-                dataY1 = dataMin + dataY1 * (dataMax - dataMin);
+                dataY0 = dataMinMax.mapFractional(dataY0);
+                dataY1 = dataMinMax.mapFractional(dataY1);
             }
             markY = dataArea.dataToViewY(dataY1);
             double markMaxY = dataArea.dataToViewY(dataY0);
             markH = markMaxY - markY;
+            markY += dataViewY;
         }
 
         // Handle CoordSpaceY DataBounds
@@ -266,6 +274,7 @@ public class MarkerView extends ChartPartView<Marker> {
                 markY = dispMin + markY * (dispMax - dispMin);
                 markH = markH * (dispMax - dispMin);
             }
+            markY += dataViewY;
         }
 
         // Handle CoordSpaceY ChartBounds
@@ -273,14 +282,12 @@ public class MarkerView extends ChartPartView<Marker> {
             if (isFractionalY) {
                 double dispMin = 0;
                 double dispMax = chartView.getHeight();
-                markY = dispMin + markY * (dispMax - dispMin) - dataView.getY();
+                markY = dispMin + markY * (dispMax - dispMin);
                 markH = markH * (dispMax - dispMin);
             }
         }
 
-        // Convert X/Y from DataView to ChartView coords and return rect
-        markX += dataView.getX();
-        markY += dataView.getY();
+        // Return rect
         return new Rect(markX, markY, markW, markH);
     }
 
