@@ -7,9 +7,11 @@ import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.app.MarkerTool;
+import snapcharts.model.AxisType;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Marker;
+import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartPartView;
 import snapcharts.view.ChartView;
 import snapcharts.view.MarkerView;
@@ -125,6 +127,12 @@ public class MarkerInsp extends ChartPartInsp {
         setViewValue("YSpaceY4Button", coordSpaceY == Marker.CoordSpace.Y4);
         setViewValue("YSpaceDataButton", coordSpaceY == Marker.CoordSpace.DataView);
         setViewValue("YSpaceChartButton", coordSpaceY == Marker.CoordSpace.ChartView);
+
+        // Only show YSpace buttons for supported Y axes
+        ChartHelper chartHelper = getChartPane().getChartHelper();
+        setViewVisible("YSpaceY2Button", chartHelper.isAxisType(AxisType.Y2));
+        setViewVisible("YSpaceY3Button", chartHelper.isAxisType(AxisType.Y3));
+        setViewVisible("YSpaceY4Button", chartHelper.isAxisType(AxisType.Y4));
 
         // Reset XText, WText, FractionalXCheckBox
         setViewValue("XText", marker.getX());
