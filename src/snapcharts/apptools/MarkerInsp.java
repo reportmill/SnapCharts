@@ -2,8 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
-import snap.gfx.Color;
-import snap.gfx.Stroke;
 import snap.view.ListView;
 import snap.view.TextField;
 import snap.view.ViewEvent;
@@ -12,6 +10,7 @@ import snapcharts.app.MarkerTool;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Marker;
+import snapcharts.view.ChartPartView;
 import snapcharts.view.ChartView;
 import snapcharts.view.MarkerView;
 
@@ -67,6 +66,16 @@ public class MarkerInsp extends ChartPartInsp {
         ChartPane chartPane = getChartPane();
         ChartPart selPart = chartPane.getSelChartPart();
         return selPart instanceof Marker ? (Marker) selPart : null;
+    }
+
+    /**
+     * Returns the selected marker.
+     */
+    private MarkerView getSelMarkerView()
+    {
+        ChartPane chartPane = getChartPane();
+        ChartPartView selView = chartPane.getSel().getSelView();
+        return selView instanceof MarkerView ? (MarkerView) selView : null;
     }
 
     /**
@@ -154,6 +163,7 @@ public class MarkerInsp extends ChartPartInsp {
             removeMarker();
 
         // Get Marker
+        MarkerView markerView = getSelMarkerView();
         Marker marker = getSelMarker();
         if (marker == null)
             return;
@@ -166,25 +176,25 @@ public class MarkerInsp extends ChartPartInsp {
 
         // Handle XSpaceXButton, XSpaceDataButton, XSpaceChartButton
         if (anEvent.equals("XSpaceXButton"))
-            marker.setCoordSpaceX(Marker.CoordSpace.X);
+            markerView.setCoordSpaceX(Marker.CoordSpace.X, marker.isFractionalX());
         if (anEvent.equals("XSpaceDataButton"))
-            marker.setCoordSpaceX(Marker.CoordSpace.DataView);
+            markerView.setCoordSpaceX(Marker.CoordSpace.DataView, marker.isFractionalX());
         if (anEvent.equals("XSpaceChartButton"))
-            marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
+            markerView.setCoordSpaceX(Marker.CoordSpace.ChartView, marker.isFractionalX());
 
         // Handle YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
         if (anEvent.equals("YSpaceYButton"))
-            marker.setCoordSpaceY(Marker.CoordSpace.Y);
+            markerView.setCoordSpaceY(Marker.CoordSpace.Y, marker.isFractionalY());
         if (anEvent.equals("YSpaceY2Button"))
-            marker.setCoordSpaceY(Marker.CoordSpace.Y2);
+            markerView.setCoordSpaceY(Marker.CoordSpace.Y2, marker.isFractionalY());
         if (anEvent.equals("YSpaceY3Button"))
-            marker.setCoordSpaceY(Marker.CoordSpace.Y3);
+            markerView.setCoordSpaceY(Marker.CoordSpace.Y3, marker.isFractionalY());
         if (anEvent.equals("YSpaceY4Button"))
-            marker.setCoordSpaceY(Marker.CoordSpace.Y4);
+            markerView.setCoordSpaceY(Marker.CoordSpace.Y4, marker.isFractionalY());
         if (anEvent.equals("YSpaceDataButton"))
-            marker.setCoordSpaceY(Marker.CoordSpace.DataView);
+            markerView.setCoordSpaceY(Marker.CoordSpace.DataView, marker.isFractionalY());
         if (anEvent.equals("YSpaceChartButton"))
-            marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
+            markerView.setCoordSpaceY(Marker.CoordSpace.ChartView, marker.isFractionalY());
 
         // Handle XText, WText, FractionalXCheckBox
         if (anEvent.equals("XText"))
@@ -192,7 +202,7 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("WText"))
             marker.setWidth(anEvent.getFloatValue());
         if (anEvent.equals("FractionalXCheckBox"))
-            marker.setFractionalX(anEvent.getBoolValue());
+            markerView.setCoordSpaceX(marker.getCoordSpaceX(), anEvent.getBoolValue());
 
         // Handle YText, HText, FractionalYCheckBox
         if (anEvent.equals("YText"))
@@ -200,7 +210,7 @@ public class MarkerInsp extends ChartPartInsp {
         if (anEvent.equals("HText"))
             marker.setHeight(anEvent.getFloatValue());
         if (anEvent.equals("FractionalYCheckBox"))
-            marker.setFractionalY(anEvent.getBoolValue());
+            markerView.setCoordSpaceY(marker.getCoordSpaceY(), anEvent.getBoolValue());
 
         // Handle TextText, TextOutsideXCheckBox, TextOutsideYCheckBox, FitTextToBoundsCheckBox, ShowTextInAxisCheckBox
         if (anEvent.equals("TextText"))

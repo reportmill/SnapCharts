@@ -41,6 +41,54 @@ public class MarkerView extends ChartPartView<Marker> {
     public Marker getMarker()  { return _chartPart; }
 
     /**
+     * Sets Marker CoordSpaceX and FractionalX while preserving the effective X/Width of marker in ChartView coords.
+     */
+    public void setCoordSpaceX(Marker.CoordSpace aCoordSpace, boolean isFractional)
+    {
+        // Get marker - if values already set, just return
+        Marker marker = getMarker();
+        if (marker.getCoordSpaceX() == aCoordSpace && marker.isFractionalX() == isFractional)
+            return;
+
+        // Get X/Width of marker for new CoordSpace + Fractional
+        Rect viewBounds = getMarkerBoundsInChartViewCoords();
+        double markX = mapChartViewToCoordSpaceX(aCoordSpace, isFractional, viewBounds.x);
+        double markW = mapChartViewToCoordSpaceX(aCoordSpace, isFractional, viewBounds.getMaxX()) - markX;
+
+        // Set new CoordSpace, Fractional, X, Width
+        marker.setCoordSpaceX(aCoordSpace);
+        marker.setFractionalX(isFractional);
+        marker.setX(markX);
+        marker.setWidth(markW);
+    }
+
+    /**
+     * Sets Marker CoordSpaceY and FractionalY while preserving the effective Y/Height of marker in ChartView coords.
+     */
+    public void setCoordSpaceY(Marker.CoordSpace aCoordSpace, boolean isFractional)
+    {
+        // Get marker - if values already set, just return
+        Marker marker = getMarker();
+        if (marker.getCoordSpaceY() == aCoordSpace && marker.isFractionalY() == isFractional)
+            return;
+
+        // Get Y/Height of marker for new CoordSpace + Fractional
+        Rect viewBounds = getMarkerBoundsInChartViewCoords();
+        double markY = mapChartViewToCoordSpaceY(aCoordSpace, isFractional, viewBounds.y);
+        double markH = mapChartViewToCoordSpaceY(aCoordSpace, isFractional, viewBounds.getMaxY()) - markY;
+        if (markH < 0) {
+            markY -= markH;
+            markH = -markH;
+        }
+
+        // Set new CoordSpace, Fractional, Y, Height
+        marker.setCoordSpaceY(aCoordSpace);
+        marker.setFractionalY(isFractional);
+        marker.setY(markY);
+        marker.setHeight(markH);
+    }
+
+    /**
      * Override for MarkerView.
      */
     @Override
@@ -177,17 +225,10 @@ public class MarkerView extends ChartPartView<Marker> {
     }
 
     /**
-     * Returns the appropriate bounds for MarkerView in ChartView coords.
+     * Returns the bounds of the Marker in ChartView coords.
      */
-    public Rect getPrefBoundsInChartViewCoords()
+    public Rect getMarkerBoundsInChartViewCoords()
     {
-        // Get ChartView, DataView
-        ChartHelper chartHelper = getChartHelper();
-        ChartView chartView = getChartView();
-        DataView dataView = chartHelper.getDataView();
-        double dataViewX = dataView.getX();
-        double dataViewY = dataView.getY();
-
         // Get Marker and Marker bounds
         Marker marker = getMarker();
         double markX = marker.getX();
@@ -195,100 +236,190 @@ public class MarkerView extends ChartPartView<Marker> {
         double markW = marker.getWidth();
         double markH = marker.getHeight();
 
-        // Get first DataArea
-        DataArea[] dataAreas = chartHelper.getDataAreas();
-        DataArea dataArea0 = dataAreas.length > 0 ? dataAreas[0] : null;
-
-        // Get CoordSpace info for X
+        // Get bounds for Marker in ChartView
         Marker.CoordSpace coordSpaceX = marker.getCoordSpaceX();
-        boolean isFractionalX = marker.isFractionalX();
-        AxisType axisTypeX = coordSpaceX.getAxisType();
-
-        // Handle CoordSpaceX Axis
-        if (axisTypeX != null) {
-            DataArea dataArea = dataArea0;
-            double dataX0 = marker.getX();
-            double dataX1 = dataX0 + marker.getWidth();
-            if (isFractionalX) {
-                double dataMin = dataArea.getStagedData().getMinX();
-                double dataMax = dataArea.getStagedData().getMaxX();
-                dataX0 = MathUtils.mapFractionalToRange(dataX0, dataMin, dataMax);
-                dataX1 = MathUtils.mapFractionalToRange(dataX1, dataMin, dataMax);
-            }
-            markX = dataArea.dataToViewX(dataX0);
-            markW = dataArea.dataToViewX(dataX1) - markX;
-            markX += dataViewX;
-        }
-
-        // Handle CoordSpaceX DataBounds
-        else if (coordSpaceX == Marker.CoordSpace.DataView) {
-            if (isFractionalX) {
-                double dispMin = 0;
-                double dispMax = dataView.getWidth();
-                markX = dispMin + markX * (dispMax - dispMin);
-                markW = markW * (dispMax - dispMin);
-            }
-            markX += dataViewX;
-        }
-
-        // Handle CoordSpaceX ChartBounds
-        else if (coordSpaceX == Marker.CoordSpace.ChartView) {
-            if (isFractionalX) {
-                double dispMin = 0;
-                double dispMax = chartView.getWidth();
-                markX = dispMin + markX * (dispMax - dispMin);
-                markW = markW * (dispMax - dispMin);
-            }
-        }
-
-        // Get CoordSpace info for Y
         Marker.CoordSpace coordSpaceY = marker.getCoordSpaceY();
+        boolean isFractionalX = marker.isFractionalX();
         boolean isFractionalY = marker.isFractionalY();
-        AxisType axisTypeY = coordSpaceY.getAxisType();
-
-        // Handle CoordSpaceY Axis
-        if (axisTypeY != null) {
-            DataArea dataArea = chartHelper.getDataAreaForAxisTypeY(axisTypeY);
-            if (dataArea == null) {
-                System.err.println("MarkerView.getPrefBoundsInChartViewCoords: Invalid Y axis: " + axisTypeY);
-                dataArea = dataArea0;
-            }
-            double dataY0 = marker.getY();
-            double dataY1 = dataY0 + marker.getHeight();
-            if (isFractionalY) {
-                MinMax dataMinMax = getStagedDataMinMaxYForAxisY(axisTypeY);
-                dataY0 = dataMinMax.mapFractional(dataY0);
-                dataY1 = dataMinMax.mapFractional(dataY1);
-            }
-            markY = dataArea.dataToViewY(dataY1);
-            double markMaxY = dataArea.dataToViewY(dataY0);
-            markH = markMaxY - markY;
-            markY += dataViewY;
-        }
-
-        // Handle CoordSpaceY DataBounds
-        else if (coordSpaceY == Marker.CoordSpace.DataView) {
-            if (isFractionalY) {
-                double dispMin = 0;
-                double dispMax = dataView.getHeight();
-                markY = dispMin + markY * (dispMax - dispMin);
-                markH = markH * (dispMax - dispMin);
-            }
-            markY += dataViewY;
-        }
-
-        // Handle CoordSpaceY ChartBounds
-        else if (coordSpaceY == Marker.CoordSpace.ChartView) {
-            if (isFractionalY) {
-                double dispMin = 0;
-                double dispMax = chartView.getHeight();
-                markY = dispMin + markY * (dispMax - dispMin);
-                markH = markH * (dispMax - dispMin);
-            }
+        double viewX = mapCoordSpaceToChartViewX(coordSpaceX, isFractionalX, markX);
+        double viewY = mapCoordSpaceToChartViewY(coordSpaceY, isFractionalY, markY);
+        double viewW = mapCoordSpaceToChartViewX(coordSpaceX, isFractionalX, markX + markW) - viewX;
+        double viewH = mapCoordSpaceToChartViewY(coordSpaceY, isFractionalY, markY + markH) - viewY;
+        if (viewH < 0) {
+            viewY -= viewH;
+            viewH = -viewH;
         }
 
         // Return rect
-        return new Rect(markX, markY, markW, markH);
+        return new Rect(viewX, viewY, viewW, viewH);
+    }
+
+    /**
+     * Converts the given ChartView X coord to given CoordSpace and fractional.
+     */
+    private double mapCoordSpaceToChartViewX(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
+    {
+        // Get ChartView, DataView
+        ChartHelper chartHelper = getChartHelper();
+        DataView dataView = chartHelper.getDataView();
+        double dataViewX = dataView.getX();
+
+        // Handle CoordSpaceX Axis
+        AxisType axisTypeX = aCoordSpace.getAxisType();
+        if (axisTypeX != null) {
+            double dataX = aValue;
+            if (isFractional) {
+                DataArea[] dataAreas = chartHelper.getDataAreas();
+                DataArea dataArea = dataAreas.length > 0 ? dataAreas[0] : null;
+                MinMax dataRangeX = dataArea.getStagedData().getMinMaxX();
+                dataX = dataRangeX.mapFractionalToRangeValue(dataX);
+            }
+            double dispX = chartHelper.dataToView(axisTypeX, dataX);
+            return dispX + dataViewX;
+        }
+
+        // Handle CoordSpaceX DataBounds
+        if (aCoordSpace == Marker.CoordSpace.DataView) {
+            double dispX = aValue;
+            if (isFractional)
+                dispX = MathUtils.mapFractionalToRangeValue(dispX, 0, dataView.getWidth());
+            return dispX + dataViewX;
+        }
+
+        // Handle CoordSpaceX ChartBounds
+        if (aCoordSpace == Marker.CoordSpace.ChartView) {
+            double dispX = aValue;
+            if (isFractional)
+                dispX = MathUtils.mapFractionalToRangeValue(dispX, 0, getChartView().getWidth());
+            return dispX;
+        }
+
+        // Handle impossible CoordSpace: Throw a fit
+        throw new RuntimeException("MarkerView.mapCoordSpaceToChartViewX: Unknown CoordSpace: " + aCoordSpace);
+    }
+
+    /**
+     * Converts the given ChartView Y coord to given CoordSpace and fractional.
+     */
+    private double mapCoordSpaceToChartViewY(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
+    {
+        // Get ChartView, DataView
+        ChartHelper chartHelper = getChartHelper();
+        ChartView chartView = getChartView();
+        DataView dataView = chartHelper.getDataView();
+        double dataViewY = dataView.getY();
+
+        // Handle CoordSpaceY Axis
+        AxisType axisTypeY = aCoordSpace.getAxisType();
+        if (axisTypeY != null) {
+            DataArea dataArea = chartHelper.getDataAreaForAxisTypeY(axisTypeY);
+            if (dataArea == null) {
+                System.err.println("MarkerView.mapCoordSpaceToChartViewY: Invalid Y axis: " + axisTypeY);
+                return 0;
+            }
+            double dataY = aValue;
+            if (isFractional) {
+                MinMax dataMinMax = getStagedDataMinMaxYForAxisY(axisTypeY);
+                dataY = dataMinMax.mapFractionalToRangeValue(dataY);
+            }
+            double dispY = dataArea.dataToViewY(dataY);
+            return dispY + dataViewY;
+        }
+
+        // Handle CoordSpaceY DataBounds
+        else if (aCoordSpace == Marker.CoordSpace.DataView) {
+            double dispY = aValue;
+            if (isFractional)
+                dispY = MathUtils.mapFractionalToRangeValue(dispY, 0, dataView.getHeight());
+            return dispY + dataViewY;
+        }
+
+        // Handle CoordSpaceY ChartBounds
+        else if (aCoordSpace == Marker.CoordSpace.ChartView) {
+            double dispY = aValue;
+            if (isFractional)
+                dispY = MathUtils.mapFractionalToRangeValue(dispY, 0, chartView.getHeight());
+            return dispY;
+        }
+
+        // Handle impossible CoordSpace: Throw a fit
+        throw new RuntimeException("MarkerView.mapCoordSpaceToChartViewY: Unknown CoordSpace: " + aCoordSpace);
+    }
+
+    /**
+     * Converts the given ChartView X coord to given CoordSpace and fractional.
+     */
+    private double mapChartViewToCoordSpaceX(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
+    {
+        // Get ChartView, DataView
+        ChartHelper chartHelper = getChartHelper();
+        DataView dataView = chartHelper.getDataView();
+        double dataViewX = dataView.getX();
+
+        // Handle CoordSpaceX Axis
+        AxisType axisTypeX = aCoordSpace.getAxisType();
+        if (axisTypeX != null) {
+            double dispX = aValue - dataViewX;
+            double dataX = chartHelper.viewToData(axisTypeX, dispX);
+            if (isFractional) {
+                DataArea[] dataAreas = chartHelper.getDataAreas();
+                DataArea dataArea = dataAreas.length > 0 ? dataAreas[0] : null;
+                MinMax minMax = dataArea.getStagedData().getMinMaxX();
+                dataX = minMax.mapRangeValueToFractional(dataX);
+            }
+            return dataX;
+        }
+
+        // Handle CoordSpaceX DataBounds
+        if (aCoordSpace == Marker.CoordSpace.DataView) {
+            double dispX = aValue - dataViewX;
+            if (isFractional)
+                dispX = MathUtils.mapRangeValueToFractional(dispX, 0, dataView.getWidth());
+            return dispX;
+        }
+
+        // Handle CoordSpaceX ChartBounds
+        double dispX = aValue;
+        if (isFractional)
+            dispX = MathUtils.mapRangeValueToFractional(dispX, 0, getChartView().getWidth());
+        return dispX;
+    }
+
+    /**
+     * Converts the given ChartView Y coord to given CoordSpace and fractional.
+     */
+    private double mapChartViewToCoordSpaceY(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
+    {
+        // Get ChartView, DataView
+        ChartHelper chartHelper = getChartHelper();
+        DataView dataView = chartHelper.getDataView();
+        double dataViewY = dataView.getY();
+
+        // Handle CoordSpaceX Axis
+        AxisType axisTypeY = aCoordSpace.getAxisType();
+        if (axisTypeY != null) {
+            double dispY = aValue - dataViewY;
+            double dataY = chartHelper.viewToData(axisTypeY, dispY);
+            if (isFractional) {
+                MinMax minMax = getStagedDataMinMaxYForAxisY(axisTypeY);
+                dataY = minMax.mapRangeValueToFractional(dataY);
+            }
+            return dataY;
+        }
+
+        // Handle CoordSpaceX DataBounds
+        if (aCoordSpace == Marker.CoordSpace.DataView) {
+            double dispY = aValue - dataViewY;
+            if (isFractional)
+                dispY = MathUtils.mapRangeValueToFractional(dispY, 0, dataView.getHeight());
+            return dispY;
+        }
+
+        // Handle CoordSpaceX ChartBounds
+        double dispY = aValue;
+        if (isFractional)
+            dispY = MathUtils.mapRangeValueToFractional(dispY, 0, getChartView().getHeight());
+        return dispY;
     }
 
     /**

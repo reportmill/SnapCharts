@@ -581,7 +581,7 @@ public class ChartView extends ChartPartView<Chart> {
     {
         MarkerView[] markerViews = getMarkerViews();
         for (MarkerView markerView : markerViews) {
-            Rect bnds = markerView.getPrefBoundsInChartViewCoords();
+            Rect bnds = markerView.getMarkerBoundsInChartViewCoords();
             markerView.setBounds(bnds);
             markerView.resetView();
         }

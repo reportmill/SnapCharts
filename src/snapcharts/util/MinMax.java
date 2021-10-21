@@ -57,9 +57,17 @@ public class MinMax implements Cloneable {
     /**
      * Returns the given fractional value expressed in range 0 to 1 mapped to this MinMax range.
      */
-    public double mapFractional(double aValue)
+    public double mapFractionalToRangeValue(double aValue)
     {
-        return MathUtils.mapFractionalToRange(aValue, _min, _max);
+        return MathUtils.mapFractionalToRangeValue(aValue, _min, _max);
+    }
+
+    /**
+     * Returns the given fractional value expressed in range 0 to 1 mapped to this MinMax range.
+     */
+    public double mapRangeValueToFractional(double aValue)
+    {
+        return MathUtils.mapRangeValueToFractional(aValue, _min, _max);
     }
 
     /**

@@ -51,14 +51,20 @@ public class MarkerToolRect extends MarkerTool {
         if (rect.width * rect.height < 50)
             return;
 
+        // Create Marker
         Chart chart = _chartView.getChart();
         Marker marker = createDefaultMarker(chart);
+
+        // Set Marker bounds in ChartView coords
         marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
         marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
         marker.setFractionalX(false);
         marker.setFractionalY(false);
         marker.setBounds(rect.x, rect.y, rect.width, rect.height);
+
+        // Add Marker to chart and select it
         chart.addMarker(marker);
+        _chartPane.getSel().setSelChartPart(marker);
     }
 
     /**
