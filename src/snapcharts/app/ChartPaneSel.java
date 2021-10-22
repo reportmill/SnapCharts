@@ -1,7 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.app;
-import snap.geom.Rect;
-import snap.geom.RoundRect;
-import snap.geom.Shape;
+import snap.geom.*;
 import snap.gfx.*;
 import snap.view.*;
 import snapcharts.model.*;
@@ -29,6 +30,9 @@ public class ChartPaneSel {
 
     // The last mouse event
     private ViewEvent  _lastMouseEvent;
+
+    // The handle being resized
+    private Pos  _resizeHandle;
 
     // Constants
     private static Color  SEL_COLOR = Color.get("#039ED3");
@@ -125,10 +129,6 @@ public class ChartPaneSel {
         // Set new part
         _targPart = aChartPart;
 
-        // Update cursor
-        Cursor cursor = getTargViewCursor();
-        _chartView.setCursor(cursor);
-
         // Repaint
         _chartPane.getUI().repaint();
     }
@@ -210,10 +210,8 @@ public class ChartPaneSel {
     private void chartViewMouseEvent(ViewEvent anEvent)
     {
         // Handle MouseMove
-        if (anEvent.isMouseMove()) {
-            ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
-            setTargChartPart(hitPart);
-        }
+        if (anEvent.isMouseMove())
+            mouseMoved(anEvent);
 
         // Handle MouseExit
         if (anEvent.isMouseExit()) {
@@ -229,7 +227,33 @@ public class ChartPaneSel {
         else if (anEvent.isMouseRelease()) {
             mouseReleased(anEvent);
             _chartView.repaint();
+            _chartPane.resetLater();
         }
+    }
+
+    /**
+     * MouseMoved.
+     */
+    private void mouseMoved(ViewEvent anEvent)
+    {
+        // If event over SelView and resizable, and over handle, set cursor and return
+        ChartPartView selView = getSelView();
+        if (selView != null && selView.isResizable()) {
+            Pos handlePos = getHandlePosForPoint(selView, _chartView, anEvent.getX(), anEvent.getY());
+            if (handlePos != null) {
+                Cursor cursor = Cursor.get(handlePos);
+                _chartView.setCursor(cursor);
+                return;
+            }
+        }
+
+        // Update target
+        ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
+        setTargChartPart(hitPart);
+
+        // Update cursor
+        Cursor cursor = getTargViewCursor();
+        _chartView.setCursor(cursor);
     }
 
     /**
@@ -239,6 +263,17 @@ public class ChartPaneSel {
     {
         _chartView.repaint();
         _lastMouseEvent = anEvent;
+
+        // If event over SelView and resizable, and over handle, set handle and return
+        ChartPartView selView = getSelView();
+        if (selView != null && selView.isResizable()) {
+            Pos handlePos = getHandlePosForPoint(selView, _chartView, anEvent.getX(), anEvent.getY());
+            if (handlePos != null) {
+                _resizeHandle = handlePos;
+                anEvent.consume();
+                return;
+            }
+        }
 
         // If Movable, consume event
         ChartPartView targView = getTargView();
@@ -251,6 +286,15 @@ public class ChartPaneSel {
      */
     private void mouseDragged(ViewEvent anEvent)
     {
+        // If resizing SelView, forward to SelView and return
+        if (_resizeHandle != null) {
+            ChartPartView selView = getSelView();
+            selView.processResizeEvent(anEvent, _lastMouseEvent, _resizeHandle);
+            _lastMouseEvent = anEvent;
+            anEvent.consume();
+        }
+
+        // If moving TargView, forward to TargView and return
         ChartPartView targView = getTargView();
         if (targView != null && targView.isMovable()) {
             targView.processMoveEvent(anEvent, _lastMouseEvent);
@@ -264,6 +308,13 @@ public class ChartPaneSel {
      */
     private void mouseReleased(ViewEvent anEvent)
     {
+        // If resizing, clear and return
+        if (_resizeHandle != null) {
+            _resizeHandle = null;
+            anEvent.consume();
+            return;
+        }
+
         // If Movable, consume event, ensure targView selected, return
         ChartPartView targView = getTargView();
         if (targView != null && targView.isMovable()) {
@@ -378,7 +429,7 @@ public class ChartPaneSel {
             return;
 
         // If SelView set, paint it
-        View selView = getSelView();
+        ChartPartView selView = getSelView();
         if (selView != null && selView != _chartView) {
             if (selView.isShowing())
                 paintSelView(aPntr, selView, aHostView);
@@ -395,7 +446,7 @@ public class ChartPaneSel {
     /**
      * Paints the selection.
      */
-    protected void paintSelView(Painter aPntr, View selView, View aHostView)
+    protected void paintSelView(Painter aPntr, ChartPartView selView, View aHostView)
     {
         // Get SelView bounds shape in HostView coords
         Rect selViewBounds = selView.getBoundsLocal();
@@ -418,7 +469,52 @@ public class ChartPaneSel {
         aPntr.setOpacity(.7);
         imgBox.paintImageBox(aPntr, selViewBoundsInHost.x, selViewBoundsInHost.y);
         aPntr.setOpacity(1);
+
+        // If resizable, paint handles
+        if (selView.isResizable())
+            paintSelViewHandles(aPntr, selView, aHostView);
     }
+
+    /**
+     * Paints the selection.
+     */
+    protected void paintSelViewHandles(Painter aPntr, ChartPartView selView, View aHostView)
+    {
+        Rect[] handleRects = getHandleRects(selView, aHostView);
+        for (Rect handleRect : handleRects)
+            paintSelViewHandleForRect(aPntr, handleRect);
+    }
+
+    /**
+     * Paints the selection.
+     */
+    protected void paintSelViewHandleForRect(Painter aPntr, Rect handleRect)
+    {
+        Image handleImage = getHandleImage();
+        aPntr.drawImage(handleImage, handleRect.x - 4, handleRect.y - 4);
+    }
+
+    /**
+     * Returns the handle image.
+     */
+    private Image getHandleImage()
+    {
+        if (_handleImage != null) return _handleImage;
+        ShapeView shapeView = new ShapeView();
+        shapeView.setShape(new Rect(0, 0, 9, 9));
+        shapeView.sizeToShape();
+        shapeView.setFill(Color.WHITE);
+        shapeView.setBorder(Color.DARKGRAY, 1);
+        shapeView.setEffect(new ShadowEffect(3, Color.LIGHTGRAY, 0, 0));
+        BoxView boxView = new BoxView(shapeView);
+        boxView.setPadding(4, 4, 4, 4);
+        boxView.setSizeToPrefSize();
+        Image image = ViewUtils.getImageForScale(boxView, -1);
+        return _handleImage = image;
+    }
+
+    // Handle image
+    private static Image  _handleImage;
 
     /**
      * Paints the targeting.
@@ -453,6 +549,51 @@ public class ChartPaneSel {
             aPntr.setColor(TARGET_COLOR);
             aPntr.draw(targViewShapeInHost);
         }
+    }
+
+    /**
+     * Returns handle rects for view.
+     */
+    private Rect[] getHandleRects(ChartPartView aView, View aHostView)
+    {
+        // Get View bounds in HostView coords
+        Point viewXY = aView.localToParent(0, 0, aHostView);
+        Rect viewBounds = new Rect(viewXY.x, viewXY.y, aView.getWidth(), aView.getHeight());
+
+        // Iterate over handle positions and get handle rect for each
+        Pos[] posValues = aView.getHandlePositions();
+        Rect[] handleRects = new Rect[posValues.length];
+        for (int i = 0; i < posValues.length; i++) {
+            Pos pos = posValues[i];
+            handleRects[i] = getHandleRect(viewBounds, pos);
+        }
+
+        // Return handle rects
+        return handleRects;
+    }
+
+    /**
+     * Returns handle rect for view and pos
+     */
+    private Rect getHandleRect(Rect aRect, Pos aPos)
+    {
+        Point posPoint = aRect.getPoint(aPos);
+        return new Rect(posPoint.x - 4, posPoint.y - 4, 8, 8);
+    }
+
+    /**
+     * Returns a handle position for given rect.
+     */
+    private Pos getHandlePosForPoint(ChartPartView aView, View aHostView, double aX, double aY)
+    {
+        Rect[] handleRects = getHandleRects(aView, aHostView);
+        for (int i = 0; i < handleRects.length; i++) {
+            Rect handleRect = handleRects[i];
+            if (handleRect.contains(aX, aY))
+                return aView.getHandlePositions()[i];
+        }
+
+        return null;
     }
 
     /**

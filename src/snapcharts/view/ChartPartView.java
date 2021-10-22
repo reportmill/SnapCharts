@@ -1,5 +1,7 @@
 package snapcharts.view;
+import snap.geom.Pos;
 import snap.view.ParentView;
+import snap.view.View;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 
@@ -92,6 +94,16 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
      * Called to handle a move event.
      */
     public void processMoveEvent(ViewEvent anEvent, ViewEvent lastEvent)  { }
+
+    /**
+     * Called to handle a resize event.
+     */
+    public void processResizeEvent(ViewEvent anEvent, ViewEvent lastEvent, Pos aHandlePos)  { }
+
+    /**
+     * Returns handle positions for view.
+     */
+    public Pos[] getHandlePositions()  { return Pos.ALL_OUTER; }
 
     /**
      * Called to reset view from ChartPart to make sure it is up to date.

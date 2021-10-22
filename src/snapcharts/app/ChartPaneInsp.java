@@ -188,11 +188,14 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void resetUI()
     {
-        // Get editor (and just return if null) and tool for selected shapes
-        ChartPane chartPane = getEditorPane();
+        // Reset SelPartInsp
+        ChartPart selPart = _chartPane.getSelChartPart();
+        ChartPartInsp selPartInsp = getChartPartInsp(selPart);
+        if (selPartInsp != null && selPartInsp.isShowing())
+            selPartInsp.resetLater();
 
         // Reset DataSetInsp
-        boolean isDataSetSelected = chartPane.getDataSet()!=null;
+        boolean isDataSetSelected = _chartPane.getDataSet() != null;
         if (isDataSetSelected) {
             _dataSetInsp.getUI().setVisible(true);
             _dataSetInsp.resetLater();

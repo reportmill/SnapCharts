@@ -1,8 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.view;
-import snap.geom.HPos;
-import snap.geom.Insets;
-import snap.geom.Rect;
-import snap.geom.VPos;
+import snap.geom.*;
 import snap.util.MathUtils;
 import snap.view.TextArea;
 import snap.view.View;
@@ -44,8 +44,9 @@ public class MarkerView extends ChartPartView<Marker> {
     public Marker getMarker()  { return _chartPart; }
 
     /**
-     * Returns whether this view is movable.
+     * Override to return true if MarkerView in display space (ChartView or DataView).
      */
+    @Override
     public boolean isMovable()
     {
         Marker marker = getMarker();
@@ -57,6 +58,7 @@ public class MarkerView extends ChartPartView<Marker> {
     /**
      * Called to handle a move event.
      */
+    @Override
     public void processMoveEvent(ViewEvent anEvent, ViewEvent lastEvent)
     {
         // Get change in View X/Y
@@ -77,6 +79,57 @@ public class MarkerView extends ChartPartView<Marker> {
         // Update new XY
         marker.setX(marker.getX() + dx);
         marker.setY(marker.getY() + dy);
+    }
+
+    /**
+     * Override to return true if MarkerView in display space (ChartView or DataView).
+     */
+    @Override
+    public boolean isResizable()
+    {
+        return isMovable();
+    }
+
+    /**
+     * Called to handle a resize event.
+     */
+    @Override
+    public void processResizeEvent(ViewEvent anEvent, ViewEvent lastEvent, Pos aHandlePos)
+    {
+        // Get change in View X/Y
+        double dx = anEvent.getX() - lastEvent.getX();
+        double dy = anEvent.getY() - lastEvent.getY();
+
+        // If Marker coords isFractional, convert to fraction
+        Marker marker = getMarker();
+        if (marker.isFractionalX()) {
+            View view = marker.getCoordSpaceX() == CoordSpace.ChartView ? getChartView() : getDataView();
+            dx /= view.getWidth();
+        }
+        if (marker.isFractionalY()) {
+            View view = marker.getCoordSpaceY() == CoordSpace.ChartView ? getChartView() : getDataView();
+            dy /= view.getHeight();
+        }
+
+        // Calculate change in View Width/Height for handle (and maybe adjust change in X/Y)
+        double dw = 0;
+        double dh = 0;
+        switch (aHandlePos.getHPos()) {
+            case LEFT: dw = -dx; break;
+            case CENTER: dx = 0; break;
+            case RIGHT: dw = dx; dx = 0; break;
+        }
+        switch (aHandlePos.getVPos()) {
+            case TOP: dh = -dy; break;
+            case CENTER: dy = 0; break;
+            case BOTTOM: dh = dy; dy = 0; break;
+        }
+
+        // Update new bounds
+        marker.setX(marker.getX() + dx);
+        marker.setY(marker.getY() + dy);
+        marker.setWidth(marker.getWidth() + dw);
+        marker.setHeight(marker.getHeight() + dh);
     }
 
     /**
