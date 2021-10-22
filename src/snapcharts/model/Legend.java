@@ -23,6 +23,9 @@ public class Legend extends ParentPart {
     // The ChartText to hold title text
     private ChartText  _title;
 
+    // A Marker to hold Legend floating bounds info
+    private Marker  _marker;
+
     // Property constants
     public static final String ShowLegend_Prop = "ShowLegend";
     public static final String Position_Prop = "Position";
@@ -92,6 +95,25 @@ public class Legend extends ParentPart {
      * Returns the Legend title ChartText.
      */
     public ChartText getTitle()  { return _title; }
+
+    /**
+     * Returns whether legend is floating (bounds are defined by Legend.Marker).
+     */
+    public boolean isFloating()
+    {
+        return getPosition() == Pos.CENTER && !isInside();
+    }
+
+    /**
+     * Returns the marker to be used for legend floating position (when Position = CENTER, inside = false).
+     */
+    public Marker getMarker()
+    {
+        if (_marker != null) return _marker;
+        Marker marker = new Marker();
+        addChild(marker);
+        return _marker = marker;
+    }
 
     /**
      * Override to register props.

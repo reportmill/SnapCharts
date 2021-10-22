@@ -21,6 +21,9 @@ public class LegendView extends ChartPartView<Legend> {
     // The view to hold title text
     protected StringView  _titleView;
 
+    // The MarkerView to hold floating legend bounds via legend.Marker
+    protected MarkerView  _markerView;
+
     /**
      * Constructor.
      */
@@ -63,6 +66,72 @@ public class LegendView extends ChartPartView<Legend> {
     public boolean isInside()  { return getChartPart().isInside(); }
 
     /**
+     * Override to return true when floating.
+     */
+    @Override
+    public boolean isMovable()
+    {
+        return isFloating();
+    }
+
+    /**
+     * Override to return true when floating.
+     */
+    @Override
+    public boolean isResizable()
+    {
+        return isFloating();
+    }
+
+    /**
+     * Override to forward to MarkerView.
+     */
+    @Override
+    public void processMoveEvent(ViewEvent anEvent, ViewEvent lastEvent)
+    {
+        MarkerView markerView = getMarkerView();
+        markerView.processMoveEvent(anEvent, lastEvent);
+    }
+
+    /**
+     * Override to forward to MarkerView.
+     */
+    @Override
+    public void processResizeEvent(ViewEvent anEvent, ViewEvent lastEvent, Pos aHandlePos)
+    {
+        MarkerView markerView = getMarkerView();
+        markerView.processResizeEvent(anEvent, lastEvent, aHandlePos);
+    }
+
+    /**
+     * Returns whether legend is floating (bounds are defined by Legend.Marker).
+     */
+    public boolean isFloating()
+    {
+        return getChartPart().isFloating();
+    }
+
+    /**
+     * Returns the marker to get legend floating bounds (when Position = CENTER, inside = false).
+     */
+    public Marker getMarker()
+    {
+        return getChartPart().getMarker();
+    }
+
+    /**
+     * Returns the MarkerView to get legend floating bounds (when Position = CENTER, inside = false).
+     */
+    public MarkerView getMarkerView()
+    {
+        if (_markerView != null) return _markerView;
+        Marker marker = getMarker();
+        MarkerView markerView = new MarkerView(marker);
+        addChild(markerView);
+        return _markerView = markerView;
+    }
+
+    /**
      * Reloads legend contents.
      */
     public void resetView()
@@ -86,7 +155,7 @@ public class LegendView extends ChartPartView<Legend> {
         _titleView.setLeanX(legend.getAlignX());
 
         // Handle Inside
-        if (legend.isInside()) {
+        if (legend.isInside() || isFloating()) {
             ChartView chartView = getChartView();
             ViewUtils.moveToFront(chartView, this);
         }

@@ -2,6 +2,7 @@ package snapcharts.view;
 import snap.geom.*;
 import snap.gfx.Border;
 import snap.view.*;
+import snapcharts.model.Marker;
 import snapcharts.viewx.PolarChartHelper;
 import java.util.Arrays;
 
@@ -66,15 +67,9 @@ public class ChartViewLayout {
         // Get PrefDataViewBounds
         _prefDataBounds = _chartView.getPrefDataViewBounds();
 
-        //_legendProxy.getView().setHeight(Math.round(_chartView.getHeight() * 2));
-
         // Layout top, bottom
         layoutTopSide();
         layoutBottomSide();
-
-        // Resize legend to DataAreaHeight
-        //double legendH = _chartView.getHeight() - _dataAreaInsets.getHeight();
-        //_legendProxy.getView().setHeight(legendH);
 
         // Layout left side, right side
         layoutLeftSide();
@@ -102,20 +97,9 @@ public class ChartViewLayout {
             }
         }
 
-        // Adjust legend for DataAreaBounds
-        if (_legendProxy != null && _legendProxy.isVisible()) {
-
-            // If Inside, layout special
-            LegendView legendView = _legendProxy.getView();
-            if (legendView.isInside())
-                layoutLegendInside();
-
-            // If Position is Top/Bottom, restrict to DataAreaBounds
-            else if (legendView.getPosition().getSide().isTopOrBottom()) {
-                _legendProxy.setX(dataAreaBounds.x);
-                _legendProxy.setWidth(dataAreaBounds.width);
-            }
-        }
+        // Handle special legend layout (Inside, Floating)
+        if (_legendProxy != null && _legendProxy.isVisible())
+            layoutLegendSpecialCases(dataAreaBounds);
 
         // Copy back to views
         _chartProxy.setBoundsInClient();
@@ -292,6 +276,39 @@ public class ChartViewLayout {
         viewProxy.setFillHeight(true);
         viewProxy.setPadding(getPaddingForSide(Side.RIGHT));
         return viewProxy;
+    }
+
+    /**
+     * Lays out the legend after normal layout to handle special cases (Inside, Floating).
+     */
+    private void layoutLegendSpecialCases(Rect dataAreaBounds)
+    {
+        // If Inside, layout special
+        LegendView legendView = _legendProxy.getView();
+        if (legendView.isInside())
+            layoutLegendInside();
+
+        // If Position is Top/Bottom, restrict to DataAreaBounds
+        else if (legendView.getPosition().isTopOrBottom()) {
+            _legendProxy.setX(dataAreaBounds.x);
+            _legendProxy.setWidth(dataAreaBounds.width);
+        }
+
+        // Handle Legend.Floating
+        else if (legendView.isFloating()) {
+            MarkerView markerView = legendView.getMarkerView();
+            Marker marker = markerView.getMarker();
+            if (marker.getX() == 0 && marker.getY() == 0) {
+                Size prefSize = legendView.getPrefSize();
+                double legendX = Math.round((_chartView.getWidth() - prefSize.width) / 2);
+                double legendY = Math.round((_chartView.getHeight() - prefSize.height) / 2);
+                marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
+                marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
+                marker.setBounds(legendX, legendY, prefSize.width, prefSize.height);
+            }
+            Rect legendBounds = markerView.getMarkerBoundsInChartViewCoords();
+            _legendProxy.setBounds(legendBounds);
+        }
     }
 
     /**
