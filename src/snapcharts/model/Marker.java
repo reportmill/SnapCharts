@@ -52,6 +52,9 @@ public class Marker extends ChartPart {
 
         // Map to AxisType
         public AxisType getAxisType()  { return getAxisTypeForCoordSpace(this); }
+
+        // Returns whether space is 'display' space (DataView or ChartView)
+        public boolean isDisplaySpace()  { return this == DataView || this == ChartView; }
     }
 
     // Constants for properties

@@ -122,6 +122,10 @@ public class ChartPaneSel {
         // Set new part
         _targPart = aChartPart;
 
+        // Update cursor
+        Cursor cursor = getTargViewCursor();
+        _chartView.setCursor(cursor);
+
         // Repaint
         _chartPane.getUI().repaint();
     }
@@ -132,6 +136,19 @@ public class ChartPaneSel {
     public ChartPartView getTargView()
     {
         return getChartPartViewForPart(_targPart);
+    }
+
+    /**
+     * Returns the cursor for the TargView.
+     */
+    protected Cursor getTargViewCursor()
+    {
+        ChartPartView targView = getTargView();
+        if (targView != null && targView.isMovable())
+            return Cursor.MOVE;
+        if (targView instanceof DataView)
+            return Cursor.MOVE;
+        return null;
     }
 
     /**

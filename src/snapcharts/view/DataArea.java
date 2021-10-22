@@ -40,7 +40,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public DataArea(ChartHelper aChartHelper, DataSet aDataSet)
     {
         super();
-        setCursor(Cursor.MOVE);
+        //setCursor(Cursor.MOVE);
 
         // Set ivars
         _chartHelper = aChartHelper;

@@ -9,6 +9,7 @@ import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataStore;
 import snapcharts.model.Marker;
+import snapcharts.model.Marker.CoordSpace;
 import snapcharts.util.MinMax;
 
 /**
@@ -33,6 +34,17 @@ public class MarkerView extends ChartPartView<Marker> {
         _textArea = new TextArea();
         _textArea.setPlainText(true);
         addChild(_textArea);
+    }
+
+    /**
+     * Returns whether this view is movable.
+     */
+    public boolean isMovable()
+    {
+        Marker marker = getMarker();
+        boolean isDisplaySpaceX = marker.getCoordSpaceX().isDisplaySpace();
+        boolean isDisplaySpaceY = marker.getCoordSpaceY().isDisplaySpace();
+        return isDisplaySpaceX && isDisplaySpaceY;
     }
 
     /**

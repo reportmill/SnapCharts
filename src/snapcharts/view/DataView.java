@@ -36,7 +36,7 @@ public class DataView extends ChartPartView<DataSetList> {
         _chartView = aChartView;
 
         // Config
-        setCursor(Cursor.MOVE);
+        //setCursor(Cursor.MOVE);
         enableEvents(MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
     }
 
