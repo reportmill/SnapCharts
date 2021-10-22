@@ -27,6 +27,9 @@ public class ChartPaneSel {
     // The cached ImageBox/image for painting current selection, target
     private ImageBox  _selImageBox, _targImageBox;
 
+    // The last mouse event
+    private ViewEvent  _lastMouseEvent;
+
     // Constants
     private static Color  SEL_COLOR = Color.get("#039ED3");
     private static Effect  SEL_EFFECT = new ShadowEffect(8, SEL_COLOR.darker(), 0, 0);
@@ -214,29 +217,71 @@ public class ChartPaneSel {
 
         // Handle MouseExit
         if (anEvent.isMouseExit()) {
-            setTargChartPart(null);
+            if (!ViewUtils.isMouseDown())
+                setTargChartPart(null);
         }
 
-        // Handle MousePress
+        // Handle MousePress, MouseDrag, MouseRelease
         else if (anEvent.isMousePress())
-            _chartView.repaint();
-
-        // Handle MouseRelease: If click, select part at event point, otherwise select chart
+            mousePressed(anEvent);
+        else if (anEvent.isMouseDrag())
+            mouseDragged(anEvent);
         else if (anEvent.isMouseRelease()) {
-
-            // Handle Click: Select part at mouse point
-            boolean isClick = anEvent.isEventWithinTimeAndDist(-1, 1);
-            if (isClick) {
-                ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
-                setSelChartPart(hitPart);
-            }
-
-            // Otherwise, clear selection
-            else setSelChartPart(getChart());
-
-            // Repaint because targ paint might change
+            mouseReleased(anEvent);
             _chartView.repaint();
         }
+    }
+
+    /**
+     * MousePressed.
+     */
+    private void mousePressed(ViewEvent anEvent)
+    {
+        _chartView.repaint();
+        _lastMouseEvent = anEvent;
+
+        // If Movable, consume event
+        ChartPartView targView = getTargView();
+        if (targView != null && targView.isMovable())
+            anEvent.consume();
+    }
+
+    /**
+     * MouseDragged.
+     */
+    private void mouseDragged(ViewEvent anEvent)
+    {
+        ChartPartView targView = getTargView();
+        if (targView != null && targView.isMovable()) {
+            targView.processMoveEvent(anEvent, _lastMouseEvent);
+            _lastMouseEvent = anEvent;
+            anEvent.consume();
+        }
+    }
+
+    /**
+     * MouseReleased.
+     */
+    private void mouseReleased(ViewEvent anEvent)
+    {
+        // If Movable, consume event, ensure targView selected, return
+        ChartPartView targView = getTargView();
+        if (targView != null && targView.isMovable()) {
+            anEvent.consume();
+            ChartPart selPart = targView.getChartPart();
+            setSelChartPart(selPart);
+            return;
+        }
+
+        // Handle Click: Select part at mouse point
+        boolean isClick = anEvent.isEventWithinTimeAndDist(-1, 1);
+        if (isClick) {
+            ChartPart hitPart = getChartPartForXY(anEvent.getX(), anEvent.getY());
+            setSelChartPart(hitPart);
+        }
+
+        // Otherwise, clear selection
+        else setSelChartPart(getChart());
     }
 
     /**

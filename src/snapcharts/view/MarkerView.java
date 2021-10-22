@@ -5,6 +5,8 @@ import snap.geom.Rect;
 import snap.geom.VPos;
 import snap.util.MathUtils;
 import snap.view.TextArea;
+import snap.view.View;
+import snap.view.ViewEvent;
 import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataStore;
@@ -37,6 +39,11 @@ public class MarkerView extends ChartPartView<Marker> {
     }
 
     /**
+     * Returns the Marker.
+     */
+    public Marker getMarker()  { return _chartPart; }
+
+    /**
      * Returns whether this view is movable.
      */
     public boolean isMovable()
@@ -48,9 +55,29 @@ public class MarkerView extends ChartPartView<Marker> {
     }
 
     /**
-     * Returns the Marker.
+     * Called to handle a move event.
      */
-    public Marker getMarker()  { return _chartPart; }
+    public void processMoveEvent(ViewEvent anEvent, ViewEvent lastEvent)
+    {
+        // Get change in View X/Y
+        double dx = anEvent.getX() - lastEvent.getX();
+        double dy = anEvent.getY() - lastEvent.getY();
+
+        // If Marker coords isFractional, convert to fraction
+        Marker marker = getMarker();
+        if (marker.isFractionalX()) {
+            View view = marker.getCoordSpaceX() == CoordSpace.ChartView ? getChartView() : getDataView();
+            dx /= view.getWidth();
+        }
+        if (marker.isFractionalY()) {
+            View view = marker.getCoordSpaceY() == CoordSpace.ChartView ? getChartView() : getDataView();
+            dy /= view.getHeight();
+        }
+
+        // Update new XY
+        marker.setX(marker.getX() + dx);
+        marker.setY(marker.getY() + dy);
+    }
 
     /**
      * Sets Marker CoordSpaceX and FractionalX while preserving the effective X/Width of marker in ChartView coords.

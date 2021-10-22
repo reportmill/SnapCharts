@@ -1,5 +1,6 @@
 package snapcharts.view;
 import snap.view.ParentView;
+import snap.view.ViewEvent;
 import snapcharts.model.*;
 
 /**
@@ -86,6 +87,11 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
      * Returns whether this view is resizable.
      */
     public boolean isResizable()  { return false; }
+
+    /**
+     * Called to handle a move event.
+     */
+    public void processMoveEvent(ViewEvent anEvent, ViewEvent lastEvent)  { }
 
     /**
      * Called to reset view from ChartPart to make sure it is up to date.
