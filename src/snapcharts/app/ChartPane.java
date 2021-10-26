@@ -2,20 +2,17 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.app;
+import snap.geom.Point;
 import snap.gfx.*;
-import snap.util.DeepChangeListener;
-import snap.util.PropChange;
-import snap.util.PropChangeListener;
-import snap.util.Undoer;
+import snap.util.*;
 import snap.view.*;
-import snapcharts.doc.DocItem;
-import snapcharts.doc.DocItemChart;
-import snapcharts.doc.DocItemDataSet;
+import snapcharts.doc.*;
 import snapcharts.model.*;
-import snapcharts.doc.ChartArchiver;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
+
+import java.util.List;
 
 /**
  * A class to manage charts/data in a ChartBook.
@@ -315,6 +312,9 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
             _chartBox.setPadding(20, 20, 20, 20);
         }
 
+        // Register for DragEvents
+        enableEvents(getUI(), DragEvents);
+
         // Register for EscapeAction
         addKeyActionHandler("EscapeAction", "ESCAPE");
 
@@ -389,6 +389,10 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle DragDrop events
+        if (anEvent.isDragDropEvent())
+            handleDragEvent(anEvent);
+
         // Handle ZoomSelectButton
         if (anEvent.equals("ZoomSelectButton")) {
             ChartHelper chartHelper = getChartHelper();
@@ -422,6 +426,83 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle EditButton
         if (anEvent.equals("EditButton"))
             _chartPaneTools.respondEditButton(anEvent);
+    }
+
+    /**
+     * Called when DragEvent is over ChartPane.
+     */
+    private void handleDragEvent(ViewEvent anEvent)
+    {
+        anEvent.acceptDrag();
+        anEvent.consume();
+
+        // Handle DragDropEvent: Call handleDragDropChartsFile (with loaded file)
+        if(anEvent.isDragDropEvent()) {
+
+            // If not Drag-Drop file, just return
+            Clipboard clipboard = anEvent.getClipboard();
+            if (!clipboard.hasFiles())
+                return;
+
+            // If no files, just return
+            List<ClipboardData> cbFiles = clipboard.getFiles();
+            if (cbFiles.size() == 0)
+                return;
+
+            // If file not '.charts' or '.simple', just return
+            ClipboardData cbFile = cbFiles.get(0);
+            String fileName = cbFile.getName();
+            String ext = FilePathUtils.getType(fileName);
+            if (!ext.equals("png") && !ext.equals("jpg") && !ext.equals("jpeg") && !ext.equals("gif"))
+                return;
+
+            if (cbFile.isLoaded())
+                handleDragDropImageFile(anEvent, cbFile);
+            else cbFile.addLoadListener(cbd -> handleDragDropImageFile(anEvent, cbd));
+            anEvent.dropComplete();
+        }
+    }
+
+    /**
+     * Called when DragEvent drop has loaded file.
+     */
+    private void handleDragDropImageFile(ViewEvent anEvent, ClipboardData aFile)
+    {
+        // Get image name, bytes and image
+        String name = aFile.getName();
+        byte[] imageBytes = aFile.getBytes();
+        Image image = Image.get(imageBytes);
+
+        // When loaded, call handleDragDropImage(image)
+        if (image.isLoaded())
+            handleDragDropImage(anEvent, image, name);
+        else image.addLoadListener(() -> handleDragDropImage(anEvent, image, name));
+    }
+
+    /**
+     * Called when DragEvent drop has loaded image.
+     */
+    private void handleDragDropImage(ViewEvent anEvent, Image anImage, String aName)
+    {
+        // Create/configure marker
+        Chart chart = getChart();
+        Marker marker = new Marker();
+        marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
+        marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
+        marker.setImage(anImage);
+        marker.setName(aName);
+
+        // Calculate bounds and set
+        Point chartXY = anEvent.getPoint(_chartView);
+        double imageW = anImage.getWidth();
+        double imageH = anImage.getHeight();
+        double imageX = chartXY.x - Math.round(imageW / 2);
+        double imageY = chartXY.y - Math.round(imageH / 2);
+        marker.setBounds(imageX, imageY, imageW, imageH);
+
+        // Add marker to chart and select
+        chart.addMarker(marker);
+        getSel().setSelChartPart(marker);
     }
 
     /**

@@ -3,7 +3,9 @@
  */
 package snapcharts.view;
 import snap.geom.*;
+import snap.gfx.Image;
 import snap.util.MathUtils;
+import snap.view.ImageView;
 import snap.view.TextArea;
 import snap.view.View;
 import snap.view.ViewEvent;
@@ -21,6 +23,9 @@ public class MarkerView extends ChartPartView<Marker> {
 
     // The TextView to show Marker text
     private TextArea  _textArea;
+
+    // The ImageView to show Image
+    private ImageView  _imageView;
 
     /**
      * Constructor.
@@ -198,21 +203,26 @@ public class MarkerView extends ChartPartView<Marker> {
             return;
         }
 
-        // Update TextArea properties
+        // Layout Image
+        if (marker.getImage() != null)
+            layoutImageView();
+
+        // If Text is set, update TextArea properties and layout
         String text = marker.getText();
-        if (text == null || text.length() == 0) {
-            _textArea.setVisible(false);
-            return;
+        if (text != null && text.length() > 0) {
+
+            // Update TextArea
+            _textArea.setText(text);
+            _textArea.setFont(marker.getFont());
+            _textArea.setVisible(true);
+            _textArea.setWrapLines(marker.isFitTextToBounds());
+
+            // Layout TextArea
+            layoutTextArea();
         }
 
-        // Update TextArea
-        _textArea.setText(text);
-        _textArea.setFont(marker.getFont());
-        _textArea.setVisible(true);
-        _textArea.setWrapLines(marker.isFitTextToBounds());
-
-        // Layout TextArea
-        layoutTextArea();
+        // Otherwise, hide text
+        else _textArea.setVisible(false);
     }
 
     /**
@@ -314,6 +324,36 @@ public class MarkerView extends ChartPartView<Marker> {
         _textArea.setAlign(marker.getAlign());
         _textArea.setFontScale(1);
         _textArea.scaleTextToFit();
+    }
+
+    /**
+     * Does layout for Image.
+     */
+    private void layoutImageView()
+    {
+        Marker marker = getMarker();
+        Image image = marker.getImage();
+
+        // If no ImageView, create/add ImageView
+        if (_imageView == null) {
+            _imageView = new ImageView(image);
+            _imageView.setFillWidth(true);
+            _imageView.setFillHeight(true);
+            addChild(_imageView, 0);
+        }
+
+        // Make sure image is up to date
+        _imageView.setImage(image);
+
+        // Get marker area bounds
+        Insets ins = getInsetsAll();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = getWidth() - ins.getWidth();
+        double areaH = getHeight() - ins.getHeight();
+
+        // Set ImageView bounds
+        _imageView.setBounds(areaX, areaY, areaW, areaH);
     }
 
     /**

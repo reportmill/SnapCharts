@@ -1,5 +1,6 @@
 package snapcharts.model;
 import snap.geom.Pos;
+import snap.gfx.Image;
 import snap.util.SnapUtils;
 import java.util.Objects;
 
@@ -44,6 +45,9 @@ public class Marker extends ChartPart {
     // Whether to show text in axis (between tick labels and axis label)
     private boolean  _showTextInAxis;
 
+    // Image to be shown for this marker
+    private Image  _image;
+
     // Constant for coordinate space
     public enum CoordSpace  {
 
@@ -72,6 +76,7 @@ public class Marker extends ChartPart {
     public static final String TextOutsideY_Prop = "TextOutsideY";
     public static final String FitTextToBounds_Prop = "FitTextToBounds";
     public static final String ShowTextInAxis_Prop = "ShowTextInAxis";
+    public static final String Image_Prop = "Image";
 
     // Constants for defaults
     private static final Pos DEFAULT_MARKER_ALIGN = Pos.CENTER;
@@ -300,6 +305,20 @@ public class Marker extends ChartPart {
     }
 
     /**
+     * Returns image to be shown for this marker.
+     */
+    public Image getImage()  { return _image; }
+
+    /**
+     * Sets text to be shown for this marker.
+     */
+    public void setImage(Image anImage)
+    {
+        if (anImage == _image) return;
+        firePropChange(Image_Prop, _image, _image = anImage);
+    }
+
+    /**
      * Override so ChartPart will get/set Marker border from line properties.
      */
     @Override
@@ -338,6 +357,9 @@ public class Marker extends ChartPart {
             case FitTextToBounds_Prop: return isFitTextToBounds();
             case ShowTextInAxis_Prop: return isShowTextInAxis();
 
+            // Image
+            case Image_Prop: return getImage();
+
             // Do normal version
             default: return super.getPropValue(aPropName);
         }
@@ -372,6 +394,9 @@ public class Marker extends ChartPart {
             case TextOutsideY_Prop: setTextOutsideY(SnapUtils.boolValue(aValue)); break;
             case FitTextToBounds_Prop: setFitTextToBounds(SnapUtils.boolValue(aValue)); break;
             case ShowTextInAxis_Prop: setShowTextInAxis(SnapUtils.boolValue(aValue)); break;
+
+            // Image
+            case Image_Prop: setImage((Image) aValue); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);
