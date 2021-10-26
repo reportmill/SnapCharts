@@ -2,7 +2,6 @@ package snapcharts.view;
 import snap.geom.*;
 import snap.gfx.Border;
 import snap.view.*;
-import snapcharts.model.Marker;
 import snapcharts.viewx.PolarChartHelper;
 import java.util.Arrays;
 
@@ -294,19 +293,9 @@ public class ChartViewLayout {
             _legendProxy.setWidth(dataAreaBounds.width);
         }
 
-        // Handle Legend.Floating
+        // Handle Legend.Floating (Uses Legend.Marker for location with some hacks)
         else if (legendView.isFloating()) {
-            MarkerView markerView = legendView.getMarkerView();
-            Marker marker = markerView.getMarker();
-            if (marker.getX() == 0 && marker.getY() == 0) {
-                Size prefSize = legendView.getPrefSize();
-                double legendX = Math.round((_chartView.getWidth() - prefSize.width) / 2);
-                double legendY = Math.round((_chartView.getHeight() - prefSize.height) / 2);
-                marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
-                marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
-                marker.setBounds(legendX, legendY, prefSize.width, prefSize.height);
-            }
-            Rect legendBounds = markerView.getMarkerBoundsInChartViewCoords();
+            Rect legendBounds = legendView.getFloatingBounds();
             _legendProxy.setBounds(legendBounds);
         }
     }

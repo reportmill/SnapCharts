@@ -3,8 +3,13 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
+import snap.geom.Point;
 import snap.geom.Pos;
+import snap.geom.Size;
 import snap.util.*;
+import snapcharts.util.DataUtils;
+
+import java.util.Objects;
 
 /**
  * A class to represent the Legend of chart.
@@ -23,13 +28,18 @@ public class Legend extends ParentPart {
     // The ChartText to hold title text
     private ChartText  _title;
 
-    // A Marker to hold Legend floating bounds info
-    private Marker  _marker;
+    // Hacky support for customer case of floating legend with fractional XY
+    private Point  _userXY;
+
+    // Hacky support for customer case of floating legend with user defined size
+    private Size  _userSize;
 
     // Property constants
     public static final String ShowLegend_Prop = "ShowLegend";
     public static final String Position_Prop = "Position";
     public static final String Inside_Prop = "Inside";
+    public static final String UserXY_Prop = "UserXY";
+    public static final String UserSize_Prop = "UserSize";
 
     // Constants for property defaults
     private static Pos DEFAULT_LEGEND_ALIGN = Pos.TOP_LEFT;
@@ -105,14 +115,31 @@ public class Legend extends ParentPart {
     }
 
     /**
-     * Returns the marker to be used for legend floating position (when Position = CENTER, inside = false).
+     * Hacky support for customer case of floating legend with fractional XY.
      */
-    public Marker getMarker()
+    public Point getUserXY()  { return _userXY; }
+
+    /**
+     * Hacky support for customer case of floating legend with fractional XY.
+     */
+    public void setUserXY(Point aPoint)
     {
-        if (_marker != null) return _marker;
-        Marker marker = new Marker();
-        addChild(marker);
-        return _marker = marker;
+        if (Objects.equals(aPoint, getUserXY())) return;
+        firePropChange(UserXY_Prop, _userXY, _userXY = aPoint);
+    }
+
+    /**
+     * Hacky support for customer case of floating legend with display coords width/height.
+     */
+    public Size getUserSize()  { return _userSize; }
+
+    /**
+     * Hacky support for customer case of floating legend with fraction XY and display coords width/height.
+     */
+    public void setUserSize(Size aSize)
+    {
+        if (Objects.equals(aSize, getUserSize())) return;
+        firePropChange(UserSize_Prop, _userSize, _userSize = aSize);
     }
 
     /**
@@ -142,6 +169,10 @@ public class Legend extends ParentPart {
             case Position_Prop: return getPosition();
             case Inside_Prop: return isInside();
 
+            // UserXY, UserSize
+            case UserXY_Prop: return getUserXY();
+            case UserSize_Prop: return getUserSize();
+
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
         }
@@ -160,6 +191,10 @@ public class Legend extends ParentPart {
             case ShowLegend_Prop: setShowLegend(SnapUtils.boolValue(aValue)); break;
             case Position_Prop: setPosition((Pos) aValue); break;
             case Inside_Prop: setInside(SnapUtils.boolValue(aValue)); break;
+
+            // UserXY, UserSize
+            case UserXY_Prop: setUserXY((Point) aValue); break;
+            case UserSize_Prop: setUserSize((Size) aValue); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue); break;
@@ -180,6 +215,10 @@ public class Legend extends ParentPart {
 
             // Handle Position
             case Position_Prop: return DEFAULT_POSITION;
+
+            // UserXY, UserSize
+            case UserXY_Prop: return null;
+            case UserSize_Prop: return null;
 
             // Handle superclass properties
             default: return super.getPropDefault(aPropName);
@@ -210,6 +249,18 @@ public class Legend extends ParentPart {
             e.addElement(titleXML);
         }
 
+        // Archive UserXY, UserSize
+        if (!isPropDefault(UserXY_Prop)) {
+            Point userXY = getUserXY();
+            String pointStr = userXY.x + ", " + userXY.y;
+            e.add(UserXY_Prop, pointStr);
+        }
+        if (!isPropDefault(UserSize_Prop)) {
+            Size userSize = getUserSize();
+            String sizeStr = userSize.width + ", " + userSize.height;
+            e.add(UserXY_Prop, sizeStr);
+        }
+
         // Return element
         return e;
     }
@@ -235,6 +286,20 @@ public class Legend extends ParentPart {
         XMLElement titleXML = anElement.getElement("Title");
         if (titleXML != null)
             getTitle().fromXML(anArchiver, titleXML);
+
+        // Unarchive UserXY, UserSize
+        if (anElement.hasAttribute(UserXY_Prop)) {
+            String pointStr = anElement.getAttributeValue(UserXY_Prop);
+            double[] pointVals = DataUtils.getDoubleArrayForString(pointStr);
+            if (pointVals.length > 1)
+                setUserXY(new Point(pointVals[0], pointVals[1]));
+        }
+        if (anElement.hasAttribute(UserSize_Prop)) {
+            String sizeStr = anElement.getAttributeValue(UserSize_Prop);
+            double[] sizeVals = DataUtils.getDoubleArrayForString(sizeStr);
+            if (sizeVals.length > 1)
+                setUserXY(new Point(sizeVals[0], sizeVals[1]));
+        }
 
         // Return this part
         return this;

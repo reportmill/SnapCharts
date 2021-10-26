@@ -7,6 +7,8 @@ import snap.util.ArrayUtils;
 import snap.view.*;
 import snapcharts.model.*;
 
+import java.util.Objects;
+
 /**
  * A view to display chart legend.
  */
@@ -20,9 +22,6 @@ public class LegendView extends ChartPartView<Legend> {
 
     // The view to hold title text
     protected StringView  _titleView;
-
-    // The MarkerView to hold floating legend bounds via legend.Marker
-    protected MarkerView  _markerView;
 
     /**
      * Constructor.
@@ -84,27 +83,56 @@ public class LegendView extends ChartPartView<Legend> {
     }
 
     /**
-     * Override to forward to MarkerView.
+     * Override to move legend via UserXY.
      */
     @Override
     public void processMoveEvent(ViewEvent anEvent, ViewEvent lastEvent)
     {
-        MarkerView markerView = getMarkerView();
-        markerView.processMoveEvent(anEvent, lastEvent);
+        // Get change in View X/Y
+        double dx = anEvent.getX() - lastEvent.getX();
+        double dy = anEvent.getY() - lastEvent.getY();
+
+        // Update new XY
+        Point userXY = getUserXY();
+        Point newXY = new Point(userXY.x + dx, userXY.y + dy);
+        setUserXY(newXY);
     }
 
     /**
-     * Override to forward to MarkerView.
+     * Override to resize legend via UserXY and UserSize.
      */
     @Override
     public void processResizeEvent(ViewEvent anEvent, ViewEvent lastEvent, Pos aHandlePos)
     {
-        MarkerView markerView = getMarkerView();
-        markerView.processResizeEvent(anEvent, lastEvent, aHandlePos);
+        // Get change in View X/Y
+        double dx = anEvent.getX() - lastEvent.getX();
+        double dy = anEvent.getY() - lastEvent.getY();
+
+        // Calculate change in View Width/Height for handle (and maybe adjust change in X/Y)
+        double dw = 0;
+        double dh = 0;
+        switch (aHandlePos.getHPos()) {
+            case LEFT: dw = -dx; break;
+            case CENTER: dx = 0; break;
+            case RIGHT: dw = dx; dx = 0; break;
+        }
+        switch (aHandlePos.getVPos()) {
+            case TOP: dh = -dy; break;
+            case CENTER: dy = 0; break;
+            case BOTTOM: dh = dy; dy = 0; break;
+        }
+
+        // Update new bounds
+        Point userXY = getUserXY();
+        Size userSize = getUserSize();
+        Point newXY = new Point(userXY.x + dx, userXY.y + dy);
+        Size newSize = new Size(userSize.width + dw, userSize.height + dh);
+        setUserXY(newXY);
+        setUserSize(newSize);
     }
 
     /**
-     * Returns whether legend is floating (bounds are defined by Legend.Marker).
+     * Returns whether legend is floating (position is center but legend not isInside).
      */
     public boolean isFloating()
     {
@@ -112,23 +140,102 @@ public class LegendView extends ChartPartView<Legend> {
     }
 
     /**
-     * Returns the marker to get legend floating bounds (when Position = CENTER, inside = false).
+     * Returns the floating legend bounds.
      */
-    public Marker getMarker()
+    public Rect getFloatingBounds()
     {
-        return getChartPart().getMarker();
+        Point userXY = getUserXY();
+        Size userSize = getUserSize();
+        return new Rect(userXY.x, userXY.y, userSize.width, userSize.height);
     }
 
     /**
-     * Returns the MarkerView to get legend floating bounds (when Position = CENTER, inside = false).
+     * Returns location of floating legend in ChartView coords.
      */
-    public MarkerView getMarkerView()
+    public Point getUserXY()
     {
-        if (_markerView != null) return _markerView;
-        Marker marker = getMarker();
-        MarkerView markerView = new MarkerView(marker);
-        addChild(markerView);
-        return _markerView = markerView;
+        // Get defined UserXY
+        Legend legend = getLegend();
+        Point userXY = legend.getUserXY();
+
+        // If defined, convert from DataView fractional to ChartView coords for current ChartView size
+        if (userXY != null) {
+            ChartView chartView = getChartView();
+            DataView dataView = chartView.getDataView();
+            double dispX = Math.round(userXY.x * dataView.getWidth() + dataView.getX());
+            double dispY = Math.round(userXY.y * dataView.getHeight() + dataView.getY());
+            return new Point(dispX, dispY);
+        }
+
+        // If null, but Floating is set, return XY of centered UserSize (PrefSize probably)
+        if (userXY == null && isFloating()) {
+            Size userSize = getUserSize();
+            double dispX = Math.round((getChartView().getWidth() - userSize.width) / 2);
+            double dispY = Math.round((getChartView().getHeight() - userSize.height) / 2);
+            return new Point(dispX, dispY);
+        }
+
+        // Return
+        return userXY;
+    }
+
+    /**
+     * Sets location of floating legend in ChartView coords.
+     */
+    public void setUserXY(Point aPoint)
+    {
+        // Convert from ChartView to DataView fractional
+        if (aPoint != null) {
+            ChartView chartView = getChartView();
+            View dataView = chartView.getDataView();
+            double fractX = (aPoint.x - dataView.getX()) / dataView.getWidth();
+            double fractY = (aPoint.y - dataView.getY()) / dataView.getHeight();
+            aPoint = new Point(fractX, fractY);
+        }
+        Legend legend = getLegend();
+        legend.setUserXY(aPoint);
+    }
+
+    /**
+     * Returns size of floating legend in ChartView coords.
+     */
+    public Size getUserSize()
+    {
+        // Get Legend.UserSize
+        Legend legend = getLegend();
+        Size userSize = legend.getUserSize();
+
+        // If not defined, user PrefSize instead
+        if (userSize == null)
+            userSize = getPrefSize();
+
+        // If Legend.UserXY is defined, make sure UserSize doesn't go outside chart bounds
+        if (legend.getUserXY() != null) {
+            Point userXY = getUserXY();
+            ChartView chartView = getChartView();
+            double chartW = chartView.getWidth();
+            double chartH = chartView.getHeight();
+            if (userXY.x + userSize.width > chartW || userXY.y + userSize.height > chartH) {
+                userSize = userSize.clone();
+                if (userXY.x + userSize.width > chartW)
+                    userSize.width = chartW - userXY.x - 2;
+                if (userXY.y + userSize.height > chartH)
+                    userSize.height = chartH - userXY.y - 2;
+            }
+        }
+
+        // Return
+        return userSize;
+    }
+
+    /**
+     * Sets size of floating legend in ChartView coords.
+     */
+    public void setUserSize(Size aSize)
+    {
+        Legend legend = getLegend();
+        if (!Objects.equals(aSize, getUserSize()))
+            legend.setUserSize(aSize);
     }
 
     /**
