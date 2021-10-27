@@ -3,12 +3,10 @@
  */
 package snapcharts.view;
 import snap.geom.*;
+import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.util.MathUtils;
-import snap.view.ImageView;
-import snap.view.TextArea;
-import snap.view.View;
-import snap.view.ViewEvent;
+import snap.view.*;
 import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
 import snapcharts.model.DataStore;
@@ -26,6 +24,9 @@ public class MarkerView extends ChartPartView<Marker> {
 
     // The ImageView to show Image
     private ImageView  _imageView;
+
+    // The ShapeView to show SVG
+    private ShapeView  _shapeView;
 
     /**
      * Constructor.
@@ -207,6 +208,10 @@ public class MarkerView extends ChartPartView<Marker> {
         if (marker.getImage() != null)
             layoutImageView();
 
+        // Layout SVG
+        if (marker.getSVG() != null)
+            layoutSVGView();
+
         // If Text is set, update TextArea properties and layout
         String text = marker.getText();
         if (text != null && text.length() > 0) {
@@ -354,6 +359,42 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Set ImageView bounds
         _imageView.setBounds(areaX, areaY, areaW, areaH);
+    }
+
+    /**
+     * Does layout for SVG.
+     */
+    private void layoutSVGView()
+    {
+        Marker marker = getMarker();
+
+        // If no ImageView, create/add ImageView
+        if (_shapeView == null) {
+            String svgText = marker.getSVG();
+            Path path = Path.getPathFromSVG(svgText);
+            _shapeView = new ShapeView(path);
+            _shapeView.setFillWidth(true);
+            _shapeView.setFillHeight(true);
+            _shapeView.setBorder(Color.RED, 5);
+            addChild(_shapeView, 0);
+        }
+
+        // Make sure image is up to date
+        //_imageView.setImage(image);
+        _shapeView.setFill(marker.getFill());
+        _shapeView.setBorder(marker.getBorder());
+        setFill(null);
+        setBorder(null);
+
+        // Get marker area bounds
+        Insets ins = getInsetsAll();
+        double areaX = ins.left;
+        double areaY = ins.top;
+        double areaW = getWidth() - ins.getWidth();
+        double areaH = getHeight() - ins.getHeight();
+
+        // Set ImageView bounds
+        _shapeView.setBounds(areaX, areaY, areaW, areaH);
     }
 
     /**

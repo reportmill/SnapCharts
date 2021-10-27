@@ -132,15 +132,22 @@ public class MarkerTool {
         marker.setLineDash(Stroke.DASH_DASH);
 
         // Set name
-        for (int i = 1; true; i++) {
-            String name = "Marker " + i;
-            if (aChart.getMarker(name) == null) {
-                marker.setName(name);
-                break;
-            }
-        }
+        String name = getDefaultMarkerName(aChart);
+        marker.setName(name);
 
         // Return marker
         return marker;
+   }
+
+    /**
+     * Creates a new marker.
+     */
+    public static String getDefaultMarkerName(Chart aChart)
+    {
+        for (int i = 1; true; i++) {
+            String name = "Marker " + i;
+            if (aChart.getMarker(name) == null)
+                return name;
+        }
     }
 }

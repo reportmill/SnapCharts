@@ -21,8 +21,11 @@ public class ChartPaneTools {
     // The current MarkerTool
     private MarkerTool  _currentTool;
 
-    // The RectTool
+    // The Rect tool
     private MarkerToolRect  _rectTool;
+
+    // The Pencil tool
+    private MarkerToolPencil  _pencilTool;
 
     /**
      * Constructor.
@@ -31,6 +34,7 @@ public class ChartPaneTools {
     {
         _chartPane = aChartPane;
         _rectTool = new MarkerToolRect(this);
+        _pencilTool = new MarkerToolPencil(this);
     }
 
     /**
@@ -77,9 +81,12 @@ public class ChartPaneTools {
     /**
      * Responds to EditButton pressed.
      */
-    public void respondEditButton(ViewEvent anEvent)
+    public void respondToolButton(ViewEvent anEvent)
     {
-        setCurrentTool(_rectTool);
+        if (anEvent.equals("RectToolButton"))
+            setCurrentTool(_rectTool);
+        else if (anEvent.equals("PencilToolButton"))
+            setCurrentTool(_pencilTool);
     }
 
     /**
@@ -87,17 +94,26 @@ public class ChartPaneTools {
      */
     public void addChartPaneTools()
     {
-        // Create EditButton
-        ToggleButton editButton = new ToggleButton();
-        editButton.setName("EditButton");
-        editButton.setToolTip("Add Chart Annotations");
-        Image editButtonImage = Image.get(getClass(), "SGPencil.png");
-        editButton.setImage(editButtonImage);
-        editButton.setShowArea(false);
-        editButton.setPrefSize(24, 24);
+        addChartPaneTool("PencilToolButton", "Add Sketch Annotations", "SGPencil.png");
+        addChartPaneTool("RectToolButton", "Add Rect Annotations", "SGRect.png");
+    }
+
+    /**
+     * Adds tools.k
+     */
+    public void addChartPaneTool(String buttonName, String toolTip, String imagePath)
+    {
+        // Create Tool button
+        ToggleButton toolButton = new ToggleButton();
+        toolButton.setName(buttonName);
+        toolButton.setToolTip(toolTip);
+        Image buttonImage = Image.get(getClass(), imagePath);
+        toolButton.setImage(buttonImage);
+        toolButton.setShowArea(false);
+        toolButton.setPrefSize(24, 24);
 
         // Add to toolbar
         RowView toolBar = _chartPane.getView("ToolBar", RowView.class);
-        toolBar.addChild(editButton, 0);
+        toolBar.addChild(toolButton, 0);
     }
 }

@@ -423,9 +423,10 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         if (anEvent.equals("EscapeAction"))
             getSel().popSelection();
 
-        // Handle EditButton
-        if (anEvent.equals("EditButton"))
-            _chartPaneTools.respondEditButton(anEvent);
+        // Handle XXXToolButton
+        String name = anEvent.getName();
+        if (name.endsWith("ToolButton"))
+            _chartPaneTools.respondToolButton(anEvent);
     }
 
     /**

@@ -48,6 +48,9 @@ public class Marker extends ChartPart {
     // Image to be shown for this marker
     private Image  _image;
 
+    // SVG to be shown for this marker
+    private String  _svg;
+
     // Constant for coordinate space
     public enum CoordSpace  {
 
@@ -77,6 +80,7 @@ public class Marker extends ChartPart {
     public static final String FitTextToBounds_Prop = "FitTextToBounds";
     public static final String ShowTextInAxis_Prop = "ShowTextInAxis";
     public static final String Image_Prop = "Image";
+    public static final String SVG_Prop = "SVG";
 
     // Constants for defaults
     private static final Pos DEFAULT_MARKER_ALIGN = Pos.CENTER;
@@ -319,6 +323,20 @@ public class Marker extends ChartPart {
     }
 
     /**
+     * Returns SVG to be shown for this marker.
+     */
+    public String getSVG()  { return _svg; }
+
+    /**
+     * Sets SVG to be shown for this marker.
+     */
+    public void setSVG(String aString)
+    {
+        if (Objects.equals(aString, _svg)) return;
+        firePropChange(SVG_Prop, _svg, _svg = aString);
+    }
+
+    /**
      * Override so ChartPart will get/set Marker border from line properties.
      */
     @Override
@@ -357,8 +375,9 @@ public class Marker extends ChartPart {
             case FitTextToBounds_Prop: return isFitTextToBounds();
             case ShowTextInAxis_Prop: return isShowTextInAxis();
 
-            // Image
+            // Image, SVG
             case Image_Prop: return getImage();
+            case SVG_Prop: return getSVG();
 
             // Do normal version
             default: return super.getPropValue(aPropName);
@@ -395,8 +414,9 @@ public class Marker extends ChartPart {
             case FitTextToBounds_Prop: setFitTextToBounds(SnapUtils.boolValue(aValue)); break;
             case ShowTextInAxis_Prop: setShowTextInAxis(SnapUtils.boolValue(aValue)); break;
 
-            // Image
+            // Image, SVG
             case Image_Prop: setImage((Image) aValue); break;
+            case SVG_Prop: setSVG(SnapUtils.stringValue(aValue)); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);
