@@ -4,7 +4,6 @@
 package snapcharts.viewx;
 import snap.geom.Arc;
 import snap.geom.Rect;
-import snap.gfx.Color;
 import snap.gfx.Painter;
 import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
@@ -75,7 +74,7 @@ public class PolarGridPainter extends GridPainter {
 
         // Iterate over intervals and paint lines
         Intervals ivals = axisView.getIntervals();
-        for (int i=0, iMax=ivals.getCount(); i<iMax; i++) {
+        for (int i = 0, iMax = ivals.getCount(); i < iMax; i++) {
 
             // Get something
             double dataRad = ivals.getInterval(i);
@@ -90,7 +89,7 @@ public class PolarGridPainter extends GridPainter {
             aPntr.setColor(gridColor);
             double radX = areaMidX - radLenX;
             double radY = areaMidY - radLenY;
-            arc.setRect(radX, radY, radLenX*2, radLenY*2);
+            arc.setRect(radX, radY, radLenX * 2, radLenY * 2);
             arc.setStartAngle(0);
             arc.setSweepAngle(-360 * reveal);
             arc.setClosure(Arc.Closure.Open);
@@ -116,7 +115,7 @@ public class PolarGridPainter extends GridPainter {
         double dataRad = ivals.getMax() * reveal;
 
         // Iterate over intervals and paint lines
-        for (int i=0, iMax=360; i<iMax; i+=15) {
+        for (int i = 0, iMax = 360; i < iMax; i += 15) {
             double angleRad = -Math.toRadians((i)) * (-reveal);
             double dispX = _polarHelper.polarDataToView(AxisType.X, angleRad, dataRad);
             double dispY = _polarHelper.polarDataToView(axisTypeY, angleRad, dataRad);

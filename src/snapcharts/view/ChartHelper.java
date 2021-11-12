@@ -5,6 +5,7 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.util.ArrayUtils;
+import snap.util.MathUtils;
 import snap.util.PropChange;
 import snap.view.View;
 import snap.view.ViewEvent;
@@ -477,17 +478,16 @@ public abstract class ChartHelper {
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Handle horizontal (X) axis
-        boolean isHor = axisView.getAxisType() == AxisType.X;
-        if (isHor) {
+        // Handle X axis
+        if (axisView.getAxisType() == AxisType.X) {
             double areaW = axisView.getWidth();
-            double dispX = (dataXY - dataMin) / (dataMax - dataMin) * areaW;
+            double dispX = MathUtils.mapValueForRanges(dataXY, dataMin, dataMax, 0, areaW);
             return dispX;
         }
 
-        // Handle vertical (Y) axis
+        // Handle Y axis
         double areaH = axisView.getHeight();
-        double dispY = areaH - (dataXY - dataMin) / (dataMax - dataMin) * areaH;
+        double dispY = MathUtils.mapValueForRanges(dataXY, dataMin, dataMax, areaH, 0);
         return dispY;
     }
 
@@ -510,22 +510,17 @@ public abstract class ChartHelper {
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Handle horizontal (X) axis
-        boolean isHor = axisView.getAxisType() == AxisType.X;
-        double dataXY;
-        if (isHor) {
+        // Handle X axis
+        if (axisView.getAxisType() == AxisType.X) {
             double areaW = axisView.getWidth();
-            dataXY = dataMin + dispXY / areaW * (dataMax - dataMin);
+            double dataX = MathUtils.mapValueForRanges(dispXY, 0, areaW, dataMin, dataMax);
+            return dataX;
         }
 
-        // Handle vertical (Y) axis
-        else {
-            double areaW = axisView.getHeight();
-            dataXY = dataMax - dispXY / areaW * (dataMax - dataMin);
-        }
-
-        // Return data val
-        return dataXY;
+        // Handle Y axis
+        double areaH = axisView.getHeight();
+        double dataY = MathUtils.mapValueForRanges(dispXY, 0, areaH, dataMax, dataMin);
+        return dataY;
     }
 
     /**

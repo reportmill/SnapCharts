@@ -28,7 +28,6 @@ public class PolarDataArea extends DataArea {
     private Shape  _tailShape;
 
     // Constants for defaults
-    protected static Stroke Stroke2 = new Stroke(2, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke3 = new Stroke(3, Stroke.Cap.Round, Stroke.Join.Round, 0);
     protected static Stroke Stroke5 = new Stroke(5, Stroke.Cap.Round, Stroke.Join.Round, 0);
 
@@ -54,9 +53,10 @@ public class PolarDataArea extends DataArea {
         Path2D path = new Path2D();
 
         // Iterate over data points
-        for (int i=0, iMax=dispPoints.length; i<iMax; i++) {
+        for (int i = 0, iMax = dispPoints.length; i < iMax; i++) {
             Point point = dispPoints[i];
-            if (i == 0) path.moveTo(point.x, point.y);
+            if (i == 0)
+                path.moveTo(point.x, point.y);
             else path.lineTo(point.x, point.y);
         }
 
@@ -73,18 +73,27 @@ public class PolarDataArea extends DataArea {
         if (_dispPoints != null) return _dispPoints;
 
         // Get dataset info
-        DataSet dset = getDataSet();
-        DataStore dataStore = dset.getPolarData();
-        int pointCount = dset.getPointCount();
+        DataSet dataSet = getDataSet();
+        DataStore dataStore = dataSet.getPolarData();
+        int pointCount = dataSet.getPointCount();
         AxisType axisTypeY = getAxisTypeY();
+
+        // Get whether to convert to radians - this is bogus!
+        boolean convertToRadians = dataStore.getMinMaxT().getMax() > 10;
 
         // Create points array
         Point[] dispPoints = new Point[pointCount];
 
         // Iterate over polar data points and covert/set in display points
         for (int j = 0; j < pointCount; j++) {
+
+            // Get Theta and Radius
             double dataTheta = dataStore.getT(j);
             double dataRad = dataStore.getR(j);
+            if (convertToRadians)
+                dataTheta = Math.toRadians(dataTheta);
+
+            // Convert to display coords
             double dispX = _polarHelper.polarDataToView(AxisType.X, dataTheta, dataRad);
             double dispY = _polarHelper.polarDataToView(axisTypeY, dataTheta, dataRad);
             dispPoints[j] = new Point(dispX, dispY);
@@ -129,7 +138,7 @@ public class PolarDataArea extends DataArea {
 
         // Get path - if Reveal is active, get path spliced
         Shape path = getDataPath();
-        if (reveal<1)
+        if (reveal < 1)
             path = new SplicerShape(path, 0, reveal);
 
         // Handle selected
@@ -175,7 +184,7 @@ public class PolarDataArea extends DataArea {
 
             // Iterate over points
             Point[] points = getDisplayPoints();
-            for (int i=0, iMax=points.length; i<iMax; i++) {
+            for (int i = 0, iMax = points.length; i < iMax; i++) {
                 Point point = points[i];
                 double dispX = point.x;
                 double dispY = point.y;
@@ -193,7 +202,7 @@ public class PolarDataArea extends DataArea {
         if (isSelected)
             paintSelPoint(aPntr);
 
-        // If reveal not full, resture gstate
+        // If reveal not full, restore gstate
         if (reveal < 1)
             aPntr.restore();
     }
@@ -238,7 +247,7 @@ public class PolarDataArea extends DataArea {
     public Shape getTailShape()
     {
         // If already set, just return
-        if (_tailShape!=null) return _tailShape;
+        if (_tailShape != null) return _tailShape;
 
         // Create/configure/set TailShape
         Path2D path = new Path2D();

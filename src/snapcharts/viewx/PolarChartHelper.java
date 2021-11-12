@@ -4,6 +4,7 @@
 package snapcharts.viewx;
 import snap.geom.Rect;
 import snap.gfx.Painter;
+import snap.util.MathUtils;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
@@ -102,21 +103,6 @@ public class PolarChartHelper extends ChartHelper {
     }
 
     /**
-     * Converts a polar theta/radius point to coord on axis in display coords.
-     */
-    public double polarDataToView(AxisType anAxisType, double aTheta, double aRadius)
-    {
-        // Convert from polar to XY
-        double dataXY;
-        if (anAxisType == AxisType.X)
-            dataXY = Math.cos(aTheta) * aRadius;
-        else dataXY = Math.sin(aTheta) * aRadius;
-
-        // Do normal XY data to view conversion
-        return dataToView(anAxisType, dataXY);
-    }
-
-    /**
      * Override to handle Polar special.
      */
     protected Intervals createIntervals(AxisView axisView)
@@ -156,27 +142,70 @@ public class PolarChartHelper extends ChartHelper {
     }
 
     /**
+     * Converts a polar theta/radius point to coord on axis in display coords.
+     */
+    public double polarDataToView(AxisType anAxisType, double aTheta, double aRadius)
+    {
+        AxisView axisView = getAxisView(anAxisType);
+        return polarDataToView(axisView, aTheta, aRadius);
+    }
+
+    /**
+     * Converts a polar theta/radius point to coord on axis in display coords.
+     */
+    public double polarDataToView(AxisView axisView, double aTheta, double aRadius)
+    {
+        // Convert from polar to XY
+        double dataXY = polarDataToXY(axisView, aTheta, aRadius);
+
+        // Do normal XY data to view conversion
+        return dataToView(axisView, dataXY);
+    }
+
+    /**
+     * Converts a polar theta/radius point to X/Y in data coords.
+     */
+    private final double polarDataToXY(AxisView axisView, double aTheta, double aRadius)
+    {
+        // Get data min/max (data coords)
+        Intervals intervals = axisView.getIntervals();
+        double dataMin = intervals.getMin();
+        double radius = aRadius - dataMin;
+
+        // Handle X axis
+        if (axisView.getAxisType() == AxisType.X)
+            return dataMin + Math.cos(aTheta) * radius;
+
+        // Handle Y axis
+        return dataMin + Math.sin(aTheta) * radius;
+    }
+
+    /**
      * Override to handle Polar special.
      */
     public double dataToView(AxisView axisView, double dataXY)
     {
+        // Get PolarBounds
+        Rect polarBounds = getPolarBounds();
+
         // Get data min/max (data coords)
         Intervals intervals = axisView.getIntervals();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Get display len (min is zero)
-        boolean isHor = axisView.getAxisType() == AxisType.X;
-        Rect polarBounds = getPolarBounds();
-        double areaX = isHor ? polarBounds.getMidX() : polarBounds.y;
-        double areaW = isHor ? polarBounds.getWidth()/2 : polarBounds.getHeight()/2;
+        // Handle X axis
+        if (axisView.getAxisType() == AxisType.X) {
+            double areaX = polarBounds.getMidX();
+            double areaW = polarBounds.width / 2;
+            double dispX = MathUtils.mapValueForRanges(dataXY, dataMin, dataMax, areaX, areaX + areaW);
+            return dispX;
+        }
 
-        // Convert data to display
-        double dispXY = isHor ? areaX + (dataXY - dataMin) / (dataMax - dataMin) * areaW :
-                areaX + areaW - (dataXY - dataMin) / (dataMax - dataMin) * areaW;
-
-        // Return display val
-        return dispXY;
+        // Handle Y axis
+        double areaY = polarBounds.y;
+        double areaH = polarBounds.height / 2;
+        double dispY = MathUtils.mapValueForRanges(dataXY, dataMin, dataMax, areaY + areaH, areaY);
+        return dispY;
     }
 
     /**
@@ -184,23 +213,27 @@ public class PolarChartHelper extends ChartHelper {
      */
     public double viewToData(AxisView axisView, double dispXY)
     {
+        // Get PolarBounds
+        Rect polarBounds = getPolarBounds();
+
         // Get data min/max (data coords)
         Intervals intervals = axisView.getIntervals();
         double dataMin = intervals.getMin();
         double dataMax = intervals.getMax();
 
-        // Get display len (min is zero)
-        boolean isHor = axisView.getAxisType() == AxisType.X;
-        Rect polarBounds = getPolarBounds();
-        double areaX = isHor ? polarBounds.getMidX() : polarBounds.y;
-        double areaW = isHor ? polarBounds.getWidth()/2 : polarBounds.getHeight()/2;
+        // Handle X axis
+        if (axisView.getAxisType() == AxisType.X) {
+            double areaX = polarBounds.getMidX();
+            double areaW = polarBounds.width / 2;
+            double dataX = MathUtils.mapValueForRanges(dispXY, areaX, areaX + areaW, dataMin, dataMax);
+            return dataX;
+        }
 
-        // Convert display to data
-        double dataXY = isHor ? dataMin + (dispXY - areaX) / areaW * (dataMax - dataMin) :
-                dataMax - (dispXY - areaX) / areaW * (dataMax - dataMin);
-
-        // Return data val
-        return dataXY;
+        // Handle Y axis
+        double areaY = polarBounds.y;
+        double areaH = polarBounds.height / 2;
+        double dataY = MathUtils.mapValueForRanges(dispXY, areaY, areaY + areaH, dataMax, dataMin);
+        return dataY;
     }
 
     /**
@@ -231,8 +264,10 @@ public class PolarChartHelper extends ChartHelper {
         AxisView axisViewX = getAxisViewX();
         Axis axisX = axisViewX.getAxis();
         if (axisX.isZeroRequired()) {
-            if (min > 0) min = 0;
-            if (max < 0) max = 0;
+            if (min > 0)
+                min = 0;
+            else if (max < 0)
+                max = 0;
         }
 
         // Set/return min/max
@@ -250,7 +285,7 @@ public class PolarChartHelper extends ChartHelper {
 
         // Handle DataSet/DataSetList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList) {
+        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
             _radiusMinMax = null;
         }
     }
