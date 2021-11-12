@@ -8,6 +8,7 @@ import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.util.PropChange;
 import snapcharts.model.*;
+import snapcharts.modelx.PolarStyle;
 import snapcharts.view.*;
 
 /**
@@ -78,8 +79,10 @@ public class PolarDataArea extends DataArea {
         int pointCount = dataSet.getPointCount();
         AxisType axisTypeY = getAxisTypeY();
 
-        // Get whether to convert to radians - this is bogus!
-        boolean convertToRadians = dataStore.getMinMaxT().getMax() > 10;
+        // Get whether to convert to radians
+        DataStyle dataStyle = dataSet.getDataStyle();
+        PolarStyle polarStyle = dataStyle instanceof PolarStyle ? (PolarStyle) dataStyle : null;
+        boolean convertToRadians = polarStyle != null && polarStyle.getThetaUnit() != PolarStyle.ThetaUnit.Radians;
 
         // Create points array
         Point[] dispPoints = new Point[pointCount];
@@ -110,6 +113,7 @@ public class PolarDataArea extends DataArea {
     {
         _dataPath = null;
         _dispPoints = null;
+        repaint();
     }
 
     /**
@@ -270,7 +274,7 @@ public class PolarDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src == getDataSet() || src instanceof Axis) {
+        if (src == getDataSet() || src instanceof Axis || src instanceof DataStyle) {
             clearDataPath();
         }
     }

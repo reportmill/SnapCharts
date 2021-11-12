@@ -13,16 +13,19 @@ public class DataStyleHpr {
     private ChartPart  _parent;
 
     // Line chart properties
-    private XYStyle _xyStyle;
+    private XYStyle  _xyStyle;
 
     // Bar chart properties
-    private BarStyle _barStyle;
+    private BarStyle  _barStyle;
 
     // Pie chart properties
-    private PieStyle _pieStyle;
+    private PieStyle  _pieStyle;
+
+    // Polar chart properties
+    private PolarStyle  _polarStyle;
 
     // Contour chart properties
-    private ContourStyle _contourStyle;
+    private ContourStyle  _contourStyle;
 
     // Bar3D chart properties
     private Bar3DStyle  _bar3DStyle;
@@ -62,6 +65,7 @@ public class DataStyleHpr {
             case SCATTER: return getXYStyle();
             case BAR: return getBarStyle();
             case PIE: return getPieStyle();
+            case POLAR: return getPolarStyle();
             case CONTOUR: return getContourStyle();
             case POLAR_CONTOUR: return getContourStyle();
             case BAR_3D: return getBar3DStyle();
@@ -97,6 +101,7 @@ public class DataStyleHpr {
             case SCATTER: return new XYStyle();
             case BAR: return new BarStyle();
             case PIE: return new PieStyle();
+            case POLAR: return new PolarStyle();
             case CONTOUR: return new ContourStyle();
             case POLAR_CONTOUR: return new ContourStyle();
             case BAR_3D: return new Bar3DStyle();
@@ -109,7 +114,7 @@ public class DataStyleHpr {
      */
     public XYStyle getXYStyle()
     {
-        if (_xyStyle !=null) return _xyStyle;
+        if (_xyStyle != null) return _xyStyle;
         return _xyStyle = (XYStyle) createDataStyleForChartType(ChartType.SCATTER);
     }
 
@@ -118,7 +123,7 @@ public class DataStyleHpr {
      */
     public BarStyle getBarStyle()
     {
-        if(_barStyle !=null) return _barStyle;
+        if(_barStyle != null) return _barStyle;
         return _barStyle = (BarStyle) createDataStyleForChartType(ChartType.BAR);
     }
 
@@ -127,8 +132,17 @@ public class DataStyleHpr {
      */
     public PieStyle getPieStyle()
     {
-        if(_pieStyle !=null) return _pieStyle;
+        if(_pieStyle != null) return _pieStyle;
         return _pieStyle = (PieStyle) createDataStyleForChartType(ChartType.PIE);
+    }
+
+    /**
+     * Returns Polar chart properties.
+     */
+    public PolarStyle getPolarStyle()
+    {
+        if(_polarStyle != null) return _polarStyle;
+        return _polarStyle = (PolarStyle) createDataStyleForChartType(ChartType.POLAR);
     }
 
     /**
@@ -145,7 +159,7 @@ public class DataStyleHpr {
      */
     public Bar3DStyle getBar3DStyle()
     {
-        if(_bar3DStyle !=null) return _bar3DStyle;
+        if(_bar3DStyle != null) return _bar3DStyle;
         return _bar3DStyle = (Bar3DStyle) createDataStyleForChartType(ChartType.BAR_3D);
     }
 }

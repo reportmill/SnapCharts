@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.apptools;
 import snap.geom.Line;
 import snap.geom.Shape;
@@ -23,8 +26,11 @@ public class DataStyleInsp extends ChartPartInsp {
     // The Current ChartPartInsp
     private ChartPartInsp  _currentInsp;
 
-    // The ContourPropsInsp
-    private ContourStyleInsp _contourStyleInsp;
+    // The PolarStyleInsp
+    private PolarStyleInsp  _polarStyleInsp;
+
+    // The ContourStyleInsp
+    private ContourStyleInsp  _contourStyleInsp;
 
     // Constants
     private static final Color SYMBOL_COLOR = Color.DARKGRAY;
@@ -87,16 +93,27 @@ public class DataStyleInsp extends ChartPartInsp {
     {
         ChartType chartType = getChart().getType();
         switch (chartType) {
-            case CONTOUR: return getContourPropsInsp();
-            case POLAR_CONTOUR: return getContourPropsInsp();
+            case POLAR: return getPolarStyleInsp();
+            case CONTOUR: return getContourStyleInsp();
+            case POLAR_CONTOUR: return getContourStyleInsp();
             default: return null;
         }
     }
 
     /**
-     * Returns the ContourPropsInsp.
+     * Returns the PolarStyleInsp.
      */
-    private ContourStyleInsp getContourPropsInsp()
+    private PolarStyleInsp getPolarStyleInsp()
+    {
+        if (_polarStyleInsp != null) return _polarStyleInsp;
+        PolarStyleInsp insp = new PolarStyleInsp(getChartPane());
+        return _polarStyleInsp = insp;
+    }
+
+    /**
+     * Returns the ContourStyleInsp.
+     */
+    private ContourStyleInsp getContourStyleInsp()
     {
         if (_contourStyleInsp != null) return _contourStyleInsp;
         ContourStyleInsp insp = new ContourStyleInsp(getChartPane());
