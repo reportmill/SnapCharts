@@ -246,6 +246,46 @@ public class PolarDataArea extends DataArea {
     }
 
     /**
+     * Returns the data point closest to given x/y in local coords (null if none).
+     */
+    @Override
+    public DataPoint getDataPointForLocalXY(double aX, double aY)
+    {
+        // Constant for maximum display distance (in points)
+        int MAX_SELECT_DISTANCE = 60;
+
+        // Get data info
+        Point[] points = getDisplayPoints();
+        int pointCount = points.length;
+        DataPoint dataPoint = null;
+        double dist = MAX_SELECT_DISTANCE;
+
+        // Iterate over points and get closest DataPoint
+        for (int j = 0; j < pointCount; j++) {
+            Point point = points[j];
+            double dst = Point.getDistance(aX, aY, point.x, point.y);
+            if (dst < dist) {
+                dist = dst;
+                dataPoint = getDataSet().getPoint(j);
+            }
+        }
+
+        // Return DataPoint
+        return dataPoint;
+    }
+
+    /**
+     * Returns the given data point X/Y in this view coords.
+     */
+    @Override
+    public Point getLocalXYForDataPoint(DataPoint aDP)
+    {
+        int index = aDP.getIndex();
+        Point[] displayPoints = getDisplayPoints();
+        return index < displayPoints.length ? displayPoints[index] : new Point();
+    }
+
+    /**
      * Returns the tail shape.
      */
     public Shape getTailShape()
