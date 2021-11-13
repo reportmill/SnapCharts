@@ -6,7 +6,6 @@ import snap.geom.Point;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
-import snap.view.Cursor;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
 import snapcharts.util.DataStoreUtils;
@@ -194,16 +193,26 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns the DataSet.ProcessedData as PureData in DataArea display coords.
+     * Returns the DataSet points in display coords for this DataArea (cached).
      */
-    public DataStore getDispData()
+    public DataStore getDisplayData()
     {
         // If already set, just return
         if (_dispData != null) return _dispData;
 
+        // Get display coords DataStore, set and return
+        DataStore displayData = getDisplayDataImpl();
+        return _dispData = displayData;
+    }
+
+    /**
+     * Returns the DataSet points in display coords for this DataArea.
+     */
+    protected DataStore getDisplayDataImpl()
+    {
         // Get StagedData
-        DataStore dataStore = getStagedData();
-        int pointCount = dataStore.getPointCount();
+        DataStore stagedData = getStagedData();
+        int pointCount = stagedData.getPointCount();
         double[] dispX = new double[pointCount];
         double[] dispY = new double[pointCount];
 
@@ -212,19 +221,16 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         AxisView axisViewX = getAxisViewX();
         AxisView axisViewY = getAxisViewY();
 
-        // Iterate over data points
+        // Iterate over dataSet points and convert to display coords
         for (int i = 0; i < pointCount; i++) {
-
-            // Get data X/Y and disp X/Y
-            double dataX = dataStore.getX(i);
-            double dataY = dataStore.getY(i);
+            double dataX = stagedData.getX(i);
+            double dataY = stagedData.getY(i);
             dispX[i] = chartHelper.dataToView(axisViewX, dataX);
             dispY[i] = chartHelper.dataToView(axisViewY, dataY);
         }
 
-        // Create PureData, set, return
-        DataStore dispData = new DataStoreImpl(DataType.XY, dispX, dispY);
-        return _dispData = dispData;
+        // Create DataStore for points and return
+        return new DataStoreImpl(DataType.XY, dispX, dispY);
     }
 
     /**
@@ -233,7 +239,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public int getDispDataStartIndex()
     {
         // Get DisplayData and PointCount
-        DataStore dispData = getDispData();
+        DataStore dispData = getDisplayData();
         int pointCount = dispData.getPointCount();
 
         // Iterate over DispData to find first visible point index
@@ -251,7 +257,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public int getDispDataEndIndex()
     {
         // Get DisplayData and PointCount
-        DataStore dispData = getDispData();
+        DataStore dispData = getDisplayData();
         int pointCount = dispData.getPointCount();
 
         // Iterate over DispData (back-to-front) to find last visible point index
@@ -281,7 +287,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public int getDispDataEndOutsideIndex()
     {
         int endIndex = getDispDataEndIndex();
-        int pointCount = getDispData().getPointCount();
+        int pointCount = getDisplayData().getPointCount();
         if (endIndex + 1 < pointCount)
             endIndex++;
         return endIndex;
@@ -294,7 +300,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     {
         DataArea[] dataAreas = _chartHelper.getDataAreas();
         int index = ArrayUtils.indexOf(dataAreas, this);
-        for (int i=index-1; i>=0; i--) {
+        for (int i = index - 1; i >= 0; i--) {
             DataArea prevDataArea = dataAreas[i];
             DataSet prevDataSet = prevDataArea.getDataSet();
             if (prevDataSet.isStacked())
@@ -427,7 +433,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
 
         // Paint chart
         DataSet dataSet = getDataSet();
-        if (dataSet.isEnabled() || getParent().getChildCount()==1)
+        if (dataSet.isEnabled() || getParent().getChildCount() == 1)
             paintDataArea(aPntr);
 
         // Restore Graphics state
@@ -469,15 +475,15 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
-        for (int j=0; j<pointCount; j++) {
-            double dataX = stagedData.getX(j);
-            double dataY = stagedData.getY(j);
+        for (int i = 0; i < pointCount; i++) {
+            double dataX = stagedData.getX(i);
+            double dataY = stagedData.getY(i);
             double dispX = dataToViewX(dataX);
             double dispY = dataToViewY(dataY);
             double dst = Point.getDistance(aX, aY, dispX, dispY);
             if (dst < dist) {
                 dist = dst;
-                dataPoint = getDataSet().getPoint(j);
+                dataPoint = getDataSet().getPoint(i);
             }
         }
 
@@ -509,6 +515,24 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
+     * Clears the staged data.
+     */
+    protected void clearStagedData()
+    {
+        _stagedData = null;
+        clearDisplayData();
+    }
+
+    /**
+     * Clears the staged data.
+     */
+    protected void clearDisplayData()
+    {
+        _dispData = null;
+        repaint();
+    }
+
+    /**
      * Called when a ChartPart changes.
      */
     protected void chartPartDidChange(PropChange aPC)
@@ -516,9 +540,10 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         // Clear XYPainter
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
-        if (src == getDataSet() || src instanceof Axis || propName == DataSet.Stacked_Prop) {
-            _stagedData = null;
-            _dispData = null;
+        DataSet dataSet = getDataSet();
+        DataStyle dataStyle = getDataStyle();
+        if (src == dataSet || src == dataStyle || src instanceof Axis || propName == DataSet.Stacked_Prop) {
+            clearStagedData();
         }
     }
 
@@ -527,7 +552,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     protected void dataViewDidChangeSize()
     {
-        _dispData = null;
+        clearDisplayData();
     }
 
     /**
@@ -535,6 +560,6 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     protected void axisViewDidChange(PropChange aPC)
     {
-        _dispData = null;
+        clearDisplayData();
     }
 }

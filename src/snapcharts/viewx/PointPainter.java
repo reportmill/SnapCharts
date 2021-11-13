@@ -76,7 +76,7 @@ public class PointPainter {
         List<StringBox> tagBoxList = new ArrayList<>();
 
         // Get DispData and start/end index for current visible range
-        DataStore dispData = _dataArea.getDispData();
+        DataStore dispData = _dataArea.getDisplayData();
         int startIndex = _dataArea.getDispDataStartIndex();
         int endIndex = _dataArea.getDispDataEndIndex();
 

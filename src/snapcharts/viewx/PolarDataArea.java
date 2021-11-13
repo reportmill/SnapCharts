@@ -6,7 +6,6 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
-import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.modelx.PolarStyle;
 import snapcharts.view.*;
@@ -18,12 +17,6 @@ public class PolarDataArea extends DataArea {
 
     // The Polar ChartHelper
     private PolarChartHelper _polarHelper;
-
-    // The Path2D for painting DataSet
-    private Path2D  _dataPath;
-
-    // The Data path points in display coords
-    private Point[]  _dispPoints;
 
     // The TailShape
     private Shape  _tailShape;
@@ -42,42 +35,23 @@ public class PolarDataArea extends DataArea {
     }
 
     /**
-     * Returns Path2D for painting dataset.
+     * Returns Shape for painting dataset data line.
      */
-    public Path2D getDataPath()
+    public Shape getDataLineShape()
     {
-        // If already set, just return
-        if (_dataPath !=null) return _dataPath;
-
-        // Get display points and create new path
-        Point[] dispPoints = getDisplayPoints();
-        Path2D path = new Path2D();
-
-        // Iterate over data points
-        for (int i = 0, iMax = dispPoints.length; i < iMax; i++) {
-            Point point = dispPoints[i];
-            if (i == 0)
-                path.moveTo(point.x, point.y);
-            else path.lineTo(point.x, point.y);
-        }
-
-        // Return path
-        return _dataPath = path;
+        return new DataLineShape();
     }
 
     /**
-     * Returns data line points in display coords.
+     * Override to do polar data to display coords conversion.
      */
-    public Point[] getDisplayPoints()
+    @Override
+    protected DataStore getDisplayDataImpl()
     {
-        // If already set, just return
-        if (_dispPoints != null) return _dispPoints;
-
-        // Get dataset info
+        // Get DataSet.PolarData
         DataSet dataSet = getDataSet();
-        DataStore dataStore = dataSet.getPolarData();
-        int pointCount = dataSet.getPointCount();
-        AxisType axisTypeY = getAxisTypeY();
+        DataStore polarData = dataSet.getPolarData();
+        int pointCount = polarData.getPointCount();
 
         // Get whether to convert to radians
         DataStyle dataStyle = dataSet.getDataStyle();
@@ -85,40 +59,31 @@ public class PolarDataArea extends DataArea {
         boolean convertToRadians = polarStyle != null && polarStyle.getThetaUnit() != PolarStyle.ThetaUnit.Radians;
 
         // Create points array
-        Point[] dispPoints = new Point[pointCount];
+        double[] dispX = new double[pointCount];
+        double[] dispY = new double[pointCount];
 
         // Iterate over polar data points and covert/set in display points
-        for (int j = 0; j < pointCount; j++) {
+        for (int i = 0; i < pointCount; i++) {
 
             // Get Theta and Radius
-            double dataTheta = dataStore.getT(j);
-            double dataRad = dataStore.getR(j);
+            double dataTheta = polarData.getT(i);
+            double dataRad = polarData.getR(i);
             if (convertToRadians)
                 dataTheta = Math.toRadians(dataTheta);
 
             // Convert to display coords
-            double dispX = _polarHelper.polarDataToView(AxisType.X, dataTheta, dataRad);
-            double dispY = _polarHelper.polarDataToView(axisTypeY, dataTheta, dataRad);
-            dispPoints[j] = new Point(dispX, dispY);
+            dispX[i] = _polarHelper.polarDataToView(AxisType.X, dataTheta, dataRad);
+            dispY[i] = _polarHelper.polarDataToView(AxisType.Y, dataTheta, dataRad);
         }
 
-        // Set/return points
-        return _dispPoints = dispPoints;
-    }
-
-    /**
-     * Clears the DataPath.
-     */
-    private void clearDataPath()
-    {
-        _dataPath = null;
-        _dispPoints = null;
-        repaint();
+        // Create DataStore for points and return
+        return new DataStoreImpl(DataType.XY, dispX, dispY);
     }
 
     /**
      * Paints chart.
      */
+    @Override
     protected void paintDataArea(Painter aPntr)
     {
         // Get area
@@ -141,7 +106,7 @@ public class PolarDataArea extends DataArea {
         boolean showSymbols = dataStyle.isShowSymbols();
 
         // Get path - if Reveal is active, get path spliced
-        Shape path = getDataPath();
+        Shape path = getDataLineShape();
         if (reveal < 1)
             path = new SplicerShape(path, 0, reveal);
 
@@ -186,12 +151,12 @@ public class PolarDataArea extends DataArea {
         // Draw dataset points
         if (showSymbols) {
 
-            // Iterate over points
-            Point[] points = getDisplayPoints();
-            for (int i = 0, iMax = points.length; i < iMax; i++) {
-                Point point = points[i];
-                double dispX = point.x;
-                double dispY = point.y;
+            // Iterate over DisplayData points
+            DataStore displayData = getDisplayData();
+            int pointCount = displayData.getPointCount();
+            for (int i = 0; i < pointCount; i++) {
+                double dispX = displayData.getX(i);
+                double dispY = displayData.getY(i);
 
                 // Get symbol and color and paint
                 Symbol symbol = getDataSymbol();
@@ -221,10 +186,9 @@ public class PolarDataArea extends DataArea {
         int selIndex = selDataPoint.getIndex();
 
         // Get data X/Y and disp X/Y
-        Point[] points = getDisplayPoints();
-        Point selPoint = points[selIndex];
-        double dispX = selPoint.x;
-        double dispY = selPoint.y;
+        DataStore displayData = getDisplayData();
+        double dispX = displayData.getX(selIndex);
+        double dispY = displayData.getY(selIndex);
 
         // Get data color and symbol
         Color dataColor = getDataColor();
@@ -255,15 +219,16 @@ public class PolarDataArea extends DataArea {
         int MAX_SELECT_DISTANCE = 60;
 
         // Get data info
-        Point[] points = getDisplayPoints();
-        int pointCount = points.length;
+        DataStore displayData = getDisplayData();
+        int pointCount = displayData.getPointCount();
         DataPoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
         for (int j = 0; j < pointCount; j++) {
-            Point point = points[j];
-            double dst = Point.getDistance(aX, aY, point.x, point.y);
+            double dispX = displayData.getX(j);
+            double dispY = displayData.getY(j);
+            double dst = Point.getDistance(aX, aY, dispX, dispY);
             if (dst < dist) {
                 dist = dst;
                 dataPoint = getDataSet().getPoint(j);
@@ -281,8 +246,12 @@ public class PolarDataArea extends DataArea {
     public Point getLocalXYForDataPoint(DataPoint aDP)
     {
         int index = aDP.getIndex();
-        Point[] displayPoints = getDisplayPoints();
-        return index < displayPoints.length ? displayPoints[index] : new Point();
+        DataStore displayData = getDisplayData();
+        if (index >= displayData.getPointCount())
+            return new Point();
+        double dispX = displayData.getX(index);
+        double dispY = displayData.getY(index);
+        return new Point(dispX, dispY);
     }
 
     /**
@@ -304,31 +273,71 @@ public class PolarDataArea extends DataArea {
     }
 
     /**
-     * Override to clear display points.
+     * A Shape implementation to display this PolarDataArea.DisplayData as data line.
      */
-    @Override
-    protected void chartPartDidChange(PropChange aPC)
-    {
-        // Do normal version
-        super.chartPartDidChange(aPC);
+    private class DataLineShape extends Shape {
 
-        // Handle Data changes
-        Object src = aPC.getSource();
-        if (src == getDataSet() || src instanceof Axis || src instanceof DataStyle) {
-            clearDataPath();
+        /**
+         * Return DataLinePathIter.
+         */
+        @Override
+        public PathIter getPathIter(Transform aTransform)
+        {
+            return new DataLinePathIter(aTransform, PolarDataArea.this);
         }
     }
 
     /**
-     * Called when DataView changes size.
+     * A PathIter implementation to display DataArea.DisplayData as data line.
      */
-    @Override
-    protected void dataViewDidChangeSize()
-    {
-        // Do normal version
-        super.dataViewDidChangeSize();
+    private static class DataLinePathIter extends PathIter {
 
-        // Clear DataPath
-        clearDataPath();
+        // The X/Y display coords arrays
+        private double[] _dispX, _dispY;
+
+        // The DisplayData.PointCount
+        private int _count;
+
+        // The index
+        private int _index;
+
+        /**
+         * Constructor.
+         */
+        public DataLinePathIter(Transform aTrans, DataArea aDataArea)
+        {
+            super(aTrans);
+
+            // Get/set display points
+            DataStore displayData = aDataArea.getDisplayData();
+            _dispX = displayData.getDataX();
+            _dispY = displayData.getDataY();
+            _count = displayData.getPointCount();
+        }
+
+        /**
+         * Returns whether there are remaining segments.
+         */
+        @Override
+        public boolean hasNext()
+        {
+            return _index < _count;
+        }
+
+        /**
+         * Returns next segment.
+         */
+        @Override
+        public Seg getNext(double[] coords)
+        {
+            // Get next display X/Y coords
+            double dispX = _dispX[_index];
+            double dispY = _dispY[_index];
+
+            // First segment is moveTo, then lineTos
+            if (_index++ == 0)
+                return moveTo(dispX, dispY, coords);
+            return lineTo(dispX, dispY, coords);
+        }
     }
 }

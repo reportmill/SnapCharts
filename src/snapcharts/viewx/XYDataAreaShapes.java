@@ -140,7 +140,7 @@ public class XYDataAreaShapes {
             _dataArea = aDataArea;
 
             // Get/set display points
-            DataStore dispData = aDataArea.getDispData();
+            DataStore dispData = aDataArea.getDisplayData();
             _dispX = dispData.getDataX();
             _dispY = dispData.getDataY();
 
