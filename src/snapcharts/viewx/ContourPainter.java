@@ -4,7 +4,7 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataStore;
+import snapcharts.data.DataStore;
 import snapcharts.util.ContourMaker;
 import snapcharts.view.AxisView;
 import snapcharts.view.DataArea;

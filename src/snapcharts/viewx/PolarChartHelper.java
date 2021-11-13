@@ -6,6 +6,7 @@ import snap.geom.Rect;
 import snap.gfx.Painter;
 import snap.util.MathUtils;
 import snap.util.PropChange;
+import snapcharts.data.DataStore;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import snapcharts.view.*;

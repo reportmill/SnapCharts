@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snapcharts.data.DataType;
 
 /**
  * A class to represent a data point.

@@ -2,7 +2,7 @@ package snapcharts.util;
 import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
-import snapcharts.model.DataStore;
+import snapcharts.data.DataStore;
 import snapcharts.util.Mesh.Edge;
 import snapcharts.util.Mesh.Triangle;
 import java.util.*;

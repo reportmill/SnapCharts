@@ -5,9 +5,12 @@ package snapcharts.model;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.util.DataUtils;
+import snapcharts.data.DataChan;
+import snapcharts.data.DataStore;
+import snapcharts.data.DataType;
+import snapcharts.data.DataUtils;
 import snapcharts.util.MinMax;
-import snapcharts.util.DataStoreUtils;
+import snapcharts.data.DataStoreUtils;
 import java.util.*;
 
 /**
@@ -45,7 +48,7 @@ public class DataSet extends ChartPart {
     private DataStyleHpr  _dataStyleHpr;
 
     // The RawData
-    private DataStore  _rawData = DataStore.newDataStore();
+    private DataStore _rawData = DataStore.newDataStore();
 
     // The Processed Data
     private DataStore  _procData;
@@ -60,7 +63,7 @@ public class DataSet extends ChartPart {
     private DataStore  _polarXYData;
 
     // Constants for properties
-    public static final String DataType_Prop = "DataType";
+    public static final String DataType_Prop = DataStore.DataType_Prop;
     public static final String Disabled_Prop = "Disabled";
     public static final String Point_Prop = "Points";
     public static final String AxisTypeY_Prop = "AxisTypeY";

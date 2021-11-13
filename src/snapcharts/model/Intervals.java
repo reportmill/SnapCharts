@@ -4,7 +4,7 @@
 package snapcharts.model;
 import snap.util.ArrayUtils;
 import snap.util.MathUtils;
-import snapcharts.util.DataUtils;
+import snapcharts.data.DataUtils;
 
 /**
  * This class represent a set of equally spaced interval values for a given min and max value and an axis length.

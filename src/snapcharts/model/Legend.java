@@ -7,7 +7,7 @@ import snap.geom.Point;
 import snap.geom.Pos;
 import snap.geom.Size;
 import snap.util.*;
-import snapcharts.util.DataUtils;
+import snapcharts.data.DataUtils;
 
 import java.util.Objects;
 

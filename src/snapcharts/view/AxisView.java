@@ -8,6 +8,7 @@ import snap.gfx.*;
 import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.data.DataType;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import java.util.function.Predicate;

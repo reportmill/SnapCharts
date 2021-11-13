@@ -7,7 +7,7 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.AxisType;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataType;
+import snapcharts.data.DataType;
 
 /**
  * A class to manage UI to edit basic DataSet props.

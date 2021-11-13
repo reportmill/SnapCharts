@@ -2,8 +2,8 @@ package snapcharts.util;
 import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
-import snapcharts.model.DataType;
-import snapcharts.model.DataStore;
+import snapcharts.data.DataType;
+import snapcharts.data.DataStore;
 
 import java.util.*;
 

@@ -7,6 +7,7 @@ import snap.gfx.*;
 import snap.text.NumberFormat;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
+import snapcharts.data.DataStore;
 import snapcharts.model.*;
 import snapcharts.view.DataArea;
 import java.util.ArrayList;

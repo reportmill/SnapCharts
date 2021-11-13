@@ -1,8 +1,10 @@
 package snapcharts.doc;
 import snap.geom.Pos;
 import snap.util.SnapUtils;
+import snapcharts.data.DataStore;
+import snapcharts.data.DataType;
 import snapcharts.model.*;
-import snapcharts.util.DataStoreUtils;
+import snapcharts.data.DataStoreUtils;
 import java.util.Arrays;
 
 /**

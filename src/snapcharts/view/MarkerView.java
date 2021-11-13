@@ -9,7 +9,7 @@ import snap.util.MathUtils;
 import snap.view.*;
 import snapcharts.model.AxisType;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataStore;
+import snapcharts.data.DataStore;
 import snapcharts.model.Marker;
 import snapcharts.model.Marker.CoordSpace;
 import snapcharts.util.MinMax;

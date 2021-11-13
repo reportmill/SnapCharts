@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.model;
+package snapcharts.data;
 
 /**
  * Constants for a channel of data in a DataType (X, Y, Z, C, I).

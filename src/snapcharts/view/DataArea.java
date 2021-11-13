@@ -6,9 +6,13 @@ import snap.geom.Point;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
+import snapcharts.data.DataStore;
+import snapcharts.data.DataStoreImpl;
+import snapcharts.data.DataStoreWrapper;
+import snapcharts.data.DataType;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
-import snapcharts.util.DataStoreUtils;
+import snapcharts.data.DataStoreUtils;
 
 /**
  * A view to display the actual contents of a chart.

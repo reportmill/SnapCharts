@@ -1,11 +1,10 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.model;
+package snapcharts.data;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.util.DataStoreUtils;
-import snapcharts.util.DataUtils;
+import snapcharts.model.DataPoint;
 import snapcharts.util.MinMax;
 import java.util.Arrays;
 
@@ -37,6 +36,9 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
 
     // Min/Max values for X/Y/Z
     private MinMax  _minMaxX, _minMaxY, _minMaxZ;
+
+    // Properties
+    public static final String DataType_Prop = "DataType";
 
     /**
      * Returns the DataType.
@@ -470,7 +472,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     {
         // Archive DataType
         DataType dataType = getDataType();
-        e.add(DataSet.DataType_Prop, dataType);
+        e.add(DataType_Prop, dataType);
 
         // If DataType has X, add DataX values
         if (dataType.hasChannel(DataChan.X)) {
@@ -509,7 +511,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
         // Unarchive DataType
-        String dataTypeStr = anElement.getAttributeValue(DataSet.DataType_Prop);
+        String dataTypeStr = anElement.getAttributeValue(DataType_Prop);
         DataType dataType = DataType.valueOf(dataTypeStr);
         setDataType(dataType);
 

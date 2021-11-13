@@ -1,8 +1,9 @@
 package snapcharts.util;
 import snap.util.ListSel;
 import snap.util.SnapUtils;
+import snapcharts.data.DataUtils;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataType;
+import snapcharts.data.DataType;
 
 /**
  * Utility methods for DataSet class.

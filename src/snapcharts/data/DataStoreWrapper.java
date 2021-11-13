@@ -1,8 +1,9 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.model;
+package snapcharts.data;
 import snap.util.Range;
+import snapcharts.model.DataPoint;
 
 /**
  * A DataStore implementation that wraps around another DataStore and extends its data to any min/max.

@@ -7,6 +7,8 @@ import snap.text.TextFormat;
 import snap.util.FileUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
+import snapcharts.data.DataChan;
+import snapcharts.data.DataType;
 import snapcharts.model.*;
 
 import java.io.File;

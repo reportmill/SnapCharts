@@ -3,6 +3,7 @@
  */
 package snapcharts.viewx;
 import snap.geom.*;
+import snapcharts.data.DataStore;
 import snapcharts.model.*;
 import snapcharts.view.DataArea;
 

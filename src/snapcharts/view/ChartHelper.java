@@ -10,6 +10,7 @@ import snap.util.PropChange;
 import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
+import snapcharts.data.DataStore;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import snapcharts.viewx.*;

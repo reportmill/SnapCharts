@@ -3,6 +3,8 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
+import snapcharts.data.DataChan;
+import snapcharts.data.DataType;
 import snapcharts.model.*;
 
 import java.text.DecimalFormat;

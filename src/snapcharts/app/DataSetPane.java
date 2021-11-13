@@ -7,12 +7,12 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.appmisc.SheetView;
 import snapcharts.doc.DocItemDataSet;
-import snapcharts.model.DataChan;
+import snapcharts.data.DataChan;
 import snapcharts.model.DataSet;
-import snapcharts.model.DataStore;
-import snapcharts.model.DataType;
+import snapcharts.data.DataStore;
+import snapcharts.data.DataType;
 import snapcharts.util.DataSetUtils;
-import snapcharts.util.DataUtils;
+import snapcharts.data.DataUtils;
 
 /**
  * A ViewOwner to handle display of whole ChartDoc.

@@ -9,6 +9,8 @@ import snap.geom.Insets;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.util.*;
+import snapcharts.data.DataStore;
+import snapcharts.data.DataType;
 import snapcharts.util.MinMax;
 
 /**

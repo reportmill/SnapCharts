@@ -1,8 +1,7 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.util;
-import snapcharts.model.DataType;
+package snapcharts.data;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
