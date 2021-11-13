@@ -1,5 +1,4 @@
 package snapcharts.viewx;
-
 import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
@@ -24,7 +23,7 @@ public class BarDataArea extends DataArea {
     protected int  _pointCount;
 
     // The cached sections
-    private Section  _sections[];
+    private Section[]  _sections;
 
     /**
      * Constructor.
@@ -96,7 +95,7 @@ public class BarDataArea extends DataArea {
 
                 // Get data point
                 DataSet dataSet = dataSets[j];
-                DataPoint dataPoint = dataSet.getPoint(i);
+                DataSetPoint dataPoint = dataSet.getPoint(i);
                 double dataY = dataPoint.getY();
                 double dispY = dataToViewY(dataY);
 
@@ -128,7 +127,7 @@ public class BarDataArea extends DataArea {
     protected void paintDataArea(Painter aPntr)
     {
         // Get selected point index (section index)
-        DataPoint dataPoint = getChartView().getTargDataPoint();
+        DataSetPoint dataPoint = getChartView().getTargDataPoint();
         int selIndex = dataPoint!=null ? dataPoint.getIndex() : -1;
 
         double viewW = getWidth();
@@ -163,16 +162,17 @@ public class BarDataArea extends DataArea {
 
     /**
      * Returns the data point best associated with given x/y (null if none).
+     * @return
      */
     @Override
-    public DataPoint getDataPointForLocalXY(double aX, double aY)
+    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
     {
         // Get sections array
         Section[] sections = getSections();
 
         // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
-        for (int i=0; i<_pointCount; i++) { Section section = sections[i];
-            for (int j=0; j<_dsetCount; j++) { Bar bar = section.bars[j];
+        for (int i = 0; i < _pointCount; i++) { Section section = sections[i];
+            for (int j = 0; j < _dsetCount; j++) { Bar bar = section.bars[j];
                 if (bar.contains(aX, aY))
                     return bar.point;
             }
@@ -184,9 +184,10 @@ public class BarDataArea extends DataArea {
 
     /**
      * Returns the given data point X/Y in this view coords.
+     * @param aDP
      */
     @Override
-    public Point getLocalXYForDataPoint(DataPoint aDP)
+    public Point getLocalXYForDataPoint(DataSetPoint aDP)
     {
         // Get sections array
         Section[] sections = getSections();
@@ -272,12 +273,12 @@ public class BarDataArea extends DataArea {
     protected class Bar {
 
         // Points
-        DataPoint point;
+        DataSetPoint point;
         double x, y, width, height;
         Color color;
 
         /** Creates a bar. */
-        public Bar(DataPoint aDP, double aX, double aY, double aW, double aH, Color aColor)
+        public Bar(DataSetPoint aDP, double aX, double aY, double aW, double aH, Color aColor)
         {
             point = aDP;
             x = aX; y = aY; width = aW; height = aH;

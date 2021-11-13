@@ -93,11 +93,11 @@ public class PieChartHelper extends ChartHelper {
         super.resetView();
 
         // Update SelDataPoint
-        DataSet dset = dsetList.getDataSet(0);
-        if (dset.getPointCount()==0) return;
-        DataPoint dp = dset.getPoint(0);
+        DataSet dataSet = dsetList.getDataSet(0);
+        if (dataSet.getPointCount()==0) return;
+        DataSetPoint dataSetPoint = dataSet.getPoint(0);
         _dataArea._disableMorph = true;
-        _chartView.setSelDataPoint(dp);
+        _chartView.setSelDataPoint(dataSetPoint);
         _dataArea._disableMorph = false;
 
         // Fix padding to accommodate bottom label, if needed

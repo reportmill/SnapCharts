@@ -97,7 +97,7 @@ public class PolarDataArea extends DataArea {
         DataSet dset = getDataSet();
 
         // Get Selection, Reveal info
-        DataPoint selPoint = getChartView().getTargDataPoint();
+        DataSetPoint selPoint = getChartView().getTargDataPoint();
         boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
         double reveal = getReveal();
 
@@ -185,7 +185,7 @@ public class PolarDataArea extends DataArea {
     protected void paintSelPoint(Painter aPntr)
     {
         // Get info
-        DataPoint selDataPoint = getChartView().getTargDataPoint();
+        DataSetPoint selDataPoint = getChartView().getTargDataPoint();
         int selIndex = selDataPoint.getIndex();
 
         // Get data X/Y and disp X/Y
@@ -214,9 +214,10 @@ public class PolarDataArea extends DataArea {
 
     /**
      * Returns the data point closest to given x/y in local coords (null if none).
+     * @return
      */
     @Override
-    public DataPoint getDataPointForLocalXY(double aX, double aY)
+    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
     {
         // Constant for maximum display distance (in points)
         int MAX_SELECT_DISTANCE = 60;
@@ -224,7 +225,7 @@ public class PolarDataArea extends DataArea {
         // Get data info
         DataStore displayData = getDisplayData();
         int pointCount = displayData.getPointCount();
-        DataPoint dataPoint = null;
+        DataSetPoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
@@ -244,9 +245,10 @@ public class PolarDataArea extends DataArea {
 
     /**
      * Returns the given data point X/Y in this view coords.
+     * @param aDP
      */
     @Override
-    public Point getLocalXYForDataPoint(DataPoint aDP)
+    public Point getLocalXYForDataPoint(DataSetPoint aDP)
     {
         int index = aDP.getIndex();
         DataStore displayData = getDisplayData();

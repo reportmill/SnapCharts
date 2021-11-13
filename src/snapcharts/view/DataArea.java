@@ -6,13 +6,9 @@ import snap.geom.Point;
 import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
-import snapcharts.data.DataStore;
-import snapcharts.data.DataStoreImpl;
-import snapcharts.data.DataStoreWrapper;
-import snapcharts.data.DataType;
+import snapcharts.data.*;
 import snapcharts.model.Intervals;
 import snapcharts.model.*;
-import snapcharts.data.DataStoreUtils;
 
 /**
  * A view to display the actual contents of a chart.
@@ -328,7 +324,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public boolean isSelected()
     {
         DataSet dataSet = getDataSet();
-        DataPoint dataPoint = getChartView().getSelDataPoint();
+        DataSetPoint dataPoint = getChartView().getSelDataPoint();
         return dataPoint != null && dataPoint.getDataSet() == dataSet;
     }
 
@@ -338,7 +334,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     public boolean isTargeted()
     {
         DataSet dataSet = getDataSet();
-        DataPoint dataPoint = getChartView().getTargDataPoint();
+        DataSetPoint dataPoint = getChartView().getTargDataPoint();
         return dataPoint != null && dataPoint.getDataSet() == dataSet;
     }
 
@@ -353,9 +349,9 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     /**
      * Returns selected data point if in DataSet.
      */
-    public DataPoint getSelDataPoint()
+    public DataSetPoint getSelDataPoint()
     {
-        DataPoint selDataPoint = getChartView().getSelDataPoint();
+        DataSetPoint selDataPoint = getChartView().getSelDataPoint();
         if (selDataPoint != null && selDataPoint.getDataSet() == getDataSet())
             return selDataPoint;
         return null;
@@ -364,9 +360,9 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     /**
      * Returns targeted data point if in DataSet.
      */
-    public DataPoint getTargDataPoint()
+    public DataSetPoint getTargDataPoint()
     {
-        DataPoint targDataPoint = getChartView().getTargDataPoint();
+        DataSetPoint targDataPoint = getChartView().getTargDataPoint();
         if (targDataPoint != null && targDataPoint.getDataSet() == getDataSet())
             return targDataPoint;
         return null;
@@ -466,8 +462,9 @@ public abstract class DataArea extends ChartPartView<DataSet> {
 
     /**
      * Returns the data point closest to given x/y in local coords (null if none).
+     * @return
      */
-    public DataPoint getDataPointForLocalXY(double aX, double aY)
+    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
     {
         // Constant for maximum display distance (in points)
         int MAX_SELECT_DISTANCE = 60;
@@ -475,7 +472,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         // Get data info
         DataStore stagedData = getStagedData();
         int pointCount = stagedData.getPointCount();
-        DataPoint dataPoint = null;
+        DataSetPoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
@@ -497,8 +494,9 @@ public abstract class DataArea extends ChartPartView<DataSet> {
 
     /**
      * Returns the given data point X/Y in this view coords.
+     * @param aDP
      */
-    public Point getLocalXYForDataPoint(DataPoint aDP)
+    public Point getLocalXYForDataPoint(DataSetPoint aDP)
     {
         DataStore stagedData = getStagedData();
         int index = aDP.getIndex();

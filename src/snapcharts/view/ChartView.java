@@ -43,13 +43,13 @@ public class ChartView extends ChartPartView<Chart> {
     private ToolTipView  _toolTipView;
 
     // The selected point
-    private DataPoint  _selPoint;
+    private DataSetPoint  _selPoint;
 
     // The targeted (under mouse) point
     private Point  _targPoint;
 
     // The targeted data point
-    private DataPoint  _targDataPoint;
+    private DataSetPoint  _targDataPoint;
 
     // The preferred DataArea bounds (optional)
     protected Rect  _prefDataBounds;
@@ -343,12 +343,12 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Returns the selected data point.
      */
-    public DataPoint getSelDataPoint()  { return _selPoint; }
+    public DataSetPoint getSelDataPoint()  { return _selPoint; }
 
     /**
      * Sets the selected data point.
      */
-    public void setSelDataPoint(DataPoint aDP)
+    public void setSelDataPoint(DataSetPoint aDP)
     {
         if (Objects.equals(aDP, _selPoint)) return;
         firePropChange(SelDataPoint_Prop, _selPoint, _selPoint = aDP);
@@ -372,7 +372,9 @@ public class ChartView extends ChartPartView<Chart> {
         firePropChange(TargPoint_Prop, _targPoint, _targPoint = aPoint);
 
         // Update TargDataPoint
-        DataPoint dataPoint = aPoint!=null ? _chartHelper.getDataPointForViewXY(this, aPoint.x, aPoint.y) : null;
+        DataSetPoint dataPoint = null;
+        if (aPoint != null)
+            dataPoint = _chartHelper.getDataPointForViewXY(this, aPoint.x, aPoint.y);
         setTargDataPoint(dataPoint);
     }
 
@@ -391,12 +393,12 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Returns the targeted data point.
      */
-    public DataPoint getTargDataPoint()  { return _targDataPoint; }
+    public DataSetPoint getTargDataPoint()  { return _targDataPoint; }
 
     /**
      * Sets the targeted data point.
      */
-    public void setTargDataPoint(DataPoint aDP)
+    public void setTargDataPoint(DataSetPoint aDP)
     {
         // If already set, just return
         if (Objects.equals(aDP, _targDataPoint)) return;

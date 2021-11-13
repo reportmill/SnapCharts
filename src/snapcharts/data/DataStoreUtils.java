@@ -1,7 +1,6 @@
 package snapcharts.data;
 import snap.util.KeyChain;
 import snap.util.MathUtils;
-import snapcharts.model.DataPoint;
 import snapcharts.view.ChartViewUtils;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -4,11 +4,9 @@
 package snapcharts.view;
 import snap.geom.Point;
 import snap.gfx.Painter;
-import snap.view.Cursor;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
-
 import java.util.Objects;
 
 /**
@@ -205,8 +203,8 @@ public class DataView extends ChartPartView<DataSetList> {
     {
         // Handle MouseMove: Set ChartView.TargPoint
         if (anEvent.isMouseMove()) {
-            Point pnt = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
-            _chartView.setTargPoint(pnt);
+            Point point = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
+            _chartView.setTargPoint(point);
         }
 
         // Handle MouseExit: Clear ChartView.TargPoint
@@ -218,10 +216,10 @@ public class DataView extends ChartPartView<DataSetList> {
 
         // Handle MouseClick
         if (anEvent.isMouseClick() && anEvent.getClickCount() == 1) {
-            DataPoint dpnt = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
-            if (Objects.equals(dpnt, _chartView.getSelDataPoint()))
-                dpnt = null;
-            _chartView.setSelDataPoint(dpnt);
+            DataSetPoint dataPoint = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
+            if (Objects.equals(dataPoint, _chartView.getSelDataPoint()))
+                dataPoint = null;
+            _chartView.setSelDataPoint(dataPoint);
         }
 
         // Do normal version

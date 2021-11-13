@@ -4,7 +4,6 @@
 package snapcharts.data;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.model.DataPoint;
 import snapcharts.util.MinMax;
 import java.util.Arrays;
 

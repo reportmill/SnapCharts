@@ -8,7 +8,6 @@ import snap.gfx.Color;
 import snap.gfx3d.Camera;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
-import snapcharts.model.DataPoint;
 import snapcharts.model.Intervals;
 
 /**

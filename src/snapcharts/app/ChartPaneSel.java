@@ -345,7 +345,7 @@ public class ChartPaneSel {
 
         // Handle DataView special: If TargDataPoint, return DataPoint.DataSet
         if (hitView instanceof DataView) {
-            DataPoint dataPoint = _chartView.getTargDataPoint();
+            DataSetPoint dataPoint = _chartView.getTargDataPoint();
             if (dataPoint != null)
                 return dataPoint.getDataSet();
         }

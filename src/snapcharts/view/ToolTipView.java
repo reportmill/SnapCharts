@@ -6,7 +6,6 @@ import snap.view.*;
 import snapcharts.data.DataChan;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
-
 import java.text.DecimalFormat;
 
 /**
@@ -56,7 +55,7 @@ public class ToolTipView extends ColView {
         }
 
         // Get info
-        DataPoint dataPoint = _chartView.getTargDataPoint();
+        DataSetPoint dataPoint = _chartView.getTargDataPoint();
         DataSet dataSet = dataPoint.getDataSet();
 
         // Remove children and reset opacity, padding and spacing

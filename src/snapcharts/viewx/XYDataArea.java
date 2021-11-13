@@ -185,8 +185,8 @@ public class XYDataArea extends DataArea {
     protected void paintSelDataPoint(Painter aPntr)
     {
         // Get targeted or selected datapoint (targeted takes precidence)
-        DataPoint targPoint = getTargDataPoint();
-        DataPoint dataPoint = targPoint != null ? targPoint : getSelDataPoint();
+        DataSetPoint targPoint = getTargDataPoint();
+        DataSetPoint dataPoint = targPoint != null ? targPoint : getSelDataPoint();
         if (dataPoint == null)
             return;
 

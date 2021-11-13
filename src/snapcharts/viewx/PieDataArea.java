@@ -18,7 +18,7 @@ import snapcharts.view.DataView;
 public class PieDataArea extends DataArea {
     
     // The cached wedges
-    private Wedge  _wedges[];
+    private Wedge[]  _wedges;
     
     // The pie center point
     private double  _pieX, _pieY;
@@ -30,7 +30,7 @@ public class PieDataArea extends DataArea {
     //private Point _lastMouseMovePoint;
 
     // Vars for animating SelDataPoint change
-    private DataPoint  _selPointLast;
+    private DataSetPoint _selPointLast;
     private double  _selPointMorph = 1;
     public boolean  _disableMorph;
 
@@ -205,8 +205,9 @@ public class PieDataArea extends DataArea {
 
     /**
      * Returns the data point best associated with given x/y (null if none).
+     * @return
      */
-    public DataPoint getDataPointForLocalXY(double aX, double aY)
+    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
         DataSet dset = getDataSet();
@@ -223,9 +224,10 @@ public class PieDataArea extends DataArea {
 
     /**
      * Returns the given data point X/Y in this view coords.
+     * @param aDP
      */
     @Override
-    public Point getLocalXYForDataPoint(DataPoint aDP)
+    public Point getLocalXYForDataPoint(DataSetPoint aDP)
     {
         int ind = aDP.getIndex();
         Wedge wedges[] = getWedges();
@@ -348,7 +350,7 @@ public class PieDataArea extends DataArea {
         if (!isShowing() || _disableMorph) return;
 
         // Cache last point and configure SelDataPointMorph to change from 0 to 1 over time
-        _selPointLast = (DataPoint)aPC.getOldValue();
+        _selPointLast = (DataSetPoint) aPC.getOldValue();
         setSelDataPointMorph(0);
         getAnimCleared(400).setValue(SelDataPointMorph_Prop, 1).setLinear().setOnFinish(a -> _selPointLast = null).play();
     }
@@ -358,7 +360,7 @@ public class PieDataArea extends DataArea {
      */
     int getSelPointIndex()
     {
-        DataPoint dp = getChartView().getSelDataPoint();
+        DataSetPoint dp = getChartView().getSelDataPoint();
         return dp != null ? dp.getIndex() : -1;
     }
     int getSelPointLastIndex()
@@ -367,7 +369,7 @@ public class PieDataArea extends DataArea {
     }
     int getTargPointIndex()
     {
-        DataPoint dp = getChartView().getTargDataPoint();
+        DataSetPoint dp = getChartView().getTargDataPoint();
         return dp != null ? dp.getIndex() : -1;
     }
 

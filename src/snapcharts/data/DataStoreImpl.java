@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snapcharts.model.DataPoint;
 import java.util.Arrays;
 
 /**

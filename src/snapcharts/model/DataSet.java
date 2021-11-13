@@ -5,12 +5,9 @@ package snapcharts.model;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.data.DataChan;
-import snapcharts.data.DataStore;
-import snapcharts.data.DataType;
-import snapcharts.data.DataUtils;
+import snapcharts.data.*;
 import snapcharts.util.MinMax;
-import snapcharts.data.DataStoreUtils;
+
 import java.util.*;
 
 /**
@@ -263,9 +260,9 @@ public class DataSet extends ChartPart {
     /**
      * Returns the data point at given index.
      */
-    public DataPoint getPoint(int anIndex)
+    public DataSetPoint getPoint(int anIndex)
     {
-        return new DataPoint(this, anIndex);
+        return new DataSetPoint(this, anIndex);
     }
 
     /**
@@ -285,7 +282,6 @@ public class DataSet extends ChartPart {
     {
         // Get point at index
         DataPoint dataPoint = getPoint(anIndex);
-        dataPoint.cacheValues();
 
         // Remove point from RawData
         _rawData.removePoint(anIndex);
@@ -465,7 +461,6 @@ public class DataSet extends ChartPart {
     {
         // Get point
         DataPoint dataPoint = getPoint(anIndex);
-        dataPoint.cacheValues();
 
         switch (aChan) {
             case X:
@@ -492,7 +487,6 @@ public class DataSet extends ChartPart {
 
         // Get point
         DataPoint dataPoint2 = getPoint(anIndex);
-        dataPoint2.cacheValues();
         firePropChange(Point_Prop, dataPoint, dataPoint2, anIndex);
     }
 

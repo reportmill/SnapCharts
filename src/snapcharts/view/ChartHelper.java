@@ -527,10 +527,10 @@ public abstract class ChartHelper {
     /**
      * Returns the data point for given View + X/Y.
      */
-    public DataPoint getDataPointForViewXY(View aView, double aX, double aY)
+    public DataSetPoint getDataPointForViewXY(View aView, double aX, double aY)
     {
         // Local vars for data point closest to x/y
-        DataPoint dataPoint = null;
+        DataSetPoint dataPoint = null;
         double dist = Float.MAX_VALUE;
 
         // Get View XY in DataView coords
@@ -546,7 +546,7 @@ public abstract class ChartHelper {
         // Iterate over data areas to find closest DataPoint
         DataArea[] dataAreas = getDataAreas();
         for (DataArea dataArea : dataAreas) {
-            DataPoint dpnt = dataArea.getDataPointForLocalXY(dispX, dispY);
+            DataSetPoint dpnt = dataArea.getDataPointForLocalXY(dispX, dispY);
             if (dpnt != null) {
                 Point dspXY = dataArea.getLocalXYForDataPoint(dpnt);
                 double dst = Point.getDistance(dispX, dispY, dspXY.x, dspXY.y);
@@ -564,7 +564,7 @@ public abstract class ChartHelper {
     /**
      * Returns the given data point as X/Y in given view coords.
      */
-    public Point getViewXYForDataPoint(View aView, DataPoint aDP)
+    public Point getViewXYForDataPoint(View aView, DataSetPoint aDP)
     {
         // Get DataArea for DataPoint
         DataSet dataSet = aDP.getDataSet();
