@@ -4,6 +4,7 @@ import snap.view.ComboBox;
 import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
+import snapcharts.data.DataStore;
 import snapcharts.model.AxisType;
 import snapcharts.model.ChartPart;
 import snapcharts.model.DataSet;
@@ -45,8 +46,13 @@ public class DataSetInsp extends ChartPartInsp {
     @Override
     protected void initUI()
     {
+        // Configure DataTypeComboBox
         ComboBox<DataType> dataTypeComboBox = getView("DataTypeComboBox", ComboBox.class);
         dataTypeComboBox.setItems(DataType.values());
+
+        // Configure ThetaUnitComboBox
+        ComboBox<DataStore.ThetaUnit> thetaUnitComboBox = getView("ThetaUnitComboBox", ComboBox.class);
+        thetaUnitComboBox.setItems(DataStore.ThetaUnit.values());
 
         getView("ExprXText", TextField.class).setPromptText("x * 2 + 5");
         getView("ExprYText", TextField.class).setPromptText("y * 2 + 5");
@@ -65,7 +71,14 @@ public class DataSetInsp extends ChartPartInsp {
         setViewValue("NameText", dataSet.getName());
 
         // Reset DataTypeComboBox
+        DataType dataType = dataSet.getDataType();
         setViewValue("DataTypeComboBox", dataSet.getDataType());
+
+        // Reset ThetaUnitComboBox
+        boolean isPolar = dataType.isPolar();
+        setViewVisible("ThetaUnitBox", isPolar);
+        if (isPolar)
+            setViewValue("ThetaUnitComboBox", dataSet.getThetaUnit());
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
         boolean isMultiYEnabled = dataSet.getChartType().isMultiYAxisType();
@@ -82,7 +95,6 @@ public class DataSetInsp extends ChartPartInsp {
         setViewValue("ExprXText", dataSet.getExprX());
         setViewValue("ExprYText", dataSet.getExprY());
         setViewValue("ExprZText", dataSet.getExprZ());
-        DataType dataType = dataSet.getDataType();
         setViewVisible("ExprZBox", dataType.hasZ());
 
         // Reset StackedCheckBox, ShowLegendEntryCheckBox
@@ -108,6 +120,12 @@ public class DataSetInsp extends ChartPartInsp {
         if (anEvent.equals("DataTypeComboBox")) {
             DataType dataType = (DataType) getViewSelItem("DataTypeComboBox");
             dataSet.setDataType(dataType);
+        }
+
+        // Handle ThetaUnitComboBox
+        if (anEvent.equals("ThetaUnitComboBox")) {
+            DataStore.ThetaUnit thetaUnit = (DataStore.ThetaUnit) anEvent.getSelItem();
+            dataSet.setThetaUnit(thetaUnit);
         }
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton

@@ -12,40 +12,12 @@ import snapcharts.model.DataStyle;
  */
 public class PolarStyle extends DataStyle {
 
-    // The units for theta
-    private ThetaUnit  _thetaUnit;
-
-    // Constant for ThetaUnits
-    public enum ThetaUnit { Degrees, Radians }
-
-    // Constants for properties
-    public final String ThetaUnit_Prop = "ThetaUnit";
-
-    // Constants for defaults
-    public final ThetaUnit DEFAULT_THETA_UNIT = ThetaUnit.Degrees;
-
     /**
      * Constructor.
      */
     public PolarStyle()
     {
         super();
-
-        _thetaUnit = DEFAULT_THETA_UNIT;
-    }
-
-    /**
-     * Returns the units for Theta data.
-     */
-    public ThetaUnit getThetaUnit()  { return _thetaUnit; }
-
-    /**
-     * Sets the units for Theta data.
-     */
-    public void setThetaUnit(ThetaUnit aValue)
-    {
-        if (aValue == getThetaUnit()) return;
-        firePropChange(ThetaUnit_Prop, _thetaUnit, _thetaUnit = aValue);
     }
 
     /**
@@ -58,7 +30,7 @@ public class PolarStyle extends DataStyle {
         super.initPropDefaults(aPropDefaults);
 
         // Add Props
-        aPropDefaults.addProps(ThetaUnit_Prop);
+        //aPropDefaults.addProps(ThetaUnit_Prop);
     }
 
     /**
@@ -71,7 +43,7 @@ public class PolarStyle extends DataStyle {
         switch (aPropName) {
 
             // Handle ThetaUnit
-            case ThetaUnit_Prop: return getThetaUnit();
+            //case ThetaUnit_Prop: return getThetaUnit();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -88,7 +60,7 @@ public class PolarStyle extends DataStyle {
         switch (aPropName) {
 
             // Handle ThetaUnit
-            case ThetaUnit_Prop: setThetaUnit((ThetaUnit) aValue); break;
+            //case ThetaUnit_Prop: setThetaUnit((ThetaUnit) aValue); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -104,7 +76,7 @@ public class PolarStyle extends DataStyle {
         switch (aPropName) {
 
             // Handle ThetaUnit
-            case ThetaUnit_Prop: return DEFAULT_THETA_UNIT;
+            //case ThetaUnit_Prop: return DEFAULT_THETA_UNIT;
 
             // Handle super class properties (or unknown)
             default: return super.getPropDefault(aPropName);
@@ -121,8 +93,8 @@ public class PolarStyle extends DataStyle {
         XMLElement e = super.toXML(anArchiver);
 
         // Archive ThetaUnit_Prop
-        if (!isPropDefault(ThetaUnit_Prop))
-            e.add(ThetaUnit_Prop, getPointJoin());
+        //if (!isPropDefault(ThetaUnit_Prop))
+        //    e.add(ThetaUnit_Prop, getPointJoin());
 
         // Return element
         return e;
@@ -138,8 +110,8 @@ public class PolarStyle extends DataStyle {
         super.fromXML(anArchiver, anElement);
 
         // Unarchive ThetaUnit
-        if (anElement.hasAttribute(ThetaUnit_Prop))
-            setThetaUnit(anElement.getAttributeEnumValue(ShowLine_Prop, ThetaUnit.class, null));
+        //if (anElement.hasAttribute(ThetaUnit_Prop))
+        //    setThetaUnit(anElement.getAttributeEnumValue(ShowLine_Prop, ThetaUnit.class, null));
 
         // Return this part
         return this;
@@ -151,7 +123,8 @@ public class PolarStyle extends DataStyle {
     @Override
     public String toString()
     {
-        return "PolarStyle { ThetaUnit=" + _thetaUnit +
+        return "PolarStyle {" +
+                //" ThetaUnit=" + _thetaUnit +
                 " }";
     }
 }

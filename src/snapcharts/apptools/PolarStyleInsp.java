@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
-import snap.view.ComboBox;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
@@ -62,8 +61,6 @@ public class PolarStyleInsp extends ChartPartInsp {
     @Override
     protected void initUI()
     {
-        ComboBox<PolarStyle.ThetaUnit> thetaUnitComboBox = getView("ThetaUnitComboBox", ComboBox.class);
-        thetaUnitComboBox.setItems(PolarStyle.ThetaUnit.values());
     }
 
     /**
@@ -75,7 +72,7 @@ public class PolarStyleInsp extends ChartPartInsp {
         PolarStyle polarStyle = getPolarStyle(); if (polarStyle == null) return;
 
         // Reset ThetaUnitComboBox
-        setViewValue("ThetaUnitComboBox", polarStyle.getThetaUnit());
+        //setViewValue("ThetaUnitComboBox", polarStyle.getThetaUnit());
     }
 
     /**
@@ -87,7 +84,7 @@ public class PolarStyleInsp extends ChartPartInsp {
         PolarStyle polarStyle = getPolarStyle(); if (polarStyle == null) return;
 
         // Handle ThetaUnitComboBox
-        if (anEvent.equals("ThetaUnitComboBox"))
-            polarStyle.setThetaUnit((PolarStyle.ThetaUnit) anEvent.getSelItem());
+        //if (anEvent.equals("ThetaUnitComboBox"))
+        //    polarStyle.setThetaUnit((PolarStyle.ThetaUnit) anEvent.getSelItem());
     }
 }

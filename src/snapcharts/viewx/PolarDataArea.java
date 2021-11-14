@@ -10,7 +10,6 @@ import snapcharts.data.DataStore;
 import snapcharts.data.DataStoreImpl;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
-import snapcharts.modelx.PolarStyle;
 import snapcharts.view.*;
 
 /**
@@ -57,9 +56,7 @@ public class PolarDataArea extends DataArea {
         int pointCount = polarData.getPointCount();
 
         // Get whether to convert to radians
-        DataStyle dataStyle = dataSet.getDataStyle();
-        PolarStyle polarStyle = dataStyle instanceof PolarStyle ? (PolarStyle) dataStyle : null;
-        boolean convertToRadians = polarStyle != null && polarStyle.getThetaUnit() != PolarStyle.ThetaUnit.Radians;
+        boolean convertToRadians = dataSet.getThetaUnit() != DataStore.ThetaUnit.Radians;
 
         // Create points array
         double[] dispX = new double[pointCount];

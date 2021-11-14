@@ -16,7 +16,10 @@ import java.util.Arrays;
 public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
 
     // The format of the data
-    private DataType _dataType = DataType.XY;
+    private DataType  _dataType;
+
+    // The units for theta
+    private ThetaUnit  _thetaUnit;
 
     // The number of rows
     private int  _rowCount;
@@ -36,8 +39,25 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     // Min/Max values for X/Y/Z
     private MinMax  _minMaxX, _minMaxY, _minMaxZ;
 
+    // Constant for ThetaUnits
+    public enum ThetaUnit { Degrees, Radians }
+
     // Properties
     public static final String DataType_Prop = "DataType";
+    public static final String ThetaUnit_Prop = "ThetaUnit";
+
+    // Constants for defaults
+    public final DataType DEFAULT_DATA_TYPE = DataType.XY;
+    public final ThetaUnit DEFAULT_THETA_UNIT = ThetaUnit.Degrees;
+
+    /**
+     * Constructor.
+     */
+    public DataStore()
+    {
+        _dataType = DEFAULT_DATA_TYPE;
+        _thetaUnit = DEFAULT_THETA_UNIT;
+    }
 
     /**
      * Returns the DataType.
@@ -50,6 +70,19 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     public void setDataType(DataType aDataType)
     {
         _dataType = aDataType;
+    }
+
+    /**
+     * Returns the units for Theta data.
+     */
+    public ThetaUnit getThetaUnit()  { return _thetaUnit; }
+
+    /**
+     * Sets the units for Theta data.
+     */
+    public void setThetaUnit(ThetaUnit aValue)
+    {
+        _thetaUnit = aValue;
     }
 
     /**
@@ -473,6 +506,10 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         DataType dataType = getDataType();
         e.add(DataType_Prop, dataType);
 
+        // Archive ThetaUnit
+        if (dataType.isPolar() && getThetaUnit() != DEFAULT_THETA_UNIT)
+            e.add(ThetaUnit_Prop, getThetaUnit());
+
         // If DataType has X, add DataX values
         if (dataType.hasChannel(DataChan.X)) {
             double[] dataX = dataType!=DataType.XYZZ ? getDataX() : getDataXforZZ();
@@ -513,6 +550,10 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
         String dataTypeStr = anElement.getAttributeValue(DataType_Prop);
         DataType dataType = DataType.valueOf(dataTypeStr);
         setDataType(dataType);
+
+        // Unarchive ThetaUnit
+        if (anElement.hasAttribute(ThetaUnit_Prop))
+            setThetaUnit(anElement.getAttributeEnumValue(ThetaUnit_Prop, ThetaUnit.class, DEFAULT_THETA_UNIT));
 
         // Get DataX
         double[] dataX = null;

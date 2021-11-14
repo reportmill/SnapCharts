@@ -61,14 +61,15 @@ public class DataSet extends ChartPart {
 
     // Constants for properties
     public static final String DataType_Prop = DataStore.DataType_Prop;
-    public static final String Disabled_Prop = "Disabled";
-    public static final String Point_Prop = "Points";
+    public static final String ThetaUhit_Prop = "ThetaUnit";
     public static final String AxisTypeY_Prop = "AxisTypeY";
     public static final String ExprX_Prop = "ExpressionX";
     public static final String ExprY_Prop = "ExpressionY";
     public static final String ExprZ_Prop = "ExpressionZ";
     public static final String Stacked_Prop = "Stacked";
     public static final String ShowLegendEntry_Prop = "ShowLegendEntry";
+    public static final String Disabled_Prop = "Disabled";
+    public static final String Point_Prop = "Points";
 
     /**
      * Constructor.
@@ -106,6 +107,28 @@ public class DataSet extends ChartPart {
         // Clear cached data and firePropChange
         clearCachedData();
         firePropChange(DataType_Prop, old, aDataType);
+    }
+
+    /**
+     * Returns the units for Theta data.
+     */
+    public DataStore.ThetaUnit getThetaUnit()  { return _rawData.getThetaUnit(); }
+
+    /**
+     * Sets the units for Theta data.
+     */
+    public void setThetaUnit(DataStore.ThetaUnit aValue)
+    {
+        // If already set, just return
+        if (aValue == getThetaUnit()) return;
+
+        // Forward to RawData
+        DataStore.ThetaUnit old = getThetaUnit();
+        _rawData.setThetaUnit(aValue);
+
+        // Clear cached data and firePropChange
+        clearCachedData();
+        firePropChange(ThetaUhit_Prop, old, aValue);
     }
 
     /**
