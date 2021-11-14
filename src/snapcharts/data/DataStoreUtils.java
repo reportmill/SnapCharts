@@ -210,8 +210,8 @@ public class DataStoreUtils {
             throw new IllegalArgumentException("DataStoreUtils.getPolarDataForType: Come on, man: " + aDataType);
 
         // Otherwise, get DataX array and create dataT array
-        int count = aDataStore.getPointCount();
-        double dataT[] = new double[count];
+        int pointCount = aDataStore.getPointCount();
+        double[] dataT = new double[pointCount];
 
         // Get min/max X to scale to polar
         double minX = aDataStore.getMinX();
@@ -219,7 +219,7 @@ public class DataStoreUtils {
         double maxAngle = 2 * Math.PI; // 360 degrees
 
         // Iterate over X values and convert to 0 - 360 scale
-        for (int i=0;i<count;i++) {
+        for (int i = 0; i < pointCount; i++) {
             double valX = aDataStore.getX(i);
             double valTheta = (valX - minX) / (maxX - minX) * maxAngle;
             dataT[i] = valTheta;
@@ -228,15 +228,18 @@ public class DataStoreUtils {
         // Get DataR and DataZ
         double[] dataR = aDataStore.getDataY();
         double[] dataZ = aDataStore.getDataType().hasZ() ? aDataStore.getDataZ() : null;
-        if (aDataType.hasZ() && dataZ==null)
-            dataZ = new double[count];
+        if (aDataType.hasZ() && dataZ == null)
+            dataZ = new double[pointCount];
 
-        // Return new DataStore for type and values
-        return DataStore.newDataStoreForTypeAndValues(aDataType, dataT, dataR, dataZ);
+        // Create new DataStore for type and values and return
+        DataStore polarData = DataStore.newDataStoreForTypeAndValues(aDataType, dataT, dataR, dataZ);
+        polarData.setThetaUnit(DataStore.ThetaUnit.Radians);
+        return polarData;
     }
 
     /**
-     * Returns DataStore for given polar type.
+     * Returns DataStore of XY points for given Polar type DataStore.
+     * This is probably bogus since it makes assumptions about the XY range.
      */
     public static DataStore getPolarXYDataForPolar(DataStore aDataStore)
     {
@@ -244,17 +247,26 @@ public class DataStoreUtils {
         if (!aDataStore.getDataType().isPolar())
             return aDataStore;
 
-        // Otherwise, get DataX array and create dataT array
-        int count = aDataStore.getPointCount();
-        double dataX[] = new double[count];
-        double dataY[] = new double[count];
+        // Get pointCount and create dataX/dataY arrays
+        int pointCount = aDataStore.getPointCount();
+        double[] dataX = new double[pointCount];
+        double[] dataY = new double[pointCount];
+
+        // Get whether to convert to radians
+        boolean convertToRadians = aDataStore.getThetaUnit() != DataStore.ThetaUnit.Radians;
 
         // Iterate over X values and convert to 0 - 360 scale
-        for (int i=0;i<count;i++) {
-            double valT = aDataStore.getT(i);
-            double valR = aDataStore.getR(i);
-            dataX[i] = Math.cos(valT) * valR;
-            dataY[i] = Math.sin(valT) * valR;
+        for (int i = 0; i < pointCount; i++) {
+
+            // Get Theta and Radius
+            double dataTheta = aDataStore.getT(i);
+            double dataRadius = aDataStore.getR(i);
+            if (convertToRadians)
+                dataTheta = Math.toRadians(dataTheta);
+
+            // Convert to display coords
+            dataX[i] = Math.cos(dataTheta) * dataRadius;
+            dataY[i] = Math.sin(dataTheta) * dataRadius;
         }
 
         // Get DataZ and DataType
@@ -276,7 +288,7 @@ public class DataStoreUtils {
         // If DataStores have identical DataX, just add Y values
         if (isAlignedX(aDataStore1, aDataStore2)) {
             int pointCount = aDataStore1.getPointCount();
-            for (int i=0; i<pointCount; i++) {
+            for (int i = 0; i < pointCount; i++) {
                 double y1 = aDataStore1.getY(i);
                 double y2 = aDataStore2.getY(i);
                 double y3 = y1 + y2;
@@ -287,7 +299,7 @@ public class DataStoreUtils {
         // Otherwise, we must use interpolated values
         else {
             int pointCount = aDataStore1.getPointCount();
-            for (int i=0; i<pointCount; i++) {
+            for (int i = 0; i < pointCount; i++) {
                 double x1 = aDataStore1.getX(i);
                 double y1 = aDataStore1.getY(i);
                 double y2 = aDataStore2.getYForX(x1);
@@ -311,7 +323,7 @@ public class DataStoreUtils {
             return false;
 
         // Iterate over X coords and return false if they don't match
-        for (int i=0; i<pointCount; i++) {
+        for (int i = 0; i < pointCount; i++) {
             double x0 = aDataStore1.getX(i);
             double x1 = aDataStore2.getX(i);
             if (!MathUtils.equals(x0, x1))
