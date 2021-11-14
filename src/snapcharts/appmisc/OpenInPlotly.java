@@ -282,7 +282,8 @@ public class OpenInPlotly {
         traceJS.addKeyValue("name", aDataSet.getName());
 
         // Add: type : 'scatter'
-        switch (_chart.getType()) {
+        ChartType chartType = _chart.getType();
+        switch (chartType) {
             case BAR:
             case BAR_3D:
                 traceJS.addKeyValue("type", "bar"); break;
@@ -306,7 +307,7 @@ public class OpenInPlotly {
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'
-        if (_chart.getType() == ChartType.SCATTER) {
+        if (chartType == ChartType.SCATTER || chartType == ChartType.POLAR) {
 
             // Set mode: lines | markers | lines+markers
             boolean isShowLine = dataStyle.isShowLine();
@@ -333,7 +334,7 @@ public class OpenInPlotly {
         }
 
         // If ChartType.CONTOUR, add: colorscale: 'Jet'
-        if (_chart.getType() == ChartType.CONTOUR) {
+        if (chartType == ChartType.CONTOUR) {
 
             // colorscale
             traceJS.addKeyValue("colorscale", "Jet");
@@ -355,20 +356,19 @@ public class OpenInPlotly {
         }
 
         // Iterate over channels and add channel values for each
-        for (int i=0; i<chanCount; i++) {
+        for (int i = 0; i < chanCount; i++) {
 
             // Get DataChan, DataChanString
             DataChan dataChan = dataType.getChannel(i);
             String dataChanStr = dataChan.toString().toLowerCase();
 
-            // If polar do something
-            if (_chart.getType() == ChartType.POLAR) {
-                if (dataChan==DataChan.X)
+            // If ChartType is Polar, remap dataChan string
+            if (chartType == ChartType.POLAR) {
+                if (dataChan == DataChan.T || dataChan == DataChan.X)
                     dataChanStr = "theta";
-                else if (dataChan==DataChan.Y)
+                else if (dataChan == DataChan.R || dataChan == DataChan.Y)
                     dataChanStr = "r";
-                else return;
-                traceJS.addKeyValue("mode", "markers");
+                else System.err.println("OpenInPlotly.writeDataSet: Unknown Polar DataChan: " + dataChan);
             }
 
             // Get Channel, create valsJS and add to traceJS
@@ -376,14 +376,14 @@ public class OpenInPlotly {
             traceJS.addKeyValue(dataChanStr, valsJS);
 
             // Iterate over values and add to valsJS
-            for (int j=0; j<pointCount; j++) {
+            for (int j = 0; j < pointCount; j++) {
                 Object val = aDataSet.getValueForChannel(dataChan, j);
                 valsJS.addValue(val);
             }
         }
 
         // If ChartType.LINE_3D, add: fill: 'tozeroy'
-        if (_chart.getType() == ChartType.LINE_3D) {
+        if (chartType == ChartType.LINE_3D) {
             JSONNode valsJS = new JSONNode();
             traceJS.addKeyValue("z", valsJS);
             for (int j = 0; j < pointCount; j++)
