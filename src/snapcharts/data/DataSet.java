@@ -8,12 +8,13 @@ import snapcharts.util.MinMax;
 import java.util.Arrays;
 
 /**
- * This class is a low-level representation of a chart data set.
+ * This class is the representation of a data set for SnapCharts. Conceptually it holds an array of points, which are
+ * in the form of XY pairs (2D scatter), XYZ triplets (3D), CY (bar), TR/TRZ (polar).
  *
  * It provides a simple API for defining the DataType (which defines the data format/schema), the number of data
  * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
-public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
+public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
 
     // The format of the data
     private DataType  _dataType;
@@ -53,7 +54,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     /**
      * Constructor.
      */
-    public DataStore()
+    public DataSet()
     {
         _dataType = DEFAULT_DATA_TYPE;
         _thetaUnit = DEFAULT_THETA_UNIT;
@@ -253,7 +254,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
             case Z: return getDataZ();
             case T: return getDataX();
             case R: return getDataY();
-            default: throw new RuntimeException("DataStore.getDataArrayForChannel: Invalid channel: " + aChannel);
+            default: throw new RuntimeException("DataSet.getDataArrayForChannel: Invalid channel: " + aChannel);
         }
     }
 
@@ -478,10 +479,10 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
      * Standard clone implementation.
      */
     @Override
-    public DataStore clone()
+    public DataSet clone()
     {
-        DataStore clone;
-        try { clone = (DataStore) super.clone(); }
+        DataSet clone;
+        try { clone = (DataSet) super.clone(); }
         catch (CloneNotSupportedException e) { throw new RuntimeException(e); }
         return clone;
     }
@@ -492,7 +493,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     @Override
     public XMLElement toXML(XMLArchiver anArchiver)
     {
-        XMLElement e = new XMLElement("DataStore");
+        XMLElement e = new XMLElement("DataSet");
         toXML(anArchiver, e);
         return e;
     }
@@ -589,9 +590,9 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
 
         // Add Data points
         if (dataType == DataType.XYZZ)
-            DataStoreUtils.addDataPointsXYZZ(this, dataX, dataY, dataZ);
+            DataSetUtils.addDataPointsXYZZ(this, dataX, dataY, dataZ);
         else if (dataType != DataType.UNKNOWN)
-            DataStoreUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
+            DataSetUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
 
         // Return this part
         return this;
@@ -603,7 +604,7 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     @Override
     public String toString()
     {
-        String str = "DataStore { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        String str = "DataSet { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
         for (DataChan chan : getDataType().getChannels()) {
             MinMax minMax = getMinMax(chan);
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
@@ -612,18 +613,18 @@ public abstract class DataStore implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
-     * Returns new DataStore instance.
+     * Returns new DataSet instance.
      */
-    public static DataStore newDataStore()
+    public static DataSet newDataSet()
     {
-        return new DataStoreImpl();
+        return new DataSetImpl();
     }
 
     /**
-     * Returns new DataStore instance for type and array values.
+     * Returns new DataSet instance for type and array values.
      */
-    public static DataStore newDataStoreForTypeAndValues(DataType aDataType, Object ... theArrays)
+    public static DataSet newDataSetForTypeAndValues(DataType aDataType, Object ... theArrays)
     {
-        return new DataStoreImpl(aDataType, theArrays);
+        return new DataSetImpl(aDataType, theArrays);
     }
 }

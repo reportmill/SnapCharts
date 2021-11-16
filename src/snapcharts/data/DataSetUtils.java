@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utilities for DataStore.
+ * Utilities for DataSet.
  */
-public class DataStoreUtils {
+public class DataSetUtils {
 
     /**
      * Adds data points to given DataSet for given data arrays.
      */
-    public static void addDataPoints(DataStore aDataStore, double[] dataX, double[] dataY, double[] dataZ, String[] dataC)
+    public static void addDataPoints(DataSet aDataSet, double[] dataX, double[] dataY, double[] dataZ, String[] dataC)
     {
         // Get min length of staged data
         int xlen = dataX != null ? dataX.length : Integer.MAX_VALUE;
@@ -32,28 +32,28 @@ public class DataStoreUtils {
             Double valZ = dataZ != null ? dataZ[i] : null;
             String valC = dataC != null ? dataC[i] : null;
             DataPoint dataPoint = new DataPoint(valX, valY, valZ, valC);
-            int index = aDataStore.getPointCount();
-            aDataStore.addPoint(dataPoint, index);
+            int index = aDataSet.getPointCount();
+            aDataSet.addPoint(dataPoint, index);
         }
     }
 
     /**
      * Adds data points to given DataSet for given data arrays.
      */
-    public static void addDataPointsXYZZ(DataStore aDataStore, double[] dataX, double[] dataY, double[] dataZZ)
+    public static void addDataPointsXYZZ(DataSet aDataSet, double[] dataX, double[] dataY, double[] dataZZ)
     {
         // Get rows and cols
         int colCount = dataX.length;
         int rowCount = dataY.length;
 
-        // Set in DataStore
-        aDataStore.setColCount(colCount);
-        aDataStore.setRowCount(rowCount);
+        // Set in DataSet
+        aDataSet.setColCount(colCount);
+        aDataSet.setRowCount(rowCount);
 
         // If insufficient Z, complain and pad with zero
         int pointCount = colCount * rowCount;
         if (pointCount>dataZZ.length) {
-            System.err.println("DataStoreUtils.addDataPointsXYZZ: Insufficient number of Z values");
+            System.err.println("DataSetUtils.addDataPointsXYZZ: Insufficient number of Z values");
             dataZZ = Arrays.copyOf(dataZZ, pointCount);
         }
 
@@ -65,8 +65,8 @@ public class DataStoreUtils {
                 int zind = row * colCount + col;
                 double zval = dataZZ[zind];
                 DataPoint dataPoint = new DataPoint(xval, yval, zval, null);
-                int index = aDataStore.getPointCount();
-                aDataStore.addPoint(dataPoint, index);
+                int index = aDataSet.getPointCount();
+                aDataSet.addPoint(dataPoint, index);
             }
         }
     }
@@ -74,11 +74,11 @@ public class DataStoreUtils {
     /**
      * Returns the index of the first value that is inside or inside adjacent for given min/max.
      */
-    public static int getStartIndexForRange(DataStore aDataStore, double aMin, double aMax)
+    public static int getStartIndexForRange(DataSet aDataSet, double aMin, double aMax)
     {
         int start = 0;
-        int pointCount = aDataStore.getPointCount();
-        while (start<pointCount && !isArrayValueAtIndexInsideOrInsideAdjacent(aDataStore, start, pointCount, aMin, aMax))
+        int pointCount = aDataSet.getPointCount();
+        while (start<pointCount && !isArrayValueAtIndexInsideOrInsideAdjacent(aDataSet, start, pointCount, aMin, aMax))
             start++;
         return start;
     }
@@ -86,11 +86,11 @@ public class DataStoreUtils {
     /**
      * Returns the index of the last value that is inside or inside adjacent for given min/max.
      */
-    public static int getEndIndexForRange(DataStore aDataStore, double aMin, double aMax)
+    public static int getEndIndexForRange(DataSet aDataSet, double aMin, double aMax)
     {
-        int pointCount = aDataStore.getPointCount();
+        int pointCount = aDataSet.getPointCount();
         int end = pointCount - 1;
-        while (end>0 && !isArrayValueAtIndexInsideOrInsideAdjacent(aDataStore, end, pointCount, aMin, aMax))
+        while (end>0 && !isArrayValueAtIndexInsideOrInsideAdjacent(aDataSet, end, pointCount, aMin, aMax))
             end--;
         return end;
     }
@@ -98,17 +98,17 @@ public class DataStoreUtils {
     /**
      * Returns true if given data/index value is inside range or adjacent to point inside.
      */
-    private static final boolean isArrayValueAtIndexInsideOrInsideAdjacent(DataStore aDataStore, int i, int pointCount, double aMin, double aMax)
+    private static final boolean isArrayValueAtIndexInsideOrInsideAdjacent(DataSet aDataSet, int i, int pointCount, double aMin, double aMax)
     {
         // If val at index in range, return true
-        double val = aDataStore.getX(i);
+        double val = aDataSet.getX(i);
         if (val >= aMin && val <= aMax)
             return true;
 
         // If val at next index in range, return true
         if (i+1 < pointCount)
         {
-            double nextVal = aDataStore.getX(i + 1);
+            double nextVal = aDataSet.getX(i + 1);
             if (val < aMin && nextVal >= aMin || val > aMax && nextVal <= aMax)
                 return true;
         }
@@ -116,7 +116,7 @@ public class DataStoreUtils {
         // If val at previous index in range, return true
         if (i > 0)
         {
-            double prevVal = aDataStore.getX(i - 1);
+            double prevVal = aDataSet.getX(i - 1);
             if ( val < aMin && prevVal >= aMin || val > aMax && prevVal <= aMax)
                 return true;
         }
@@ -126,16 +126,16 @@ public class DataStoreUtils {
     }
 
     /**
-     * Returns a copy of given DataStore processed with given expressions.
+     * Returns a copy of given DataSet processed with given expressions.
      */
-    public static DataStore getProcessedData(DataStore aDataStore, String exprX, String exprY, String exprZ)
+    public static DataSet getProcessedData(DataSet aDataSet, String exprX, String exprY, String exprZ)
     {
         // If both expressions empty, just return
         boolean isEmptyX = exprX == null || exprX.length() == 0;
         boolean isEmptyY = exprY == null || exprY.length() == 0;
         boolean isEmptyZ = exprZ == null || exprZ.length() == 0;
         if (isEmptyX && isEmptyY && isEmptyZ)
-            return aDataStore;
+            return aDataSet;
 
         // Get KeyChains
         KeyChain keyChainX = !isEmptyX ? KeyChain.getKeyChain(exprX.toLowerCase()) : null;
@@ -143,17 +143,17 @@ public class DataStoreUtils {
         KeyChain keyChainZ = !isEmptyZ ? KeyChain.getKeyChain(exprZ.toLowerCase()) : null;
 
         // Get DataX
-        DataType dataType = aDataStore.getDataType();
-        int pointCount = aDataStore.getPointCount();
+        DataType dataType = aDataSet.getDataType();
+        int pointCount = aDataSet.getPointCount();
         boolean hasZ = dataType.hasZ();
         double[] dataX = new double[pointCount];
         double[] dataY = new double[pointCount];
         double[] dataZ = hasZ ? new double[pointCount] : null;
         Map map = new HashMap();
         for (int i=0; i<pointCount; i++) {
-            double valX = aDataStore.getX(i);
-            double valY = aDataStore.getY(i);
-            double valZ = hasZ ? aDataStore.getZ(i) : 0;
+            double valX = aDataSet.getX(i);
+            double valY = aDataSet.getY(i);
+            double valZ = hasZ ? aDataSet.getZ(i) : 0;
             map.put("x", valX);
             map.put("y", valY);
             if (hasZ)
@@ -165,26 +165,26 @@ public class DataStoreUtils {
                 dataZ[i] = isEmptyZ ? valZ : KeyChain.getDoubleValue(map, keyChainZ);
         }
 
-        // Return new DataStore for type and values
-        return DataStore.newDataStoreForTypeAndValues(dataType, dataX, dataY, dataZ);
+        // Return new DataSet for type and values
+        return DataSet.newDataSetForTypeAndValues(dataType, dataX, dataY, dataZ);
     }
 
     /**
-     * Returns a copy of given DataStore with values converted to log.
+     * Returns a copy of given DataSet with values converted to log.
      */
-    public static DataStore getLogData(DataStore aDataStore, boolean doLogX, boolean doLogY)
+    public static DataSet getLogData(DataSet aDataSet, boolean doLogX, boolean doLogY)
     {
         // Get DataX
-        DataType dataType = aDataStore.getDataType();
-        int pointCount = aDataStore.getPointCount();
+        DataType dataType = aDataSet.getDataType();
+        int pointCount = aDataSet.getPointCount();
         boolean hasZ = dataType.hasZ();
         double[] dataX = new double[pointCount];
         double[] dataY = new double[pointCount];
         double[] dataZ = hasZ ? new double[pointCount] : null;
         for (int i=0; i<pointCount; i++) {
-            double valX = aDataStore.getX(i);
-            double valY = aDataStore.getY(i);
-            double valZ = hasZ ? aDataStore.getZ(i) : 0;
+            double valX = aDataSet.getX(i);
+            double valY = aDataSet.getY(i);
+            double valZ = hasZ ? aDataSet.getZ(i) : 0;
 
             dataX[i] = doLogX ? ChartViewUtils.log10(valX) : valX;
             dataY[i] = doLogY ? ChartViewUtils.log10(valY) : valY;
@@ -192,75 +192,75 @@ public class DataStoreUtils {
                 dataZ[i] = valZ;
         }
 
-        // Return new DataStore for type and values
-        return DataStore.newDataStoreForTypeAndValues(dataType, dataX, dataY, dataZ);
+        // Return new DataSet for type and values
+        return DataSet.newDataSetForTypeAndValues(dataType, dataX, dataY, dataZ);
     }
 
     /**
-     * Returns DataStore for given polar type.
+     * Returns DataSet for given polar type.
      */
-    public static DataStore getPolarDataForType(DataStore aDataStore, DataType aDataType)
+    public static DataSet getPolarDataForType(DataSet aDataSet, DataType aDataType)
     {
         // If already polar, just return
-        if (aDataStore.getDataType().isPolar())
-            return aDataStore;
+        if (aDataSet.getDataType().isPolar())
+            return aDataSet;
 
         // Complain if DataType arg isn't polar
         if (!aDataType.isPolar())
-            throw new IllegalArgumentException("DataStoreUtils.getPolarDataForType: Come on, man: " + aDataType);
+            throw new IllegalArgumentException("DataSetUtils.getPolarDataForType: Come on, man: " + aDataType);
 
         // Otherwise, get DataX array and create dataT array
-        int pointCount = aDataStore.getPointCount();
+        int pointCount = aDataSet.getPointCount();
         double[] dataT = new double[pointCount];
 
         // Get min/max X to scale to polar
-        double minX = aDataStore.getMinX();
-        double maxX = aDataStore.getMaxX();
+        double minX = aDataSet.getMinX();
+        double maxX = aDataSet.getMaxX();
         double maxAngle = 2 * Math.PI; // 360 degrees
 
         // Iterate over X values and convert to 0 - 360 scale
         for (int i = 0; i < pointCount; i++) {
-            double valX = aDataStore.getX(i);
+            double valX = aDataSet.getX(i);
             double valTheta = (valX - minX) / (maxX - minX) * maxAngle;
             dataT[i] = valTheta;
         }
 
         // Get DataR and DataZ
-        double[] dataR = aDataStore.getDataY();
-        double[] dataZ = aDataStore.getDataType().hasZ() ? aDataStore.getDataZ() : null;
+        double[] dataR = aDataSet.getDataY();
+        double[] dataZ = aDataSet.getDataType().hasZ() ? aDataSet.getDataZ() : null;
         if (aDataType.hasZ() && dataZ == null)
             dataZ = new double[pointCount];
 
-        // Create new DataStore for type and values and return
-        DataStore polarData = DataStore.newDataStoreForTypeAndValues(aDataType, dataT, dataR, dataZ);
-        polarData.setThetaUnit(DataStore.ThetaUnit.Radians);
+        // Create new DataSet for type and values and return
+        DataSet polarData = DataSet.newDataSetForTypeAndValues(aDataType, dataT, dataR, dataZ);
+        polarData.setThetaUnit(DataSet.ThetaUnit.Radians);
         return polarData;
     }
 
     /**
-     * Returns DataStore of XY points for given Polar type DataStore.
+     * Returns DataSet of XY points for given Polar type DataSet.
      * This is probably bogus since it makes assumptions about the XY range.
      */
-    public static DataStore getPolarXYDataForPolar(DataStore aDataStore)
+    public static DataSet getPolarXYDataForPolar(DataSet aDataSet)
     {
         // If already non-polar, just return
-        if (!aDataStore.getDataType().isPolar())
-            return aDataStore;
+        if (!aDataSet.getDataType().isPolar())
+            return aDataSet;
 
         // Get pointCount and create dataX/dataY arrays
-        int pointCount = aDataStore.getPointCount();
+        int pointCount = aDataSet.getPointCount();
         double[] dataX = new double[pointCount];
         double[] dataY = new double[pointCount];
 
         // Get whether to convert to radians
-        boolean convertToRadians = aDataStore.getThetaUnit() != DataStore.ThetaUnit.Radians;
+        boolean convertToRadians = aDataSet.getThetaUnit() != DataSet.ThetaUnit.Radians;
 
         // Iterate over X values and convert to 0 - 360 scale
         for (int i = 0; i < pointCount; i++) {
 
             // Get Theta and Radius
-            double dataTheta = aDataStore.getT(i);
-            double dataRadius = aDataStore.getR(i);
+            double dataTheta = aDataSet.getT(i);
+            double dataRadius = aDataSet.getR(i);
             if (convertToRadians)
                 dataTheta = Math.toRadians(dataTheta);
 
@@ -270,62 +270,62 @@ public class DataStoreUtils {
         }
 
         // Get DataZ and DataType
-        double[] dataZ = aDataStore.getDataType().hasZ() ? aDataStore.getDataZ() : null;
+        double[] dataZ = aDataSet.getDataType().hasZ() ? aDataSet.getDataZ() : null;
         DataType dataType = dataZ == null ? DataType.XY : DataType.XYZ;
 
-        // Return new DataStore for type and values
-        return DataStore.newDataStoreForTypeAndValues(dataType, dataX, dataY, dataZ);
+        // Return new DataSet for type and values
+        return DataSet.newDataSetForTypeAndValues(dataType, dataX, dataY, dataZ);
     }
 
     /**
      * Adds stacked data
      */
-    public static DataStore addStackedData(DataStore aDataStore1, DataStore aDataStore2)
+    public static DataSet addStackedData(DataSet aDataSet1, DataSet aDataSet2)
     {
-        // Get new dataStore
-        DataStore dataStore = aDataStore1.clone();
+        // Get new DataSet
+        DataSet dataSet = aDataSet1.clone();
 
-        // If DataStores have identical DataX, just add Y values
-        if (isAlignedX(aDataStore1, aDataStore2)) {
-            int pointCount = aDataStore1.getPointCount();
+        // If DataSets have identical DataX, just add Y values
+        if (isAlignedX(aDataSet1, aDataSet2)) {
+            int pointCount = aDataSet1.getPointCount();
             for (int i = 0; i < pointCount; i++) {
-                double y1 = aDataStore1.getY(i);
-                double y2 = aDataStore2.getY(i);
+                double y1 = aDataSet1.getY(i);
+                double y2 = aDataSet2.getY(i);
                 double y3 = y1 + y2;
-                dataStore.setValueY(y3, i);
+                dataSet.setValueY(y3, i);
             }
         }
 
         // Otherwise, we must use interpolated values
         else {
-            int pointCount = aDataStore1.getPointCount();
+            int pointCount = aDataSet1.getPointCount();
             for (int i = 0; i < pointCount; i++) {
-                double x1 = aDataStore1.getX(i);
-                double y1 = aDataStore1.getY(i);
-                double y2 = aDataStore2.getYForX(x1);
+                double x1 = aDataSet1.getX(i);
+                double y1 = aDataSet1.getY(i);
+                double y2 = aDataSet2.getYForX(x1);
                 double y3 = y1 + y2;
-                dataStore.setValueY(y3, i);
+                dataSet.setValueY(y3, i);
             }
         }
 
-        // Return new DataStore
-        return dataStore;
+        // Return new DataSet
+        return dataSet;
     }
 
     /**
-     * Returns whether given DataStore is has same X values as this one.
+     * Returns whether given DataSet is has same X values as this one.
      */
-    public static boolean isAlignedX(DataStore aDataStore1, DataStore aDataStore2)
+    public static boolean isAlignedX(DataSet aDataSet1, DataSet aDataSet2)
     {
         // If PointCounts don't match, return false
-        int pointCount = aDataStore1.getPointCount();
-        if (pointCount != aDataStore2.getPointCount())
+        int pointCount = aDataSet1.getPointCount();
+        if (pointCount != aDataSet2.getPointCount())
             return false;
 
         // Iterate over X coords and return false if they don't match
         for (int i = 0; i < pointCount; i++) {
-            double x0 = aDataStore1.getX(i);
-            double x1 = aDataStore2.getX(i);
+            double x0 = aDataSet1.getX(i);
+            double x1 = aDataSet2.getX(i);
             if (!MathUtils.equals(x0, x1))
                 return false;
         }

@@ -1,10 +1,10 @@
 package snapcharts.doc;
 import snap.geom.Pos;
 import snap.util.SnapUtils;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
-import snapcharts.data.DataStoreUtils;
+import snapcharts.data.DataSetUtils;
 import java.util.Arrays;
 
 /**
@@ -331,12 +331,12 @@ public class DocTextReader {
         _trace.setDataType(dataType);
 
         // Add points XYZZ
-        DataStore rawData = _trace.getRawData();
+        DataSet rawData = _trace.getRawData();
         if (dataType == DataType.XYZZ)
-            DataStoreUtils.addDataPointsXYZZ(rawData, _dataX, _dataY, _dataZZ);
+            DataSetUtils.addDataPointsXYZZ(rawData, _dataX, _dataY, _dataZZ);
 
         // Add points other
-        else DataStoreUtils.addDataPoints(rawData, _dataX, _dataY, _dataZ, _dataC);
+        else DataSetUtils.addDataPoints(rawData, _dataX, _dataY, _dataZ, _dataC);
 
         // Clear staged data
         _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;

@@ -9,7 +9,7 @@ import snapcharts.appmisc.SheetView;
 import snapcharts.doc.DocItemDataSet;
 import snapcharts.data.DataChan;
 import snapcharts.model.Trace;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.util.TraceUtils;
 import snapcharts.data.DataUtils;
@@ -149,12 +149,12 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
         _sheetView.setMinColCount(colCount);
 
         // Update PointCountLabel
-        DataStore dataStore = trace.getRawData();
+        DataSet dataSet = trace.getRawData();
         String str = "Points: " + pointCount + "   |   ";
-        str += "Min X: " + FormatUtils.formatNum(dataStore.getMinX()) + "   |   ";
-        str += "Max X: " + FormatUtils.formatNum(dataStore.getMaxX()) + "   |   ";
-        str += "Min Y: " + FormatUtils.formatNum(dataStore.getMinY()) + "   |   ";
-        str += "Max Y: " + FormatUtils.formatNum(dataStore.getMaxY());
+        str += "Min X: " + FormatUtils.formatNum(dataSet.getMinX()) + "   |   ";
+        str += "Max X: " + FormatUtils.formatNum(dataSet.getMaxX()) + "   |   ";
+        str += "Min Y: " + FormatUtils.formatNum(dataSet.getMinY()) + "   |   ";
+        str += "Max Y: " + FormatUtils.formatNum(dataSet.getMaxY());
         setViewValue("PointCountLabel", str);
     }
 

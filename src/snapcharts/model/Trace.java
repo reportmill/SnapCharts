@@ -44,22 +44,22 @@ public class Trace extends ChartPart {
     private TraceStyleHpr _traceStyleHpr;
 
     // The RawData
-    private DataStore _rawData = DataStore.newDataStore();
+    private DataSet _rawData = DataSet.newDataSet();
 
     // The Processed Data
-    private DataStore  _procData;
+    private DataSet _procData;
 
     // Processed Data in log form
-    private DataStore[]  _logData;
+    private DataSet[]  _logData;
 
     // Processed data in polar form
-    private DataStore  _polarData;
+    private DataSet _polarData;
 
     // Processed data in polar XY form
-    private DataStore  _polarXYData;
+    private DataSet _polarXYData;
 
     // Constants for properties
-    public static final String DataType_Prop = DataStore.DataType_Prop;
+    public static final String DataType_Prop = DataSet.DataType_Prop;
     public static final String ThetaUhit_Prop = "ThetaUnit";
     public static final String AxisTypeY_Prop = "AxisTypeY";
     public static final String ExprX_Prop = "ExpressionX";
@@ -111,18 +111,18 @@ public class Trace extends ChartPart {
     /**
      * Returns the units for Theta data.
      */
-    public DataStore.ThetaUnit getThetaUnit()  { return _rawData.getThetaUnit(); }
+    public DataSet.ThetaUnit getThetaUnit()  { return _rawData.getThetaUnit(); }
 
     /**
      * Sets the units for Theta data.
      */
-    public void setThetaUnit(DataStore.ThetaUnit aValue)
+    public void setThetaUnit(DataSet.ThetaUnit aValue)
     {
         // If already set, just return
         if (aValue == getThetaUnit()) return;
 
         // Forward to RawData
-        DataStore.ThetaUnit old = getThetaUnit();
+        DataSet.ThetaUnit old = getThetaUnit();
         _rawData.setThetaUnit(aValue);
 
         // Clear cached data and firePropChange
@@ -337,7 +337,7 @@ public class Trace extends ChartPart {
      */
     public double getX(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getX(anIndex);
     }
 
@@ -346,7 +346,7 @@ public class Trace extends ChartPart {
      */
     public double getY(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getY(anIndex);
     }
 
@@ -355,7 +355,7 @@ public class Trace extends ChartPart {
      */
     public double getZ(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getZ(anIndex);
     }
 
@@ -364,7 +364,7 @@ public class Trace extends ChartPart {
      */
     public String getC(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getC(anIndex);
     }
 
@@ -382,7 +382,7 @@ public class Trace extends ChartPart {
      */
     public Double getValueX(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getValueX(anIndex);
     }
 
@@ -400,7 +400,7 @@ public class Trace extends ChartPart {
      */
     public Double getValueY(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getValueY(anIndex);
     }
 
@@ -418,7 +418,7 @@ public class Trace extends ChartPart {
      */
     public Double getValueZ(int anIndex)
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getValueZ(anIndex);
     }
 
@@ -535,21 +535,21 @@ public class Trace extends ChartPart {
     /**
      * Returns the raw data.
      */
-    public DataStore getRawData()  { return _rawData; }
+    public DataSet getRawData()  { return _rawData; }
 
     /**
      * Sets the raw data.
      */
-    public void setRawData(DataStore aDataStore)
+    public void setRawData(DataSet aDataSet)
     {
-        _rawData = aDataStore;
+        _rawData = aDataSet;
         clearCachedData();
     }
 
     /**
      * Returns the Processed Data.
      */
-    public DataStore getProcessedData()
+    public DataSet getProcessedData()
     {
         // If already set, just return
         if (_procData != null) return _procData;
@@ -558,14 +558,14 @@ public class Trace extends ChartPart {
         String exprX = getExprX();
         String exprY = getExprY();
         String exprZ = getExprZ();
-        DataStore procData = DataStoreUtils.getProcessedData(_rawData, exprX, exprY, exprZ);
+        DataSet procData = DataSetUtils.getProcessedData(_rawData, exprX, exprY, exprZ);
         return _procData = procData;
     }
 
     /**
      * Returns the ProcessedData converted to log.
      */
-    public DataStore getLogData(boolean doLogX, boolean doLogY)
+    public DataSet getLogData(boolean doLogX, boolean doLogY)
     {
         // If already set, just return
         int index = (doLogX && doLogY) ? 2 : doLogX ? 0 : 1;
@@ -573,24 +573,24 @@ public class Trace extends ChartPart {
 
         // Make sure LogData array is present
         if (_logData == null)
-            _logData = new DataStore[3];
+            _logData = new DataSet[3];
 
         // If already DataType.isPolar, set/return
-        DataStore procData = getProcessedData();
-        DataStore logData = DataStoreUtils.getLogData(procData, doLogX, doLogY);
+        DataSet procData = getProcessedData();
+        DataSet logData = DataSetUtils.getLogData(procData, doLogX, doLogY);
         return _logData[index] = logData;
     }
 
     /**
      * Returns the ProcessedData in polar form (just normal data if already DataType.isPolar).
      */
-    public DataStore getPolarData()
+    public DataSet getPolarData()
     {
         // If already set, just return
         if (_polarData != null) return _polarData;
 
         // If already DataType.isPolar, set/return
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         DataType dataType = getDataType();
         if (dataType.isPolar())
             return _polarData = procData;
@@ -601,21 +601,21 @@ public class Trace extends ChartPart {
             polarDataType = dataType == DataType.XYZZ ? DataType.TRZZ : DataType.TRZ;
 
         // Convert, set, return
-        DataStore polarData = DataStoreUtils.getPolarDataForType(procData, polarDataType);
+        DataSet polarData = DataSetUtils.getPolarDataForType(procData, polarDataType);
         return _polarData = polarData;
     }
 
     /**
      * Returns the PolarData converted to XY format.
      */
-    public DataStore getPolarXYData()
+    public DataSet getPolarXYData()
     {
         // If already set, just return
         if (_polarXYData != null) return _polarXYData;
 
         // Get PolarData, convert to polarXY, set/return
-        DataStore polarData = getPolarData();
-        DataStore xyData = DataStoreUtils.getPolarXYDataForPolar(polarData);
+        DataSet polarData = getPolarData();
+        DataSet xyData = DataSetUtils.getPolarXYDataForPolar(polarData);
         return _polarXYData = xyData;
     }
 
@@ -624,7 +624,7 @@ public class Trace extends ChartPart {
      */
     public double getMinZ()
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getMinZ();
     }
 
@@ -633,7 +633,7 @@ public class Trace extends ChartPart {
      */
     public double getMaxZ()
     {
-        DataStore procData = getProcessedData();
+        DataSet procData = getProcessedData();
         return procData.getMaxZ();
     }
 
@@ -665,9 +665,9 @@ public class Trace extends ChartPart {
     public String toString()
     {
         String str = "Trace { " + "Name=" + getName() + ", DataType=" + getDataType() + ", PointCount=" + getPointCount();
-        DataStore dataStore = getRawData();
+        DataSet dataSet = getRawData();
         for (DataChan chan : getDataType().getChannels()) {
-            MinMax minMax = dataStore.getMinMax(chan);
+            MinMax minMax = dataSet.getMinMax(chan);
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
         }
         return str + '}';
@@ -711,7 +711,7 @@ public class Trace extends ChartPart {
         }
 
         // Archive RawData
-        DataStore rawData = getRawData();
+        DataSet rawData = getRawData();
         rawData.toXML(anArchiver, e);
 
         // Return element
@@ -754,7 +754,7 @@ public class Trace extends ChartPart {
             getTraceStyle().fromXML(anArchiver, dataStyleXML);
 
         // Unarchive RawData
-        DataStore rawData = getRawData();
+        DataSet rawData = getRawData();
         rawData.fromXML(anArchiver, anElement);
 
         // Legacy

@@ -10,7 +10,7 @@ import snap.util.PropChange;
 import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
 import snapcharts.viewx.*;
@@ -449,7 +449,7 @@ public abstract class ChartHelper {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
         for (DataArea dataArea : dataAreas) {
-            DataStore stagedData = dataArea.getStagedData();
+            DataSet stagedData = dataArea.getStagedData();
             double minVal = isX ? stagedData.getMinX() : stagedData.getMinY();
             double maxVal = isX ? stagedData.getMaxX() : stagedData.getMaxY();
             min = Math.min(min, minVal);

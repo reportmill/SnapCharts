@@ -4,7 +4,7 @@ import snap.view.ComboBox;
 import snap.view.TextField;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.model.AxisType;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Trace;
@@ -51,8 +51,8 @@ public class DataSetInsp extends ChartPartInsp {
         dataTypeComboBox.setItems(DataType.values());
 
         // Configure ThetaUnitComboBox
-        ComboBox<DataStore.ThetaUnit> thetaUnitComboBox = getView("ThetaUnitComboBox", ComboBox.class);
-        thetaUnitComboBox.setItems(DataStore.ThetaUnit.values());
+        ComboBox<DataSet.ThetaUnit> thetaUnitComboBox = getView("ThetaUnitComboBox", ComboBox.class);
+        thetaUnitComboBox.setItems(DataSet.ThetaUnit.values());
 
         getView("ExprXText", TextField.class).setPromptText("x * 2 + 5");
         getView("ExprYText", TextField.class).setPromptText("y * 2 + 5");
@@ -124,7 +124,7 @@ public class DataSetInsp extends ChartPartInsp {
 
         // Handle ThetaUnitComboBox
         if (anEvent.equals("ThetaUnitComboBox")) {
-            DataStore.ThetaUnit thetaUnit = (DataStore.ThetaUnit) anEvent.getSelItem();
+            DataSet.ThetaUnit thetaUnit = (DataSet.ThetaUnit) anEvent.getSelItem();
             trace.setThetaUnit(thetaUnit);
         }
 

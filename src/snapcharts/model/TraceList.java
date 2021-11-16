@@ -9,7 +9,7 @@ import snap.geom.Insets;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.util.*;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.util.MinMax;
 
@@ -232,7 +232,7 @@ public class TraceList extends ChartPart {
             double min = Double.MAX_VALUE;
             double max = -Double.MAX_VALUE;
             for (Trace trace : traces) {
-                DataStore procData = trace.getProcessedData();
+                DataSet procData = trace.getProcessedData();
                 min = Math.min(min, procData.getMinX());
                 max = Math.max(max, procData.getMaxX());
             }
@@ -245,7 +245,7 @@ public class TraceList extends ChartPart {
             double max = -Double.MAX_VALUE;
             for (Trace trace : traces) {
                 if (anAxisType == trace.getAxisTypeY()) {
-                    DataStore procData = trace.getProcessedData();
+                    DataSet procData = trace.getProcessedData();
                     min = Math.min(min, procData.getMinY());
                     max = Math.max(max, procData.getMaxY());
                 }

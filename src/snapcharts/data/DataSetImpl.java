@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * This is the cover class for holding the raw data.
  */
-public class DataStoreImpl extends DataStore {
+public class DataSetImpl extends DataSet {
 
     // The number of points
     private int  _pointCount;
@@ -27,12 +27,12 @@ public class DataStoreImpl extends DataStore {
     /**
      * Constructor.
      */
-    public DataStoreImpl()  { }
+    public DataSetImpl()  { }
 
     /**
      * Constructor for DataType and arrays.
      */
-    public DataStoreImpl(DataType aDataType, Object ... theValues)
+    public DataSetImpl(DataType aDataType, Object ... theValues)
     {
         setDataType(aDataType);
 
@@ -70,7 +70,7 @@ public class DataStoreImpl extends DataStore {
 
         // If silly value, complain and return
         if (aValue < 1 || aValue > MAX_POINT_COUNT) {
-            System.err.println("DataStoreImpl.setPointCount: Count exceeds arbitrary limit: " + aValue);
+            System.err.println("DataSetImpl.setPointCount: Count exceeds arbitrary limit: " + aValue);
             return;
         }
 
@@ -104,7 +104,7 @@ public class DataStoreImpl extends DataStore {
                 case Y: _dataY = _dataY != null ? Arrays.copyOf(_dataY, newLen) : new double[newLen]; break;
                 case Z: _dataZ = _dataZ != null ? Arrays.copyOf(_dataZ, newLen) : new double[newLen]; break;
                 case C: _dataC = _dataC != null ? Arrays.copyOf(_dataC, newLen) : new String[newLen]; break;
-                default: throw new RuntimeException("DataStoreImpl.ensureCapacity: Unknown channel: " + chan);
+                default: throw new RuntimeException("DataSetImpl.ensureCapacity: Unknown channel: " + chan);
             }
         }
 
@@ -135,7 +135,7 @@ public class DataStoreImpl extends DataStore {
                     case Y: System.arraycopy(_dataY, anIndex, _dataY, anIndex + 1, tailLen); break;
                     case Z: System.arraycopy(_dataZ, anIndex, _dataZ, anIndex + 1, tailLen); break;
                     case C: System.arraycopy(_dataC, anIndex, _dataC, anIndex + 1, tailLen); break;
-                    default: throw new RuntimeException("DataStoreImpl.addPoint: Unknown channel: " + chan);
+                    default: throw new RuntimeException("DataSetImpl.addPoint: Unknown channel: " + chan);
                 }
             }
         }
@@ -147,7 +147,7 @@ public class DataStoreImpl extends DataStore {
                 case Y: _dataY[anIndex] = aPoint.getY(); break;
                 case Z: _dataZ[anIndex] = aPoint.getZ(); break;
                 case C: _dataC[anIndex] = aPoint.getC(); break;
-                default: throw new RuntimeException("DataStoreImpl.addPoint: Unknown channel: " + chan);
+                default: throw new RuntimeException("DataSetImpl.addPoint: Unknown channel: " + chan);
             }
         }
 
@@ -180,7 +180,7 @@ public class DataStoreImpl extends DataStore {
                     case Y: System.arraycopy(_dataY, nextIndex, _dataY, anIndex, tailLen); break;
                     case Z: System.arraycopy(_dataZ, nextIndex, _dataZ, anIndex, tailLen); break;
                     case C: System.arraycopy(_dataC, nextIndex, _dataC, anIndex, tailLen); break;
-                    default: throw new RuntimeException("DataStoreImpl.removePoint: Unknown channel: " + chan);
+                    default: throw new RuntimeException("DataSetImpl.removePoint: Unknown channel: " + chan);
                 }
             }
         }
@@ -320,9 +320,9 @@ public class DataStoreImpl extends DataStore {
      * Override to copy arrays.
      */
     @Override
-    public DataStore clone()
+    public DataSet clone()
     {
-        DataStoreImpl clone = (DataStoreImpl) super.clone();
+        DataSetImpl clone = (DataSetImpl) super.clone();
         clone._dataX = _dataX != null ? _dataX.clone() : null;
         clone._dataY = _dataY != null ? _dataY.clone() : null;
         clone._dataZ = _dataZ != null ? _dataZ.clone() : null;

@@ -28,10 +28,10 @@ public abstract class DataArea extends ChartPartView<Trace> {
     private AxisType  _axisTypeY;
 
     // The Trace.ProcessedData possibly further processed for DataArea/Axes
-    private DataStore  _stagedData;
+    private DataSet  _stagedData;
 
     // The ProcessedData converted to DataArea display coords
-    private DataStore  _dispData;
+    private DataSet  _dispData;
 
     /**
      * Constructor.
@@ -45,7 +45,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
         _chartHelper = aChartHelper;
         _trace = aTrace;
 
-        // Get/set Trace.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
+        // Get/set AxisTypeY for Trace. If chart type doesn't support it, just use standard Y
         _axisTypeY = _trace.getAxisTypeY();
         if (_axisTypeY != AxisType.Y && !_chartHelper.isAxisType(_axisTypeY))
             _axisTypeY = AxisType.Y;
@@ -148,14 +148,14 @@ public abstract class DataArea extends ChartPartView<Trace> {
      * Returns the Trace.ProcessedData possibly further processed for DataArea/Axes.
      * Conditions that cause further processing: Stacked, AxisWrap, Axis Log.
      */
-    public DataStore getStagedData()
+    public DataSet getStagedData()
     {
         // If already set, just return
         if (_stagedData != null) return _stagedData;
 
         // Get Trace and ProcessedData
         Trace trace = getTrace();
-        DataStore dataStore = trace.getProcessedData();
+        DataSet dataSet = trace.getProcessedData();
 
         // If Log, use Trace.LogData
         AxisViewX axisViewX = getAxisViewX();
@@ -165,16 +165,16 @@ public abstract class DataArea extends ChartPartView<Trace> {
         boolean isLogX = axisX != null && axisX.isLog();
         boolean isLogY = axisY != null && axisY.isLog();
         if (isLogX || isLogY)
-            dataStore = trace.getLogData(isLogX, isLogY);
+            dataSet = trace.getLogData(isLogX, isLogY);
 
         // Handle stacked
         if (trace.isStacked()) {
-            DataStore prevStackedData = getPreviousStackedData();
+            DataSet prevStackedData = getPreviousStackedData();
             if (prevStackedData != null)
-                dataStore = DataStoreUtils.addStackedData(dataStore, prevStackedData);
+                dataSet = DataSetUtils.addStackedData(dataSet, prevStackedData);
         }
 
-        // If WrapAxis, wrap DataStore inside DataStoreWrapper for wrap range and axis range
+        // If WrapAxis, wrap DataSet inside DataSetWrapper for wrap range and axis range
         if (axisX != null && axisX.isWrapAxis()) {
 
             // Get Wrap Min/Max values
@@ -182,36 +182,36 @@ public abstract class DataArea extends ChartPartView<Trace> {
             double wrapMax = axisX.getWrapMinMax().getMax();
 
             // Get Axis Min/Max values
-            _stagedData = dataStore; // Is this lame? I think it might be
+            _stagedData = dataSet; // Is this lame? I think it might be
             double axisMin = axisViewX.getAxisMin();
             double axisMax = axisViewX.getAxisMax();
-            dataStore = new DataStoreWrapper(dataStore, wrapMin, wrapMax, axisMin, axisMax);
+            dataSet = new DataSetWrapper(dataSet, wrapMin, wrapMax, axisMin, axisMax);
         }
 
         // Set/return
-        return _stagedData = dataStore;
+        return _stagedData = dataSet;
     }
 
     /**
      * Returns the Trace points in display coords for this DataArea (cached).
      */
-    public DataStore getDisplayData()
+    public DataSet getDisplayData()
     {
         // If already set, just return
         if (_dispData != null) return _dispData;
 
-        // Get display coords DataStore, set and return
-        DataStore displayData = getDisplayDataImpl();
+        // Get display coords DataSet, set and return
+        DataSet displayData = getDisplayDataImpl();
         return _dispData = displayData;
     }
 
     /**
      * Returns the Trace points in display coords for this DataArea.
      */
-    protected DataStore getDisplayDataImpl()
+    protected DataSet getDisplayDataImpl()
     {
         // Get StagedData
-        DataStore stagedData = getStagedData();
+        DataSet stagedData = getStagedData();
         int pointCount = stagedData.getPointCount();
         double[] dispX = new double[pointCount];
         double[] dispY = new double[pointCount];
@@ -229,8 +229,8 @@ public abstract class DataArea extends ChartPartView<Trace> {
             dispY[i] = chartHelper.dataToView(axisViewY, dataY);
         }
 
-        // Create DataStore for points and return
-        return new DataStoreImpl(DataType.XY, dispX, dispY);
+        // Create DataSet for points and return
+        return new DataSetImpl(DataType.XY, dispX, dispY);
     }
 
     /**
@@ -239,7 +239,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public int getDispDataStartIndex()
     {
         // Get DisplayData and PointCount
-        DataStore dispData = getDisplayData();
+        DataSet dispData = getDisplayData();
         int pointCount = dispData.getPointCount();
 
         // Iterate over DispData to find first visible point index
@@ -257,7 +257,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public int getDispDataEndIndex()
     {
         // Get DisplayData and PointCount
-        DataStore dispData = getDisplayData();
+        DataSet dispData = getDisplayData();
         int pointCount = dispData.getPointCount();
 
         // Iterate over DispData (back-to-front) to find last visible point index
@@ -312,7 +312,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     /**
      * Returns the previous stacked DataArea.StagedData.
      */
-    public DataStore getPreviousStackedData()
+    public DataSet getPreviousStackedData()
     {
         DataArea prevDataArea = getPreviousStackedDataArea();
         return prevDataArea != null ? prevDataArea.getStagedData() : null;
@@ -470,7 +470,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
         int MAX_SELECT_DISTANCE = 60;
 
         // Get data info
-        DataStore stagedData = getStagedData();
+        DataSet stagedData = getStagedData();
         int pointCount = stagedData.getPointCount();
         TracePoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
@@ -498,7 +498,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
      */
     public Point getLocalXYForDataPoint(TracePoint aDP)
     {
-        DataStore stagedData = getStagedData();
+        DataSet stagedData = getStagedData();
         int index = aDP.getIndex();
         double dataX = stagedData.getX(index);
         double dataY = stagedData.getY(index);

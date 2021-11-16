@@ -6,8 +6,8 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
-import snapcharts.data.DataStore;
-import snapcharts.data.DataStoreImpl;
+import snapcharts.data.DataSet;
+import snapcharts.data.DataSetImpl;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
 import snapcharts.view.*;
@@ -48,15 +48,15 @@ public class PolarDataArea extends DataArea {
      * Override to do polar data to display coords conversion.
      */
     @Override
-    protected DataStore getDisplayDataImpl()
+    protected DataSet getDisplayDataImpl()
     {
         // Get Trace.PolarData
         Trace trace = getTrace();
-        DataStore polarData = trace.getPolarData();
+        DataSet polarData = trace.getPolarData();
         int pointCount = polarData.getPointCount();
 
         // Get whether to convert to radians
-        boolean convertToRadians = trace.getThetaUnit() != DataStore.ThetaUnit.Radians;
+        boolean convertToRadians = trace.getThetaUnit() != DataSet.ThetaUnit.Radians;
 
         // Create points array
         double[] dispX = new double[pointCount];
@@ -76,8 +76,8 @@ public class PolarDataArea extends DataArea {
             dispY[i] = _polarHelper.polarDataToView(AxisType.Y, dataTheta, dataRad);
         }
 
-        // Create DataStore for points and return
-        return new DataStoreImpl(DataType.XY, dispX, dispY);
+        // Create DataSet for points and return
+        return new DataSetImpl(DataType.XY, dispX, dispY);
     }
 
     /**
@@ -152,7 +152,7 @@ public class PolarDataArea extends DataArea {
         if (showSymbols) {
 
             // Iterate over DisplayData points
-            DataStore displayData = getDisplayData();
+            DataSet displayData = getDisplayData();
             int pointCount = displayData.getPointCount();
             for (int i = 0; i < pointCount; i++) {
                 double dispX = displayData.getX(i);
@@ -186,7 +186,7 @@ public class PolarDataArea extends DataArea {
         int selIndex = selDataPoint.getIndex();
 
         // Get data X/Y and disp X/Y
-        DataStore displayData = getDisplayData();
+        DataSet displayData = getDisplayData();
         double dispX = displayData.getX(selIndex);
         double dispY = displayData.getY(selIndex);
 
@@ -220,7 +220,7 @@ public class PolarDataArea extends DataArea {
         int MAX_SELECT_DISTANCE = 60;
 
         // Get data info
-        DataStore displayData = getDisplayData();
+        DataSet displayData = getDisplayData();
         int pointCount = displayData.getPointCount();
         TracePoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
@@ -248,7 +248,7 @@ public class PolarDataArea extends DataArea {
     public Point getLocalXYForDataPoint(TracePoint aDP)
     {
         int index = aDP.getIndex();
-        DataStore displayData = getDisplayData();
+        DataSet displayData = getDisplayData();
         if (index >= displayData.getPointCount())
             return new Point();
         double dispX = displayData.getX(index);
@@ -311,7 +311,7 @@ public class PolarDataArea extends DataArea {
             super(aTrans);
 
             // Get/set display points
-            DataStore displayData = aDataArea.getDisplayData();
+            DataSet displayData = aDataArea.getDisplayData();
             _dispX = displayData.getDataX();
             _dispY = displayData.getDataY();
             _count = displayData.getPointCount();

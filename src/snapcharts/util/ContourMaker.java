@@ -2,7 +2,7 @@ package snapcharts.util;
 import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.util.Mesh.Edge;
 import snapcharts.util.Mesh.Triangle;
 import java.util.*;
@@ -21,9 +21,9 @@ public class ContourMaker {
     /**
      * Constructor to create mesh for given DataSet and array of triangle vertex indexes.
      */
-    public ContourMaker(DataStore aDataStore)
+    public ContourMaker(DataSet aDataSet)
     {
-        _mesh = new Mesh(aDataStore);
+        _mesh = new Mesh(aDataSet);
         _pointCount = _mesh.getPointCount();
     }
 

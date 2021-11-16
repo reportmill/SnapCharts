@@ -3,7 +3,7 @@
  */
 package snapcharts.viewx;
 import snap.geom.*;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.view.DataArea;
 
@@ -141,7 +141,7 @@ public class XYDataAreaShapes {
             _dataArea = aDataArea;
 
             // Get/set display points
-            DataStore dispData = aDataArea.getDisplayData();
+            DataSet dispData = aDataArea.getDisplayData();
             _dispX = dispData.getDataX();
             _dispY = dispData.getDataY();
 

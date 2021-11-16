@@ -7,7 +7,7 @@ import snap.gfx.*;
 import snap.text.NumberFormat;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
-import snapcharts.data.DataStore;
+import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.view.DataArea;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class PointPainter {
         // Get ShowTag info because TagBoxes are created
         boolean showTags = traceStyle.isShowTags();
         TagStyle tagStyle = traceStyle.getTagStyle();
-        DataStore procData = _dataArea.getTrace().getProcessedData();
+        DataSet procData = _dataArea.getTrace().getProcessedData();
         boolean hasZ = procData.getDataType().hasZ();
         Color tagBorderColor = tagStyle.getLineColor();
         double tagBorderWidth = tagStyle.getLineWidth();
@@ -77,7 +77,7 @@ public class PointPainter {
         List<StringBox> tagBoxList = new ArrayList<>();
 
         // Get DispData and start/end index for current visible range
-        DataStore dispData = _dataArea.getDisplayData();
+        DataSet dispData = _dataArea.getDisplayData();
         int startIndex = _dataArea.getDispDataStartIndex();
         int endIndex = _dataArea.getDispDataEndIndex();
 
