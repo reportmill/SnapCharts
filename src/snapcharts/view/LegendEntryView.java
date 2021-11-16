@@ -10,11 +10,11 @@ import snapcharts.model.*;
  */
 public class LegendEntryView extends Label {
 
-    // The DataSet
-    private DataSet _dataSet;
+    // The Trace
+    private Trace  _trace;
 
     // The DataStyle
-    private DataStyle _dataStyle;
+    private TraceStyle _traceStyle;
 
     // The SymbolStyle
     private SymbolStyle _symbolStyle;
@@ -25,18 +25,18 @@ public class LegendEntryView extends Label {
     /**
      * Constructor.
      */
-    public LegendEntryView(Legend aLegend, DataSet aDataSet)
+    public LegendEntryView(Legend aLegend, Trace aTrace)
     {
         super();
-        _dataSet = aDataSet;
-        _dataStyle = aDataSet.getDataStyle();
-        _symbolStyle = _dataStyle.getSymbolStyle();
+        _trace = aTrace;
+        _traceStyle = aTrace.getTraceStyle();
+        _symbolStyle = _traceStyle.getSymbolStyle();
 
         // Set ShowText
         setShowText(true);
 
         // Set TextFill
-        Paint textFill = aDataSet.isDisabled() ? DISABLED_COLOR : aLegend.getTextFill();
+        Paint textFill = aTrace.isDisabled() ? DISABLED_COLOR : aLegend.getTextFill();
         setTextFill(textFill);
 
         // Create/add LegendGraphic
@@ -59,7 +59,7 @@ public class LegendEntryView extends Label {
     public void setShowText(boolean aValue)
     {
         if (aValue == isShowText()) return;
-        String text = aValue ? _dataSet.getName() : null;
+        String text = aValue ? _trace.getName() : null;
         setText(text);
     }
 
@@ -95,11 +95,11 @@ public class LegendEntryView extends Label {
         {
             // Get marked height of line/area/symbol
             double markedHeight = 0;
-            if (_dataStyle.isShowLine())
-                markedHeight = _dataStyle.getLineWidth();
-            if (_dataStyle.isShowArea())
+            if (_traceStyle.isShowLine())
+                markedHeight = _traceStyle.getLineWidth();
+            if (_traceStyle.isShowArea())
                 markedHeight += AREA_HEIGHT - markedHeight / 2;
-            if (_dataStyle.isShowSymbols())
+            if (_traceStyle.isShowSymbols())
                 markedHeight = Math.max(_symbolStyle.getSymbol().getSize(), markedHeight);
 
             // Return markedHeight plus insets height
@@ -121,27 +121,27 @@ public class LegendEntryView extends Label {
             double areaH = getHeight() - ins.getHeight();
 
             // Get info
-            boolean showArea = _dataStyle.isShowArea();
-            boolean showLine = _dataStyle.isShowLine();
-            boolean showSymbols = _dataStyle.isShowSymbols();
-            boolean disabled = _dataSet.isDisabled();
-            double lineWidth = showLine ? _dataStyle.getLineWidth() : 0;
+            boolean showArea = _traceStyle.isShowArea();
+            boolean showLine = _traceStyle.isShowLine();
+            boolean showSymbols = _traceStyle.isShowSymbols();
+            boolean disabled = _trace.isDisabled();
+            double lineWidth = showLine ? _traceStyle.getLineWidth() : 0;
             double lineY = areaY + areaH / 2;
             if (showArea)
                 lineY -= AREA_HEIGHT / 2;
 
             // Handle ShowArea
             if (showArea) {
-                Color fillColor = _dataStyle.getFillColor();
+                Color fillColor = _traceStyle.getFillColor();
                 double lineMidY = lineY + lineWidth / 2;
                 aPntr.fillRectWithPaint(areaX, lineMidY, areaW, AREA_HEIGHT, fillColor);
             }
 
             // Handle ShowLine
             if (showLine) {
-                Color lineColor = _dataStyle.getLineColor();
+                Color lineColor = _traceStyle.getLineColor();
                 if (disabled) lineColor = DISABLED_COLOR;
-                Stroke lineStroke = _dataStyle.getLineStroke();
+                Stroke lineStroke = _traceStyle.getLineStroke();
                 aPntr.setColor(lineColor);
                 aPntr.setStroke(lineStroke);
                 aPntr.drawLine(areaX, lineY, areaX + areaW, lineY);

@@ -4,7 +4,7 @@ import snap.styler.Styler;
 import snap.util.Undoer;
 import snap.view.View;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 
 /**
  * ChartStyler.
@@ -139,8 +139,8 @@ public class ChartStyler extends Styler {
     private ChartPart getSelPart()
     {
         ChartPart chartPart = _editor.getSelChartPart();
-        if (chartPart instanceof DataSet)
-            chartPart = ((DataSet) chartPart).getDataStyle();
+        if (chartPart instanceof Trace)
+            chartPart = ((Trace) chartPart).getTraceStyle();
         return chartPart;
     }
 

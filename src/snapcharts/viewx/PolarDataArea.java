@@ -30,14 +30,14 @@ public class PolarDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public PolarDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public PolarDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
         _polarHelper = (PolarChartHelper) aChartHelper;
     }
 
     /**
-     * Returns Shape for painting dataset data line.
+     * Returns Shape for painting trace data line.
      */
     public Shape getDataLineShape()
     {
@@ -50,13 +50,13 @@ public class PolarDataArea extends DataArea {
     @Override
     protected DataStore getDisplayDataImpl()
     {
-        // Get DataSet.PolarData
-        DataSet dataSet = getDataSet();
-        DataStore polarData = dataSet.getPolarData();
+        // Get Trace.PolarData
+        Trace trace = getTrace();
+        DataStore polarData = trace.getPolarData();
         int pointCount = polarData.getPointCount();
 
         // Get whether to convert to radians
-        boolean convertToRadians = dataSet.getThetaUnit() != DataStore.ThetaUnit.Radians;
+        boolean convertToRadians = trace.getThetaUnit() != DataStore.ThetaUnit.Radians;
 
         // Create points array
         double[] dispX = new double[pointCount];
@@ -90,20 +90,20 @@ public class PolarDataArea extends DataArea {
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get DataSet list
-        DataSet dset = getDataSet();
+        // Get Trace list
+        Trace trace = getTrace();
 
         // Get Selection, Reveal info
-        DataSetPoint selPoint = getChartView().getTargDataPoint();
-        boolean isSelected = selPoint != null && selPoint.getDataSet() == dset;
+        TracePoint selPoint = getChartView().getTargDataPoint();
+        boolean isSelected = selPoint != null && selPoint.getTrace() == trace;
         double reveal = getReveal();
 
         // Get style info
-        DataStyle dataStyle = dset.getDataStyle();
-        boolean showLine = dataStyle.isShowLine();
-        Stroke dataStroke = dataStyle.getLineStroke();
+        TraceStyle traceStyle = trace.getTraceStyle();
+        boolean showLine = traceStyle.isShowLine();
+        Stroke dataStroke = traceStyle.getLineStroke();
         Color dataColor = getDataColor();
-        boolean showSymbols = dataStyle.isShowSymbols();
+        boolean showSymbols = traceStyle.isShowSymbols();
 
         // Get path - if Reveal is active, get path spliced
         Shape path = getDataLineShape();
@@ -114,7 +114,7 @@ public class PolarDataArea extends DataArea {
         if (isSelected)
             dataStroke = dataStroke.copyForWidth(dataStroke.getWidth() + 1);
 
-        // Set dataset color, stroke and paint
+        // Set trace color, stroke and paint
         aPntr.setColor(dataColor);
         aPntr.setStroke(dataStroke);
 
@@ -148,7 +148,7 @@ public class PolarDataArea extends DataArea {
             aPntr.clipRect(0, 0, areaW * reveal, areaH);
         }
 
-        // Draw dataset points
+        // Draw trace points
         if (showSymbols) {
 
             // Iterate over DisplayData points
@@ -182,7 +182,7 @@ public class PolarDataArea extends DataArea {
     protected void paintSelPoint(Painter aPntr)
     {
         // Get info
-        DataSetPoint selDataPoint = getChartView().getTargDataPoint();
+        TracePoint selDataPoint = getChartView().getTargDataPoint();
         int selIndex = selDataPoint.getIndex();
 
         // Get data X/Y and disp X/Y
@@ -214,7 +214,7 @@ public class PolarDataArea extends DataArea {
      * @return
      */
     @Override
-    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
+    public TracePoint getDataPointForLocalXY(double aX, double aY)
     {
         // Constant for maximum display distance (in points)
         int MAX_SELECT_DISTANCE = 60;
@@ -222,7 +222,7 @@ public class PolarDataArea extends DataArea {
         // Get data info
         DataStore displayData = getDisplayData();
         int pointCount = displayData.getPointCount();
-        DataSetPoint dataPoint = null;
+        TracePoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
@@ -232,7 +232,7 @@ public class PolarDataArea extends DataArea {
             double dst = Point.getDistance(aX, aY, dispX, dispY);
             if (dst < dist) {
                 dist = dst;
-                dataPoint = getDataSet().getPoint(j);
+                dataPoint = getTrace().getPoint(j);
             }
         }
 
@@ -245,7 +245,7 @@ public class PolarDataArea extends DataArea {
      * @param aDP
      */
     @Override
-    public Point getLocalXYForDataPoint(DataSetPoint aDP)
+    public Point getLocalXYForDataPoint(TracePoint aDP)
     {
         int index = aDP.getIndex();
         DataStore displayData = getDisplayData();

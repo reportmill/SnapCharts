@@ -7,7 +7,7 @@ import snapcharts.modelx.*;
 /**
  * A class to hold the multiple DataStyles for different ChartTypes.
  */
-public class DataStyleHpr {
+public class TraceStyleHpr {
 
     // The parent ChartPart that holds this DataStyleHpr
     private ChartPart  _parent;
@@ -33,7 +33,7 @@ public class DataStyleHpr {
     /**
      * Constructor.
      */
-    public DataStyleHpr(ChartPart aChartPart)
+    public TraceStyleHpr(ChartPart aChartPart)
     {
         _parent = aChartPart;
     }
@@ -49,7 +49,7 @@ public class DataStyleHpr {
     /**
      * Returns the current DataStyle.
      */
-    public DataStyle getDataStyle()
+    public TraceStyle getDataStyle()
     {
         Chart chart = getChart();
         ChartType chartType = chart.getType();
@@ -59,7 +59,7 @@ public class DataStyleHpr {
     /**
      * Returns the DataStyle for given ChartType.
      */
-    public DataStyle getDataStyleForChartType(ChartType aType)
+    public TraceStyle getDataStyleForChartType(ChartType aType)
     {
         switch(aType) {
             case SCATTER: return getXYStyle();
@@ -76,25 +76,25 @@ public class DataStyleHpr {
     /**
      * Returns the DataStyle for given ChartType.
      */
-    private DataStyle createDataStyleForChartType(ChartType aType)
+    private TraceStyle createDataStyleForChartType(ChartType aType)
     {
         // Create DataStyle and set parent
-        DataStyle dataStyle = createDataStyleForChartTypeRaw(aType);
-        dataStyle.setParent(_parent);
-        dataStyle.setChart(getChart());
+        TraceStyle traceStyle = createDataStyleForChartTypeRaw(aType);
+        traceStyle.setParent(_parent);
+        traceStyle.setChart(getChart());
 
         // Register to notify Chart of changes
         Chart chart = getChart();
-        dataStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
+        traceStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
 
         // Return DataStyle
-        return dataStyle;
+        return traceStyle;
     }
 
     /**
      * Returns the DataStyle for given ChartType.
      */
-    private DataStyle createDataStyleForChartTypeRaw(ChartType aType)
+    private TraceStyle createDataStyleForChartTypeRaw(ChartType aType)
     {
         // Get instance
         switch(aType) {

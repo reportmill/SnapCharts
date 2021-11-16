@@ -1,7 +1,6 @@
 package snapcharts.view;
 import snap.geom.Pos;
 import snap.view.ParentView;
-import snap.view.View;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 
@@ -50,9 +49,9 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     public ChartType getChartType()  { return getChart().getType(); }
 
     /**
-     * Returns the DataSetList.
+     * Returns the TraceList.
      */
-    public DataSetList getDataSetList()  { return getChart().getDataSetList(); }
+    public TraceList getTraceList()  { return getChart().getTraceList(); }
 
     /**
      * Returns the ChartView.

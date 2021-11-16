@@ -2,31 +2,31 @@ package snapcharts.util;
 import snap.util.ListSel;
 import snap.util.SnapUtils;
 import snapcharts.data.DataUtils;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.data.DataType;
 
 /**
- * Utility methods for DataSet class.
+ * Utility methods for Trace class.
  */
-public class DataSetUtils {
+public class TraceUtils {
 
     /**
-     * Deletes data for given DataSet and selection.
+     * Deletes data for given Trace and selection.
      */
-    public static void deleteDataForSelection(DataSet aDataSet, ListSel aSel)
+    public static void deleteDataForSelection(Trace aTrace, ListSel aSel)
     {
         int[] indexes = aSel.getIndexes();
         for (int i = indexes.length - 1; i >= 0; i--) {
             int ind = indexes[i];
-            if (ind < aDataSet.getPointCount())
-                aDataSet.removePoint(ind);
+            if (ind < aTrace.getPointCount())
+                aTrace.removePoint(ind);
         }
     }
 
     /**
-     * Replaces data for given DataSet and selection.
+     * Replaces data for given Trace and selection.
      */
-    public static void replaceDataForSelection(DataSet aDatatSet, ListSel aSel, String[][] theCells)
+    public static void replaceDataForSelection(Trace aDatatSet, ListSel aSel, String[][] theCells)
     {
         DataType dataType = aDatatSet.getDataType();
         int[] indexes = aSel.getIndexes();
@@ -74,7 +74,7 @@ public class DataSetUtils {
                 }
 
                 default:
-                    System.out.println("DataSet.replaceData: Unsupported data type: " + dataType);
+                    System.out.println("TraceUtils.replaceData: Unsupported data type: " + dataType);
                     return;
             }
         }

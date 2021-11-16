@@ -50,12 +50,12 @@ public class Line3DChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        if (dataSets.length == 0)
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        if (traces.length == 0)
             return new DataArea[0];
-        DataSet dset = dataSets[0];
-        return new DataArea[] { new Line3DDataArea(this, dset) };
+        Trace trace = traces[0];
+        return new DataArea[] { new Line3DDataArea(this, trace) };
     }
 
     /**
@@ -63,11 +63,11 @@ public class Line3DChartHelper extends ChartHelper {
      */
     public void resetView()
     {
-        // Make sure all DataSet.AxisTypeY are just Y
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets(); if (dataSets.length == 0) return;
-        for (DataSet dset : dataSets)
-            dset.setAxisTypeY(AxisType.Y);
+        // Make sure all Trace.AxisTypeY are just Y
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        for (Trace trace : traces)
+            trace.setAxisTypeY(AxisType.Y);
 
         // Do normal version
         super.resetView();

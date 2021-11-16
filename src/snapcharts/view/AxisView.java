@@ -109,11 +109,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public T getChartPart()  { return (T) getAxis(); }
 
     /**
-     * Returns the dataset.
+     * Returns the TraceList.
      */
-    public DataSetList getDataSetList()
+    public TraceList getTraceList()
     {
-        return _chartHelper.getDataSetList();
+        return _chartHelper.getTraceList();
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (minBound == AxisBound.AUTO)
             min = getAxisMin();
         else if (minBound == AxisBound.DATA)
-            min = getDataSetList().getMinForAxis(axis.getType());
+            min = getTraceList().getMinForAxis(axis.getType());
 
         // Get max val for Axis MaxBound
         AxisBound maxBound = axis.getMaxBound();
@@ -146,7 +146,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (maxBound == AxisBound.AUTO)
             max = getAxisMax();
         else if (maxBound == AxisBound.DATA)
-            max = getDataSetList().getMaxForAxis(axis.getType());
+            max = getTraceList().getMaxForAxis(axis.getType());
 
         // Return min/max
         return new MinMax(min, max);
@@ -253,10 +253,10 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (isBar)
             return true;
 
-        // If DataSet is IY or CY, return true
-        DataSetList dataSetList = getDataSetList();
-        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
-        DataType dataType = dataSet != null ? dataSet.getDataType() : null;
+        // If Trace is IY or CY, return true
+        TraceList traceList = getTraceList();
+        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
+        DataType dataType = trace != null ? trace.getDataType() : null;
         if (dataType == DataType.IY || dataType == DataType.CY)
             return true;
 
@@ -265,7 +265,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Returns the axis intervals for active datasets.
+     * Returns the axis intervals for active Traces.
      *
      * This is tricky because of chicken-and-egg between Intervals and DivLen:
      *
@@ -475,7 +475,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     }
 
     /**
-     * Converts an value from dataset coords to view coords.
+     * Converts an value from data coords to view coords.
      */
     public double dataToView(double dataXY)
     {
@@ -632,7 +632,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+        if (src instanceof Trace || src instanceof TraceList || src instanceof Axis) {
             clearIntervals();
         }
 

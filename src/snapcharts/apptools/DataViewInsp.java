@@ -40,8 +40,8 @@ public class DataViewInsp extends ChartPartInsp {
     public ChartPart getChartPart()
     {
         Chart chart = getChart();
-        DataSetList dataSetList = chart.getDataSetList();
-        return dataSetList;
+        TraceList traceList = chart.getTraceList();
+        return traceList;
     }
 
     /**
@@ -74,7 +74,7 @@ public class DataViewInsp extends ChartPartInsp {
     {
         // Get Axis, AxisView (just return if null)
         Chart chart = getChart();
-        DataSetList dataSetList = chart.getDataSetList();
+        TraceList traceList = chart.getTraceList();
         ChartPane chartPane = getChartPane();
         ChartView chartView = chartPane.getChartView();
         ChartHelper chartHelper = chartView.getChartHelper();
@@ -84,7 +84,7 @@ public class DataViewInsp extends ChartPartInsp {
         Axis axis = axes.length > 0 ? axes[0] : null;
 
         // Reset ShowBorderCheckBox
-        Border border = dataSetList.getBorder();
+        Border border = traceList.getBorder();
         boolean showBorder = border != null;
         setViewValue("ShowBorderCheckBox", showBorder);
 
@@ -99,16 +99,16 @@ public class DataViewInsp extends ChartPartInsp {
             // Reset BorderColorButton, BorderColorResetButton
             Color borderColor = border != null ? border.getColor() : null;
             setViewValue("BorderColorButton", borderColor);
-            setViewVisible("BorderColorResetButton", !Objects.equals(borderColor, DataSetList.DEFAULT_BORDER.getColor()));
+            setViewVisible("BorderColorResetButton", !Objects.equals(borderColor, TraceList.DEFAULT_BORDER.getColor()));
 
             // Reset BorderWidthText, BorderWidthResetButton
             double borderWidth = border != null ? border.getWidth() : 0;
             setViewValue("BorderWidthText", borderWidth);
-            setViewVisible("BorderWidthResetButton", borderWidth != DataSetList.DEFAULT_BORDER.getWidth());
+            setViewVisible("BorderWidthResetButton", borderWidth != TraceList.DEFAULT_BORDER.getWidth());
         }
 
         // Reset ShowFillCheckBox
-        Paint fill = dataSetList.getFill();
+        Paint fill = traceList.getFill();
         boolean showFill = fill != null;
         setViewValue("ShowFillCheckBox", showFill);
 
@@ -166,7 +166,7 @@ public class DataViewInsp extends ChartPartInsp {
     {
         // Get Axis, AxisView (just return if null)
         Chart chart = getChart();
-        DataSetList dataSetList = chart.getDataSetList();
+        TraceList traceList = chart.getTraceList();
         ChartPane chartPane = getChartPane();
         ChartView chartView = chartPane.getChartView();
         ChartHelper chartHelper = chartView.getChartHelper();
@@ -175,62 +175,62 @@ public class DataViewInsp extends ChartPartInsp {
         for (int i=0; i<axisViews.length; i++) axes[i] = axisViews[i].getAxis();
 
         // Get Border (and non-null/default version if needed)
-        Border border = dataSetList.getBorder();
-        Border borderNonNull = border != null ? border : DataSetList.DEFAULT_BORDER;
+        Border border = traceList.getBorder();
+        Border borderNonNull = border != null ? border : TraceList.DEFAULT_BORDER;
 
         // Handle ShowBorderCheckBox
         if (anEvent.equals("ShowBorderCheckBox")) {
             boolean showBorder = anEvent.getBoolValue();
             Border border2 = showBorder ? borderNonNull : null;
-            dataSetList.setBorder(border2);
+            traceList.setBorder(border2);
             setViewValue("ShowBorderMoreButton", showBorder);
         }
 
         // Handle BorderWidthText, BorderWidthAdd1Button, BorderWidthSub1Button, BorderWidthResetButton
         if (anEvent.equals("BorderWidthText")) {
             Border border2 = borderNonNull.copyForStrokeWidth(Math.max(anEvent.getIntValue(), 1));
-            dataSetList.setBorder(border2);
+            traceList.setBorder(border2);
         }
         if (anEvent.equals("BorderWidthAdd1Button")) {
             Border border2 = borderNonNull.copyForStrokeWidth(borderNonNull.getWidth() + 1);
-            dataSetList.setBorder(border2);
+            traceList.setBorder(border2);
         }
         if (anEvent.equals("BorderWidthSub1Button")) {
             Border border2 = borderNonNull.copyForStrokeWidth(Math.max(borderNonNull.getWidth() - 1, 1));
-            dataSetList.setBorder(border2);
+            traceList.setBorder(border2);
         }
         if (anEvent.equals("BorderWidthResetButton")) {
             Border border2 = borderNonNull.copyForStrokeWidth(1);
-            dataSetList.setBorder(border2);
+            traceList.setBorder(border2);
         }
 
         // Handle BorderColorButton, BorderColorResetButton
         if (anEvent.equals("BorderColorButton")) {
             Color color = (Color) getViewValue("BorderColorButton");
             Border border2 = borderNonNull.copyForColor(color);
-            dataSetList.setBorder(border2);
+            traceList.setBorder(border2);
         }
         if (anEvent.equals("BorderColorResetButton")) {
-            Border border2 = borderNonNull.copyForColor(DataSetList.DEFAULT_BORDER.getColor());
-            dataSetList.setBorder(border2);
+            Border border2 = borderNonNull.copyForColor(TraceList.DEFAULT_BORDER.getColor());
+            traceList.setBorder(border2);
         }
 
         // Handle ShowFillCheckBox
         if (anEvent.equals("ShowFillCheckBox")) {
             boolean showFill = anEvent.getBoolValue();
             Color fill2 = showFill ? Color.WHITE : null;
-            dataSetList.setFill(fill2);
+            traceList.setFill(fill2);
             setViewValue("ShowFillMoreButton", showFill);
         }
 
         // Handle FillColorButton, FillColorResetButton
         if (anEvent.equals("FillColorButton")) {
             Color fillColor = (Color) getViewValue("FillColorButton");
-            dataSetList.setFill(fillColor);
+            traceList.setFill(fillColor);
         }
         if (anEvent.equals("FillColorResetButton")) {
             Paint fill = ChartPart.DEFAULT_FILL;
-            dataSetList.setFill(fill);
+            traceList.setFill(fill);
         }
 
         // Handle ShowGridCheckBox

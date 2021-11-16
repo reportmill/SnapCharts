@@ -701,7 +701,7 @@ public class DocPane extends ViewOwner {
     {
         Map<String,Class> docItemTypes = new TreeMap<>();
         docItemTypes.put("Chart", Chart.class);
-        docItemTypes.put("DataSet", DataSet.class);
+        docItemTypes.put("DataSet", Trace.class);
         return docItemTypes;
     }
 
@@ -727,15 +727,15 @@ public class DocPane extends ViewOwner {
         }
 
         // Handle DataSet
-        else if (aClass == DataSet.class) {
+        else if (aClass == Trace.class) {
 
             // Create new dataset
-            DataSet dset = new DataSet();
-            dset.setName("New Dataset");
+            Trace trace = new Trace();
+            trace.setName("New Dataset");
 
             // Add to SelItem
             DocItem selItem = getSelItem();
-            DocItem newDataSetItem = selItem.addChartPart(dset, null);
+            DocItem newDataSetItem = selItem.addChartPart(trace, null);
             setSelItem(newDataSetItem);
         }
     }

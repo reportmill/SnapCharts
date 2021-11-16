@@ -14,7 +14,7 @@ import snap.util.XMLElement;
 public class SymbolStyle extends ChartPart {
 
     // The DataStyle that holds this SymbolStyle
-    private DataStyle  _dataStyle;
+    private TraceStyle _traceStyle;
 
     // The Symbol Size
     private int  _symbolSize = DEFAULT_SYMBOL_SIZE;
@@ -38,10 +38,10 @@ public class SymbolStyle extends ChartPart {
     /**
      * Constructor.
      */
-    public SymbolStyle(DataStyle aDataStyle)
+    public SymbolStyle(TraceStyle aTraceStyle)
     {
         super();
-        _dataStyle = aDataStyle;
+        _traceStyle = aTraceStyle;
     }
 
     /**
@@ -92,7 +92,7 @@ public class SymbolStyle extends ChartPart {
      */
     private Color getDefaultLineColor()
     {
-        return _dataStyle.getLineColor();
+        return _traceStyle.getLineColor();
     }
 
     /**
@@ -102,7 +102,7 @@ public class SymbolStyle extends ChartPart {
     {
         if (getLineWidth() > 0 && !isLineColorSet())
             return Color.WHITE;
-        return _dataStyle.getDefaultLineColor();
+        return _traceStyle.getDefaultLineColor();
     }
 
     /**

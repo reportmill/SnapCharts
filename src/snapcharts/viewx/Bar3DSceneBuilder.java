@@ -122,14 +122,14 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     protected void addBars()
     {
         // Iterate over sections
-        int dataSetCount = _dataArea._dsetCount;
+        int traceCount = _dataArea._traceCount;
         int pointCount = _dataArea._pointCount;
         BarDataArea.Section[] sections = _dataArea.getSections();
         for (int i=0;i<pointCount;i++) {
             BarDataArea.Section section = sections[i];
 
-            // Iterate over datasets and draw bars
-            for (int j=0; j<dataSetCount; j++) {
+            // Iterate over traces and draw bars
+            for (int j = 0; j < traceCount; j++) {
                 BarDataArea.Bar bar = section.bars[j];
                 addBar(bar.x, bar.y, bar.width, bar.height - .5, bar.color);
             }

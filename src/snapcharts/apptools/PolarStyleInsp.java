@@ -6,8 +6,8 @@ import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataStyle;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceStyle;
 import snapcharts.modelx.PolarStyle;
 
 /**
@@ -33,7 +33,7 @@ public class PolarStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getDataStyle(); }
+    public ChartPart getChartPart()  { return getChart().getTraceStyle(); }
 
     /**
      * Returns the PolarStyle.
@@ -41,17 +41,17 @@ public class PolarStyleInsp extends ChartPartInsp {
     public PolarStyle getPolarStyle()
     {
         ChartPart chartPart = _chartPane.getSelChartPart();
-        if (chartPart instanceof DataSet) {
-            DataSet dataSet = (DataSet) chartPart;
-            DataStyle dataStyle = dataSet.getDataStyle();
-            if (dataStyle instanceof PolarStyle)
-                return (PolarStyle) dataStyle;
+        if (chartPart instanceof Trace) {
+            Trace trace = (Trace) chartPart;
+            TraceStyle traceStyle = trace.getTraceStyle();
+            if (traceStyle instanceof PolarStyle)
+                return (PolarStyle) traceStyle;
         }
 
         Chart chart = getChart();
-        DataStyle dataStyle = chart.getDataStyle();
-        if (dataStyle instanceof PolarStyle)
-            return (PolarStyle) dataStyle;
+        TraceStyle traceStyle = chart.getTraceStyle();
+        if (traceStyle instanceof PolarStyle)
+            return (PolarStyle) traceStyle;
         return null;
     }
 

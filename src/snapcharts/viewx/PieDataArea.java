@@ -30,7 +30,7 @@ public class PieDataArea extends DataArea {
     //private Point _lastMouseMovePoint;
 
     // Vars for animating SelDataPoint change
-    private DataSetPoint _selPointLast;
+    private TracePoint _selPointLast;
     private double  _selPointMorph = 1;
     public boolean  _disableMorph;
 
@@ -48,9 +48,9 @@ public class PieDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public PieDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public PieDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
         setFont(Font.Arial12.getBold());
     }
@@ -69,14 +69,14 @@ public class PieDataArea extends DataArea {
      */
     public double[] getAngles()
     {
-        DataSet dset = getDataSet();
-        int count = dset.getPointCount();
+        Trace trace = getTrace();
+        int count = trace.getPointCount();
 
         // Get/set ratios, angles
-        double ratios[] = getRatiosYtoTotalY(dset);
-        double angles[] = new double[count];
-        for (int i=0;i<count;i++)
-            angles[i] = Math.round(ratios[i]*360);
+        double[] ratios = getRatiosYtoTotalY(trace);
+        double[] angles = new double[count];
+        for (int i = 0; i < count; i++)
+            angles[i] = Math.round(ratios[i] * 360);
         return angles;
     }
 
@@ -89,9 +89,9 @@ public class PieDataArea extends DataArea {
         if (_wedges!=null) return _wedges;
 
         // Get ratios and angles
-        DataSet dset = getDataSet();
-        double ratios[] = getRatiosYtoTotalY(dset);
-        double angles[] = getAngles();
+        Trace trace = getTrace();
+        double[] ratios = getRatiosYtoTotalY(trace);
+        double[] angles = getAngles();
 
         // Get area bounds
         Insets ins = getInsetsAll();
@@ -109,11 +109,11 @@ public class PieDataArea extends DataArea {
         // Iterate over angles and create/configure wedges
         Wedge wedges[] = new Wedge[angles.length];
         double start = 0;
-        for (int i=0; i<angles.length; i++) { double angle = angles[i];
+        for (int i = 0; i < angles.length; i++) { double angle = angles[i];
             Wedge wedge = wedges[i] = new Wedge();
             wedge._start = start;
             wedge._angle = angle;
-            String text = dset.getString(i);
+            String text = trace.getString(i);
             if (text!=null && text.length()>0)
                 wedge._text = text + ": " + _fmt.format(ratios[i]);
             start += angle;
@@ -147,7 +147,7 @@ public class PieDataArea extends DataArea {
         int selIndexLast = getSelPointLastIndex();
         double reveal = getReveal();
         double selPointMorph = getSelDataPointMorph();
-        DataStyle dataStyle = getDataStyle();
+        TraceStyle traceStyle = getDataStyle();
 
         // Set font
         aPntr.setFont(getFont());
@@ -158,7 +158,7 @@ public class PieDataArea extends DataArea {
 
             // Get loop wedge and color
             Wedge wedge = wedges[i];
-            Color color = dataStyle.getColorMapColor(i);
+            Color color = traceStyle.getColorMapColor(i);
 
             // If targeted, paint targ area
             if (i==targIndex && i!=selIndex) {
@@ -207,15 +207,15 @@ public class PieDataArea extends DataArea {
      * Returns the data point best associated with given x/y (null if none).
      * @return
      */
-    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
+    public TracePoint getDataPointForLocalXY(double aX, double aY)
     {
         // Iterate over wedges and return point for wedge that contains given x/y
-        DataSet dset = getDataSet();
+        Trace trace = getTrace();
         Wedge wedges[] = getWedges();
         for (int i=0; i<wedges.length; i++) { Wedge wedge = wedges[i];
             Arc arc = wedge.getArc();
             if (arc.contains(aX, aY))
-                return dset.getPoint(i);
+                return trace.getPoint(i);
         }
 
         // Return null since no wedge contains point
@@ -227,7 +227,7 @@ public class PieDataArea extends DataArea {
      * @param aDP
      */
     @Override
-    public Point getLocalXYForDataPoint(DataSetPoint aDP)
+    public Point getLocalXYForDataPoint(TracePoint aDP)
     {
         int ind = aDP.getIndex();
         Wedge wedges[] = getWedges();
@@ -248,7 +248,7 @@ public class PieDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList) {
+        if (src instanceof Trace || src instanceof TraceList) {
             clearWedges();
         }
     }
@@ -350,7 +350,7 @@ public class PieDataArea extends DataArea {
         if (!isShowing() || _disableMorph) return;
 
         // Cache last point and configure SelDataPointMorph to change from 0 to 1 over time
-        _selPointLast = (DataSetPoint) aPC.getOldValue();
+        _selPointLast = (TracePoint) aPC.getOldValue();
         setSelDataPointMorph(0);
         getAnimCleared(400).setValue(SelDataPointMorph_Prop, 1).setLinear().setOnFinish(a -> _selPointLast = null).play();
     }
@@ -360,7 +360,7 @@ public class PieDataArea extends DataArea {
      */
     int getSelPointIndex()
     {
-        DataSetPoint dp = getChartView().getSelDataPoint();
+        TracePoint dp = getChartView().getSelDataPoint();
         return dp != null ? dp.getIndex() : -1;
     }
     int getSelPointLastIndex()
@@ -369,7 +369,7 @@ public class PieDataArea extends DataArea {
     }
     int getTargPointIndex()
     {
-        DataSetPoint dp = getChartView().getTargDataPoint();
+        TracePoint dp = getChartView().getTargDataPoint();
         return dp != null ? dp.getIndex() : -1;
     }
 
@@ -394,26 +394,26 @@ public class PieDataArea extends DataArea {
     }
 
     /**
-     * Returns an array of dataset ratios.
+     * Returns an array of trace ratios.
      */
-    private static double[] getRatiosYtoTotalY(DataSet aDataSet)
+    private static double[] getRatiosYtoTotalY(Trace aTrace)
     {
-        double total = getTotalY(aDataSet);
-        int count = aDataSet.getPointCount();
+        double total = getTotalY(aTrace);
+        int count = aTrace.getPointCount();
         double ratios[] = new double[count];
-        for (int i=0;i<count;i++) ratios[i] = aDataSet.getY(i)/total;
+        for (int i=0;i<count;i++) ratios[i] = aTrace.getY(i)/total;
         return ratios;
     }
 
     /**
      * Returns the total of all values.
      */
-    private static double getTotalY(DataSet aDataSet)
+    private static double getTotalY(Trace aTrace)
     {
         double total = 0;
-        int count = aDataSet.getPointCount();
+        int count = aTrace.getPointCount();
         for (int i=0; i<count; i++)
-            total += aDataSet.getY(i);
+            total += aTrace.getY(i);
         return total;
     }
 

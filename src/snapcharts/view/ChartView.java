@@ -43,13 +43,13 @@ public class ChartView extends ChartPartView<Chart> {
     private ToolTipView  _toolTipView;
 
     // The selected point
-    private DataSetPoint  _selPoint;
+    private TracePoint _selPoint;
 
     // The targeted (under mouse) point
     private Point  _targPoint;
 
     // The targeted data point
-    private DataSetPoint  _targDataPoint;
+    private TracePoint _targDataPoint;
 
     // The preferred DataArea bounds (optional)
     protected Rect  _prefDataBounds;
@@ -118,7 +118,7 @@ public class ChartView extends ChartPartView<Chart> {
 
         // Set sample values
         //setTitle("Sample Growth by Sector, 2012-2018");
-        //getDataSetList().addDataSetForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
+        //getTraceList().addTraceForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
         resetLater();
 
         //
@@ -211,11 +211,11 @@ public class ChartView extends ChartPartView<Chart> {
     }
 
     /**
-     * Returns the dataset.
+     * Returns the TraceList.
      */
-    public DataSetList getDataSetList()
+    public TraceList getTraceList()
     {
-        return _chartHelper.getDataSetList();
+        return _chartHelper.getTraceList();
     }
 
     /**
@@ -343,12 +343,12 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Returns the selected data point.
      */
-    public DataSetPoint getSelDataPoint()  { return _selPoint; }
+    public TracePoint getSelDataPoint()  { return _selPoint; }
 
     /**
      * Sets the selected data point.
      */
-    public void setSelDataPoint(DataSetPoint aDP)
+    public void setSelDataPoint(TracePoint aDP)
     {
         if (Objects.equals(aDP, _selPoint)) return;
         firePropChange(SelDataPoint_Prop, _selPoint, _selPoint = aDP);
@@ -372,7 +372,7 @@ public class ChartView extends ChartPartView<Chart> {
         firePropChange(TargPoint_Prop, _targPoint, _targPoint = aPoint);
 
         // Update TargDataPoint
-        DataSetPoint dataPoint = null;
+        TracePoint dataPoint = null;
         if (aPoint != null)
             dataPoint = _chartHelper.getDataPointForViewXY(this, aPoint.x, aPoint.y);
         setTargDataPoint(dataPoint);
@@ -393,12 +393,12 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Returns the targeted data point.
      */
-    public DataSetPoint getTargDataPoint()  { return _targDataPoint; }
+    public TracePoint getTargDataPoint()  { return _targDataPoint; }
 
     /**
      * Sets the targeted data point.
      */
-    public void setTargDataPoint(DataSetPoint aDP)
+    public void setTargDataPoint(TracePoint aDP)
     {
         // If already set, just return
         if (Objects.equals(aDP, _targDataPoint)) return;

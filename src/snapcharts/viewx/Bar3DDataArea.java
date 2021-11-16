@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.gfx.*;
 import snap.gfx3d.*;
 import snap.view.ViewAnim;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.view.AxisViewY;
 import snapcharts.view.ChartHelper;
 
@@ -29,9 +29,9 @@ public class Bar3DDataArea extends BarDataArea {
     /**
      * Constructor.
      */
-    public Bar3DDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
 
         _camView = new CameraView() {
             protected void layoutImpl() { rebuildScene(); }

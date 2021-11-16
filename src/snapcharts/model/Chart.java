@@ -45,8 +45,8 @@ public class Chart extends ParentPart {
     // The ColorBar
     private ColorBar  _colorBar;
 
-    // The DataSet
-    private DataSetList  _dsetList;
+    // The TraceList
+    private TraceList  _traceList;
 
     // The Legend
     private Legend  _legend;
@@ -54,11 +54,11 @@ public class Chart extends ParentPart {
     // Array of marker objects used to highlight or annotate an area on the chart
     private Marker[]  _markers = new Marker[0];
 
-    // The dataset colors
+    // The trace colors
     private Color[]  _colors = ColorMap.GT_COLORS;
 
     // The object holding specific chart type properties
-    private DataStyleHpr  _dataStyleHpr = new DataStyleHpr(this);
+    private TraceStyleHpr _traceStyleHpr = new TraceStyleHpr(this);
 
     // Constants for properties
     public static final String Type_Prop = "Type";
@@ -120,9 +120,9 @@ public class Chart extends ParentPart {
         _legend = new Legend();
         addChild(_legend);
 
-        // Start listening to DataSet changes
-        _dsetList = new DataSetList();
-        addChild(_dsetList);
+        // Start listening to Trace changes
+        _traceList = new TraceList();
+        addChild(_traceList);
     }
 
     /**
@@ -285,16 +285,16 @@ public class Chart extends ParentPart {
     }
 
     /**
-     * Returns the DataSetList.
+     * Returns the TraceList.
      */
-    public DataSetList getDataSetList()  { return _dsetList; }
+    public TraceList getTraceList()  { return _traceList; }
 
     /**
-     * Adds a new dataset.
+     * Adds a new Trace.
      */
-    public void addDataSet(DataSet aDataSet)
+    public void addTrace(Trace aTrace)
     {
-        _dsetList.addDataSet(aDataSet);
+        _traceList.addTrace(aTrace);
     }
 
     /**
@@ -311,7 +311,7 @@ public class Chart extends ParentPart {
     }
 
     /**
-     * Returns the dataset color at index.
+     * Returns the trace color at index.
      */
     public Color getColor(int anIndex)
     {
@@ -323,12 +323,12 @@ public class Chart extends ParentPart {
     /**
      * Returns the DataStyleHpr that provides/manages DataStyles.
      */
-    public DataStyleHpr getDataStyleHelper()  { return _dataStyleHpr; }
+    public TraceStyleHpr getDataStyleHelper()  { return _traceStyleHpr; }
 
     /**
      * Returns the DataStyle for this chart (ChartType).
      */
-    public DataStyle getDataStyle()  { return _dataStyleHpr.getDataStyle(); }
+    public TraceStyle getTraceStyle()  { return _traceStyleHpr.getDataStyle(); }
 
     /**
      * Called when chart part has prop change.
@@ -434,8 +434,8 @@ public class Chart extends ParentPart {
         XMLElement legendXML = anArchiver.toXML(_legend);
         e.add(legendXML);
 
-        // Archive DataSetList
-        e.add(anArchiver.toXML(_dsetList));
+        // Archive TraceList
+        e.add(anArchiver.toXML(_traceList));
 
         // Return element
         return e;
@@ -477,10 +477,12 @@ public class Chart extends ParentPart {
         if (legend_XML != null)
             anArchiver.fromXML(legend_XML, _legend, this);
 
-        // Unarchive DataSetList
-        XMLElement dsetListXML = anElement.get("DataSetList");
-        if (dsetListXML != null)
-            anArchiver.fromXML(dsetListXML, _dsetList, this);
+        // Unarchive TraceList
+        XMLElement traceListXML = anElement.get("TraceList");
+        if (traceListXML == null)
+            traceListXML = anElement.get("DataSetList");
+        if (traceListXML != null)
+            anArchiver.fromXML(traceListXML, _traceList, this);
 
         // Legacy: Unarchive Title, Subtitle, ShowLegend
         if (anElement.hasAttribute(Header.Title_Prop))

@@ -7,7 +7,7 @@ import snapcharts.doc.DocItemDataSet;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.doc.DocItem;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 
 /**
  * A CopyPaster implementation for Editor.
@@ -114,9 +114,9 @@ public class DocPaneCopyPaster {
         // Handle DataSet type
         if (selItem instanceof DocItemDataSet) {
             DocItemDataSet docItemDataSet = (DocItemDataSet) selItem;
-            DataSet dataSet = docItemDataSet.getDataSet();
-            Chart chart = dataSet.getChart();
-            chart.getDataSetList().removeDataSet(dataSet);
+            Trace trace = docItemDataSet.getTrace();
+            Chart chart = trace.getChart();
+            chart.getTraceList().removeTrace(trace);
         }
 
         // Handle anything else

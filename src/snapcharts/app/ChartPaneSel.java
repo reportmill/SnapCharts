@@ -87,8 +87,8 @@ public class ChartPaneSel {
         _chartPane.chartPaneSelChanged();
         _chartPane.getUI().repaint();
 
-        // If SelPart not DataSet, clear SelDataPoint
-        if (!(_selPart instanceof DataSet)) {
+        // If SelPart not Trace, clear SelDataPoint
+        if (!(_selPart instanceof Trace)) {
             _chartView.setSelDataPoint(null);
         }
     }
@@ -186,7 +186,7 @@ public class ChartPaneSel {
         }
 
         // Handle DataStyle
-        if (aChartPart instanceof DataSetList || aChartPart instanceof DataSet)
+        if (aChartPart instanceof TraceList || aChartPart instanceof Trace)
             return _chartView.getDataView();
 
         // Handle unknown
@@ -343,11 +343,11 @@ public class ChartPaneSel {
         // Get the ChartPartView at XY
         ChartPartView hitView = getChartPartViewForXY(aX, aY);
 
-        // Handle DataView special: If TargDataPoint, return DataPoint.DataSet
+        // Handle DataView special: If TargDataPoint, return TracePoint.Trace
         if (hitView instanceof DataView) {
-            DataSetPoint dataPoint = _chartView.getTargDataPoint();
+            TracePoint dataPoint = _chartView.getTargDataPoint();
             if (dataPoint != null)
-                return dataPoint.getDataSet();
+                return dataPoint.getTrace();
         }
 
         // Get chartPart for hit view and return

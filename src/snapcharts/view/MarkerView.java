@@ -8,7 +8,7 @@ import snap.gfx.Image;
 import snap.util.MathUtils;
 import snap.view.*;
 import snapcharts.model.AxisType;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.data.DataStore;
 import snapcharts.model.Marker;
 import snapcharts.model.Marker.CoordSpace;
@@ -605,8 +605,8 @@ public class MarkerView extends ChartPartView<Marker> {
         double min = Float.MAX_VALUE;
         double max = -Float.MAX_VALUE;
         for (DataArea dataArea : dataAreas) {
-            DataSet dataSet = dataArea.getDataSet();
-            if (dataSet.getAxisTypeY() != anAxisType || dataSet.isDisabled())
+            Trace trace = dataArea.getTrace();
+            if (trace.getAxisTypeY() != anAxisType || trace.isDisabled())
                 continue;
             DataStore stagedData = dataArea.getStagedData();
             min = Math.min(min, stagedData.getMinY());

@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * A class to display data (via DataArea).
  */
-public class DataView extends ChartPartView<DataSetList> {
+public class DataView extends ChartPartView<TraceList> {
 
     // The ChartView
     private ChartView  _chartView;
@@ -41,9 +41,9 @@ public class DataView extends ChartPartView<DataSetList> {
     /**
      * Returns the ChartPart.
      */
-    public DataSetList getChartPart()
+    public TraceList getChartPart()
     {
-        return getDataSetList();
+        return getTraceList();
     }
 
     /**
@@ -216,7 +216,7 @@ public class DataView extends ChartPartView<DataSetList> {
 
         // Handle MouseClick
         if (anEvent.isMouseClick() && anEvent.getClickCount() == 1) {
-            DataSetPoint dataPoint = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
+            TracePoint dataPoint = _chartHelper.getDataPointForViewXY(this, anEvent.getX(), anEvent.getY());
             if (Objects.equals(dataPoint, _chartView.getSelDataPoint()))
                 dataPoint = null;
             _chartView.setSelDataPoint(dataPoint);

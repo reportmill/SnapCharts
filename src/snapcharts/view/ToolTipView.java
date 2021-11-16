@@ -55,8 +55,8 @@ public class ToolTipView extends ColView {
         }
 
         // Get info
-        DataSetPoint dataPoint = _chartView.getTargDataPoint();
-        DataSet dataSet = dataPoint.getDataSet();
+        TracePoint dataPoint = _chartView.getTargDataPoint();
+        Trace trace = dataPoint.getTrace();
 
         // Remove children and reset opacity, padding and spacing
         removeChildren();
@@ -64,33 +64,33 @@ public class ToolTipView extends ColView {
         setPadding(5,5,10,5);
 
         // Create RowView: BulletView
-        DataStyle dataStyle = dataSet.getDataStyle();
-        Color color = dataStyle.getLineColor();
+        TraceStyle traceStyle = trace.getTraceStyle();
+        Color color = traceStyle.getLineColor();
 
         // If alt down, add index
         int pointIndex = dataPoint.getIndex();
         if (ViewUtils.isAltDown()) {
-            if (dataSet.getDataType() == DataType.XYZZ) {
+            if (trace.getDataType() == DataType.XYZZ) {
                 addChild(createToolTipEntry("Row: " + dataPoint.getRowIndex()));
                 addChild(createToolTipEntry("Col: " + dataPoint.getColIndex()));
             }
             addChild(createToolTipEntry("Index: " + pointIndex));
         }
 
-        // This is probably bogus - for wrapped datasets
-        if (pointIndex >= dataSet.getPointCount()) {
+        // This is probably bogus - for wrapped traces
+        if (pointIndex >= trace.getPointCount()) {
             SnapUtils.printlnOnce(System.err, "ToolTipView.reloadContentsNow: Need to handle wrapped datasets better");
-            int pointCount = dataSet.getPointCount(); if (pointCount == 0) return;
+            int pointCount = trace.getPointCount(); if (pointCount == 0) return;
             pointIndex = pointIndex % pointCount;
         }
 
         // Add children
-        int chanCount = dataSet.getDataType().getChannelCount();
+        int chanCount = trace.getDataType().getChannelCount();
         for (int i=0; i<chanCount; i++) {
 
             // Get text
-            DataChan chan = dataSet.getDataType().getChannel(i);
-            Object val = dataSet.getValueForChannel(chan, pointIndex);
+            DataChan chan = trace.getDataType().getChannel(i);
+            Object val = trace.getValueForChannel(chan, pointIndex);
             String valStr = val instanceof String ? (String) val : _fmt.format(val);
             String text = chan.toString() + ": " + valStr;
 

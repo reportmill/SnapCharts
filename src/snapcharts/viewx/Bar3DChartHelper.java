@@ -47,11 +47,11 @@ public class Bar3DChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        if (dataSetList.getDataSetCount() == 0)
+        TraceList traceList = getTraceList();
+        if (traceList.getTraceCount() == 0)
             return new DataArea[0];
-        DataSet dset = dataSetList.getDataSet(0);
-        return new DataArea[] { new Bar3DDataArea(this, dset) };
+        Trace trace = traceList.getTrace(0);
+        return new DataArea[] { new Bar3DDataArea(this, trace) };
     }
 
     /**
@@ -60,11 +60,11 @@ public class Bar3DChartHelper extends ChartHelper {
     @Override
     public void resetView()
     {
-        // Make sure all DataSet.AxisTypeY are just Y
-        DataSetList dsetList = getDataSetList();
-        DataSet[] dataSets = dsetList.getDataSets(); if (dataSets.length == 0) return;
-        for (DataSet dset : dataSets)
-            dset.setAxisTypeY(AxisType.Y);
+        // Make sure all Trace.AxisTypeY are just Y
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        for (Trace trace : traces)
+            trace.setAxisTypeY(AxisType.Y);
 
         // Do normal version
         super.resetView();

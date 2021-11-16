@@ -50,14 +50,14 @@ public class PolarChartHelper extends ChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dsets = dataSetList.getDataSets();
-        int dsetCount = dsets.length;
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
 
-        DataArea[] dataAreas = new DataArea[dsetCount];
-        for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dsets[i];
-            dataAreas[i] = new PolarDataArea(this, dset);
+        DataArea[] dataAreas = new DataArea[traceCount];
+        for (int i = 0; i < traceCount; i++) {
+            Trace trace = traces[i];
+            dataAreas[i] = new PolarDataArea(this, trace);
         }
 
         return dataAreas;
@@ -245,17 +245,17 @@ public class PolarChartHelper extends ChartHelper {
         // If already set, just return
         if (_radiusMinMax != null) return _radiusMinMax;
 
-        // Get DataSetList (if empty, just return silly range)
-        DataSetList dataSetList = getDataSetList();
-        if (dataSetList.getDataSetCount()==0 || dataSetList.getPointCount()==0)
+        // Get TraceList (if empty, just return silly range)
+        TraceList traceList = getTraceList();
+        if (traceList.getTraceCount()==0 || traceList.getPointCount()==0)
             return new MinMax(0, 5);
 
-        // Get Radius MinMax for all datasets
+        // Get Radius MinMax for all traces
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        DataSet[] dataSets = dataSetList.getEnabledDataSets();
-        for (DataSet dset : dataSets) {
-            DataStore dataStore = dset.getProcessedData();
+        Trace[] traces = traceList.getEnabledTraces();
+        for (Trace trace : traces) {
+            DataStore dataStore = trace.getProcessedData();
             MinMax minMax = dataStore.getMinMaxR();
             min = Math.min(min, minMax.getMin());
             max = Math.max(max, minMax.getMax());
@@ -284,9 +284,9 @@ public class PolarChartHelper extends ChartHelper {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle DataSet/DataSetList change
+        // Handle Trace/TraceList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+        if (src instanceof Trace || src instanceof TraceList || src instanceof Axis) {
             _radiusMinMax = null;
         }
     }

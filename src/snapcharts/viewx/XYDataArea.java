@@ -31,9 +31,9 @@ public class XYDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public XYDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public XYDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
     }
 
     /**
@@ -64,7 +64,7 @@ public class XYDataArea extends DataArea {
     }
 
     /**
-     * Paints the DataArea (ChartType/DataSet specific painting).
+     * Paints the DataArea (ChartType/Trace specific painting).
      */
     @Override
     protected void paintDataArea(Painter aPntr)
@@ -73,18 +73,18 @@ public class XYDataArea extends DataArea {
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get whether DataArea/DataSet is selected or targeted
+        // Get whether DataArea/Trace is selected or targeted
         boolean isSelected = isSelectedOrTargeted();
 
         // Get DataStyle info
-        DataStyle dataStyle = getDataStyle();
-        boolean showLine = dataStyle.isShowLine();
-        boolean showSymbols = dataStyle.isShowSymbols();
-        boolean showArea = dataStyle.isShowArea();
+        TraceStyle traceStyle = getDataStyle();
+        boolean showLine = traceStyle.isShowLine();
+        boolean showSymbols = traceStyle.isShowSymbols();
+        boolean showArea = traceStyle.isShowArea();
 
         // Get DataColor, DataStroke
         Color dataColor = getDataColor();
-        Stroke dataStroke = dataStyle.getLineStroke();
+        Stroke dataStroke = traceStyle.getLineStroke();
 
         // If reveal is not full (1) then clip
         double reveal = getReveal();
@@ -96,7 +96,7 @@ public class XYDataArea extends DataArea {
         // If ShowArea, fill path, too
         if (showArea) {
             Shape dataAreaShape = getDataAreaShape();
-            Color dataAreaColor = dataStyle.getFillColor();
+            Color dataAreaColor = traceStyle.getFillColor();
             aPntr.setColor(dataAreaColor);
             aPntr.fill(dataAreaShape);
         }
@@ -149,7 +149,7 @@ public class XYDataArea extends DataArea {
             paintSelDataPoint(aPntr);
 
         // If ShowSymbols or ShowTags
-        boolean showTags = dataStyle.isShowTags();
+        boolean showTags = traceStyle.isShowTags();
         if (showSymbols || showTags)
             _pointPainter.paintSymbolsAndTagsPrep();
 
@@ -171,7 +171,7 @@ public class XYDataArea extends DataArea {
     }
 
     /**
-     * Paints tags for DataSet.
+     * Paints tags for Trace.
      */
     @Override
     protected void paintDataTags(Painter aPntr)
@@ -185,8 +185,8 @@ public class XYDataArea extends DataArea {
     protected void paintSelDataPoint(Painter aPntr)
     {
         // Get targeted or selected datapoint (targeted takes precidence)
-        DataSetPoint targPoint = getTargDataPoint();
-        DataSetPoint dataPoint = targPoint != null ? targPoint : getSelDataPoint();
+        TracePoint targPoint = getTargDataPoint();
+        TracePoint dataPoint = targPoint != null ? targPoint : getSelDataPoint();
         if (dataPoint == null)
             return;
 
@@ -213,9 +213,9 @@ public class XYDataArea extends DataArea {
         aPntr.draw(dataSymbolShape);
 
         // Paint selected symbol
-        DataSet dataSet = getDataSet();
-        DataStyle dataStyle = dataSet.getDataStyle();
-        boolean showSymbols = dataStyle.isShowSymbols();
+        Trace trace = getTrace();
+        TraceStyle traceStyle = trace.getTraceStyle();
+        boolean showSymbols = traceStyle.isShowSymbols();
         if (!showSymbols) {
             aPntr.setStroke(Stroke3);
             aPntr.setColor(dataColor);
@@ -265,10 +265,10 @@ public class XYDataArea extends DataArea {
     @Override
     protected int getRevealTime()
     {
-        // If not Line chart or DataSet.Disabled, return default
-        DataStyle dataStyle = getDataStyle();
-        boolean showSymbolsOrFill = dataStyle.isShowSymbols() || dataStyle.isShowArea();
-        if (showSymbolsOrFill || getDataSet().isDisabled())
+        // If not Line chart or Trace.Disabled, return default
+        TraceStyle traceStyle = getDataStyle();
+        boolean showSymbolsOrFill = traceStyle.isShowSymbols() || traceStyle.isShowArea();
+        if (showSymbolsOrFill || getTrace().isDisabled())
             return DataView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time
@@ -298,7 +298,7 @@ public class XYDataArea extends DataArea {
 
         // Clear cached data path info
         Object src = aPC.getSource();
-        if (src == getDataSet() || src instanceof Axis) {
+        if (src == getTrace() || src instanceof Axis) {
             clearDataPath();
         }
     }

@@ -8,9 +8,9 @@ import snap.gfx.Color;
 import snap.gfx3d.Camera;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
-import snapcharts.model.DataStyle;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceList;
+import snapcharts.model.TraceStyle;
 import snapcharts.model.Intervals;
 import snapcharts.view.AxisViewX;
 
@@ -64,26 +64,26 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     protected void addLine3Ds()
     {
         // Get info
-        DataSetList dataSetList = _dataArea.getDataSetList();
-        DataSet[] dataSets = dataSetList.getEnabledDataSets();
-        int dataSetCount = dataSets.length;
+        TraceList traceList = _dataArea.getTraceList();
+        Trace[] traces = traceList.getEnabledTraces();
+        int traceCount = traces.length;
 
-        // Iterate over datasets and add Line3D shape for each
-        for (int i=0; i<dataSetCount; i++) {
-            DataSet dset = dataSets[i];
-            addLine3D(dset, i, dataSetCount);
+        // Iterate over traces and add Line3D shape for each
+        for (int i=0; i<traceCount; i++) {
+            Trace trace = traces[i];
+            addLine3D(trace, i, traceCount);
         }
     }
 
     /**
-     * Adds the Line3D shape for DataSet.
+     * Adds the Line3D shape for Trace.
      */
-    protected void addLine3D(DataSet aDataSet, int anIndex, int aCount)
+    protected void addLine3D(Trace aTrace, int anIndex, int aCount)
     {
         // Create 2d path
-        Path path = createDataPath(aDataSet);
-        DataStyle dataStyle = aDataSet.getDataStyle();
-        Color dataStrokeColor = dataStyle.getLineColor();
+        Path path = createDataPath(aTrace);
+        TraceStyle traceStyle = aTrace.getTraceStyle();
+        Color dataStrokeColor = traceStyle.getLineColor();
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front
@@ -99,12 +99,12 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     }
 
     /**
-     * Returns Path2D for painting dataset.
+     * Returns Path2D for painting Trace.
      */
-    protected Path createDataPath(DataSet dset)
+    protected Path createDataPath(Trace aTrace)
     {
-        // Create/add path for dataset
-        int pointCount = dset.getPointCount();
+        // Create/add path for trace
+        int pointCount = aTrace.getPointCount();
         Path path = new Path();
 
         // Get area bounds
@@ -119,8 +119,8 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         for (int j=0; j<pointCount; j++) {
 
             // Get data point in display coords
-            double dataX = dset.getX(j);
-            double dataY = dset.getY(j);
+            double dataX = aTrace.getX(j);
+            double dataY = aTrace.getY(j);
             Point dispXY = _dataArea.dataToView(dataX, dataY);
 
             // Clamp to area/axis bounds
@@ -206,16 +206,16 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         }
 
         // Get info
-        DataSetList dataSetList = _dataArea.getDataSetList();
-        DataSet[] dataSets = dataSetList.getEnabledDataSets();
-        int dataSetCount = dataSets.length;
+        TraceList traceList = _dataArea.getTraceList();
+        Trace[] traces = traceList.getEnabledTraces();
+        int traceCount = traces.length;
 
-        // Iterate over datasets and add separator for side
-        if (dataSetCount>1) {
-            double sectionDepth = areaW / dataSetCount;
-            for (int i = 1; i < dataSetCount; i++) {
-                DataSet dset = dataSets[i];
-                addLine3D(dset, i, dataSetCount);
+        // Iterate over traces and add separator for side
+        if (traceCount > 1) {
+            double sectionDepth = areaW / traceCount;
+            for (int i = 1; i < traceCount; i++) {
+                Trace trace = traces[i];
+                addLine3D(trace, i, traceCount);
                 double lineZ2 = sectionDepth * i;
                 _gridWithoutSep.moveTo(lineZ2, 0);
                 _gridWithoutSep.lineTo(lineZ2, areaH);

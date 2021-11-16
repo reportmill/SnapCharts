@@ -100,20 +100,20 @@ public class OpenInPlotly {
         // Write script open
         _sb.append("<script>\n");
 
-        // Get DataSet info
-        DataSetList dataSetList = aChart.getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        int dsetCount = dataSets.length;
+        // Get Trace info
+        TraceList traceList = aChart.getTraceList();
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
 
-        // Iterate over DataSets and write trace declaration for each: var trace0 = [ ... ]; var trace1 = [ ... ]; ...
-        for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dataSets[i];
-            writeDataSet(dset, i);
+        // Iterate over Traces and write trace declaration for each: var trace0 = [ ... ]; var trace1 = [ ... ]; ...
+        for (int i = 0; i < traceCount; i++) {
+            Trace trace = traces[i];
+            writeTrace(trace, i);
         }
 
         // Write Data declaration: var data [ trace0, trace1, ... ];
         _sb.append("var data = [");
-        for (int i=0; i<dsetCount; i++)
+        for (int i=0; i<traceCount; i++)
             _sb.append(i>0 ? ", " : " ").append("trace").append(i);
         _sb.append(" ];\n\n");
 
@@ -155,7 +155,7 @@ public class OpenInPlotly {
         titleJS.addKeyValue("text", title);
 
         // Write the axis layout
-        AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
         for (AxisType axisType : axisTypes)
             writeChartAxisLayout(aChart, axisType, layoutJS);
 
@@ -265,21 +265,21 @@ public class OpenInPlotly {
     }
 
     /**
-     * Writes a DataSet, e.g.: var trace1 = { x: [1, 2, 3, 4], y: [0, 2, 3, 5], type: 'scatter' };
+     * Writes a Trace, e.g.: var trace1 = { x: [1, 2, 3, 4], y: [0, 2, 3, 5], type: 'scatter' };
      */
-    private void writeDataSet(DataSet aDataSet, int anIndex)
+    private void writeTrace(Trace aTrace, int anIndex)
     {
-        // Get DataSet info
-        DataStyle dataStyle = aDataSet.getDataStyle();
-        int pointCount = aDataSet.getPointCount();
-        DataType dataType = aDataSet.getDataType();
+        // Get Trace info
+        TraceStyle traceStyle = aTrace.getTraceStyle();
+        int pointCount = aTrace.getPointCount();
+        DataType dataType = aTrace.getDataType();
         int chanCount = dataType.getChannelCount();
 
         // Create new TraceJSON
         JSONNode traceJS = new JSONNode();
 
         // Set the trace name
-        traceJS.addKeyValue("name", aDataSet.getName());
+        traceJS.addKeyValue("name", aTrace.getName());
 
         // Add: type : 'scatter'
         ChartType chartType = _chart.getType();
@@ -299,19 +299,19 @@ public class OpenInPlotly {
         }
 
         // Handle Stacked
-        if (aDataSet.isStacked())
+        if (aTrace.isStacked())
             traceJS.addKeyValue("stackgroup", "one");
 
         // If ShowArea, add: fill: 'tozeroy'
-        if (dataStyle.isShowArea() && !aDataSet.isStacked())
+        if (traceStyle.isShowArea() && !aTrace.isStacked())
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'
         if (chartType == ChartType.SCATTER || chartType == ChartType.POLAR) {
 
             // Set mode: lines | markers | lines+markers
-            boolean isShowLine = dataStyle.isShowLine();
-            boolean isShowSymbols = dataStyle.isShowSymbols();
+            boolean isShowLine = traceStyle.isShowLine();
+            boolean isShowSymbols = traceStyle.isShowSymbols();
             String modeStr = isShowLine && isShowSymbols ? "lines+markers" :
                     isShowLine ? "lines" : isShowSymbols ? "markers" : "";
             traceJS.addKeyValue("mode", modeStr);
@@ -324,12 +324,12 @@ public class OpenInPlotly {
                 traceJS.addKeyValue("line", lineJS);
 
                 // Set the line.color
-                Color color = dataStyle.getLineColor();
+                Color color = traceStyle.getLineColor();
                 String colorStr = getPlotlyColorString(color);
                 lineJS.addKeyValue("color", colorStr);
 
                 // Set the line.width
-                lineJS.addKeyValue("width", dataStyle.getLineWidth());
+                lineJS.addKeyValue("width", traceStyle.getLineWidth());
             }
         }
 
@@ -349,9 +349,9 @@ public class OpenInPlotly {
             traceJS.addKeyValue("ncontours", "16");
 
             JSONNode contourJS = new JSONNode("contours", null);
-            contourJS.addKeyValue("start", aDataSet.getMinZ());
-            contourJS.addKeyValue("end", aDataSet.getMaxZ());
-            contourJS.addKeyValue("size", (aDataSet.getMaxZ() - aDataSet.getMinZ()) / 16);
+            contourJS.addKeyValue("start", aTrace.getMinZ());
+            contourJS.addKeyValue("end", aTrace.getMaxZ());
+            contourJS.addKeyValue("size", (aTrace.getMaxZ() - aTrace.getMinZ()) / 16);
             traceJS.addKeyValue("contours", contourJS);
         }
 
@@ -368,7 +368,7 @@ public class OpenInPlotly {
                     dataChanStr = "theta";
                 else if (dataChan == DataChan.R || dataChan == DataChan.Y)
                     dataChanStr = "r";
-                else System.err.println("OpenInPlotly.writeDataSet: Unknown Polar DataChan: " + dataChan);
+                else System.err.println("OpenInPlotly.writeTrace: Unknown Polar DataChan: " + dataChan);
             }
 
             // Get Channel, create valsJS and add to traceJS
@@ -377,7 +377,7 @@ public class OpenInPlotly {
 
             // Iterate over values and add to valsJS
             for (int j = 0; j < pointCount; j++) {
-                Object val = aDataSet.getValueForChannel(dataChan, j);
+                Object val = aTrace.getValueForChannel(dataChan, j);
                 valsJS.addValue(val);
             }
         }
@@ -392,8 +392,8 @@ public class OpenInPlotly {
         }
 
         // If not Y axis
-        if (aDataSet.getAxisTypeY() != AxisType.Y)
-            traceJS.addKeyValue("yaxis", aDataSet.getAxisTypeY().toString().toLowerCase());
+        if (aTrace.getAxisTypeY() != AxisType.Y)
+            traceJS.addKeyValue("yaxis", aTrace.getAxisTypeY().toString().toLowerCase());
 
         // Write trace
         _sb.append("var trace").append(anIndex).append(" = ");
@@ -466,7 +466,7 @@ public class OpenInPlotly {
      */
     private JSONNode getXAxisDomain(Chart aChart)
     {
-        AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
         if (axisTypes.length <= 2)
             return null;
         int left = 0, right = 0;
@@ -489,7 +489,7 @@ public class OpenInPlotly {
      */
     private double getYAxisPosition(Chart aChart, AxisType anAxisType)
     {
-        AxisType[] axisTypes = aChart.getDataSetList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
         Side side = aChart.getAxisForType(anAxisType).getSide();
         int count = 0;
         for (AxisType axisType : axisTypes) {

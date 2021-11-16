@@ -21,9 +21,9 @@ public class ContourDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public ContourDataArea(ContourChartHelper aChartHelper, DataSet aDataSet)
+    public ContourDataArea(ContourChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
 
         _contourHelper = aChartHelper._contourHelper;
         _contourPainter = new ContourPainter(_contourHelper, this);
@@ -55,7 +55,7 @@ public class ContourDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis || src instanceof DataStyle) {
+        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle) {
             _contourPainter.clearContoursAll();
         }
     }

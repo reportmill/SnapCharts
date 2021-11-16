@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class to handle painting DataArea.DataSet data symbols and tags.
+ * A class to handle painting DataArea.Trace data symbols and tags.
  */
 public class PointPainter {
 
@@ -54,17 +54,17 @@ public class PointPainter {
     public void paintSymbolsAndTagsPrep()
     {
         // Get ShowSymbol info
-        DataStyle dataStyle = _dataArea.getDataStyle();
-        boolean showSymbols = dataStyle.isShowSymbols();
-        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        TraceStyle traceStyle = _dataArea.getDataStyle();
+        boolean showSymbols = traceStyle.isShowSymbols();
+        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
         int symbolSize = symbolStyle.getSymbolSize();
         double symbolShift = symbolSize / 2d;
         List<Point> symbolPointList = new ArrayList<>();
 
         // Get ShowTag info because TagBoxes are created
-        boolean showTags = dataStyle.isShowTags();
-        TagStyle tagStyle = dataStyle.getTagStyle();
-        DataStore procData = _dataArea.getDataSet().getProcessedData();
+        boolean showTags = traceStyle.isShowTags();
+        TagStyle tagStyle = traceStyle.getTagStyle();
+        DataStore procData = _dataArea.getTrace().getProcessedData();
         boolean hasZ = procData.getDataType().hasZ();
         Color tagBorderColor = tagStyle.getLineColor();
         double tagBorderWidth = tagStyle.getLineWidth();
@@ -83,9 +83,9 @@ public class PointPainter {
 
         // Get VisPointCount and MaxPointCount
         int visPointCount = endIndex - startIndex + 1;
-        int maxPointCount = dataStyle.getMaxPointCount();
-        int skipPointCount = dataStyle.getSkipPointCount();
-        int pointSpacing = dataStyle.getPointSpacing();
+        int maxPointCount = traceStyle.getMaxPointCount();
+        int skipPointCount = traceStyle.getSkipPointCount();
+        int pointSpacing = traceStyle.getPointSpacing();
 
         // Get point increment (as real number, so we can round to point index for distribution)
         double incrementReal = 1;
@@ -177,8 +177,8 @@ public class PointPainter {
     public void paintSymbols(Painter aPntr)
     {
         // Get info
-        DataStyle dataStyle = _dataArea.getDataStyle();
-        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        TraceStyle traceStyle = _dataArea.getDataStyle();
+        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
         Symbol symbol = symbolStyle.getSymbol();
         Color symbolColor = symbolStyle.getFillColor();  //color.darker().darker()
         Shape symbolShape = symbol.getShape();
@@ -188,7 +188,7 @@ public class PointPainter {
         double symbolBorderWidth = symbolStyle.getLineWidth();
 
         // Get whether showing points only
-        boolean pointsOnly = !(dataStyle.isShowLine() || dataStyle.isShowArea());
+        boolean pointsOnly = !(traceStyle.isShowLine() || traceStyle.isShowArea());
         if (symbolBorderWidth == 0 && pointsOnly)
             symbolBorderWidth = 1;
 
@@ -226,8 +226,8 @@ public class PointPainter {
     public void paintTags(Painter aPntr)
     {
         TagBox[] tagBoxes = getTagBoxes();
-        DataStyle dataStyle = _dataArea.getDataStyle();
-        TagStyle tagStyle = dataStyle.getTagStyle();
+        TraceStyle traceStyle = _dataArea.getDataStyle();
+        TagStyle tagStyle = traceStyle.getTagStyle();
         Color fillColor = tagStyle.getFillColor();
 
         for (TagBox sbox : tagBoxes)

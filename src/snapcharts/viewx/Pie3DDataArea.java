@@ -8,7 +8,7 @@ import snap.gfx3d.Camera;
 import snap.gfx3d.CameraView;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.view.ChartHelper;
 
 /**
@@ -28,9 +28,9 @@ public class Pie3DDataArea extends PieDataArea {
     /**
      * Constructor.
      */
-    public Pie3DDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public Pie3DDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
 
         // Create/add CameraView
         _camView = new CameraView() {

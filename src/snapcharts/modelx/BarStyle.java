@@ -2,12 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.modelx;
-import snapcharts.model.DataStyle;
+import snapcharts.model.TraceStyle;
 
 /**
  * A DataStyle subclass for Bar chart properties.
  */
-public class BarStyle extends DataStyle {
+public class BarStyle extends TraceStyle {
 
     // The ratio of a section used to pad a group of bars
     double             _groupPad = .2;

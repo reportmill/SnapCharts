@@ -88,8 +88,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle DocItemDataSet
         else if (aDocItem instanceof DocItemDataSet) {
             DocItemDataSet docItemDataSet = (DocItemDataSet) aDocItem;
-            DataSet dataSet = docItemDataSet.getDataSet();
-            setChartForSingleDataSet(dataSet);
+            Trace trace = docItemDataSet.getTrace();
+            setChartForSingleDataSet(trace);
         }
     }
 
@@ -109,21 +109,21 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     /**
      * Sets the DataSet, with chart.
      */
-    private void setChartForSingleDataSet(DataSet aDataSet)
+    private void setChartForSingleDataSet(Trace aTrace)
     {
         // Put ChartPane in 'DataSetMode'
         _dataSetMode = true;
 
         // Copy DataSet chart
-        Chart chart = aDataSet.getChart();
+        Chart chart = aTrace.getChart();
         Chart chartCopy = new ChartArchiver().copy(chart);
-        DataSetList dataSetList = chartCopy.getDataSetList();
-        while (dataSetList.getDataSetCount() > 0)
-            dataSetList.removeDataSet(0);
+        TraceList traceList = chartCopy.getTraceList();
+        while (traceList.getTraceCount() > 0)
+            traceList.removeTrace(0);
 
         // Copy DataSet and add to ChartCopy
-        DataSet dataSetCopy = new ChartArchiver().copy(aDataSet);
-        dataSetList.addDataSet(dataSetCopy);
+        Trace traceCopy = new ChartArchiver().copy(aTrace);
+        traceList.addTrace(traceCopy);
 
         // Set Chart
         setChart(chartCopy);
@@ -155,24 +155,24 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     public ChartHelper getChartHelper()  { return _chartView.getChartHelper(); }
 
     /**
-     * Returns the DataSetList.
+     * Returns the TraceList.
      */
-    private DataSetList getDataSetList()
+    private TraceList getTraceList()
     {
         Chart chart = getChart();
-        return chart.getDataSetList();
+        return chart.getTraceList();
     }
 
     /**
-     * Returns the current DataSet.
+     * Returns the current Trace.
      */
-    public DataSet getDataSet()
+    public Trace getTrace()
     {
-        DataSetList dataSetList = getDataSetList();
+        TraceList traceList = getTraceList();
         int selIndex = _tabView != null ? _tabView.getSelIndex() : -1;
-        if (selIndex < 0 || selIndex >= dataSetList.getDataSetCount())
+        if (selIndex < 0 || selIndex >= traceList.getTraceCount())
             return null;
-        return dataSetList.getDataSet(selIndex);
+        return traceList.getTrace(selIndex);
     }
 
     /**
@@ -338,11 +338,11 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     @Override
     protected void initShowing()
     {
-        // Configure TabView with Chart.Datasets
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dsets = dataSetList.getDataSets();
-        for (DataSet dset : dsets) {
-            _tabView.addTab(dset.getName(), new Label(dset.getName()));
+        // Configure TabView with Chart.Traces
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        for (Trace trace : traces) {
+            _tabView.addTab(trace.getName(), new Label(trace.getName()));
         }
 
         // If DataSetMode, showDataSetTabs
@@ -364,9 +364,9 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         int selTabIndex = _tabView.getSelIndex();
         if (selTabIndex>=0 && _tabView.getTabContent(selTabIndex) instanceof Label) {
 
-            // Get DataSet and create DataSetPane
-            DataSet dataSet = getDataSetList().getDataSet(selTabIndex);
-            DocItemDataSet docItemDataSet = new DocItemDataSet(dataSet);
+            // Get Trace and create DataSetPane
+            Trace trace = getTraceList().getTrace(selTabIndex);
+            DocItemDataSet docItemDataSet = new DocItemDataSet(trace);
             DataSetPane dsetPane = new DataSetPane(docItemDataSet);
 
             // Set TabView content
@@ -379,7 +379,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Update ShowDataSetTabs
         if (!_dataSetMode) {
             ChartPart selPart = getSelChartPart();
-            boolean showDataSets = selPart instanceof DataSet;
+            boolean showDataSets = selPart instanceof Trace;
             setShowDataSetTabs(showDataSets);
         }
     }
@@ -415,8 +415,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle TabView
         if (anEvent.equals("TabView")) {
             int selIndex = _tabView.getSelIndex();
-            DataSet dset = getDataSetList().getDataSet(selIndex);
-            getSel().setSelChartPart(dset);
+            Trace trace = getTraceList().getTrace(selIndex);
+            getSel().setSelChartPart(trace);
         }
 
         // Handle EscapeAction
@@ -511,11 +511,11 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     public void chartPaneSelChanged()
     {
-        // If SelPart is DataSet, make sure tabPane is selected
+        // If SelPart is Trace, make sure tabPane is selected
         ChartPart selPart = getSelChartPart();
-        if (selPart instanceof DataSet) {
-            DataSet dataSet = (DataSet) selPart;
-            _tabView.setSelIndex(dataSet.getIndex());
+        if (selPart instanceof Trace) {
+            Trace trace = (Trace) selPart;
+            _tabView.setSelIndex(trace.getIndex());
         }
 
         // Notify Inspector

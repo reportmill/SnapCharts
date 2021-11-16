@@ -199,10 +199,10 @@ public class AxisViewY extends AxisView<AxisY> {
             // Remove/add LegendEntryViews to LegendGraphicRowView
             _legendGraphicRowView.removeChildren();
             Legend legend = axisY.getChart().getLegend();
-            DataSet[] dataSets = getDataSetList().getDataSets();
-            for (DataSet dataSet : dataSets) {
-                if (dataSet.getAxisTypeY() == getAxisType()) {
-                    LegendEntryView legendEntryView = new LegendEntryView(legend, dataSet);
+            Trace[] traces = getTraceList().getTraces();
+            for (Trace trace : traces) {
+                if (trace.getAxisTypeY() == getAxisType()) {
+                    LegendEntryView legendEntryView = new LegendEntryView(legend, trace);
                     legendEntryView.setShowText(false);
                     legendEntryView.getGraphic().setPrefWidth(40);
                     _legendGraphicRowView.addChild(legendEntryView);

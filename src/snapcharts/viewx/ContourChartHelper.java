@@ -49,14 +49,14 @@ public class ContourChartHelper extends ChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        int dsetCount = dataSets.length;
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
 
-        DataArea[] dataAreas = new DataArea[dsetCount];
-        for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dataSets[i];
-            dataAreas[i] = new ContourDataArea(this, dset);
+        DataArea[] dataAreas = new DataArea[traceCount];
+        for (int i=0; i<traceCount; i++) {
+            Trace trace = traces[i];
+            dataAreas[i] = new ContourDataArea(this, trace);
         }
 
         return dataAreas;
@@ -89,9 +89,9 @@ public class ContourChartHelper extends ChartHelper {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle DataSet/DataSetList change
+        // Handle Trace/TraceList change
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof DataStyle) {
+        if (src instanceof Trace || src instanceof TraceList || src instanceof TraceStyle) {
             _contourHelper.resetCachedValues();
         }
     }

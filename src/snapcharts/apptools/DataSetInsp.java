@@ -7,11 +7,11 @@ import snapcharts.app.ChartPane;
 import snapcharts.data.DataStore;
 import snapcharts.model.AxisType;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.data.DataType;
 
 /**
- * A class to manage UI to edit basic DataSet props.
+ * A class to manage UI to edit basic Trace props.
  */
 public class DataSetInsp extends ChartPartInsp {
 
@@ -27,18 +27,18 @@ public class DataSetInsp extends ChartPartInsp {
      * Returns the name.
      */
     @Override
-    public String getName()  { return "DataSet Settings"; }
+    public String getName()  { return "Trace Settings"; }
 
     /**
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getDataSet(); }
+    public ChartPart getChartPart()  { return getTrace(); }
 
     /**
-     * Returns the DataSet.
+     * Returns the Trace.
      */
-    public DataSet getDataSet()  { return _chartPane.getDataSet(); }
+    public Trace getTrace()  { return _chartPane.getTrace(); }
 
     /**
      * Init UI.
@@ -64,27 +64,27 @@ public class DataSetInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get DataSet
-        DataSet dataSet = getDataSet(); if (dataSet == null) return;
+        // Get Trace
+        Trace trace = getTrace(); if (trace == null) return;
 
         // Reset NameText
-        setViewValue("NameText", dataSet.getName());
+        setViewValue("NameText", trace.getName());
 
         // Reset DataTypeComboBox
-        DataType dataType = dataSet.getDataType();
-        setViewValue("DataTypeComboBox", dataSet.getDataType());
+        DataType dataType = trace.getDataType();
+        setViewValue("DataTypeComboBox", trace.getDataType());
 
         // Reset ThetaUnitComboBox
         boolean isPolar = dataType.isPolar();
         setViewVisible("ThetaUnitBox", isPolar);
         if (isPolar)
-            setViewValue("ThetaUnitComboBox", dataSet.getThetaUnit());
+            setViewValue("ThetaUnitComboBox", trace.getThetaUnit());
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
-        boolean isMultiYEnabled = dataSet.getChartType().isMultiYAxisType();
+        boolean isMultiYEnabled = trace.getChartType().isMultiYAxisType();
         getView("AxisTypeYBox").setVisible(isMultiYEnabled);
         if (isMultiYEnabled) {
-            AxisType axisTypeY = dataSet.getAxisTypeY();
+            AxisType axisTypeY = trace.getAxisTypeY();
             setViewValue("YAxisButton", axisTypeY == AxisType.Y);
             setViewValue("Y2AxisButton", axisTypeY == AxisType.Y2);
             setViewValue("Y3AxisButton", axisTypeY == AxisType.Y3);
@@ -92,14 +92,14 @@ public class DataSetInsp extends ChartPartInsp {
         }
 
         // Reset ExprXText, ExprYText, ExprZText
-        setViewValue("ExprXText", dataSet.getExprX());
-        setViewValue("ExprYText", dataSet.getExprY());
-        setViewValue("ExprZText", dataSet.getExprZ());
+        setViewValue("ExprXText", trace.getExprX());
+        setViewValue("ExprYText", trace.getExprY());
+        setViewValue("ExprZText", trace.getExprZ());
         setViewVisible("ExprZBox", dataType.hasZ());
 
         // Reset StackedCheckBox, ShowLegendEntryCheckBox
-        setViewValue("StackedCheckBox", dataSet.isStacked());
-        setViewValue("ShowLegendEntryCheckBox", dataSet.isShowLegendEntry());
+        setViewValue("StackedCheckBox", trace.isStacked());
+        setViewValue("ShowLegendEntryCheckBox", trace.isShowLegendEntry());
     }
 
     /**
@@ -107,54 +107,54 @@ public class DataSetInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get DataSet
-        DataSet dataSet = getDataSet(); if (dataSet == null) return;
+        // Get Trace
+        Trace trace = getTrace(); if (trace == null) return;
 
         // Handle NameText
         if (anEvent.equals("NameText")) {
-            dataSet.setName(anEvent.getStringValue());
+            trace.setName(anEvent.getStringValue());
             _chartPane.getDocPane().docItemNameChanged();
         }
 
         // Handle DataTypeCombo
         if (anEvent.equals("DataTypeComboBox")) {
             DataType dataType = (DataType) getViewSelItem("DataTypeComboBox");
-            dataSet.setDataType(dataType);
+            trace.setDataType(dataType);
         }
 
         // Handle ThetaUnitComboBox
         if (anEvent.equals("ThetaUnitComboBox")) {
             DataStore.ThetaUnit thetaUnit = (DataStore.ThetaUnit) anEvent.getSelItem();
-            dataSet.setThetaUnit(thetaUnit);
+            trace.setThetaUnit(thetaUnit);
         }
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
         if (anEvent.equals("YAxisButton"))
-            dataSet.setAxisTypeY(AxisType.Y);
+            trace.setAxisTypeY(AxisType.Y);
         if (anEvent.equals("Y2AxisButton"))
-            dataSet.setAxisTypeY(AxisType.Y2);
+            trace.setAxisTypeY(AxisType.Y2);
         if (anEvent.equals("Y3AxisButton"))
-            dataSet.setAxisTypeY(AxisType.Y3);
+            trace.setAxisTypeY(AxisType.Y3);
         if (anEvent.equals("Y4AxisButton"))
-            dataSet.setAxisTypeY(AxisType.Y4);
+            trace.setAxisTypeY(AxisType.Y4);
 
         // Handle ExprXText, ExprYText, ExprZText
         if (anEvent.equals("ExprXText"))
-            dataSet.setExprX(anEvent.getStringValue());
+            trace.setExprX(anEvent.getStringValue());
         if (anEvent.equals("ExprYText"))
-            dataSet.setExprY(anEvent.getStringValue());
+            trace.setExprY(anEvent.getStringValue());
         if (anEvent.equals("ExprZText"))
-            dataSet.setExprZ(anEvent.getStringValue());
+            trace.setExprZ(anEvent.getStringValue());
 
         // Handle StackedCheckBox: Set them all
         if (anEvent.equals("StackedCheckBox")) {
-            DataSet[] dataSets = dataSet.getDataSetList().getDataSets();
-            for (DataSet dset : dataSets)
-                dset.setStacked(anEvent.getBoolValue());
+            Trace[] traces = trace.getTraceList().getTraces();
+            for (Trace trc : traces)
+                trc.setStacked(anEvent.getBoolValue());
         }
 
         // Handle ShowLegendEntryCheckBox
         if (anEvent.equals("ShowLegendEntryCheckBox"))
-            dataSet.setShowLegendEntry(anEvent.getBoolValue());
+            trace.setShowLegendEntry(anEvent.getBoolValue());
     }
 }

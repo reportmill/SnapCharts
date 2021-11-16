@@ -2,7 +2,7 @@ package snapcharts.doc;
 import snap.util.*;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.model.PageDisplay;
 import java.util.ArrayList;
 import java.util.List;
@@ -180,8 +180,8 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
             return addChart(chart, ind);
         }
 
-        // Handle DataSet
-        if (aChartPart instanceof DataSet) {
+        // Handle Trace
+        if (aChartPart instanceof Trace) {
             for (DocItem item : getItems())
                 if (item instanceof DocItemChart)
                     item.addChartPart(aChartPart, null);

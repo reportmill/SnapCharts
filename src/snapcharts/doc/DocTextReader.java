@@ -21,8 +21,8 @@ public class DocTextReader {
     // The current chart
     private Chart  _chart;
 
-    // The current DataSet
-    private DataSet  _dset;
+    // The current Trace
+    private Trace  _trace;
 
     // Staged data arrays X/Y/Z
     private double[]  _dataX, _dataY, _dataZ, _dataZZ;
@@ -231,13 +231,13 @@ public class DocTextReader {
         // Handle keys
         switch (key) {
             case "Name":
-                _dset = new DataSet();
-                _dset.setName(aVal);
-                _chart.addDataSet(_dset);
+                _trace = new Trace();
+                _trace.setName(aVal);
+                _chart.addTrace(_trace);
                 break;
 
             case "ShowSymbols":
-                _dset.getDataStyle().setShowSymbols(SnapUtils.boolValue(aVal));
+                _trace.getTraceStyle().setShowSymbols(SnapUtils.boolValue(aVal));
                 break;
 
             case "DataX":
@@ -262,19 +262,19 @@ public class DocTextReader {
 
             case "AxisY":
                 AxisType axisTypeY = AxisType.valueOf(aVal);
-                _dset.setAxisTypeY(axisTypeY);
+                _trace.setAxisTypeY(axisTypeY);
                 break;
 
             case "ExprX":
-                _dset.setExprX(aVal);
+                _trace.setExprX(aVal);
                 break;
 
             case "ExprY":
-                _dset.setExprY(aVal);
+                _trace.setExprY(aVal);
                 break;
 
             case "ExprZ":
-                _dset.setExprZ(aVal);
+                _trace.setExprZ(aVal);
                 break;
         }
     }
@@ -321,17 +321,17 @@ public class DocTextReader {
         DataType dataType = DataType.getDataType(_dataX!=null, _dataY!=null, _dataZ!=null, _dataZZ!=null, _dataC!=null);
 
         // If no DataSet or DataType, complain and return
-        if (_dset==null || dataType==DataType.UNKNOWN) {
+        if (_trace ==null || dataType==DataType.UNKNOWN) {
             System.err.println("DocTextReader.applyStagedData: No DataSet or unknown type: " + dataType);
-            _dset = null; _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;
+            _trace = null; _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;
             return;
         }
 
         // Set DataType
-        _dset.setDataType(dataType);
+        _trace.setDataType(dataType);
 
         // Add points XYZZ
-        DataStore rawData = _dset.getRawData();
+        DataStore rawData = _trace.getRawData();
         if (dataType == DataType.XYZZ)
             DataStoreUtils.addDataPointsXYZZ(rawData, _dataX, _dataY, _dataZZ);
 

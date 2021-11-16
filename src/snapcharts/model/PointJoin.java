@@ -4,7 +4,7 @@
 package snapcharts.model;
 
 /**
- * This enum class describes the method by which DataSet points are joined.
+ * This enum class describes the method by which Trace points are joined.
  */
 public enum PointJoin {
 

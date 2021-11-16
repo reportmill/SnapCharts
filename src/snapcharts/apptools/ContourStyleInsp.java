@@ -3,7 +3,7 @@ package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataStyle;
+import snapcharts.model.TraceStyle;
 import snapcharts.modelx.ContourStyle;
 
 /**
@@ -29,7 +29,7 @@ public class ContourStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getDataStyle(); }
+    public ChartPart getChartPart()  { return getChart().getTraceStyle(); }
 
     /**
      * Reset UI.
@@ -37,8 +37,8 @@ public class ContourStyleInsp extends ChartPartInsp {
     protected void resetUI()
     {
         // Get DataStyle
-        DataStyle dataStyle = getChart().getDataStyle();
-        ContourStyle contourStyle = dataStyle instanceof ContourStyle ? (ContourStyle) dataStyle : null;
+        TraceStyle traceStyle = getChart().getTraceStyle();
+        ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
         if (contourStyle == null) return;
 
         // Reset LevelsText, ShowLinesCheckBox, ShowMeshCheckBox
@@ -54,8 +54,8 @@ public class ContourStyleInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get DataStyle
-        DataStyle dataStyle = getChart().getDataStyle();
-        ContourStyle contourStyle = dataStyle instanceof ContourStyle ? (ContourStyle) dataStyle : null;
+        TraceStyle traceStyle = getChart().getTraceStyle();
+        ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
         if (contourStyle == null) return;
 
         // Reset LevelsText, LevelsButtons

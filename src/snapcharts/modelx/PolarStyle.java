@@ -5,12 +5,12 @@ package snapcharts.modelx;
 import snap.util.PropDefaults;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.model.DataStyle;
+import snapcharts.model.TraceStyle;
 
 /**
  * A DataStyle subclass for Polar chart properties.
  */
-public class PolarStyle extends DataStyle {
+public class PolarStyle extends TraceStyle {
 
     /**
      * Constructor.

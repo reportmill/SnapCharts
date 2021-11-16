@@ -13,7 +13,7 @@ import snapcharts.model.*;
 /**
  * A view to display the actual contents of a chart.
  */
-public abstract class DataArea extends ChartPartView<DataSet> {
+public abstract class DataArea extends ChartPartView<Trace> {
 
     // The ChartHelper
     protected ChartHelper  _chartHelper;
@@ -21,14 +21,14 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     // The DataView that holds this DataArea
     protected DataView  _dataView;
 
-    // The DataSet
-    private DataSet  _dataSet;
+    // The Trace
+    private Trace  _trace;
 
     // The AxisType for Y axis (might get coerced down to Y if chart type doesn't support it)
     private AxisType  _axisTypeY;
 
-    // The DataSet.ProcessedData possibly further processed for DataArea/Axes
-    private DataStore _stagedData;
+    // The Trace.ProcessedData possibly further processed for DataArea/Axes
+    private DataStore  _stagedData;
 
     // The ProcessedData converted to DataArea display coords
     private DataStore  _dispData;
@@ -36,17 +36,17 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     /**
      * Constructor.
      */
-    public DataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public DataArea(ChartHelper aChartHelper, Trace aTrace)
     {
         super();
         //setCursor(Cursor.MOVE);
 
         // Set ivars
         _chartHelper = aChartHelper;
-        _dataSet = aDataSet;
+        _trace = aTrace;
 
-        // Get/set DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
-        _axisTypeY = _dataSet.getAxisTypeY();
+        // Get/set Trace.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
+        _axisTypeY = _trace.getAxisTypeY();
         if (_axisTypeY != AxisType.Y && !_chartHelper.isAxisType(_axisTypeY))
             _axisTypeY = AxisType.Y;
     }
@@ -55,30 +55,30 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      * Returns the ChartPart.
      */
     @Override
-    public DataSet getChartPart()  { return _dataSet; }
+    public Trace getChartPart()  { return _trace; }
 
     /**
-     * Returns the DataSet.
+     * Returns the Trace.
      */
-    public DataSet getDataSet()  { return _dataSet; }
+    public Trace getTrace()  { return _trace; }
 
     /**
      * Returns the DataStyle.
      */
-    public DataStyle getDataStyle()  { return _dataSet.getDataStyle(); }
+    public TraceStyle getDataStyle()  { return _trace.getTraceStyle(); }
 
     /**
-     * Returns whether dataset is enabled.
+     * Returns whether trace is enabled.
      */
-    public boolean isDataSetEnabled()  { return _dataSet.isEnabled(); }
+    public boolean isTraceEnabled()  { return _trace.isEnabled(); }
 
     /**
-     * Returns whether dataset is disabled.
+     * Returns whether trace is disabled.
      */
-    public boolean isDataSetDisabled()  { return _dataSet.isDisabled(); }
+    public boolean isTraceDisabled()  { return _trace.isDisabled(); }
 
     /**
-     * Returns the DataSet AxisType.
+     * Returns the trace AxisType.
      */
     public AxisType getAxisTypeY()  { return _axisTypeY; }
 
@@ -108,29 +108,29 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns the DataSetList of active data sets.
+     * Returns the TraceList of active data sets.
      */
-    public DataSetList getDataSetList()
+    public TraceList getTraceList()
     {
-        return _chartHelper.getDataSetList();
+        return _chartHelper.getTraceList();
     }
 
     /**
-     * Returns the dataset color at index.
+     * Returns the trace color at index.
      */
     public Color getDataColor()
     {
-        DataStyle dataStyle = getDataStyle();
-        return dataStyle.getLineColor();
+        TraceStyle traceStyle = getDataStyle();
+        return traceStyle.getLineColor();
     }
 
     /**
-     * Returns the dataset color at index.
+     * Returns the trace color at index.
      */
     public Color getColorMapColor(int anIndex)
     {
-        DataStyle dataStyle = getDataStyle();
-        return dataStyle.getColorMapColor(anIndex);
+        TraceStyle traceStyle = getDataStyle();
+        return traceStyle.getColorMapColor(anIndex);
     }
 
     /**
@@ -138,14 +138,14 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     public Symbol getDataSymbol()
     {
-        DataSet dataSet = getDataSet();
-        DataStyle dataStyle = dataSet.getDataStyle();
-        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+        Trace trace = getTrace();
+        TraceStyle traceStyle = trace.getTraceStyle();
+        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
         return symbolStyle.getSymbol();
     }
 
     /**
-     * Returns the DataSet.ProcessedData possibly further processed for DataArea/Axes.
+     * Returns the Trace.ProcessedData possibly further processed for DataArea/Axes.
      * Conditions that cause further processing: Stacked, AxisWrap, Axis Log.
      */
     public DataStore getStagedData()
@@ -153,11 +153,11 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         // If already set, just return
         if (_stagedData != null) return _stagedData;
 
-        // Get DataSet and ProcessedData
-        DataSet dataSet = getDataSet();
-        DataStore dataStore = dataSet.getProcessedData();
+        // Get Trace and ProcessedData
+        Trace trace = getTrace();
+        DataStore dataStore = trace.getProcessedData();
 
-        // If Log, use DataSet.LogData
+        // If Log, use Trace.LogData
         AxisViewX axisViewX = getAxisViewX();
         AxisViewY axisViewY = getAxisViewY();
         Axis axisX = axisViewX != null ? axisViewX.getAxis() : null;
@@ -165,10 +165,10 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         boolean isLogX = axisX != null && axisX.isLog();
         boolean isLogY = axisY != null && axisY.isLog();
         if (isLogX || isLogY)
-            dataStore = dataSet.getLogData(isLogX, isLogY);
+            dataStore = trace.getLogData(isLogX, isLogY);
 
         // Handle stacked
-        if (dataSet.isStacked()) {
+        if (trace.isStacked()) {
             DataStore prevStackedData = getPreviousStackedData();
             if (prevStackedData != null)
                 dataStore = DataStoreUtils.addStackedData(dataStore, prevStackedData);
@@ -193,7 +193,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns the DataSet points in display coords for this DataArea (cached).
+     * Returns the Trace points in display coords for this DataArea (cached).
      */
     public DataStore getDisplayData()
     {
@@ -206,7 +206,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns the DataSet points in display coords for this DataArea.
+     * Returns the Trace points in display coords for this DataArea.
      */
     protected DataStore getDisplayDataImpl()
     {
@@ -221,7 +221,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         AxisView axisViewX = getAxisViewX();
         AxisView axisViewY = getAxisViewY();
 
-        // Iterate over dataSet points and convert to display coords
+        // Iterate over data points and convert to display coords
         for (int i = 0; i < pointCount; i++) {
             double dataX = stagedData.getX(i);
             double dataY = stagedData.getY(i);
@@ -302,8 +302,8 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         int index = ArrayUtils.indexOf(dataAreas, this);
         for (int i = index - 1; i >= 0; i--) {
             DataArea prevDataArea = dataAreas[i];
-            DataSet prevDataSet = prevDataArea.getDataSet();
-            if (prevDataSet.isStacked())
+            Trace prevTrace = prevDataArea.getTrace();
+            if (prevTrace.isStacked())
                 return prevDataArea;
         }
         return null;
@@ -319,27 +319,27 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns whether dataset is selected.
+     * Returns whether trace is selected.
      */
     public boolean isSelected()
     {
-        DataSet dataSet = getDataSet();
-        DataSetPoint dataPoint = getChartView().getSelDataPoint();
-        return dataPoint != null && dataPoint.getDataSet() == dataSet;
+        Trace trace = getTrace();
+        TracePoint dataPoint = getChartView().getSelDataPoint();
+        return dataPoint != null && dataPoint.getTrace() == trace;
     }
 
     /**
-     * Returns whether dataset is targeted.
+     * Returns whether trace is targeted.
      */
     public boolean isTargeted()
     {
-        DataSet dataSet = getDataSet();
-        DataSetPoint dataPoint = getChartView().getTargDataPoint();
-        return dataPoint != null && dataPoint.getDataSet() == dataSet;
+        Trace trace = getTrace();
+        TracePoint dataPoint = getChartView().getTargDataPoint();
+        return dataPoint != null && dataPoint.getTrace() == trace;
     }
 
     /**
-     * Returns whether dataset is selected or targeted.
+     * Returns whether trace is selected or targeted.
      */
     public boolean isSelectedOrTargeted()
     {
@@ -347,23 +347,23 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Returns selected data point if in DataSet.
+     * Returns selected data point if in Trace.
      */
-    public DataSetPoint getSelDataPoint()
+    public TracePoint getSelDataPoint()
     {
-        DataSetPoint selDataPoint = getChartView().getSelDataPoint();
-        if (selDataPoint != null && selDataPoint.getDataSet() == getDataSet())
+        TracePoint selDataPoint = getChartView().getSelDataPoint();
+        if (selDataPoint != null && selDataPoint.getTrace() == getTrace())
             return selDataPoint;
         return null;
     }
 
     /**
-     * Returns targeted data point if in DataSet.
+     * Returns targeted data point if in Trace.
      */
-    public DataSetPoint getTargDataPoint()
+    public TracePoint getTargDataPoint()
     {
-        DataSetPoint targDataPoint = getChartView().getTargDataPoint();
-        if (targDataPoint != null && targDataPoint.getDataSet() == getDataSet())
+        TracePoint targDataPoint = getChartView().getTargDataPoint();
+        if (targDataPoint != null && targDataPoint.getTrace() == getTrace())
             return targDataPoint;
         return null;
     }
@@ -384,7 +384,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     protected int getRevealTime()  { return DataView.DEFAULT_REVEAL_TIME; }
 
     /**
-     * Returns the Y axis intervals for active datasets.
+     * Returns the Y axis intervals for active traces.
      */
     public Intervals getIntervalsY()
     {
@@ -392,7 +392,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Converts a point from dataset coords to view coords.
+     * Converts a point from data coords to view coords.
      */
     public Point dataToView(double dataX, double dataY)
     {
@@ -432,8 +432,8 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         aPntr.clipRect(0, 0, areaW, areaH);
 
         // Paint chart
-        DataSet dataSet = getDataSet();
-        if (dataSet.isEnabled() || getParent().getChildCount() == 1)
+        Trace trace = getTrace();
+        if (trace.isEnabled() || getParent().getChildCount() == 1)
             paintDataArea(aPntr);
 
         // Restore Graphics state
@@ -441,7 +441,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
     }
 
     /**
-     * Paints the DataArea (ChartType/DataSet specific painting).
+     * Paints the DataArea (ChartType/Trace specific painting).
      */
     protected void paintDataArea(Painter aPntr)  { }
 
@@ -450,13 +450,13 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     protected void paintDataAreaAbove(Painter aPntr)
     {
-        DataStyle dataStyle = getDataStyle();
-        if (dataStyle.isShowTags())
+        TraceStyle traceStyle = getDataStyle();
+        if (traceStyle.isShowTags())
             paintDataTags(aPntr);
     }
 
     /**
-     * Paints tags for DataSet.
+     * Paints tags for Trace.
      */
     protected void paintDataTags(Painter aPntr)  { }
 
@@ -464,7 +464,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      * Returns the data point closest to given x/y in local coords (null if none).
      * @return
      */
-    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
+    public TracePoint getDataPointForLocalXY(double aX, double aY)
     {
         // Constant for maximum display distance (in points)
         int MAX_SELECT_DISTANCE = 60;
@@ -472,7 +472,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         // Get data info
         DataStore stagedData = getStagedData();
         int pointCount = stagedData.getPointCount();
-        DataSetPoint dataPoint = null;
+        TracePoint dataPoint = null;
         double dist = MAX_SELECT_DISTANCE;
 
         // Iterate over points and get closest DataPoint
@@ -484,7 +484,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
             double dst = Point.getDistance(aX, aY, dispX, dispY);
             if (dst < dist) {
                 dist = dst;
-                dataPoint = getDataSet().getPoint(i);
+                dataPoint = getTrace().getPoint(i);
             }
         }
 
@@ -496,7 +496,7 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      * Returns the given data point X/Y in this view coords.
      * @param aDP
      */
-    public Point getLocalXYForDataPoint(DataSetPoint aDP)
+    public Point getLocalXYForDataPoint(TracePoint aDP)
     {
         DataStore stagedData = getStagedData();
         int index = aDP.getIndex();
@@ -510,8 +510,8 @@ public abstract class DataArea extends ChartPartView<DataSet> {
      */
     protected void resetView()
     {
-        // Get/set DataSet.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
-        _axisTypeY = _dataSet.getAxisTypeY();
+        // Get/set Trace.AxisTypeY. If chart type doesn't support it, coerce down to standard Y
+        _axisTypeY = _trace.getAxisTypeY();
         if (_axisTypeY != AxisType.Y && !_chartHelper.isAxisType(_axisTypeY))
             _axisTypeY = AxisType.Y;
     }
@@ -542,9 +542,9 @@ public abstract class DataArea extends ChartPartView<DataSet> {
         // Clear XYPainter
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
-        DataSet dataSet = getDataSet();
-        DataStyle dataStyle = getDataStyle();
-        if (src == dataSet || src == dataStyle || src instanceof Axis || propName == DataSet.Stacked_Prop) {
+        Trace trace = getTrace();
+        TraceStyle traceStyle = getDataStyle();
+        if (src == trace || src == traceStyle || src instanceof Axis || propName == Trace.Stacked_Prop) {
             clearStagedData();
         }
     }

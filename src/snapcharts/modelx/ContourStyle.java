@@ -2,12 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.modelx;
-import snapcharts.model.DataStyle;
+import snapcharts.model.TraceStyle;
 
 /**
  * A DataStyle subclass for Contour chart properties.
  */
-public class ContourStyle extends DataStyle {
+public class ContourStyle extends TraceStyle {
 
     // The number of levels of contours
     private int  _levelCount = 16;

@@ -3,8 +3,8 @@ import snap.util.PropChange;
 import snap.util.PropDefaults;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceList;
 
 /**
  * A DocItem subclass to hold a chart.
@@ -18,10 +18,10 @@ public class DocItemChart extends DocItem<Chart> {
     {
         super(aChart);
 
-        // Add Items for DataSets
-        DataSetList dsetList = _content.getDataSetList();
-        for (DataSet dset : dsetList.getDataSets())
-            addItem(new DocItemDataSet(dset));
+        // Add Items for Traces
+        TraceList traceList = _content.getTraceList();
+        for (Trace trace : traceList.getTraces())
+            addItem(new DocItemDataSet(trace));
 
         // Start listening to prop changes
         _content.addPropChangeListener(aPC -> chartDidPropChange(aPC));
@@ -54,15 +54,15 @@ public class DocItemChart extends DocItem<Chart> {
     public ChartPart getChartPart()  { return getChart(); }
 
     /**
-     * Override to accept DataSets.
+     * Override to accept Traces.
      */
     public DocItem addChartPart(ChartPart aChartPart, DocItem aChildItem)
     {
-        // Handle add DataSet
-        if (aChartPart instanceof DataSet) {
-            DataSet dset = (DataSet) aChartPart;
+        // Handle add Trace
+        if (aChartPart instanceof Trace) {
+            Trace trace = (Trace) aChartPart;
             int ind = aChildItem != null ? aChildItem.getIndex() + 1 : getItemCount();
-            getChart().getDataSetList().addDataSet(dset, ind);
+            getChart().getTraceList().addTrace(trace, ind);
             return getItem(ind);
         }
 
@@ -78,10 +78,10 @@ public class DocItemChart extends DocItem<Chart> {
         // Get property name
         String propName = aPC.getPropName();
 
-        // Handle DataSet add/remove
-        if (propName == DataSetList.DataSet_Prop) {
+        // Handle Trace add/remove
+        if (propName == TraceList.Trace_Prop) {
             int ind = aPC.getIndex(); if (ind < 0) return;
-            DataSet newVal = (DataSet) aPC.getNewValue();
+            Trace newVal = (Trace) aPC.getNewValue();
             if (newVal != null)
                 addItem(new DocItemDataSet(newVal));
             else removeItem(ind);

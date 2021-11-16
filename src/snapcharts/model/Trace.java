@@ -11,11 +11,10 @@ import snapcharts.util.MinMax;
 import java.util.*;
 
 /**
- * This class is a high-level representation of a chart data set.
- *
- * It contains the raw data (DataStore) and expressions, filters and more to provide processed data (also a DataStore).
+ * This class represents a 'rendered' or 'painted' dataset. It contains the original data (DataSet) and paint properties
+ * as well as expressions, filters and more to provide processed data.
  */
-public class DataSet extends ChartPart {
+public class Trace extends ChartPart {
     
     // The index in data set
     protected int  _index;
@@ -35,14 +34,14 @@ public class DataSet extends ChartPart {
     // Whether data is stacked
     private boolean  _stacked;
 
-    // Whether dataset is disabled
+    // Whether trace is disabled
     private boolean  _disabled;
 
     // Whether to show legend entry
     private boolean  _showLegendEntry = true;
 
     // The DataStyleHpr
-    private DataStyleHpr  _dataStyleHpr;
+    private TraceStyleHpr _traceStyleHpr;
 
     // The RawData
     private DataStore _rawData = DataStore.newDataStore();
@@ -74,13 +73,13 @@ public class DataSet extends ChartPart {
     /**
      * Constructor.
      */
-    public DataSet()
+    public Trace()
     {
         super();
     }
 
     /**
-     * Returns the index in dataset.
+     * Returns the index in TraceList.
      */
     public int getIndex()  { return _index; }
 
@@ -146,7 +145,7 @@ public class DataSet extends ChartPart {
 
         // If not Y AxisType, complain
         if (anAxisType==null || !anAxisType.isAnyY())
-            throw new IllegalArgumentException("DataSet.setAxisTypeY: Unsupported AxisTypeY: " + anAxisType);
+            throw new IllegalArgumentException("Trace.setAxisTypeY: Unsupported AxisTypeY: " + anAxisType);
 
         // Set and firePropChange
         firePropChange(AxisTypeY_Prop, _axisTypeY, _axisTypeY = anAxisType);
@@ -198,12 +197,12 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns whether this dataset is stacked.
+     * Returns whether this trace is stacked.
      */
     public boolean isStacked()  { return _stacked; }
 
     /**
-     * Sets whether this dataset is stacked.
+     * Sets whether this trace is stacked.
      */
     public void setStacked(boolean aValue)
     {
@@ -212,12 +211,12 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns whether this dataset is disabled.
+     * Returns whether this trace is disabled.
      */
     public boolean isDisabled()  { return _disabled; }
 
     /**
-     * Sets whether this dataset is disabled.
+     * Sets whether this trace is disabled.
      */
     public void setDisabled(boolean aValue)
     {
@@ -226,17 +225,17 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns whether this dataset is enabled.
+     * Returns whether this trace is enabled.
      */
     public boolean isEnabled()  { return !_disabled; }
 
     /**
-     * Returns whether to show legend entry for this dataset.
+     * Returns whether to show legend entry for this trace.
      */
     public boolean isShowLegendEntry()  { return _showLegendEntry; }
 
     /**
-     * Sets whether to show legend entry for this dataset.
+     * Sets whether to show legend entry for this trace.
      */
     public void setShowLegendEntry(boolean aValue)
     {
@@ -245,13 +244,13 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the DataStyle for this DataSet (and ChartType).
+     * Returns the DataStyle for this trace (and ChartType).
      */
-    public DataStyle getDataStyle()
+    public TraceStyle getTraceStyle()
     {
-        if (_dataStyleHpr == null)
-            _dataStyleHpr = new DataStyleHpr(this);
-        return _dataStyleHpr.getDataStyle();
+        if (_traceStyleHpr == null)
+            _traceStyleHpr = new TraceStyleHpr(this);
+        return _traceStyleHpr.getDataStyle();
     }
 
     /**
@@ -283,9 +282,9 @@ public class DataSet extends ChartPart {
     /**
      * Returns the data point at given index.
      */
-    public DataSetPoint getPoint(int anIndex)
+    public TracePoint getPoint(int anIndex)
     {
-        return new DataSetPoint(this, anIndex);
+        return new TracePoint(this, anIndex);
     }
 
     /**
@@ -449,7 +448,7 @@ public class DataSet extends ChartPart {
             return cats.get(anIndex);
 
         // If start value is set
-        int startValue = getDataSetList().getStartValue();
+        int startValue = getTraceList().getStartValue();
         if (startValue!=0)
             return String.valueOf(startValue + anIndex);
 
@@ -473,7 +472,7 @@ public class DataSet extends ChartPart {
             case C: return getString(anIndex);
             case T: return getValueX(anIndex);
             case R: return getValueY(anIndex);
-            default: throw new RuntimeException("DataSet.getValueForChannelAndIndex: Unknown channel: " + aChan);
+            default: throw new RuntimeException("Trace.getValueForChannelAndIndex: Unknown channel: " + aChan);
         }
     }
 
@@ -499,13 +498,13 @@ public class DataSet extends ChartPart {
                 setValueZ(valZ, anIndex);
                 break;
             case I:
-                System.err.println("DataSet.setValueForChannel: Shouldn't set value for index channel");
+                System.err.println("Trace.setValueForChannel: Shouldn't set value for index channel");
                 break;
             case C:
                 String valC = aValue!=null ? SnapUtils.stringValue(aValue) : null;
                 setValueC(valC, anIndex);
                 break;
-            default: throw new RuntimeException("DataSet.getValueForChannelAndIndex: Unknown channel: " + aChan);
+            default: throw new RuntimeException("Trace.getValueForChannelAndIndex: Unknown channel: " + aChan);
         }
 
         // Get point
@@ -621,7 +620,7 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the minimum Z value in this dataset.
+     * Returns the minimum Z value in this trace.
      */
     public double getMinZ()
     {
@@ -630,7 +629,7 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns the maximum Z value in this dataset.
+     * Returns the maximum Z value in this trace.
      */
     public double getMaxZ()
     {
@@ -639,7 +638,7 @@ public class DataSet extends ChartPart {
     }
 
     /**
-     * Returns whether this dataset is clear (no name and no values).
+     * Returns whether this trace is clear (no name and no values).
      */
     public boolean isClear()
     {
@@ -665,7 +664,7 @@ public class DataSet extends ChartPart {
     @Override
     public String toString()
     {
-        String str = "DataSet { " + "Name=" + getName() + ", DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        String str = "Trace { " + "Name=" + getName() + ", DataType=" + getDataType() + ", PointCount=" + getPointCount();
         DataStore dataStore = getRawData();
         for (DataChan chan : getDataType().getChannels()) {
             MinMax minMax = dataStore.getMinMax(chan);
@@ -704,8 +703,8 @@ public class DataSet extends ChartPart {
             e.add(ShowLegendEntry_Prop, false);
 
         // Archive DataStyle
-        DataStyle dataStyle = getDataStyle();
-        XMLElement dataStyleXML = dataStyle.toXML(anArchiver);
+        TraceStyle traceStyle = getTraceStyle();
+        XMLElement dataStyleXML = traceStyle.toXML(anArchiver);
         if (dataStyleXML.getAttributeCount() > 0) {
             dataStyleXML.setName("DataStyle");
             e.addElement(dataStyleXML);
@@ -752,16 +751,16 @@ public class DataSet extends ChartPart {
         // Unarchive DataStyle
         XMLElement dataStyleXML = anElement.getElement("DataStyle");
         if (dataStyleXML != null)
-            getDataStyle().fromXML(anArchiver, dataStyleXML);
+            getTraceStyle().fromXML(anArchiver, dataStyleXML);
 
         // Unarchive RawData
         DataStore rawData = getRawData();
         rawData.fromXML(anArchiver, anElement);
 
         // Legacy
-        if (anElement.hasAttribute(DataStyle.ShowSymbols_Prop)) {
-            boolean showSymbols = anElement.getAttributeBoolValue(DataStyle.ShowSymbols_Prop);
-            getDataStyle().setShowSymbols(showSymbols);
+        if (anElement.hasAttribute(TraceStyle.ShowSymbols_Prop)) {
+            boolean showSymbols = anElement.getAttributeBoolValue(TraceStyle.ShowSymbols_Prop);
+            getTraceStyle().setShowSymbols(showSymbols);
         }
 
         // Return this part

@@ -38,14 +38,14 @@ public class PieChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getEnabledDataSets();
-        if (dataSets.length == 0)
-            dataSets = dataSetList.getDataSets();
-        if (dataSets.length == 0)
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getEnabledTraces();
+        if (traces.length == 0)
+            traces = traceList.getTraces();
+        if (traces.length == 0)
             return new DataArea[0];
-        DataSet dset = dataSets[0];
-        return new DataArea[] { _dataArea = new PieDataArea(this, dset) };
+        Trace trace = traces[0];
+        return new DataArea[] { _dataArea = new PieDataArea(this, trace) };
     }
 
     /**
@@ -54,18 +54,18 @@ public class PieChartHelper extends ChartHelper {
     public void activate()
     {
         // Get info
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        int dsetCount = dataSets.length;
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
 
         // Update parts
         Legend legend = getChart().getLegend();
         _showLegend = legend.isShowLegend();
-        legend.setShowLegend(dsetCount>1);
+        legend.setShowLegend(traceCount>1);
 
-        // If multiple datasets, make sure only first is enabled
-        for (int i=1; i<dsetCount; i++)
-            dataSets[i].setDisabled(i > 0);
+        // If multiple traces, make sure only first is enabled
+        for (int i = 1; i < traceCount; i++)
+            traces[i].setDisabled(i > 0);
     }
 
     /**
@@ -83,21 +83,21 @@ public class PieChartHelper extends ChartHelper {
      */
     public void resetView()
     {
-        // Make sure all DataSet.AxisTypeY are just Y
-        DataSetList dsetList = getDataSetList();
-        DataSet[] dataSets = dsetList.getDataSets(); if (dataSets.length == 0) return;
-        for (DataSet dset : dataSets)
-            dset.setAxisTypeY(AxisType.Y);
+        // Make sure all Trace.AxisTypeY are just Y
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        for (Trace trace : traces)
+            trace.setAxisTypeY(AxisType.Y);
 
         // Do normal version
         super.resetView();
 
         // Update SelDataPoint
-        DataSet dataSet = dsetList.getDataSet(0);
-        if (dataSet.getPointCount()==0) return;
-        DataSetPoint dataSetPoint = dataSet.getPoint(0);
+        Trace trace = traceList.getTrace(0);
+        if (trace.getPointCount()==0) return;
+        TracePoint tracePoint = trace.getPoint(0);
         _dataArea._disableMorph = true;
-        _chartView.setSelDataPoint(dataSetPoint);
+        _chartView.setSelDataPoint(tracePoint);
         _dataArea._disableMorph = false;
 
         // Fix padding to accommodate bottom label, if needed

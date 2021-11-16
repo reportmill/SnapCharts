@@ -5,8 +5,8 @@ package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.Axis;
-import snapcharts.model.DataStyle;
-import snapcharts.model.DataSet;
+import snapcharts.model.TraceStyle;
+import snapcharts.model.Trace;
 
 /**
  * A (Polar)DataArea subclass for PolarContour charts.
@@ -22,9 +22,9 @@ public class PolarContourDataArea extends PolarDataArea {
     /**
      * Constructor.
      */
-    public PolarContourDataArea(PolarContourChartHelper aChartHelper, DataSet aDataSet)
+    public PolarContourDataArea(PolarContourChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
 
         _contourHelper = aChartHelper._contourHelper;
         _contourPainter = new ContourPainter(_contourHelper, this);
@@ -56,7 +56,7 @@ public class PolarContourDataArea extends PolarDataArea {
 
         // Handle changes
         Object src = aPC.getSource();
-        if (src==getDataSet() || src instanceof Axis || src instanceof DataStyle) {
+        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle) {
             _contourPainter.clearContoursAll();
         }
     }

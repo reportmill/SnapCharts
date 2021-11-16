@@ -8,34 +8,34 @@ import snapcharts.data.DataType;
 /**
  * A class to represent a data point.
  */
-public class DataSetPoint extends DataPoint {
+public class TracePoint extends DataPoint {
 
-    // The DataSet this point belongs to
-    protected DataSet _dset;
+    // The Trace this point belongs to
+    protected Trace  _trace;
 
     // The index of point in data set
     protected int  _index;
 
     /**
-     * Constructor for dataset point at index.
+     * Constructor.
      */
-    public DataSetPoint(DataSet aDataSet, int anIndex)
+    public TracePoint(Trace aTrace, int anIndex)
     {
-        _dset = aDataSet;
+        _trace = aTrace;
         _index = anIndex;
-        _x = _dset.getValueX(_index);
-        _y = _dset.getValueY(_index);
-        _z = _dset.getValueZ(_index);
-        _c = _dset.getC(_index);
+        _x = _trace.getValueX(_index);
+        _y = _trace.getValueY(_index);
+        _z = _trace.getValueZ(_index);
+        _c = _trace.getC(_index);
     }
 
     /**
-     * Returns the DataSet.
+     * Returns the Trace.
      */
-    public DataSet getDataSet()  { return _dset; }
+    public Trace getTrace()  { return _trace; }
 
     /**
-     * Returns the index of this point in dataset.
+     * Returns the index of this point in trace.
      */
     public int getIndex()  { return _index; }
 
@@ -44,10 +44,10 @@ public class DataSetPoint extends DataPoint {
      */
     public int getColIndex()
     {
-        if (_dset.getDataType() != DataType.XYZZ)
+        if (_trace.getDataType() != DataType.XYZZ)
             return 0;
         int index = getIndex();
-        int colCount = _dset.getColCount(); if (colCount == 0) return index;
+        int colCount = _trace.getColCount(); if (colCount == 0) return index;
         return index % colCount;
     }
 
@@ -57,9 +57,9 @@ public class DataSetPoint extends DataPoint {
     public int getRowIndex()
     {
         int index = getIndex();
-        if (_dset.getDataType() != DataType.XYZZ)
+        if (_trace.getDataType() != DataType.XYZZ)
             return index;
-        int colCount = _dset.getColCount(); if (colCount == 0) return index;
+        int colCount = _trace.getColCount(); if (colCount == 0) return index;
         return index / colCount;
     }
 
@@ -70,11 +70,11 @@ public class DataSetPoint extends DataPoint {
     {
         // Check basics
         if (anObj == this) return true;
-        DataSetPoint other = anObj instanceof DataSetPoint ? (DataSetPoint) anObj : null;
+        TracePoint other = anObj instanceof TracePoint ? (TracePoint) anObj : null;
         if (other == null) return false;
 
-        // Check DataSet, Index
-        if (other._dset != _dset) return false;
+        // Check Trace, Index
+        if (other._trace != _trace) return false;
         if (other._index != _index) return false;
         return true;
     }

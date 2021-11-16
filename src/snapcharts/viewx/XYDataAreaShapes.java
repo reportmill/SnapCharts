@@ -98,7 +98,7 @@ public class XYDataAreaShapes {
         public PathIter getPathIter(Transform aTransform)
         {
             // If Stacked and there is a PreviousStackedDataArea, return DataAreaToNextPathIter
-            boolean isStacked = _dataArea.getDataSet().isStacked();
+            boolean isStacked = _dataArea.getTrace().isStacked();
             if (isStacked) {
                 DataArea previousStackedDataArea = _dataArea.getPreviousStackedDataArea();
                 if (previousStackedDataArea != null)

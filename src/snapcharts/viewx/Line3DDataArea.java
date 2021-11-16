@@ -31,9 +31,9 @@ public class Line3DDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public Line3DDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public Line3DDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
 
         // Create/add CameraView
         _camView = new CameraView() {
@@ -135,7 +135,7 @@ public class Line3DDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList) {
+        if (src instanceof Trace || src instanceof TraceList) {
             _camView.relayout();
         }
     }

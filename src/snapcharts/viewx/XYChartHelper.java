@@ -5,8 +5,8 @@ package snapcharts.viewx;
 import snap.gfx.Border;
 import snap.gfx.Painter;
 import snapcharts.model.ChartType;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceList;
 import snapcharts.view.*;
 
 /**
@@ -38,14 +38,14 @@ public class XYChartHelper extends ChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        int dsetCount = dataSets.length;
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
 
-        DataArea[] dataAreas = new DataArea[dsetCount];
-        for (int i=0; i<dsetCount; i++) {
-            DataSet dset = dataSets[i];
-            dataAreas[i] = new XYDataArea(this, dset);
+        DataArea[] dataAreas = new DataArea[traceCount];
+        for (int i = 0; i < traceCount; i++) {
+            Trace trace = traces[i];
+            dataAreas[i] = new XYDataArea(this, trace);
         }
 
         return dataAreas;
@@ -85,8 +85,8 @@ public class XYChartHelper extends ChartHelper {
     public static void paintBorderXY(ChartHelper aChartHelper, Painter aPntr)
     {
         // Get border
-        DataSetList dataSetList = aChartHelper.getDataSetList();
-        Border border = dataSetList.getBorder();
+        TraceList traceList = aChartHelper.getTraceList();
+        Border border = traceList.getBorder();
         if (border == null)
             return;
 

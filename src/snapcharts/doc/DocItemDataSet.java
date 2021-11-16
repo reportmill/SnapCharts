@@ -1,37 +1,37 @@
 package snapcharts.doc;
 import snapcharts.model.ChartPart;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 
 /**
  * A DocItem subclass to hold a chart.
  */
-public class DocItemDataSet extends DocItem<DataSet> {
+public class DocItemDataSet extends DocItem<Trace> {
 
     /**
      * Constructor.
      */
-    public DocItemDataSet(DataSet aDataSet)
+    public DocItemDataSet(Trace aTrace)
     {
-        super(aDataSet);
+        super(aTrace);
     }
 
     /**
-     * Returns the DataSet.
+     * Returns the Trace.
      */
-    public DataSet getDataSet()  { return _content; }
+    public Trace getTrace()  { return _content; }
 
     /**
-     * Override to return DataSet name.
+     * Override to return Trace name.
      */
     @Override
     public String getName()
     {
-        return getDataSet().getName();
+        return getTrace().getName();
     }
 
     /**
-     * Override to return DataSet.
+     * Override to return Trace.
      */
     @Override
-    public ChartPart getChartPart()  { return getDataSet(); }
+    public ChartPart getChartPart()  { return getTrace(); }
 }

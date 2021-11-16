@@ -8,10 +8,10 @@ import snap.view.*;
 import snapcharts.appmisc.SheetView;
 import snapcharts.doc.DocItemDataSet;
 import snapcharts.data.DataChan;
-import snapcharts.model.DataSet;
+import snapcharts.model.Trace;
 import snapcharts.data.DataStore;
 import snapcharts.data.DataType;
-import snapcharts.util.DataSetUtils;
+import snapcharts.util.TraceUtils;
 import snapcharts.data.DataUtils;
 
 /**
@@ -19,8 +19,8 @@ import snapcharts.data.DataUtils;
  */
 public class DataSetPane extends DocItemPane<DocItemDataSet> {
 
-    // The DataSet
-    private DataSet  _dataSet;
+    // The Trace
+    private Trace  _trace;
 
     // The SheetView
     private SheetView  _sheetView;
@@ -38,23 +38,23 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
     {
         super(aDataSet);
 
-        setDataSet(aDataSet.getDataSet());
+        setTrace(aDataSet.getTrace());
     }
 
     /**
-     * Returns the DataSet.
+     * Returns the Trace.
      */
-    public DataSet getDataSet()  { return _dataSet; }
+    public Trace getTrace()  { return _trace; }
 
     /**
-     * Sets the DataSet.
+     * Sets the Trace.
      */
-    public void setDataSet(DataSet aDS)
+    public void setTrace(Trace aDS)
     {
-        _dataSet = aDS;
+        _trace = aDS;
 
         // Start listening to changes
-        _dataSet.addPropChangeListener(pc -> dataSetDidChange(pc));
+        _trace.addPropChangeListener(pc -> traceDidChange(pc));
     }
 
     /**
@@ -75,9 +75,9 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
         // Get cells
         String[][] cells = DataUtils.getCellData(str);
         if (cells != null) {
-            DataSet dset = getDataSet();
+            Trace trace = getTrace();
             ListSel sel = _sheetView.getSel();
-            DataSetUtils.replaceDataForSelection(dset, sel, cells);
+            TraceUtils.replaceDataForSelection(trace, sel, cells);
         }
 
         // Reset
@@ -95,9 +95,9 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
         // Get selection (just return if empty)
         ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
 
-        // Get DataSet
-        DataSet dset = getDataSet();
-        DataSetUtils.deleteDataForSelection(dset, sel);
+        // Get Trace
+        Trace trace = getTrace();
+        TraceUtils.deleteDataForSelection(trace, sel);
 
         // Reset selection
         _sheetView.setSelIndex(sel.getMin()-1);
@@ -137,19 +137,19 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
      */
     protected void resetUI()
     {
-        // Get DataSet info
-        DataSet dset = getDataSet();
-        DataType dataType = dset.getDataType();
+        // Get Trace info
+        Trace trace = getTrace();
+        DataType dataType = trace.getDataType();
 
         // Set TableView row & col count
-        int pointCount = dset.getPointCount();
+        int pointCount = trace.getPointCount();
         int rowCount = pointCount + 1;
         int colCount = dataType.getChannelCount();
         _sheetView.setMinRowCount(rowCount);
         _sheetView.setMinColCount(colCount);
 
         // Update PointCountLabel
-        DataStore dataStore = dset.getRawData();
+        DataStore dataStore = trace.getRawData();
         String str = "Points: " + pointCount + "   |   ";
         str += "Min X: " + FormatUtils.formatNum(dataStore.getMinX()) + "   |   ";
         str += "Max X: " + FormatUtils.formatNum(dataStore.getMaxX()) + "   |   ";
@@ -184,13 +184,13 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
      */
     private void configureColumn(TableCol aCol)
     {
-        // Get DataSet info
-        DataSet dset = getDataSet();
-        DataType dtype = dset.getDataType();
+        // Get Trace info
+        Trace trace = getTrace();
+        DataType dataType = trace.getDataType();
 
         // Get column and DataChan
         int col = aCol.getColIndex();
-        DataChan dchan = col<dtype.getChannelCount() ? dtype.getChannel(col) : null;
+        DataChan dchan = col < dataType.getChannelCount() ? dataType.getChannel(col) : null;
 
         // Get HeaderText string
         String headerText = "";
@@ -210,17 +210,17 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
      */
     private void configureCell(ListCell aCell)
     {
-        // Get DataSet info
-        DataSet dset = getDataSet();
-        DataType dataType = dset.getDataType();
+        // Get Trace info
+        Trace trace = getTrace();
+        DataType dataType = trace.getDataType();
         int chanCount = dataType.getChannelCount();
-        int pointCount = dset.getPointCount();
+        int pointCount = trace.getPointCount();
 
         // Set Cell.MinSize
         int minCellHeight = (int) Math.ceil(aCell.getFont().getLineHeight());
         aCell.getStringView().setMinSize(40, minCellHeight);
 
-        // Get dataset count, point count, row and column
+        // Get trace count, point count, row and column
         int row = aCell.getRow();
         int col = aCell.getCol();
         if (row>=pointCount || col>=chanCount) {
@@ -229,7 +229,7 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
         }
 
         // Get/set Cell value/text
-        Object val = dset.getValueForChannelIndex(col, row);
+        Object val = trace.getValueForChannelIndex(col, row);
         String valStr = SnapUtils.stringValue(val);
         aCell.setText(valStr);
         aCell.setAlignX(HPos.RIGHT);
@@ -240,58 +240,58 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
      */
     private void editingCellChanged(PropChange aPC)
     {
-        // Get DataSet info
-        DataSet dset = getDataSet();
+        // Get Trace info
+        Trace trace = getTrace();
 
         // If cell that stopped editing (just return if null)
         ListCell cell = (ListCell) aPC.getOldValue(); if (cell == null) return;
 
-        // Get row/col and make sure there are dataset/points to cover it
+        // Get row/col and make sure there are trace/points to cover it
         String text = cell.getText();
         int row = cell.getRow();
         int col = cell.getCol();
-        expandDataSetSize(row);
+        expandTraceSize(row);
 
         // Set value
-        dset.setValueForChannelIndex(text, col, row);
+        trace.setValueForChannelIndex(text, col, row);
 
-        // Update row and trim DataSet in case dataset/points were cleared
+        // Update row and trim Trace in case trace/points were cleared
         _sheetView.updateItems(cell.getItem());
-        trimDataSet();
+        trimTrace();
         resetLater();
     }
 
     /**
-     * Make sure dataset is at least given size.
+     * Make sure trace is at least given size.
      */
-    private void expandDataSetSize(int aSize)
+    private void expandTraceSize(int aSize)
     {
-        DataSet dset = getDataSet();
-        if (aSize >= dset.getPointCount())
-            dset.setPointCount(aSize + 1);
+        Trace trace = getTrace();
+        if (aSize >= trace.getPointCount())
+            trace.setPointCount(aSize + 1);
     }
 
     /**
-     * Removes empty dataset and slices.
+     * Removes empty trace and slices.
      */
-    private void trimDataSet()
+    private void trimTrace()
     {
         // While last slice is empty, remove it
-        DataSet dset = getDataSet();
-        int pc = dset.getPointCount();
-        while (pc>1 && dset.getPoint(pc-1).getValueY()==null)
-            dset.setPointCount(--pc);
+        Trace trace = getTrace();
+        int pointCount = trace.getPointCount();
+        while (pointCount > 1 && trace.getPoint(pointCount - 1).getValueY() == null)
+            trace.setPointCount(--pointCount);
     }
 
     /**
-     * Called when DataSet has prop change.
+     * Called when Trace has prop change.
      */
-    private void dataSetDidChange(PropChange aPC)
+    private void traceDidChange(PropChange aPC)
     {
         String propName = aPC.getPropName();
 
-        // Handle DataSet.DataType change
-        if (propName == DataSet.DataType_Prop) {
+        // Handle Trace.DataType change
+        if (propName == Trace.DataType_Prop) {
             _sheetView.setMinColCount(0);
             resetLater();
         }

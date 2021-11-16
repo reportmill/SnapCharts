@@ -5,8 +5,8 @@ import snap.gfx.Font;
 import snap.gfx.Paint;
 import snap.view.ChildView;
 import snapcharts.model.Axis;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataSetList;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceList;
 import snapcharts.model.Intervals;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,10 +150,10 @@ public class TickLabelBox extends ChildView {
      */
     public static TickLabel[] createTickLabelsForCategoryAxis(AxisView axisView)
     {
-        // Get DataSet and pointCount
-        DataSetList dataSetList = axisView.getDataSetList();
-        DataSet dataSet = dataSetList.getDataSetCount() > 0 ? dataSetList.getDataSet(0) : null;
-        int pointCount = dataSetList.getPointCount();
+        // Get Trace and pointCount
+        TraceList traceList = axisView.getTraceList();
+        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
+        int pointCount = traceList.getPointCount();
         TickLabel[] tickLabels = new TickLabel[pointCount];
 
         // Get TickLabel attributes
@@ -164,7 +164,7 @@ public class TickLabelBox extends ChildView {
         // Iterate over points and create/set TickLabel
         for (int i = 0; i < pointCount; i++) {
             TickLabel tickLabel = tickLabels[i] = new TickLabel(i + .5);
-            String str = dataSet.getString(i); // was getC(i)
+            String str = trace.getString(i); // was getC(i)
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
             tickLabel.setTextFill(tickTextFill);

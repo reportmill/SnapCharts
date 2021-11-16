@@ -16,10 +16,10 @@ public class BarDataArea extends DataArea {
     // The BarStyle
     private BarStyle  _barStyle;
 
-    // The number of datasets to display
-    protected int  _dsetCount;
+    // The number of traces to display
+    protected int  _traceCount;
 
-    // The number of values in dataset(s)
+    // The number of values in trace(s)
     protected int  _pointCount;
 
     // The cached sections
@@ -28,9 +28,9 @@ public class BarDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public BarDataArea(ChartHelper aChartHelper, DataSet aDataSet)
+    public BarDataArea(ChartHelper aChartHelper, Trace aTrace)
     {
-        super(aChartHelper, aDataSet);
+        super(aChartHelper, aTrace);
 
         // Add top so top axis line isn't on edge
         //setPadding(5,0,0,0);
@@ -51,11 +51,11 @@ public class BarDataArea extends DataArea {
     protected Section[] getSections()
     {
         // If recalc not needed, just return
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getEnabledDataSets();
-        int dsetCount = dataSets.length;
-        int pointCount = dataSetList.getPointCount();
-        if (_sections != null && _sections.length == pointCount && _dsetCount == dsetCount)
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getEnabledTraces();
+        int traceCount = traces.length;
+        int pointCount = traceList.getPointCount();
+        if (_sections != null && _sections.length == pointCount && _traceCount == traceCount)
             return _sections;
 
         // Get DataAreaBar info
@@ -63,10 +63,10 @@ public class BarDataArea extends DataArea {
         double groupPad = barStyle.getGroupPadding();
         double barPad = barStyle.getBarPadding();
         double viewHeight = getHeight();
-        boolean colorDataSets = !barStyle.isColorValues();
+        boolean colorTraces = !barStyle.isColorValues();
 
-        // Get number of datasets, points and section width
-        _dsetCount = dsetCount;
+        // Get number of traces, points and section width
+        _traceCount = traceCount;
         _pointCount = pointCount;
         double sectionWidth = getWidth()/_pointCount;
 
@@ -77,8 +77,8 @@ public class BarDataArea extends DataArea {
 
         // Get width of individual bar (bar count + bar spaces + bar&space at either end)
         double barWidthRatio = 1 - barPad*2;
-        double barWidth = barWidthRatio>=0 ? barWidthRatio*groupWidth/ _dsetCount : 1;
-        double barPadWidth = barWidthRatio>=0 ? barPad*groupWidth/ _dsetCount : 1;
+        double barWidth = barWidthRatio>=0 ? barWidthRatio*groupWidth/ _traceCount : 1;
+        double barPadWidth = barWidthRatio>=0 ? barPad*groupWidth/ _traceCount : 1;
 
         // Create new bars array
         Section[] sections = new Section[pointCount];
@@ -88,20 +88,20 @@ public class BarDataArea extends DataArea {
 
             // Create/set new section and section.bars
             Section section = sections[i] = new Section(i*sectionWidth, 0, sectionWidth, viewHeight);
-            section.bars = new Bar[_dsetCount];
+            section.bars = new Bar[_traceCount];
 
-            // Iterate over datasets
-            for (int j = 0; j< _dsetCount; j++) {
+            // Iterate over traces
+            for (int j = 0; j< _traceCount; j++) {
 
                 // Get data point
-                DataSet dataSet = dataSets[j];
-                DataSetPoint dataPoint = dataSet.getPoint(i);
+                Trace trace = traces[j];
+                TracePoint dataPoint = trace.getPoint(i);
                 double dataY = dataPoint.getY();
                 double dispY = dataToViewY(dataY);
 
                 // Draw bar
-                DataStyle dataStyle = dataSet.getDataStyle();
-                Color color = colorDataSets ? dataStyle.getLineColor() : getColorMapColor(i);
+                TraceStyle traceStyle = trace.getTraceStyle();
+                Color color = colorTraces ? traceStyle.getLineColor() : getColorMapColor(i);
                 double barX = i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
                 double barHeight = viewHeight - dispY;
                 section.bars[j] = new Bar(dataPoint, barX, dispY, barWidth, barHeight, color);
@@ -127,7 +127,7 @@ public class BarDataArea extends DataArea {
     protected void paintDataArea(Painter aPntr)
     {
         // Get selected point index (section index)
-        DataSetPoint dataPoint = getChartView().getTargDataPoint();
+        TracePoint dataPoint = getChartView().getTargDataPoint();
         int selIndex = dataPoint!=null ? dataPoint.getIndex() : -1;
 
         double viewW = getWidth();
@@ -149,8 +149,8 @@ public class BarDataArea extends DataArea {
                 aPntr.fillRect(i*section.width, 0, section.width, viewH);
             }
 
-            // Iterate over datasets and draw bars
-            for (int j=0; j<_dsetCount; j++) { Bar bar = section.bars[j];
+            // Iterate over traces and draw bars
+            for (int j = 0; j< _traceCount; j++) { Bar bar = section.bars[j];
                 aPntr.setColor(bar.color);
                 aPntr.fillRect(bar.x, bar.y, bar.width, bar.height - .5);
             }
@@ -165,14 +165,14 @@ public class BarDataArea extends DataArea {
      * @return
      */
     @Override
-    public DataSetPoint getDataPointForLocalXY(double aX, double aY)
+    public TracePoint getDataPointForLocalXY(double aX, double aY)
     {
         // Get sections array
         Section[] sections = getSections();
 
-        // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
+        // Iterate over sections (points) and bars (trace) and if bar contains point, return data point
         for (int i = 0; i < _pointCount; i++) { Section section = sections[i];
-            for (int j = 0; j < _dsetCount; j++) { Bar bar = section.bars[j];
+            for (int j = 0; j < _traceCount; j++) { Bar bar = section.bars[j];
                 if (bar.contains(aX, aY))
                     return bar.point;
             }
@@ -187,14 +187,14 @@ public class BarDataArea extends DataArea {
      * @param aDP
      */
     @Override
-    public Point getLocalXYForDataPoint(DataSetPoint aDP)
+    public Point getLocalXYForDataPoint(TracePoint aDP)
     {
         // Get sections array
         Section[] sections = getSections();
 
-        // Iterate over sections (points) and bars (dataset) and if bar contains point, return data point
+        // Iterate over sections (points) and bars (trace) and if bar contains point, return data point
         for (int i=0; i<_pointCount; i++) { Section section = sections[i];
-            for (int j=0; j<_dsetCount; j++) { Bar bar = section.bars[j];
+            for (int j = 0; j< _traceCount; j++) { Bar bar = section.bars[j];
                 if (bar.point == aDP) {
                     double dispX = Math.round(bar.x + bar.width/2);
                     double dispY = Math.round(bar.y);
@@ -218,7 +218,7 @@ public class BarDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src instanceof DataSet || src instanceof DataSetList || src instanceof Axis) {
+        if (src instanceof Trace || src instanceof TraceList || src instanceof Axis) {
             clearSections();
         }
     }
@@ -273,12 +273,12 @@ public class BarDataArea extends DataArea {
     protected class Bar {
 
         // Points
-        DataSetPoint point;
+        TracePoint point;
         double x, y, width, height;
         Color color;
 
         /** Creates a bar. */
-        public Bar(DataSetPoint aDP, double aX, double aY, double aW, double aH, Color aColor)
+        public Bar(TracePoint aDP, double aX, double aY, double aW, double aH, Color aColor)
         {
             point = aDP;
             x = aX; y = aY; width = aW; height = aH;

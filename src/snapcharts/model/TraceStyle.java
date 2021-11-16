@@ -8,7 +8,7 @@ import snap.util.*;
 /**
  * A class to represent properties to render data for a specific ChartType.
  */
-public class DataStyle extends ChartPart {
+public class TraceStyle extends ChartPart {
 
     // Whether to show line
     private boolean  _showLine = true;
@@ -62,13 +62,13 @@ public class DataStyle extends ChartPart {
     public static final int DEFAULT_MAX_POINT_COUNT = 0;
     public static final int DEFAULT_SKIP_POINT_COUNT = 0;
 
-    // Constant for how dataset area should be filled
+    // Constant for how Trace area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext };
 
     /**
      * Constructor.
      */
-    public DataStyle()
+    public TraceStyle()
     {
         super();
         setLineWidth(DEFAULT_LINE_WIDTH);
@@ -79,7 +79,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns whether to show line for DataSet.
+     * Returns whether to show line for Trace.
      */
     public boolean isShowLine()
     {
@@ -87,7 +87,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Sets whether to show line for DataSet.
+     * Sets whether to show line for Trace.
      */
     public void setShowLine(boolean aValue)
     {
@@ -100,11 +100,11 @@ public class DataStyle extends ChartPart {
      */
     public Color getDefaultLineColor()
     {
-        // Get from DataSet
+        // Get from Trace
         ChartPart parent = getParent();
-        if (parent instanceof DataSet) {
-            DataSet dataSet = (DataSet) parent;
-            int index = dataSet.getIndex();
+        if (parent instanceof Trace) {
+            Trace trace = (Trace) parent;
+            int index = trace.getIndex();
             return getColorMapColor(index);
         }
 
@@ -176,7 +176,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns whether to show symbols for DataSet.
+     * Returns whether to show symbols for Trace.
      */
     public boolean isShowSymbols()
     {
@@ -184,7 +184,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Sets whether to show symbols for DataSet.
+     * Sets whether to show symbols for Trace.
      */
     public void setShowSymbols(boolean aValue)
     {
@@ -193,12 +193,12 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns the SymbolStyle for this DataSet.
+     * Returns the SymbolStyle for this Trace.
      */
     public SymbolStyle getSymbolStyle()  { return _symbolStyle; }
 
     /**
-     * Returns whether to show data tags for DataSet.
+     * Returns whether to show data tags for Trace.
      */
     public boolean isShowTags()
     {
@@ -206,7 +206,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Sets whether to show data tags for DataSet.
+     * Sets whether to show data tags for Trace.
      */
     public void setShowTags(boolean aValue)
     {
@@ -215,7 +215,7 @@ public class DataStyle extends ChartPart {
     }
 
     /**
-     * Returns the TagStyle for this DataSet.
+     * Returns the TagStyle for this Trace.
      */
     public TagStyle getTagStyle()  { return _tagStyle; }
 

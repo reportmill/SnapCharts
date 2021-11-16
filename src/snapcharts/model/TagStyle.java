@@ -13,7 +13,7 @@ import snap.util.XMLElement;
 public class TagStyle extends ChartPart {
 
     // The DataStyle that holds this SymbolStyle
-    private DataStyle  _dataStyle;
+    private TraceStyle _traceStyle;
 
     // Constants for property defaults
     public static final Font DEFAULT_TAG_FONT = Font.Arial10;
@@ -24,10 +24,10 @@ public class TagStyle extends ChartPart {
     /**
      * Constructor.
      */
-    public TagStyle(DataStyle aDataStyle)
+    public TagStyle(TraceStyle aTraceStyle)
     {
         super();
-        _dataStyle = aDataStyle;
+        _traceStyle = aTraceStyle;
     }
 
     /**
@@ -55,7 +55,7 @@ public class TagStyle extends ChartPart {
         switch (aPropName) {
 
             // Handle LineColor
-            case LineColor_Prop: return _dataStyle.getLineColor();
+            case LineColor_Prop: return _traceStyle.getLineColor();
 
             // Handle LineColor
             case Fill_Prop: return getDefaultFill();

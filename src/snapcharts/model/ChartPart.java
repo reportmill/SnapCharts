@@ -181,21 +181,21 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     /**
      * Returns the DataStyle.
      */
-    public DataStyle getDataStyle()
+    public TraceStyle getTraceStyle()
     {
         Chart chart = getChart();
-        return chart != null ? chart.getDataStyle() : null;
+        return chart != null ? chart.getTraceStyle() : null;
     }
 
     /**
-     * Returns the dataset.
+     * Returns the TraceList.
      */
-    public DataSetList getDataSetList()
+    public TraceList getTraceList()
     {
-        if (_parent instanceof DataSetList)
-            return (DataSetList) _parent;
+        if (_parent instanceof TraceList)
+            return (TraceList) _parent;
         Chart chart = getChart();
-        return chart != null ? chart.getDataSetList() : null;
+        return chart != null ? chart.getTraceList() : null;
     }
 
     /**

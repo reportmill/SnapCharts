@@ -1,8 +1,8 @@
 package snapcharts.util;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
-import snapcharts.model.DataSet;
-import snapcharts.model.DataStyle;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceStyle;
 
 /**
  * Utility methods for Chart.
@@ -17,28 +17,28 @@ public class ChartUtils {
      */
     public static ScatterType getScatterType(Chart aChart)
     {
-        // Get DataSets (if none, just return LINE)
-        DataSet[] dataSets = aChart.getDataSetList().getDataSets();
-        if (dataSets.length == 0)
+        // Get Traces (if none, just return LINE)
+        Trace[] traces = aChart.getTraceList().getTraces();
+        if (traces.length == 0)
             return ScatterType.LINE;
 
-        // If all DataSets ShowArea, return AREA
+        // If all Traces ShowArea, return AREA
         boolean showArea = true;
-        for (DataSet dataSet : dataSets) {
-            if (!dataSet.getDataStyle().isShowArea()) {
+        for (Trace trace : traces) {
+            if (!trace.getTraceStyle().isShowArea()) {
                 showArea = false;
                 break;
             }
-            if (dataSet.isStacked())
+            if (trace.isStacked())
                 return ScatterType.STACKED_AREA;
         }
         if (showArea)
             return ScatterType.AREA;
 
-        // If all DataSets ShowLine, return LINE
+        // If all Traces ShowLine, return LINE
         boolean showLine = true;
-        for (DataSet dataSet : dataSets) {
-            if (!dataSet.getDataStyle().isShowLine()) {
+        for (Trace trace : traces) {
+            if (!trace.getTraceStyle().isShowLine()) {
                 showLine = false;
                 break;
             }
@@ -63,14 +63,14 @@ public class ChartUtils {
 
         aChart.setType(ChartType.SCATTER);
 
-        // Configure DataSets
-        DataSet[] dataSets = aChart.getDataSetList().getDataSets();
-        for (DataSet dataSet : dataSets) {
-            DataStyle dataStyle = dataSet.getDataStyle();
-            dataStyle.setShowLine(isLine || isArea || isStackedArea);
-            dataStyle.setShowSymbols(isLine || isScatter);
-            dataStyle.setShowArea(isArea || isStackedArea);
-            dataSet.setStacked(isStackedArea);
+        // Configure Traces
+        Trace[] traces = aChart.getTraceList().getTraces();
+        for (Trace trace : traces) {
+            TraceStyle traceStyle = trace.getTraceStyle();
+            traceStyle.setShowLine(isLine || isArea || isStackedArea);
+            traceStyle.setShowSymbols(isLine || isScatter);
+            traceStyle.setShowArea(isArea || isStackedArea);
+            trace.setStacked(isStackedArea);
         }
     }
 

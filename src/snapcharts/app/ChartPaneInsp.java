@@ -195,7 +195,7 @@ public class ChartPaneInsp extends ViewOwner {
             selPartInsp.resetLater();
 
         // Reset DataSetInsp
-        boolean isDataSetSelected = _chartPane.getDataSet() != null;
+        boolean isDataSetSelected = _chartPane.getTrace() != null;
         if (isDataSetSelected) {
             _dataSetInsp.getUI().setVisible(true);
             _dataSetInsp.resetLater();
@@ -247,9 +247,9 @@ public class ChartPaneInsp extends ViewOwner {
             return _legendInsp;
         if (aChartPart instanceof Marker)
             return _markerInsp;
-        if (aChartPart instanceof DataSetList)
+        if (aChartPart instanceof TraceList)
             return _dataViewInsp;
-        if (aChartPart instanceof DataSet)
+        if (aChartPart instanceof Trace)
             return _dataSetInsp;
         return _chartInsp;
     }
@@ -263,10 +263,10 @@ public class ChartPaneInsp extends ViewOwner {
         ChartPart chartPart = anInsp.getChartPart();
 
         // DataStyleInsp/DataStyle is going to pretend to represent DataSetList
-        if (chartPart instanceof DataStyle) {
+        if (chartPart instanceof TraceStyle) {
             Chart chart = _chartPane.getChart();
-            DataSetList dataList = chart.getDataSetList();
-            chartPart = dataList.getDataSetCount() > 0 ? dataList.getDataSet(0) : chart;
+            TraceList dataList = chart.getTraceList();
+            chartPart = dataList.getTraceCount() > 0 ? dataList.getTrace(0) : chart;
         }
 
         // Set new ChartPane.SelChartPart

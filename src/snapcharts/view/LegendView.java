@@ -271,17 +271,17 @@ public class LegendView extends ChartPartView<Legend> {
         resetEntryBox();
         _entryBox.setSpacing(_entryBox.getSpacing() + legend.getSpacing());
 
-        // Iterate over DataSets and add entries
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        for (DataSet dataSet : dataSets) {
+        // Iterate over Traces and add entries
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        for (Trace trace : traces) {
 
-            // If not DataSet.ShowLegendEntry, just continue
-            if (!dataSet.isShowLegendEntry())
+            // If not Trace.ShowLegendEntry, just continue
+            if (!trace.isShowLegendEntry())
                 continue;
 
-            // Create, add LegendEntryView for DataSet
-            View entryView = new LegendEntryView(legend, dataSet);
+            // Create, add LegendEntryView for Trace
+            View entryView = new LegendEntryView(legend, trace);
             _entryBox.addChild(entryView);
 
             // Register row to enable/disable
@@ -342,11 +342,11 @@ public class LegendView extends ChartPartView<Legend> {
      */
     private void legendWasClicked(ViewEvent anEvent)
     {
-        // Enable all DataSets
-        DataSetList dsetList = getDataSetList();
-        DataSet[] dataSets = dsetList.getDataSets();
-        for (DataSet dataSet : dataSets)
-            dataSet.setDisabled(false);
+        // Enable all Traces
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        for (Trace trace : traces)
+            trace.setDisabled(false);
     }
 
     /**
@@ -360,14 +360,14 @@ public class LegendView extends ChartPartView<Legend> {
             return;
         }
 
-        // Get row/dataset index
+        // Get row/trace index
         ParentView parentView = anEntryView.getParent();
         int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView) - 1;
 
-        // Get dataset and disable
-        DataSetList dsetList = getDataSetList();
-        DataSet dset = dsetList.getDataSet(index);
-        dset.setDisabled(!dset.isDisabled());
+        // Get trace and disable
+        TraceList traceList = getTraceList();
+        Trace trace = traceList.getTrace(index);
+        trace.setDisabled(!trace.isDisabled());
         anEvent.consume();
     }
 

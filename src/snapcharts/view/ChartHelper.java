@@ -28,8 +28,8 @@ public abstract class ChartHelper {
     // The DataView
     protected DataView  _dataView;
 
-    // The DataSetList
-    private DataSetList  _dataSetList;
+    // The TraceList
+    private TraceList _traceList;
 
     // The AxisTypes
     private AxisType[]  _axisTypes;
@@ -91,15 +91,15 @@ public abstract class ChartHelper {
     public abstract ChartType getChartType();
 
     /**
-     * Returns the DataSetList.
+     * Returns the TraceList.
      */
-    public DataSetList getDataSetList()
+    public TraceList getTraceList()
     {
         // If already set, just return
-        if (_dataSetList!=null) return _dataSetList;
+        if (_traceList !=null) return _traceList;
 
-        // Get DataSetList for DataSets that are enabled
-        return _dataSetList = getChart().getDataSetList();
+        // Get TraceList for Traces that are enabled
+        return _traceList = getChart().getTraceList();
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class ChartHelper {
      */
     protected AxisType[] getAxisTypesImpl()
     {
-        return getDataSetList().getAxisTypes();
+        return getTraceList().getAxisTypes();
     }
 
     /**
@@ -248,13 +248,13 @@ public abstract class ChartHelper {
     protected abstract DataArea[] createDataAreas();
 
     /**
-     * Returns the first DataArea for axis type.
+     * Returns the DataArea for trace.
      */
-    public DataArea getDataAreaForDataSet(DataSet aDataSet)
+    public DataArea getDataAreaForTrace(Trace aTrace)
     {
         DataArea[] dataAreas = getDataAreas();
         for (DataArea dataArea : dataAreas)
-            if (dataArea.getDataSet() == aDataSet)
+            if (dataArea.getTrace() == aTrace)
                 return dataArea;
 
         // Some charts have only one shared DataArea (Bar, Pie)
@@ -300,12 +300,12 @@ public abstract class ChartHelper {
         // Handle AxisType X
         if (anAxisType == AxisType.X) {
             if (!includeDisabled)
-                dataAreas = ArrayUtils.filter(dataAreas, da -> !da.isDataSetDisabled());
+                dataAreas = ArrayUtils.filter(dataAreas, da -> !da.isTraceDisabled());
         }
 
         // Handle AxisType Y
         else if (anAxisType.isAnyY()) {
-            Predicate<DataArea> filter = da -> da.getAxisTypeY() == anAxisType && (includeDisabled || !da.isDataSetDisabled());
+            Predicate<DataArea> filter = da -> da.getAxisTypeY() == anAxisType && (includeDisabled || !da.isTraceDisabled());
             dataAreas = ArrayUtils.filter(dataAreas, filter);
         }
 
@@ -324,7 +324,7 @@ public abstract class ChartHelper {
     public void paintBorder(Painter aPntr)  { }
 
     /**
-     * Creates the axis intervals for active datasets.
+     * Creates the axis intervals for active traces.
      */
     protected Intervals createIntervals(AxisView axisView)
     {
@@ -370,8 +370,8 @@ public abstract class ChartHelper {
     protected Intervals createIntervalsForCategoryAxis()
     {
         boolean isBar = getChartType().isBarType();
-        DataSetList dataSetList = getDataSetList();
-        int pointCount = dataSetList.getPointCount();
+        TraceList traceList = getTraceList();
+        int pointCount = traceList.getPointCount();
         int maxX = isBar ? pointCount : pointCount - 1;
         return Intervals.getIntervalsSimple(0, maxX);
     }
@@ -527,10 +527,10 @@ public abstract class ChartHelper {
     /**
      * Returns the data point for given View + X/Y.
      */
-    public DataSetPoint getDataPointForViewXY(View aView, double aX, double aY)
+    public TracePoint getDataPointForViewXY(View aView, double aX, double aY)
     {
         // Local vars for data point closest to x/y
-        DataSetPoint dataPoint = null;
+        TracePoint dataPoint = null;
         double dist = Float.MAX_VALUE;
 
         // Get View XY in DataView coords
@@ -546,7 +546,7 @@ public abstract class ChartHelper {
         // Iterate over data areas to find closest DataPoint
         DataArea[] dataAreas = getDataAreas();
         for (DataArea dataArea : dataAreas) {
-            DataSetPoint dpnt = dataArea.getDataPointForLocalXY(dispX, dispY);
+            TracePoint dpnt = dataArea.getDataPointForLocalXY(dispX, dispY);
             if (dpnt != null) {
                 Point dspXY = dataArea.getLocalXYForDataPoint(dpnt);
                 double dst = Point.getDistance(dispX, dispY, dspXY.x, dspXY.y);
@@ -564,11 +564,11 @@ public abstract class ChartHelper {
     /**
      * Returns the given data point as X/Y in given view coords.
      */
-    public Point getViewXYForDataPoint(View aView, DataSetPoint aDP)
+    public Point getViewXYForDataPoint(View aView, TracePoint aDP)
     {
         // Get DataArea for DataPoint
-        DataSet dataSet = aDP.getDataSet();
-        DataArea dataArea = getDataAreaForDataSet(dataSet);
+        Trace trace = aDP.getTrace();
+        DataArea dataArea = getDataAreaForTrace(trace);
         if (dataArea == null) return null;
 
         // Get DataArea X/Y for DataPoint and return point converted to given view coords
@@ -584,11 +584,11 @@ public abstract class ChartHelper {
      */
     public void activate()
     {
-        // Enable all datasets
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getDataSets();
-        for (DataSet dset : dataSets)
-            dset.setDisabled(false);
+        // Enable all traces
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        for (Trace trace : traces)
+            trace.setDisabled(false);
     }
 
     /**
@@ -602,7 +602,7 @@ public abstract class ChartHelper {
     public void resetView()
     {
         // If AxisTypes have changed, resetAxisViews
-        if (!Objects.equals(getAxisTypes(), getDataSetList().getAxisTypes()))
+        if (!Objects.equals(getAxisTypes(), getTraceList().getAxisTypes()))
             resetAxisViews();
 
         // Reset Axes
@@ -611,7 +611,7 @@ public abstract class ChartHelper {
 
         // Reset DataAreas
         for (DataArea dataArea : getDataAreas())
-            if (dataArea.isDataSetEnabled())
+            if (dataArea.isTraceEnabled())
                 dataArea.resetView();
     }
 

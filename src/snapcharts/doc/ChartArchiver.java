@@ -89,15 +89,17 @@ public class ChartArchiver extends XMLArchiver {
         Map cmap = new HashMap();
 
         // Add classes
-        cmap.put(DataStyle.class.getSimpleName(), DataStyle.class);
+        cmap.put(TraceStyle.class.getSimpleName(), TraceStyle.class);
         cmap.put(Axis.class.getSimpleName(), Axis.class);
         cmap.put(AxisX.class.getSimpleName(), AxisX.class);
         cmap.put(AxisY.class.getSimpleName(), AxisY.class);
         cmap.put(Chart.class.getSimpleName(), Chart.class);
         cmap.put("ChartDoc", Doc.class); // Legacy - can go soon
         cmap.put(Doc.class.getSimpleName(), Doc.class);
-        cmap.put(DataSet.class.getSimpleName(), DataSet.class);
-        cmap.put(DataSetList.class.getSimpleName(), DataSetList.class);
+        cmap.put(Trace.class.getSimpleName(), Trace.class);
+        cmap.put(TraceList.class.getSimpleName(), TraceList.class);
+        cmap.put("DataSet", Trace.class);
+        cmap.put("DataSetList", TraceList.class);
         cmap.put(Header.class.getSimpleName(), Header.class);
         cmap.put(Legend.class.getSimpleName(), Legend.class);
 

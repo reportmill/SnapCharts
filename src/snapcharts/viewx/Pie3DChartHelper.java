@@ -33,13 +33,13 @@ public class Pie3DChartHelper extends PieChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        DataSetList dataSetList = getDataSetList();
-        DataSet[] dataSets = dataSetList.getEnabledDataSets();
-        if (dataSets.length == 0)
-            dataSets = dataSetList.getDataSets();
-        if (dataSets.length == 0)
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getEnabledTraces();
+        if (traces.length == 0)
+            traces = traceList.getTraces();
+        if (traces.length == 0)
             return new DataArea[0];
-        DataSet dset = dataSets[0];
-        return new DataArea[] { _dataArea = new Pie3DDataArea(this, dset) };
+        Trace trace = traces[0];
+        return new DataArea[] { _dataArea = new Pie3DDataArea(this, trace) };
     }
 }

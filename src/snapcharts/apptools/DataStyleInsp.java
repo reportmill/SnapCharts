@@ -59,7 +59,7 @@ public class DataStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getDataStyle(); }
+    public ChartPart getChartPart()  { return getChart().getTraceStyle(); }
 
     /**
      * Returns the current inspector.
@@ -148,8 +148,8 @@ public class DataStyleInsp extends ChartPartInsp {
         setViewVisible("ShowAreaBox", false);
 
         // Configure FillModeComboBox to show FillModes
-        ComboBox<DataStyle.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
-        fillModeComboBox.setItems(DataStyle.FillMode.values());
+        ComboBox<TraceStyle.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
+        fillModeComboBox.setItems(TraceStyle.FillMode.values());
         fillModeComboBox.setItemTextFunction(item -> StringUtils.fromCamelCase(item.toString()));
 
         // Hide ShowSymbolsBox, SymbolsBox
@@ -186,10 +186,10 @@ public class DataStyleInsp extends ChartPartInsp {
 
         // Get DataStyle
         ChartPart selPart = _chartPane.getSelChartPart(); if (selPart == null) return;
-        DataStyle dataStyle = selPart.getDataStyle(); if (dataStyle == null) return;
+        TraceStyle traceStyle = selPart.getTraceStyle(); if (traceStyle == null) return;
 
         // Reset ShowLineCheckBox
-        boolean showLine = dataStyle.isShowLine();
+        boolean showLine = traceStyle.isShowLine();
         setViewValue("ShowLineCheckBox", showLine);
 
         // Reset ShowLineBox.Visible
@@ -201,27 +201,27 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showLineMore) {
 
             // Reset LineColorButton, LineColorResetButton
-            setViewValue("LineColorButton", dataStyle.getLineColor());
-            setViewVisible("LineColorResetButton", dataStyle.isLineColorSet());
+            setViewValue("LineColorButton", traceStyle.getLineColor());
+            setViewVisible("LineColorResetButton", traceStyle.isLineColorSet());
 
             // Reset LineWidthText, LineWidthResetButton
-            setViewValue("LineWidthText", dataStyle.getLineWidth());
-            setViewVisible("LineWidthResetButton", dataStyle.getLineWidth() != DataStyle.DEFAULT_LINE_WIDTH);
+            setViewValue("LineWidthText", traceStyle.getLineWidth());
+            setViewVisible("LineWidthResetButton", traceStyle.getLineWidth() != TraceStyle.DEFAULT_LINE_WIDTH);
 
             // Reset LineDashButton
             ToggleButton lineDashButton = getView("LineDashButton", ToggleButton.class);
-            configureLineDashButton(lineDashButton, dataStyle.getLineDash());
+            configureLineDashButton(lineDashButton, traceStyle.getLineDash());
 
             // Reset LineDashBox
             View lineDashBox = getView("LineDashBox");
             ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
 
             // Reset PointJoinComboBox
-            setViewSelItem("PointJoinComboBox", dataStyle.getPointJoin());
+            setViewSelItem("PointJoinComboBox", traceStyle.getPointJoin());
         }
 
         // Reset ShowAreaCheckBox
-        boolean showArea = dataStyle.isShowArea();
+        boolean showArea = traceStyle.isShowArea();
         setViewValue("ShowAreaCheckBox", showArea);
 
         // Reset ShowAreaBox.Visible
@@ -233,15 +233,15 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showAreaMore) {
 
             // Reset FillColorButton, FillColorResetButton
-            setViewValue("FillColorButton", dataStyle.getFillColor());
-            setViewVisible("FillColorResetButton", dataStyle.isFillSet());
+            setViewValue("FillColorButton", traceStyle.getFillColor());
+            setViewVisible("FillColorResetButton", traceStyle.isFillSet());
 
             // Reset FillModeComboBox
-            setViewSelItem("FillModeComboBox", dataStyle.getFillMode());
+            setViewSelItem("FillModeComboBox", traceStyle.getFillMode());
         }
 
         // Reset ShowSymbolsCheckBox
-        boolean showSymbols = dataStyle.isShowSymbols();
+        boolean showSymbols = traceStyle.isShowSymbols();
         setViewValue("ShowSymbolsCheckBox", showSymbols);
 
         // Reset ShowSymbolsBox.Visible
@@ -253,7 +253,7 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showSymbolsMore) {
 
             // Reset SymbolColorButton, SymbolColorResetButton
-            SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
+            SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
             Color symbolColor = symbolStyle.getFillColor();
             setViewValue("SymbolColorButton", symbolColor);
             setViewVisible("SymbolColorResetButton", symbolStyle.isFillSet());
@@ -282,7 +282,7 @@ public class DataStyleInsp extends ChartPartInsp {
         }
 
         // Reset ShowTagsCheckBox
-        boolean showTags = dataStyle.isShowTags();
+        boolean showTags = traceStyle.isShowTags();
         setViewValue("ShowTagsCheckBox", showTags);
 
         // Reset ShowTagsBox.Visible
@@ -294,7 +294,7 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showTagsMore) {
 
             // Reset TagFontText, TagFontResetButton
-            TagStyle tagStyle = dataStyle.getTagStyle();
+            TagStyle tagStyle = traceStyle.getTagStyle();
             Font tagFont = tagStyle.getFont();
             String fontName = tagFont.getName() + ' ' + FormatUtils.formatNum(tagFont.getSize());
             setViewValue("TagFontText", fontName);
@@ -337,16 +337,16 @@ public class DataStyleInsp extends ChartPartInsp {
         if (showSymbolsOrTags) {
 
             // Reset PointSpacingText, PointSpacingResetButton
-            setViewValue("PointSpacingText", dataStyle.getPointSpacing());
-            setViewVisible("PointSpacingResetButton", dataStyle.getPointSpacing() != DataStyle.DEFAULT_POINT_SPACING);
+            setViewValue("PointSpacingText", traceStyle.getPointSpacing());
+            setViewVisible("PointSpacingResetButton", traceStyle.getPointSpacing() != TraceStyle.DEFAULT_POINT_SPACING);
 
             // Reset SkipPointCountText, SkipPointCountResetButton
-            setViewValue("SkipPointCountText", dataStyle.getSkipPointCount());
-            setViewVisible("SkipPointCountResetButton", dataStyle.getSkipPointCount() != DataStyle.DEFAULT_SKIP_POINT_COUNT);
+            setViewValue("SkipPointCountText", traceStyle.getSkipPointCount());
+            setViewVisible("SkipPointCountResetButton", traceStyle.getSkipPointCount() != TraceStyle.DEFAULT_SKIP_POINT_COUNT);
 
             // Reset MaxPointCountText, MaxPointCountResetButton
-            setViewValue("MaxPointCountText", dataStyle.getMaxPointCount());
-            setViewVisible("MaxPointCountResetButton", dataStyle.getMaxPointCount() != DataStyle.DEFAULT_MAX_POINT_COUNT);
+            setViewValue("MaxPointCountText", traceStyle.getMaxPointCount());
+            setViewVisible("MaxPointCountResetButton", traceStyle.getMaxPointCount() != TraceStyle.DEFAULT_MAX_POINT_COUNT);
         }
     }
 
@@ -358,54 +358,54 @@ public class DataStyleInsp extends ChartPartInsp {
         // Get DataStyle, SymbolStyle, TagStyle
         ChartPart selPart = _chartPane.getSelChartPart();
         if (selPart == null) return;
-        DataStyle dataStyle = selPart.getDataStyle();
-        if (dataStyle == null) return;
-        SymbolStyle symbolStyle = dataStyle.getSymbolStyle();
-        TagStyle tagStyle = dataStyle.getTagStyle();
+        TraceStyle traceStyle = selPart.getTraceStyle();
+        if (traceStyle == null) return;
+        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
+        TagStyle tagStyle = traceStyle.getTagStyle();
 
         // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {
             boolean showLine = anEvent.getBoolValue();
-            dataStyle.setShowLine(showLine);
+            traceStyle.setShowLine(showLine);
             if (!showLine)
-                dataStyle.setShowSymbols(true);
+                traceStyle.setShowSymbols(true);
             setViewValue("ShowLineMoreButton", showLine);
         }
 
         // Handle LineWidthText, LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
         if (anEvent.equals("LineWidthText"))
-            dataStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
+            traceStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
         if (anEvent.equals("LineWidthAdd1Button"))
-            dataStyle.setLineWidth(dataStyle.getLineWidth() + 1);
+            traceStyle.setLineWidth(traceStyle.getLineWidth() + 1);
         if (anEvent.equals("LineWidthSub1Button"))
-            dataStyle.setLineWidth(Math.max(dataStyle.getLineWidth() - 1, 1));
+            traceStyle.setLineWidth(Math.max(traceStyle.getLineWidth() - 1, 1));
         if (anEvent.equals("LineWidthResetButton"))
-            dataStyle.setLineWidth(1);
+            traceStyle.setLineWidth(1);
 
         // Handle LineColorButton, LineColorResetButton
         if (anEvent.equals("LineColorButton")) {
             Color color = (Color) getViewValue("LineColorButton");
-            dataStyle.setLineColor(color);
+            traceStyle.setLineColor(color);
         }
         if (anEvent.equals("LineColorResetButton"))
-            dataStyle.setLineColor(null);
+            traceStyle.setLineColor(null);
 
         // Handle LineDashButton_X
         String eventName = anEvent.getName();
         if (eventName.startsWith("LineDashButton_")) {
             int id = SnapUtils.intValue(eventName);
             double[] dashArray = Stroke.DASHES_ALL[id];
-            dataStyle.setLineDash(dashArray);
+            traceStyle.setLineDash(dashArray);
         }
 
         // Handle PointJoinComboBox
         if (anEvent.equals("PointJoinComboBox"))
-            dataStyle.setPointJoin((PointJoin) anEvent.getSelItem());
+            traceStyle.setPointJoin((PointJoin) anEvent.getSelItem());
 
         // Handle ShowAreaCheckBox, FillModeComboBox
         if (anEvent.equals("ShowAreaCheckBox")) {
             boolean showArea = anEvent.getBoolValue();
-            dataStyle.setShowArea(showArea);
+            traceStyle.setShowArea(showArea);
             setViewValue("ShowAreaMoreButton", showArea);
         }
 
@@ -413,23 +413,23 @@ public class DataStyleInsp extends ChartPartInsp {
         if (anEvent.equals("FillColorButton")) {
             Color color = (Color) getViewValue("FillColorButton");
             color = color.getAlpha() <= .5 ? color : color.copyForAlpha(.5);
-            dataStyle.setFill(color);
+            traceStyle.setFill(color);
         }
         if (anEvent.equals("FillColorResetButton"))
-            dataStyle.setFill(null);
+            traceStyle.setFill(null);
 
         // Handle FillModeComboBox
         if (anEvent.equals("FillModeComboBox")) {
-            DataStyle.FillMode fillMode = (DataStyle.FillMode) getViewSelItem("FillModeComboBox");
-            dataStyle.setFillMode(fillMode);
+            TraceStyle.FillMode fillMode = (TraceStyle.FillMode) getViewSelItem("FillModeComboBox");
+            traceStyle.setFillMode(fillMode);
         }
 
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox")) {
             boolean showSymbols = anEvent.getBoolValue();
-            dataStyle.setShowSymbols(showSymbols);
+            traceStyle.setShowSymbols(showSymbols);
             if (!showSymbols)
-                dataStyle.setShowLine(true);
+                traceStyle.setShowLine(true);
             setViewValue("ShowSymbolsMoreButton", showSymbols);
         }
 
@@ -478,7 +478,7 @@ public class DataStyleInsp extends ChartPartInsp {
         // Handle ShowTagsCheckBox
         if (anEvent.equals("ShowTagsCheckBox")) {
             boolean showTags = anEvent.getBoolValue();
-            dataStyle.setShowTags(showTags);
+            traceStyle.setShowTags(showTags);
             setViewValue("ShowTagsMoreButton", showTags);
         }
 
@@ -549,33 +549,33 @@ public class DataStyleInsp extends ChartPartInsp {
 
         // Handle PointSpacingText, PointSpacingAdd1Button, PointSpacingSub1Button, PointSpacingResetButton
         if (anEvent.equals("PointSpacingText"))
-            dataStyle.setPointSpacing(Math.max(anEvent.getIntValue(), 0));
+            traceStyle.setPointSpacing(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("PointSpacingAdd1Button"))
-            dataStyle.setPointSpacing(dataStyle.getPointSpacing() + 1);
+            traceStyle.setPointSpacing(traceStyle.getPointSpacing() + 1);
         if (anEvent.equals("PointSpacingSub1Button"))
-            dataStyle.setPointSpacing(Math.max(dataStyle.getPointSpacing() - 1, 0));
+            traceStyle.setPointSpacing(Math.max(traceStyle.getPointSpacing() - 1, 0));
         if (anEvent.equals("PointSpacingResetButton"))
-            dataStyle.setPointSpacing(DataStyle.DEFAULT_POINT_SPACING);
+            traceStyle.setPointSpacing(TraceStyle.DEFAULT_POINT_SPACING);
 
         // Handle SkipPointCountText, SkipPointCountAdd1Button, SkipPointCountSub1Button, SkipPointCountResetButton
         if (anEvent.equals("SkipPointCountText"))
-            dataStyle.setSkipPointCount(Math.max(anEvent.getIntValue(), 0));
+            traceStyle.setSkipPointCount(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("SkipPointCountAdd1Button"))
-            dataStyle.setSkipPointCount(dataStyle.getSkipPointCount() + 1);
+            traceStyle.setSkipPointCount(traceStyle.getSkipPointCount() + 1);
         if (anEvent.equals("SkipPointCountSub1Button"))
-            dataStyle.setSkipPointCount(Math.max(dataStyle.getSkipPointCount() - 1, 0));
+            traceStyle.setSkipPointCount(Math.max(traceStyle.getSkipPointCount() - 1, 0));
         if (anEvent.equals("SkipPointCountResetButton"))
-            dataStyle.setSkipPointCount(DataStyle.DEFAULT_SKIP_POINT_COUNT);
+            traceStyle.setSkipPointCount(TraceStyle.DEFAULT_SKIP_POINT_COUNT);
 
         // Handle MaxPointCountText, MaxPointCountAdd1Button, MaxPointCountSub1Button, MaxPointCountResetButton
         if (anEvent.equals("MaxPointCountText"))
-            dataStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
+            traceStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("MaxPointCountAdd1Button"))
-            dataStyle.setMaxPointCount(dataStyle.getMaxPointCount() + 1);
+            traceStyle.setMaxPointCount(traceStyle.getMaxPointCount() + 1);
         if (anEvent.equals("MaxPointCountSub1Button"))
-            dataStyle.setMaxPointCount(Math.max(dataStyle.getMaxPointCount() - 1, 0));
+            traceStyle.setMaxPointCount(Math.max(traceStyle.getMaxPointCount() - 1, 0));
         if (anEvent.equals("MaxPointCountResetButton"))
-            dataStyle.setMaxPointCount(DataStyle.DEFAULT_MAX_POINT_COUNT);
+            traceStyle.setMaxPointCount(TraceStyle.DEFAULT_MAX_POINT_COUNT);
     }
 
     /**
