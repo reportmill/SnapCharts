@@ -76,6 +76,8 @@ public class Trace extends ChartPart {
     public Trace()
     {
         super();
+
+        _traceStyleHpr = new TraceStyleHpr(this);
     }
 
     /**
@@ -244,13 +246,28 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the DataStyle for this trace (and ChartType).
+     * Returns the TraceStyle for this trace (and ChartType).
      */
     public TraceStyle getTraceStyle()
     {
-        if (_traceStyleHpr == null)
-            _traceStyleHpr = new TraceStyleHpr(this);
-        return _traceStyleHpr.getDataStyle();
+        ChartType chartType = getTraceChartType();
+        return _traceStyleHpr.getTraceStyleForChartType(chartType);
+    }
+
+    /**
+     * Returns the Trace ChartType. This should be the same as Chart.ChartType, but can be overridden.
+     */
+    public ChartType getTraceChartType()
+    {
+        // Get Chart.ChartType
+        ChartType chartType = getChartType();
+
+        // If Contour but no Z data, use Scatter instead
+        if (chartType.isContourType() && !getDataType().hasZ())
+            chartType = chartType.isPolarType() ? ChartType.POLAR : ChartType.SCATTER;
+
+        // Return ChartType
+        return chartType;
     }
 
     /**

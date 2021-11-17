@@ -49,16 +49,21 @@ public class ContourChartHelper extends ChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
+        // Get Traces
         TraceList traceList = getTraceList();
         Trace[] traces = traceList.getTraces();
         int traceCount = traces.length;
 
+        // Iterate over traces and create DataAreas
         DataArea[] dataAreas = new DataArea[traceCount];
-        for (int i=0; i<traceCount; i++) {
+        for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new ContourDataArea(this, trace);
+            if (trace.getDataType().hasZ() )
+                dataAreas[i] = new ContourDataArea(this, trace);
+            else dataAreas[i] = new XYDataArea(this, trace);
         }
 
+        // Return DataAreas
         return dataAreas;
     }
 

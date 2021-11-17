@@ -328,7 +328,7 @@ public class Chart extends ParentPart {
     /**
      * Returns the DataStyle for this chart (ChartType).
      */
-    public TraceStyle getTraceStyle()  { return _traceStyleHpr.getDataStyle(); }
+    public TraceStyle getTraceStyle()  { return _traceStyleHpr.getTraceStyle(); }
 
     /**
      * Called when chart part has prop change.

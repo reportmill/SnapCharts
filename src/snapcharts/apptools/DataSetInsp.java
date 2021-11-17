@@ -38,7 +38,11 @@ public class DataSetInsp extends ChartPartInsp {
     /**
      * Returns the Trace.
      */
-    public Trace getTrace()  { return _chartPane.getTrace(); }
+    public Trace getTrace()
+    {
+        ChartPart selPart = _chartPane.getSelChartPart();
+        return selPart instanceof Trace ? (Trace) selPart : null;
+    }
 
     /**
      * Init UI.

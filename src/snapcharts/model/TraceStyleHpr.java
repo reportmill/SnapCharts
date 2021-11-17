@@ -5,11 +5,11 @@ package snapcharts.model;
 import snapcharts.modelx.*;
 
 /**
- * A class to hold the multiple DataStyles for different ChartTypes.
+ * A class to hold the multiple TraceStyles for different ChartTypes.
  */
 public class TraceStyleHpr {
 
-    // The parent ChartPart that holds this DataStyleHpr
+    // The parent ChartPart that holds this TraceStyleHpr
     private ChartPart  _parent;
 
     // Line chart properties
@@ -47,19 +47,19 @@ public class TraceStyleHpr {
     }
 
     /**
-     * Returns the current DataStyle.
+     * Returns the current TraceStyle.
      */
-    public TraceStyle getDataStyle()
+    public TraceStyle getTraceStyle()
     {
         Chart chart = getChart();
         ChartType chartType = chart.getType();
-        return getDataStyleForChartType(chartType);
+        return getTraceStyleForChartType(chartType);
     }
 
     /**
-     * Returns the DataStyle for given ChartType.
+     * Returns the TraceStyle for given ChartType.
      */
-    public TraceStyle getDataStyleForChartType(ChartType aType)
+    public TraceStyle getTraceStyleForChartType(ChartType aType)
     {
         switch(aType) {
             case SCATTER: return getXYStyle();
@@ -74,12 +74,12 @@ public class TraceStyleHpr {
     }
 
     /**
-     * Returns the DataStyle for given ChartType.
+     * Returns the TraceStyle for given ChartType.
      */
-    private TraceStyle createDataStyleForChartType(ChartType aType)
+    private TraceStyle createTraceStyleForChartType(ChartType aType)
     {
-        // Create DataStyle and set parent
-        TraceStyle traceStyle = createDataStyleForChartTypeRaw(aType);
+        // Create TraceStyle and set parent
+        TraceStyle traceStyle = createTraceStyleForChartTypeRaw(aType);
         traceStyle.setParent(_parent);
         traceStyle.setChart(getChart());
 
@@ -87,14 +87,14 @@ public class TraceStyleHpr {
         Chart chart = getChart();
         traceStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
 
-        // Return DataStyle
+        // Return TraceStyle
         return traceStyle;
     }
 
     /**
-     * Returns the DataStyle for given ChartType.
+     * Returns the TraceStyle for given ChartType.
      */
-    private TraceStyle createDataStyleForChartTypeRaw(ChartType aType)
+    private TraceStyle createTraceStyleForChartTypeRaw(ChartType aType)
     {
         // Get instance
         switch(aType) {
@@ -115,7 +115,7 @@ public class TraceStyleHpr {
     public XYStyle getXYStyle()
     {
         if (_xyStyle != null) return _xyStyle;
-        return _xyStyle = (XYStyle) createDataStyleForChartType(ChartType.SCATTER);
+        return _xyStyle = (XYStyle) createTraceStyleForChartType(ChartType.SCATTER);
     }
 
     /**
@@ -124,7 +124,7 @@ public class TraceStyleHpr {
     public BarStyle getBarStyle()
     {
         if(_barStyle != null) return _barStyle;
-        return _barStyle = (BarStyle) createDataStyleForChartType(ChartType.BAR);
+        return _barStyle = (BarStyle) createTraceStyleForChartType(ChartType.BAR);
     }
 
     /**
@@ -133,7 +133,7 @@ public class TraceStyleHpr {
     public PieStyle getPieStyle()
     {
         if(_pieStyle != null) return _pieStyle;
-        return _pieStyle = (PieStyle) createDataStyleForChartType(ChartType.PIE);
+        return _pieStyle = (PieStyle) createTraceStyleForChartType(ChartType.PIE);
     }
 
     /**
@@ -142,7 +142,7 @@ public class TraceStyleHpr {
     public PolarStyle getPolarStyle()
     {
         if(_polarStyle != null) return _polarStyle;
-        return _polarStyle = (PolarStyle) createDataStyleForChartType(ChartType.POLAR);
+        return _polarStyle = (PolarStyle) createTraceStyleForChartType(ChartType.POLAR);
     }
 
     /**
@@ -151,7 +151,7 @@ public class TraceStyleHpr {
     public ContourStyle getContourStyle()
     {
         if(_contourStyle != null) return _contourStyle;
-        return _contourStyle = (ContourStyle) createDataStyleForChartType(ChartType.CONTOUR);
+        return _contourStyle = (ContourStyle) createTraceStyleForChartType(ChartType.CONTOUR);
     }
 
     /**
@@ -160,6 +160,6 @@ public class TraceStyleHpr {
     public Bar3DStyle getBar3DStyle()
     {
         if(_bar3DStyle != null) return _bar3DStyle;
-        return _bar3DStyle = (Bar3DStyle) createDataStyleForChartType(ChartType.BAR_3D);
+        return _bar3DStyle = (Bar3DStyle) createTraceStyleForChartType(ChartType.BAR_3D);
     }
 }

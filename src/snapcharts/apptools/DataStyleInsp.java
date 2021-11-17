@@ -49,9 +49,14 @@ public class DataStyleInsp extends ChartPartInsp {
     @Override
     public String getName()
     {
+        // If not set, just return generic
         if (!_chartPane.isUISet()) return "Chart Style";
-        Chart chart = getChart();
-        ChartType chartType = chart.getType();
+
+        // Get Trace ChartType
+        Trace trace = getTrace();
+        ChartType chartType = trace.getTraceChartType();
+        if (chartType == null)
+            chartType = getChart().getType();
         return chartType.getStringPlain() + " Style";
     }
 
@@ -59,7 +64,31 @@ public class DataStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getTraceStyle(); }
+    public ChartPart getChartPart()
+    {
+        return getTraceStyle();
+    }
+
+    /**
+     * Returns the Trace.
+     */
+    public Trace getTrace()
+    {
+        ChartPart selPart = _chartPane.getSelChartPart();
+        return selPart instanceof Trace ? (Trace) selPart : null;
+    }
+
+    /**
+     * Returns the TraceStyle.
+     */
+    public TraceStyle getTraceStyle()
+    {
+        Trace trace = getTrace();
+        if (trace != null)
+            return trace.getTraceStyle();
+
+        return getChart().getTraceStyle();
+    }
 
     /**
      * Returns the current inspector.
@@ -89,9 +118,15 @@ public class DataStyleInsp extends ChartPartInsp {
     /**
      * Returns the ChartPartInsp for chart type.
      */
-    private ChartPartInsp getChartPropsInsp()
+    private ChartPartInsp getTraceStyleInsp()
     {
-        ChartType chartType = getChart().getType();
+        // Get Trace ChartType
+        Trace trace = getTrace();
+        ChartType chartType = trace != null ? trace.getTraceChartType() : null;
+        if (chartType == null)
+            chartType = getChart().getType();
+
+        // Return TraceStyleInsp for chartType
         switch (chartType) {
             case POLAR: return getPolarStyleInsp();
             case CONTOUR: return getContourStyleInsp();
@@ -174,7 +209,7 @@ public class DataStyleInsp extends ChartPartInsp {
     protected void resetUI()
     {
         // Update child inspector
-        ChartPartInsp chartTypeInsp = getChartPropsInsp();
+        ChartPartInsp chartTypeInsp = getTraceStyleInsp();
         setCurrentInspector(chartTypeInsp);
         if (chartTypeInsp != null)
             chartTypeInsp.resetLater();
