@@ -3,6 +3,7 @@
  */
 package snapcharts.app;
 import snap.geom.Point;
+import snap.geom.Pos;
 import snap.gfx.*;
 import snap.util.*;
 import snap.view.*;
@@ -234,7 +235,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     {
         // Add TabView
         double chartHeight = _chartBox.getPrefHeight();
-        int minTabViewHeight = _dataSetMode ? 320 : 180;
+        int minTabViewHeight = _dataSetMode ? 320 : 300;
         double tabViewHeight = Math.max(_splitView.getHeight() - chartHeight - 70, minTabViewHeight);
         _splitView.addItemWithAnim(_tabView, tabViewHeight);
 
@@ -323,6 +324,18 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         _chartPaneTools.addChartPaneTools();
         _chartBox.addEventFilter(e -> _chartPaneTools.processMouseEvent(e), MouseEvents);
 
+        // Add ShowDataButton
+        if (!_dataSetMode) {
+            Button showDataButton = new Button("Show Data");
+            showDataButton.setName("ShowDataButton");
+            showDataButton.setLean(Pos.BOTTOM_CENTER);
+            showDataButton.setManaged(false);
+            showDataButton.setPadding(4, 10, 4, 10);
+            showDataButton.setMargin(5, 5, 5, 5);
+            showDataButton.setSizeToPrefSize();
+            ViewUtils.addChild(_chartBox, showDataButton);
+        }
+
         // Set Chart in ChartView
         Chart chart = getChart();
         _chartView.setChart(chart);
@@ -375,13 +388,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
         // Reset inspector
         _insp.resetLater();
-
-        // Update ShowDataSetTabs
-        if (!_dataSetMode) {
-            ChartPart selPart = getSelChartPart();
-            boolean showDataSets = selPart instanceof Trace;
-            setShowDataSetTabs(showDataSets);
-        }
     }
 
     /**
@@ -427,6 +433,13 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         String name = anEvent.getName();
         if (name.endsWith("ToolButton"))
             _chartPaneTools.respondToolButton(anEvent);
+
+        // Handle ShowDataButton
+        if (anEvent.equals("ShowDataButton")) {
+            boolean showData = !isShowDataSetTabs();
+            setShowDataSetTabs(showData);
+            getView("ShowDataButton").setText(showData ? "Hide Data" : "Show Data");
+        }
     }
 
     /**

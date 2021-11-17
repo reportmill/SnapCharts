@@ -188,10 +188,12 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void resetUI()
     {
-        // Reset MarkerInsp.Visible
+        // Make MarkerInsp.Visible only if chart has markers
         boolean hasMarkers = _chartPane.getChart().getMarkers().length > 0;
-        _markerInsp.getUI().setVisible(hasMarkers);
-        _markerInsp.getLabel().setVisible(hasMarkers);
+        if (_markerInsp != null) {
+            _markerInsp.getUI().setVisible(hasMarkers);
+            _markerInsp.getLabel().setVisible(hasMarkers);
+        }
 
         // Reset SelPartInsp
         ChartPart selPart = _chartPane.getSelChartPart();
