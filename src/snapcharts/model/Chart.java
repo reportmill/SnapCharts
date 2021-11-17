@@ -321,12 +321,12 @@ public class Chart extends ParentPart {
     }
 
     /**
-     * Returns the DataStyleHpr that provides/manages DataStyles.
+     * Returns the TraceStyleHpr that provides/manages TraceStyles.
      */
-    public TraceStyleHpr getDataStyleHelper()  { return _traceStyleHpr; }
+    public TraceStyleHpr getTraceStyleHelper()  { return _traceStyleHpr; }
 
     /**
-     * Returns the DataStyle for this chart (ChartType).
+     * Returns the TraceStyle for this chart (ChartType).
      */
     public TraceStyle getTraceStyle()  { return _traceStyleHpr.getTraceStyle(); }
 

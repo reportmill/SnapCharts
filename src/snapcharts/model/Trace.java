@@ -40,7 +40,7 @@ public class Trace extends ChartPart {
     // Whether to show legend entry
     private boolean  _showLegendEntry = true;
 
-    // The DataStyleHpr
+    // The TraceStyleHpr
     private TraceStyleHpr _traceStyleHpr;
 
     // The RawData
@@ -719,12 +719,12 @@ public class Trace extends ChartPart {
         if (!isShowLegendEntry())
             e.add(ShowLegendEntry_Prop, false);
 
-        // Archive DataStyle
+        // Archive TraceStyle
         TraceStyle traceStyle = getTraceStyle();
-        XMLElement dataStyleXML = traceStyle.toXML(anArchiver);
-        if (dataStyleXML.getAttributeCount() > 0) {
-            dataStyleXML.setName("DataStyle");
-            e.addElement(dataStyleXML);
+        XMLElement traceStyleXML = traceStyle.toXML(anArchiver);
+        if (traceStyleXML.getAttributeCount() > 0) {
+            traceStyleXML.setName("TraceStyle");
+            e.addElement(traceStyleXML);
         }
 
         // Archive RawData
@@ -765,10 +765,12 @@ public class Trace extends ChartPart {
         if (anElement.hasAttribute(ShowLegendEntry_Prop))
             setShowLegendEntry(anElement.getAttributeBoolValue(ShowLegendEntry_Prop));
 
-        // Unarchive DataStyle
-        XMLElement dataStyleXML = anElement.getElement("DataStyle");
-        if (dataStyleXML != null)
-            getTraceStyle().fromXML(anArchiver, dataStyleXML);
+        // Unarchive TraceStyle
+        XMLElement traceStyleXML = anElement.getElement("TraceStyle");
+        if (traceStyleXML == null)
+            traceStyleXML = anElement.getElement("DataStyle");
+        if (traceStyleXML != null)
+            getTraceStyle().fromXML(anArchiver, traceStyleXML);
 
         // Unarchive RawData
         DataSet rawData = getRawData();

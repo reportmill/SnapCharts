@@ -13,7 +13,7 @@ import snap.util.XMLElement;
  */
 public class SymbolStyle extends ChartPart {
 
-    // The DataStyle that holds this SymbolStyle
+    // The TraceStyle that holds this SymbolStyle
     private TraceStyle _traceStyle;
 
     // The Symbol Size

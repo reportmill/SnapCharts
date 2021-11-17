@@ -44,7 +44,7 @@ public class ContourHelper {
     public ContourStyle getContourProps()
     {
         Chart chart = _chartHelper.getChart();
-        return chart.getDataStyleHelper().getContourStyle();
+        return chart.getTraceStyleHelper().getContourStyle();
     }
 
     /**

@@ -1,5 +1,4 @@
 package snapcharts.apptools;
-
 import snap.view.ComboBox;
 import snap.view.TextField;
 import snap.view.ViewEvent;
@@ -13,12 +12,12 @@ import snapcharts.data.DataType;
 /**
  * A class to manage UI to edit basic Trace props.
  */
-public class DataSetInsp extends ChartPartInsp {
+public class TraceInsp extends ChartPartInsp {
 
     /**
      * Constructor.
      */
-    public DataSetInsp(ChartPane aChartPane)
+    public TraceInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }

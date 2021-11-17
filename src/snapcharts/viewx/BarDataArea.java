@@ -42,7 +42,7 @@ public class BarDataArea extends DataArea {
     public BarStyle getBarStyle()
     {
         if (_barStyle != null) return _barStyle;
-        return _barStyle = getChart().getDataStyleHelper().getBarStyle();
+        return _barStyle = getChart().getTraceStyleHelper().getBarStyle();
     }
 
     /**

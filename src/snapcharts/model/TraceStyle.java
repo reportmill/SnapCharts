@@ -362,7 +362,7 @@ public class TraceStyle extends ChartPart {
     }
 
     /**
-     * Override to define DataStyle defaults
+     * Override to define TraceStyle defaults
      */
     @Override
     public Object getPropDefault(String aPropName)

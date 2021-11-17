@@ -48,10 +48,10 @@ public class ChartPaneInsp extends ViewOwner {
     private DataViewInsp  _dataViewInsp;
 
     // The DataSet Inspector
-    private DataSetInsp _dataSetInsp;
+    private TraceInsp _traceInsp;
 
     // The DataStyleInsp
-    private DataStyleInsp _dataStyleInsp;
+    private TraceStyleInsp _traceStyleInsp;
 
     // The array of ChartPartInsp
     private ChartPartInsp[]  _allInspectors;
@@ -130,18 +130,18 @@ public class ChartPaneInsp extends ViewOwner {
         }
 
         // Add DataSetInsp
-        _dataSetInsp = new DataSetInsp(_chartPane);
-        addInspector(_dataSetInsp, false);
+        _traceInsp = new TraceInsp(_chartPane);
+        addInspector(_traceInsp, false);
 
         // Create/add DataStyleInsp
-        _dataStyleInsp = new DataStyleInsp(_chartPane);
-        addInspector(_dataStyleInsp, false);
+        _traceStyleInsp = new TraceStyleInsp(_chartPane);
+        addInspector(_traceStyleInsp, false);
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _legendInsp,
-                _markerInsp, _dataViewInsp, _dataStyleInsp, _dataSetInsp};
+                _markerInsp, _dataViewInsp, _traceStyleInsp, _traceInsp};
         if (!chartMode)
-            _allInspectors = new ChartPartInsp[] {_dataSetInsp};
+            _allInspectors = new ChartPartInsp[] {_traceInsp};
 
         // Trigger initial open panel
         runLater(() -> chartPaneSelChanged());
@@ -160,8 +160,8 @@ public class ChartPaneInsp extends ViewOwner {
     @Override
     protected void initShowing()
     {
-        if (_dataStyleInsp != null)
-            _dataStyleInsp.resetLater();
+        if (_traceStyleInsp != null)
+            _traceStyleInsp.resetLater();
     }
 
     /**
@@ -197,10 +197,10 @@ public class ChartPaneInsp extends ViewOwner {
         // Reset DataSetInsp
         boolean isDataSetSelected = _chartPane.getTrace() != null;
         if (isDataSetSelected) {
-            _dataSetInsp.getUI().setVisible(true);
-            _dataSetInsp.resetLater();
+            _traceInsp.getUI().setVisible(true);
+            _traceInsp.resetLater();
         }
-        else _dataSetInsp.getUI().setVisible(false);
+        else _traceInsp.getUI().setVisible(false);
 
         // Reset Styler
         if (_stylerPane.isShowing())
@@ -250,7 +250,7 @@ public class ChartPaneInsp extends ViewOwner {
         if (aChartPart instanceof TraceList)
             return _dataViewInsp;
         if (aChartPart instanceof Trace)
-            return _dataSetInsp;
+            return _traceInsp;
         return _chartInsp;
     }
 
@@ -285,7 +285,7 @@ public class ChartPaneInsp extends ViewOwner {
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
             boolean isSelected = insp == selPartInsp ||
-                (insp == _dataStyleInsp && selPartInsp == _dataSetInsp);
+                (insp == _traceStyleInsp && selPartInsp == _traceInsp);
             insp.setSelected(isSelected);
             if (isSelected)
                 insp.resetLater();
@@ -308,6 +308,6 @@ public class ChartPaneInsp extends ViewOwner {
         // Handle Chart.Type change
         String propName = aPC.getPropName();
         if (propName == Chart.Type_Prop)
-            _dataStyleInsp.resetLater();
+            _traceStyleInsp.resetLater();
     }
 }

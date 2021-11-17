@@ -16,9 +16,9 @@ import snapcharts.model.*;
 import java.util.Objects;
 
 /**
- * A class to manage UI to edit a DataStyle.
+ * A class to manage UI to edit a TraceStyle.
  */
-public class DataStyleInsp extends ChartPartInsp {
+public class TraceStyleInsp extends ChartPartInsp {
 
     // The View that holds the child insp
     private ColView  _inspBox;
@@ -38,7 +38,7 @@ public class DataStyleInsp extends ChartPartInsp {
     /**
      * Constructor.
      */
-    public DataStyleInsp(ChartPane aChartPane)
+    public TraceStyleInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }
@@ -54,7 +54,7 @@ public class DataStyleInsp extends ChartPartInsp {
 
         // Get Trace ChartType
         Trace trace = getTrace();
-        ChartType chartType = trace.getTraceChartType();
+        ChartType chartType = trace != null ? trace.getTraceChartType() : null;
         if (chartType == null)
             chartType = getChart().getType();
         return chartType.getStringPlain() + " Style";
@@ -219,7 +219,7 @@ public class DataStyleInsp extends ChartPartInsp {
         Label label = getCollapser().getLabel();
         label.setText(title);
 
-        // Get DataStyle
+        // Get TraceStyle
         ChartPart selPart = _chartPane.getSelChartPart(); if (selPart == null) return;
         TraceStyle traceStyle = selPart.getTraceStyle(); if (traceStyle == null) return;
 
@@ -390,7 +390,7 @@ public class DataStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get DataStyle, SymbolStyle, TagStyle
+        // Get TraceStyle, SymbolStyle, TagStyle
         ChartPart selPart = _chartPane.getSelChartPart();
         if (selPart == null) return;
         TraceStyle traceStyle = selPart.getTraceStyle();

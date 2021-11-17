@@ -12,8 +12,8 @@ import snap.util.XMLElement;
  */
 public class TagStyle extends ChartPart {
 
-    // The DataStyle that holds this SymbolStyle
-    private TraceStyle _traceStyle;
+    // The Trace that holds this TagStyle
+    private TraceStyle  _traceStyle;
 
     // Constants for property defaults
     public static final Font DEFAULT_TAG_FONT = Font.Arial10;

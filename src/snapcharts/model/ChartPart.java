@@ -179,7 +179,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the DataStyle.
+     * Returns the TraceStyle.
      */
     public TraceStyle getTraceStyle()
     {
