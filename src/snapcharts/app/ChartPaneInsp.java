@@ -188,19 +188,22 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void resetUI()
     {
+        // Reset MarkerInsp.Visible
+        boolean hasMarkers = _chartPane.getChart().getMarkers().length > 0;
+        _markerInsp.getUI().setVisible(hasMarkers);
+        _markerInsp.getLabel().setVisible(hasMarkers);
+
         // Reset SelPartInsp
         ChartPart selPart = _chartPane.getSelChartPart();
         ChartPartInsp selPartInsp = getChartPartInsp(selPart);
         if (selPartInsp != null && selPartInsp.isShowing())
             selPartInsp.resetLater();
 
-        // Reset DataSetInsp
-        boolean isDataSetSelected = _chartPane.getTrace() != null;
-        if (isDataSetSelected) {
-            _traceInsp.getUI().setVisible(true);
+        // Reset TraceInsp
+        boolean isTraceSelected = _chartPane.getTrace() != null;
+        _traceInsp.getUI().setVisible(isTraceSelected);
+        if (isTraceSelected)
             _traceInsp.resetLater();
-        }
-        else _traceInsp.getUI().setVisible(false);
 
         // Reset Styler
         if (_stylerPane.isShowing())
