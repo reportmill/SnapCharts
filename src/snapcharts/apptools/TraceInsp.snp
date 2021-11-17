@@ -37,4 +37,19 @@
   <RowView Padding="2,4,2,4" Spacing="4">
     <CheckBox Name="ShowLegendEntryCheckBox" Spacing="5" text="Show Legend Entry" />
   </RowView>
+  <RowView Align="CENTER" Padding="3,4,2,4">
+    <ToggleButton Name="LineStyleButton" MinWidth="60" MinHeight="0" Padding="3" GrowWidth="true" text="Line" Position="CENTER_LEFT">
+      <font name="Arial" size="12" />
+    </ToggleButton>
+    <ToggleButton Name="AreaStyleButton" MinWidth="60" Padding="3" text="Area" GrowWidth="true" Position="CENTER">
+      <font name="Arial" size="12" />
+    </ToggleButton>
+    <ToggleButton Name="PointsStyleButton" MinWidth="60" Padding="3" text="Points" GrowWidth="true" Position="CENTER">
+      <font name="Arial" size="12" />
+    </ToggleButton>
+    <ToggleButton Name="TagsStyleButton" MinWidth="60" Padding="3" text="Tags" GrowWidth="true" Position="CENTER_RIGHT">
+      <font name="Arial" size="12" />
+    </ToggleButton>
+  </RowView>
+  <ColView Name="InspectorBox" />
 </ColView>

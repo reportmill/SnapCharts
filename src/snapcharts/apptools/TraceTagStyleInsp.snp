@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="0,10,4,10" Spacing="4" FillWidth="true">
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <CheckBox Name="ShowTagsCheckBox" Spacing="5" text="Show Tags" />
+  </RowView>
+    <RowView Padding="2,20,2,4" Spacing="4">
+      <Label Spacing="4" text="Font:" />
+      <TextField Name="TagFontText" GrowWidth="true" />
+      <Button Name="TagFontSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="TagFontSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="TagFontResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="2,4,2,4" Spacing="4">
+      <Label Spacing="4" text="Color:" />
+      <ColorButton Name="TagColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+      <Button Name="TagColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="2,4,2,4" Spacing="4">
+      <Label Spacing="4" text="Border color:" />
+      <ColorButton Name="TagBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
+      <Button Name="TagBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="2,4,2,4" Spacing="4">
+      <Label Spacing="4" text="Border width:" />
+      <TextField Name="TagBorderWidthText" PrefWidth="50" Align="CENTER" />
+      <Button Name="TagBorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+        <font name="Arial" size="13" />
+      </Button>
+      <Button Name="TagBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+      <Button Name="TagBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+    </RowView>
+    <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+      <Label Spacing="4" text="Ticks Format:" />
+      <TextField Name="TickFormatText" Align="CENTER" GrowWidth="true" ColCount="7" />
+    </RowView>
+    <RowView Padding="2,4,2,4" Spacing="4">
+      <Label Name="AxisTickPos" Spacing="4" text="Ticks Exponent:" />
+      <RowView GrowWidth="true">
+        <ToggleButton Name="ExpNoneButton" MinWidth="46" Padding="2" text="None" Position="CENTER_LEFT" Selected="true" />
+        <ToggleButton Name="ExpSciButton" MinWidth="46" Padding="2" text="Scientific" Position="CENTER" />
+        <ToggleButton Name="ExpFinancialButton" MinWidth="46" Padding="2" text="Financial" Position="CENTER_RIGHT" />
+      </RowView>
+    </RowView>
+</ColView>

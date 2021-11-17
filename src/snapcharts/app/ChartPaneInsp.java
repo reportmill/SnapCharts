@@ -48,10 +48,10 @@ public class ChartPaneInsp extends ViewOwner {
     private DataViewInsp  _dataViewInsp;
 
     // The DataSet Inspector
-    private TraceInsp _traceInsp;
+    private TraceInsp  _traceInsp;
 
-    // The DataStyleInsp
-    private TraceStyleInsp _traceStyleInsp;
+    // The TraceStyleInsp
+    //private TraceStyleInsp  _traceStyleInsp;
 
     // The array of ChartPartInsp
     private ChartPartInsp[]  _allInspectors;
@@ -134,14 +134,14 @@ public class ChartPaneInsp extends ViewOwner {
         addInspector(_traceInsp, false);
 
         // Create/add DataStyleInsp
-        _traceStyleInsp = new TraceStyleInsp(_chartPane);
-        addInspector(_traceStyleInsp, false);
+        //_traceStyleInsp = new TraceStyleInsp(_chartPane);
+        //addInspector(_traceStyleInsp, false);
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _legendInsp,
-                _markerInsp, _dataViewInsp, _traceStyleInsp, _traceInsp};
+                _markerInsp, _dataViewInsp, _traceInsp };
         if (!chartMode)
-            _allInspectors = new ChartPartInsp[] {_traceInsp};
+            _allInspectors = new ChartPartInsp[] { _traceInsp };
 
         // Trigger initial open panel
         runLater(() -> chartPaneSelChanged());
@@ -160,8 +160,8 @@ public class ChartPaneInsp extends ViewOwner {
     @Override
     protected void initShowing()
     {
-        if (_traceStyleInsp != null)
-            _traceStyleInsp.resetLater();
+        //if (_traceStyleInsp != null)
+        //    _traceStyleInsp.resetLater();
     }
 
     /**
@@ -289,8 +289,7 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
-            boolean isSelected = insp == selPartInsp ||
-                (insp == _traceStyleInsp && selPartInsp == _traceInsp);
+            boolean isSelected = insp == selPartInsp; // || (insp == _traceStyleInsp && selPartInsp == _traceInsp);
             insp.setSelected(isSelected);
             if (isSelected)
                 insp.resetLater();
@@ -311,8 +310,7 @@ public class ChartPaneInsp extends ViewOwner {
         if (!isUISet()) return;
 
         // Handle Chart.Type change
-        String propName = aPC.getPropName();
-        if (propName == Chart.Type_Prop)
-            _traceStyleInsp.resetLater();
+        //String propName = aPC.getPropName();
+        //if (propName == Chart.Type_Prop) _traceStyleInsp.resetLater();
     }
 }
