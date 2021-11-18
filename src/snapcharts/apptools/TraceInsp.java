@@ -144,17 +144,6 @@ public class TraceInsp extends ChartPartInsp {
         setViewValue("StackedCheckBox", trace.isStacked());
         setViewValue("ShowLegendEntryCheckBox", trace.isShowLegendEntry());
 
-        // Make sure there is an inspector
-        TraceStyle traceStyle = trace.getTraceStyle();
-        if (_currentInsp == null) {
-            if (traceStyle.isShowLine())
-                setCurrentInspector(_lineStyleInsp);
-            else if (traceStyle.isShowArea())
-                setCurrentInspector(_areaStyleInsp);
-            else if (traceStyle.isShowSymbols())
-                setCurrentInspector(_pointStyleInsp);
-        }
-
         // Reset LineStyleButton, AreaStyleButton, PointsStyleButton, TagsStyleButton
         setViewValue("LineStyleButton", _currentInsp == _lineStyleInsp);
         setViewValue("AreaStyleButton", _currentInsp == _areaStyleInsp);
@@ -162,10 +151,11 @@ public class TraceInsp extends ChartPartInsp {
         setViewValue("TagsStyleButton", _currentInsp == _tagStyleInsp);
 
         // Reset fonts
-        setFontBold("LineStyleButton", traceStyle.isShowLine());
-        setFontBold("AreaStyleButton", traceStyle.isShowArea());
-        setFontBold("PointsStyleButton", traceStyle.isShowSymbols());
-        setFontBold("TagsStyleButton", traceStyle.isShowTags());
+        TraceStyle traceStyle = trace.getTraceStyle();
+        setButtonHighlight("LineStyleButton", traceStyle.isShowLine());
+        setButtonHighlight("AreaStyleButton", traceStyle.isShowArea());
+        setButtonHighlight("PointsStyleButton", traceStyle.isShowSymbols());
+        setButtonHighlight("TagsStyleButton", traceStyle.isShowTags());
 
         // Update child inspector
         ChartPartInsp chartTypeInsp = getCurrentInspector();
@@ -173,7 +163,7 @@ public class TraceInsp extends ChartPartInsp {
         if (chartTypeInsp != null)
             chartTypeInsp.resetLater();
 
-        // Update SpacingInspector visible
+        // Update SpacingInsp.Visible
         boolean isPointsOrTags = traceStyle.isShowSymbols() || traceStyle.isShowTags();
         boolean isPointsOrTagsInsp = _currentInsp == _pointStyleInsp || _currentInsp == _tagStyleInsp;
         boolean isShowSpacing = isPointsOrTags && isPointsOrTagsInsp;
@@ -286,7 +276,40 @@ public class TraceInsp extends ChartPartInsp {
             _inspBox.addChild(_currentInsp.getUI());
     }
 
-    private void setFontBold(String aName, boolean aValue)
+    /**
+     * Override to initialize Line/Area/Points inspector and SpacingInsp.
+     */
+    @Override
+    public void setSelected(boolean aValue)
+    {
+        if (aValue == isSelected()) return;
+
+        // If first call, initialize Line/Area/Point inspector to primary trace painting
+        Trace trace = getTrace();
+        TraceStyle traceStyle = trace != null ? trace.getTraceStyle() : null;
+        if (_currentInsp == null && traceStyle != null) {
+            if (traceStyle.isShowLine())
+                setCurrentInspector(_lineStyleInsp);
+            else if (traceStyle.isShowArea())
+                setCurrentInspector(_areaStyleInsp);
+            else if (traceStyle.isShowSymbols())
+                setCurrentInspector(_pointStyleInsp);
+        }
+
+        // Update SpacingInsp.Visible
+        boolean isPointsOrTags = traceStyle != null && (traceStyle.isShowSymbols() || traceStyle.isShowTags());
+        boolean isPointsOrTagsInsp = _currentInsp == _pointStyleInsp || _currentInsp == _tagStyleInsp;
+        boolean isShowSpacing = isPointsOrTags && isPointsOrTagsInsp;
+        _spacingInsp.getUI().setVisible(isShowSpacing);
+
+        // Do normal version
+        super.setSelected(aValue);
+    }
+
+    /**
+     * Sets button to be highlighted for given button name and boolean.
+     */
+    private void setButtonHighlight(String aName, boolean aValue)
     {
         ButtonBase view = getView(aName, ButtonBase.class);
         Color color = (Color) view.getLabel().getTextFill();
