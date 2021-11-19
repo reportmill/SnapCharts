@@ -140,8 +140,8 @@ public abstract class DataArea extends ChartPartView<Trace> {
     {
         Trace trace = getTrace();
         TraceStyle traceStyle = trace.getTraceStyle();
-        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
-        return symbolStyle.getSymbol();
+        PointStyle pointStyle = traceStyle.getPointStyle();
+        return pointStyle.getSymbol();
     }
 
     /**

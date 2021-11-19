@@ -12,8 +12,6 @@ import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
-import java.util.Objects;
-
 /**
  * A class to manage UI to edit a TraceStyle.
  */
@@ -122,13 +120,8 @@ public class TraceLineStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle, SymbolStyle, TagStyle
-        ChartPart selPart = _chartPane.getSelChartPart();
-        if (selPart == null) return;
-        TraceStyle traceStyle = selPart.getTraceStyle();
-        if (traceStyle == null) return;
-        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
-        TagStyle tagStyle = traceStyle.getTagStyle();
+        // Get TraceStyle
+        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {

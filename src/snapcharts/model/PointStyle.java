@@ -9,12 +9,12 @@ import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
 /**
- * This ChartPart subclass holds style attributes for symbols.
+ * This ChartPart subclass holds style properties for Trace points.
  */
-public class SymbolStyle extends ChartPart {
+public class PointStyle extends ChartPart {
 
-    // The TraceStyle that holds this SymbolStyle
-    private TraceStyle _traceStyle;
+    // The TraceStyle that holds this PointStyle
+    private TraceStyle  _traceStyle;
 
     // The Symbol Size
     private int  _symbolSize = DEFAULT_SYMBOL_SIZE;
@@ -38,7 +38,7 @@ public class SymbolStyle extends ChartPart {
     /**
      * Constructor.
      */
-    public SymbolStyle(TraceStyle aTraceStyle)
+    public PointStyle(TraceStyle aTraceStyle)
     {
         super();
         _traceStyle = aTraceStyle;
@@ -161,7 +161,7 @@ public class SymbolStyle extends ChartPart {
     }
 
     /**
-     * Override to provide SymbolStyle defaults.
+     * Override to provide custom defaults.
      */
     @Override
     public Object getPropDefault(String aPropName)

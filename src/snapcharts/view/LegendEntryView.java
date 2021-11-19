@@ -14,10 +14,10 @@ public class LegendEntryView extends Label {
     private Trace  _trace;
 
     // The DataStyle
-    private TraceStyle _traceStyle;
+    private TraceStyle  _traceStyle;
 
-    // The SymbolStyle
-    private SymbolStyle _symbolStyle;
+    // The PointStyle
+    private PointStyle  _pointStyle;
 
     // Constants
     private static Color DISABLED_COLOR = Color.LIGHTGRAY;
@@ -30,7 +30,7 @@ public class LegendEntryView extends Label {
         super();
         _trace = aTrace;
         _traceStyle = aTrace.getTraceStyle();
-        _symbolStyle = _traceStyle.getSymbolStyle();
+        _pointStyle = _traceStyle.getPointStyle();
 
         // Set ShowText
         setShowText(true);
@@ -100,7 +100,7 @@ public class LegendEntryView extends Label {
             if (_traceStyle.isShowArea())
                 markedHeight += AREA_HEIGHT - markedHeight / 2;
             if (_traceStyle.isShowSymbols())
-                markedHeight = Math.max(_symbolStyle.getSymbol().getSize(), markedHeight);
+                markedHeight = Math.max(_pointStyle.getSymbol().getSize(), markedHeight);
 
             // Return markedHeight plus insets height
             Insets ins = getInsetsAll();
@@ -151,16 +151,16 @@ public class LegendEntryView extends Label {
             if (showSymbols) {
 
                 // Get symbol fill color
-                Color fillColor = _symbolStyle.getFillColor();
+                Color fillColor = _pointStyle.getFillColor();
                 if (disabled) fillColor = DISABLED_COLOR;
 
                 // Get symbol border color
-                double borderWidth = _symbolStyle.getLineWidth();
-                Color borderColor = _symbolStyle.getLineColor();
+                double borderWidth = _pointStyle.getLineWidth();
+                Color borderColor = _pointStyle.getLineColor();
                 if (disabled) borderColor = DISABLED_COLOR;
 
                 // Paint Symbol at midpoint
-                Symbol symbol = _symbolStyle.getSymbol(); //.copyForSize(8);
+                Symbol symbol = _pointStyle.getSymbol(); //.copyForSize(8);
                 double areaMidX = areaX + areaW / 2;
                 symbol.paintSymbol(aPntr, fillColor, borderColor, borderWidth, areaMidX, lineY);
             }

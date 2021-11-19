@@ -25,11 +25,11 @@ public class TraceStyle extends ChartPart {
     // Whether to show data tags
     private boolean  _showTags;
 
+    // The PointStyle
+    private PointStyle  _pointStyle = new PointStyle(this);
+
     // The TagStyle
     private TagStyle  _tagStyle = new TagStyle(this);
-
-    // The SymbolStyle
-    private SymbolStyle  _symbolStyle = new SymbolStyle(this);
 
     // The maximum number of symbols/tags visible
     private int  _maxPointCount = DEFAULT_MAX_POINT_COUNT;
@@ -51,7 +51,7 @@ public class TraceStyle extends ChartPart {
     public static final String SkipPointCount_Prop = "SkipPointCount";
 
     // Constants for relations
-    public static final String SymbolStyle_Rel = "SymbolStyle";
+    public static final String PointStyle_Rel = "PointStyle";
     public static final String TagStyle_Rel = "TagStyle";
 
     // Constants for property defaults
@@ -73,9 +73,9 @@ public class TraceStyle extends ChartPart {
         super();
         setLineWidth(DEFAULT_LINE_WIDTH);
 
-        // Register listener for TagStyle, SymbolStyle prop changes
+        // Register listener for TagStyle, PointStyle prop changes
         _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
-        _symbolStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
+        _pointStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
     }
 
     /**
@@ -193,9 +193,9 @@ public class TraceStyle extends ChartPart {
     }
 
     /**
-     * Returns the SymbolStyle for this Trace.
+     * Returns the PointStyle for this Trace.
      */
-    public SymbolStyle getSymbolStyle()  { return _symbolStyle; }
+    public PointStyle getPointStyle()  { return _pointStyle; }
 
     /**
      * Returns whether to show data tags for Trace.
@@ -290,7 +290,7 @@ public class TraceStyle extends ChartPart {
             FillMode_Prop, ShowSymbols_Prop, ShowTags_Prop,
             PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
 
-        aPropDefaults.addRelations(SymbolStyle_Rel, TagStyle_Rel);
+        aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel);
     }
 
     /**
@@ -320,8 +320,8 @@ public class TraceStyle extends ChartPart {
             case MaxPointCount_Prop: return getMaxPointCount();
             case SkipPointCount_Prop: return getSkipPointCount();
 
-            // Handle SymbolStyleRel, TagStyle_Rel
-            case SymbolStyle_Rel: return getSymbolStyle();
+            // Handle PointStyleRel, TagStyle_Rel
+            case PointStyle_Rel: return getPointStyle();
             case TagStyle_Rel: return getTagStyle();
 
             // Handle super class properties (or unknown)
@@ -413,11 +413,11 @@ public class TraceStyle extends ChartPart {
         if (isShowSymbols()) {
             e.add(ShowSymbols_Prop, true);
 
-            // Archive SymbolStyle
-            SymbolStyle symbolStyle = getSymbolStyle();
-            XMLElement symbolStyleXML = symbolStyle.toXML(anArchiver);
-            if (symbolStyleXML.getAttributeCount() > 0 || symbolStyleXML.getElementCount() > 0)
-                e.addElement(symbolStyleXML);
+            // Archive PointStyle
+            PointStyle pointStyle = getPointStyle();
+            XMLElement pointStyleXML = pointStyle.toXML(anArchiver);
+            if (pointStyleXML.getAttributeCount() > 0 || pointStyleXML.getElementCount() > 0)
+                e.addElement(pointStyleXML);
         }
 
         // Archive ShowTags
@@ -472,10 +472,12 @@ public class TraceStyle extends ChartPart {
         if (anElement.hasAttribute(ShowTags_Prop))
             setShowTags(anElement.getAttributeBoolValue(ShowTags_Prop));
 
-        // Unarchive SymbolStyle
-        XMLElement symbolStyleXML = anElement.getElement("SymbolStyle");
-        if (symbolStyleXML != null)
-            getSymbolStyle().fromXML(anArchiver, symbolStyleXML);
+        // Unarchive PointStyle
+        XMLElement pointStyleXML = anElement.getElement("PointStyle");
+        if (pointStyleXML == null)
+            pointStyleXML = anElement.getElement("SymbolStyle");
+        if (pointStyleXML != null)
+            getPointStyle().fromXML(anArchiver, pointStyleXML);
 
         // Unarchive TagStyle
         XMLElement tagStyleXML = anElement.getElement("TagStyle");

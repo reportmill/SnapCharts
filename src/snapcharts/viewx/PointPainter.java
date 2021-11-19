@@ -56,8 +56,8 @@ public class PointPainter {
         // Get ShowSymbol info
         TraceStyle traceStyle = _dataArea.getDataStyle();
         boolean showSymbols = traceStyle.isShowSymbols();
-        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
-        int symbolSize = symbolStyle.getSymbolSize();
+        PointStyle pointStyle = traceStyle.getPointStyle();
+        int symbolSize = pointStyle.getSymbolSize();
         double symbolShift = symbolSize / 2d;
         List<Point> symbolPointList = new ArrayList<>();
 
@@ -178,14 +178,14 @@ public class PointPainter {
     {
         // Get info
         TraceStyle traceStyle = _dataArea.getDataStyle();
-        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
-        Symbol symbol = symbolStyle.getSymbol();
-        Color symbolColor = symbolStyle.getFillColor();  //color.darker().darker()
+        PointStyle pointStyle = traceStyle.getPointStyle();
+        Symbol symbol = pointStyle.getSymbol();
+        Color symbolColor = pointStyle.getFillColor();  //color.darker().darker()
         Shape symbolShape = symbol.getShape();
 
         // Get Symbol border info
-        Color symbolBorderColor = symbolStyle.getLineColor();
-        double symbolBorderWidth = symbolStyle.getLineWidth();
+        Color symbolBorderColor = pointStyle.getLineColor();
+        double symbolBorderWidth = pointStyle.getLineWidth();
 
         // Get whether showing points only
         boolean pointsOnly = !(traceStyle.isShowLine() || traceStyle.isShowArea());

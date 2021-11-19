@@ -96,32 +96,32 @@ public class TracePointStyleInsp extends ChartPartInsp {
         setViewValue("ShowSymbolsCheckBox", showSymbols);
 
         // Reset SymbolColorButton, SymbolColorResetButton
-        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
-        Color symbolColor = symbolStyle.getFillColor();
+        PointStyle pointStyle = traceStyle.getPointStyle();
+        Color symbolColor = pointStyle.getFillColor();
         setViewValue("SymbolColorButton", symbolColor);
-        setViewVisible("SymbolColorResetButton", symbolStyle.isFillSet());
+        setViewVisible("SymbolColorResetButton", pointStyle.isFillSet());
 
         // Reset SymbolSizeText, SymbolSizeResetButton
-        setViewValue("SymbolSizeText", symbolStyle.getSymbolSize());
-        setViewVisible("SymbolSizeResetButton", symbolStyle.getSymbolSize() != SymbolStyle.DEFAULT_SYMBOL_SIZE);
+        setViewValue("SymbolSizeText", pointStyle.getSymbolSize());
+        setViewVisible("SymbolSizeResetButton", pointStyle.getSymbolSize() != PointStyle.DEFAULT_SYMBOL_SIZE);
 
         // Reset SymbolShapeButton
         ToggleButton symbolShapeButton = getView("SymbolShapeButton", ToggleButton.class);
-        configureSymbolShapeButton(symbolShapeButton, symbolStyle.getSymbol());
+        configureSymbolShapeButton(symbolShapeButton, pointStyle.getSymbol());
 
         // Reset SymbolsBox
         View symbolsBox = getView("SymbolsBox");
         ViewAnimUtils.setVisible(symbolsBox, symbolShapeButton.isSelected(), false, true);
 
         // Reset SymbolBorderColorButton, SymbolBorderColorResetButton
-        Color symbolBorderColor = symbolStyle.getLineColor();
+        Color symbolBorderColor = pointStyle.getLineColor();
         setViewValue("SymbolBorderColorButton", symbolBorderColor);
-        setViewVisible("SymbolBorderColorResetButton", symbolStyle.isLineColorSet());
+        setViewVisible("SymbolBorderColorResetButton", pointStyle.isLineColorSet());
 
         // Reset SymbolBorderWidthText, SymbolBorderWidthResetButton
-        double symbolBorderWidth = symbolStyle.getLineWidth();
+        double symbolBorderWidth = pointStyle.getLineWidth();
         setViewValue("SymbolBorderWidthText", symbolBorderWidth);
-        setViewVisible("SymbolBorderWidthResetButton", symbolBorderWidth != SymbolStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+        setViewVisible("SymbolBorderWidthResetButton", symbolBorderWidth != PointStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
     }
 
     /**
@@ -129,9 +129,9 @@ public class TracePointStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle, SymbolStyle
+        // Get TraceStyle, PointStyle
         TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
-        SymbolStyle symbolStyle = traceStyle.getSymbolStyle();
+        PointStyle pointStyle = traceStyle.getPointStyle();
 
         // Handle ShowSymbolsCheckBox
         if (anEvent.equals("ShowSymbolsCheckBox")) {
@@ -145,45 +145,45 @@ public class TracePointStyleInsp extends ChartPartInsp {
         // Handle SymbolColorButton, SymbolColorResetButton
         if (anEvent.equals("SymbolColorButton")) {
             Color color = (Color) getViewValue("SymbolColorButton");
-            symbolStyle.setFill(color);
+            pointStyle.setFill(color);
         }
         if (anEvent.equals("SymbolColorResetButton"))
-            symbolStyle.setFill(SymbolStyle.DEFAULT_SYMBOL_FILL);
+            pointStyle.setFill(PointStyle.DEFAULT_SYMBOL_FILL);
 
         // Handle SymbolSizeText, SymbolSizeAdd1Button, SymbolSizeSub1Button, SymbolSizeResetButton
         if (anEvent.equals("SymbolSizeText"))
-            symbolStyle.setSymbolSize(Math.max(anEvent.getIntValue(), 6));
+            pointStyle.setSymbolSize(Math.max(anEvent.getIntValue(), 6));
         if (anEvent.equals("SymbolSizeAdd1Button"))
-            symbolStyle.setSymbolSize(symbolStyle.getSymbolSize() + 1);
+            pointStyle.setSymbolSize(pointStyle.getSymbolSize() + 1);
         if (anEvent.equals("SymbolSizeSub1Button"))
-            symbolStyle.setSymbolSize(Math.max(symbolStyle.getSymbolSize() - 1, 6));
+            pointStyle.setSymbolSize(Math.max(pointStyle.getSymbolSize() - 1, 6));
         if (anEvent.equals("SymbolSizeResetButton"))
-            symbolStyle.setSymbolSize(SymbolStyle.DEFAULT_SYMBOL_SIZE);
+            pointStyle.setSymbolSize(PointStyle.DEFAULT_SYMBOL_SIZE);
 
         // Handle SymbolShapeButton_
         String eventName = anEvent.getName();
         if (eventName.startsWith("SymbolShapeButton_")) {
             int id = SnapUtils.intValue(eventName);
-            symbolStyle.setSymbolId(id);
+            pointStyle.setSymbolId(id);
         }
 
         // Handle SymbolBorderColorButton, SymbolBorderColorResetButton
         if (anEvent.equals("SymbolBorderColorButton")) {
             Color color = (Color) getViewValue("SymbolBorderColorButton");
-            symbolStyle.setLineColor(color);
+            pointStyle.setLineColor(color);
         }
         if (anEvent.equals("SymbolBorderColorResetButton"))
-            symbolStyle.setLineColor(SymbolStyle.DEFAULT_SYMBOL_BORDER_COLOR);
+            pointStyle.setLineColor(PointStyle.DEFAULT_SYMBOL_BORDER_COLOR);
 
         // Handle SymbolBorderWidthText, SymbolBorderWidthAdd1Button, SymbolBorderWidthSub1Button, SymbolBorderWidthResetButton
         if (anEvent.equals("SymbolBorderWidthText"))
-            symbolStyle.setLineWidth(Math.max(anEvent.getIntValue(), 0));
+            pointStyle.setLineWidth(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("SymbolBorderWidthAdd1Button"))
-            symbolStyle.setLineWidth(symbolStyle.getLineWidth() + 1);
+            pointStyle.setLineWidth(pointStyle.getLineWidth() + 1);
         if (anEvent.equals("SymbolBorderWidthSub1Button"))
-            symbolStyle.setLineWidth(Math.max(symbolStyle.getLineWidth() - 1, 0));
+            pointStyle.setLineWidth(Math.max(pointStyle.getLineWidth() - 1, 0));
         if (anEvent.equals("SymbolBorderWidthResetButton"))
-            symbolStyle.setLineWidth(SymbolStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+            pointStyle.setLineWidth(PointStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
     }
 
     /**
