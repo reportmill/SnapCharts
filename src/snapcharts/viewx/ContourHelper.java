@@ -1,11 +1,11 @@
 package snapcharts.viewx;
-
 import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
 import snapcharts.model.Chart;
+import snapcharts.model.ContourAxis;
 import snapcharts.modelx.ContourStyle;
 import snapcharts.model.Trace;
 import snapcharts.util.MinMax;
@@ -71,8 +71,9 @@ public class ContourHelper {
     public int getContourCount()
     {
         if (_levelsCount > 0) return _levelsCount;
-        ContourStyle contourStyle = getContourProps();
-        return _levelsCount = contourStyle.getLevelCount();
+        Chart chart = _chartHelper.getChart();
+        ContourAxis contourAxis = chart.getContourAxis();
+        return _levelsCount = contourAxis.getLevelCount();
     }
 
     /**

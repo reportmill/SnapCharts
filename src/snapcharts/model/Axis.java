@@ -183,12 +183,12 @@ public abstract class Axis extends ChartPart {
     public abstract AxisType getType();
 
     /**
-     * Returns the YAxis title.
+     * Returns the Axis title.
      */
     public String getTitle()  { return _title; }
 
     /**
-     * Sets the YAxis title.
+     * Sets the Axis title.
      */
     public void setTitle(String aStr)
     {
@@ -764,6 +764,16 @@ public abstract class Axis extends ChartPart {
         if (getTitleRotation() != 0)
             e.add(TitleRotation_Prop, getTitleRotation());
 
+        // Archive MinBound, MaxBounds, MinValue, MaxValue
+        if (!isPropDefault(MinBound_Prop))
+            e.add(MinBound_Prop, getMinBound());
+        if (!isPropDefault(MaxBound_Prop))
+            e.add(MaxBound_Prop, getMaxBound());
+        if (!isPropDefault(MinValue_Prop))
+            e.add(MinValue_Prop, getMinValue());
+        if (!isPropDefault(MaxValue_Prop))
+            e.add(MaxValue_Prop, getMaxValue());
+
         // Archive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
         if (!isPropDefault(ZeroRequired_Prop))
             e.add(ZeroRequired_Prop, true);
@@ -835,6 +845,16 @@ public abstract class Axis extends ChartPart {
             setTitle(anElement.getAttributeValue(Title_Prop));
         if (anElement.hasAttribute(TitleRotation_Prop))
             setTitleRotation(anElement.getAttributeDoubleValue(TitleRotation_Prop));
+
+        // Unarchive MinBound, MaxBounds, MinValue, MaxValue
+        if (anElement.hasAttribute(MinBound_Prop))
+            setMinBound(anElement.getAttributeEnumValue(MinBound_Prop, AxisBound.class, null));
+        if (anElement.hasAttribute(MaxBound_Prop))
+            setMaxBound(anElement.getAttributeEnumValue(MaxBound_Prop, AxisBound.class, null));
+        if (anElement.hasAttribute(MinValue_Prop))
+            setMinValue(anElement.getAttributeDoubleValue(MinValue_Prop));
+        if (anElement.hasAttribute(MaxValue_Prop))
+            setMaxValue(anElement.getAttributeDoubleValue(MaxValue_Prop));
 
         // Unachive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
         if (anElement.hasAttribute(ZeroRequired_Prop))

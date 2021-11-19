@@ -96,7 +96,7 @@ public class ContourChartHelper extends ChartHelper {
 
         // Handle Trace/TraceList change
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof TraceStyle) {
+        if (src instanceof Trace || src instanceof TraceList || src instanceof TraceStyle || src instanceof ContourAxis) {
             _contourHelper.resetCachedValues();
         }
     }

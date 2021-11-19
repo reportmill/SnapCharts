@@ -195,6 +195,15 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void resetUI()
     {
+        // Make ContourAxisInsp.Visible only if ChartType is contour
+        Chart chart = _chartPane.getChart();
+        ChartType chartType = chart.getType();
+        boolean isContour = chartType.isContourType();
+        if (_contourAxisInsp != null) {
+            _contourAxisInsp.getUI().setVisible(isContour);
+            _contourAxisInsp.getLabel().setVisible(isContour);
+        }
+
         // Make MarkerInsp.Visible only if chart has markers
         boolean hasMarkers = _chartPane.getChart().getMarkers().length > 0;
         if (_markerInsp != null) {

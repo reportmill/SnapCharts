@@ -1,5 +1,4 @@
 package snapcharts.apptools;
-
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
@@ -41,8 +40,7 @@ public class ContourStyleInsp extends ChartPartInsp {
         ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
         if (contourStyle == null) return;
 
-        // Reset LevelsText, ShowLinesCheckBox, ShowMeshCheckBox
-        setViewValue("LevelsText", contourStyle.getLevelCount());
+        // Reset ShowLinesCheckBox, ShowMeshCheckBox
         setViewValue("ShowLinesCheckBox", contourStyle.isShowLines());
         setViewValue("ShowMeshCheckBox", contourStyle.isShowMesh());
         setViewEnabled("ReverseScaleCheckBox", false);
@@ -57,20 +55,6 @@ public class ContourStyleInsp extends ChartPartInsp {
         TraceStyle traceStyle = getChart().getTraceStyle();
         ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
         if (contourStyle == null) return;
-
-        // Reset LevelsText, LevelsButtons
-        if (anEvent.equals("LevelsText"))
-            contourStyle.setLevelCount(anEvent.getIntValue());
-        if (anEvent.equals("LevelsButton4"))
-            contourStyle.setLevelCount(4);
-        if (anEvent.equals("LevelsButton8"))
-            contourStyle.setLevelCount(8);
-        if (anEvent.equals("LevelsButton16"))
-            contourStyle.setLevelCount(16);
-        if (anEvent.equals("LevelsButton32"))
-            contourStyle.setLevelCount(32);
-        if (anEvent.equals("LevelsButton64"))
-            contourStyle.setLevelCount(64);
 
         // Handle ShowLinesCheckBox, ShowMeshCheckBox
         if (anEvent.equals("ShowLinesCheckBox"))

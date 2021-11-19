@@ -55,7 +55,7 @@ public class ContourDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle) {
+        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle || src instanceof ContourAxis) {
             _contourPainter.clearContoursAll();
         }
     }
