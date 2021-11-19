@@ -529,6 +529,11 @@ public class ChartView extends ChartPartView<Chart> {
         // Forward to ChartHelper
         _chartHelper.chartPartDidChange(aPC);
 
+        // Handle SymbolStyle, TagStyle: Repaint
+        Object src = aPC.getSource();
+        if (src instanceof SymbolStyle || src instanceof TagStyle)
+            repaint();
+
         // Handle Marker change
         if (aPC.getSource() instanceof Marker) {
             relayout();

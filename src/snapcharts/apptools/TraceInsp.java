@@ -125,13 +125,18 @@ public class TraceInsp extends ChartPartInsp {
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
         boolean isMultiYEnabled = trace.getChartType().isMultiYAxisType();
-        getView("AxisTypeYBox").setVisible(isMultiYEnabled);
+        setViewVisible("AxisTypeYBox", isMultiYEnabled);
         if (isMultiYEnabled) {
             AxisType axisTypeY = trace.getAxisTypeY();
             setViewValue("YAxisButton", axisTypeY == AxisType.Y);
             setViewValue("Y2AxisButton", axisTypeY == AxisType.Y2);
             setViewValue("Y3AxisButton", axisTypeY == AxisType.Y3);
             setViewValue("Y4AxisButton", axisTypeY == AxisType.Y4);
+
+            // If only one dataset, hide the Y3/Y4 buttons
+            boolean showAllAxes = getTrace().getTraceList().getTraceCount() > 1;
+            setViewVisible("Y3AxisButton", showAllAxes);
+            setViewVisible("Y4AxisButton", showAllAxes);
         }
 
         // Reset ExprXText, ExprYText, ExprZText
