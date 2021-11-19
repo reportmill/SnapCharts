@@ -19,8 +19,8 @@ public class TraceStyle extends ChartPart {
     // The FillMode
     private FillMode  _fillMode = FillMode.None;
 
-    // Whether to show symbols
-    private boolean  _showSymbols;
+    // Whether to show data points
+    private boolean  _showPoints;
 
     // Whether to show data tags
     private boolean  _showTags;
@@ -44,7 +44,7 @@ public class TraceStyle extends ChartPart {
     public static final String ShowLine_Prop = "ShowLine";
     public static final String PointJoin_Prop = "PointJoin";
     public static final String FillMode_Prop = "FillMode";
-    public static final String ShowSymbols_Prop = "ShowSymbols";
+    public static final String ShowPoints_Prop = "ShowPoints";
     public static final String ShowTags_Prop = "ShowTags";
     public static final String PointSpacing_Prop = "PointSpacing";
     public static final String MaxPointCount_Prop = "MaxPointCount";
@@ -176,20 +176,20 @@ public class TraceStyle extends ChartPart {
     }
 
     /**
-     * Returns whether to show symbols for Trace.
+     * Returns whether to show points/symbols for Trace.
      */
-    public boolean isShowSymbols()
+    public boolean isShowPoints()
     {
-        return _showSymbols;
+        return _showPoints;
     }
 
     /**
-     * Sets whether to show symbols for Trace.
+     * Sets whether to show points/symbols for Trace.
      */
-    public void setShowSymbols(boolean aValue)
+    public void setShowPoints(boolean aValue)
     {
-        if (aValue == isShowSymbols()) return;
-        firePropChange(ShowSymbols_Prop, _showSymbols, _showSymbols = aValue);
+        if (aValue == isShowPoints()) return;
+        firePropChange(ShowPoints_Prop, _showPoints, _showPoints = aValue);
     }
 
     /**
@@ -287,7 +287,7 @@ public class TraceStyle extends ChartPart {
 
         // Add Props
         aPropDefaults.addProps(ShowLine_Prop, PointJoin_Prop,
-            FillMode_Prop, ShowSymbols_Prop, ShowTags_Prop,
+            FillMode_Prop, ShowPoints_Prop, ShowTags_Prop,
             PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
 
         aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel);
@@ -309,8 +309,8 @@ public class TraceStyle extends ChartPart {
             // Handle FillMode
             case FillMode_Prop: return getFillMode();
 
-            // Handle ShowSymbols
-            case ShowSymbols_Prop: return isShowSymbols();
+            // Handle ShowPoints
+            case ShowPoints_Prop: return isShowPoints();
 
             // Handle ShowTags
             case ShowTags_Prop: return isShowTags();
@@ -345,8 +345,8 @@ public class TraceStyle extends ChartPart {
             // Handle FillMode
             case FillMode_Prop: setFillMode((FillMode) aValue); break;
 
-            // Handle ShowSymbols
-            case ShowSymbols_Prop: setShowSymbols(SnapUtils.boolValue(aValue)); break;
+            // Handle ShowPoints
+            case ShowPoints_Prop: setShowPoints(SnapUtils.boolValue(aValue)); break;
 
             // Handle ShowTags
             case ShowTags_Prop: setShowTags(SnapUtils.boolValue(aValue)); break;
@@ -409,9 +409,9 @@ public class TraceStyle extends ChartPart {
         if (!isPropDefault(FillMode_Prop))
             e.add(FillMode_Prop, getFillMode());
 
-        // Archive ShowSymbols
-        if (isShowSymbols()) {
-            e.add(ShowSymbols_Prop, true);
+        // Archive ShowPoints
+        if (isShowPoints()) {
+            e.add(ShowPoints_Prop, true);
 
             // Archive PointStyle
             PointStyle pointStyle = getPointStyle();
@@ -464,9 +464,11 @@ public class TraceStyle extends ChartPart {
         if (anElement.hasAttribute(FillMode_Prop))
             setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
-        // Unarchive ShowSymbols
-        if (anElement.hasAttribute(ShowSymbols_Prop))
-            setShowSymbols(anElement.getAttributeBoolValue(ShowSymbols_Prop));
+        // Unarchive ShowPoints (and legacy ShowSymbols)
+        if (anElement.hasAttribute(ShowPoints_Prop))
+            setShowPoints(anElement.getAttributeBoolValue(ShowPoints_Prop));
+        else if (anElement.hasAttribute("ShowSymbols"))
+            setShowPoints(anElement.getAttributeBoolValue("ShowSymbols"));
 
         // Unarchive ShowTags
         if (anElement.hasAttribute(ShowTags_Prop))

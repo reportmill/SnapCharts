@@ -103,7 +103,7 @@ public class PolarDataArea extends DataArea {
         boolean showLine = traceStyle.isShowLine();
         Stroke dataStroke = traceStyle.getLineStroke();
         Color dataColor = getDataColor();
-        boolean showSymbols = traceStyle.isShowSymbols();
+        boolean showPoints = traceStyle.isShowPoints();
 
         // Get path - if Reveal is active, get path spliced
         Shape path = getDataLineShape();
@@ -149,7 +149,7 @@ public class PolarDataArea extends DataArea {
         }
 
         // Draw trace points
-        if (showSymbols) {
+        if (showPoints) {
 
             // Iterate over DisplayData points
             DataSet displayData = getDisplayData();

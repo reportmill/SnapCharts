@@ -55,7 +55,7 @@ public class PointPainter {
     {
         // Get ShowSymbol info
         TraceStyle traceStyle = _dataArea.getDataStyle();
-        boolean showSymbols = traceStyle.isShowSymbols();
+        boolean showPoints = traceStyle.isShowPoints();
         PointStyle pointStyle = traceStyle.getPointStyle();
         int symbolSize = pointStyle.getSymbolSize();
         double symbolShift = symbolSize / 2d;
@@ -152,7 +152,7 @@ public class PointPainter {
             }
 
             // Get disp X/Y of symbol origin add to SymbolPointList
-            if (showSymbols) {
+            if (showPoints) {
                 double symbX = dispX - symbolShift;
                 double symbY = dispY - symbolShift;
                 symbolPointList.add(new Point(symbX, symbY));

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="0,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ShowSymbolsCheckBox" Spacing="5" text="Show Symbols" />
+    <CheckBox Name="ShowPointsCheckBox" Spacing="5" text="Show Points" />
   </RowView>
     <RowView Padding="2,4,2,4" Spacing="4">
       <Label Spacing="4" text="Color:" />

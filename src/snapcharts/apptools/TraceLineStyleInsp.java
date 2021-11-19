@@ -128,7 +128,7 @@ public class TraceLineStyleInsp extends ChartPartInsp {
             boolean showLine = anEvent.getBoolValue();
             traceStyle.setShowLine(showLine);
             if (!showLine)
-                traceStyle.setShowSymbols(true);
+                traceStyle.setShowPoints(true);
         }
 
         // Handle LineWidthText, LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton

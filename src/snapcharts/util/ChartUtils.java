@@ -68,8 +68,8 @@ public class ChartUtils {
         for (Trace trace : traces) {
             TraceStyle traceStyle = trace.getTraceStyle();
             traceStyle.setShowLine(isLine || isArea || isStackedArea);
-            traceStyle.setShowSymbols(isLine || isScatter);
             traceStyle.setShowArea(isArea || isStackedArea);
+            traceStyle.setShowPoints(isLine || isScatter);
             trace.setStacked(isStackedArea);
         }
     }

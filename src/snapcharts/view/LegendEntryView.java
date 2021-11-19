@@ -99,7 +99,7 @@ public class LegendEntryView extends Label {
                 markedHeight = _traceStyle.getLineWidth();
             if (_traceStyle.isShowArea())
                 markedHeight += AREA_HEIGHT - markedHeight / 2;
-            if (_traceStyle.isShowSymbols())
+            if (_traceStyle.isShowPoints())
                 markedHeight = Math.max(_pointStyle.getSymbol().getSize(), markedHeight);
 
             // Return markedHeight plus insets height
@@ -123,7 +123,7 @@ public class LegendEntryView extends Label {
             // Get info
             boolean showArea = _traceStyle.isShowArea();
             boolean showLine = _traceStyle.isShowLine();
-            boolean showSymbols = _traceStyle.isShowSymbols();
+            boolean showPoints = _traceStyle.isShowPoints();
             boolean disabled = _trace.isDisabled();
             double lineWidth = showLine ? _traceStyle.getLineWidth() : 0;
             double lineY = areaY + areaH / 2;
@@ -148,7 +148,7 @@ public class LegendEntryView extends Label {
             }
 
             // Handle ShowSymbol
-            if (showSymbols) {
+            if (showPoints) {
 
                 // Get symbol fill color
                 Color fillColor = _pointStyle.getFillColor();

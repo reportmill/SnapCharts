@@ -777,9 +777,9 @@ public class Trace extends ChartPart {
         dataSet.fromXML(anArchiver, anElement);
 
         // Legacy
-        if (anElement.hasAttribute(TraceStyle.ShowSymbols_Prop)) {
-            boolean showSymbols = anElement.getAttributeBoolValue(TraceStyle.ShowSymbols_Prop);
-            getTraceStyle().setShowSymbols(showSymbols);
+        if (anElement.hasAttribute("ShowSymbols")) {
+            boolean showPoints = anElement.getAttributeBoolValue("ShowSymbols");
+            getTraceStyle().setShowPoints(showPoints);
         }
 
         // Return this part

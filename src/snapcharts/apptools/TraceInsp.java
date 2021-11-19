@@ -171,7 +171,7 @@ public class TraceInsp extends ChartPartInsp {
         TraceStyle traceStyle = trace.getTraceStyle();
         setButtonHighlight("LineStyleButton", traceStyle.isShowLine());
         setButtonHighlight("AreaStyleButton", traceStyle.isShowArea());
-        setButtonHighlight("PointsStyleButton", traceStyle.isShowSymbols());
+        setButtonHighlight("PointsStyleButton", traceStyle.isShowPoints());
         setButtonHighlight("TagsStyleButton", traceStyle.isShowTags());
 
         // Update child inspector
@@ -181,7 +181,7 @@ public class TraceInsp extends ChartPartInsp {
             chartTypeInsp.resetLater();
 
         // Update SpacingInsp.Visible
-        boolean isPointsOrTags = traceStyle.isShowSymbols() || traceStyle.isShowTags();
+        boolean isPointsOrTags = traceStyle.isShowPoints() || traceStyle.isShowTags();
         boolean isPointsOrTagsInsp = _currentInsp == _pointStyleInsp || _currentInsp == _tagStyleInsp;
         boolean isShowSpacing = isPointsOrTags && isPointsOrTagsInsp;
         _spacingInsp.getUI().setVisible(isShowSpacing);
@@ -263,7 +263,7 @@ public class TraceInsp extends ChartPartInsp {
         if (anEvent.equals("PointsStyleButton")) {
             setCurrentInspector(_pointStyleInsp);
             if (anEvent.getParentEvent() != null && anEvent.getParentEvent().getClickCount() == 2)
-                traceStyle.setShowSymbols(!traceStyle.isShowSymbols());
+                traceStyle.setShowPoints(!traceStyle.isShowPoints());
         }
         if (anEvent.equals("TagsStyleButton")) {
             setCurrentInspector(_tagStyleInsp);
@@ -384,12 +384,12 @@ public class TraceInsp extends ChartPartInsp {
                 setCurrentInspector(_lineStyleInsp);
             else if (traceStyle.isShowArea())
                 setCurrentInspector(_areaStyleInsp);
-            else if (traceStyle.isShowSymbols())
+            else if (traceStyle.isShowPoints())
                 setCurrentInspector(_pointStyleInsp);
         }
 
         // Update SpacingInsp.Visible
-        boolean isPointsOrTags = traceStyle != null && (traceStyle.isShowSymbols() || traceStyle.isShowTags());
+        boolean isPointsOrTags = traceStyle != null && (traceStyle.isShowPoints() || traceStyle.isShowTags());
         boolean isPointsOrTagsInsp = _currentInsp == _pointStyleInsp || _currentInsp == _tagStyleInsp;
         boolean isShowSpacing = isPointsOrTags && isPointsOrTagsInsp;
         _spacingInsp.getUI().setVisible(isShowSpacing);

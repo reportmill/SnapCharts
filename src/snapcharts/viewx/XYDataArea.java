@@ -79,7 +79,7 @@ public class XYDataArea extends DataArea {
         // Get DataStyle info
         TraceStyle traceStyle = getDataStyle();
         boolean showLine = traceStyle.isShowLine();
-        boolean showSymbols = traceStyle.isShowSymbols();
+        boolean showPoints = traceStyle.isShowPoints();
         boolean showArea = traceStyle.isShowArea();
 
         // Get DataColor, DataStroke
@@ -88,7 +88,7 @@ public class XYDataArea extends DataArea {
 
         // If reveal is not full (1) then clip
         double reveal = getReveal();
-        if (reveal < 1 && (showSymbols || showArea)) {
+        if (reveal < 1 && (showPoints || showArea)) {
             aPntr.save();
             aPntr.clipRect(0, 0, areaW * reveal, areaH);
         }
@@ -148,17 +148,17 @@ public class XYDataArea extends DataArea {
         if (isSelected)
             paintSelDataPoint(aPntr);
 
-        // If ShowSymbols or ShowTags
+        // If ShowPoints or ShowTags
         boolean showTags = traceStyle.isShowTags();
-        if (showSymbols || showTags)
+        if (showPoints || showTags)
             _pointPainter.paintSymbolsAndTagsPrep();
 
-        // If ShowSymbols, paint symbols
-        if (showSymbols)
+        // If ShowPoints, paint symbols
+        if (showPoints)
             paintSymbols(aPntr);
 
         // If reveal not full, resture gstate
-        if (reveal < 1 && (showSymbols || showArea))
+        if (reveal < 1 && (showPoints || showArea))
             aPntr.restore();
     }
 
@@ -215,8 +215,8 @@ public class XYDataArea extends DataArea {
         // Paint selected symbol
         Trace trace = getTrace();
         TraceStyle traceStyle = trace.getTraceStyle();
-        boolean showSymbols = traceStyle.isShowSymbols();
-        if (!showSymbols) {
+        boolean showPoints = traceStyle.isShowPoints();
+        if (!showPoints) {
             aPntr.setStroke(Stroke3);
             aPntr.setColor(dataColor);
             aPntr.draw(dataSymbolShape);
@@ -267,8 +267,8 @@ public class XYDataArea extends DataArea {
     {
         // If not Line chart or Trace.Disabled, return default
         TraceStyle traceStyle = getDataStyle();
-        boolean showSymbolsOrFill = traceStyle.isShowSymbols() || traceStyle.isShowArea();
-        if (showSymbolsOrFill || getTrace().isDisabled())
+        boolean showPointsOrArea = traceStyle.isShowPoints() || traceStyle.isShowArea();
+        if (showPointsOrArea || getTrace().isDisabled())
             return DataView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time

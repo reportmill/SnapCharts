@@ -311,9 +311,9 @@ public class OpenInPlotly {
 
             // Set mode: lines | markers | lines+markers
             boolean isShowLine = traceStyle.isShowLine();
-            boolean isShowSymbols = traceStyle.isShowSymbols();
-            String modeStr = isShowLine && isShowSymbols ? "lines+markers" :
-                    isShowLine ? "lines" : isShowSymbols ? "markers" : "";
+            boolean isShowPoints = traceStyle.isShowPoints();
+            String modeStr = isShowLine && isShowPoints ? "lines+markers" :
+                    isShowLine ? "lines" : isShowPoints ? "markers" : "";
             traceJS.addKeyValue("mode", modeStr);
 
             // Configure scatter plot line node
