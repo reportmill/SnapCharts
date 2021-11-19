@@ -22,17 +22,12 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
     // The ColView to hold Contour Entries
     private ColView  _entryBox;
 
-    // Constants
-
     /**
      * Constructor.
      */
     public ContourAxisView()
     {
         super();
-
-        setPadding(DEFAULT_PADDING);
-        setAlign(Pos.CENTER_LEFT);
 
         // Create/add ColorBox
         _colorBox = new ColorBox();
