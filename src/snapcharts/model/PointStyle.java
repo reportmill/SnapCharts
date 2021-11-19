@@ -13,8 +13,8 @@ import snap.util.XMLElement;
  */
 public class PointStyle extends ChartPart {
 
-    // The TraceStyle that holds this PointStyle
-    private TraceStyle  _traceStyle;
+    // The Trace that holds this PointStyle
+    private Trace  _trace;
 
     // The Symbol Size
     private int  _symbolSize = DEFAULT_SYMBOL_SIZE;
@@ -38,10 +38,10 @@ public class PointStyle extends ChartPart {
     /**
      * Constructor.
      */
-    public PointStyle(TraceStyle aTraceStyle)
+    public PointStyle(Trace aTrace)
     {
         super();
-        _traceStyle = aTraceStyle;
+        _trace = aTrace;
     }
 
     /**
@@ -92,7 +92,7 @@ public class PointStyle extends ChartPart {
      */
     private Color getDefaultLineColor()
     {
-        return _traceStyle.getLineColor();
+        return _trace.getTraceStyle().getLineColor();
     }
 
     /**
@@ -102,7 +102,7 @@ public class PointStyle extends ChartPart {
     {
         if (getLineWidth() > 0 && !isLineColorSet())
             return Color.WHITE;
-        return _traceStyle.getDefaultLineColor();
+        return _trace.getTraceStyle().getDefaultLineColor();
     }
 
     /**

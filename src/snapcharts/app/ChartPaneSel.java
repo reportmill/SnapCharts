@@ -189,7 +189,7 @@ public class ChartPaneSel {
                     return markerView;
         }
 
-        // Handle DataStyle
+        // Handle Trace
         if (aChartPart instanceof TraceList || aChartPart instanceof Trace)
             return _chartView.getDataView();
 

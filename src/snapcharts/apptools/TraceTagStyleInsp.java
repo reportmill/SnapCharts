@@ -77,15 +77,15 @@ public class TraceTagStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get TraceStyle
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
+        // Get Trace
+        Trace trace = getTrace(); if (trace == null) return;
 
         // Reset ShowTagsCheckBox
-        boolean showTags = traceStyle.isShowTags();
+        boolean showTags = trace.isShowTags();
         setViewValue("ShowTagsCheckBox", showTags);
 
         // Reset TagFontText, TagFontResetButton
-        TagStyle tagStyle = traceStyle.getTagStyle();
+        TagStyle tagStyle = trace.getTagStyle();
         Font tagFont = tagStyle.getFont();
         String fontName = tagFont.getName() + ' ' + FormatUtils.formatNum(tagFont.getSize());
         setViewValue("TagFontText", fontName);
@@ -125,14 +125,14 @@ public class TraceTagStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle, TagStyle
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
-        TagStyle tagStyle = traceStyle.getTagStyle();
+        // Get Trace, TagStyle
+        Trace trace = getTrace(); if (trace == null) return;
+        TagStyle tagStyle = trace.getTagStyle();
 
         // Handle ShowTagsCheckBox
         if (anEvent.equals("ShowTagsCheckBox")) {
             boolean showTags = anEvent.getBoolValue();
-            traceStyle.setShowTags(showTags);
+            trace.setShowTags(showTags);
             _traceInsp.resetLater();
         }
 

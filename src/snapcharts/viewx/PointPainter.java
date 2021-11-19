@@ -54,16 +54,17 @@ public class PointPainter {
     public void paintSymbolsAndTagsPrep()
     {
         // Get ShowSymbol info
-        TraceStyle traceStyle = _dataArea.getDataStyle();
-        boolean showPoints = traceStyle.isShowPoints();
-        PointStyle pointStyle = traceStyle.getPointStyle();
+        Trace trace = _dataArea.getTrace();
+        TraceStyle traceStyle = _dataArea.getTraceStyle();
+        boolean showPoints = trace.isShowPoints();
+        PointStyle pointStyle = trace.getPointStyle();
         int symbolSize = pointStyle.getSymbolSize();
         double symbolShift = symbolSize / 2d;
         List<Point> symbolPointList = new ArrayList<>();
 
         // Get ShowTag info because TagBoxes are created
-        boolean showTags = traceStyle.isShowTags();
-        TagStyle tagStyle = traceStyle.getTagStyle();
+        boolean showTags = trace.isShowTags();
+        TagStyle tagStyle = trace.getTagStyle();
         DataSet procData = _dataArea.getTrace().getProcessedData();
         boolean hasZ = procData.getDataType().hasZ();
         Color tagBorderColor = tagStyle.getLineColor();
@@ -177,8 +178,8 @@ public class PointPainter {
     public void paintSymbols(Painter aPntr)
     {
         // Get info
-        TraceStyle traceStyle = _dataArea.getDataStyle();
-        PointStyle pointStyle = traceStyle.getPointStyle();
+        Trace trace = _dataArea.getTrace();
+        PointStyle pointStyle = trace.getPointStyle();
         Symbol symbol = pointStyle.getSymbol();
         Color symbolColor = pointStyle.getFillColor();  //color.darker().darker()
         Shape symbolShape = symbol.getShape();
@@ -188,7 +189,7 @@ public class PointPainter {
         double symbolBorderWidth = pointStyle.getLineWidth();
 
         // Get whether showing points only
-        boolean pointsOnly = !(traceStyle.isShowLine() || traceStyle.isShowArea());
+        boolean pointsOnly = !(trace.isShowLine() || trace.isShowArea());
         if (symbolBorderWidth == 0 && pointsOnly)
             symbolBorderWidth = 1;
 
@@ -226,8 +227,8 @@ public class PointPainter {
     public void paintTags(Painter aPntr)
     {
         TagBox[] tagBoxes = getTagBoxes();
-        TraceStyle traceStyle = _dataArea.getDataStyle();
-        TagStyle tagStyle = traceStyle.getTagStyle();
+        Trace trace = _dataArea.getTrace();
+        TagStyle tagStyle = trace.getTagStyle();
         Color fillColor = tagStyle.getFillColor();
 
         for (TagBox sbox : tagBoxes)

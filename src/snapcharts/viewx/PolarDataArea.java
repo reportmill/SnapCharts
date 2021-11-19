@@ -100,10 +100,10 @@ public class PolarDataArea extends DataArea {
 
         // Get style info
         TraceStyle traceStyle = trace.getTraceStyle();
-        boolean showLine = traceStyle.isShowLine();
+        boolean showLine = trace.isShowLine();
         Stroke dataStroke = traceStyle.getLineStroke();
         Color dataColor = getDataColor();
-        boolean showPoints = traceStyle.isShowPoints();
+        boolean showPoints = trace.isShowPoints();
 
         // Get path - if Reveal is active, get path spliced
         Shape path = getDataLineShape();

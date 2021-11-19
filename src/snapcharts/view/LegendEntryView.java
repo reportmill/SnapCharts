@@ -13,7 +13,7 @@ public class LegendEntryView extends Label {
     // The Trace
     private Trace  _trace;
 
-    // The DataStyle
+    // The TraceStyle
     private TraceStyle  _traceStyle;
 
     // The PointStyle
@@ -30,7 +30,7 @@ public class LegendEntryView extends Label {
         super();
         _trace = aTrace;
         _traceStyle = aTrace.getTraceStyle();
-        _pointStyle = _traceStyle.getPointStyle();
+        _pointStyle = _trace.getPointStyle();
 
         // Set ShowText
         setShowText(true);
@@ -95,11 +95,11 @@ public class LegendEntryView extends Label {
         {
             // Get marked height of line/area/symbol
             double markedHeight = 0;
-            if (_traceStyle.isShowLine())
+            if (_trace.isShowLine())
                 markedHeight = _traceStyle.getLineWidth();
-            if (_traceStyle.isShowArea())
+            if (_trace.isShowArea())
                 markedHeight += AREA_HEIGHT - markedHeight / 2;
-            if (_traceStyle.isShowPoints())
+            if (_trace.isShowPoints())
                 markedHeight = Math.max(_pointStyle.getSymbol().getSize(), markedHeight);
 
             // Return markedHeight plus insets height
@@ -108,7 +108,7 @@ public class LegendEntryView extends Label {
         }
 
         /**
-         * Override to paint sample of DataStyle line.
+         * Override to paint sample of Trace line.
          */
         @Override
         protected void paintFront(Painter aPntr)
@@ -121,9 +121,9 @@ public class LegendEntryView extends Label {
             double areaH = getHeight() - ins.getHeight();
 
             // Get info
-            boolean showArea = _traceStyle.isShowArea();
-            boolean showLine = _traceStyle.isShowLine();
-            boolean showPoints = _traceStyle.isShowPoints();
+            boolean showArea = _trace.isShowArea();
+            boolean showLine = _trace.isShowLine();
+            boolean showPoints = _trace.isShowPoints();
             boolean disabled = _trace.isDisabled();
             double lineWidth = showLine ? _traceStyle.getLineWidth() : 0;
             double lineY = areaY + areaH / 2;

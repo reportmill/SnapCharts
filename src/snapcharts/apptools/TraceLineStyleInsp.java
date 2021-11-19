@@ -89,10 +89,11 @@ public class TraceLineStyleInsp extends ChartPartInsp {
     protected void resetUI()
     {
         // Get TraceStyle
+        Trace trace = getTrace(); if (trace == null) return;
         TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Reset ShowLineCheckBox
-        boolean showLine = traceStyle.isShowLine();
+        boolean showLine = trace.isShowLine();
         setViewValue("ShowLineCheckBox", showLine);
 
         // Reset LineColorButton, LineColorResetButton
@@ -121,14 +122,15 @@ public class TraceLineStyleInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get TraceStyle
+        Trace trace = getTrace(); if (trace == null) return;
         TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {
             boolean showLine = anEvent.getBoolValue();
-            traceStyle.setShowLine(showLine);
+            trace.setShowLine(showLine);
             if (!showLine)
-                traceStyle.setShowPoints(true);
+                trace.setShowPoints(true);
         }
 
         // Handle LineWidthText, LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton

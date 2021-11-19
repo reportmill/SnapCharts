@@ -74,11 +74,12 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get TraceStyle
+        // Get Trace, TraceStyle
+        Trace trace = getTrace(); if (trace == null) return;
         TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Reset ShowAreaCheckBox
-        boolean showArea = traceStyle.isShowArea();
+        boolean showArea = trace.isShowArea();
         setViewValue("ShowAreaCheckBox", showArea);
 
         // Reset FillColorButton, FillColorResetButton
@@ -95,12 +96,13 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
     protected void respondUI(ViewEvent anEvent)
     {
         // Get TraceStyle
+        Trace trace = getTrace(); if (trace == null) return;
         TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Handle ShowAreaCheckBox, FillModeComboBox
         if (anEvent.equals("ShowAreaCheckBox")) {
             boolean showArea = anEvent.getBoolValue();
-            traceStyle.setShowArea(showArea);
+            trace.setShowArea(showArea);
         }
 
         // Handle FillColorButton, FillColorResetButton

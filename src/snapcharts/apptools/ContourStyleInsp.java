@@ -35,7 +35,7 @@ public class ContourStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get DataStyle
+        // Get TraceStyle
         TraceStyle traceStyle = getChart().getTraceStyle();
         ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
         if (contourStyle == null) return;
@@ -51,7 +51,7 @@ public class ContourStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get DataStyle
+        // Get TraceStyle
         TraceStyle traceStyle = getChart().getTraceStyle();
         ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
         if (contourStyle == null) return;

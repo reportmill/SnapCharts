@@ -5,7 +5,7 @@ package snapcharts.modelx;
 import snapcharts.model.TraceStyle;
 
 /**
- * A DataStyle subclass for Pie chart properties.
+ * A TraceStyle subclass for Pie chart properties.
  */
 public class PieStyle extends TraceStyle {
 

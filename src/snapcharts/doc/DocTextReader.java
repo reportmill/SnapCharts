@@ -237,7 +237,7 @@ public class DocTextReader {
                 break;
 
             case "ShowSymbols":
-                _trace.getTraceStyle().setShowPoints(SnapUtils.boolValue(aVal));
+                _trace.setShowPoints(SnapUtils.boolValue(aVal));
                 break;
 
             case "DataX":

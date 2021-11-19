@@ -147,7 +147,7 @@ public class PieDataArea extends DataArea {
         int selIndexLast = getSelPointLastIndex();
         double reveal = getReveal();
         double selPointMorph = getSelDataPointMorph();
-        TraceStyle traceStyle = getDataStyle();
+        TraceStyle traceStyle = getTraceStyle();
 
         // Set font
         aPntr.setFont(getFont());

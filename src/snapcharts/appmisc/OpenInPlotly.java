@@ -303,15 +303,15 @@ public class OpenInPlotly {
             traceJS.addKeyValue("stackgroup", "one");
 
         // If ShowArea, add: fill: 'tozeroy'
-        if (traceStyle.isShowArea() && !aTrace.isStacked())
+        if (aTrace.isShowArea() && !aTrace.isStacked())
             traceJS.addKeyValue("fill", "tozeroy");
 
         // If ChartType.SCATTER, add: mode: 'markers'
         if (chartType == ChartType.SCATTER || chartType == ChartType.POLAR) {
 
             // Set mode: lines | markers | lines+markers
-            boolean isShowLine = traceStyle.isShowLine();
-            boolean isShowPoints = traceStyle.isShowPoints();
+            boolean isShowLine = aTrace.isShowLine();
+            boolean isShowPoints = aTrace.isShowPoints();
             String modeStr = isShowLine && isShowPoints ? "lines+markers" :
                     isShowLine ? "lines" : isShowPoints ? "markers" : "";
             traceJS.addKeyValue("mode", modeStr);

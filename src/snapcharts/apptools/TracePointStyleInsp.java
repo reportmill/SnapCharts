@@ -88,15 +88,15 @@ public class TracePointStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get TraceStyle
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
+        // Get Trace
+        Trace trace = getTrace(); if (trace == null) return;
 
         // Reset ShowPointsCheckBox
-        boolean showPoints = traceStyle.isShowPoints();
+        boolean showPoints = trace.isShowPoints();
         setViewValue("ShowPointsCheckBox", showPoints);
 
         // Reset SymbolColorButton, SymbolColorResetButton
-        PointStyle pointStyle = traceStyle.getPointStyle();
+        PointStyle pointStyle = trace.getPointStyle();
         Color symbolColor = pointStyle.getFillColor();
         setViewValue("SymbolColorButton", symbolColor);
         setViewVisible("SymbolColorResetButton", pointStyle.isFillSet());
@@ -129,16 +129,16 @@ public class TracePointStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle, PointStyle
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
-        PointStyle pointStyle = traceStyle.getPointStyle();
+        // Get Trace, PointStyle
+        Trace trace = getTrace(); if (trace == null) return;
+        PointStyle pointStyle = trace.getPointStyle();
 
         // Handle ShowPointsCheckBox
         if (anEvent.equals("ShowPointsCheckBox")) {
             boolean showPoints = anEvent.getBoolValue();
-            traceStyle.setShowPoints(showPoints);
+            trace.setShowPoints(showPoints);
             if (!showPoints)
-                traceStyle.setShowLine(true);
+                trace.setShowLine(true);
             _traceInsp.resetLater();
         }
 

@@ -76,11 +76,12 @@ public class XYDataArea extends DataArea {
         // Get whether DataArea/Trace is selected or targeted
         boolean isSelected = isSelectedOrTargeted();
 
-        // Get DataStyle info
-        TraceStyle traceStyle = getDataStyle();
-        boolean showLine = traceStyle.isShowLine();
-        boolean showPoints = traceStyle.isShowPoints();
-        boolean showArea = traceStyle.isShowArea();
+        // Get Trace info
+        Trace trace = getTrace();
+        TraceStyle traceStyle = getTraceStyle();
+        boolean showLine = trace.isShowLine();
+        boolean showPoints = trace.isShowPoints();
+        boolean showArea = trace.isShowArea();
 
         // Get DataColor, DataStroke
         Color dataColor = getDataColor();
@@ -149,7 +150,7 @@ public class XYDataArea extends DataArea {
             paintSelDataPoint(aPntr);
 
         // If ShowPoints or ShowTags
-        boolean showTags = traceStyle.isShowTags();
+        boolean showTags = trace.isShowTags();
         if (showPoints || showTags)
             _pointPainter.paintSymbolsAndTagsPrep();
 
@@ -214,8 +215,7 @@ public class XYDataArea extends DataArea {
 
         // Paint selected symbol
         Trace trace = getTrace();
-        TraceStyle traceStyle = trace.getTraceStyle();
-        boolean showPoints = traceStyle.isShowPoints();
+        boolean showPoints = trace.isShowPoints();
         if (!showPoints) {
             aPntr.setStroke(Stroke3);
             aPntr.setColor(dataColor);
@@ -266,8 +266,8 @@ public class XYDataArea extends DataArea {
     protected int getRevealTime()
     {
         // If not Line chart or Trace.Disabled, return default
-        TraceStyle traceStyle = getDataStyle();
-        boolean showPointsOrArea = traceStyle.isShowPoints() || traceStyle.isShowArea();
+        Trace trace = getTrace();
+        boolean showPointsOrArea = trace.isShowPoints() || trace.isShowArea();
         if (showPointsOrArea || getTrace().isDisabled())
             return DataView.DEFAULT_REVEAL_TIME;
 

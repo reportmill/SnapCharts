@@ -8,7 +8,7 @@ import snap.util.XMLElement;
 import snapcharts.model.TraceStyle;
 
 /**
- * A DataStyle subclass for Polar chart properties.
+ * A TraceStyle subclass for Polar chart properties.
  */
 public class PolarStyle extends TraceStyle {
 
@@ -68,7 +68,7 @@ public class PolarStyle extends TraceStyle {
     }
 
     /**
-     * Override to define DataStyle defaults
+     * Override to define custom defaults
      */
     @Override
     public Object getPropDefault(String aPropName)

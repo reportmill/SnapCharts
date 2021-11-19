@@ -63,9 +63,9 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public Trace getTrace()  { return _trace; }
 
     /**
-     * Returns the DataStyle.
+     * Returns the TraceStyle.
      */
-    public TraceStyle getDataStyle()  { return _trace.getTraceStyle(); }
+    public TraceStyle getTraceStyle()  { return _trace.getTraceStyle(); }
 
     /**
      * Returns whether trace is enabled.
@@ -120,7 +120,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
      */
     public Color getDataColor()
     {
-        TraceStyle traceStyle = getDataStyle();
+        TraceStyle traceStyle = getTraceStyle();
         return traceStyle.getLineColor();
     }
 
@@ -129,7 +129,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
      */
     public Color getColorMapColor(int anIndex)
     {
-        TraceStyle traceStyle = getDataStyle();
+        TraceStyle traceStyle = getTraceStyle();
         return traceStyle.getColorMapColor(anIndex);
     }
 
@@ -139,8 +139,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public Symbol getDataSymbol()
     {
         Trace trace = getTrace();
-        TraceStyle traceStyle = trace.getTraceStyle();
-        PointStyle pointStyle = traceStyle.getPointStyle();
+        PointStyle pointStyle = trace.getPointStyle();
         return pointStyle.getSymbol();
     }
 
@@ -450,8 +449,8 @@ public abstract class DataArea extends ChartPartView<Trace> {
      */
     protected void paintDataAreaAbove(Painter aPntr)
     {
-        TraceStyle traceStyle = getDataStyle();
-        if (traceStyle.isShowTags())
+        Trace trace = getTrace();
+        if (trace.isShowTags())
             paintDataTags(aPntr);
     }
 
@@ -462,7 +461,6 @@ public abstract class DataArea extends ChartPartView<Trace> {
 
     /**
      * Returns the data point closest to given x/y in local coords (null if none).
-     * @return
      */
     public TracePoint getDataPointForLocalXY(double aX, double aY)
     {
@@ -494,7 +492,6 @@ public abstract class DataArea extends ChartPartView<Trace> {
 
     /**
      * Returns the given data point X/Y in this view coords.
-     * @param aDP
      */
     public Point getLocalXYForDataPoint(TracePoint aDP)
     {
@@ -543,7 +540,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
         Trace trace = getTrace();
-        TraceStyle traceStyle = getDataStyle();
+        TraceStyle traceStyle = getTraceStyle();
         if (src == trace || src == traceStyle || src instanceof Axis || propName == Trace.Stacked_Prop) {
             clearStagedData();
         }

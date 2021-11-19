@@ -5,7 +5,7 @@ package snapcharts.modelx;
 import snapcharts.model.TraceStyle;
 
 /**
- * A DataStyle subclass for Bar chart properties.
+ * A TraceStyle subclass for Bar chart properties.
  */
 public class BarStyle extends TraceStyle {
 

@@ -140,10 +140,6 @@ public class ChartPaneInsp extends ViewOwner {
         _traceInsp = new TraceInsp(_chartPane);
         addInspector(_traceInsp, false);
 
-        // Create/add DataStyleInsp
-        //_traceStyleInsp = new TraceStyleInsp(_chartPane);
-        //addInspector(_traceStyleInsp, false);
-
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _contourAxisInsp,
                 _dataViewInsp, _legendInsp, _markerInsp, _traceInsp };
@@ -159,16 +155,6 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Create/set MiscInsp
         _miscInsp = new MiscInsp(_chartPane);
-    }
-
-    /**
-     * Override to trigger update of DataStyleInsp.
-     */
-    @Override
-    protected void initShowing()
-    {
-        //if (_traceStyleInsp != null)
-        //    _traceStyleInsp.resetLater();
     }
 
     /**
@@ -285,11 +271,11 @@ public class ChartPaneInsp extends ViewOwner {
         // Get ChartPart for inspector
         ChartPart chartPart = anInsp.getChartPart();
 
-        // DataStyleInsp/DataStyle is going to pretend to represent DataSetList
+        // TraceInsp/Trace is going to pretend to represent TraceList
         if (chartPart instanceof TraceStyle) {
             Chart chart = _chartPane.getChart();
-            TraceList dataList = chart.getTraceList();
-            chartPart = dataList.getTraceCount() > 0 ? dataList.getTrace(0) : chart;
+            TraceList traceList = chart.getTraceList();
+            chartPart = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : chart;
         }
 
         // Set new ChartPane.SelChartPart

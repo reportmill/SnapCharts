@@ -2,9 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
-import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
+import snap.util.*;
 import snapcharts.data.*;
 import snapcharts.util.MinMax;
 
@@ -16,8 +14,20 @@ import java.util.*;
  */
 public class Trace extends ChartPart {
     
-    // The index in data set
+    // The index in parent TraceList
     protected int  _index;
+
+    // Whether to show line
+    private boolean  _showLine = true;
+
+    // Whether to show area
+    private boolean  _showArea;
+
+    // Whether to show data points
+    private boolean  _showPoints;
+
+    // Whether to show data tags
+    private boolean  _showTags;
 
     // The Y Axis type
     private AxisType  _axisTypeY = AxisType.Y;
@@ -43,6 +53,12 @@ public class Trace extends ChartPart {
     // The TraceStyleHpr
     private TraceStyleHpr _traceStyleHpr;
 
+    // The PointStyle
+    private PointStyle  _pointStyle = new PointStyle(this);
+
+    // The TagStyle
+    private TagStyle  _tagStyle = new TagStyle(this);
+
     // The original DataSet
     private DataSet  _dataSet = DataSet.newDataSet();
 
@@ -59,6 +75,10 @@ public class Trace extends ChartPart {
     private DataSet _polarXYData;
 
     // Constants for properties
+    public static final String ShowLine_Prop = "ShowLine";
+    public static final String ShowArea_Prop = "ShowArea";
+    public static final String ShowPoints_Prop = "ShowPoints";
+    public static final String ShowTags_Prop = "ShowTags";
     public static final String DataType_Prop = DataSet.DataType_Prop;
     public static final String ThetaUhit_Prop = "ThetaUnit";
     public static final String AxisTypeY_Prop = "AxisTypeY";
@@ -70,6 +90,10 @@ public class Trace extends ChartPart {
     public static final String Disabled_Prop = "Disabled";
     public static final String Point_Prop = "Points";
 
+    // Constants for relations
+    public static final String PointStyle_Rel = "PointStyle";
+    public static final String TagStyle_Rel = "TagStyle";
+
     /**
      * Constructor.
      */
@@ -78,12 +102,94 @@ public class Trace extends ChartPart {
         super();
 
         _traceStyleHpr = new TraceStyleHpr(this);
+
+        // Register listener for TagStyle, PointStyle prop changes
+        _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
+        _pointStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
     }
 
     /**
      * Returns the index in TraceList.
      */
     public int getIndex()  { return _index; }
+
+    /**
+     * Returns whether to show line for Trace.
+     */
+    public boolean isShowLine()
+    {
+        return _showLine;
+    }
+
+    /**
+     * Sets whether to show line for Trace.
+     */
+    public void setShowLine(boolean aValue)
+    {
+        if (aValue == isShowLine()) return;
+        firePropChange(ShowLine_Prop, _showLine, _showLine = aValue);
+    }
+
+    /**
+     * Returns whether to show area for Trace.
+     */
+    public boolean isShowArea()
+    {
+        return _showArea;
+    }
+
+    /**
+     * Sets whether to show area for Trace.
+     */
+    public void setShowArea(boolean aValue)
+    {
+        if (aValue == isShowArea()) return;
+        firePropChange(ShowArea_Prop, _showArea, _showArea = aValue);
+    }
+
+    /**
+     * Returns whether to show points/symbols for Trace.
+     */
+    public boolean isShowPoints()
+    {
+        return _showPoints;
+    }
+
+    /**
+     * Sets whether to show points/symbols for Trace.
+     */
+    public void setShowPoints(boolean aValue)
+    {
+        if (aValue == isShowPoints()) return;
+        firePropChange(ShowPoints_Prop, _showPoints, _showPoints = aValue);
+    }
+
+    /**
+     * Returns whether to show data tags for Trace.
+     */
+    public boolean isShowTags()
+    {
+        return _showTags;
+    }
+
+    /**
+     * Sets whether to show data tags for Trace.
+     */
+    public void setShowTags(boolean aValue)
+    {
+        if (aValue == isShowTags()) return;
+        firePropChange(ShowTags_Prop, _showTags, _showTags = aValue);
+    }
+
+    /**
+     * Returns the PointStyle for this Trace.
+     */
+    public PointStyle getPointStyle()  { return _pointStyle; }
+
+    /**
+     * Returns the TagStyle for this Trace.
+     */
+    public TagStyle getTagStyle()  { return _tagStyle; }
 
     /**
      * Returns the DataType.
@@ -691,6 +797,74 @@ public class Trace extends ChartPart {
     }
 
     /**
+     * Called when a child chart part has prop change.
+     */
+    private void childChartPartDidPropChange(PropChange aPC)
+    {
+        Chart chart = getChart();
+        chart.chartPartDidPropChange(aPC);
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(ShowLine_Prop, ShowArea_Prop, ShowPoints_Prop, ShowTags_Prop);
+
+        aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel);
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // Handle ShowLine, ShowArea, ShowPoints, ShowTags
+            case ShowLine_Prop: return isShowLine();
+            case ShowArea_Prop: return isShowArea();
+            case ShowPoints_Prop: return isShowPoints();
+            case ShowTags_Prop: return isShowTags();
+
+            // Handle PointStyleRel, TagStyle_Rel
+            case PointStyle_Rel: return getPointStyle();
+            case TagStyle_Rel: return getTagStyle();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // Handle ShowLine, ShowArea, ShowPoints, ShowTags
+            case ShowLine_Prop: setShowLine(SnapUtils.boolValue(aValue)); break;
+            case ShowArea_Prop: setShowArea(SnapUtils.boolValue(aValue)); break;
+            case ShowPoints_Prop: setShowPoints(SnapUtils.boolValue(aValue)); break;
+            case ShowTags_Prop: setShowTags(SnapUtils.boolValue(aValue)); break;
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue);
+        }
+    }
+
+    /**
      * Archival.
      */
     @Override
@@ -698,6 +872,34 @@ public class Trace extends ChartPart {
     {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
+
+        // Archive ShowLine, ShowArea
+        if (!isShowLine())
+            e.add(ShowLine_Prop, false);
+        if (isShowArea())
+            e.add(ShowArea_Prop, true);
+
+        // Archive ShowPoints
+        if (isShowPoints()) {
+            e.add(ShowPoints_Prop, true);
+
+            // Archive PointStyle
+            PointStyle pointStyle = getPointStyle();
+            XMLElement pointStyleXML = pointStyle.toXML(anArchiver);
+            if (pointStyleXML.getAttributeCount() > 0 || pointStyleXML.getElementCount() > 0)
+                e.addElement(pointStyleXML);
+        }
+
+        // Archive ShowTags
+        if (isShowTags()) {
+            e.add(ShowTags_Prop, true);
+
+            // Archive TagStyle
+            TagStyle tagStyle = getTagStyle();
+            XMLElement tagStyleXML = tagStyle.toXML(anArchiver);
+            if (tagStyleXML.getAttributeCount() > 0 || tagStyleXML.getElementCount() > 0)
+                e.addElement(tagStyleXML);
+        }
 
         // Archive AxisTypeY
         if (getAxisTypeY() != AxisType.Y)
@@ -744,6 +946,34 @@ public class Trace extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
+        // Unarchive ShowLine, ShowArea
+        if (anElement.hasAttribute(ShowLine_Prop))
+            setShowLine(anElement.getAttributeBoolValue(ShowLine_Prop));
+        if (anElement.hasAttribute(ShowArea_Prop))
+            setShowArea(anElement.getAttributeBoolValue(ShowArea_Prop));
+
+        // Unarchive ShowPoints (and legacy ShowSymbols)
+        if (anElement.hasAttribute(ShowPoints_Prop))
+            setShowPoints(anElement.getAttributeBoolValue(ShowPoints_Prop));
+        else if (anElement.hasAttribute("ShowSymbols"))
+            setShowPoints(anElement.getAttributeBoolValue("ShowSymbols"));
+
+        // Unarchive ShowTags
+        if (anElement.hasAttribute(ShowTags_Prop))
+            setShowTags(anElement.getAttributeBoolValue(ShowTags_Prop));
+
+        // Unarchive PointStyle
+        XMLElement pointStyleXML = anElement.getElement("PointStyle");
+        if (pointStyleXML == null)
+            pointStyleXML = anElement.getElement("SymbolStyle");
+        if (pointStyleXML != null)
+            getPointStyle().fromXML(anArchiver, pointStyleXML);
+
+        // Unarchive TagStyle
+        XMLElement tagStyleXML = anElement.getElement("TagStyle");
+        if (tagStyleXML != null)
+            getTagStyle().fromXML(anArchiver, tagStyleXML);
+
         // Unarchive AxisTypeY
         String axisTypeStr = anElement.getAttributeValue(AxisTypeY_Prop);
         if (axisTypeStr != null)
@@ -769,18 +999,13 @@ public class Trace extends ChartPart {
         XMLElement traceStyleXML = anElement.getElement("TraceStyle");
         if (traceStyleXML == null)
             traceStyleXML = anElement.getElement("DataStyle");
-        if (traceStyleXML != null)
+        if (traceStyleXML != null) {
             getTraceStyle().fromXML(anArchiver, traceStyleXML);
+        }
 
         // Unarchive DataSet
         DataSet dataSet = getDataSet();
         dataSet.fromXML(anArchiver, anElement);
-
-        // Legacy
-        if (anElement.hasAttribute("ShowSymbols")) {
-            boolean showPoints = anElement.getAttributeBoolValue("ShowSymbols");
-            getTraceStyle().setShowPoints(showPoints);
-        }
 
         // Return this part
         return this;

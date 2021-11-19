@@ -25,7 +25,7 @@ public class ChartUtils {
         // If all Traces ShowArea, return AREA
         boolean showArea = true;
         for (Trace trace : traces) {
-            if (!trace.getTraceStyle().isShowArea()) {
+            if (!trace.isShowArea()) {
                 showArea = false;
                 break;
             }
@@ -38,7 +38,7 @@ public class ChartUtils {
         // If all Traces ShowLine, return LINE
         boolean showLine = true;
         for (Trace trace : traces) {
-            if (!trace.getTraceStyle().isShowLine()) {
+            if (!trace.isShowLine()) {
                 showLine = false;
                 break;
             }
@@ -66,10 +66,9 @@ public class ChartUtils {
         // Configure Traces
         Trace[] traces = aChart.getTraceList().getTraces();
         for (Trace trace : traces) {
-            TraceStyle traceStyle = trace.getTraceStyle();
-            traceStyle.setShowLine(isLine || isArea || isStackedArea);
-            traceStyle.setShowArea(isArea || isStackedArea);
-            traceStyle.setShowPoints(isLine || isScatter);
+            trace.setShowLine(isLine || isArea || isStackedArea);
+            trace.setShowArea(isArea || isStackedArea);
+            trace.setShowPoints(isLine || isScatter);
             trace.setStacked(isStackedArea);
         }
     }

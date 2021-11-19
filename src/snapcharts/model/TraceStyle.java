@@ -10,26 +10,11 @@ import snap.util.*;
  */
 public class TraceStyle extends ChartPart {
 
-    // Whether to show line
-    private boolean  _showLine = true;
-
     // The method by which points are joined
     private PointJoin _pointJoin = PointJoin.Line;
 
     // The FillMode
     private FillMode  _fillMode = FillMode.None;
-
-    // Whether to show data points
-    private boolean  _showPoints;
-
-    // Whether to show data tags
-    private boolean  _showTags;
-
-    // The PointStyle
-    private PointStyle  _pointStyle = new PointStyle(this);
-
-    // The TagStyle
-    private TagStyle  _tagStyle = new TagStyle(this);
 
     // The maximum number of symbols/tags visible
     private int  _maxPointCount = DEFAULT_MAX_POINT_COUNT;
@@ -41,18 +26,11 @@ public class TraceStyle extends ChartPart {
     private int  _pointSpacing = DEFAULT_POINT_SPACING;
 
     // Constants for properties
-    public static final String ShowLine_Prop = "ShowLine";
     public static final String PointJoin_Prop = "PointJoin";
     public static final String FillMode_Prop = "FillMode";
-    public static final String ShowPoints_Prop = "ShowPoints";
-    public static final String ShowTags_Prop = "ShowTags";
     public static final String PointSpacing_Prop = "PointSpacing";
     public static final String MaxPointCount_Prop = "MaxPointCount";
     public static final String SkipPointCount_Prop = "SkipPointCount";
-
-    // Constants for relations
-    public static final String PointStyle_Rel = "PointStyle";
-    public static final String TagStyle_Rel = "TagStyle";
 
     // Constants for property defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
@@ -72,27 +50,6 @@ public class TraceStyle extends ChartPart {
     {
         super();
         setLineWidth(DEFAULT_LINE_WIDTH);
-
-        // Register listener for TagStyle, PointStyle prop changes
-        _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
-        _pointStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
-    }
-
-    /**
-     * Returns whether to show line for Trace.
-     */
-    public boolean isShowLine()
-    {
-        return _showLine;
-    }
-
-    /**
-     * Sets whether to show line for Trace.
-     */
-    public void setShowLine(boolean aValue)
-    {
-        if (aValue == isShowLine()) return;
-        firePropChange(ShowLine_Prop, _showLine, _showLine = aValue);
     }
 
     /**
@@ -138,19 +95,16 @@ public class TraceStyle extends ChartPart {
     /**
      * Returns whether to paint area for data.
      */
-    public boolean isShowArea()
-    {
-        return _fillMode != FillMode.None;
-    }
+    //public boolean isShowArea()  { return _fillMode != FillMode.None; }
 
     /**
      * Sets whether to paint area for data.
      */
-    public void setShowArea(boolean aValue)
+    /*public void setShowArea(boolean aValue)
     {
         FillMode fillMode = aValue ? FillMode.ToZeroY : FillMode.None;
         setFillMode(fillMode);
-    }
+    }*/
 
     /**
      * Returns the default color to fill the data area.
@@ -174,50 +128,6 @@ public class TraceStyle extends ChartPart {
         if (aFillMode == _fillMode) return;
         firePropChange(FillMode_Prop, _fillMode, _fillMode = aFillMode);
     }
-
-    /**
-     * Returns whether to show points/symbols for Trace.
-     */
-    public boolean isShowPoints()
-    {
-        return _showPoints;
-    }
-
-    /**
-     * Sets whether to show points/symbols for Trace.
-     */
-    public void setShowPoints(boolean aValue)
-    {
-        if (aValue == isShowPoints()) return;
-        firePropChange(ShowPoints_Prop, _showPoints, _showPoints = aValue);
-    }
-
-    /**
-     * Returns the PointStyle for this Trace.
-     */
-    public PointStyle getPointStyle()  { return _pointStyle; }
-
-    /**
-     * Returns whether to show data tags for Trace.
-     */
-    public boolean isShowTags()
-    {
-        return _showTags;
-    }
-
-    /**
-     * Sets whether to show data tags for Trace.
-     */
-    public void setShowTags(boolean aValue)
-    {
-        if (aValue == isShowTags()) return;
-        firePropChange(ShowTags_Prop, _showTags, _showTags = aValue);
-    }
-
-    /**
-     * Returns the TagStyle for this Trace.
-     */
-    public TagStyle getTagStyle()  { return _tagStyle; }
 
     /**
      * Returns the minimum amount of space between symbols/tags to avoid excessive overlap.
@@ -262,15 +172,6 @@ public class TraceStyle extends ChartPart {
     }
 
     /**
-     * Called when a child chart part has prop change.
-     */
-    private void childChartPartDidPropChange(PropChange aPC)
-    {
-        Chart chart = getChart();
-        chart.chartPartDidPropChange(aPC);
-    }
-
-    /**
      * Override to prevent client code from using border instead of line props.
      */
     @Override
@@ -286,11 +187,8 @@ public class TraceStyle extends ChartPart {
         super.initPropDefaults(aPropDefaults);
 
         // Add Props
-        aPropDefaults.addProps(ShowLine_Prop, PointJoin_Prop,
-            FillMode_Prop, ShowPoints_Prop, ShowTags_Prop,
+        aPropDefaults.addProps(PointJoin_Prop, FillMode_Prop,
             PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
-
-        aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel);
     }
 
     /**
@@ -302,27 +200,16 @@ public class TraceStyle extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
-            // Handle ShowLine, PointJoint
-            case ShowLine_Prop: return isShowLine();
+            // Handle PointJoin
             case PointJoin_Prop: return getPointJoin();
 
             // Handle FillMode
             case FillMode_Prop: return getFillMode();
 
-            // Handle ShowPoints
-            case ShowPoints_Prop: return isShowPoints();
-
-            // Handle ShowTags
-            case ShowTags_Prop: return isShowTags();
-
             // Handle PointSpacing, MaxPointCount, SkipPointCount
             case PointSpacing_Prop: return getPointSpacing();
             case MaxPointCount_Prop: return getMaxPointCount();
             case SkipPointCount_Prop: return getSkipPointCount();
-
-            // Handle PointStyleRel, TagStyle_Rel
-            case PointStyle_Rel: return getPointStyle();
-            case TagStyle_Rel: return getTagStyle();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -338,18 +225,11 @@ public class TraceStyle extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
-            // Handle ShowLine, PointJoint
-            case ShowLine_Prop: setShowLine(SnapUtils.boolValue(aValue)); break;
+            // Handle PointJoint
             case PointJoin_Prop: setPointJoin((PointJoin) aValue); break;
 
             // Handle FillMode
             case FillMode_Prop: setFillMode((FillMode) aValue); break;
-
-            // Handle ShowPoints
-            case ShowPoints_Prop: setShowPoints(SnapUtils.boolValue(aValue)); break;
-
-            // Handle ShowTags
-            case ShowTags_Prop: setShowTags(SnapUtils.boolValue(aValue)); break;
 
             // Handle PointSpacing, MaxPointCount, SkipPointCount
             case PointSpacing_Prop: setPointSpacing(SnapUtils.intValue(aValue)); break;
@@ -397,10 +277,6 @@ public class TraceStyle extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive ShowLine
-        if (!isShowLine())
-            e.add(ShowLine_Prop, false);
-
         // Archive PointJoin
         if (!isPropDefault(PointJoin_Prop))
             e.add(PointJoin_Prop, getPointJoin());
@@ -408,28 +284,6 @@ public class TraceStyle extends ChartPart {
         // Archive FillMode
         if (!isPropDefault(FillMode_Prop))
             e.add(FillMode_Prop, getFillMode());
-
-        // Archive ShowPoints
-        if (isShowPoints()) {
-            e.add(ShowPoints_Prop, true);
-
-            // Archive PointStyle
-            PointStyle pointStyle = getPointStyle();
-            XMLElement pointStyleXML = pointStyle.toXML(anArchiver);
-            if (pointStyleXML.getAttributeCount() > 0 || pointStyleXML.getElementCount() > 0)
-                e.addElement(pointStyleXML);
-        }
-
-        // Archive ShowTags
-        if (isShowTags()) {
-            e.add(ShowTags_Prop, true);
-
-            // Archive TagStyle
-            TagStyle tagStyle = getTagStyle();
-            XMLElement tagStyleXML = tagStyle.toXML(anArchiver);
-            if (tagStyleXML.getAttributeCount() > 0 || tagStyleXML.getElementCount() > 0)
-                e.addElement(tagStyleXML);
-        }
 
         // Archive PointSpacing, MaxPointCount, SkipPointCount
         if (!isPropDefault(PointSpacing_Prop))
@@ -452,10 +306,6 @@ public class TraceStyle extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive ShowLine
-        if (anElement.hasAttribute(ShowLine_Prop))
-            setShowLine(anElement.getAttributeBoolValue(ShowLine_Prop));
-
         // Unarchive FillMode
         if (anElement.hasAttribute(PointJoin_Prop))
             setPointJoin(anElement.getAttributeEnumValue(PointJoin_Prop, PointJoin.class, DEFAULT_POINT_JOIN));
@@ -464,28 +314,6 @@ public class TraceStyle extends ChartPart {
         if (anElement.hasAttribute(FillMode_Prop))
             setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
-        // Unarchive ShowPoints (and legacy ShowSymbols)
-        if (anElement.hasAttribute(ShowPoints_Prop))
-            setShowPoints(anElement.getAttributeBoolValue(ShowPoints_Prop));
-        else if (anElement.hasAttribute("ShowSymbols"))
-            setShowPoints(anElement.getAttributeBoolValue("ShowSymbols"));
-
-        // Unarchive ShowTags
-        if (anElement.hasAttribute(ShowTags_Prop))
-            setShowTags(anElement.getAttributeBoolValue(ShowTags_Prop));
-
-        // Unarchive PointStyle
-        XMLElement pointStyleXML = anElement.getElement("PointStyle");
-        if (pointStyleXML == null)
-            pointStyleXML = anElement.getElement("SymbolStyle");
-        if (pointStyleXML != null)
-            getPointStyle().fromXML(anArchiver, pointStyleXML);
-
-        // Unarchive TagStyle
-        XMLElement tagStyleXML = anElement.getElement("TagStyle");
-        if (tagStyleXML != null)
-            getTagStyle().fromXML(anArchiver, tagStyleXML);
-
         // Unarchive PointSpacing, MaxPointCount, SkipPointCount
         if (anElement.hasAttribute(PointSpacing_Prop))
             setPointSpacing(anElement.getAttributeIntValue(PointSpacing_Prop));
@@ -493,6 +321,27 @@ public class TraceStyle extends ChartPart {
             setMaxPointCount(anElement.getAttributeIntValue(MaxPointCount_Prop));
         if (anElement.hasAttribute(SkipPointCount_Prop))
             setSkipPointCount(anElement.getAttributeIntValue(SkipPointCount_Prop));
+
+        // Legacy stuff
+        Trace trace = (Trace) getParent();
+        if (anElement.hasAttribute(Trace.ShowLine_Prop))
+            trace.setShowLine(anElement.getAttributeBoolValue(Trace.ShowLine_Prop));
+        if (anElement.hasAttribute(FillMode_Prop))
+            trace.setShowArea(true);
+        if (anElement.hasAttribute(Trace.ShowPoints_Prop))
+            trace.setShowPoints(anElement.getAttributeBoolValue(Trace.ShowPoints_Prop));
+        else if (anElement.hasAttribute("ShowSymbols"))
+            trace.setShowPoints(anElement.getAttributeBoolValue("ShowSymbols"));
+        if (anElement.hasAttribute(Trace.ShowTags_Prop))
+            trace.setShowTags(anElement.getAttributeBoolValue(Trace.ShowTags_Prop));
+        XMLElement pointStyleXML = anElement.getElement("PointStyle");
+        if (pointStyleXML == null)
+            pointStyleXML = anElement.getElement("SymbolStyle");
+        if (pointStyleXML != null)
+            trace.getPointStyle().fromXML(anArchiver, pointStyleXML);
+        XMLElement tagStyleXML = anElement.getElement("TagStyle");
+        if (tagStyleXML != null)
+            trace.getTagStyle().fromXML(anArchiver, tagStyleXML);
 
         // Return this part
         return this;
