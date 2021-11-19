@@ -23,7 +23,6 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
     private ColView  _entryBox;
 
     // Constants
-    private static Insets DEFAULT_PADDING = new Insets(5, 5, 5, 10);
 
     /**
      * Constructor.

@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.geom.Insets;
 import snap.util.*;
 import snapcharts.util.MinMax;
 import java.util.Objects;
@@ -39,6 +40,8 @@ public class ContourAxis extends ChartPart {
 
     // Constants for property defaults
     public static final int DEFAULT_LEVEL_COUNT = 16;
+    private static Insets DEFAULT_CONTOUR_AXIS_MARGIN = new Insets(0, 5, 0, 5);
+    private static Insets DEFAULT_CONTOUR_AXIS_PADDING = new Insets(5, 5, 5, 5);
 
     /**
      * Constructor.
@@ -218,6 +221,10 @@ public class ContourAxis extends ChartPart {
 
             // LevelCount
             case LevelCount_Prop: return DEFAULT_LEVEL_COUNT;
+
+            // Margin, Padding override
+            case Margin_Prop: return DEFAULT_CONTOUR_AXIS_MARGIN;
+            case Padding_Prop: return DEFAULT_CONTOUR_AXIS_PADDING;
 
             // Superclass properties
             default: return super.getPropDefault(aPropName);
