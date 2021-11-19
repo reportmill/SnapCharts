@@ -52,4 +52,9 @@
     </ToggleButton>
   </RowView>
   <ColView Name="InspectorBox" />
+  <Separator Name="TraceStyleInspSep" Margin="0,20,8,10" GrowWidth="true" />
+  <RowView Name="TraceStyleInspLabelBox" Padding="2,4,2,4" Spacing="4">
+    <Label Name="TraceStyleInspLabel" Spacing="4" />
+  </RowView>
+  <ColView Name="TraceStyleInspBox" />
 </ColView>

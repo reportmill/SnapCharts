@@ -3,11 +3,8 @@ import snap.gfx.Color;
 import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.data.DataSet;
-import snapcharts.model.AxisType;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Trace;
+import snapcharts.model.*;
 import snapcharts.data.DataType;
-import snapcharts.model.TraceStyle;
 
 /**
  * A class to manage UI to edit basic Trace props.
@@ -18,7 +15,7 @@ public class TraceInsp extends ChartPartInsp {
     private ChartPartInsp  _currentInsp;
 
     // The View that holds the child insp
-    private ColView _inspBox;
+    private ColView  _inspBox;
 
     // The LineStyleInsp
     private TraceLineStyleInsp  _lineStyleInsp;
@@ -34,6 +31,18 @@ public class TraceInsp extends ChartPartInsp {
 
     // The TagSpacingInsp
     private TraceSpacingInsp  _spacingInsp;
+
+    // The Current ChartPartInsp
+    private ChartPartInsp  _traceStyleInsp;
+
+    // The View that holds the TraceStyle insp
+    private ColView  _traceStyleInspBox;
+
+    // The PolarStyleInsp
+    private PolarStyleInsp  _polarStyleInsp;
+
+    // The ContourStyleInsp
+    private ContourStyleInsp  _contourStyleInsp;
 
     /**
      * Constructor.
@@ -95,6 +104,9 @@ public class TraceInsp extends ChartPartInsp {
         _spacingInsp = new TraceSpacingInsp(_chartPane);
         ViewUtils.addChild(getUI(ParentView.class), _spacingInsp.getUI());
         _spacingInsp.getUI().setVisible(false);
+
+        // Get TraceStyleInspBox
+        _traceStyleInspBox = getView("TraceStyleInspBox", ColView.class);
     }
 
     @Override
@@ -175,6 +187,10 @@ public class TraceInsp extends ChartPartInsp {
         _spacingInsp.getUI().setVisible(isShowSpacing);
         if (isShowSpacing)
             _spacingInsp.resetLater();
+
+        // Update TraceStyleInsp
+        ChartPartInsp traceStyleInsp = getTraceStyleInspForTrace();
+        setTraceStyleInsp(traceStyleInsp);
     }
 
     /**
@@ -282,6 +298,77 @@ public class TraceInsp extends ChartPartInsp {
     }
 
     /**
+     * Returns the TraceStyle inspector.
+     */
+    private ChartPartInsp getTraceStyleInsp()  { return _traceStyleInsp; }
+
+    /**
+     * Sets the TraceStyle inspector.
+     */
+    private void setTraceStyleInsp(ChartPartInsp anInsp)
+    {
+        // If already set, just return
+        if (anInsp == getTraceStyleInsp()) return;
+
+        // If old, remove it
+        if (_traceStyleInsp != null)
+            _traceStyleInspBox.removeChild(_traceStyleInsp.getUI());
+
+        // Set new
+        _traceStyleInsp = anInsp;
+
+        // If new, add UI
+        if(_traceStyleInsp != null)
+            _traceStyleInspBox.addChild(_traceStyleInsp.getUI());
+
+        // Update TraceStyleInspSep.Visible, TraceStyleInspLabelBox.Visible, TraceStyleInspLabel.Text
+        setViewVisible("TraceStyleInspSep", _traceStyleInsp != null);
+        setViewVisible("TraceStyleInspLabelBox", _traceStyleInsp != null);
+        if (_traceStyleInsp != null)
+            setViewText("TraceStyleInspLabel", _traceStyleInsp.getName());
+    }
+
+    /**
+     * Returns the TraceStyleInsp for Trace.
+     */
+    private ChartPartInsp getTraceStyleInspForTrace()
+    {
+        // Get Trace ChartType
+        Trace trace = getTrace();
+        ChartType chartType = trace != null ? trace.getTraceChartType() : null;
+        if (chartType == null)
+            chartType = getChart().getType();
+
+        // Return TraceStyleInsp for chartType
+        switch (chartType) {
+            case POLAR: return getPolarStyleInsp();
+            case CONTOUR: return getContourStyleInsp();
+            case POLAR_CONTOUR: return getContourStyleInsp();
+            default: return null;
+        }
+    }
+
+    /**
+     * Returns the PolarStyleInsp.
+     */
+    private PolarStyleInsp getPolarStyleInsp()
+    {
+        if (_polarStyleInsp != null) return _polarStyleInsp;
+        PolarStyleInsp insp = new PolarStyleInsp(getChartPane());
+        return _polarStyleInsp = insp;
+    }
+
+    /**
+     * Returns the ContourStyleInsp.
+     */
+    private ContourStyleInsp getContourStyleInsp()
+    {
+        if (_contourStyleInsp != null) return _contourStyleInsp;
+        ContourStyleInsp insp = new ContourStyleInsp(getChartPane());
+        return _contourStyleInsp = insp;
+    }
+
+    /**
      * Override to initialize Line/Area/Points inspector and SpacingInsp.
      */
     @Override
@@ -306,6 +393,12 @@ public class TraceInsp extends ChartPartInsp {
         boolean isPointsOrTagsInsp = _currentInsp == _pointStyleInsp || _currentInsp == _tagStyleInsp;
         boolean isShowSpacing = isPointsOrTags && isPointsOrTagsInsp;
         _spacingInsp.getUI().setVisible(isShowSpacing);
+
+        // Update TraceStyleInsp
+        ChartPartInsp traceStyleInsp = getTraceStyleInspForTrace();
+        setTraceStyleInsp(traceStyleInsp);
+        setViewVisible("TraceStyleInspSep", _traceStyleInsp != null);
+        setViewVisible("TraceStyleInspLabelBox", _traceStyleInsp != null);
 
         // Do normal version
         super.setSelected(aValue);
