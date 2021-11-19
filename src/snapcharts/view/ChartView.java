@@ -28,7 +28,7 @@ public class ChartView extends ChartPartView<Chart> {
     private LegendView  _legendView;
 
     // The view that shows contour color bar scale
-    private ColorBarView  _colorBarView;
+    private ContourAxisView _contourAxisView;
 
     // The MarkerViews
     private MarkerView[]  _markerViews;
@@ -105,9 +105,9 @@ public class ChartView extends ChartPartView<Chart> {
         _legendView = new LegendView();
         addChild(_legendView);
 
-        // Create/configure ColorBarView
-        _colorBarView = new ColorBarView();
-        addChild(_colorBarView);
+        // Create/configure ContourAxisView
+        _contourAxisView = new ContourAxisView();
+        addChild(_contourAxisView);
 
         // Create/add DataView
         _dataView = new DataView(this);
@@ -234,9 +234,9 @@ public class ChartView extends ChartPartView<Chart> {
     public LegendView getLegendView()  { return _legendView; }
 
     /**
-     * Returns the ColorBarView.
+     * Returns the ContourAxisView.
      */
-    public ColorBarView getColorBarView()  { return _colorBarView; }
+    public ContourAxisView getContourAxisView()  { return _contourAxisView; }
 
     /**
      * Returns the MarkerViews.
@@ -286,8 +286,8 @@ public class ChartView extends ChartPartView<Chart> {
         // Reset Legend
         _legendView.resetView();
 
-        // Reset ColorBar
-        _colorBarView.resetView();
+        // Reset ContourAxis
+        _contourAxisView.resetView();
 
         // Reset MarkerViews
         MarkerView[] markerViews = getMarkerViews();

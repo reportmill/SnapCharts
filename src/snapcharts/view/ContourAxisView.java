@@ -11,7 +11,7 @@ import snapcharts.viewx.PolarContourChartHelper;
 /**
  * A view to display chart contour axis.
  */
-public class ColorBarView extends ChartPartView<ColorBar> {
+public class ContourAxisView extends ChartPartView<ContourAxis> {
 
     // The Contour helper
     private ContourHelper  _contourHelper;
@@ -28,7 +28,7 @@ public class ColorBarView extends ChartPartView<ColorBar> {
     /**
      * Constructor.
      */
-    public ColorBarView()
+    public ContourAxisView()
     {
         super();
 
@@ -55,7 +55,7 @@ public class ColorBarView extends ChartPartView<ColorBar> {
     /**
      * Returns the ChartPart.
      */
-    public ColorBar getChartPart()  { return getChart().getColorBar(); }
+    public ContourAxis getChartPart()  { return getChart().getContourAxis(); }
 
     /**
      * Reloads legend contents.

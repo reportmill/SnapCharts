@@ -4,14 +4,14 @@
 package snapcharts.model;
 
 /**
- * A class to represent a ColorBar. Subclasses axis because of the similarities.
+ * A class to represent a ContourAxis. Subclasses axis because of the similarities.
  */
-public class ColorBar extends Axis {
+public class ContourAxis extends ChartPart {
 
     /**
      * Constructor.
      */
-    public ColorBar()
+    public ContourAxis()
     {
         super();
     }

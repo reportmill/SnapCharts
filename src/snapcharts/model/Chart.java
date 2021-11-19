@@ -42,8 +42,8 @@ public class Chart extends ParentPart {
     // The Z Axis
     private AxisZ  _axisZ;
 
-    // The ColorBar
-    private ColorBar  _colorBar;
+    // The ContourAxis
+    private ContourAxis  _contourAxis;
 
     // The TraceList
     private TraceList  _traceList;
@@ -112,9 +112,9 @@ public class Chart extends ParentPart {
         _axisZ = new AxisZ();
         addChild(_axisZ);
 
-        // Create/set ColorBar
-        _colorBar = new ColorBar();
-        addChild(_colorBar);
+        // Create/set ContourAxis
+        _contourAxis = new ContourAxis();
+        addChild(_contourAxis);
 
         // Create/set Legend
         _legend = new Legend();
@@ -197,9 +197,9 @@ public class Chart extends ParentPart {
     public AxisZ getAxisZ()  { return _axisZ; }
 
     /**
-     * Returns the ColorBar object (which is modelled as an axis).
+     * Returns the ContourAxis object (which is modelled as an axis).
      */
-    public ColorBar getColorBar()  { return _colorBar; }
+    public ContourAxis getContourAxis()  { return _contourAxis; }
 
     /**
      * Returns the Axis for given type.

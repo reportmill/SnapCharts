@@ -38,6 +38,9 @@ public class ChartPaneInsp extends ViewOwner {
     // The AxisInsp
     private AxisInsp  _axisInsp;
 
+    // The ContourAxisInsp
+    private ContourAxisInsp  _contourAxisInsp;
+
     // The LegendInsp
     private LegendInsp  _legendInsp;
 
@@ -116,6 +119,10 @@ public class ChartPaneInsp extends ViewOwner {
             _axisInsp = new AxisInsp(_chartPane);
             addInspector(_axisInsp, false);
 
+            // Create/add ContourAxisInsp
+            _contourAxisInsp = new ContourAxisInsp(_chartPane);
+            addInspector(_contourAxisInsp, false);
+
             // Create/add LegendInsp
             _legendInsp = new LegendInsp(_chartPane);
             addInspector(_legendInsp, false);
@@ -138,8 +145,8 @@ public class ChartPaneInsp extends ViewOwner {
         //addInspector(_traceStyleInsp, false);
 
         // Set all inspectors
-        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _legendInsp,
-                _markerInsp, _dataViewInsp, _traceInsp };
+        _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _contourAxisInsp,
+                _dataViewInsp, _legendInsp, _markerInsp, _traceInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _traceInsp };
 
@@ -248,6 +255,8 @@ public class ChartPaneInsp extends ViewOwner {
             return _headerInsp;
         if (aChartPart instanceof Axis)
             return _axisInsp;
+        if (aChartPart instanceof ContourAxis)
+            return _contourAxisInsp;
         if (aChartPart instanceof Legend)
             return _legendInsp;
         if (aChartPart instanceof Marker)

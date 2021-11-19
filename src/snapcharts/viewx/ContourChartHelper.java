@@ -36,11 +36,11 @@ public class ContourChartHelper extends ChartHelper {
     public ContourHelper getContourHelper()  { return _contourHelper; }
 
     /**
-     * Returns the ColorBarView.
+     * Returns the ContourAxisView.
      */
-    public ColorBarView getColorBarView()
+    public ContourAxisView getContourAxisView()
     {
-        return _chartView.getColorBarView();
+        return _chartView.getContourAxisView();
     }
 
     /**

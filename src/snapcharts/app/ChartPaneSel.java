@@ -174,6 +174,10 @@ public class ChartPaneSel {
             return _chartView.getChartHelper().getAxisView(axisType);
         }
 
+        // Handle ContourAxis
+        if (aChartPart instanceof ContourAxis)
+            return _chartView.getContourAxisView();
+
         // Handle Legend
         if (aChartPart instanceof Legend)
             return _chartView.getLegendView();
@@ -415,8 +419,8 @@ public class ChartPaneSel {
      */
     private boolean isSelectableView(View aView)
     {
-        return aView instanceof AxisView || aView instanceof LegendView || aView instanceof HeaderView ||
-                aView instanceof DataView || aView instanceof MarkerView;
+        return aView instanceof HeaderView || aView instanceof AxisView || aView instanceof ContourAxisView ||
+                aView instanceof DataView || aView instanceof LegendView || aView instanceof MarkerView;
     }
 
     /**
