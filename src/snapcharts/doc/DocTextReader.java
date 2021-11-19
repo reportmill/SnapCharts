@@ -331,12 +331,12 @@ public class DocTextReader {
         _trace.setDataType(dataType);
 
         // Add points XYZZ
-        DataSet rawData = _trace.getRawData();
+        DataSet dataSet = _trace.getDataSet();
         if (dataType == DataType.XYZZ)
-            DataSetUtils.addDataPointsXYZZ(rawData, _dataX, _dataY, _dataZZ);
+            DataSetUtils.addDataPointsXYZZ(dataSet, _dataX, _dataY, _dataZZ);
 
         // Add points other
-        else DataSetUtils.addDataPoints(rawData, _dataX, _dataY, _dataZ, _dataC);
+        else DataSetUtils.addDataPoints(dataSet, _dataX, _dataY, _dataZ, _dataC);
 
         // Clear staged data
         _dataX = _dataY = _dataZ = _dataZZ = null; _dataC = null;

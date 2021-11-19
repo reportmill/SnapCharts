@@ -149,7 +149,7 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
         _sheetView.setMinColCount(colCount);
 
         // Update PointCountLabel
-        DataSet dataSet = trace.getRawData();
+        DataSet dataSet = trace.getDataSet();
         String str = "Points: " + pointCount + "   |   ";
         str += "Min X: " + FormatUtils.formatNum(dataSet.getMinX()) + "   |   ";
         str += "Max X: " + FormatUtils.formatNum(dataSet.getMaxX()) + "   |   ";

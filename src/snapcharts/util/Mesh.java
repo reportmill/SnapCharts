@@ -12,8 +12,8 @@ import java.util.*;
  */
 public class Mesh {
 
-    // The RawData to provide X/Y/Z values to Contour
-    private DataSet _dataSet;
+    // The DataSet to provide X/Y/Z values to Contour
+    private DataSet  _dataSet;
 
     // The number of points in dataset
     private int  _pointCount;

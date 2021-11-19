@@ -43,11 +43,11 @@ public class Trace extends ChartPart {
     // The TraceStyleHpr
     private TraceStyleHpr _traceStyleHpr;
 
-    // The RawData
-    private DataSet _rawData = DataSet.newDataSet();
+    // The original DataSet
+    private DataSet  _dataSet = DataSet.newDataSet();
 
-    // The Processed Data
-    private DataSet _procData;
+    // The DataSet processed with expressions
+    private DataSet  _procData;
 
     // Processed Data in log form
     private DataSet[]  _logData;
@@ -90,7 +90,7 @@ public class Trace extends ChartPart {
      */
     public DataType getDataType()
     {
-        return _rawData.getDataType();
+        return _dataSet.getDataType();
     }
 
     /**
@@ -101,9 +101,9 @@ public class Trace extends ChartPart {
         // If already set, just return
         if (aDataType == getDataType()) return;
 
-        // Forward to RawData
+        // Forward to DataSet
         DataType old = getDataType();
-        _rawData.setDataType(aDataType);
+        _dataSet.setDataType(aDataType);
 
         // Clear cached data and firePropChange
         clearCachedData();
@@ -113,7 +113,7 @@ public class Trace extends ChartPart {
     /**
      * Returns the units for Theta data.
      */
-    public DataSet.ThetaUnit getThetaUnit()  { return _rawData.getThetaUnit(); }
+    public DataSet.ThetaUnit getThetaUnit()  { return _dataSet.getThetaUnit(); }
 
     /**
      * Sets the units for Theta data.
@@ -123,9 +123,9 @@ public class Trace extends ChartPart {
         // If already set, just return
         if (aValue == getThetaUnit()) return;
 
-        // Forward to RawData
+        // Forward to DataSet
         DataSet.ThetaUnit old = getThetaUnit();
-        _rawData.setThetaUnit(aValue);
+        _dataSet.setThetaUnit(aValue);
 
         // Clear cached data and firePropChange
         clearCachedData();
@@ -273,19 +273,19 @@ public class Trace extends ChartPart {
     /**
      * Returns the number of rows.
      */
-    public int getRowCount()  { return _rawData.getRowCount(); }
+    public int getRowCount()  { return _dataSet.getRowCount(); }
 
     /**
      * Returns the number of columns.
      */
-    public int getColCount()  { return _rawData.getColCount(); }
+    public int getColCount()  { return _dataSet.getColCount(); }
 
     /**
      * Returns the number of points.
      */
     public int getPointCount()
     {
-        return _rawData.getPointCount();
+        return _dataSet.getPointCount();
     }
 
     /**
@@ -293,7 +293,7 @@ public class Trace extends ChartPart {
      */
     public void setPointCount(int aValue)
     {
-        _rawData.setPointCount(aValue);
+        _dataSet.setPointCount(aValue);
     }
 
     /**
@@ -309,7 +309,7 @@ public class Trace extends ChartPart {
      */
     public void addPoint(DataPoint aPoint, int anIndex)
     {
-        _rawData.addPoint(aPoint, anIndex);
+        _dataSet.addPoint(aPoint, anIndex);
         clearCachedData();
         firePropChange(Point_Prop, aPoint, null, anIndex);
     }
@@ -322,8 +322,8 @@ public class Trace extends ChartPart {
         // Get point at index
         DataPoint dataPoint = getPoint(anIndex);
 
-        // Remove point from RawData
-        _rawData.removePoint(anIndex);
+        // Remove point from DataSet
+        _dataSet.removePoint(anIndex);
         clearCachedData();
         firePropChange(Point_Prop, dataPoint, null, anIndex);
 
@@ -336,7 +336,7 @@ public class Trace extends ChartPart {
      */
     public void clearPoints()
     {
-        _rawData.clearPoints();
+        _dataSet.clearPoints();
         clearCachedData();
     }
 
@@ -390,7 +390,7 @@ public class Trace extends ChartPart {
      */
     public void setValueC(String aValue, int anIndex)
     {
-        _rawData.setC(aValue, anIndex);
+        _dataSet.setC(aValue, anIndex);
         clearCachedData();
     }
 
@@ -408,7 +408,7 @@ public class Trace extends ChartPart {
      */
     public void setValueX(Double aValue, int anIndex)
     {
-        _rawData.setValueX(aValue, anIndex);
+        _dataSet.setValueX(aValue, anIndex);
         clearCachedData();
     }
 
@@ -426,7 +426,7 @@ public class Trace extends ChartPart {
      */
     public void setValueY(Double aValue, int anIndex)
     {
-        _rawData.setValueY(aValue, anIndex);
+        _dataSet.setValueY(aValue, anIndex);
         clearCachedData();
     }
 
@@ -444,7 +444,7 @@ public class Trace extends ChartPart {
      */
     public void setValueZ(Double aValue, int anIndex)
     {
-        _rawData.setValueZ(aValue, anIndex);
+        _dataSet.setValueZ(aValue, anIndex);
         clearCachedData();
     }
 
@@ -550,16 +550,16 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the raw data.
+     * Returns the original DataSet.
      */
-    public DataSet getRawData()  { return _rawData; }
+    public DataSet getDataSet()  { return _dataSet; }
 
     /**
-     * Sets the raw data.
+     * Sets the original DataSet.
      */
-    public void setRawData(DataSet aDataSet)
+    public void setDataSet(DataSet aDataSet)
     {
-        _rawData = aDataSet;
+        _dataSet = aDataSet;
         clearCachedData();
     }
 
@@ -575,7 +575,7 @@ public class Trace extends ChartPart {
         String exprX = getExprX();
         String exprY = getExprY();
         String exprZ = getExprZ();
-        DataSet procData = DataSetUtils.getProcessedData(_rawData, exprX, exprY, exprZ);
+        DataSet procData = DataSetUtils.getProcessedData(_dataSet, exprX, exprY, exprZ);
         return _procData = procData;
     }
 
@@ -661,7 +661,7 @@ public class Trace extends ChartPart {
     {
         if (getName()!=null && getName().length()>0)
             return false;
-        return _rawData.isClear();
+        return _dataSet.isClear();
     }
 
     /**
@@ -682,7 +682,7 @@ public class Trace extends ChartPart {
     public String toString()
     {
         String str = "Trace { " + "Name=" + getName() + ", DataType=" + getDataType() + ", PointCount=" + getPointCount();
-        DataSet dataSet = getRawData();
+        DataSet dataSet = getDataSet();
         for (DataChan chan : getDataType().getChannels()) {
             MinMax minMax = dataSet.getMinMax(chan);
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
@@ -727,9 +727,9 @@ public class Trace extends ChartPart {
             e.addElement(traceStyleXML);
         }
 
-        // Archive RawData
-        DataSet rawData = getRawData();
-        rawData.toXML(anArchiver, e);
+        // Archive DataSet
+        DataSet dataSet = getDataSet();
+        dataSet.toXML(anArchiver, e);
 
         // Return element
         return e;
@@ -772,9 +772,9 @@ public class Trace extends ChartPart {
         if (traceStyleXML != null)
             getTraceStyle().fromXML(anArchiver, traceStyleXML);
 
-        // Unarchive RawData
-        DataSet rawData = getRawData();
-        rawData.fromXML(anArchiver, anElement);
+        // Unarchive DataSet
+        DataSet dataSet = getDataSet();
+        dataSet.fromXML(anArchiver, anElement);
 
         // Legacy
         if (anElement.hasAttribute(TraceStyle.ShowSymbols_Prop)) {
