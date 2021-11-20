@@ -37,7 +37,7 @@ public class TraceLineStyleInsp extends ChartPartInsp {
     @Override
     public ChartPart getChartPart()
     {
-        return getTraceStyle();
+        return getTrace();
     }
 
     /**
@@ -47,18 +47,6 @@ public class TraceLineStyleInsp extends ChartPartInsp {
     {
         ChartPart selPart = _chartPane.getSelChartPart();
         return selPart instanceof Trace ? (Trace) selPart : null;
-    }
-
-    /**
-     * Returns the TraceStyle.
-     */
-    public TraceStyle getTraceStyle()
-    {
-        Trace trace = getTrace();
-        if (trace != null)
-            return trace.getTraceStyle();
-
-        return getChart().getTraceStyle();
     }
 
     /**
@@ -88,32 +76,31 @@ public class TraceLineStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get TraceStyle
+        // Get Trace
         Trace trace = getTrace(); if (trace == null) return;
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Reset ShowLineCheckBox
         boolean showLine = trace.isShowLine();
         setViewValue("ShowLineCheckBox", showLine);
 
         // Reset LineColorButton, LineColorResetButton
-        setViewValue("LineColorButton", traceStyle.getLineColor());
-        setViewVisible("LineColorResetButton", traceStyle.isLineColorSet());
+        setViewValue("LineColorButton", trace.getLineColor());
+        setViewVisible("LineColorResetButton", trace.isLineColorSet());
 
         // Reset LineWidthText, LineWidthResetButton
-        setViewValue("LineWidthText", traceStyle.getLineWidth());
-        setViewVisible("LineWidthResetButton", traceStyle.getLineWidth() != TraceStyle.DEFAULT_LINE_WIDTH);
+        setViewValue("LineWidthText", trace.getLineWidth());
+        setViewVisible("LineWidthResetButton", trace.getLineWidth() != TraceStyle.DEFAULT_LINE_WIDTH);
 
         // Reset LineDashButton
         ToggleButton lineDashButton = getView("LineDashButton", ToggleButton.class);
-        configureLineDashButton(lineDashButton, traceStyle.getLineDash());
+        configureLineDashButton(lineDashButton, trace.getLineDash());
 
         // Reset LineDashBox
         View lineDashBox = getView("LineDashBox");
         ViewAnimUtils.setVisible(lineDashBox, lineDashButton.isSelected(), false, true);
 
         // Reset PointJoinComboBox
-        setViewSelItem("PointJoinComboBox", traceStyle.getPointJoin());
+        setViewSelItem("PointJoinComboBox", trace.getPointJoin());
     }
 
     /**
@@ -121,9 +108,8 @@ public class TraceLineStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle
+        // Get Trace
         Trace trace = getTrace(); if (trace == null) return;
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Handle ShowLineCheckBox
         if (anEvent.equals("ShowLineCheckBox")) {
@@ -135,33 +121,33 @@ public class TraceLineStyleInsp extends ChartPartInsp {
 
         // Handle LineWidthText, LineWidthAdd1Button, LineWidthSub1Button, LineWidthResetButton
         if (anEvent.equals("LineWidthText"))
-            traceStyle.setLineWidth(Math.max(anEvent.getIntValue(), 1));
+            trace.setLineWidth(Math.max(anEvent.getIntValue(), 1));
         if (anEvent.equals("LineWidthAdd1Button"))
-            traceStyle.setLineWidth(traceStyle.getLineWidth() + 1);
+            trace.setLineWidth(trace.getLineWidth() + 1);
         if (anEvent.equals("LineWidthSub1Button"))
-            traceStyle.setLineWidth(Math.max(traceStyle.getLineWidth() - 1, 1));
+            trace.setLineWidth(Math.max(trace.getLineWidth() - 1, 1));
         if (anEvent.equals("LineWidthResetButton"))
-            traceStyle.setLineWidth(1);
+            trace.setLineWidth(1);
 
         // Handle LineColorButton, LineColorResetButton
         if (anEvent.equals("LineColorButton")) {
             Color color = (Color) getViewValue("LineColorButton");
-            traceStyle.setLineColor(color);
+            trace.setLineColor(color);
         }
         if (anEvent.equals("LineColorResetButton"))
-            traceStyle.setLineColor(null);
+            trace.setLineColor(null);
 
         // Handle LineDashButton_X
         String eventName = anEvent.getName();
         if (eventName.startsWith("LineDashButton_")) {
             int id = SnapUtils.intValue(eventName);
             double[] dashArray = Stroke.DASHES_ALL[id];
-            traceStyle.setLineDash(dashArray);
+            trace.setLineDash(dashArray);
         }
 
         // Handle PointJoinComboBox
         if (anEvent.equals("PointJoinComboBox"))
-            traceStyle.setPointJoin((PointJoin) anEvent.getSelItem());
+            trace.setPointJoin((PointJoin) anEvent.getSelItem());
     }
 
     /**

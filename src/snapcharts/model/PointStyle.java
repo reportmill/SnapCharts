@@ -25,15 +25,30 @@ public class PointStyle extends ChartPart {
     // The cached symbol
     private Symbol  _symbol;
 
+    // The maximum number of symbols/tags visible
+    private int  _maxPointCount = DEFAULT_MAX_POINT_COUNT;
+
+    // The number of symbols/tags to skip to avoid excessive overlap
+    private int  _skipPointCount = DEFAULT_SKIP_POINT_COUNT;
+
+    // The minimum amount of space between symbols/tags to avoid excessive overlap
+    private int  _pointSpacing = DEFAULT_POINT_SPACING;
+
     // Constants for properties
     public static final String SymbolSize_Prop = "SymbolSize";
     public static final String SymbolId_Prop = "SymbolId";
+    public static final String PointSpacing_Prop = "PointSpacing";
+    public static final String MaxPointCount_Prop = "MaxPointCount";
+    public static final String SkipPointCount_Prop = "SkipPointCount";
 
     // Constants for property defaults
     public static final int DEFAULT_SYMBOL_SIZE = 8;
     public static final Color DEFAULT_SYMBOL_FILL = null;
     public static final Color DEFAULT_SYMBOL_BORDER_COLOR = null; //Color.BLACK;
     public static final int DEFAULT_SYMBOL_BORDER_WIDTH = 0;
+    public static final int DEFAULT_POINT_SPACING = 0;
+    public static final int DEFAULT_MAX_POINT_COUNT = 0;
+    public static final int DEFAULT_SKIP_POINT_COUNT = 0;
 
     /**
      * Constructor.
@@ -88,11 +103,53 @@ public class PointStyle extends ChartPart {
     }
 
     /**
+     * Returns the minimum amount of space between symbols/tags to avoid excessive overlap.
+     */
+    public int getPointSpacing()  { return _pointSpacing; }
+
+    /**
+     * Sets the minimum amount of space between symbols/tags to avoid excessive overlap.
+     */
+    public void setPointSpacing(int aValue)
+    {
+        if (aValue == getPointSpacing()) return;
+        firePropChange(PointSpacing_Prop, _pointSpacing, _pointSpacing = aValue);
+    }
+
+    /**
+     * Returns the maximum number of symbols/tags visible.
+     */
+    public int getMaxPointCount()  { return _maxPointCount; }
+
+    /**
+     * Sets the maximum number of symbols/tags visible.
+     */
+    public void setMaxPointCount(int aValue)
+    {
+        if (aValue == getMaxPointCount()) return;
+        firePropChange(MaxPointCount_Prop, _maxPointCount, _maxPointCount = aValue);
+    }
+
+    /**
+     * Returns the number of symbols/tags to skip to avoid excessive overlap.
+     */
+    public int getSkipPointCount()  { return _skipPointCount; }
+
+    /**
+     * Sets the number of symbols/tags to skip to avoid excessive overlap.
+     */
+    public void setSkipPointCount(int aValue)
+    {
+        if (aValue == getSkipPointCount()) return;
+        firePropChange(SkipPointCount_Prop, _skipPointCount, _skipPointCount = aValue);
+    }
+
+    /**
      * Returns the default fill color.
      */
     private Color getDefaultLineColor()
     {
-        return _trace.getTraceStyle().getLineColor();
+        return _trace.getLineColor();
     }
 
     /**
@@ -102,7 +159,7 @@ public class PointStyle extends ChartPart {
     {
         if (getLineWidth() > 0 && !isLineColorSet())
             return Color.WHITE;
-        return _trace.getTraceStyle().getDefaultLineColor();
+        return _trace.getDefaultLineColor();
     }
 
     /**
@@ -121,7 +178,7 @@ public class PointStyle extends ChartPart {
         super.initPropDefaults(aPropDefaults);
 
         // Add Props
-        aPropDefaults.addProps(SymbolSize_Prop, SymbolId_Prop);
+        aPropDefaults.addProps(SymbolSize_Prop, SymbolId_Prop, PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
     }
 
     /**
@@ -136,6 +193,11 @@ public class PointStyle extends ChartPart {
             // SymbolSize, SymbolId
             case SymbolSize_Prop: return getSymbolSize();
             case SymbolId_Prop: return getSymbolId();
+
+            // Handle PointSpacing, MaxPointCount, SkipPointCount
+            case PointSpacing_Prop: return getPointSpacing();
+            case MaxPointCount_Prop: return getMaxPointCount();
+            case SkipPointCount_Prop: return getSkipPointCount();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -155,6 +217,11 @@ public class PointStyle extends ChartPart {
             case SymbolSize_Prop: setSymbolSize(SnapUtils.intValue(aValue)); break;
             case SymbolId_Prop: setSymbolId(SnapUtils.intValue(aValue)); break;
 
+            // Handle PointSpacing, MaxPointCount, SkipPointCount
+            case PointSpacing_Prop: setPointSpacing(SnapUtils.intValue(aValue)); break;
+            case MaxPointCount_Prop: setMaxPointCount(SnapUtils.intValue(aValue)); break;
+            case SkipPointCount_Prop: setSkipPointCount(SnapUtils.intValue(aValue)); break;
+
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue); break;
         }
@@ -168,15 +235,18 @@ public class PointStyle extends ChartPart {
     {
         switch (aPropName) {
 
-            // LineColor_Prop
+            // Override LineColor, Fill
             case LineColor_Prop: return getDefaultLineColor();
+            case Fill_Prop: return getDefaultFillColor();
 
             // SymbolSize, SymbolId
             case SymbolSize_Prop: return DEFAULT_SYMBOL_SIZE;
             case SymbolId_Prop: return 0;
 
-            // Fill_Prop
-            case Fill_Prop: return getDefaultFillColor();
+            // PointSpacing properties
+            case PointSpacing_Prop: return DEFAULT_POINT_SPACING;
+            case MaxPointCount_Prop: return DEFAULT_MAX_POINT_COUNT;
+            case SkipPointCount_Prop: return DEFAULT_SKIP_POINT_COUNT;
 
             // Do normal version
             default: return super.getPropDefault(aPropName);
@@ -192,13 +262,19 @@ public class PointStyle extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive SymbolSize
+        // Archive SymbolSize, SymbolId
         if (!isPropDefault(SymbolSize_Prop))
             e.add(SymbolSize_Prop, getSymbolSize());
-
-        // Archive SymbolId
         if (!isPropDefault(SymbolSize_Prop))
             e.add(SymbolId_Prop, getSymbolId());
+
+        // Archive PointSpacing, MaxPointCount, SkipPointCount
+        if (!isPropDefault(PointSpacing_Prop))
+            e.add(PointSpacing_Prop, getPointSpacing());
+        if (!isPropDefault(MaxPointCount_Prop))
+            e.add(MaxPointCount_Prop, getMaxPointCount());
+        if (!isPropDefault(SkipPointCount_Prop))
+            e.add(SkipPointCount_Prop, getSkipPointCount());
 
         // Return xml
         return e;
@@ -213,14 +289,19 @@ public class PointStyle extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-
-        // Unarchive SymbolSize
+        // Unarchive SymbolSize, SymbolId
         if (anElement.hasAttribute(SymbolSize_Prop))
             setSymbolSize(anElement.getAttributeIntValue(SymbolSize_Prop));
-
-        // Unarchive SymbolId
         if (anElement.hasAttribute(SymbolId_Prop))
             setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
+
+        // Unarchive PointSpacing, MaxPointCount, SkipPointCount
+        if (anElement.hasAttribute(PointSpacing_Prop))
+            setPointSpacing(anElement.getAttributeIntValue(PointSpacing_Prop));
+        if (anElement.hasAttribute(MaxPointCount_Prop))
+            setMaxPointCount(anElement.getAttributeIntValue(MaxPointCount_Prop));
+        if (anElement.hasAttribute(SkipPointCount_Prop))
+            setSkipPointCount(anElement.getAttributeIntValue(SkipPointCount_Prop));
 
         // Return
         return this;

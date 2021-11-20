@@ -21,6 +21,9 @@ public class ContourHelper {
     // The ChartHelper
     private ChartHelper  _chartHelper;
 
+    // The ContourStyle
+    private ContourStyle  _contourStyle;
+
     // The number of contour levels
     private int  _levelsCount;
 
@@ -33,19 +36,16 @@ public class ContourHelper {
     /**
      * Constructor.
      */
-    public ContourHelper(ChartHelper aChartHelper)
+    public ContourHelper(ChartHelper aChartHelper, ContourStyle aContourStyle)
     {
         _chartHelper = aChartHelper;
+        _contourStyle = aContourStyle;
     }
 
     /**
      * Returns the ContourProps.
      */
-    public ContourStyle getContourProps()
-    {
-        Chart chart = _chartHelper.getChart();
-        return chart.getTraceStyleHelper().getContourStyle();
-    }
+    public ContourStyle getContourProps()  { return _contourStyle; }
 
     /**
      * Returns whether to show contour lines.

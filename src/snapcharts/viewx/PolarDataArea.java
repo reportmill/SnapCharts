@@ -99,9 +99,8 @@ public class PolarDataArea extends DataArea {
         double reveal = getReveal();
 
         // Get style info
-        TraceStyle traceStyle = trace.getTraceStyle();
         boolean showLine = trace.isShowLine();
-        Stroke dataStroke = traceStyle.getLineStroke();
+        Stroke dataStroke = trace.getLineStroke();
         Color dataColor = getDataColor();
         boolean showPoints = trace.isShowPoints();
 

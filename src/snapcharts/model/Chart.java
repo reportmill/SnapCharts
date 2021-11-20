@@ -57,9 +57,6 @@ public class Chart extends ParentPart {
     // The trace colors
     private Color[]  _colors = ColorMap.GT_COLORS;
 
-    // The object holding specific chart type properties
-    private TraceStyleHpr _traceStyleHpr = new TraceStyleHpr(this);
-
     // Constants for properties
     public static final String Type_Prop = "Type";
     public static final String Colors_Prop = "Colors";
@@ -319,16 +316,6 @@ public class Chart extends ParentPart {
         int index = (anIndex - _colors.length) % ColorMap.COLORS.length;
         return ColorMap.COLORS[index];
     }
-
-    /**
-     * Returns the TraceStyleHpr that provides/manages TraceStyles.
-     */
-    public TraceStyleHpr getTraceStyleHelper()  { return _traceStyleHpr; }
-
-    /**
-     * Returns the TraceStyle for this chart (ChartType).
-     */
-    public TraceStyle getTraceStyle()  { return _traceStyleHpr.getTraceStyle(); }
 
     /**
      * Called when chart part has prop change.

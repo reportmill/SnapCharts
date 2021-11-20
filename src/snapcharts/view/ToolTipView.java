@@ -64,8 +64,7 @@ public class ToolTipView extends ColView {
         setPadding(5,5,10,5);
 
         // Create RowView: BulletView
-        TraceStyle traceStyle = trace.getTraceStyle();
-        Color color = traceStyle.getLineColor();
+        Color color = trace.getLineColor();
 
         // If alt down, add index
         int pointIndex = dataPoint.getIndex();
@@ -92,7 +91,7 @@ public class ToolTipView extends ColView {
             DataChan chan = trace.getDataType().getChannel(i);
             Object val = trace.getValueForChannel(chan, pointIndex);
             String valStr = val instanceof String ? (String) val : _fmt.format(val);
-            String text = chan.toString() + ": " + valStr;
+            String text = chan + ": " + valStr;
 
             // Create label and add
             View entryView = createToolTipEntry(text);

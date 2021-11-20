@@ -57,7 +57,7 @@ public class XYDataAreaShapes {
         {
             _dataArea = aDataArea;
             _includeAll = isIncludeAll;
-            _pointJoin = _dataArea.getTraceStyle().getPointJoin();
+            _pointJoin = _dataArea.getTrace().getPointJoin();
         }
 
         /**
@@ -151,7 +151,7 @@ public class XYDataAreaShapes {
             _count = _endIndex - _startIndex + 1;
 
             // If PointJoin.Spline, we might need extra point to prevent jumping
-            PointJoin pointJoin = aDataArea.getTraceStyle().getPointJoin();
+            PointJoin pointJoin = aDataArea.getTrace().getPointJoin();
             if (pointJoin == PointJoin.Spline) {
                 if (_startIndex > 0)
                     _startIndex--;
@@ -249,7 +249,7 @@ public class XYDataAreaShapes {
             _dataLinePathIter = dataLinePathIter;
 
             // Apply PointJoint PathIter, if needed
-            PointJoin pointJoin = aDataArea.getTraceStyle().getPointJoin();
+            PointJoin pointJoin = aDataArea.getTrace().getPointJoin();
             if (pointJoin != PointJoin.Line)
                 _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aDataArea);
 
@@ -339,7 +339,7 @@ public class XYDataAreaShapes {
             _dataLinePathIter = new DataLinePathIter(aTrans, aDataArea, false);
 
             // Apply PointJoint PathIter, if needed
-            PointJoin pointJoin = _dataArea.getTraceStyle().getPointJoin();
+            PointJoin pointJoin = _dataArea.getTrace().getPointJoin();
             if (pointJoin != PointJoin.Line)
                 _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aDataArea);
 
@@ -386,7 +386,7 @@ public class XYDataAreaShapes {
                 _nextDataAreaPathIter = nextDataAreaPathIter;
 
                 // Apply PointJoin if needed
-                PointJoin pointJoin = _nextDataArea.getTraceStyle().getPointJoin();
+                PointJoin pointJoin = _nextDataArea.getTrace().getPointJoin();
                 PointJoin pointJoinReverse = pointJoin.getReverse(); // Turns HV to VH
                 if (pointJoinReverse != PointJoin.Line)
                     _nextDataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoinReverse, _nextDataAreaPathIter, _nextDataArea);

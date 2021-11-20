@@ -31,7 +31,7 @@ public class TraceSpacingInsp extends ChartPartInsp {
     @Override
     public ChartPart getChartPart()
     {
-        return getTraceStyle();
+        return getPointStyle();
     }
 
     /**
@@ -46,21 +46,10 @@ public class TraceSpacingInsp extends ChartPartInsp {
     /**
      * Returns the TraceStyle.
      */
-    public TraceStyle getTraceStyle()
+    public PointStyle getPointStyle()
     {
         Trace trace = getTrace();
-        if (trace != null)
-            return trace.getTraceStyle();
-
-        return getChart().getTraceStyle();
-    }
-
-    /**
-     * Initialize UI.
-     */
-    @Override
-    protected void initUI()
-    {
+        return trace != null ? trace.getPointStyle() : null;
     }
 
     /**
@@ -68,20 +57,20 @@ public class TraceSpacingInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get TraceStyle
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
+        // Get PointStyle
+        PointStyle pointStyle = getPointStyle(); if (pointStyle == null) return;
 
         // Reset PointSpacingText, PointSpacingResetButton
-        setViewValue("PointSpacingText", traceStyle.getPointSpacing());
-        setViewVisible("PointSpacingResetButton", traceStyle.getPointSpacing() != TraceStyle.DEFAULT_POINT_SPACING);
+        setViewValue("PointSpacingText", pointStyle.getPointSpacing());
+        setViewVisible("PointSpacingResetButton", pointStyle.getPointSpacing() != PointStyle.DEFAULT_POINT_SPACING);
 
         // Reset SkipPointCountText, SkipPointCountResetButton
-        setViewValue("SkipPointCountText", traceStyle.getSkipPointCount());
-        setViewVisible("SkipPointCountResetButton", traceStyle.getSkipPointCount() != TraceStyle.DEFAULT_SKIP_POINT_COUNT);
+        setViewValue("SkipPointCountText", pointStyle.getSkipPointCount());
+        setViewVisible("SkipPointCountResetButton", pointStyle.getSkipPointCount() != PointStyle.DEFAULT_SKIP_POINT_COUNT);
 
         // Reset MaxPointCountText, MaxPointCountResetButton
-        setViewValue("MaxPointCountText", traceStyle.getMaxPointCount());
-        setViewVisible("MaxPointCountResetButton", traceStyle.getMaxPointCount() != TraceStyle.DEFAULT_MAX_POINT_COUNT);
+        setViewValue("MaxPointCountText", pointStyle.getMaxPointCount());
+        setViewVisible("MaxPointCountResetButton", pointStyle.getMaxPointCount() != PointStyle.DEFAULT_MAX_POINT_COUNT);
     }
 
     /**
@@ -89,37 +78,37 @@ public class TraceSpacingInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
+        // Get PointStyle
+        PointStyle pointStyle = getPointStyle(); if (pointStyle == null) return;
 
         // Handle PointSpacingText, PointSpacingAdd1Button, PointSpacingSub1Button, PointSpacingResetButton
         if (anEvent.equals("PointSpacingText"))
-            traceStyle.setPointSpacing(Math.max(anEvent.getIntValue(), 0));
+            pointStyle.setPointSpacing(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("PointSpacingAdd1Button"))
-            traceStyle.setPointSpacing(traceStyle.getPointSpacing() + 1);
+            pointStyle.setPointSpacing(pointStyle.getPointSpacing() + 1);
         if (anEvent.equals("PointSpacingSub1Button"))
-            traceStyle.setPointSpacing(Math.max(traceStyle.getPointSpacing() - 1, 0));
+            pointStyle.setPointSpacing(Math.max(pointStyle.getPointSpacing() - 1, 0));
         if (anEvent.equals("PointSpacingResetButton"))
-            traceStyle.setPointSpacing(TraceStyle.DEFAULT_POINT_SPACING);
+            pointStyle.setPointSpacing(PointStyle.DEFAULT_POINT_SPACING);
 
         // Handle SkipPointCountText, SkipPointCountAdd1Button, SkipPointCountSub1Button, SkipPointCountResetButton
         if (anEvent.equals("SkipPointCountText"))
-            traceStyle.setSkipPointCount(Math.max(anEvent.getIntValue(), 0));
+            pointStyle.setSkipPointCount(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("SkipPointCountAdd1Button"))
-            traceStyle.setSkipPointCount(traceStyle.getSkipPointCount() + 1);
+            pointStyle.setSkipPointCount(pointStyle.getSkipPointCount() + 1);
         if (anEvent.equals("SkipPointCountSub1Button"))
-            traceStyle.setSkipPointCount(Math.max(traceStyle.getSkipPointCount() - 1, 0));
+            pointStyle.setSkipPointCount(Math.max(pointStyle.getSkipPointCount() - 1, 0));
         if (anEvent.equals("SkipPointCountResetButton"))
-            traceStyle.setSkipPointCount(TraceStyle.DEFAULT_SKIP_POINT_COUNT);
+            pointStyle.setSkipPointCount(PointStyle.DEFAULT_SKIP_POINT_COUNT);
 
         // Handle MaxPointCountText, MaxPointCountAdd1Button, MaxPointCountSub1Button, MaxPointCountResetButton
         if (anEvent.equals("MaxPointCountText"))
-            traceStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
+            pointStyle.setMaxPointCount(Math.max(anEvent.getIntValue(), 0));
         if (anEvent.equals("MaxPointCountAdd1Button"))
-            traceStyle.setMaxPointCount(traceStyle.getMaxPointCount() + 1);
+            pointStyle.setMaxPointCount(pointStyle.getMaxPointCount() + 1);
         if (anEvent.equals("MaxPointCountSub1Button"))
-            traceStyle.setMaxPointCount(Math.max(traceStyle.getMaxPointCount() - 1, 0));
+            pointStyle.setMaxPointCount(Math.max(pointStyle.getMaxPointCount() - 1, 0));
         if (anEvent.equals("MaxPointCountResetButton"))
-            traceStyle.setMaxPointCount(TraceStyle.DEFAULT_MAX_POINT_COUNT);
+            pointStyle.setMaxPointCount(PointStyle.DEFAULT_MAX_POINT_COUNT);
     }
 }

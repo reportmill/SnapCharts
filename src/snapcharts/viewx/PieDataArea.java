@@ -147,7 +147,7 @@ public class PieDataArea extends DataArea {
         int selIndexLast = getSelPointLastIndex();
         double reveal = getReveal();
         double selPointMorph = getSelDataPointMorph();
-        TraceStyle traceStyle = getTraceStyle();
+        Trace trace = getTrace();
 
         // Set font
         aPntr.setFont(getFont());
@@ -158,7 +158,7 @@ public class PieDataArea extends DataArea {
 
             // Get loop wedge and color
             Wedge wedge = wedges[i];
-            Color color = traceStyle.getColorMapColor(i);
+            Color color = trace.getColorMapColor(i);
 
             // If targeted, paint targ area
             if (i==targIndex && i!=selIndex) {

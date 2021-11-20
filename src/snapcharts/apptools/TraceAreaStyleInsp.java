@@ -33,7 +33,7 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
     @Override
     public ChartPart getChartPart()
     {
-        return getTraceStyle();
+        return getTrace();
     }
 
     /**
@@ -46,26 +46,14 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
     }
 
     /**
-     * Returns the TraceStyle.
-     */
-    public TraceStyle getTraceStyle()
-    {
-        Trace trace = getTrace();
-        if (trace != null)
-            return trace.getTraceStyle();
-
-        return getChart().getTraceStyle();
-    }
-
-    /**
      * Initialize UI.
      */
     @Override
     protected void initUI()
     {
         // Configure FillModeComboBox to show FillModes
-        ComboBox<TraceStyle.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
-        fillModeComboBox.setItems(TraceStyle.FillMode.values());
+        ComboBox<Trace.FillMode> fillModeComboBox = getView("FillModeComboBox", ComboBox.class);
+        fillModeComboBox.setItems(Trace.FillMode.values());
         fillModeComboBox.setItemTextFunction(item -> StringUtils.fromCamelCase(item.toString()));
     }
 
@@ -74,20 +62,19 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get Trace, TraceStyle
+        // Get Trace
         Trace trace = getTrace(); if (trace == null) return;
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Reset ShowAreaCheckBox
         boolean showArea = trace.isShowArea();
         setViewValue("ShowAreaCheckBox", showArea);
 
         // Reset FillColorButton, FillColorResetButton
-        setViewValue("FillColorButton", traceStyle.getFillColor());
-        setViewVisible("FillColorResetButton", traceStyle.isFillSet());
+        setViewValue("FillColorButton", trace.getFillColor());
+        setViewVisible("FillColorResetButton", trace.isFillSet());
 
         // Reset FillModeComboBox
-        setViewSelItem("FillModeComboBox", traceStyle.getFillMode());
+        setViewSelItem("FillModeComboBox", trace.getFillMode());
     }
 
     /**
@@ -95,9 +82,8 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle
+        // Get Trace
         Trace trace = getTrace(); if (trace == null) return;
-        TraceStyle traceStyle = getTraceStyle(); if (traceStyle == null) return;
 
         // Handle ShowAreaCheckBox, FillModeComboBox
         if (anEvent.equals("ShowAreaCheckBox")) {
@@ -109,15 +95,15 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
         if (anEvent.equals("FillColorButton")) {
             Color color = (Color) getViewValue("FillColorButton");
             color = color.getAlpha() <= .5 ? color : color.copyForAlpha(.5);
-            traceStyle.setFill(color);
+            trace.setFill(color);
         }
         if (anEvent.equals("FillColorResetButton"))
-            traceStyle.setFill(null);
+            trace.setFill(null);
 
         // Handle FillModeComboBox
         if (anEvent.equals("FillModeComboBox")) {
-            TraceStyle.FillMode fillMode = (TraceStyle.FillMode) getViewSelItem("FillModeComboBox");
-            traceStyle.setFillMode(fillMode);
+            Trace.FillMode fillMode = (Trace.FillMode) getViewSelItem("FillModeComboBox");
+            trace.setFillMode(fillMode);
         }
     }
 }

@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.gfx.Color;
 import snap.util.*;
 import snapcharts.data.*;
 import snapcharts.util.MinMax;
@@ -29,6 +30,21 @@ public class Trace extends ChartPart {
     // Whether to show data tags
     private boolean  _showTags;
 
+    // The method by which points are joined
+    private PointJoin  _pointJoin;
+
+    // The FillMode
+    private FillMode  _fillMode;
+
+    // The PointStyle
+    private PointStyle  _pointStyle = new PointStyle(this);
+
+    // The TagStyle
+    private TagStyle  _tagStyle = new TagStyle(this);
+
+    // The TraceStyleHpr
+    private TraceStyleHpr  _traceStyleHpr;
+
     // The Y Axis type
     private AxisType  _axisTypeY = AxisType.Y;
 
@@ -50,15 +66,6 @@ public class Trace extends ChartPart {
     // Whether to show legend entry
     private boolean  _showLegendEntry = true;
 
-    // The TraceStyleHpr
-    private TraceStyleHpr _traceStyleHpr;
-
-    // The PointStyle
-    private PointStyle  _pointStyle = new PointStyle(this);
-
-    // The TagStyle
-    private TagStyle  _tagStyle = new TagStyle(this);
-
     // The original DataSet
     private DataSet  _dataSet = DataSet.newDataSet();
 
@@ -74,11 +81,16 @@ public class Trace extends ChartPart {
     // Processed data in polar XY form
     private DataSet _polarXYData;
 
+    // Constant for how Trace area should be filled
+    public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext }
+
     // Constants for properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String ShowArea_Prop = "ShowArea";
     public static final String ShowPoints_Prop = "ShowPoints";
     public static final String ShowTags_Prop = "ShowTags";
+    public static final String PointJoin_Prop = "PointJoin";
+    public static final String FillMode_Prop = "FillMode";
     public static final String DataType_Prop = DataSet.DataType_Prop;
     public static final String ThetaUhit_Prop = "ThetaUnit";
     public static final String AxisTypeY_Prop = "AxisTypeY";
@@ -93,6 +105,12 @@ public class Trace extends ChartPart {
     // Constants for relations
     public static final String PointStyle_Rel = "PointStyle";
     public static final String TagStyle_Rel = "TagStyle";
+    public static final String TraceStyle_Rel = "TraceStyle";
+
+    // Properties for defaults
+    public static final int DEFAULT_LINE_WIDTH = 1;
+    public static final PointJoin DEFAULT_POINT_JOIN = PointJoin.Line;
+    public static final FillMode DEFAULT_FILL_MODE = FillMode.None;
 
     /**
      * Constructor.
@@ -101,11 +119,17 @@ public class Trace extends ChartPart {
     {
         super();
 
-        _traceStyleHpr = new TraceStyleHpr(this);
+        // Set defaults
+        _lineWidth = DEFAULT_LINE_WIDTH;
+        _pointJoin = DEFAULT_POINT_JOIN;
+        _fillMode = DEFAULT_FILL_MODE;
 
         // Register listener for TagStyle, PointStyle prop changes
         _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
         _pointStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
+
+        // Configure TraceStyle via TraceStyleHpr
+        _traceStyleHpr = new TraceStyleHpr(this);
     }
 
     /**
@@ -182,6 +206,34 @@ public class Trace extends ChartPart {
     }
 
     /**
+     * Returns the method by which points are joined.
+     */
+    public PointJoin getPointJoin()  { return _pointJoin; }
+
+    /**
+     * Sets the method by which points are joined.
+     */
+    public void setPointJoin(PointJoin aPointJoin)
+    {
+        if (aPointJoin == getPointJoin()) return;
+        firePropChange(PointJoin_Prop, _pointJoin, _pointJoin = aPointJoin);
+    }
+
+    /**
+     * Returns the FillMode (how/whether to paint the data area).
+     */
+    public FillMode getFillMode()  { return _fillMode; }
+
+    /**
+     * Sets the FillMode (how/whether to paint the data area).
+     */
+    public void setFillMode(FillMode aFillMode)
+    {
+        if (aFillMode == _fillMode) return;
+        firePropChange(FillMode_Prop, _fillMode, _fillMode = aFillMode);
+    }
+
+    /**
      * Returns the PointStyle for this Trace.
      */
     public PointStyle getPointStyle()  { return _pointStyle; }
@@ -190,6 +242,58 @@ public class Trace extends ChartPart {
      * Returns the TagStyle for this Trace.
      */
     public TagStyle getTagStyle()  { return _tagStyle; }
+
+    /**
+     * Returns the TraceStyle for this trace (and ChartType).
+     */
+    public TraceStyle getTraceStyle()
+    {
+        ChartType chartType = getTraceChartType();
+        return _traceStyleHpr.getTraceStyleForChartType(chartType);
+    }
+
+    /**
+     * Returns the Trace ChartType. This should be the same as Chart.ChartType, but can be overridden.
+     */
+    public ChartType getTraceChartType()
+    {
+        // Get Chart.ChartType
+        ChartType chartType = getChartType();
+
+        // If Contour but no Z data, use Scatter instead
+        if (chartType.isContourType() && !getDataType().hasZ())
+            chartType = chartType.isPolarType() ? ChartType.POLAR : ChartType.SCATTER;
+
+        // Return ChartType
+        return chartType;
+    }
+
+    /**
+     * Returns the default line color.
+     */
+    public Color getDefaultLineColor()
+    {
+        int index = getIndex();
+        return getColorMapColor(index);
+    }
+
+    /**
+     * Returns the color map color at index.
+     */
+    public Color getColorMapColor(int anIndex)
+    {
+        Chart chart = getChart();
+        return chart.getColor(anIndex);
+    }
+
+    /**
+     * Returns the default color to fill the data area.
+     */
+    public Color getFillColorDefault()
+    {
+        // Get from LineColor, half transparent
+        return getDefaultLineColor().copyForAlpha(.5);
+    }
 
     /**
      * Returns the DataType.
@@ -349,31 +453,6 @@ public class Trace extends ChartPart {
     {
         if (aValue==isShowLegendEntry()) return;
         firePropChange(ShowLegendEntry_Prop, _showLegendEntry, _showLegendEntry = aValue);
-    }
-
-    /**
-     * Returns the TraceStyle for this trace (and ChartType).
-     */
-    public TraceStyle getTraceStyle()
-    {
-        ChartType chartType = getTraceChartType();
-        return _traceStyleHpr.getTraceStyleForChartType(chartType);
-    }
-
-    /**
-     * Returns the Trace ChartType. This should be the same as Chart.ChartType, but can be overridden.
-     */
-    public ChartType getTraceChartType()
-    {
-        // Get Chart.ChartType
-        ChartType chartType = getChartType();
-
-        // If Contour but no Z data, use Scatter instead
-        if (chartType.isContourType() && !getDataType().hasZ())
-            chartType = chartType.isPolarType() ? ChartType.POLAR : ChartType.SCATTER;
-
-        // Return ChartType
-        return chartType;
     }
 
     /**
@@ -782,6 +861,12 @@ public class Trace extends ChartPart {
     }
 
     /**
+     * Override to prevent client code from using border instead of line props.
+     */
+    @Override
+    public boolean isBorderSupported()  { return false; }
+
+    /**
      * Standard toString implementation.
      */
     @Override
@@ -815,9 +900,11 @@ public class Trace extends ChartPart {
         super.initPropDefaults(aPropDefaults);
 
         // Add Props
-        aPropDefaults.addProps(ShowLine_Prop, ShowArea_Prop, ShowPoints_Prop, ShowTags_Prop);
+        aPropDefaults.addProps(ShowLine_Prop, ShowArea_Prop, ShowPoints_Prop, ShowTags_Prop,
+                PointJoin_Prop, FillMode_Prop);
 
-        aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel);
+        // Add Relations
+        aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel, TraceStyle_Rel);
     }
 
     /**
@@ -835,9 +922,14 @@ public class Trace extends ChartPart {
             case ShowPoints_Prop: return isShowPoints();
             case ShowTags_Prop: return isShowTags();
 
-            // Handle PointStyleRel, TagStyle_Rel
+            // Handle PointJoin, FillMode
+            case PointJoin_Prop: return getPointJoin();
+            case FillMode_Prop: return getFillMode();
+
+            // Handle PointStyleRel, TagStyle_Rel, TraceStyle_Rel
             case PointStyle_Rel: return getPointStyle();
             case TagStyle_Rel: return getTagStyle();
+            case TraceStyle_Rel: return getTraceStyle();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -859,8 +951,36 @@ public class Trace extends ChartPart {
             case ShowPoints_Prop: setShowPoints(SnapUtils.boolValue(aValue)); break;
             case ShowTags_Prop: setShowTags(SnapUtils.boolValue(aValue)); break;
 
+            // Handle PointJoint, FillMode
+            case PointJoin_Prop: setPointJoin((PointJoin) aValue); break;
+            case FillMode_Prop: setFillMode((FillMode) aValue); break;
+
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
+        }
+    }
+
+    /**
+     * Override to define TraceStyle defaults
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        switch (aPropName) {
+
+            // Override LineColor_Prop, LineWidth_Prop
+            case LineColor_Prop: return getDefaultLineColor();
+            case LineWidth_Prop: return DEFAULT_LINE_WIDTH;
+
+            // Override Fill
+            case Fill_Prop: return getFillColorDefault();
+
+            // PointJoin, FillMode
+            case PointJoin_Prop: return DEFAULT_POINT_JOIN;
+            case FillMode_Prop: return DEFAULT_FILL_MODE;
+
+            // Do normal version
+            default: return super.getPropDefault(aPropName);
         }
     }
 
@@ -873,33 +993,21 @@ public class Trace extends ChartPart {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
 
-        // Archive ShowLine, ShowArea
+        // Archive ShowLine, ShowArea, ShowPoints, ShowTags
         if (!isShowLine())
             e.add(ShowLine_Prop, false);
         if (isShowArea())
             e.add(ShowArea_Prop, true);
-
-        // Archive ShowPoints
-        if (isShowPoints()) {
+        if (isShowPoints())
             e.add(ShowPoints_Prop, true);
-
-            // Archive PointStyle
-            PointStyle pointStyle = getPointStyle();
-            XMLElement pointStyleXML = pointStyle.toXML(anArchiver);
-            if (pointStyleXML.getAttributeCount() > 0 || pointStyleXML.getElementCount() > 0)
-                e.addElement(pointStyleXML);
-        }
-
-        // Archive ShowTags
-        if (isShowTags()) {
+        if (isShowTags())
             e.add(ShowTags_Prop, true);
 
-            // Archive TagStyle
-            TagStyle tagStyle = getTagStyle();
-            XMLElement tagStyleXML = tagStyle.toXML(anArchiver);
-            if (tagStyleXML.getAttributeCount() > 0 || tagStyleXML.getElementCount() > 0)
-                e.addElement(tagStyleXML);
-        }
+        // Archive PointJoin, FillMode
+        if (!isPropDefault(PointJoin_Prop))
+            e.add(PointJoin_Prop, getPointJoin());
+        if (!isPropDefault(FillMode_Prop))
+            e.add(FillMode_Prop, getFillMode());
 
         // Archive AxisTypeY
         if (getAxisTypeY() != AxisType.Y)
@@ -921,13 +1029,23 @@ public class Trace extends ChartPart {
         if (!isShowLegendEntry())
             e.add(ShowLegendEntry_Prop, false);
 
+        // Archive PointStyle
+        PointStyle pointStyle = getPointStyle();
+        XMLElement pointStyleXML = pointStyle.toXML(anArchiver);
+        if (pointStyleXML.getAttributeCount() > 0 || pointStyleXML.getElementCount() > 0)
+            e.addElement(pointStyleXML);
+
+        // Archive TagStyle
+        TagStyle tagStyle = getTagStyle();
+        XMLElement tagStyleXML = tagStyle.toXML(anArchiver);
+        if (tagStyleXML.getAttributeCount() > 0 || tagStyleXML.getElementCount() > 0)
+            e.addElement(tagStyleXML);
+
         // Archive TraceStyle
         TraceStyle traceStyle = getTraceStyle();
         XMLElement traceStyleXML = traceStyle.toXML(anArchiver);
-        if (traceStyleXML.getAttributeCount() > 0) {
-            traceStyleXML.setName("TraceStyle");
+        if (traceStyleXML.getAttributeCount() > 0 || traceStyleXML.getElementCount() > 0)
             e.addElement(traceStyleXML);
-        }
 
         // Archive DataSet
         DataSet dataSet = getDataSet();
@@ -946,31 +1064,34 @@ public class Trace extends ChartPart {
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);
 
-        // Unarchive ShowLine, ShowArea
+        // This is for brief time when DataStyle (TraceStyle) held standard Trace display props
+        XMLElement dataStyleXML = anElement.getElement("DataStyle");
+        if (dataStyleXML != null)
+            fromLegacyDataStyleXML(anArchiver, dataStyleXML);
+
+        // Unarchive ShowLine, ShowArea, ShowPoints, ShowTags
         if (anElement.hasAttribute(ShowLine_Prop))
             setShowLine(anElement.getAttributeBoolValue(ShowLine_Prop));
         if (anElement.hasAttribute(ShowArea_Prop))
             setShowArea(anElement.getAttributeBoolValue(ShowArea_Prop));
-
-        // Unarchive ShowPoints (and legacy ShowSymbols)
         if (anElement.hasAttribute(ShowPoints_Prop))
             setShowPoints(anElement.getAttributeBoolValue(ShowPoints_Prop));
-        else if (anElement.hasAttribute("ShowSymbols"))
-            setShowPoints(anElement.getAttributeBoolValue("ShowSymbols"));
-
-        // Unarchive ShowTags
         if (anElement.hasAttribute(ShowTags_Prop))
             setShowTags(anElement.getAttributeBoolValue(ShowTags_Prop));
 
+        // Unarchive PointJoin, FillMode
+        if (anElement.hasAttribute(PointJoin_Prop))
+            setPointJoin(anElement.getAttributeEnumValue(PointJoin_Prop, PointJoin.class, DEFAULT_POINT_JOIN));
+        if (anElement.hasAttribute(FillMode_Prop))
+            setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
+
         // Unarchive PointStyle
-        XMLElement pointStyleXML = anElement.getElement("PointStyle");
-        if (pointStyleXML == null)
-            pointStyleXML = anElement.getElement("SymbolStyle");
+        XMLElement pointStyleXML = anElement.getElement(PointStyle_Rel);
         if (pointStyleXML != null)
             getPointStyle().fromXML(anArchiver, pointStyleXML);
 
         // Unarchive TagStyle
-        XMLElement tagStyleXML = anElement.getElement("TagStyle");
+        XMLElement tagStyleXML = anElement.getElement(TagStyle_Rel);
         if (tagStyleXML != null)
             getTagStyle().fromXML(anArchiver, tagStyleXML);
 
@@ -996,12 +1117,9 @@ public class Trace extends ChartPart {
             setShowLegendEntry(anElement.getAttributeBoolValue(ShowLegendEntry_Prop));
 
         // Unarchive TraceStyle
-        XMLElement traceStyleXML = anElement.getElement("TraceStyle");
-        if (traceStyleXML == null)
-            traceStyleXML = anElement.getElement("DataStyle");
-        if (traceStyleXML != null) {
+        XMLElement traceStyleXML = anElement.getElement(TraceStyle_Rel);
+        if (traceStyleXML != null)
             getTraceStyle().fromXML(anArchiver, traceStyleXML);
-        }
 
         // Unarchive DataSet
         DataSet dataSet = getDataSet();
@@ -1009,5 +1127,37 @@ public class Trace extends ChartPart {
 
         // Return this part
         return this;
+    }
+
+    /**
+     * Legacy unarchival for time when DataStyle held most Trace display properties.
+     */
+    private void fromLegacyDataStyleXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        if (anElement.hasAttribute(Trace.ShowLine_Prop) || anElement.hasAttribute(FillMode_Prop))
+            super.fromXML(anArchiver, anElement);
+
+        if (anElement.hasAttribute(Trace.ShowLine_Prop))
+            setShowLine(anElement.getAttributeBoolValue(Trace.ShowLine_Prop));
+        if (anElement.hasAttribute(FillMode_Prop))
+            setShowArea(true);
+        if (anElement.hasAttribute("ShowSymbols"))
+            setShowPoints(anElement.getAttributeBoolValue("ShowSymbols"));
+        if (anElement.hasAttribute(Trace.ShowTags_Prop))
+            setShowTags(anElement.getAttributeBoolValue(Trace.ShowTags_Prop));
+        XMLElement pointStyleXML = anElement.getElement("SymbolStyle");
+        if (pointStyleXML != null)
+            getPointStyle().fromXML(anArchiver, pointStyleXML);
+        XMLElement tagStyleXML = anElement.getElement("TagStyle");
+        if (tagStyleXML != null)
+            getTagStyle().fromXML(anArchiver, tagStyleXML);
+        if (anElement.hasAttribute(PointJoin_Prop))
+            setPointJoin(anElement.getAttributeEnumValue(PointJoin_Prop, PointJoin.class, null));
+        if (anElement.hasAttribute(PointStyle.PointSpacing_Prop))
+            getPointStyle().setPointSpacing(anElement.getAttributeIntValue(PointStyle.PointSpacing_Prop));
+        if (anElement.hasAttribute(PointStyle.MaxPointCount_Prop))
+            getPointStyle().setMaxPointCount(anElement.getAttributeIntValue(PointStyle.MaxPointCount_Prop));
+        if (anElement.hasAttribute(PointStyle.SkipPointCount_Prop))
+            getPointStyle().setSkipPointCount(anElement.getAttributeIntValue(PointStyle.SkipPointCount_Prop));
     }
 }

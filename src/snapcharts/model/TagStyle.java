@@ -55,7 +55,7 @@ public class TagStyle extends ChartPart {
         switch (aPropName) {
 
             // Handle LineColor
-            case LineColor_Prop: return _trace.getTraceStyle().getLineColor();
+            case LineColor_Prop: return _trace.getLineColor();
 
             // Handle LineColor
             case Fill_Prop: return getDefaultFill();
@@ -76,7 +76,6 @@ public class TagStyle extends ChartPart {
     {
         // Archive basic attributes
         XMLElement e = super.toXML(anArchiver);
-        e.setName("TagStyle");
 
         // Return xml
         return e;

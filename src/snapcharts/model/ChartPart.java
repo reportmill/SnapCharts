@@ -179,15 +179,6 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the TraceStyle.
-     */
-    public TraceStyle getTraceStyle()
-    {
-        Chart chart = getChart();
-        return chart != null ? chart.getTraceStyle() : null;
-    }
-
-    /**
      * Returns the TraceList.
      */
     public TraceList getTraceList()

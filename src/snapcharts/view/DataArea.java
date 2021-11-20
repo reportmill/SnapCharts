@@ -63,11 +63,6 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public Trace getTrace()  { return _trace; }
 
     /**
-     * Returns the TraceStyle.
-     */
-    public TraceStyle getTraceStyle()  { return _trace.getTraceStyle(); }
-
-    /**
      * Returns whether trace is enabled.
      */
     public boolean isTraceEnabled()  { return _trace.isEnabled(); }
@@ -120,8 +115,8 @@ public abstract class DataArea extends ChartPartView<Trace> {
      */
     public Color getDataColor()
     {
-        TraceStyle traceStyle = getTraceStyle();
-        return traceStyle.getLineColor();
+        Trace trace = getTrace();
+        return trace.getLineColor();
     }
 
     /**
@@ -129,8 +124,8 @@ public abstract class DataArea extends ChartPartView<Trace> {
      */
     public Color getColorMapColor(int anIndex)
     {
-        TraceStyle traceStyle = getTraceStyle();
-        return traceStyle.getColorMapColor(anIndex);
+        Trace trace = getTrace();
+        return trace.getColorMapColor(anIndex);
     }
 
     /**
@@ -540,7 +535,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
         Trace trace = getTrace();
-        TraceStyle traceStyle = getTraceStyle();
+        TraceStyle traceStyle = trace.getTraceStyle();
         if (src == trace || src == traceStyle || src instanceof Axis || propName == Trace.Stacked_Prop) {
             clearStagedData();
         }

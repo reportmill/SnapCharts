@@ -13,9 +13,6 @@ public class LegendEntryView extends Label {
     // The Trace
     private Trace  _trace;
 
-    // The TraceStyle
-    private TraceStyle  _traceStyle;
-
     // The PointStyle
     private PointStyle  _pointStyle;
 
@@ -29,7 +26,6 @@ public class LegendEntryView extends Label {
     {
         super();
         _trace = aTrace;
-        _traceStyle = aTrace.getTraceStyle();
         _pointStyle = _trace.getPointStyle();
 
         // Set ShowText
@@ -96,7 +92,7 @@ public class LegendEntryView extends Label {
             // Get marked height of line/area/symbol
             double markedHeight = 0;
             if (_trace.isShowLine())
-                markedHeight = _traceStyle.getLineWidth();
+                markedHeight = _trace.getLineWidth();
             if (_trace.isShowArea())
                 markedHeight += AREA_HEIGHT - markedHeight / 2;
             if (_trace.isShowPoints())
@@ -125,23 +121,23 @@ public class LegendEntryView extends Label {
             boolean showLine = _trace.isShowLine();
             boolean showPoints = _trace.isShowPoints();
             boolean disabled = _trace.isDisabled();
-            double lineWidth = showLine ? _traceStyle.getLineWidth() : 0;
+            double lineWidth = showLine ? _trace.getLineWidth() : 0;
             double lineY = areaY + areaH / 2;
             if (showArea)
                 lineY -= AREA_HEIGHT / 2;
 
             // Handle ShowArea
             if (showArea) {
-                Color fillColor = _traceStyle.getFillColor();
+                Color fillColor = _trace.getFillColor();
                 double lineMidY = lineY + lineWidth / 2;
                 aPntr.fillRectWithPaint(areaX, lineMidY, areaW, AREA_HEIGHT, fillColor);
             }
 
             // Handle ShowLine
             if (showLine) {
-                Color lineColor = _traceStyle.getLineColor();
+                Color lineColor = _trace.getLineColor();
                 if (disabled) lineColor = DISABLED_COLOR;
-                Stroke lineStroke = _traceStyle.getLineStroke();
+                Stroke lineStroke = _trace.getLineStroke();
                 aPntr.setColor(lineColor);
                 aPntr.setStroke(lineStroke);
                 aPntr.drawLine(areaX, lineY, areaX + areaW, lineY);

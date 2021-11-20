@@ -78,14 +78,13 @@ public class XYDataArea extends DataArea {
 
         // Get Trace info
         Trace trace = getTrace();
-        TraceStyle traceStyle = getTraceStyle();
         boolean showLine = trace.isShowLine();
         boolean showPoints = trace.isShowPoints();
         boolean showArea = trace.isShowArea();
 
         // Get DataColor, DataStroke
         Color dataColor = getDataColor();
-        Stroke dataStroke = traceStyle.getLineStroke();
+        Stroke dataStroke = trace.getLineStroke();
 
         // If reveal is not full (1) then clip
         double reveal = getReveal();
@@ -97,7 +96,7 @@ public class XYDataArea extends DataArea {
         // If ShowArea, fill path, too
         if (showArea) {
             Shape dataAreaShape = getDataAreaShape();
-            Color dataAreaColor = traceStyle.getFillColor();
+            Color dataAreaColor = trace.getFillColor();
             aPntr.setColor(dataAreaColor);
             aPntr.fill(dataAreaShape);
         }

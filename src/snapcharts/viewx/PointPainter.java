@@ -55,7 +55,6 @@ public class PointPainter {
     {
         // Get ShowSymbol info
         Trace trace = _dataArea.getTrace();
-        TraceStyle traceStyle = _dataArea.getTraceStyle();
         boolean showPoints = trace.isShowPoints();
         PointStyle pointStyle = trace.getPointStyle();
         int symbolSize = pointStyle.getSymbolSize();
@@ -84,9 +83,9 @@ public class PointPainter {
 
         // Get VisPointCount and MaxPointCount
         int visPointCount = endIndex - startIndex + 1;
-        int maxPointCount = traceStyle.getMaxPointCount();
-        int skipPointCount = traceStyle.getSkipPointCount();
-        int pointSpacing = traceStyle.getPointSpacing();
+        int maxPointCount = pointStyle.getMaxPointCount();
+        int skipPointCount = pointStyle.getSkipPointCount();
+        int pointSpacing = pointStyle.getPointSpacing();
 
         // Get point increment (as real number, so we can round to point index for distribution)
         double incrementReal = 1;

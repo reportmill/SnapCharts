@@ -10,7 +10,6 @@ import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
-import snapcharts.model.TraceStyle;
 import snapcharts.model.Intervals;
 import snapcharts.view.AxisViewX;
 
@@ -82,8 +81,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     {
         // Create 2d path
         Path path = createDataPath(aTrace);
-        TraceStyle traceStyle = aTrace.getTraceStyle();
-        Color dataStrokeColor = traceStyle.getLineColor();
+        Color dataStrokeColor = aTrace.getLineColor();
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front

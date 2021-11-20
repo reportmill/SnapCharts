@@ -1,6 +1,7 @@
 package snapcharts.viewx;
 import snap.util.PropChange;
 import snapcharts.model.*;
+import snapcharts.modelx.ContourStyle;
 import snapcharts.view.*;
 
 /**
@@ -17,7 +18,19 @@ public class PolarContourChartHelper extends PolarChartHelper {
     public PolarContourChartHelper(ChartView aChartView)
     {
         super(aChartView);
-        _contourHelper = new ContourHelper(this);
+
+        // This is bogus
+        Trace[] traces = aChartView.getTraceList().getTraces();
+        for (Trace trace : traces) {
+            TraceStyle traceStyle = trace.getTraceStyle();
+            if (traceStyle instanceof ContourStyle) {
+                _contourHelper = new ContourHelper(this, (ContourStyle) traceStyle);
+                break;
+            }
+        }
+        if (_contourHelper == null) {
+            System.err.println("PolarContourChartHelper.init: No Contour Trace!");
+        }
     }
 
     /**

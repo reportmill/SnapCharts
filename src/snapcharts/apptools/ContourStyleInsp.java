@@ -2,6 +2,7 @@ package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
+import snapcharts.model.Trace;
 import snapcharts.model.TraceStyle;
 import snapcharts.modelx.ContourStyle;
 
@@ -28,17 +29,34 @@ public class ContourStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getChart().getTraceStyle(); }
+    public ChartPart getChartPart()  { return getContourStyle(); }
+
+    /**
+     * Returns the Trace.
+     */
+    public Trace getTrace()
+    {
+        ChartPart selPart = _chartPane.getSelChartPart();
+        return selPart instanceof Trace ? (Trace) selPart : null;
+    }
+
+    /**
+     * Returns the TraceStyle.
+     */
+    public ContourStyle getContourStyle()
+    {
+        Trace trace = getTrace();
+        TraceStyle traceStyle = trace != null ? trace.getTraceStyle() : null;
+        return traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
+    }
 
     /**
      * Reset UI.
      */
     protected void resetUI()
     {
-        // Get TraceStyle
-        TraceStyle traceStyle = getChart().getTraceStyle();
-        ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
-        if (contourStyle == null) return;
+        // Get ContourStyle
+        ContourStyle contourStyle = getContourStyle(); if (contourStyle == null) return;
 
         // Reset ShowLinesCheckBox, ShowMeshCheckBox
         setViewValue("ShowLinesCheckBox", contourStyle.isShowLines());
@@ -51,10 +69,8 @@ public class ContourStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get TraceStyle
-        TraceStyle traceStyle = getChart().getTraceStyle();
-        ContourStyle contourStyle = traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
-        if (contourStyle == null) return;
+        // Get ContourStyle
+        ContourStyle contourStyle = getContourStyle(); if (contourStyle == null) return;
 
         // Handle ShowLinesCheckBox, ShowMeshCheckBox
         if (anEvent.equals("ShowLinesCheckBox"))

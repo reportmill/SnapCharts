@@ -270,7 +270,6 @@ public class OpenInPlotly {
     private void writeTrace(Trace aTrace, int anIndex)
     {
         // Get Trace info
-        TraceStyle traceStyle = aTrace.getTraceStyle();
         int pointCount = aTrace.getPointCount();
         DataType dataType = aTrace.getDataType();
         int chanCount = dataType.getChannelCount();
@@ -324,12 +323,12 @@ public class OpenInPlotly {
                 traceJS.addKeyValue("line", lineJS);
 
                 // Set the line.color
-                Color color = traceStyle.getLineColor();
+                Color color = aTrace.getLineColor();
                 String colorStr = getPlotlyColorString(color);
                 lineJS.addKeyValue("color", colorStr);
 
                 // Set the line.width
-                lineJS.addKeyValue("width", traceStyle.getLineWidth());
+                lineJS.addKeyValue("width", aTrace.getLineWidth());
             }
         }
 

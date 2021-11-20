@@ -42,7 +42,12 @@ public class BarDataArea extends DataArea {
     public BarStyle getBarStyle()
     {
         if (_barStyle != null) return _barStyle;
-        return _barStyle = getChart().getTraceStyleHelper().getBarStyle();
+        Trace trace = getTrace();
+        TraceStyle traceStyle = trace.getTraceStyle();
+        if (traceStyle instanceof BarStyle)
+            return _barStyle = (BarStyle) traceStyle;
+        System.err.println("BarDataArea.getBarStyle: Trace doesn't have BarStyle");
+        return _barStyle = new TraceStyleHpr(trace).getBarStyle();
     }
 
     /**
@@ -100,8 +105,7 @@ public class BarDataArea extends DataArea {
                 double dispY = dataToViewY(dataY);
 
                 // Draw bar
-                TraceStyle traceStyle = trace.getTraceStyle();
-                Color color = colorTraces ? traceStyle.getLineColor() : getColorMapColor(i);
+                Color color = colorTraces ? trace.getLineColor() : getColorMapColor(i);
                 double barX = i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
                 double barHeight = viewHeight - dispY;
                 section.bars[j] = new Bar(dataPoint, barX, dispY, barWidth, barHeight, color);
