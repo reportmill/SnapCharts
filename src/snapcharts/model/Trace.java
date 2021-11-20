@@ -1076,6 +1076,8 @@ public class Trace extends ChartPart {
             setShowArea(anElement.getAttributeBoolValue(ShowArea_Prop));
         if (anElement.hasAttribute(ShowPoints_Prop))
             setShowPoints(anElement.getAttributeBoolValue(ShowPoints_Prop));
+        else if (anElement.hasAttribute("ShowSymbols")) // Legacy
+            setShowPoints(true);
         if (anElement.hasAttribute(ShowTags_Prop))
             setShowTags(anElement.getAttributeBoolValue(ShowTags_Prop));
 
