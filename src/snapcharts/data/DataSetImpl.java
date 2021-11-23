@@ -36,17 +36,16 @@ public class DataSetImpl extends DataSet {
     {
         setDataType(aDataType);
 
-        DataChan[] channels = aDataType.getChannels();
-        for (int i=0; i<channels.length; i++) {
+        DataChan[] channels = aDataType.getChannelsXY();
+        for (int i = 0; i < channels.length; i++) {
             DataChan chan = channels[i];
             Object chanData = theValues[i];
             switch (chan) {
                 case X: _dataX = (double[]) chanData; break;
                 case Y: _dataY = (double[]) chanData; break;
                 case Z: _dataZ = (double[]) chanData; break;
-                case T: _dataX = (double[]) chanData; break;
-                case R: _dataY = (double[]) chanData; break;
                 case C: _dataC = (String[]) chanData; break;
+                default: break;
             }
         }
 
@@ -91,7 +90,7 @@ public class DataSetImpl extends DataSet {
 
         // Get DataType
         DataType dataType = getDataType();
-        DataChan[] dataChans = dataType.getChannels();
+        DataChan[] dataChans = dataType.getChannelsXY();
 
         // New length should be double old len (stick with factors of two)
         int newLen = 32;
@@ -104,7 +103,7 @@ public class DataSetImpl extends DataSet {
                 case Y: _dataY = _dataY != null ? Arrays.copyOf(_dataY, newLen) : new double[newLen]; break;
                 case Z: _dataZ = _dataZ != null ? Arrays.copyOf(_dataZ, newLen) : new double[newLen]; break;
                 case C: _dataC = _dataC != null ? Arrays.copyOf(_dataC, newLen) : new String[newLen]; break;
-                default: throw new RuntimeException("DataSetImpl.ensureCapacity: Unknown channel: " + chan);
+                default: break;
             }
         }
 
@@ -124,7 +123,7 @@ public class DataSetImpl extends DataSet {
 
         // Get DataType
         DataType dataType = getDataType();
-        DataChan[] dataChans = dataType.getChannels();
+        DataChan[] dataChans = dataType.getChannelsXY();
 
         // If not adding to end, scoot trailing values down
         if (anIndex < pointCount) {
@@ -135,7 +134,7 @@ public class DataSetImpl extends DataSet {
                     case Y: System.arraycopy(_dataY, anIndex, _dataY, anIndex + 1, tailLen); break;
                     case Z: System.arraycopy(_dataZ, anIndex, _dataZ, anIndex + 1, tailLen); break;
                     case C: System.arraycopy(_dataC, anIndex, _dataC, anIndex + 1, tailLen); break;
-                    default: throw new RuntimeException("DataSetImpl.addPoint: Unknown channel: " + chan);
+                    default: break;
                 }
             }
         }
@@ -147,7 +146,7 @@ public class DataSetImpl extends DataSet {
                 case Y: _dataY[anIndex] = aPoint.getY(); break;
                 case Z: _dataZ[anIndex] = aPoint.getZ(); break;
                 case C: _dataC[anIndex] = aPoint.getC(); break;
-                default: throw new RuntimeException("DataSetImpl.addPoint: Unknown channel: " + chan);
+                default: break;
             }
         }
 
@@ -167,7 +166,7 @@ public class DataSetImpl extends DataSet {
     {
         // Get DataType
         DataType dataType = getDataType();
-        DataChan[] dataChans = dataType.getChannels();
+        DataChan[] dataChans = dataType.getChannelsXY();
         int pointCount = getPointCount();
 
         // If not adding to end, scoot trailing values down
@@ -180,7 +179,7 @@ public class DataSetImpl extends DataSet {
                     case Y: System.arraycopy(_dataY, nextIndex, _dataY, anIndex, tailLen); break;
                     case Z: System.arraycopy(_dataZ, nextIndex, _dataZ, anIndex, tailLen); break;
                     case C: System.arraycopy(_dataC, nextIndex, _dataC, anIndex, tailLen); break;
-                    default: throw new RuntimeException("DataSetImpl.removePoint: Unknown channel: " + chan);
+                    default: break;
                 }
             }
         }

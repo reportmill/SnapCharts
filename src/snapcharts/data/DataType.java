@@ -44,9 +44,9 @@ public enum DataType {
      */
     public int getChannelCount()
     {
-        if (this==UNKNOWN) return 0;
-        if (this==XYZZ) return 3;
-        if (this==TRZZ) return 3;
+        if (this == UNKNOWN) return 0;
+        if (this == XYZZ) return 3;
+        if (this == TRZZ) return 3;
         return toString().length();
     }
 
@@ -79,7 +79,7 @@ public enum DataType {
         // Create channels array
         int chanCount = getChannelCount();
         DataChan[] chans = new DataChan[chanCount];
-        for (int i=0; i<chanCount; i++)
+        for (int i = 0; i < chanCount; i++)
             chans[i] = getChannel(i);
 
         // Set/return channels
@@ -95,6 +95,15 @@ public enum DataType {
     }
 
     /**
+     * Returns the XY channels (if polar)
+     */
+    public DataChan[] getChannelsXY()
+    {
+        DataType dataTypeXY = getDataTypeXY();
+        return dataTypeXY.getChannels();
+    }
+
+    /**
      * Returns whether DataType has Z channel.
      */
     public boolean hasZ()  { return hasChannel(DataChan.Z); }
@@ -105,6 +114,19 @@ public enum DataType {
     public boolean isPolar()
     {
         return this == TR || this == TRZ || this == TRZZ;
+    }
+
+    /**
+     * Returns the DataType as XY (if polar).
+     */
+    public DataType getDataTypeXY()
+    {
+        switch (this) {
+            case TR: return XY;
+            case TRZ: return XYZ;
+            case TRZZ: return XYZZ;
+            default: return this;
+        }
     }
 
     /**
