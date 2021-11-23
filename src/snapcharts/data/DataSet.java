@@ -512,22 +512,24 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
             e.add(ThetaUnit_Prop, getThetaUnit());
 
         // If DataType has X, add DataX values
-        if (dataType.hasChannel(DataChan.X)) {
-            double[] dataX = dataType!=DataType.XYZZ ? getDataX() : getDataXforZZ();
+        DataType dataTypeXY = dataType.getDataTypeXY();
+        if (dataTypeXY.hasChannel(DataChan.X)) {
+            double[] dataX = dataType != DataType.XYZZ ? getDataX() : getDataXforZZ();
             String dataStr = DataUtils.getStringForDoubleArray(dataX);
             e.add(new XMLElement("DataX", dataStr));
         }
 
         // If DataType has Y, add DataY values
-        if (dataType.hasChannel(DataChan.Y)) {
-            double[] dataY = dataType!=DataType.XYZZ ? getDataY() : getDataYforZZ();
+        if (dataTypeXY.hasChannel(DataChan.Y)) {
+            double[] dataY = dataTypeXY != DataType.XYZZ ? getDataY() : getDataYforZZ();
             String dataStr = DataUtils.getStringForDoubleArray(dataY);
             e.add(new XMLElement("DataY", dataStr));
         }
 
         // If DataType has Z, add DataZ values
-        if (dataType.hasChannel(DataChan.Z)) {
-            String dataStr = DataUtils.getStringForDoubleArray(getDataZ());
+        if (dataTypeXY.hasChannel(DataChan.Z)) {
+            double[] dataZ = getDataZ();
+            String dataStr = DataUtils.getStringForDoubleArray(dataZ);
             e.add(new XMLElement("DataZ", dataStr));
         }
 
