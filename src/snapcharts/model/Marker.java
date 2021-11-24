@@ -1,7 +1,11 @@
 package snapcharts.model;
 import snap.geom.Pos;
 import snap.gfx.Image;
+import snap.util.PropDefaults;
 import snap.util.SnapUtils;
+import snap.util.XMLArchiver;
+import snap.util.XMLElement;
+
 import java.util.Objects;
 
 /**
@@ -346,6 +350,22 @@ public class Marker extends ChartPart {
     }
 
     /**
+     * Override to register props.
+     */
+    @Override
+    protected void initPropDefaults(PropDefaults aPropDefaults)
+    {
+        // Do normal version
+        super.initPropDefaults(aPropDefaults);
+
+        // Add Props
+        aPropDefaults.addProps(X_Prop, Y_Prop, Width_Prop, Height_Prop,
+                CoordSpaceX_Prop, CoordSpaceY_Prop, FractionalX_Prop, FractionalY_Prop,
+                Text_Prop, TextOutsideX_Prop, TextOutsideY_Prop, FitTextToBounds_Prop, ShowTextInAxis_Prop,
+                SVG_Prop);
+    }
+
+    /**
      * Override for subclass properties.
      */
     @Override
@@ -434,13 +454,148 @@ public class Marker extends ChartPart {
             // Align
             case Align_Prop: return DEFAULT_MARKER_ALIGN;
 
-            // CoordSpaceX, CoordSpaceY
+            // X, Y, Width, Height
+            case X_Prop: return 0;
+            case Y_Prop: return 0;
+            case Width_Prop: return 0;
+            case Height_Prop: return 0;
+
+            // CoordSpaceX, CoordSpaceY, FractionalX, FractionalY
             case CoordSpaceX_Prop: return DEFAULT_COORD_SPACE;
             case CoordSpaceY_Prop: return DEFAULT_COORD_SPACE;
+            case FractionalX_Prop: return false;
+            case FractionalY_Prop: return false;
+
+            // Text, TextOutsideX, TextOutsideY, FitTextToBounds, ShowTextInAxis
+            case Text_Prop: return null;
+            case TextOutsideX_Prop: return false;
+            case TextOutsideY_Prop: return false;
+            case FitTextToBounds_Prop: return false;
+            case ShowTextInAxis_Prop: return false;
+
+            // Image, SVG
+            case Image_Prop: return null;
+            case SVG_Prop: return null;
 
             // Do normal version
             default: return super.getPropDefault(aPropName);
         }
+    }
+
+    /**
+     * Archival.
+     */
+    @Override
+    public XMLElement toXML(XMLArchiver anArchiver)
+    {
+        // Archive basic attributes
+        XMLElement e = super.toXML(anArchiver);
+
+        // Archive X, Y, Width, Height
+        if (!isPropDefault(X_Prop))
+            e.add(X_Prop, getX());
+        if (!isPropDefault(Y_Prop))
+            e.add(Y_Prop, getY());
+        if (!isPropDefault(Width_Prop))
+            e.add(Width_Prop, getWidth());
+        if (!isPropDefault(Height_Prop))
+            e.add(Height_Prop, getHeight());
+
+        // Archive CoordSpaceX, CoordSpaceY, FractionalX, FractionalY
+        if (!isPropDefault(CoordSpaceX_Prop))
+            e.add(CoordSpaceX_Prop, getCoordSpaceX());
+        if (!isPropDefault(CoordSpaceY_Prop))
+            e.add(CoordSpaceY_Prop, getCoordSpaceY());
+        if (!isPropDefault(FractionalX_Prop))
+            e.add(FractionalX_Prop, isFractionalX());
+        if (!isPropDefault(FractionalY_Prop))
+            e.add(FractionalY_Prop, isFractionalY());
+
+        // Archive Text, TextOutsideX, TextOutsideY, FitTextToBounds, ShowTextInAxis
+        if (!isPropDefault(Text_Prop))
+            e.add(Text_Prop, getText());
+        if (!isPropDefault(TextOutsideX_Prop))
+            e.add(TextOutsideX_Prop, isTextOutsideX());
+        if (!isPropDefault(TextOutsideY_Prop))
+            e.add(TextOutsideY_Prop, isTextOutsideY());
+        if (!isPropDefault(FitTextToBounds_Prop))
+            e.add(FitTextToBounds_Prop, isFitTextToBounds());
+        if (!isPropDefault(ShowTextInAxis_Prop))
+            e.add(ShowTextInAxis_Prop, isShowTextInAxis());
+
+        // Archive Image, SVG
+        if (!isPropDefault(Image_Prop)) {
+            Image image = getImage();
+            String imageName = image.getName();
+            if (imageName == null)
+                imageName = "MarkerImage_" + anArchiver.getResources().size();
+            byte[] imageBytes = image.getBytes();
+            e.add(Image_Prop, imageName);
+            anArchiver.addResource(imageBytes, imageName);
+        }
+        if (!isPropDefault(SVG_Prop))
+            e.add(SVG_Prop, getSVG());
+
+        // Return element
+        return e;
+    }
+
+    /**
+     * Unarchival.
+     */
+    @Override
+    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
+    {
+        // Unarchive basic attributes
+        super.fromXML(anArchiver, anElement);
+
+        // Unarchive X, Y, Width, Height
+        if (anElement.hasAttribute(X_Prop))
+            setX(anElement.getAttributeDoubleValue(X_Prop));
+        if (anElement.hasAttribute(Y_Prop))
+            setY(anElement.getAttributeDoubleValue(Y_Prop));
+        if (anElement.hasAttribute(Width_Prop))
+            setWidth(anElement.getAttributeDoubleValue(Width_Prop));
+        if (anElement.hasAttribute(Height_Prop))
+            setHeight(anElement.getAttributeDoubleValue(Height_Prop));
+
+        // Unarchive CoordSpaceX, CoordSpaceY, FractionalX, FractionalY
+        if (anElement.hasAttribute(CoordSpaceX_Prop))
+            setCoordSpaceX(anElement.getAttributeEnumValue(CoordSpaceX_Prop, CoordSpace.class, null));
+        if (anElement.hasAttribute(CoordSpaceY_Prop))
+            setCoordSpaceY(anElement.getAttributeEnumValue(CoordSpaceY_Prop, CoordSpace.class, null));
+        if (anElement.hasAttribute(FractionalX_Prop))
+            setFractionalX(anElement.getAttributeBoolValue(FractionalX_Prop));
+        if (anElement.hasAttribute(FractionalY_Prop))
+            setFractionalY(anElement.getAttributeBoolValue(FractionalY_Prop));
+
+        // Unarchive Text, TextOutsideX, TextOutsideY, FitTextToBounds, ShowTextInAxis
+        if (anElement.hasAttribute(Text_Prop))
+            setText(anElement.getAttributeValue(Text_Prop));
+        if (anElement.hasAttribute(TextOutsideX_Prop))
+            setTextOutsideX(anElement.getAttributeBoolValue(TextOutsideX_Prop));
+        if (anElement.hasAttribute(TextOutsideY_Prop))
+            setTextOutsideY(anElement.getAttributeBoolValue(TextOutsideY_Prop));
+        if (anElement.hasAttribute(FitTextToBounds_Prop))
+            setFitTextToBounds(anElement.getAttributeBoolValue(FitTextToBounds_Prop));
+        if (anElement.hasAttribute(ShowTextInAxis_Prop))
+            setShowTextInAxis(anElement.getAttributeBoolValue(ShowTextInAxis_Prop));
+
+        // Unarchive Image, SVG
+        if (anElement.hasAttribute(Image_Prop)) {
+            String imageName = anElement.getAttributeValue(Image_Prop);
+            byte[] imageBytes = anArchiver.getResource(imageName);
+            if (imageBytes != null) {
+                Image image = Image.get(imageBytes);
+                if (image != null)
+                    setImage(image);
+            }
+        }
+        if (anElement.hasAttribute(SVG_Prop))
+            setSVG(anElement.getAttributeValue(SVG_Prop));
+
+        // Return this part
+        return this;
     }
 
     /**

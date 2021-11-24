@@ -86,7 +86,7 @@ public class ChartArchiver extends XMLArchiver {
     protected Map<String, Class> createClassMap()
     {
         // Create class map and add classes
-        Map cmap = new HashMap();
+        Map<String,Class> cmap = new HashMap();
 
         // Add classes
         cmap.put(TraceStyle.class.getSimpleName(), TraceStyle.class);
@@ -102,6 +102,8 @@ public class ChartArchiver extends XMLArchiver {
         cmap.put("DataSetList", TraceList.class);
         cmap.put(Header.class.getSimpleName(), Header.class);
         cmap.put(Legend.class.getSimpleName(), Legend.class);
+        cmap.put(ContourAxis.class.getSimpleName(), ContourAxis.class);
+        cmap.put(Marker.class.getSimpleName(), Marker.class);
 
         // Add Graphics classes (Border, Paint, Font, NumberFormat, Effect)
         cmap.put("color", Color.class);

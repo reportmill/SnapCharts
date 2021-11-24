@@ -417,12 +417,34 @@ public class Chart extends ParentPart {
         XMLElement axisY_XML = anArchiver.toXML(_axisY);
         e.add(axisY_XML);
 
+        // Archive ContourAxis
+        if (getType().isContourType()) {
+            XMLElement contourAxisXML = anArchiver.toXML(_contourAxis);
+            if (contourAxisXML.getAttributeCount() > 0 || contourAxisXML.getElementCount() > 0)
+                e.add(contourAxisXML);
+        }
+
         // Archive Legend
-        XMLElement legendXML = anArchiver.toXML(_legend);
-        e.add(legendXML);
+        if (getLegend().isShowLegend()) {
+            XMLElement legendXML = anArchiver.toXML(_legend);
+            if (legendXML.getAttributeCount() > 0 || legendXML.getElementCount() > 0)
+                e.add(legendXML);
+        }
+
+        // Archive Markers
+        Marker[] markers = getMarkers();
+        if (markers.length > 0) {
+            XMLElement markersXML = new XMLElement("Markers");
+            for (Marker marker : markers) {
+                XMLElement markerXML = anArchiver.toXML(marker);
+                markersXML.add(markerXML);
+            }
+            e.add(markersXML);
+        }
 
         // Archive TraceList
-        e.add(anArchiver.toXML(_traceList));
+        XMLElement traceListXML = anArchiver.toXML(_traceList);
+        e.add(traceListXML);
 
         // Return element
         return e;
@@ -451,6 +473,11 @@ public class Chart extends ParentPart {
         if (header_XML != null)
             anArchiver.fromXML(header_XML, _header, this);
 
+        // Unarchive ContourAxis
+        XMLElement contourAxisXML = anElement.get(ContourAxis.class.getSimpleName());
+        if (contourAxisXML != null)
+            anArchiver.fromXML(contourAxisXML, _contourAxis, this);
+
         // Unarchive AxisX, AxisY
         XMLElement axisX_XML = anElement.get("AxisX");
         if (axisX_XML != null)
@@ -463,6 +490,16 @@ public class Chart extends ParentPart {
         XMLElement legend_XML = anElement.get("Legend");
         if (legend_XML != null)
             anArchiver.fromXML(legend_XML, _legend, this);
+
+        // Unarchive Markers
+        XMLElement markersXML = anElement.getElement("Markers");
+        if (markersXML != null) {
+            XMLElement[] markersXMLs = markersXML.getElements("Marker").toArray(new XMLElement[0]);
+            for (XMLElement markerXML : markersXMLs) {
+                Marker marker = anArchiver.fromXML(markerXML, Marker.class, this);
+                addMarker(marker);
+            }
+        }
 
         // Unarchive TraceList
         XMLElement traceListXML = anElement.get("TraceList");
