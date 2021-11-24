@@ -736,7 +736,8 @@ public class DocPane extends ViewOwner {
             // Add to SelItem
             DocItem selItem = getSelItem();
             DocItem newDataSetItem = selItem.addChartPart(trace, null);
-            setSelItem(newDataSetItem);
+            if (!(selItem instanceof DocItemChart))
+                setSelItem(newDataSetItem);
         }
     }
 

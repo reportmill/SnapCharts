@@ -872,9 +872,11 @@ public class Trace extends ChartPart {
     @Override
     public String toString()
     {
-        String str = "Trace { " + "Name=" + getName() + ", DataType=" + getDataType() + ", PointCount=" + getPointCount();
+        DataType dataType = getDataType();
+        String str = "Trace { " + "Name=" + getName() + ", DataType=" + dataType + ", PointCount=" + getPointCount();
         DataSet dataSet = getDataSet();
-        for (DataChan chan : getDataType().getChannels()) {
+        DataChan[] dataChans = dataType.getChannels();
+        for (DataChan chan : dataChans) {
             MinMax minMax = dataSet.getMinMax(chan);
             str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
         }

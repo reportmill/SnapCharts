@@ -126,7 +126,7 @@ public class PolarChartHelper extends ChartHelper {
             return axisView.getAxisMinOverride();
 
         // Return Min for radius
-        return getMinMaxForRadius().getMin();
+        return getMinMaxForRadius().getMinE();
     }
 
     /**
@@ -139,7 +139,7 @@ public class PolarChartHelper extends ChartHelper {
             return axisView.getAxisMaxOverride();
 
         // Return Min for radius
-        return getMinMaxForRadius().getMax();
+        return getMinMaxForRadius().getMaxE();
     }
 
     /**

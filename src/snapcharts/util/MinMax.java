@@ -14,26 +14,37 @@ public class MinMax implements Cloneable {
     // The max value
     private double  _max;
 
+    // Min/max values with epsilon added (if min/max equal)
+    private double  _minE, _maxE;
+
     /**
      * Constructor.
      */
     public MinMax(double aMin, double aMax)
     {
+        _min = _minE = aMin;
+        _max = _maxE = aMax;
+
+        // Handle equal/invalid
         if (aMax <= aMin) {
+
+            // Handle Equal case
             if (aMax == aMin) {
                 System.err.println("MinMax.new: Equal min/max: I'm going to let it slide this time.");
                 double epsilon = Math.abs(aMin) * .001;
                 if (epsilon == 0) epsilon = .0000001;
-                aMin = aMin - epsilon;
-                aMax = aMax + epsilon;
+                _minE = aMin - epsilon;
+                _maxE = aMax + epsilon;
             }
+
+            // Handle invalid case
             else {
                 System.err.println("MinMax.new: Invalid min/max: I'm going to let it slide this time.");
                 double tmp = aMin; aMin = aMax; aMax = tmp;
+                _min = _minE = aMin;
+                _max = _maxE = aMax;
             }
         }
-        _min = aMin;
-        _max = aMax;
     }
 
     /**
@@ -45,6 +56,16 @@ public class MinMax implements Cloneable {
      * Returns the max value.
      */
     public double getMax()  { return _max; }
+
+    /**
+     * Returns the min value.
+     */
+    public double getMinE()  { return _minE; }
+
+    /**
+     * Returns the max value.
+     */
+    public double getMaxE()  { return _maxE; }
 
     /**
      * Returns the range length.

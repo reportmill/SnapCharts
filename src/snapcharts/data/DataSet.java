@@ -338,7 +338,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public MinMax getMinMaxX()
     {
         if (_minMaxX != null) return _minMaxX;
-        return _minMaxX = getMinMax(DataChan.X);
+        MinMax minMax = getMinMaxImpl(DataChan.X);
+        return _minMaxX = minMax;
     }
 
     /**
@@ -347,7 +348,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public MinMax getMinMaxY()
     {
         if (_minMaxY != null) return _minMaxY;
-        return _minMaxY = getMinMax(DataChan.Y);
+        MinMax minMax = getMinMaxImpl(DataChan.Y);
+        return _minMaxY = minMax;
     }
 
     /**
@@ -356,7 +358,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public MinMax getMinMaxZ()
     {
         if (_minMaxZ != null) return _minMaxZ;
-        return _minMaxZ = getMinMax(DataChan.Z);
+        MinMax minMax = getMinMaxImpl(DataChan.Z);
+        return _minMaxZ = minMax;
     }
 
     /**
@@ -380,13 +383,41 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMax(DataChan aChan)
     {
+        switch (aChan) {
+            case X: return getMinMaxX();
+            case Y: return getMinMaxY();
+            case Z: return getMinMaxZ();
+            case T: return getMinMaxT();
+            case R: return getMinMaxR();
+            case I: return new MinMax(0, getPointCount());
+            default: return new MinMax(0, 0);
+        }
+    }
+
+    /**
+     * Returns the minimum X value in this dataset.
+     */
+    protected MinMax getMinMaxImpl(DataChan aChan)
+    {
+        // If no points, just return 0,0
+        int pointCount = getPointCount();
+        if (pointCount == 0)
+            return new MinMax(0, 0);
+
+        // If Index Channel
+        if (aChan == DataChan.I)
+            return new MinMax(0, pointCount);
+
+        // Get DataArray for channel and iterate over to get min/max values
         double[] dataVals = getDataArrayForChannel(aChan);
         double min = Float.MAX_VALUE;
         double max = -Float.MAX_VALUE;
-        for (int i=0, iMax=getPointCount(); i<iMax; i++) {
+        for (int i = 0; i < pointCount; i++) {
             min = Math.min(min, dataVals[i]);
             max = Math.max(max, dataVals[i]);
         }
+
+        // Return MinMax
         return new MinMax(min, max);
     }
 

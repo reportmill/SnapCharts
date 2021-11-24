@@ -33,7 +33,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     private SplitView  _splitView;
 
     // The TabView
-    private TabView  _tabView;
+    private TabView _traceTabView;
     
     // The Inspector
     protected ChartPaneInsp  _insp;
@@ -170,7 +170,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     public Trace getTrace()
     {
         TraceList traceList = getTraceList();
-        int selIndex = _tabView != null ? _tabView.getSelIndex() : -1;
+        int selIndex = _traceTabView != null ? _traceTabView.getSelIndex() : -1;
         if (selIndex < 0 || selIndex >= traceList.getTraceCount())
             return null;
         return traceList.getTrace(selIndex);
@@ -210,46 +210,52 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     }
 
     /**
-     * Returns whether DataSetTabs are showing.
+     * Returns whether TraceTabView is showing.
      */
-    public boolean isShowDataSetTabs()
+    public boolean isShowTraceTabView()
     {
-        return _tabView.getParent()!=null;
+        return _traceTabView.getParent() != null;
     }
 
     /**
-     * Sets whether DataSetTabs are showing.
+     * Sets whether TraceTabs are showing.
      */
-    public void setShowDataSetTabs(boolean aValue)
+    public void setShowTraceTabView(boolean aValue)
     {
-        if (aValue==isShowDataSetTabs()) return;
+        if (aValue == isShowTraceTabView()) return;
         if (aValue)
-            showDataSetTabs();
-        else hideDataSetTabs();
+            showTraceTabView();
+        else hideTraceTabView();
     }
 
     /**
-     * Show dataset tabs.
+     * Show TraceTabView.
      */
-    public void showDataSetTabs()
+    public void showTraceTabView()
     {
+        // If already showing, just return
+        if (isShowTraceTabView()) return;
+
         // Add TabView
         double chartHeight = _chartBox.getPrefHeight();
         int minTabViewHeight = _dataSetMode ? 320 : 300;
         double tabViewHeight = Math.max(_splitView.getHeight() - chartHeight - 70, minTabViewHeight);
-        _splitView.addItemWithAnim(_tabView, tabViewHeight);
+        _splitView.addItemWithAnim(_traceTabView, tabViewHeight);
 
         // Make TabView the primary grower if DataSetMode
-        _tabView.setGrowHeight(_dataSetMode);
+        _traceTabView.setGrowHeight(_dataSetMode);
         _chartBox.setGrowHeight(!_dataSetMode);
     }
 
     /**
-     * Hides DataSet tabs.
+     * Hides TraceTabView.
      */
-    public void hideDataSetTabs()
+    public void hideTraceTabView()
     {
-        _splitView.removeItemWithAnim(_tabView);
+        // If already hidden, just return
+        if (!isShowTraceTabView()) return;
+
+        _splitView.removeItemWithAnim(_traceTabView);
     }
 
     /**
@@ -299,9 +305,9 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         _splitView = getView("SplitView", SplitView.class);
 
         // Get TabView and remove from SplitView (default mode)
-        _tabView = getView("TabView", TabView.class);
-        _splitView.removeItem(_tabView);
-        _tabView.setOwner(this);
+        _traceTabView = getView("TabView", TabView.class);
+        _splitView.removeItem(_traceTabView);
+        _traceTabView.setOwner(this);
 
         // Create configure ChartPaneSel
         _selHpr = new ChartPaneSel(this);
@@ -351,16 +357,11 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     @Override
     protected void initShowing()
     {
-        // Configure TabView with Chart.Traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
-        for (Trace trace : traces) {
-            _tabView.addTab(trace.getName(), new Label(trace.getName()));
-        }
+        rebuildTraceTabView();
 
-        // If DataSetMode, showDataSetTabs
+        // If DataSetMode, showTraceTabView
         if (_dataSetMode)
-            runLater(() -> showDataSetTabs());
+            runLater(() -> showTraceTabView());
     }
 
     /**
@@ -374,8 +375,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         setViewValue("ZoomSelectButton", chartHelper.isZoomSelectMode());
 
         // Make sure TabView has DataSetPane UI view (not Label placeholder)
-        int selTabIndex = _tabView.getSelIndex();
-        if (selTabIndex>=0 && _tabView.getTabContent(selTabIndex) instanceof Label) {
+        int selTabIndex = _traceTabView.getSelIndex();
+        if (selTabIndex>=0 && _traceTabView.getTabContent(selTabIndex) instanceof Label) {
 
             // Get Trace and create DataSetPane
             Trace trace = getTraceList().getTrace(selTabIndex);
@@ -383,7 +384,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
             DataSetPane dsetPane = new DataSetPane(docItemDataSet);
 
             // Set TabView content
-            _tabView.setTabContent(dsetPane.getUI(), selTabIndex);
+            _traceTabView.setTabContent(dsetPane.getUI(), selTabIndex);
         }
 
         // Reset inspector
@@ -420,7 +421,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
         // Handle TabView
         if (anEvent.equals("TabView")) {
-            int selIndex = _tabView.getSelIndex();
+            int selIndex = _traceTabView.getSelIndex();
             Trace trace = getTraceList().getTrace(selIndex);
             getSel().setSelChartPart(trace);
         }
@@ -436,8 +437,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
         // Handle ShowDataButton
         if (anEvent.equals("ShowDataButton")) {
-            boolean showData = !isShowDataSetTabs();
-            setShowDataSetTabs(showData);
+            boolean showData = !isShowTraceTabView();
+            setShowTraceTabView(showData);
             getView("ShowDataButton").setText(showData ? "Hide Data" : "Show Data");
         }
     }
@@ -520,6 +521,23 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     }
 
     /**
+     * Rebuilds the TraceTabView tabs.
+     */
+    private void rebuildTraceTabView()
+    {
+        // Remove current tabs
+        while (_traceTabView.getTabCount() > 0)
+            _traceTabView.removeTab(0);
+
+        // Configure TabView with Chart.Traces
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        for (Trace trace : traces) {
+            _traceTabView.addTab(trace.getName(), new Label(trace.getName()));
+        }
+    }
+
+    /**
      * Called when the selection changes.
      */
     public void chartPaneSelChanged()
@@ -528,7 +546,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         ChartPart selPart = getSelChartPart();
         if (selPart instanceof Trace) {
             Trace trace = (Trace) selPart;
-            _tabView.setSelIndex(trace.getIndex());
+            _traceTabView.setSelIndex(trace.getIndex());
         }
 
         // Notify Inspector
@@ -540,7 +558,43 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     private void chartPartDidPropChange(PropChange aPC)
     {
-        _insp.chartPartDidPropChange(aPC);
+        // Handle TraceList
+        Object src = aPC.getSource();
+        String propName = aPC.getPropName();
+        if (src instanceof TraceList && propName == TraceList.Trace_Prop) {
+            if (aPC.getNewValue() instanceof Trace)
+                traceListAddedTrace((Trace) aPC.getNewValue());
+            else if (aPC.getOldValue() instanceof Trace)
+                traceListRemovedTraceAtIndex(aPC.getIndex());
+        }
+    }
+
+    /**
+     * Called when Trace is added.
+     */
+    private void traceListAddedTrace(Trace aTrace)
+    {
+        rebuildTraceTabView();
+        getSel().setSelChartPart(aTrace);
+        showTraceTabView();
+    }
+
+    /**
+     * Called when Trace is removed.
+     */
+    private void traceListRemovedTraceAtIndex(int anIndex)
+    {
+        rebuildTraceTabView();
+
+        // Get next trace to select
+        TraceList traceList = getTraceList();
+        Trace nextTrace = anIndex < traceList.getTraceCount() ? traceList.getTrace(anIndex) : null;
+        if (nextTrace == null && traceList.getTraceCount() > 0)
+            nextTrace = traceList.getTrace(traceList.getTraceCount() - 1);
+
+        // Get next selected chartPart
+        ChartPart nextSel = nextTrace != null ? nextTrace : traceList;
+        getSel().setSelChartPart(nextSel);
     }
 
     /**

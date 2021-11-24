@@ -393,7 +393,7 @@ public abstract class ChartHelper {
         // If Axis.MinBound is user configured use MinValue, Otherwise get from axis StagedData
         double min = axis.getMinValue();
         if (minBound != AxisBound.VALUE)
-            min = getMinMaxForAxisStagedData(axisType).getMin();
+            min = getMinMaxForAxisStagedData(axisType).getMinE();
 
         // If ZeroRequired and min greater than zero, reset min
         if (axis.isZeroRequired() && min > 0)
@@ -420,7 +420,7 @@ public abstract class ChartHelper {
         // If Axis.MaxBound is user configured use MaxValue, Otherwise get from axis StagedData
         double max = axis.getMaxValue();
         if (maxBound != AxisBound.VALUE)
-            max = getMinMaxForAxisStagedData(axisType).getMax();
+            max = getMinMaxForAxisStagedData(axisType).getMaxE();
 
         // If ZeroRequired and max less than zero, reset max
         if (axis.isZeroRequired() && max < 0)
@@ -648,6 +648,17 @@ public abstract class ChartHelper {
     }
 
     /**
+     * Resets DataAreas.
+     */
+    protected void resetDataAreas()
+    {
+        _dataAreas = null;
+        DataArea[] dataAreas = getDataAreas();
+        DataView dataView = getDataView();
+        dataView.setDataAreas(dataAreas);
+    }
+
+    /**
      * Returns whether view is in ZoomSelectMode.
      */
     public boolean isZoomSelectMode()  { return _panZoomer.isZoomSelectMode(); }
@@ -693,6 +704,14 @@ public abstract class ChartHelper {
      */
     protected void chartPartDidChange(PropChange aPC)
     {
+        // Handle TraceList add/remove
+        Object src = aPC.getSource();
+        String propName = aPC.getPropName();
+        if (src instanceof TraceList && propName == TraceList.Trace_Prop) {
+            resetDataAreas();
+            _chartView.resetLater();
+        }
+
         // Forward to DataAreas
         for (DataArea dataArea : getDataAreas())
             dataArea.chartPartDidChange(aPC);

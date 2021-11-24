@@ -303,18 +303,4 @@ public class ChartPaneInsp extends ViewOwner {
         if (selPartInsp != null)
             selPartInsp.resetLater();
     }
-
-
-    /**
-     * Called when a ChartPart has change.
-     */
-    protected void chartPartDidPropChange(PropChange aPC)
-    {
-        // If not showing, just return
-        if (!isUISet()) return;
-
-        // Handle Chart.Type change
-        //String propName = aPC.getPropName();
-        //if (propName == Chart.Type_Prop) _traceStyleInsp.resetLater();
-    }
 }
