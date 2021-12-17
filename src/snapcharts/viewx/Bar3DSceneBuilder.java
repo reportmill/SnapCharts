@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.Color;
-import snap.gfx3d.Camera;
+import snap.gfx3d.Camera3D;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
 import snapcharts.model.Intervals;
@@ -150,7 +150,7 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
         }
 
         // Get depth, and Z values for back/front
-        Camera camera = _scene.getCamera();
+        Camera3D camera = _scene.getCamera();
         double depth = camera.getDepth();
         double z0 = depth/2 - aW / 2;
         double z1 = depth/2 + aW / 2;

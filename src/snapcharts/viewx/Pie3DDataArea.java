@@ -4,7 +4,7 @@ import snap.geom.Path;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
-import snap.gfx3d.Camera;
+import snap.gfx3d.Camera3D;
 import snap.gfx3d.CameraView;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
@@ -20,7 +20,7 @@ public class Pie3DDataArea extends PieDataArea {
     protected CameraView _camView;
 
     // The Camera
-    private Camera _camera;
+    private Camera3D _camera;
 
     // The Scene
     private Scene3D _scene;

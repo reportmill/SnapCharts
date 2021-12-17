@@ -3,7 +3,7 @@
  */
 package snapcharts.apptools;
 import snap.view.*;
-import snap.gfx3d.Camera;
+import snap.gfx3d.Camera3D;
 import snap.gfx3d.CameraView;
 import snap.gfx3d.Trackball;
 import snapcharts.view.DataArea;
@@ -116,7 +116,7 @@ public class Thr3DTool extends ViewOwner {
     /**
      * Sets Psuedo3D with some good settings.
      */
-    private void setPseudo3D(Camera aCam, boolean isPseudo3D)
+    private void setPseudo3D(Camera3D aCam, boolean isPseudo3D)
     {
         // Set defaults for pseudo 3d
         aCam.setPseudo3D(isPseudo3D);

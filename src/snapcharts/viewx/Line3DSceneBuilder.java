@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Path;
 import snap.geom.Point;
 import snap.gfx.Color;
-import snap.gfx3d.Camera;
+import snap.gfx3d.Camera3D;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
 import snapcharts.model.Trace;
@@ -85,7 +85,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front
-        Camera camera = _scene.getCamera();
+        Camera3D camera = _scene.getCamera();
         double sectionDepth = camera.getDepth() / aCount;
         double lineZ = sectionDepth * (anIndex + .5);
 

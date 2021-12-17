@@ -60,7 +60,7 @@ public abstract class AxisBoxSceneBuilder {
         rebuildGridLines();
 
         // Get standard width, height, depth
-        Camera camera = _scene.getCamera();
+        Camera3D camera = _scene.getCamera();
         double width = camera.getWidth();
         double height = camera.getHeight();
         double depth = camera.getDepth();
@@ -220,7 +220,7 @@ public abstract class AxisBoxSceneBuilder {
         boolean vertical = true;
 
         // Get graph bounds
-        Camera camera = _scene.getCamera();
+        Camera3D camera = _scene.getCamera();
         double boundsX = 0;
         double boundsY = 0;
         double boundsW = camera.getWidth();

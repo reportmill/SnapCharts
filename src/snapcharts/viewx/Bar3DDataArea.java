@@ -18,7 +18,7 @@ public class Bar3DDataArea extends BarDataArea {
     protected CameraView  _camView;
     
     // The Camera
-    private Camera  _camera;
+    private Camera3D _camera;
     
     // The Scene
     private Scene3D  _scene;
