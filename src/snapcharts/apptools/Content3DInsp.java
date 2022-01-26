@@ -16,7 +16,7 @@ import snapcharts.view.DataView;
 /**
  * Tool for visual editing RMScene3D.
  */
-public class Thr3DTool extends ChartPartInsp {
+public class Content3DInsp extends ChartPartInsp {
     
     // The Trackball control for rotating selected scene3d
     private Trackball  _trackball;
@@ -24,7 +24,7 @@ public class Thr3DTool extends ChartPartInsp {
     /**
      * Constructor.
      */
-    public Thr3DTool(ChartPane aChartPane)
+    public Content3DInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }

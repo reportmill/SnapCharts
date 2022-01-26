@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4,10,4,10" FillWidth="true">
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowBorderCheckBox" PrefWidth="100" text="Show Border" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="    Border Color:" />
+    <ColorButton Name="BorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
+    <Button Name="BorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="    Border Width:" />
+    <TextField Name="BorderWidthText" Align="CENTER" PrefWidth="50" />
+    <Button Name="BorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+      <font name="Arial" size="13" />
+    </Button>
+    <Button Name="BorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+    <Button Name="BorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowFillCheckBox" PrefWidth="100" text="Show Fill" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="    Fill Color:" />
+    <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+</ColView>

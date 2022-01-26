@@ -1,83 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowBorderCheckBox" PrefWidth="100" text="Show Border" />
-    <ToggleButton Name="ShowBorderMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
-  </RowView>
-  <ColView Name="ShowBorderBox" Padding="0,0,0,25" FillWidth="true">
-    <RowView Padding="4" Spacing="4">
-      <Label text="Color:" />
-      <ColorButton Name="BorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-      <Button Name="BorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-    <RowView Padding="4" Spacing="4">
-      <Label text="Width:" />
-      <TextField Name="BorderWidthText" Align="CENTER" PrefWidth="50" />
-      <Button Name="BorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-        <font name="Arial" size="13" />
-      </Button>
-      <Button Name="BorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-      <Button Name="BorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-  </ColView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowFillCheckBox" PrefWidth="100" text="Show Fill" />
-    <ToggleButton Name="ShowFillMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
-  </RowView>
-  <ColView Name="ShowFillBox" Padding="0,0,0,25" FillWidth="true">
-    <RowView Padding="4" Spacing="4">
-      <Label text="Color:" />
-      <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-      <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-  </ColView>
-  <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowGridCheckBox" PrefWidth="100" text="Show Grid" />
-    <ToggleButton Name="ShowGridMoreButton" PrefWidth="32" PrefHeight="18" Margin="0,0,0,20" Padding="2" image="More.png" Group="MoreBG" />
-  </RowView>
-  <ColView Name="ShowGridBox" Padding="0,0,0,25" FillWidth="true">
-    <RowView Padding="4" Spacing="4">
-      <Label text="Color:" />
-      <ColorButton Name="GridColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-      <Button Name="GridColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-    <RowView Padding="4" Spacing="4">
-      <Label text="Width:" />
-      <TextField Name="GridWidthText" Align="CENTER" PrefWidth="50" />
-      <Button Name="GridWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-        <font name="Arial" size="13" />
-      </Button>
-      <Button Name="GridWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-      <Button Name="GridWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-    <RowView Padding="4" GrowWidth="true" Spacing="13">
-      <Label text="Style:" />
-      <ToggleButton Name="GridDashButton" PrefWidth="100" PrefHeight="24" Padding="2" />
-    </RowView>
-    <ColView Name="GridDashBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
-      <EtchBorder />
-      <ColView Align="CENTER" Padding="4" GrowWidth="true" Spacing="2">
-        <Button Name="GridDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="GridDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="GridDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="GridDashButton_3" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="GridDashButton_4" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="GridDashButton_5" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      </ColView>
-    </ColView>
-  </ColView>
-  <RowView Name="ExtraInspLabelBox" Padding="2,4,2,4" Spacing="4">
-    <Label Name="ExtraInspLabel" Spacing="4" />
+  <RowView Align="CENTER" Padding="3,6,2,6">
+    <ToggleButton Name="BorderFillButton" MinWidth="60" MinHeight="0" Padding="2" GrowWidth="true" text="Border / Fill" Position="CENTER_LEFT">
+      <font name="Arial" size="11" />
+    </ToggleButton>
+    <ToggleButton Name="GridButton" MinWidth="60" Padding="2" text="Grid" GrowWidth="true" Position="CENTER">
+      <font name="Arial" size="11" />
+    </ToggleButton>
+    <ToggleButton Name="3DButton" MinWidth="60" Padding="2" text="3D" GrowWidth="true" Position="CENTER_RIGHT">
+      <font name="Arial" size="11" />
+    </ToggleButton>
   </RowView>
   <ColView Name="ExtraInspBox" />
 </ColView>

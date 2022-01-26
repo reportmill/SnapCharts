@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView Padding="4,10,4,10" FillWidth="true">
+  <RowView Padding="4" Spacing="4">
+    <CheckBox Name="ShowGridCheckBox" PrefWidth="100" text="Show Grid" />
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="    Grid Color:" />
+    <ColorButton Name="GridColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
+    <Button Name="GridColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4" Spacing="4">
+    <Label text="    Grid Width:" />
+    <TextField Name="GridWidthText" Align="CENTER" PrefWidth="50" />
+    <Button Name="GridWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
+      <font name="Arial" size="13" />
+    </Button>
+    <Button Name="GridWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
+    <Button Name="GridWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4" GrowWidth="true" Spacing="13">
+    <Label text="    Grid Line Style:" />
+    <ToggleButton Name="GridDashButton" PrefWidth="100" PrefHeight="24" Padding="2" />
+  </RowView>
+  <ColView Name="GridDashBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
+    <EtchBorder />
+    <ColView Align="CENTER" Padding="4" GrowWidth="true" Spacing="2">
+      <Button Name="GridDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="GridDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="GridDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="GridDashButton_3" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="GridDashButton_4" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="GridDashButton_5" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+    </ColView>
+  </ColView>
+</ColView>
