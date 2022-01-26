@@ -19,6 +19,15 @@ import java.util.Objects;
  */
 public class DataViewInsp extends ChartPartInsp {
 
+    // The Current ExtraInsp
+    private ChartPartInsp  _extraInsp;
+
+    // The View that holds the ExtraInsp
+    private ColView  _extraInspBox;
+
+    // The 3D inspector
+    private Thr3DTool  _3dInsp;
+
     /**
      * Constructor.
      */
@@ -65,6 +74,12 @@ public class DataViewInsp extends ChartPartInsp {
 
         // Configure MoreBG ToggleGroup to allow empty, so clicks on selected button will collapse
         getToggleGroup("MoreBG").setAllowEmpty(true);
+
+        // Get ExtraInspBox
+        _extraInspBox = getView("ExtraInspBox", ColView.class);
+
+        // Create 3DInsp
+        _3dInsp = new Thr3DTool(_chartPane);
     }
 
     /**
@@ -157,6 +172,13 @@ public class DataViewInsp extends ChartPartInsp {
             View gridDashBox = getView("GridDashBox");
             ViewAnimUtils.setVisible(gridDashBox, gridDashButton.isSelected(), false, true);
         }
+
+        // Handle 3DInsp
+        if (chart.getType().is3D()) {
+            setExtraInsp(_3dInsp);
+            _3dInsp.resetUI();
+        }
+        else setExtraInsp(null);
     }
 
     /**
@@ -272,6 +294,36 @@ public class DataViewInsp extends ChartPartInsp {
             for (Axis axis : axes)
                 axis.setGridDash(dashArray);
         }
+    }
+
+    /**
+     * Returns the Extra inspector.
+     */
+    private ChartPartInsp getExtraInsp()  { return _extraInsp; }
+
+    /**
+     * Sets the Extra inspector.
+     */
+    private void setExtraInsp(ChartPartInsp anInsp)
+    {
+        // If already set, just return
+        if (anInsp == getExtraInsp()) return;
+
+        // If old, remove it
+        if (_extraInsp != null)
+            _extraInspBox.removeChild(_extraInsp.getUI());
+
+        // Set new
+        _extraInsp = anInsp;
+
+        // If new, add UI
+        if(_extraInsp != null)
+            _extraInspBox.addChild(_extraInsp.getUI());
+
+        // Update ExtraInspLabelBox.Visible, ExtraInspLabel.Text
+        setViewVisible("ExtraInspLabelBox", _extraInsp != null);
+        if (_extraInsp != null)
+            setViewText("ExtraInspLabel", _extraInsp.getName());
     }
 
     /**

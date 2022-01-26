@@ -5,7 +5,6 @@ package snapcharts.app;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.styler.StylerPane;
-import snap.util.PropChange;
 import snap.view.*;
 import snap.viewx.TextPane;
 import snapcharts.appmisc.Collapser;
@@ -53,9 +52,6 @@ public class ChartPaneInsp extends ViewOwner {
     // The DataSet Inspector
     private TraceInsp  _traceInsp;
 
-    // The TraceStyleInsp
-    //private TraceStyleInsp  _traceStyleInsp;
-
     // The array of ChartPartInsp
     private ChartPartInsp[]  _allInspectors;
 
@@ -76,7 +72,7 @@ public class ChartPaneInsp extends ViewOwner {
     /**
      * Returns the ChartPane.
      */
-    public ChartPane getEditorPane()  { return _chartPane; }
+    public ChartPane getChartPane()  { return _chartPane; }
 
     /**
      * Initializes UI panel for the inspector.
@@ -136,7 +132,7 @@ public class ChartPaneInsp extends ViewOwner {
             addInspector(_dataViewInsp, false);
         }
 
-        // Add DataSetInsp
+        // Add TraceInsp
         _traceInsp = new TraceInsp(_chartPane);
         addInspector(_traceInsp, false);
 
@@ -147,7 +143,7 @@ public class ChartPaneInsp extends ViewOwner {
             _allInspectors = new ChartPartInsp[] { _traceInsp };
 
         // Trigger initial open panel
-        runLater(() -> chartPaneSelChanged());
+        runLater(() -> chartPaneSelChartPartChanged());
 
         // Create/set StylerPane
         _stylerPane = new StylerPane(_chartPane.getStyler());
@@ -191,7 +187,7 @@ public class ChartPaneInsp extends ViewOwner {
         }
 
         // Make MarkerInsp.Visible only if chart has markers
-        boolean hasMarkers = _chartPane.getChart().getMarkers().length > 0;
+        boolean hasMarkers = chart.getMarkers().length > 0;
         if (_markerInsp != null) {
             _markerInsp.getUI().setVisible(hasMarkers);
             _markerInsp.getLabel().setVisible(hasMarkers);
@@ -283,9 +279,9 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
-     * Called when the selection changes.
+     * Called when ChartPane selection (SelChartPart) changes.
      */
-    public void chartPaneSelChanged()
+    public void chartPaneSelChartPartChanged()
     {
         // Get SelPart and SelInsp
         ChartPart selPart = _chartPane.getSelChartPart();
@@ -293,7 +289,7 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
-            boolean isSelected = insp == selPartInsp; // || (insp == _traceStyleInsp && selPartInsp == _traceInsp);
+            boolean isSelected = insp == selPartInsp;
             insp.setSelected(isSelected);
             if (isSelected)
                 insp.resetLater();

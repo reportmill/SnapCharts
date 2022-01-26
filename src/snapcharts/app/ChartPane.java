@@ -550,7 +550,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         }
 
         // Notify Inspector
-        _insp.chartPaneSelChanged();
+        _insp.chartPaneSelChartPartChanged();
     }
 
     /**

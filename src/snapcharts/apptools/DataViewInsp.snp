@@ -76,4 +76,8 @@
       </ColView>
     </ColView>
   </ColView>
+  <RowView Name="ExtraInspLabelBox" Padding="2,4,2,4" Spacing="4">
+    <Label Name="ExtraInspLabel" Spacing="4" />
+  </RowView>
+  <ColView Name="ExtraInspBox" />
 </ColView>
