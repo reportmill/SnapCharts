@@ -2,10 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
+import snap.gfx3d.*;
 import snap.view.*;
-import snap.gfx3d.Camera3D;
-import snap.gfx3d.CameraView;
-import snap.gfx3d.Trackball;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
 import snapcharts.view.DataArea;
@@ -63,8 +61,14 @@ public class Content3DInsp extends ChartPartInsp {
         // Get Trackball
         _trackball = getView("Trackball", Trackball.class);
 
-        // Initialize RenderingComboBox
-        setViewItems("RenderingComboBox", new String[] { "Real 3D", "Pseudo 3D" });
+        // Initialize RendererComboBox
+        String[] rendererFactoryNames = RendererFactory.getFactoryNames();
+        if (rendererFactoryNames.length > 1)
+            setViewItems("RendererComboBox", rendererFactoryNames);
+        else {
+            setViewVisible("RendererComboBox", false);
+            getView("RendererComboBox").getParent().setVisible(false);
+        }
     }
 
     /**
@@ -76,13 +80,19 @@ public class Content3DInsp extends ChartPartInsp {
         CameraView cameraView = getCameraView(); if (cameraView == null) return;
         Camera3D camera = cameraView.getCamera();
 
-        // Reset Rendering radio buttons
-        setViewSelIndex("RenderingComboBox", camera.isPseudo3D() ? 1 : 0);
+        // Reset RendererComboBox
+        if (isViewVisible("RendererComboBox")) {
+            String rendererName = camera.getRenderer().getName();
+            setViewSelItem("RendererComboBox", rendererName);
+        }
 
         // Reset YawSpinner, PitchSpinner, RollSpinner
         setViewValue("YawSpinner", Math.round(camera.getYaw()));
         setViewValue("PitchSpinner", Math.round(camera.getPitch()));
         setViewValue("RollSpinner", Math.round(camera.getRoll()));
+
+        // Reset PseudoCheckBox
+        setViewValue("PseudoCheckBox", camera.isPseudo3D());
 
         // Reset scene control
         _trackball.syncFrom(camera);
@@ -105,9 +115,15 @@ public class Content3DInsp extends ChartPartInsp {
         CameraView cameraView = getCameraView(); if (cameraView == null) return;
         Camera3D camera = cameraView.getCamera();
 
-        // Handle RenderingComboBox
-        if (anEvent.equals("RenderingComboBox"))
-            setPseudo3D(camera, anEvent.getSelIndex() == 1);
+        // Handle RendererComboBox
+        if (anEvent.equals("RendererComboBox")) {
+            String rendererFactoryName = (String) anEvent.getSelItem();
+            RendererFactory rendererFactory = RendererFactory.getFactoryForName(rendererFactoryName);
+            if (rendererFactory != null) {
+                Renderer renderer = rendererFactory.newRenderer(camera);
+                camera.setRenderer(renderer);
+            }
+        }
 
         // Handle YawSpinner, PitchSpinner, RollSpinner
         if (anEvent.equals("YawSpinner"))
@@ -116,6 +132,10 @@ public class Content3DInsp extends ChartPartInsp {
             camera.setPitch(anEvent.getFloatValue());
         if (anEvent.equals("RollSpinner"))
             camera.setRoll(anEvent.getFloatValue());
+
+        // Handle PseudoCheckBox
+        if (anEvent.equals("PseudoCheckBox"))
+            setPseudo3D(camera, anEvent.getBoolValue());
 
         // Handle Trackball
         if (anEvent.equals("Trackball"))
