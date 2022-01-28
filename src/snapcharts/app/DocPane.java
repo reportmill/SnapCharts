@@ -419,6 +419,16 @@ public class DocPane extends ViewOwner {
     }
 
     /**
+     * Resets the DocItemPane for given DocItem.
+     */
+    protected void resetItemPane(DocItem anItem)
+    {
+        DocItemPane docItemPane = _docItemPanes.remove(anItem);
+        if (docItemPane != null)
+            runLater(() -> docItemPane.disposeDocItemPane());
+    }
+
+    /**
      * Opens current selection in Plotly.
      */
     public void openInPlotly()
@@ -619,6 +629,17 @@ public class DocPane extends ViewOwner {
         // Handle TreeView
         if (anEvent.equals(_treeView)) {
             DocItem docItem = _treeView.getSelItem();
+
+            // If event is double-click, reset DocItem's DocItemPane
+            if (anEvent.getParentEvent() != null && anEvent.getParentEvent().getClickCount() == 2) {
+                DocItem parItem = docItem.getParent();
+                if (parItem != null) {
+                    setSelItem(parItem);
+                    resetItemPane(docItem);
+                }
+            }
+
+            // Select docItem
             setSelItem(docItem);
         }
 

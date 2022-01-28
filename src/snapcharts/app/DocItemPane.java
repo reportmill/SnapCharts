@@ -102,4 +102,12 @@ public class DocItemPane<T extends DocItem> extends ViewOwner {
     {
 
     }
+
+    /**
+     * Called when DocItemPane is removed.
+     */
+    public void disposeDocItemPane()
+    {
+
+    }
 }
