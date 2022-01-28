@@ -104,6 +104,10 @@ public class Content3DInsp extends ChartPartInsp {
         // Reset Field of view slider/text
         setViewValue("FOVSlider", camera.getFocalLength() / 72);
         setViewValue("FOVText", camera.getFocalLength() / 72);
+
+        // Reset OffsetZThumbWheel, OffsetZText
+        setViewValue("OffsetZThumbWheel", camera.getOffsetZ());
+        setViewValue("OffsetZText", camera.getOffsetZ());
     }
 
     /**
@@ -151,6 +155,12 @@ public class Content3DInsp extends ChartPartInsp {
         if (anEvent.equals("FOVSlider") || anEvent.equals("FOVText")) {
             double focalLen = anEvent.equals("FOVSlider") ? anEvent.getIntValue() * 72 : anEvent.getFloatValue() * 72;
             camera.setFocalLength(focalLen);
+        }
+
+        // Handle OffsetZThumbWheel or OffsetZText
+        if (anEvent.equals("OffsetZThumbWheel") || anEvent.equals("OffsetZText")) {
+            double dist = anEvent.equals("OffsetZThumbWheel") ? anEvent.getIntValue() : anEvent.getFloatValue();
+            camera.setOffsetZ(dist);
         }
     }
 

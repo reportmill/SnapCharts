@@ -26,16 +26,22 @@
       </RowView>
     </ColView>
   </RowView>
-  <TitleView Margin="5" Padding="8" GrowWidth="true" Text="Depth">
+  <TitleView Margin="5" Padding="4,4,7,4" GrowWidth="true" Text="Depth">
     <RowView Padding="0,4,0,0" Spacing="5">
       <Slider Name="DepthSlider" PrefWidth="180" GrowWidth="true" Min="10" Max="200" />
       <TextField Name="DepthText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
     </RowView>
   </TitleView>
-  <TitleView Margin="5" Padding="8" GrowWidth="true" Text="Focal Length (inches from screen to eye)">
+  <TitleView Margin="5" Padding="4,4,7,4" GrowWidth="true" Text="Focal Length (inches from screen to eye)">
     <RowView Padding="0,4,0,0" Spacing="5">
       <Slider Name="FOVSlider" PrefWidth="180" GrowWidth="true" Min="6" Max="60" />
       <TextField Name="FOVText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
+    </RowView>
+  </TitleView>
+  <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Offset Z (distance to center of model)">
+    <RowView Padding="0,4,0,0" Spacing="5">
+      <ThumbWheel Name="OffsetZThumbWheel" PrefWidth="180" PrefHeight="18" GrowWidth="true" type="linear" min="0" max="500" round="1"/>
+      <TextField Name="OffsetZText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
     </RowView>
   </TitleView>
 </ColView>
