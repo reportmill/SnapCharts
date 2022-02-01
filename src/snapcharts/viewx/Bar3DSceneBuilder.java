@@ -125,7 +125,7 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
         int traceCount = _dataArea._traceCount;
         int pointCount = _dataArea._pointCount;
         BarDataArea.Section[] sections = _dataArea.getSections();
-        for (int i=0;i<pointCount;i++) {
+        for (int i = 0; i < pointCount; i++) {
             BarDataArea.Section section = sections[i];
 
             // Iterate over traces and draw bars
@@ -143,17 +143,18 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     {
         // If reveal is set, modify Y/H
         double reveal = _dataArea.getReveal();
-        if (reveal<1) {
-            double nh = aH*reveal;
+        if (reveal < 1) {
+            double nh = aH * reveal;
             aY += aH - nh;
             aH = nh;
         }
 
         // Get depth, and Z values for back/front
         Camera3D camera = _scene.getCamera();
-        double depth = camera.getDepth();
-        double z0 = depth/2 - aW / 2;
-        double z1 = depth/2 + aW / 2;
+        double sceneDepth = camera.getDepth();
+        double barDepth = Math.min(aW, sceneDepth * .9);
+        double z0 = sceneDepth / 2 - barDepth / 2;
+        double z1 = sceneDepth / 2 + barDepth / 2;
 
         // Create/configure bar path/path3d and add to scene
         Path path = new Path(new Rect(aX, aY, aW, aH));

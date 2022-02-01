@@ -103,7 +103,6 @@ public class Bar3DDataArea extends BarDataArea {
         if (aValue==0) {
             _camView.setYaw(90);
             _camView.setPitch(0);
-            //_camView.setOffsetZ(200);
             resetViewMatrixAnimated();
         }
     }
@@ -116,9 +115,7 @@ public class Bar3DDataArea extends BarDataArea {
         ViewAnim anim = _camView.getAnimCleared(1000);
         anim.setValue(CameraView.Yaw_Prop,26);
         anim.setValue(CameraView.Pitch_Prop,10);
-        //anim.setValue(CameraView.OffsetZ_Prop,0).setLinear();
         anim.play();
-        //anim.setOnFinish(() -> _camera.setAdjustZ(true));
     }
 
     /**
