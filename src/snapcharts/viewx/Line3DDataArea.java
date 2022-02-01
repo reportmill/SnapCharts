@@ -5,6 +5,7 @@ package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.PropChange;
+import snap.view.ViewAnim;
 import snapcharts.model.*;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.AxisViewY;
@@ -53,7 +54,6 @@ public class Line3DDataArea extends DataArea {
         _camera.setPitch(10);
         _camera.setDepth(300);
         _camera.setFocalLength(8*72);
-        _camera.setAdjustZ(true);
     }
 
     /**
@@ -78,7 +78,7 @@ public class Line3DDataArea extends DataArea {
     /**
      * Override to rebuild chart.
      */
-    public void setReveal(double aValue)
+    /*public void setReveal(double aValue)
     {
         super.setReveal(aValue);
         _camView.relayout();
@@ -86,11 +86,13 @@ public class Line3DDataArea extends DataArea {
             _camView.setYaw(90);
             _camView.setPitch(0);
             _camView.setOffsetZ(200);
-            _camView.getAnimCleared(1000).setValue(CameraView.Yaw_Prop,26);
-            _camView.getAnim(1000).setValue(CameraView.Pitch_Prop,10);
-            _camView.getAnim(1000).setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
+            ViewAnim anim = _camView.getAnimCleared(1000);
+            anim.setValue(CameraView.Yaw_Prop,26);
+            anim.setValue(CameraView.Pitch_Prop,10);
+            anim.setValue(CameraView.OffsetZ_Prop,0).setLinear();
+            anim.play();
         }
-    }
+    }*/
 
     /**
      * Override to resize CamView.

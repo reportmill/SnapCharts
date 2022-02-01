@@ -38,10 +38,13 @@
       <TextField Name="FOVText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
     </RowView>
   </TitleView>
-  <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Offset Z (distance to center of model)">
+  <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Gimbal Radius (distance from camera to model)">
     <RowView Padding="0,4,0,0" Spacing="5">
-      <ThumbWheel Name="OffsetZThumbWheel" PrefWidth="180" PrefHeight="18" GrowWidth="true" type="linear" min="0" max="500" round="1"/>
-      <TextField Name="OffsetZText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
+      <ThumbWheel Name="GimbalRadiusThumbWheel" PrefWidth="180" PrefHeight="16" Margin="2,1,1,1" GrowWidth="true" type="linear" min="0" max="500" round="1"/>
+      <TextField Name="GimbalRadiusText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
+      <Button Name="GimbalRadiusResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
     </RowView>
   </TitleView>
 </ColView>

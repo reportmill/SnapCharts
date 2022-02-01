@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
+import snap.gfx.Color;
 import snap.gfx3d.*;
 import snap.view.*;
 import snapcharts.app.ChartPane;
@@ -102,12 +103,18 @@ public class Content3DInsp extends ChartPartInsp {
         setViewValue("DepthText", camera.getDepth());
 
         // Reset Field of view slider/text
-        setViewValue("FOVSlider", camera.getFocalLength() / 72);
-        setViewValue("FOVText", camera.getFocalLength() / 72);
+        double focalLen = camera.getFocalLength();
+        setViewValue("FOVSlider", focalLen / 72);
+        setViewValue("FOVText", focalLen / 72);
 
-        // Reset OffsetZThumbWheel, OffsetZText
-        setViewValue("OffsetZThumbWheel", camera.getOffsetZ());
-        setViewValue("OffsetZText", camera.getOffsetZ());
+        // Reset GimbalRadiusThumbWheel, GimbalRadiusText, GimbalRadiusResetButton
+        double gimbalRadius = camera.getPrefGimbalRadius();
+        boolean gimbalRadiusSet = camera.isPrefGimbalRadiusSet();
+        setViewValue("GimbalRadiusThumbWheel", gimbalRadius);
+        setViewValue("GimbalRadiusText", gimbalRadius);
+        setViewVisible("GimbalRadiusResetButton", gimbalRadiusSet);
+        Color gimbalRadiusTextColor = gimbalRadiusSet ? Color.BLACK : Color.GRAY;
+        getView("GimbalRadiusText", TextField.class).setTextFill(gimbalRadiusTextColor);
     }
 
     /**
@@ -157,11 +164,15 @@ public class Content3DInsp extends ChartPartInsp {
             camera.setFocalLength(focalLen);
         }
 
-        // Handle OffsetZThumbWheel or OffsetZText
-        if (anEvent.equals("OffsetZThumbWheel") || anEvent.equals("OffsetZText")) {
-            double dist = anEvent.equals("OffsetZThumbWheel") ? anEvent.getIntValue() : anEvent.getFloatValue();
-            camera.setOffsetZ(dist);
+        // Handle GimbalRadiusThumbWheel or GimbalRadiusText
+        if (anEvent.equals("GimbalRadiusThumbWheel") || anEvent.equals("GimbalRadiusText")) {
+            double dist = anEvent.equals("GimbalRadiusThumbWheel") ? anEvent.getIntValue() : anEvent.getFloatValue();
+            camera.setPrefGimbalRadius(dist);
         }
+
+        // Handle GimbalRadiusResetButton
+        if (anEvent.equals("GimbalRadiusResetButton"))
+            camera.setPrefGimbalRadius(0);
     }
 
     /**

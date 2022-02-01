@@ -44,7 +44,6 @@ public class Pie3DDataArea extends PieDataArea {
         _camera.setPitch(10);
         _camera.setDepth(50);
         _camera.setFocalLength(8*72);
-        _camera.setAdjustZ(true);
 
         // Get CameraView.Scene
         _scene = _camView.getScene();
@@ -121,7 +120,7 @@ public class Pie3DDataArea extends PieDataArea {
     /**
      * Override to rebuild chart.
      */
-    @Override
+    /*@Override
     public void setReveal(double aValue)
     {
         super.setReveal(aValue);
@@ -130,11 +129,13 @@ public class Pie3DDataArea extends PieDataArea {
             _camView.setYaw(90);
             _camView.setPitch(0);
             _camView.setOffsetZ(200);
-            _camView.getAnimCleared(1000).setValue(CameraView.Yaw_Prop,-15);
-            _camView.getAnim(1000).setValue(CameraView.Pitch_Prop,-8);
-            _camView.getAnim(1000).setValue(CameraView.OffsetZ_Prop,0).setLinear().play();
+            ViewAnim anim = _camView.getAnimCleared(1000);
+            anim.setValue(CameraView.Yaw_Prop,-15);
+            anim.setValue(CameraView.Pitch_Prop,-8);
+            anim.setValue(CameraView.OffsetZ_Prop,0).setLinear();
+            anim.play();
         }
-    }
+    }*/
 
     /**
      * Override to resize CamView.
