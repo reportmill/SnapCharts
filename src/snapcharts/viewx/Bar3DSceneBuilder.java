@@ -152,7 +152,7 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
         // Get depth, and Z values for back/front
         Camera3D camera = _scene.getCamera();
         double sceneDepth = camera.getDepth();
-        double barDepth = Math.min(aW, sceneDepth * .9);
+        double barDepth = Math.min(aW, sceneDepth * .8);
         double z0 = sceneDepth / 2 - barDepth / 2;
         double z1 = sceneDepth / 2 + barDepth / 2;
 
