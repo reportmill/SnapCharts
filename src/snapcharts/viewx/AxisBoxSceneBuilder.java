@@ -94,17 +94,22 @@ public abstract class AxisBoxSceneBuilder {
         back.close();
 
         // Add Grid to back
-        Path3D grid = new Path3D(_grid, backZ); grid.setStroke(Color.BLACK, 1);
+        Path3D grid = new Path3D(_grid, backZ); grid.setName("AxisBackGrid");
+        grid.setStroke(Color.BLACK, 1);
         back.addLayer(grid);
 
         // Add GridMinor to back
-        Path3D gridMinor = new Path3D(_gridMinor, backZ); gridMinor.setStrokeColor(Color.LIGHTGRAY);
+        Path3D gridMinor = new Path3D(_gridMinor, backZ); gridMinor.setName("AxisBackGridMinor");
+        gridMinor.setStrokeColor(Color.LIGHTGRAY);
         back.addLayer(gridMinor);
 
         // If facing wrong direction, reverse
         Vector3D normal = new Vector3D(0, 0, backZ == 0 ? 1 : -1);
         if (!back.getNormal().equals(normal))
             back.reverse();
+
+        // Set name
+        back.setName(backZ == 0 ? "AxisBack" : "AxisFront");
 
         // Add to scene
         _scene.addShape(back);
@@ -138,6 +143,9 @@ public abstract class AxisBoxSceneBuilder {
         if (!side.getNormal().equals(normal))
             side.reverse();
 
+        // Set name
+        side.setName(sideX == 0 ? "AxisLeftSide" : "AxisRightSide");
+
         // Add to scene and return
         _scene.addShape(side);
     }
@@ -162,13 +170,13 @@ public abstract class AxisBoxSceneBuilder {
 
         // Configure grid
         Path sideGridPath = _gridWithoutSep.copyFor(gridRect);
-        Path3D sideGrid = new Path3D(sideGridPath, 0);
+        Path3D sideGrid = new Path3D(sideGridPath, 0); sideGrid.setName("AxisSideGrid");
         sideGrid.transform(gridTrans);
         sideGrid.setStroke(Color.BLACK, 1);
         side.addLayer(sideGrid);
 
         // Add GridMinor to side3d
-        Path sideGridPathMinor = _gridMinor.copyFor(gridMinorRect);
+        Path sideGridPathMinor = _gridMinor.copyFor(gridMinorRect); sideGrid.setName("AxisSideGridMinor");
         Path3D sideGridMinor = new Path3D(sideGridPathMinor, 0);
         sideGridMinor.transform(gridTrans);
         sideGridMinor.setStroke(Color.LIGHTGRAY,1);
@@ -183,7 +191,7 @@ public abstract class AxisBoxSceneBuilder {
     private void addFloorPlane(double width, double height, double depth)
     {
         // Create floor path shape
-        Path3D floor = new Path3D();
+        Path3D floor = new Path3D(); floor.setName("AxisFloor");
         floor.setColor(Color.LIGHTGRAY);
         floor.setStroke(Color.BLACK, 1);
         floor.setOpacity(.8f);
