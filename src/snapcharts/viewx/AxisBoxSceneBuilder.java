@@ -74,7 +74,7 @@ public abstract class AxisBoxSceneBuilder {
         addSidePlane(width, height, depth, true);
 
         // Create floor path shape
-        addFloorPlane(width, height, depth);
+        addFloorPlane(width, 0, depth);
     }
 
     /**
@@ -94,12 +94,14 @@ public abstract class AxisBoxSceneBuilder {
         back.close();
 
         // Add Grid to back
-        Path3D grid = new Path3D(_grid, backZ); grid.setName("AxisBackGrid");
+        Path3D grid = new Path3D(_grid, backZ);
+        grid.setName("AxisBackGrid");
         grid.setStroke(Color.BLACK, 1);
         back.addLayer(grid);
 
         // Add GridMinor to back
-        Path3D gridMinor = new Path3D(_gridMinor, backZ); gridMinor.setName("AxisBackGridMinor");
+        Path3D gridMinor = new Path3D(_gridMinor, backZ);
+        gridMinor.setName("AxisBackGridMinor");
         gridMinor.setStrokeColor(Color.LIGHTGRAY);
         back.addLayer(gridMinor);
 
@@ -170,13 +172,15 @@ public abstract class AxisBoxSceneBuilder {
 
         // Configure grid
         Path sideGridPath = _gridWithoutSep.copyFor(gridRect);
-        Path3D sideGrid = new Path3D(sideGridPath, 0); sideGrid.setName("AxisSideGrid");
+        Path3D sideGrid = new Path3D(sideGridPath, 0);
+        sideGrid.setName("AxisSideGrid");
         sideGrid.transform(gridTrans);
         sideGrid.setStroke(Color.BLACK, 1);
         side.addLayer(sideGrid);
 
         // Add GridMinor to side3d
-        Path sideGridPathMinor = _gridMinor.copyFor(gridMinorRect); sideGrid.setName("AxisSideGridMinor");
+        Path sideGridPathMinor = _gridMinor.copyFor(gridMinorRect);
+        sideGrid.setName("AxisSideGridMinor");
         Path3D sideGridMinor = new Path3D(sideGridPathMinor, 0);
         sideGridMinor.transform(gridTrans);
         sideGridMinor.setStroke(Color.LIGHTGRAY,1);

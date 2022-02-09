@@ -131,7 +131,7 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
             // Iterate over traces and draw bars
             for (int j = 0; j < traceCount; j++) {
                 BarDataArea.Bar bar = section.bars[j];
-                addBar(bar.x, bar.y, bar.width, bar.height - .5, bar.color);
+                addBar(bar.x, 1, bar.width, bar.height, bar.color);
             }
         }
     }
@@ -143,11 +143,8 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     {
         // If reveal is set, modify Y/H
         double reveal = _dataArea.getReveal();
-        if (reveal < 1) {
-            double nh = aH * reveal;
-            aY += aH - nh;
-            aH = nh;
-        }
+        if (reveal < 1)
+            aH *= reveal;
 
         // Get depth, and Z values for back/front
         Camera3D camera = _scene.getCamera();
