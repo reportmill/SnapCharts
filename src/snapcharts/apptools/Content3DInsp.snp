@@ -19,11 +19,6 @@
         <Label PrefWidth="40" text="Roll:" />
         <Spinner Name="RollSpinner" PrefWidth="60" Align="CENTER" Value="0" />
       </RowView>
-      <RowView Align="CENTER" Padding="0,0,0,8">
-        <CheckBox Name="PseudoCheckBox" Spacing="5" text="Pseudo 3D">
-          <font name="Arial" size="10" />
-        </CheckBox>
-      </RowView>
     </ColView>
   </RowView>
   <TitleView Margin="5" Padding="4,4,7,4" GrowWidth="true" Text="Depth">

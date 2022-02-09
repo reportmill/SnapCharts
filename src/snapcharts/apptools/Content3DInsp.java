@@ -92,9 +92,6 @@ public class Content3DInsp extends ChartPartInsp {
         setViewValue("PitchSpinner", Math.round(camera.getPitch()));
         setViewValue("RollSpinner", Math.round(camera.getRoll()));
 
-        // Reset PseudoCheckBox
-        setViewValue("PseudoCheckBox", camera.isPseudo3D());
-
         // Reset scene control
         _trackball.syncFrom(camera);
 
@@ -144,10 +141,6 @@ public class Content3DInsp extends ChartPartInsp {
         if (anEvent.equals("RollSpinner"))
             camera.setRoll(anEvent.getFloatValue());
 
-        // Handle PseudoCheckBox
-        if (anEvent.equals("PseudoCheckBox"))
-            setPseudo3D(camera, anEvent.getBoolValue());
-
         // Handle Trackball
         if (anEvent.equals("Trackball"))
             _trackball.syncTo(camera);
@@ -173,28 +166,5 @@ public class Content3DInsp extends ChartPartInsp {
         // Handle GimbalRadiusResetButton
         if (anEvent.equals("GimbalRadiusResetButton"))
             camera.setPrefGimbalRadius(0);
-    }
-
-    /**
-     * Sets Psuedo3D with some good settings.
-     */
-    private void setPseudo3D(Camera3D aCam, boolean isPseudo3D)
-    {
-        // Set defaults for pseudo 3d
-        aCam.setPseudo3D(isPseudo3D);
-        if (isPseudo3D) {
-            aCam.setPseudoSkewX(.3f);
-            aCam.setPseudoSkewY(-.25f);
-            aCam.setDepth(20);
-            aCam.setFocalLength(60*72);
-        }
-
-        // Set defaults for true 3d
-        else {
-            aCam.setYaw(23);
-            aCam.setPitch(12);
-            aCam.setDepth(100);
-            aCam.setFocalLength(8*72);
-        }
     }
 }
