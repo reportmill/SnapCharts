@@ -34,6 +34,33 @@ public abstract class AxisBoxSceneBuilder {
     }
 
     /**
+     * Returns the preferred width of the scene.
+     */
+    public double getPrefWidth()
+    {
+        Camera3D camera3D = _scene.getCamera();
+        return camera3D.getWidth();
+    }
+
+    /**
+     * Returns the preferred height of the scene.
+     */
+    public double getPrefHeight()
+    {
+        Camera3D camera3D = _scene.getCamera();
+        return camera3D.getHeight();
+    }
+
+    /**
+     * Returns the preferred depth of the scene.
+     */
+    public double getPrefDepth()
+    {
+        Camera3D camera3D = _scene.getCamera();
+        return camera3D.getDepth();
+    }
+
+    /**
      * Returns the intervals.
      */
     public abstract Intervals getIntervalsY();
@@ -59,11 +86,10 @@ public abstract class AxisBoxSceneBuilder {
         // Rebuild gridlines
         rebuildGridLines();
 
-        // Get standard width, height, depth
-        Camera3D camera = _scene.getCamera();
-        double width = camera.getWidth();
-        double height = camera.getHeight();
-        double depth = camera.getDepth();
+        // Get preferred width, height, depth
+        double width = getPrefWidth();
+        double height = getPrefHeight();
+        double depth = getPrefDepth();
 
         // Add back planes
         addBackPlane(width, height, 0);

@@ -25,7 +25,12 @@ public class Bar3DDataArea extends BarDataArea {
 
     // The SceneBuilder
     private Bar3DSceneBuilder  _sceneBuilder;
-    
+
+    // Constants
+    private static final double DEFAULT_YAW = 26;
+    private static final double DEFAULT_PITCH = 10;
+    private static final double DEFAULT_DEPTH = 100;
+
     /**
      * Constructor.
      */
@@ -56,10 +61,10 @@ public class Bar3DDataArea extends BarDataArea {
      */
     private void setDefaultViewTransform()
     {
-        _camera.setYaw(26);
-        _camera.setPitch(10);
-        _camera.setDepth(100);
-        _camera.setFocalLength(8*72);
+        _camera.setYaw(DEFAULT_YAW);
+        _camera.setPitch(DEFAULT_PITCH);
+        _camera.setDepth(DEFAULT_DEPTH);
+        _camera.setFocalLength(8 * 72);
     }
 
     /**
@@ -69,8 +74,8 @@ public class Bar3DDataArea extends BarDataArea {
     {
         // Calculate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
         int ivalCount = getIntervalsY().getCount();
-        double heightPerTick = getHeight()/(ivalCount - 1);
-        return heightPerTick>=72? 4 : heightPerTick>=50? 3 : 1;
+        double heightPerTick = getHeight() / (ivalCount - 1);
+        return heightPerTick >= 72 ? 4 : heightPerTick >= 50 ? 3 : 1;
     }
 
     /**
@@ -98,13 +103,14 @@ public class Bar3DDataArea extends BarDataArea {
     @Override
     public void setReveal(double aValue)
     {
+        // Do normal version
         super.setReveal(aValue);
         _camView.relayout();
-        if (aValue==0) {
-            _camView.setYaw(90);
-            _camView.setPitch(0);
-            resetViewMatrixAnimated();
-        }
+
+        // Animate camera rotation
+        Camera3D camera3D = _camView.getCamera();
+        camera3D.setYaw(90 + (DEFAULT_YAW - 90) * aValue);
+        camera3D.setPitch(0 + (DEFAULT_PITCH - 0) * aValue);
     }
 
     /**
@@ -113,8 +119,8 @@ public class Bar3DDataArea extends BarDataArea {
     public void resetViewMatrixAnimated()
     {
         ViewAnim anim = _camView.getAnimCleared(1000);
-        anim.setValue(CameraView.Yaw_Prop,26);
-        anim.setValue(CameraView.Pitch_Prop,10);
+        anim.setValue(CameraView.Yaw_Prop, DEFAULT_YAW);
+        anim.setValue(CameraView.Pitch_Prop, DEFAULT_PITCH);
         anim.play();
     }
 

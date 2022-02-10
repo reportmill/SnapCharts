@@ -85,8 +85,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front
-        Camera3D camera = _scene.getCamera();
-        double sectionDepth = camera.getDepth() / aCount;
+        double sectionDepth = getPrefDepth() / aCount;
         double lineZ = sectionDepth * (anIndex + .5);
 
         // Create/configure bar path/path3d and add to scene
