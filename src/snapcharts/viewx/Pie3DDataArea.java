@@ -42,7 +42,6 @@ public class Pie3DDataArea extends PieDataArea {
         _camera = _camView.getCamera();
         _camera.setYaw(26);
         _camera.setPitch(10);
-        _camera.setDepth(50);
         _camera.setFocalLength(8*72);
 
         // Get CameraView.Scene

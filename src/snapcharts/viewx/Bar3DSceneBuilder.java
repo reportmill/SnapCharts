@@ -28,6 +28,12 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     }
 
     /**
+     * Returns the preferred depth of the scene.
+     */
+    @Override
+    public double getPrefDepth()  { return Bar3DChartHelper.DEFAULT_DEPTH; }
+
+    /**
      * Returns the intervals.
      */
     public Intervals getIntervalsY()  { return _dataArea.getIntervalsY(); }

@@ -8,6 +8,9 @@ import snapcharts.view.DataArea;
  */
 public class Pie3DChartHelper extends PieChartHelper {
 
+    // Constant for default chart depth
+    public static final double DEFAULT_DEPTH = 50;
+
     /**
      * Constructor.
      */

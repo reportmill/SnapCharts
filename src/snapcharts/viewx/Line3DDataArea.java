@@ -52,7 +52,6 @@ public class Line3DDataArea extends DataArea {
         _camera = _camView.getCamera();
         _camera.setYaw(26);
         _camera.setPitch(10);
-        _camera.setDepth(300);
         _camera.setFocalLength(8*72);
     }
 

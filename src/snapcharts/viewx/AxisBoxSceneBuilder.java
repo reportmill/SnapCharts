@@ -54,11 +54,7 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Returns the preferred depth of the scene.
      */
-    public double getPrefDepth()
-    {
-        Camera3D camera3D = _scene.getCamera();
-        return camera3D.getDepth();
-    }
+    public abstract double getPrefDepth();
 
     /**
      * Returns the intervals.

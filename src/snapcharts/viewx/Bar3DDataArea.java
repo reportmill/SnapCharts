@@ -29,7 +29,6 @@ public class Bar3DDataArea extends BarDataArea {
     // Constants
     private static final double DEFAULT_YAW = 26;
     private static final double DEFAULT_PITCH = 10;
-    private static final double DEFAULT_DEPTH = 100;
 
     /**
      * Constructor.
@@ -63,7 +62,6 @@ public class Bar3DDataArea extends BarDataArea {
     {
         _camera.setYaw(DEFAULT_YAW);
         _camera.setPitch(DEFAULT_PITCH);
-        _camera.setDepth(DEFAULT_DEPTH);
         _camera.setFocalLength(8 * 72);
     }
 
