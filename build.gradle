@@ -65,3 +65,19 @@ publishing {
         }
     }
 }
+
+/**
+ * Build executable jar SnapChartsAll.jar.
+ *
+ * We could use the standard jar task just by using jar { ... } and deleting 'baseName' and 'with jar' lines.
+ */
+task buildExecJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'snapcharts.app.App'
+    }
+    archiveBaseName = 'SnapChartsAll'
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}

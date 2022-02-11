@@ -1,0 +1,32 @@
+{
+  "bin": { "SnapCharts": "jdeploy-bundle/jdeploy.js"},
+  "author": "ReportMill",
+  "description": "A Chart design app and library for Java and JavaScript",
+  "main": "index.js",
+  "preferGlobal": true,
+  "repository": "https://github.com/reportmill/SnapCharts",
+  "version": "1.0.0",
+  "jdeploy": {
+    "jdk": false,
+    "javaVersion": "11",
+    "jar": "build/libs/SnapChartsAll-1.0.0.jar",
+    "javafx": false,
+    "title": "SnapCharts",
+    "iconUrl": "scripts/icon.png",
+    "documentTypes" : [
+      {
+        "extension" : "charts",
+        "mimetype" : "text/xml",
+        "editor" : true
+      }
+    ]
+  },
+  "dependencies": {
+    "njre": "^0.2.0",
+    "shelljs": "^0.8.4"
+  },
+  "license": "ISC",
+  "name": "snapcharts",
+  "files": ["jdeploy-bundle"],
+  "scripts": {"test": "echo \"Error: no test specified\" && exit 1"}
+}

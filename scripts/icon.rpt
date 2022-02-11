@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="15" show-margin="true" snap-margin="true" margin="36 36 36 36" null-string="&lt;NA&gt;">
+  <page width="512" height="512">
+    <polygon x="16" y="16" width="480" height="410">
+      <stroke />
+      <fill color="#ff5050" />
+      <effect type="emboss" radius="30" />
+      <path>
+        <mv x="142" y="194" />
+        <cv cp1x="109.967" cp1y="194" cp2x="84" cp2y="219.967" x="84" y="252" />
+        <ln x="84" y="395" />
+        <ln x="164" y="395" />
+        <ln x="164" y="414.294" />
+        <ln x="164" y="414.294" />
+        <cv cp1x="145.468" cp1y="425.014" cp2x="133" cp2y="445.05" x="133" y="468" />
+        <cv cp1x="133" cp1y="502.243" cp2x="160.757" cp2y="530" x="195" y="530" />
+        <cv cp1x="229.243" cp1y="530" cp2x="257" cp2y="502.243" x="257" y="468" />
+        <cv cp1x="257" cp1y="443.833" cp2x="243.174" cp2y="422.896" x="223" y="412.667" />
+        <ln x="223" y="395" />
+        <ln x="353" y="395" />
+        <ln x="353" y="363.333" />
+        <cv cp1x="332.826" cp1y="353.104" cp2x="319" cp2y="332.167" x="319" y="308" />
+        <cv cp1x="319" cp1y="273.757" cp2x="346.757" cp2y="246" x="381" y="246" />
+        <cv cp1x="415.243" cp1y="246" cp2x="443" cp2y="273.757" x="443" y="308" />
+        <cv cp1x="443" cp1y="330.95" cp2x="430.532" cp2y="350.986" x="412" y="361.706" />
+        <ln x="412" y="395" />
+        <ln x="484" y="395" />
+        <ln x="484" y="252" />
+        <cv cp1x="484" cp1y="219.967" cp2x="458.033" cp2y="194" x="426" y="194" />
+        <cl />
+      </path>
+    </polygon>
+    <polygon x="16" y="80" width="480" height="420">
+      <stroke />
+      <fill color="#bed0ff" />
+      <effect type="emboss" radius="30" />
+      <path>
+        <mv x="381" y="246" />
+        <cv cp1x="346.757" cp1y="246" cp2x="319" cp2y="273.757" x="319" y="308" />
+        <cv cp1x="319" cp1y="332.167" cp2x="332.826" cp2y="353.104" x="353" y="363.333" />
+        <ln x="353" y="395" />
+        <ln x="223" y="395" />
+        <ln x="223" y="412.667" />
+        <ln x="223" y="412.667" />
+        <cv cp1x="243.174" cp1y="422.896" cp2x="257" cp2y="443.833" x="257" y="468" />
+        <cv cp1x="257" cp1y="502.243" cp2x="229.243" cp2y="530" x="195" y="530" />
+        <cv cp1x="160.757" cp1y="530" cp2x="133" cp2y="502.243" x="133" y="468" />
+        <cv cp1x="133" cp1y="445.05" cp2x="145.468" cp2y="425.014" x="164" y="414.294" />
+        <ln x="164" y="414.294" />
+        <ln x="164" y="395" />
+        <ln x="84" y="395" />
+        <ln x="84" y="536" />
+        <cv cp1x="84" cp1y="568.033" cp2x="109.967" cp2y="594" x="142" y="594" />
+        <ln x="426" y="594" />
+        <cv cp1x="458.033" cp1y="594" cp2x="484" cp2y="568.033" x="484" y="536" />
+        <ln x="484" y="395" />
+        <ln x="412" y="395" />
+        <ln x="412" y="361.706" />
+        <cv cp1x="430.532" cp1y="350.986" cp2x="443" cp2y="330.95" x="443" y="308" />
+        <cv cp1x="443" cp1y="273.757" cp2x="415.243" cp2y="246" x="381" y="246" />
+        <cl />
+      </path>
+    </polygon>
+    <text x="31.786" y="74.792" width="410" height="199.34" scaley="1.5" skewy="-9">
+      <effect type="shadow" radius="12" dx="5" dy="5" />
+      <font name="Eurostile Bold" size="146" />
+      <color value="#ffffff" />
+      <pgraph line-space="0.72" />
+      <char-spacing value="-4" />
+      <string>S</string>
+      <font name="Eurostile Bold" size="106" />
+      <string>nap</string>
+    </text>
+    <text x="223" y="327.142" width="297" height="213.507" scaley="1.4" skewy="-9">
+      <effect type="shadow" radius="12" dx="5" dy="5" />
+      <font name="Eurostile Bold" size="126" />
+      <color value="#ffffff" />
+      <pgraph line-space="0.72" />
+      <char-spacing value="-3.9" />
+      <string>C</string>
+      <font name="Eurostile Bold" size="84" />
+      <string>harts</string>
+    </text>
+  </page>
+</document>
