@@ -254,11 +254,10 @@ public abstract class AxisBoxSceneBuilder {
         boolean vertical = true;
 
         // Get graph bounds
-        Camera3D camera = _scene.getCamera();
         double boundsX = 0;
         double boundsY = 0;
-        double boundsW = camera.getViewWidth();
-        double boundsH = camera.getViewHeight();
+        double boundsW = getPrefWidth();
+        double boundsH = getPrefHeight();
 
         // Get grid line width/height
         double lineW = vertical ? boundsW : 0;
