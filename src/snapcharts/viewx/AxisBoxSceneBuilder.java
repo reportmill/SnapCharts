@@ -39,7 +39,7 @@ public abstract class AxisBoxSceneBuilder {
     public double getPrefWidth()
     {
         Camera3D camera3D = _scene.getCamera();
-        return camera3D.getWidth();
+        return camera3D.getViewWidth();
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class AxisBoxSceneBuilder {
     public double getPrefHeight()
     {
         Camera3D camera3D = _scene.getCamera();
-        return camera3D.getHeight();
+        return camera3D.getViewHeight();
     }
 
     /**
@@ -257,8 +257,8 @@ public abstract class AxisBoxSceneBuilder {
         Camera3D camera = _scene.getCamera();
         double boundsX = 0;
         double boundsY = 0;
-        double boundsW = camera.getWidth();
-        double boundsH = camera.getHeight();
+        double boundsW = camera.getViewWidth();
+        double boundsH = camera.getViewHeight();
 
         // Get grid line width/height
         double lineW = vertical ? boundsW : 0;
