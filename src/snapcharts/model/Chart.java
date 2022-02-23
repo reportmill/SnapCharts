@@ -51,6 +51,9 @@ public class Chart extends ParentPart {
     // The Legend
     private Legend  _legend;
 
+    // The Scene (for 3D charts)
+    private Scene  _scene;
+
     // Array of marker objects used to highlight or annotate an area on the chart
     private Marker[]  _markers = new Marker[0];
 
@@ -117,6 +120,10 @@ public class Chart extends ParentPart {
         _legend = new Legend();
         addChild(_legend);
 
+        // Create/set Scene
+        _scene = new Scene();
+        addChild(_scene);
+
         // Start listening to Trace changes
         _traceList = new TraceList();
         addChild(_traceList);
@@ -156,6 +163,9 @@ public class Chart extends ParentPart {
     {
         if (aType==getType()) return;
         firePropChange(Type_Prop, _type, _type = aType);
+
+        // This is bogus
+        _scene.chartTypeDidChange();
     }
 
     /**
@@ -218,6 +228,11 @@ public class Chart extends ParentPart {
      * Returns the Legend object.
      */
     public Legend getLegend()  { return _legend; }
+
+    /**
+     * Returns the Scene object (properties for 3D charts).
+     */
+    public Scene getScene()  { return _scene; }
 
     /**
      * Returns array of marker objects used to highlight or annotate an area on the chart.

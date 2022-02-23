@@ -6,12 +6,19 @@ import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx3d.*;
+import snapcharts.model.AxisType;
+import snapcharts.model.Chart;
 import snapcharts.model.Intervals;
+import snapcharts.model.Scene;
+import snapcharts.view.DataArea;
 
 /**
  * A Scene to draw an axis box.
  */
 public abstract class AxisBoxSceneBuilder {
+
+    // The DataArea
+    private DataArea  _dataArea;
 
     // The Scene
     protected Scene3D  _scene;
@@ -28,8 +35,9 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Constructor.
      */
-    public AxisBoxSceneBuilder(Scene3D aScene)
+    public AxisBoxSceneBuilder(DataArea aDataArea, Scene3D aScene)
     {
+        _dataArea = aDataArea;
         _scene = aScene;
     }
 
@@ -38,8 +46,20 @@ public abstract class AxisBoxSceneBuilder {
      */
     public double getPrefWidth()
     {
-        Camera3D camera3D = _scene.getCamera();
-        return camera3D.getViewWidth();
+        // Get Scene (3D chart info) and DataView size
+        Chart chart = _dataArea.getChart();
+        Scene scene = chart.getScene();
+        double viewW = _dataArea.getWidth();
+        double viewH = _dataArea.getHeight();
+
+        // Get Aspect for Y Axis and PrefHeight
+        double aspectY = scene.getAspect(AxisType.Y, viewW, viewH);
+        double prefH = aspectY * viewH;
+
+        // Calculate PrefWidth using AspectY and PrefHeight
+        double aspectX = scene.getAspect(AxisType.X, viewW, viewH);
+        double prefW = prefH / aspectY * aspectX;
+        return prefW;
     }
 
     /**
@@ -47,14 +67,38 @@ public abstract class AxisBoxSceneBuilder {
      */
     public double getPrefHeight()
     {
-        Camera3D camera3D = _scene.getCamera();
-        return camera3D.getViewHeight();
+        // Get Scene (3D chart info) and DataView size
+        Chart chart = _dataArea.getChart();
+        Scene scene = chart.getScene();
+        double viewW = _dataArea.getWidth();
+        double viewH = _dataArea.getHeight();
+
+        // Get Aspect for Y Axis and PrefHeight
+        double aspectY = scene.getAspect(AxisType.Y, viewW, viewH);
+        double prefH = aspectY * viewH;
+        return prefH;
     }
 
     /**
      * Returns the preferred depth of the scene.
      */
-    public abstract double getPrefDepth();
+    public double getPrefDepth()
+    {
+        // Get Scene (3D chart info) and DataView size
+        Chart chart = _dataArea.getChart();
+        Scene scene = chart.getScene();
+        double viewW = _dataArea.getWidth();
+        double viewH = _dataArea.getHeight();
+
+        // Get Aspect for Y Axis and PrefHeight
+        double aspectY = scene.getAspect(AxisType.Y, viewW, viewH);
+        double prefH = aspectY * viewH;
+
+        // Calculate PrefDepth using AspectY and PrefHeight
+        double aspectZ = scene.getAspect(AxisType.Z, viewW, viewH);
+        double prefD = prefH / aspectY * aspectZ;
+        return prefD;
+    }
 
     /**
      * Returns the intervals.

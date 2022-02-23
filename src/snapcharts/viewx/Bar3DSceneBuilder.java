@@ -5,7 +5,6 @@ package snapcharts.viewx;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.Color;
-import snap.gfx3d.Camera3D;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
 import snapcharts.model.Intervals;
@@ -23,15 +22,9 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
      */
     public Bar3DSceneBuilder(Bar3DDataArea aDataArea, Scene3D aScene)
     {
-        super(aScene);
+        super(aDataArea, aScene);
         _dataArea = aDataArea;
     }
-
-    /**
-     * Returns the preferred depth of the scene.
-     */
-    @Override
-    public double getPrefDepth()  { return Bar3DChartHelper.DEFAULT_DEPTH; }
 
     /**
      * Returns the intervals.

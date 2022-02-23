@@ -10,9 +10,6 @@ import snapcharts.view.DataArea;
  */
 public class Line3DChartHelper extends ChartHelper {
 
-    // Constant for default chart depth
-    public static final double DEFAULT_DEPTH = 300;
-
     /**
      * Constructor.
      */

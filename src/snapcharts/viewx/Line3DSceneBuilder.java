@@ -26,15 +26,9 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
      */
     public Line3DSceneBuilder(Line3DDataArea aDataArea, Scene3D aScene)
     {
-        super(aScene);
+        super(aDataArea, aScene);
         _dataArea = aDataArea;
     }
-
-    /**
-     * Returns the preferred depth of the scene.
-     */
-    @Override
-    public double getPrefDepth()  { return Line3DChartHelper.DEFAULT_DEPTH; }
 
     /**
      * Returns the intervals.
