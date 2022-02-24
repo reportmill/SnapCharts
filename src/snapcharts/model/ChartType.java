@@ -33,7 +33,10 @@ public enum ChartType {
     PIE_3D,
 
     /** 2D Line chart */
-    LINE_3D;
+    LINE_3D,
+
+    /** Contour chart */
+    CONTOUR_3D;
 
     /**
      * Returns whether type is XY type (not bar or pie).
@@ -77,7 +80,7 @@ public enum ChartType {
      */
     public boolean is3D()
     {
-        return this == BAR_3D || this == PIE_3D || this == LINE_3D;
+        return this == BAR_3D || this == PIE_3D || this == LINE_3D || this == CONTOUR_3D;
     }
 
     /**
@@ -94,6 +97,7 @@ public enum ChartType {
             case LINE_3D: return "Line3D";
             case SCATTER: return "Scatter";
             case POLAR_CONTOUR: return "PolarContour";
+            case CONTOUR_3D: return "Contour3D";
             default: break;
         }
 

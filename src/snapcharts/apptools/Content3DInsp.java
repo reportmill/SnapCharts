@@ -16,6 +16,7 @@ import snapcharts.view.DataArea;
 import snapcharts.viewx.Bar3DDataArea;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
+import snapcharts.viewx.Contour3DDataArea;
 import snapcharts.viewx.Line3DDataArea;
 import snapcharts.viewx.Pie3DDataArea;
 
@@ -75,6 +76,10 @@ public class Content3DInsp extends ChartPartInsp {
         // Handle Pie3DDataArea
         if (dataArea instanceof Pie3DDataArea)
             return ((Pie3DDataArea) dataArea).getCameraView();
+
+        // Handle Contour3DDataArea
+        if (dataArea instanceof Contour3DDataArea)
+            return ((Contour3DDataArea) dataArea).getCameraView();
 
         // Return null
         return null;

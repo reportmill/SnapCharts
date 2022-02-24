@@ -87,5 +87,7 @@ public class ChartInsp extends ChartPartInsp {
             chart.setType(ChartType.PIE_3D);
         if (anEvent.equals("Line3DChartButton"))
             chart.setType(ChartType.LINE_3D);
+        if (anEvent.equals("Contour3DChartButton"))
+            chart.setType(ChartType.CONTOUR_3D);
     }
 }

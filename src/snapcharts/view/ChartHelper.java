@@ -757,6 +757,7 @@ public abstract class ChartHelper {
             case BAR_3D: return new Bar3DChartHelper(aChartView);
             case PIE_3D: return new Pie3DChartHelper(aChartView);
             case LINE_3D: return new Line3DChartHelper(aChartView);
+            case CONTOUR_3D: return new Contour3DChartHelper(aChartView);
             default: throw new RuntimeException("ChartHelper.createChartHelper: Unknown type: " + chartType);
         }
     }

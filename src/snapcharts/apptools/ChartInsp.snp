@@ -13,6 +13,7 @@
         <RadioButton Name="PieChartButton" PrefHeight="22" Spacing="5" text="Pie" Group="bg0" />
         <RadioButton Name="PolarChartButton" PrefHeight="22" Spacing="5" text="Polar" Group="bg0" />
         <RadioButton Name="ContourChartButton" PrefHeight="22" Spacing="5" text="Contour" Group="bg0" />
+        <RadioButton Name="Contour3DChartButton" PrefHeight="22" Spacing="5" text="Contour 3D" Group="bg0" />
       </ColView>
       <ColView MinWidth="100" Spacing="4">
         <RadioButton Name="ScatterChartButton" PrefHeight="22" Spacing="5" text="Scatter" Group="bg0" />
