@@ -4,7 +4,9 @@
 package snapcharts.viewx;
 import snap.gfx.*;
 import snap.gfx3d.*;
+import snap.util.PropChange;
 import snap.view.ViewAnim;
+import snapcharts.model.Scene;
 import snapcharts.model.Trace;
 import snapcharts.view.AxisViewY;
 import snapcharts.view.ChartHelper;
@@ -153,4 +155,19 @@ public class Bar3DDataArea extends BarDataArea {
      */
     @Override
     protected void paintDataArea(Painter aPntr)  { }
+
+    /**
+     * Override to rebuild Scene.
+     */
+    @Override
+    protected void chartPartDidChange(PropChange aPC)
+    {
+        // Do normal version
+        super.chartPartDidChange(aPC);
+
+        // If Chart.Scene change, rebuild scene
+        Object source = aPC.getSource();
+        if (source instanceof Scene)
+            rebuildScene();
+    }
 }

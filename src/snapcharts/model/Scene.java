@@ -263,7 +263,7 @@ public class Scene extends ParentPart {
     /**
      * Return default AspectScale for ChartType.
      */
-    private double getAspectScaleDefault(AxisType anAxisType)
+    public double getAspectScaleDefault(AxisType anAxisType)
     {
         ChartType chartType = getChartType();
         if ((chartType == ChartType.BAR_3D || chartType == ChartType.PIE_3D) && anAxisType == AxisType.Z)

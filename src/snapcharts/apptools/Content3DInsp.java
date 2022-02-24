@@ -2,11 +2,16 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.apptools;
+import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx3d.*;
+import snap.util.ArrayUtils;
 import snap.view.*;
 import snapcharts.app.ChartPane;
+import snapcharts.model.AxisType;
+import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
+import snapcharts.model.Scene;
 import snapcharts.view.DataArea;
 import snapcharts.viewx.Bar3DDataArea;
 import snapcharts.view.ChartView;
@@ -19,6 +24,12 @@ public class Content3DInsp extends ChartPartInsp {
     
     // The Trackball control for rotating selected scene3d
     private Trackball  _trackball;
+
+    // Constant for number of RendererButtons
+    private static final int RENDERER_BUTTON_COUNT = 3;
+
+    // Constant for default focal length
+    private static double FOCAL_LENGTH_DEFAULT = 8 * 72;
 
     /**
      * Constructor.
@@ -62,13 +73,18 @@ public class Content3DInsp extends ChartPartInsp {
         // Get Trackball
         _trackball = getView("Trackball", Trackball.class);
 
-        // Initialize RendererComboBox
+        // Initialize RendererButtonX
         String[] rendererFactoryNames = RendererFactory.getFactoryNames();
-        if (rendererFactoryNames.length > 1)
-            setViewItems("RendererComboBox", rendererFactoryNames);
-        else {
-            setViewVisible("RendererComboBox", false);
-            getView("RendererComboBox").getParent().setVisible(false);
+        for (int i = 0, iMax = rendererFactoryNames.length; i < iMax && i < RENDERER_BUTTON_COUNT; i++) {
+            String rendererName = rendererFactoryNames[i];
+            ToggleButton button = getView("RendererButton" + i, ToggleButton.class);
+            button.setText(rendererName);
+            button.setPosition(iMax == 1 ? null : i == 0 ? Pos.CENTER_LEFT : i + 1 < iMax ? Pos.CENTER : Pos.CENTER_RIGHT);
+        }
+        for (int i = rendererFactoryNames.length; i < RENDERER_BUTTON_COUNT; i++) {
+            ToggleButton button = getView("RendererButton" + i, ToggleButton.class);
+            button.setVisible(false);
+            button.setEnabled(rendererFactoryNames.length > 1);
         }
     }
 
@@ -78,14 +94,36 @@ public class Content3DInsp extends ChartPartInsp {
     public void resetUI()
     {
         // Get the selected scene
+        Chart chart = getChart();
+        Scene scene = chart.getScene();
         CameraView cameraView = getCameraView(); if (cameraView == null) return;
         Camera3D camera = cameraView.getCamera();
 
-        // Reset RendererComboBox
-        if (isViewVisible("RendererComboBox")) {
-            String rendererName = camera.getRenderer().getName();
-            setViewSelItem("RendererComboBox", rendererName);
-        }
+        // Reset AspectModeViewButton, AspectModeDataButton, AspectModeDirectButton
+        Scene.AspectMode aspectMode = scene.getAspectMode();
+        setViewValue("AspectModeViewButton", aspectMode == Scene.AspectMode.View);
+        setViewValue("AspectModeDataButton", aspectMode == Scene.AspectMode.Data);
+        setViewValue("AspectModeDirectButton", aspectMode == Scene.AspectMode.Direct);
+
+        // Reset AspectScaleXText, AspectScaleYText, AspectScaleZText
+        double scaleX = scene.getAspectScaleX(), defaultScaleX = scene.getAspectScaleDefault(AxisType.X);
+        double scaleY = scene.getAspectScaleY(), defaultScaleY = scene.getAspectScaleDefault(AxisType.Y);
+        double scaleZ = scene.getAspectScaleZ(), defaultScaleZ = scene.getAspectScaleDefault(AxisType.Z);
+        setViewValue("AspectScaleXText", scaleX);
+        setViewValue("AspectScaleYText", scaleY);
+        setViewValue("AspectScaleZText", scaleZ);
+
+        // Reset AspectScaleXResetButton, AspectScaleYResetButton, AspectScaleZResetButton
+        setViewVisible("AspectScaleXResetButton", scaleX != defaultScaleX);
+        setViewVisible("AspectScaleYResetButton", scaleY != defaultScaleY);
+        setViewVisible("AspectScaleZResetButton", scaleZ != defaultScaleZ);
+
+        // Reset RendererButtonX
+        String[] rendererFactoryNames = RendererFactory.getFactoryNames();
+        String rendererName = camera.getRenderer().getName();
+        int rendererIndex = ArrayUtils.indexOf(rendererFactoryNames, rendererName);
+        for (int i = 0; i < RENDERER_BUTTON_COUNT; i++)
+            setViewValue("RendererButton" + i, i == rendererIndex);
 
         // Reset YawSpinner, PitchSpinner, RollSpinner
         setViewValue("YawSpinner", Math.round(camera.getYaw()));
@@ -95,21 +133,18 @@ public class Content3DInsp extends ChartPartInsp {
         // Reset scene control
         _trackball.syncFrom(camera);
 
-        // Reset Depth slider/text
-        setViewValue("DepthSlider", camera.getDepth());
-        setViewValue("DepthText", camera.getDepth());
-
-        // Reset Field of view slider/text
+        // Reset FOVSlider, FOVText, FOVResetButton
         double focalLen = camera.getFocalLength();
         setViewValue("FOVSlider", focalLen / 72);
         setViewValue("FOVText", focalLen / 72);
+        getView("FOVResetButton").setPaintable(focalLen != FOCAL_LENGTH_DEFAULT);
 
         // Reset GimbalRadiusThumbWheel, GimbalRadiusText, GimbalRadiusResetButton
         double gimbalRadius = camera.getPrefGimbalRadius();
         boolean gimbalRadiusSet = camera.isPrefGimbalRadiusSet();
         setViewValue("GimbalRadiusThumbWheel", gimbalRadius);
         setViewValue("GimbalRadiusText", gimbalRadius);
-        setViewVisible("GimbalRadiusResetButton", gimbalRadiusSet);
+        getView("GimbalRadiusResetButton").setPaintable(gimbalRadiusSet);
         Color gimbalRadiusTextColor = gimbalRadiusSet ? Color.BLACK : Color.GRAY;
         getView("GimbalRadiusText", TextField.class).setTextFill(gimbalRadiusTextColor);
     }
@@ -119,13 +154,39 @@ public class Content3DInsp extends ChartPartInsp {
      */
     public void respondUI(ViewEvent anEvent)
     {
-        // Get the currently selected scene3d
+        // Get the currently selected scene
+        Chart chart = getChart();
+        Scene scene = chart.getScene();
         CameraView cameraView = getCameraView(); if (cameraView == null) return;
         Camera3D camera = cameraView.getCamera();
 
-        // Handle RendererComboBox
-        if (anEvent.equals("RendererComboBox")) {
-            String rendererFactoryName = (String) anEvent.getSelItem();
+        // Handle AspectModeViewButton, AspectModeDataButton, AspectModeDirectButton
+        if (anEvent.equals("AspectModeViewButton"))
+            scene.setAspectMode(Scene.AspectMode.View);
+        if (anEvent.equals("AspectModeDataButton"))
+            scene.setAspectMode(Scene.AspectMode.Data);
+        if (anEvent.equals("AspectModeDirectButton"))
+            scene.setAspectMode(Scene.AspectMode.Direct);
+
+        // Reset AspectScaleXText, AspectScaleYText, AspectScaleZText
+        if (anEvent.equals("AspectScaleXText"))
+            scene.setAspectScaleX(anEvent.getFloatValue());
+        if (anEvent.equals("AspectScaleYText"))
+            scene.setAspectScaleY(anEvent.getFloatValue());
+        if (anEvent.equals("AspectScaleZText"))
+            scene.setAspectScaleZ(anEvent.getFloatValue());
+
+        // Reset AspectScaleXResetButton, AspectScaleYResetButton, AspectScaleZResetButton
+        if (anEvent.equals("AspectScaleXResetButton"))
+            scene.setAspectScaleX(scene.getAspectScaleDefault(AxisType.X));
+        if (anEvent.equals("AspectScaleYResetButton"))
+            scene.setAspectScaleY(scene.getAspectScaleDefault(AxisType.Y));
+        if (anEvent.equals("AspectScaleZResetButton"))
+            scene.setAspectScaleZ(scene.getAspectScaleDefault(AxisType.Z));
+
+        // Handle RendererButtonX
+        if (anEvent.getName().startsWith("RendererButton")) {
+            String rendererFactoryName = anEvent.getView().getText();
             RendererFactory rendererFactory = RendererFactory.getFactoryForName(rendererFactoryName);
             if (rendererFactory != null) {
                 Renderer renderer = rendererFactory.newRenderer(camera);
@@ -145,17 +206,13 @@ public class Content3DInsp extends ChartPartInsp {
         if (anEvent.equals("Trackball"))
             _trackball.syncTo(camera);
 
-        // Handle DepthSlider and DepthText
-        if (anEvent.equals("DepthSlider") || anEvent.equals("DepthText")) {
-            double depth = anEvent.equals("DepthSlider") ? anEvent.getIntValue() : anEvent.getFloatValue();
-            camera.setDepth(depth);
-        }
-
         // Handle FOVSlider or FOVText
         if (anEvent.equals("FOVSlider") || anEvent.equals("FOVText")) {
             double focalLen = anEvent.equals("FOVSlider") ? anEvent.getIntValue() * 72 : anEvent.getFloatValue() * 72;
             camera.setFocalLength(focalLen);
         }
+        if (anEvent.equals("FOVResetButton"))
+            camera.setFocalLength(FOCAL_LENGTH_DEFAULT);
 
         // Handle GimbalRadiusThumbWheel or GimbalRadiusText
         if (anEvent.equals("GimbalRadiusThumbWheel") || anEvent.equals("GimbalRadiusText")) {

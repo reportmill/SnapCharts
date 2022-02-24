@@ -1,8 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView PrefWidth="275">
-  <RowView Padding="10,5,5,5" Spacing="10" LeanX="CENTER">
-    <Label PrefWidth="60" Align="CENTER_RIGHT" text="Rendering:" />
-    <ComboBox Name="RendererComboBox" MinWidth="80" MinHeight="24" />
+  <RowView Padding="8,5,2,5" GrowWidth="true" LeanX="CENTER">
+    <Label Margin="0,4,0,0" text="Aspect Mode:" />
+    <ToggleButton Name="AspectModeViewButton" PrefWidth="55" PrefHeight="22" Padding="2" text="View" Position="CENTER_LEFT" />
+    <ToggleButton Name="AspectModeDataButton" PrefWidth="55" PrefHeight="22" Padding="2" text="Data" Position="CENTER" />
+    <ToggleButton Name="AspectModeDirectButton" PrefWidth="55" PrefHeight="22" Padding="2" text="Direct" Position="CENTER_RIGHT" />
+  </RowView>
+  <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
+    <Label Margin="0,4,0,0" text="Aspect Scale X:" />
+    <TextField Name="AspectScaleXText" Align="CENTER" ColCount="6" />
+    <Button Name="AspectScaleXResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
+    <Label Margin="0,4,0,0" text="Aspect Scale Y:" />
+    <TextField Name="AspectScaleYText" Align="CENTER" ColCount="6" />
+    <Button Name="AspectScaleYResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
+    <Label Margin="0,4,0,0" text="Aspect Scale Z:" />
+    <TextField Name="AspectScaleZText" Align="CENTER" ColCount="6" />
+    <Button Name="AspectScaleZResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+      <font name="Arial" size="12" />
+    </Button>
+  </RowView>
+  <RowView Padding="4,5,2,5" GrowWidth="true" LeanX="CENTER">
+    <Label Margin="0,7,0,0" text="Rendering:" />
+    <ToggleButton Name="RendererButton0" PrefWidth="66" PrefHeight="22" Padding="2" text="One" />
+    <ToggleButton Name="RendererButton1" PrefWidth="66" PrefHeight="22" Padding="2" text="Two" />
+    <ToggleButton Name="RendererButton2" PrefWidth="66" PrefHeight="22" Padding="2" text="Three" />
   </RowView>
   <RowView Align="CENTER" Padding="5" Spacing="10" GrowWidth="true">
     <View Name="Trackball" MinWidth="80" MinHeight="80" LeanX="CENTER" Class="snap.gfx3d.Trackball" />
@@ -21,21 +50,18 @@
       </RowView>
     </ColView>
   </RowView>
-  <TitleView Margin="5" Padding="4,4,7,4" GrowWidth="true" Text="Depth">
-    <RowView Padding="0,4,0,0" Spacing="5">
-      <Slider Name="DepthSlider" PrefWidth="180" GrowWidth="true" Min="10" Max="200" />
-      <TextField Name="DepthText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
-    </RowView>
-  </TitleView>
   <TitleView Margin="5" Padding="4,4,7,4" GrowWidth="true" Text="Focal Length (inches from screen to eye)">
     <RowView Padding="0,4,0,0" Spacing="5">
       <Slider Name="FOVSlider" PrefWidth="180" GrowWidth="true" Min="6" Max="60" />
       <TextField Name="FOVText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
+      <Button Name="FOVResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
     </RowView>
   </TitleView>
   <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Gimbal Radius (distance from camera to model)">
     <RowView Padding="0,4,0,0" Spacing="5">
-      <ThumbWheel Name="GimbalRadiusThumbWheel" PrefWidth="180" PrefHeight="16" Margin="2,1,1,1" GrowWidth="true" type="linear" min="0" max="500" round="1"/>
+      <ThumbWheel Name="GimbalRadiusThumbWheel" PrefWidth="180" PrefHeight="16" Margin="2,1,1,1" GrowWidth="true" type="linear" max="500" round="1" />
       <TextField Name="GimbalRadiusText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
       <Button Name="GimbalRadiusResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
         <font name="Arial" size="12" />
