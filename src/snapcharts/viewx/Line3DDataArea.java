@@ -155,7 +155,7 @@ public class Line3DDataArea extends DataArea {
 
         // Handle Scene changes: Rebuild scene
         if (source instanceof Scene)
-            rebuildScene();
+            _camView.relayout();
     }
 
     /**

@@ -8,6 +8,7 @@ import snap.util.PropChange;
 import snap.view.ViewAnim;
 import snapcharts.model.Scene;
 import snapcharts.model.Trace;
+import snapcharts.model.TraceList;
 import snapcharts.view.AxisViewY;
 import snapcharts.view.ChartHelper;
 
@@ -35,9 +36,15 @@ public class Bar3DDataArea extends BarDataArea {
     /**
      * Constructor.
      */
-    public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace);
+
+        // If not visible, just return
+        if (!isVisible) {
+            setVisible(false);
+            return;
+        }
 
         _camView = new CameraView() {
             protected void layoutImpl() { rebuildScene(); }
@@ -105,6 +112,8 @@ public class Bar3DDataArea extends BarDataArea {
     {
         // Do normal version
         super.setReveal(aValue);
+
+        if (_camView == null) return;
         _camView.relayout();
 
         // Animate camera rotation
@@ -129,6 +138,7 @@ public class Bar3DDataArea extends BarDataArea {
      */
     protected void layoutImpl()
     {
+        if (!isVisible()) return; // Shouldn't need this!
         double viewW = getWidth();
         double viewH = getHeight();
         _camView.setSize(viewW, viewH);
@@ -141,6 +151,7 @@ public class Bar3DDataArea extends BarDataArea {
     protected void clearSections()
     {
         super.clearSections();
+        if (_camView == null) return;
         _camView.relayout();
     }
 
@@ -165,9 +176,13 @@ public class Bar3DDataArea extends BarDataArea {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // If Chart.Scene change, rebuild scene
+        // Handle Trace changes: Rebuild scene
         Object source = aPC.getSource();
+        if (source instanceof Trace || source instanceof TraceList)
+            _camView.relayout();
+
+        // If Chart.Scene change, rebuild scene
         if (source instanceof Scene)
-            rebuildScene();
+            _camView.relayout();
     }
 }

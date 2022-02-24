@@ -47,11 +47,20 @@ public class Bar3DChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
+        // Get traces
         TraceList traceList = getTraceList();
-        if (traceList.getTraceCount() == 0)
-            return new DataArea[0];
-        Trace trace = traceList.getTrace(0);
-        return new DataArea[] { new Bar3DDataArea(this, trace) };
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
+
+        // Create DataArea for each Trace
+        DataArea[] dataAreas = new DataArea[traceCount];
+        for (int i = 0; i < traceCount; i++) {
+            Trace trace = traces[i];
+            dataAreas[i] = new Bar3DDataArea(this, trace, i == 0);
+        }
+
+        // Return DataAreas
+        return dataAreas;
     }
 
     /**

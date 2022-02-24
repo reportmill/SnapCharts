@@ -50,16 +50,19 @@ public class Line3DChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
+        // Get traces
         TraceList traceList = getTraceList();
         Trace[] traces = traceList.getTraces();
         int traceCount = traces.length;
 
+        // Create DataArea for each Trace
         DataArea[] dataAreas = new DataArea[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
             dataAreas[i] = new Line3DDataArea(this, trace, i == 0);
         }
 
+        // Return DataAreas
         return dataAreas;
     }
 
