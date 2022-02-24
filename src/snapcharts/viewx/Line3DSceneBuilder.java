@@ -2,11 +2,11 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.geom.Path;
+import snap.geom.Path2D;
 import snap.geom.Point;
+import snap.geom.Shape;
 import snap.gfx.Color;
-import snap.gfx3d.Camera3D;
-import snap.gfx3d.PathBox3D;
+import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
@@ -68,7 +68,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         int traceCount = traces.length;
 
         // Iterate over traces and add Line3D shape for each
-        for (int i=0; i<traceCount; i++) {
+        for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
             addLine3D(trace, i, traceCount);
         }
@@ -80,40 +80,47 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     protected void addLine3D(Trace aTrace, int anIndex, int aCount)
     {
         // Create 2d path
-        Path path = createDataPath(aTrace);
+        Shape path = createDataPath(aTrace);
         Color dataStrokeColor = aTrace.getLineColor();
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
         // Get depth, and Z values for back/front
-        double sectionDepth = getPrefDepth() / aCount;
+        double prefDepth = getPrefDepth();
+        double sectionDepth = prefDepth / aCount;
         double lineZ = sectionDepth * (anIndex + .5);
 
-        // Create/configure bar path/path3d and add to scene
-        PathBox3D bar = new PathBox3D(path, lineZ, lineZ);
-        bar.setColor(dataFillColor);
-        bar.setStroke(dataStrokeColor, 1);
-        _scene.addShape(bar);
+        // Create/configure line area path3d and add to scene
+        Path3D areaPath = new Path3D(path, lineZ);
+        areaPath.setColor(dataFillColor);
+        areaPath.setStroke(dataStrokeColor, 1);
+        _scene.addShape(areaPath);
+
+        // Create backside path3d and add to scene
+        Path3D areaPathBack = areaPath.clone();
+        areaPathBack.reverse();
+        _scene.addShape(areaPathBack);
     }
 
     /**
      * Returns Path2D for painting Trace.
      */
-    protected Path createDataPath(Trace aTrace)
+    protected Shape createDataPath(Trace aTrace)
     {
         // Create/add path for trace
         int pointCount = aTrace.getPointCount();
-        Path path = new Path();
+        Path2D path = new Path2D();
 
         // Get area bounds
-        double areaX = .1;
-        double areaY = .1;
+        double inset = 1;
+        double areaX = inset;
+        double areaY = inset;
         double areaW = _dataArea.getWidth();
         double areaH = _dataArea.getHeight();
-        double areaMaxX = areaW - .1;
-        double areaMaxY = areaH - .1;
+        double areaMaxX = areaW - inset;
+        double areaMaxY = areaH - inset;
 
         // Iterate over data points, get in display coords and add path line segment
-        for (int j=0; j<pointCount; j++) {
+        for (int j = 0; j < pointCount; j++) {
 
             // Get data point in display coords
             double dataX = aTrace.getX(j);
@@ -122,7 +129,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
 
             // Clamp to area/axis bounds
             dispXY.x = Math.max(areaX, Math.min(dispXY.x, areaMaxX));
-            dispXY.y = Math.max(areaY, Math.min(dispXY.y, areaMaxY));
+            dispXY.y = areaH - Math.max(areaY, Math.min(dispXY.y, areaMaxY));
 
             // Add to path
             if (j == 0)
@@ -132,11 +139,10 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
 
         // Close path
         Point point0 = path.getPoint(0);
-        Point pointLast = path.getPoint(pointCount-1);
-        path.lineTo(areaW, pointLast.y);
-        path.lineTo(areaW, areaH);
-        path.lineTo(0, areaH);
-        path.lineTo(0, point0.y);
+        Point pointLast = path.getPoint(pointCount - 1);
+        double zeroPointY = areaH - Math.max(areaY, Math.min(_dataArea.dataToViewY(0), areaMaxY));
+        path.lineTo(pointLast.x, zeroPointY);
+        path.lineTo(point0.x, zeroPointY);
         path.close();
 
         // Return path
@@ -172,14 +178,14 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         double minorDeltaY = gridMax * majorDeltaY / rangeY / (minorTickCountY+1);
 
         // Iterate over graph intervals
-        for (int i=0, iMax=countY; i<iMax - 1; i++) {
+        for (int i = 0, iMax = countY; i < iMax - 1; i++) {
 
             // Get interval ratio and line x & y
-            double intervalRatio = i/(iMax - 1f);
+            double intervalRatio = i / (iMax - 1f);
             double lineY = areaY + areaH * intervalRatio;
 
             // DrawMajorAxis
-            if (i>0) {
+            if (i > 0) {
                 addGridLineMajor(areaX, lineY, areaX + areaW, lineY);
             }
 
@@ -196,7 +202,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         int countX = intervalsX.getCount();
 
         // Iterate over graph intervals
-        for (int i=0; i<countX; i++) {
+        for (int i = 0; i < countX; i++) {
             double dataX = intervalsX.getInterval(i);
             double dispX = axisViewX.dataToView(dataX);
             addGridLineSeparator(dispX, areaY, dispX, areaY + areaH);
@@ -204,15 +210,12 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
 
         // Get info
         TraceList traceList = _dataArea.getTraceList();
-        Trace[] traces = traceList.getEnabledTraces();
-        int traceCount = traces.length;
+        int traceCount = traceList.getTraceCount();
 
         // Iterate over traces and add separator for side
         if (traceCount > 1) {
             double sectionDepth = areaW / traceCount;
             for (int i = 1; i < traceCount; i++) {
-                Trace trace = traces[i];
-                addLine3D(trace, i, traceCount);
                 double lineZ2 = sectionDepth * i;
                 _gridWithoutSep.moveTo(lineZ2, 0);
                 _gridWithoutSep.lineTo(lineZ2, areaH);

@@ -52,10 +52,15 @@ public class Line3DChartHelper extends ChartHelper {
     {
         TraceList traceList = getTraceList();
         Trace[] traces = traceList.getTraces();
-        if (traces.length == 0)
-            return new DataArea[0];
-        Trace trace = traces[0];
-        return new DataArea[] { new Line3DDataArea(this, trace) };
+        int traceCount = traces.length;
+
+        DataArea[] dataAreas = new DataArea[traceCount];
+        for (int i = 0; i < traceCount; i++) {
+            Trace trace = traces[i];
+            dataAreas[i] = new Line3DDataArea(this, trace, i == 0);
+        }
+
+        return dataAreas;
     }
 
     /**

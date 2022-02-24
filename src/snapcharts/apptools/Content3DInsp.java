@@ -16,6 +16,8 @@ import snapcharts.view.DataArea;
 import snapcharts.viewx.Bar3DDataArea;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
+import snapcharts.viewx.Line3DDataArea;
+import snapcharts.viewx.Pie3DDataArea;
 
 /**
  * Tool for visual editing RMScene3D.
@@ -56,13 +58,26 @@ public class Content3DInsp extends ChartPartInsp {
      */
     public CameraView getCameraView()
     {
+        // Get DataArea
         ChartView chartView = _chartPane.getChartView();
         DataView dataView = chartView.getDataView();
         DataArea[] dataAreas = dataView.getDataAreas();
         DataArea dataArea = dataAreas.length > 0 ? dataAreas[0] : null;
-        Bar3DDataArea da3d = dataArea instanceof Bar3DDataArea ? (Bar3DDataArea) dataArea : null;
-        if (da3d == null) return null;
-        return da3d.getCameraView();
+
+        // Handle Bar3DDataArea
+        if (dataArea instanceof Bar3DDataArea)
+            return ((Bar3DDataArea) dataArea).getCameraView();
+
+        // Handle Line3DDataArea
+        if (dataArea instanceof Line3DDataArea)
+            return ((Line3DDataArea) dataArea).getCameraView();
+
+        // Handle Pie3DDataArea
+        if (dataArea instanceof Pie3DDataArea)
+            return ((Pie3DDataArea) dataArea).getCameraView();
+
+        // Return null
+        return null;
     }
 
     /**

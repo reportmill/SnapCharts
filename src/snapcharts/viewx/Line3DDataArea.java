@@ -5,7 +5,6 @@ package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.PropChange;
-import snap.view.ViewAnim;
 import snapcharts.model.*;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.AxisViewY;
@@ -32,9 +31,15 @@ public class Line3DDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public Line3DDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public Line3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace);
+
+        // If not visible, just return
+        if (!isVisible) {
+            setVisible(false);
+            return;
+        }
 
         // Create/add CameraView
         _camView = new CameraView() {
@@ -56,14 +61,20 @@ public class Line3DDataArea extends DataArea {
     }
 
     /**
+     * Returns the CameraView.
+     */
+    public CameraView getCameraView()  { return _camView; }
+
+    /**
      * Returns the number of suggested ticks between the intervals of the RPG'd graph.
      */
     public int getMinorTickCount()
     {
         // Calculate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
         int ivalCount = getIntervalsY().getCount();
-        double heightPerTick = getHeight()/(ivalCount - 1);
-        return heightPerTick>=72 ? 4 : heightPerTick>=50 ? 3 : 1;
+        double viewH = getHeight();
+        double heightPerTick = viewH / (ivalCount - 1);
+        return heightPerTick >= 72 ? 4 : heightPerTick >= 50 ? 3 : 1;
     }
 
     /**
@@ -98,6 +109,7 @@ public class Line3DDataArea extends DataArea {
      */
     protected void layoutImpl()
     {
+        if (!isVisible()) return; // Shouldn't need this!
         double viewW = getWidth();
         double viewH = getHeight();
         _camView.setSize(viewW, viewH);
@@ -133,12 +145,17 @@ public class Line3DDataArea extends DataArea {
     {
         // Do normal version
         super.chartPartDidChange(aPC);
+        if (_camView == null)
+            return;
 
-        // Handle Data changes
-        Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList) {
+        // Handle Trace changes: Rebuild scene
+        Object source = aPC.getSource();
+        if (source instanceof Trace || source instanceof TraceList)
             _camView.relayout();
-        }
+
+        // Handle Scene changes: Rebuild scene
+        if (source instanceof Scene)
+            rebuildScene();
     }
 
     /**

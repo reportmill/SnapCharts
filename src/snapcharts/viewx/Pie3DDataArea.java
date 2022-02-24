@@ -53,6 +53,11 @@ public class Pie3DDataArea extends PieDataArea {
     }
 
     /**
+     * Returns the CameraView.
+     */
+    public CameraView getCameraView()  { return _camView; }
+
+    /**
      * Rebuilds 3D representation of shapes from shapes list.
      */
     protected void rebuildScene()
