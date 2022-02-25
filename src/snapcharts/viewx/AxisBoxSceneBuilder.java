@@ -103,17 +103,23 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Returns the intervals.
      */
-    public abstract Intervals getIntervalsY();
+    public Intervals getIntervalsY()  { return _dataArea.getIntervalsY(); }
 
     /**
      * Returns the minor tick count.
      */
-    public abstract int getMinorTickCount();
+    public int getMinorTickCount()
+    {
+        // Calculate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
+        int ivalCount = getIntervalsY().getCount();
+        double heightPerTick = _dataArea.getHeight() / (ivalCount - 1);
+        return heightPerTick >= 72 ? 4 : heightPerTick >= 50 ? 3 : 1;
+    }
 
     /**
      * Returns the section count.
      */
-    public abstract int getSectionCount(); // getSections().length
+    public int getSectionCount()  { return 1; }
 
     /**
      * Rebuilds the chart.
@@ -131,22 +137,22 @@ public abstract class AxisBoxSceneBuilder {
         double height = getPrefHeight();
         double depth = getPrefDepth();
 
-        // Add back planes
-        addBackPlane(width, height, 0);
-        addBackPlane(width, height, depth);
+        // Add geometry for XY plane
+        addPlaneXY(width, height, 0);
+        addPlaneXY(width, height, depth);
 
-        // Add side planes
-        addSidePlane(0, height, depth, true);
-        addSidePlane(width, height, depth, true);
+        // Add geometry for YZ plane
+        addPlaneYZ(0, height, depth, true);
+        addPlaneYZ(width, height, depth, true);
 
-        // Create floor path shape
-        addFloorPlane(width, 0, depth);
+        // Add geometry for ZX plane
+        addPlaneZX(width, 0, depth);
     }
 
     /**
      * Adds back plane for given backZ.
      */
-    private void addBackPlane(double width, double height, double backZ)
+    private void addPlaneXY(double width, double height, double backZ)
     {
         // Create back plane shape
         Path3D back = new Path3D();
@@ -186,7 +192,7 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Adds side plane for given sideX.
      */
-    private void addSidePlane(double sideX, double height, double depth, boolean vertical)
+    private void addPlaneYZ(double sideX, double height, double depth, boolean vertical)
     {
         // Calculate whether side plane should be shifted to the right. Side normal = { 1, 0, 0 }.
         //boolean shiftSide = vertical && !_camera.isPseudo3D() && _camera.isFacingAway(_scene.localToCameraForVector(1,0,0));
@@ -258,7 +264,7 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Adds floor plane.
      */
-    private void addFloorPlane(double width, double height, double depth)
+    private void addPlaneZX(double width, double height, double depth)
     {
         // Create floor path shape
         Path3D floor = new Path3D(); floor.setName("AxisFloor");

@@ -2,18 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-
-import snap.geom.Path2D;
-import snap.geom.Point;
-import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
 import snap.util.MathUtils;
 import snapcharts.data.DataSet;
 import snapcharts.model.Intervals;
-import snapcharts.model.Trace;
-import snapcharts.model.TraceList;
 import snapcharts.util.Mesh;
 import snapcharts.view.AxisViewX;
 
@@ -33,21 +27,6 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
         super(aDataArea, aScene);
         _dataArea = aDataArea;
     }
-
-    /**
-     * Returns the intervals.
-     */
-    public Intervals getIntervalsY()  { return _dataArea.getIntervalsY(); }
-
-    /**
-     * Returns the minor tick count.
-     */
-    public int getMinorTickCount()  { return _dataArea.getMinorTickCount(); }
-
-    /**
-     * Returns the section count.
-     */
-    public int getSectionCount()  { return 1; }
 
     /**
      * Rebuilds the chart.
@@ -96,14 +75,14 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             double p3z = mesh.getZ(v3);
 
             p1x = MathUtils.mapValueForRanges(p1x, minX, maxX, 0, prefW);
-            p1y = MathUtils.mapValueForRanges(p1y, minY, maxY, 0, prefD);
-            p1z = MathUtils.mapValueForRanges(p1z, minZ, maxZ, 0, prefH);
+            p1y = MathUtils.mapValueForRanges(p1y, minY, maxY, 0, prefW);
+            p1z = MathUtils.mapValueForRanges(p1z, minZ, maxZ, 0, prefD);
             p2x = MathUtils.mapValueForRanges(p2x, minX, maxX, 0, prefW);
-            p2y = MathUtils.mapValueForRanges(p2y, minY, maxY, 0, prefD);
-            p2z = MathUtils.mapValueForRanges(p2z, minZ, maxZ, 0, prefH);
+            p2y = MathUtils.mapValueForRanges(p2y, minY, maxY, 0, prefW);
+            p2z = MathUtils.mapValueForRanges(p2z, minZ, maxZ, 0, prefD);
             p3x = MathUtils.mapValueForRanges(p3x, minX, maxX, 0, prefW);
-            p3y = MathUtils.mapValueForRanges(p3y, minY, maxY, 0, prefD);
-            p3z = MathUtils.mapValueForRanges(p3z, minZ, maxZ, 0, prefH);
+            p3y = MathUtils.mapValueForRanges(p3y, minY, maxY, 0, prefW);
+            p3z = MathUtils.mapValueForRanges(p3z, minZ, maxZ, 0, prefD);
 
             Path3D path3D = new Path3D();
             path3D.moveTo(p1x, p1z, p1y);
@@ -113,6 +92,11 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
 
             path3D.setColor(Color.RED);
             _scene.addShape(path3D);
+
+            // Add back
+            Path3D path3DBack = path3D.clone();
+            path3DBack.reverse();
+            _scene.addShape(path3DBack);
         }
     }
 

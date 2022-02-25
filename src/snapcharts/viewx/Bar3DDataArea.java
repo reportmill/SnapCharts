@@ -75,17 +75,6 @@ public class Bar3DDataArea extends BarDataArea {
     }
 
     /**
-     * Returns the number of suggested ticks between the intervals of the RPG'd graph.
-     */
-    public int getMinorTickCount()
-    {
-        // Calculate height per tick - if height greater than 1 inch, return 4, greater than 3/4 inch return 3, otherwise 1
-        int ivalCount = getIntervalsY().getCount();
-        double heightPerTick = getHeight() / (ivalCount - 1);
-        return heightPerTick >= 72 ? 4 : heightPerTick >= 50 ? 3 : 1;
-    }
-
-    /**
      * Override to properly size hidden Y Axis.
      */
     @Override

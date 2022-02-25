@@ -31,21 +31,6 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     }
 
     /**
-     * Returns the intervals.
-     */
-    public Intervals getIntervalsY()  { return _dataArea.getIntervalsY(); }
-
-    /**
-     * Returns the minor tick count.
-     */
-    public int getMinorTickCount()  { return _dataArea.getMinorTickCount(); }
-
-    /**
-     * Returns the section count.
-     */
-    public int getSectionCount()  { return 1; }
-
-    /**
      * Rebuilds the chart.
      */
     protected void rebuildScene()

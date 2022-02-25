@@ -7,7 +7,6 @@ import snap.geom.Rect;
 import snap.gfx.Color;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
-import snapcharts.model.Intervals;
 
 /**
  * This class builds the Bar3D scene.
@@ -25,16 +24,6 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
         super(aDataArea, aScene);
         _dataArea = aDataArea;
     }
-
-    /**
-     * Returns the intervals.
-     */
-    public Intervals getIntervalsY()  { return _dataArea.getIntervalsY(); }
-
-    /**
-     * Returns the minor tick count.
-     */
-    public int getMinorTickCount()  { return _dataArea.getMinorTickCount(); }
 
     /**
      * Returns the section count.
