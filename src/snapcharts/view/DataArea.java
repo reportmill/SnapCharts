@@ -7,7 +7,6 @@ import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.util.PropChange;
 import snapcharts.data.*;
-import snapcharts.model.Intervals;
 import snapcharts.model.*;
 
 /**
@@ -376,14 +375,6 @@ public abstract class DataArea extends ChartPartView<Trace> {
      * Returns the time in milliseconds recommended for animation.
      */
     protected int getRevealTime()  { return DataView.DEFAULT_REVEAL_TIME; }
-
-    /**
-     * Returns the Y axis intervals for active traces.
-     */
-    public Intervals getIntervalsY()
-    {
-        return getAxisViewY().getIntervals();
-    }
 
     /**
      * Converts a point from data coords to view coords.

@@ -7,9 +7,7 @@ import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
 import snap.util.MathUtils;
 import snapcharts.data.DataSet;
-import snapcharts.model.Intervals;
 import snapcharts.util.Mesh;
-import snapcharts.view.AxisViewX;
 
 /**
  * This class builds the Line3D scene.
@@ -97,66 +95,6 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             Path3D path3DBack = path3D.clone();
             path3DBack.reverse();
             _scene.addShape(path3DBack);
-        }
-    }
-
-    /**
-     * Rebuild gridlines.
-     */
-    protected void rebuildGridLines()
-    {
-        _grid.clear();
-        _gridMinor.clear();
-        _gridWithoutSep.clear();
-
-        // Get graph bounds
-        double areaX = 0;
-        double areaY = 0;
-        double areaW = _dataArea.getWidth();
-        double areaH = _dataArea.getHeight();
-
-        // Get graph min interval and max interval
-        Intervals intervalsY = getIntervalsY();
-        int countY = intervalsY.getCount();
-        double minY = intervalsY.getMin();
-        double maxY = intervalsY.getMax();
-        double rangeY = maxY - minY;
-
-        // Get grid max
-        double gridMax = areaH;
-        int minorTickCountY = getMinorTickCount();
-        double majorDeltaY = intervalsY.getInterval(1) - minY;
-        double minorDeltaY = gridMax * majorDeltaY / rangeY / (minorTickCountY+1);
-
-        // Iterate over graph intervals
-        for (int i = 0, iMax = countY; i < iMax - 1; i++) {
-
-            // Get interval ratio and line x & y
-            double intervalRatio = i / (iMax - 1f);
-            double lineY = areaY + areaH * intervalRatio;
-
-            // DrawMajorAxis
-            if (i > 0) {
-                addGridLineMajor(areaX, lineY, areaX + areaW, lineY);
-            }
-
-            // Draw minor axis
-            /*for (int j=0; j<minorTickCountY; j++) {
-                double minorLineY = lineY + (j+1) * minorDeltaY;
-                addGridLineMinor(areaX, minorLineY, areaX + areaW, minorLineY);
-            }*/
-        }
-
-        // Get graph min interval and max interval
-        AxisViewX axisViewX = _dataArea.getAxisViewX();
-        Intervals intervalsX = axisViewX.getIntervals();
-        int countX = intervalsX.getCount();
-
-        // Iterate over graph intervals
-        for (int i = 0; i < countX; i++) {
-            double dataX = intervalsX.getInterval(i);
-            double dispX = axisViewX.dataToView(dataX);
-            addGridLineSeparator(dispX, areaY, dispX, areaY + areaH);
         }
     }
 }
