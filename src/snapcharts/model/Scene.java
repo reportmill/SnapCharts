@@ -127,7 +127,8 @@ public class Scene extends ParentPart {
         // Get info
         AspectMode aspectMode = getAspectMode();
         double aspectScale = getAspectScale(anAxisType);
-        boolean isAxisYUp = true;
+        ChartType chartType = getChartType();
+        boolean isAxisYUp = chartType == ChartType.BAR_3D || chartType == ChartType.LINE_3D;
 
         // Handle AspectModes
         switch (aspectMode) {

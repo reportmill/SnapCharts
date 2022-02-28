@@ -37,16 +37,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         // Do normal version
         super.rebuildScene();
 
-        // Add Line3D shapes
-        addLine3Ds();
-    }
-
-    /**
-     * Adds the Line3D shapes.
-     */
-    protected void addLine3Ds()
-    {
-        // Get info
+        // Get Trace info
         TraceList traceList = _dataArea.getTraceList();
         Trace[] traces = traceList.getEnabledTraces();
         int traceCount = traces.length;

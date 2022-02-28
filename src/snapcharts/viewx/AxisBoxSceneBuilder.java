@@ -5,10 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Path2D;
 import snap.gfx.Color;
 import snap.gfx3d.*;
-import snapcharts.model.AxisType;
-import snapcharts.model.Chart;
-import snapcharts.model.Intervals;
-import snapcharts.model.Scene;
+import snapcharts.model.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.DataArea;
 
@@ -92,6 +89,53 @@ public abstract class AxisBoxSceneBuilder {
     }
 
     /**
+     * Returns the axes pair for each axis box side.
+     */
+    protected AxisType[] getAxesForSide(Side3D aSide)
+    {
+        // Handle weird Bar3D and Line3D
+        if (_dataArea.getChartType() == ChartType.BAR_3D || _dataArea.getChartType() == ChartType.LINE_3D)
+            return getAxesForSideForForwardZ(aSide);
+
+        // Handle standard XYZ (Z Up) AxisBox
+        switch (aSide) {
+
+            // Front/Back is XZ plane
+            case FRONT: case BACK: return new AxisType[] { AxisType.X, AxisType.Z };
+
+            // Left/Right is YZ plane
+            case LEFT: case RIGHT: return new AxisType[] { AxisType.Y, AxisType.Z };
+
+            // Top/Bottom is XY plane
+            case TOP: case BOTTOM: return new AxisType[] { AxisType.X, AxisType.Y };
+
+            // Other is error
+            default: throw new RuntimeException("AxisBoxSceneBuilder.getAxesForSide: Invalid side: " + aSide);
+        }
+    }
+
+    /**
+     * Returns the axes pair for each axis box side for Bar3D and Line3D.
+     */
+    protected AxisType[] getAxesForSideForForwardZ(Side3D aSide)
+    {
+        switch (aSide) {
+
+            // Handle Front/Back: XY plane
+            case FRONT: case BACK: return new AxisType[] { AxisType.X, AxisType.Y };
+
+            // Handle Left/Right: YZ plane
+            case LEFT: case RIGHT: return new AxisType[] { AxisType.Z, AxisType.Y };
+
+            // Handle Top/Bottom: XZ plane
+            case TOP: case BOTTOM: return new AxisType[] { AxisType.X, AxisType.Z };
+
+            // Other is error
+            default: throw new RuntimeException("AxisBoxSceneBuilder.getAxesForSide: Invalid side: " + aSide);
+        }
+    }
+
+    /**
      * Returns the intervals for X axis.
      */
     public Intervals getIntervalsX()
@@ -112,7 +156,31 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Returns the intervals for Z axis.
      */
-    public Intervals getIntervalsZ()  { return null; }
+    public Intervals getIntervalsZ()
+    {
+        // Handle Line3D: Return intervals from 0 to TraceCount
+        ChartType chartType = _dataArea.getChartType();
+        if (chartType == ChartType.LINE_3D) {
+            TraceList traceList = _dataArea.getTraceList();
+            int traceCount = traceList.getTraceCount();
+            return Intervals.getIntervalsSimple(0, traceCount);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the intervals for given axis type.
+     */
+    protected Intervals getIntervalsForAxisType(AxisType anAxisType)
+    {
+        switch (anAxisType) {
+            case X: return getIntervalsX();
+            case Y: return getIntervalsY();
+            case Z: return getIntervalsZ();
+            default: throw new RuntimeException("AxisBoxSceneBuilder.getIntervalsForAxis: Invalid axis: " + anAxisType);
+        }
+    }
 
     /**
      * Rebuilds the chart.
@@ -127,136 +195,145 @@ public abstract class AxisBoxSceneBuilder {
         double height = getPrefHeight();
         double depth = getPrefDepth();
 
-        // Add geometry for XY plane
-        addPlaneXY(width, height, 0);
-        addPlaneXY(width, height, depth);
+        // Add shape for front/back sides
+        addSideFrontBack(width, height, 0);
+        addSideFrontBack(width, height, depth);
 
-        // Add geometry for YZ plane
-        addPlaneYZ(0, height, depth);
-        addPlaneYZ(width, height, depth);
+        // Add shape for left/right sides
+        addSideLeftRight(0, height, depth);
+        addSideLeftRight(width, height, depth);
 
-        // Add geometry for ZX plane
-        addPlaneZX(width, 0, depth);
+        // Add shape for top/bottom sides
+        addSideTopBottom(width, 0, depth);
     }
 
     /**
-     * Adds geometry for XY plane.
+     * Adds geometry for front/back sides.
      */
-    private void addPlaneXY(double width, double height, double backZ)
+    private void addSideFrontBack(double width, double height, double sideZ)
     {
         // Create wall shape
-        Path3D wall = new Path3D();
-        wall.setName(backZ == 0 ? "AxisSideXY" : "AxisFront");
-        wall.setOpacity(.8f);
-        wall.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
-        wall.setStroke(Color.BLACK, 1); //if (_backStroke!=null) back.setStroke(_backStroke.getColor(),_backStroke.getWidth());
-        wall.moveTo(0, 0, backZ);
-        wall.lineTo(0, height, backZ);
-        wall.lineTo(width, height, backZ);
-        wall.lineTo(width, 0, backZ);
-        wall.close();
+        Path3D side = new Path3D();
+        side.setName(sideZ == 0 ? "AxisBack" : "AxisFront");
+        side.setOpacity(.8f);
+        side.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
+        side.setStroke(Color.BLACK, 1); //if (_backStroke!=null) back.setStroke(_backStroke.getColor(),_backStroke.getWidth());
+        side.moveTo(0, 0, sideZ);
+        side.lineTo(0, height, sideZ);
+        side.lineTo(width, height, sideZ);
+        side.lineTo(width, 0, sideZ);
+        side.close();
 
         // If facing wrong direction, reverse
-        Vector3D normal = new Vector3D(0, 0, backZ == 0 ? 1 : -1);
-        if (!wall.getNormal().equals(normal))
-            wall.reverse();
+        Vector3D normal = new Vector3D(0, 0, sideZ == 0 ? 1 : -1);
+        if (!side.getNormal().equals(normal))
+            side.reverse();
 
         // Get 2D grid
-        Intervals intervalsX = getIntervalsX();
-        Intervals intervalsY = getIntervalsY();
-        Path2D gridX = getGridX(null, intervalsX, width, height);
-        Path2D gridXY = getGridY(gridX, intervalsY, width, height);
+        AxisType[] gridAxisTypes = getAxesForSide(Side3D.FRONT);
+        Intervals intervalsAcross = getIntervalsForAxisType(gridAxisTypes[0]);
+        Intervals intervalsDown = getIntervalsForAxisType(gridAxisTypes[1]);
+        Path2D gridX = getGridX(null, intervalsAcross, width, height);
+        Path2D gridXY = getGridY(gridX, intervalsDown, width, height);
 
         // Create Grid shape and add to wall
-        Path3D grid3D = new Path3D(gridXY, backZ);
-        grid3D.setName("AxisBackGrid");
+        Path3D grid3D = new Path3D(gridXY, sideZ);
+        grid3D.setName(side.getName() + "Grid");
         grid3D.setStroke(Color.BLACK, 1);
-        wall.addLayer(grid3D);
+        side.addLayer(grid3D);
 
         // Add to scene
-        _scene.addShape(wall);
+        _scene.addShape(side);
     }
 
     /**
-     * Add geometry for YZ plane.
+     * Add geometry for left/right sides.
      */
-    private void addPlaneYZ(double sideX, double height, double depth)
+    private void addSideLeftRight(double sideX, double height, double depth)
     {
-        // Create wall shape
-        Path3D wall = new Path3D();
-        wall.setName(sideX == 0 ? "AxisSideYZLeft" : "AxisSideYZRight");
-        wall.setColor(Color.WHITE);
-        wall.setStroke(Color.BLACK, 1);
-        wall.setOpacity(.8f);
-        wall.moveTo(sideX, 0, 0);
-        wall.lineTo(sideX, height, 0);
-        wall.lineTo(sideX, height, depth);
-        wall.lineTo(sideX, 0, depth);
-        wall.close();
+        // Create side shape
+        Path3D side = new Path3D();
+        side.setName(sideX == 0 ? "AxisLeft" : "AxisRight");
+        side.setColor(Color.WHITE);
+        side.setStroke(Color.BLACK, 1);
+        side.setOpacity(.8f);
+        side.moveTo(sideX, 0, 0);
+        side.lineTo(sideX, height, 0);
+        side.lineTo(sideX, height, depth);
+        side.lineTo(sideX, 0, depth);
+        side.close();
 
         // If facing wrong direction, reverse
         Vector3D normal = new Vector3D(sideX == 0 ? 1 : -1, 0, 0);
-        if (!wall.getNormal().equals(normal))
-            wall.reverse();
+        if (!side.getNormal().equals(normal))
+            side.reverse();
 
         // Get 2D grid
-        Intervals intervalsY = getIntervalsY();
-        Intervals intervalsZ = getIntervalsZ();
-        Path2D gridY = getGridY(null, intervalsY, depth, height);
-        Path2D gridYZ = getGridX(gridY, intervalsZ, depth, height);
+        AxisType[] gridAxisTypes = getAxesForSide(Side3D.LEFT);
+        Intervals intervalsAcross = getIntervalsForAxisType(gridAxisTypes[0]);
+        Intervals intervalsDown = getIntervalsForAxisType(gridAxisTypes[1]);
+        Path2D gridAcross = getGridX(null, intervalsAcross, depth, height);
+        Path2D gridAcrossDown = getGridY(gridAcross, intervalsDown, depth, height);
 
         // Add grid to wall
-        Path3D grid3D = new Path3D(gridYZ, 0);
-        grid3D.setName("AxisSideGrid");
+        Path3D grid3D = new Path3D(gridAcrossDown, 0);
+        grid3D.setName(side.getName() + "Grid");
         grid3D.setStroke(Color.BLACK, 1);
-        wall.addLayer(grid3D);
+        side.addLayer(grid3D);
 
         // Transform grid to wall coords
         Transform3D gridTrans = new Transform3D().rotateY(-90).translate(sideX, 0, 0);
         grid3D.transform(gridTrans);
 
         // Add to scene and return
-        _scene.addShape(wall);
+        _scene.addShape(side);
     }
 
     /**
-     * Adds floor plane.
+     * Adds geometry for top/bottom sides.
      */
-    private void addPlaneZX(double width, double height, double depth)
+    private void addSideTopBottom(double width, double sideY, double depth)
     {
-        // Create wall shape
-        Path3D wall = new Path3D();
-        wall.setName("AxisSideZX");
-        wall.setColor(Color.LIGHTGRAY);
-        wall.setStroke(Color.BLACK, 1);
-        wall.setOpacity(.8f);
-        wall.moveTo(0, height, 0);
-        wall.lineTo(width, height, 0);
-        wall.lineTo(width, height, depth);
-        wall.lineTo(0, height, depth);
-        wall.close();
+        // Create side shape
+        Path3D side = new Path3D();
+        side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
+        side.setColor(Color.LIGHTGRAY);
+        side.setStroke(Color.BLACK, 1);
+        side.setOpacity(.8f);
+        side.moveTo(0, sideY, 0);
+        side.lineTo(width, sideY, 0);
+        side.lineTo(width, sideY, depth);
+        side.lineTo(0, sideY, depth);
+        side.close();
 
         // Get 2D grid
-        Intervals intervalsZ = getIntervalsZ();
-        Intervals intervalsX = getIntervalsX();
-        Path2D gridZ = getGridY(null, intervalsZ, width, depth);
-        Path2D gridZX = getGridX(gridZ, intervalsX, width, depth);
+        AxisType[] gridAxisTypes = getAxesForSide(Side3D.TOP);
+        Intervals intervalsAcross = getIntervalsForAxisType(gridAxisTypes[0]);
+        Intervals intervalsDown = getIntervalsForAxisType(gridAxisTypes[1]);
+        Path2D gridX = getGridX(null, intervalsAcross, width, depth);
+        Path2D gridXY = getGridY(gridX, intervalsDown, width, depth);
 
-        // Add grid to wall
-        if (gridZX != null) {
-            Path3D grid3D = new Path3D(gridZX, 0);
-            grid3D.setName("AxisSideZXGrid");
+        // Add grid to side
+        if (gridXY != null) {
+
+            // Create/configure shape for grid and add to side
+            Path3D grid3D = new Path3D(gridXY, 0);
+            grid3D.setName(side.getName() + "Grid");
             grid3D.setStroke(Color.BLACK, 1);
-            wall.addLayer(grid3D);
+            side.addLayer(grid3D);
+
+            // Transform grid to wall coords
+            Transform3D gridTrans = new Transform3D().rotateX(90).translate(0, sideY, 0);
+            grid3D.transform(gridTrans);
         }
 
         // Add to scene and return
-        _scene.addShape(wall);
+        _scene.addShape(side);
 
-        // Add another floor facing opposite direction
-        Path3D floor2 = wall.clone();
-        floor2.reverse();
-        _scene.addShape(floor2);
+        // Add another side shape facing opposite direction
+        Path3D backSide = side.clone();
+        backSide.reverse();
+        _scene.addShape(backSide);
     }
 
     /**

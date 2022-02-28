@@ -7,6 +7,7 @@ import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
 import snap.util.MathUtils;
 import snapcharts.data.DataSet;
+import snapcharts.model.Intervals;
 import snapcharts.util.Mesh;
 
 /**
@@ -27,6 +28,19 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
     }
 
     /**
+     * Override to return intervals for Z.
+     */
+    @Override
+    public Intervals getIntervalsZ()
+    {
+        DataSet dataSet = _dataArea.getStagedData();
+        double minZ = dataSet.getMinZ();
+        double maxZ = dataSet.getMaxZ();
+        Intervals intervals= Intervals.getIntervalsForMinMaxLen(minZ, maxZ, 400, 40, false, false);
+        return intervals;
+    }
+
+    /**
      * Rebuilds the chart.
      */
     protected void rebuildScene()
@@ -34,15 +48,12 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
         // Do normal version
         super.rebuildScene();
 
-        // Add Line3D shapes
-        addContour3D();
-    }
+        // Get axis box size
+        double prefW = getPrefWidth();
+        double prefH = getPrefHeight();
+        double prefD = getPrefDepth();
 
-    /**
-     * Adds the Line3D shapes.
-     */
-    protected void addContour3D()
-    {
+        // Get dataset info
         DataSet dataSet = _dataArea.getStagedData();
         double minX = dataSet.getMinX();
         double maxX = dataSet.getMaxX();
@@ -51,13 +62,11 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
         double minZ = dataSet.getMinZ();
         double maxZ = dataSet.getMaxZ();
 
-        double prefW = getPrefWidth();
-        double prefH = getPrefHeight();
-        double prefD = getPrefDepth();
-
+        // Get contour mesh and triangles
         Mesh mesh = new Mesh(dataSet);
         Mesh.Triangle[] triangles = mesh.getTriangles();
 
+        // Iterate over triangles and add shape for each
         for (Mesh.Triangle triangle : triangles) {
             int v1 = triangle.v1;
             int v2 = triangle.v2;
@@ -73,14 +82,14 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             double p3z = mesh.getZ(v3);
 
             p1x = MathUtils.mapValueForRanges(p1x, minX, maxX, 0, prefW);
-            p1y = MathUtils.mapValueForRanges(p1y, minY, maxY, 0, prefW);
-            p1z = MathUtils.mapValueForRanges(p1z, minZ, maxZ, 0, prefD);
+            p1y = MathUtils.mapValueForRanges(p1y, minY, maxY, 0, prefD);
+            p1z = MathUtils.mapValueForRanges(p1z, minZ, maxZ, 0, prefH);
             p2x = MathUtils.mapValueForRanges(p2x, minX, maxX, 0, prefW);
-            p2y = MathUtils.mapValueForRanges(p2y, minY, maxY, 0, prefW);
-            p2z = MathUtils.mapValueForRanges(p2z, minZ, maxZ, 0, prefD);
+            p2y = MathUtils.mapValueForRanges(p2y, minY, maxY, 0, prefD);
+            p2z = MathUtils.mapValueForRanges(p2z, minZ, maxZ, 0, prefH);
             p3x = MathUtils.mapValueForRanges(p3x, minX, maxX, 0, prefW);
-            p3y = MathUtils.mapValueForRanges(p3y, minY, maxY, 0, prefW);
-            p3z = MathUtils.mapValueForRanges(p3z, minZ, maxZ, 0, prefD);
+            p3y = MathUtils.mapValueForRanges(p3y, minY, maxY, 0, prefD);
+            p3z = MathUtils.mapValueForRanges(p3z, minZ, maxZ, 0, prefH);
 
             Path3D path3D = new Path3D();
             path3D.moveTo(p1x, p1z, p1y);
