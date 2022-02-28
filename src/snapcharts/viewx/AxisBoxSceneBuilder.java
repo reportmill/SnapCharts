@@ -110,6 +110,11 @@ public abstract class AxisBoxSceneBuilder {
     }
 
     /**
+     * Returns the intervals for Z axis.
+     */
+    public Intervals getIntervalsZ()  { return null; }
+
+    /**
      * Rebuilds the chart.
      */
     protected void rebuildScene()
@@ -141,7 +146,7 @@ public abstract class AxisBoxSceneBuilder {
     {
         // Create wall shape
         Path3D wall = new Path3D();
-        wall.setName(backZ == 0 ? "AxisBack" : "AxisFront");
+        wall.setName(backZ == 0 ? "AxisSideXY" : "AxisFront");
         wall.setOpacity(.8f);
         wall.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
         wall.setStroke(Color.BLACK, 1); //if (_backStroke!=null) back.setStroke(_backStroke.getColor(),_backStroke.getWidth());
@@ -157,12 +162,13 @@ public abstract class AxisBoxSceneBuilder {
             wall.reverse();
 
         // Get 2D grid
-        Path2D grid = getGridX(width, height);
-        Path2D gridY = getGridY(width, height);
-        grid.addShape(gridY);
+        Intervals intervalsX = getIntervalsX();
+        Intervals intervalsY = getIntervalsY();
+        Path2D gridX = getGridX(null, intervalsX, width, height);
+        Path2D gridXY = getGridY(gridX, intervalsY, width, height);
 
         // Create Grid shape and add to wall
-        Path3D grid3D = new Path3D(grid, backZ);
+        Path3D grid3D = new Path3D(gridXY, backZ);
         grid3D.setName("AxisBackGrid");
         grid3D.setStroke(Color.BLACK, 1);
         wall.addLayer(grid3D);
@@ -178,7 +184,7 @@ public abstract class AxisBoxSceneBuilder {
     {
         // Create wall shape
         Path3D wall = new Path3D();
-        wall.setName(sideX == 0 ? "AxisLeftSide" : "AxisRightSide");
+        wall.setName(sideX == 0 ? "AxisSideYZLeft" : "AxisSideYZRight");
         wall.setColor(Color.WHITE);
         wall.setStroke(Color.BLACK, 1);
         wall.setOpacity(.8f);
@@ -194,11 +200,13 @@ public abstract class AxisBoxSceneBuilder {
             wall.reverse();
 
         // Get 2D grid
-        Path2D grid = getGridY(depth, height);
-        //Path2D gridZ = getGridY(width, height); grid.addShape(gridZ);
+        Intervals intervalsY = getIntervalsY();
+        Intervals intervalsZ = getIntervalsZ();
+        Path2D gridY = getGridY(null, intervalsY, depth, height);
+        Path2D gridYZ = getGridX(gridY, intervalsZ, depth, height);
 
         // Add grid to wall
-        Path3D grid3D = new Path3D(grid, 0);
+        Path3D grid3D = new Path3D(gridYZ, 0);
         grid3D.setName("AxisSideGrid");
         grid3D.setStroke(Color.BLACK, 1);
         wall.addLayer(grid3D);
@@ -216,23 +224,37 @@ public abstract class AxisBoxSceneBuilder {
      */
     private void addPlaneZX(double width, double height, double depth)
     {
-        // Create floor path shape
-        Path3D floor = new Path3D();
-        floor.setName("AxisFloor");
-        floor.setColor(Color.LIGHTGRAY);
-        floor.setStroke(Color.BLACK, 1);
-        floor.setOpacity(.8f);
-        floor.moveTo(0, height, 0);
-        floor.lineTo(width, height, 0);
-        floor.lineTo(width, height, depth);
-        floor.lineTo(0, height, depth);
-        floor.close();
+        // Create wall shape
+        Path3D wall = new Path3D();
+        wall.setName("AxisSideZX");
+        wall.setColor(Color.LIGHTGRAY);
+        wall.setStroke(Color.BLACK, 1);
+        wall.setOpacity(.8f);
+        wall.moveTo(0, height, 0);
+        wall.lineTo(width, height, 0);
+        wall.lineTo(width, height, depth);
+        wall.lineTo(0, height, depth);
+        wall.close();
+
+        // Get 2D grid
+        Intervals intervalsZ = getIntervalsZ();
+        Intervals intervalsX = getIntervalsX();
+        Path2D gridZ = getGridY(null, intervalsZ, width, depth);
+        Path2D gridZX = getGridX(gridZ, intervalsX, width, depth);
+
+        // Add grid to wall
+        if (gridZX != null) {
+            Path3D grid3D = new Path3D(gridZX, 0);
+            grid3D.setName("AxisSideZXGrid");
+            grid3D.setStroke(Color.BLACK, 1);
+            wall.addLayer(grid3D);
+        }
 
         // Add to scene and return
-        _scene.addShape(floor);
+        _scene.addShape(wall);
 
         // Add another floor facing opposite direction
-        Path3D floor2 = floor.clone();
+        Path3D floor2 = wall.clone();
         floor2.reverse();
         _scene.addShape(floor2);
     }
@@ -240,20 +262,20 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Returns the grid path for X axis.
      */
-    private Path2D getGridX(double aWidth, double aHeight)
+    private Path2D getGridX(Path2D aPath, Intervals theIntervals, double aWidth, double aHeight)
     {
-        // Get intervals for X axis
-        Intervals intervals = getIntervalsX();
-        int intervalCount = intervals.getCount();
+        // If no intervals, just return path
+        if (theIntervals == null) return aPath;
 
         // Create path and get X end points
-        Path2D path = new Path2D();
+        Path2D path = aPath != null ? aPath : new Path2D();
+        int intervalCount = theIntervals.getCount() - 1;
         double y1 = 0;
         double y2 = aHeight;
 
         // Iterate over intervals and add grid line
-        for (int i = 1, iMax = intervalCount; i < iMax - 1; i++) {
-            double intervalRatio = i / (iMax - 1f);
+        for (int i = 1; i < intervalCount; i++) {
+            double intervalRatio = i / (double) intervalCount;
             double lineX = aWidth * intervalRatio;
             path.moveTo(lineX, y1);
             path.lineTo(lineX, y2);
@@ -266,20 +288,20 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Returns the grid path for Y axis.
      */
-    private Path2D getGridY(double aWidth, double aHeight)
+    private Path2D getGridY(Path2D aPath, Intervals theIntervals, double aWidth, double aHeight)
     {
-        // Get intervals for Y axis
-        Intervals intervals = getIntervalsY();
-        int intervalCount = intervals.getCount();
+        // If no intervals, just return path
+        if (theIntervals == null) return aPath;
 
         // Create path and get X end points
-        Path2D path = new Path2D();
+        Path2D path = aPath != null ? aPath : new Path2D();
+        int intervalCount = theIntervals.getCount() - 1;
         double x1 = 0;
         double x2 = aWidth;
 
         // Iterate over intervals and add grid line
-        for (int i = 1, iMax = intervalCount; i < iMax - 1; i++) {
-            double intervalRatio = i / (iMax - 1f);
+        for (int i = 1; i < intervalCount; i++) {
+            double intervalRatio = i / (double) intervalCount;
             double lineY = aHeight * intervalRatio;
             path.moveTo(x1, lineY);
             path.lineTo(x2, lineY);

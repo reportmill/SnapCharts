@@ -8,6 +8,7 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
+import snapcharts.model.Intervals;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
 
@@ -131,4 +132,15 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         // Return path
         return path;
     }
+
+//    /**
+//     * Override to provide section dividers.
+//     */
+//    @Override
+//    public Intervals getIntervalsX()
+//    {
+//        TraceList traceList = _dataArea.getTraceList();
+//        int traceCount = traceList.getTraceCount();
+//        return Intervals.getIntervalsSimple(0, traceCount);
+//    }
 }
