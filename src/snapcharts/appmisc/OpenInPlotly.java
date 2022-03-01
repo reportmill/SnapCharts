@@ -159,6 +159,10 @@ public class OpenInPlotly {
         for (AxisType axisType : axisTypes)
             writeChartAxisLayout(aChart, axisType, layoutJS);
 
+        // I don't like this
+        if (aChart.getType() == ChartType.CONTOUR_3D)
+            writeChartAxisLayout(aChart, AxisType.Z, layoutJS);
+
         // Write the legend layout
         writeChartLegendLayout(aChart, layoutJS);
 
@@ -293,6 +297,8 @@ public class OpenInPlotly {
                 traceJS.addKeyValue("type", "scatterpolar"); break;
             case LINE_3D:
                 traceJS.addKeyValue("type", "scatter3d"); break;
+            case CONTOUR_3D:
+                traceJS.addKeyValue("type", "mesh3d"); break;
             default:
                 traceJS.addKeyValue("type", "scatter");
         }
@@ -354,6 +360,31 @@ public class OpenInPlotly {
             traceJS.addKeyValue("contours", contourJS);
         }
 
+        // If ChartType.CONTOUR_3D, configure
+        if (chartType == ChartType.CONTOUR_3D) {
+
+            // colorscale
+            traceJS.addKeyValue("colorscale", "Jet");
+
+            // Add:
+            traceJS.addKeyValue("autocontour", false);
+            traceJS.addKeyValue("ncontours", "16");
+
+            JSONNode contourJS = new JSONNode("contours", null);
+            contourJS.addKeyValue("start", aTrace.getMinZ());
+            contourJS.addKeyValue("end", aTrace.getMaxZ());
+            contourJS.addKeyValue("size", (aTrace.getMaxZ() - aTrace.getMinZ()) / 16);
+            traceJS.addKeyValue("contours", contourJS);
+
+            // Set intensity to Z values
+            JSONNode intensityJS = new JSONNode();
+            for (int i = 0; i < pointCount; i++) {
+                Object val = aTrace.getZ(i);
+                intensityJS.addValue(val);
+            }
+            traceJS.addKeyValue("intensity", intensityJS);
+        }
+
         // Iterate over channels and add channel values for each
         for (int i = 0; i < chanCount; i++) {
 
@@ -390,7 +421,7 @@ public class OpenInPlotly {
             traceJS.addKeyValue("fill", "tozeroy");
         }
 
-        // If not Y axis
+        // If Y axis is Y1/Y2/Y3, swap that in
         if (aTrace.getAxisTypeY() != AxisType.Y)
             traceJS.addKeyValue("yaxis", aTrace.getAxisTypeY().toString().toLowerCase());
 
