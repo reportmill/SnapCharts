@@ -67,6 +67,7 @@ public class TraceStyleHpr {
             case PIE: return getPieStyle();
             case POLAR: return getPolarStyle();
             case CONTOUR: return getContourStyle();
+            case CONTOUR_3D: return getContourStyle();
             case POLAR_CONTOUR: return getContourStyle();
             case BAR_3D: return getBar3DStyle();
             default: return getXYStyle();

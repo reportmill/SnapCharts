@@ -66,11 +66,20 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
         Mesh mesh = new Mesh(dataSet);
         Mesh.Triangle[] triangles = mesh.getTriangles();
 
+        // Get ContourHelper and ContourCount
+        Contour3DChartHelper chartHelper = (Contour3DChartHelper) _dataArea.getChartHelper();
+        ContourHelper contourHelper = chartHelper.getContourHelper();
+        int contourCount = contourHelper.getContourCount();
+
         // Iterate over triangles and add shape for each
         for (Mesh.Triangle triangle : triangles) {
+
+            // Get triangle vertex indexes
             int v1 = triangle.v1;
             int v2 = triangle.v2;
             int v3 = triangle.v3;
+
+            // Get triangle points
             double p1x = mesh.getX(v1);
             double p1y = mesh.getY(v1);
             double p1z = mesh.getZ(v1);
@@ -80,6 +89,11 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             double p3x = mesh.getX(v3);
             double p3y = mesh.getY(v3);
             double p3z = mesh.getZ(v3);
+
+            // Get vertex colors
+            Color contourColor1 = getContourColor(p1z, minZ, maxZ, contourCount, contourHelper);
+            Color contourColor2 = getContourColor(p2z, minZ, maxZ, contourCount, contourHelper);
+            Color contourColor3 = getContourColor(p3z, minZ, maxZ, contourCount, contourHelper);
 
             p1x = MathUtils.mapValueForRanges(p1x, minX, maxX, 0, prefW);
             p1y = MathUtils.mapValueForRanges(p1y, minY, maxY, 0, prefD);
@@ -91,13 +105,18 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             p3y = MathUtils.mapValueForRanges(p3y, minY, maxY, 0, prefD);
             p3z = MathUtils.mapValueForRanges(p3z, minZ, maxZ, 0, prefH);
 
+            // Create/config path for triangle
             Path3D path3D = new Path3D();
             path3D.moveTo(p1x, p1z, p1y);
             path3D.lineTo(p2x, p2z, p2y);
             path3D.lineTo(p3x, p3z, p3y);
             path3D.close();
 
-            path3D.setColor(Color.RED);
+            // Add triangle vertex colors
+            path3D.addColor(contourColor1);
+            path3D.addColor(contourColor2);
+            path3D.addColor(contourColor3);
+
             _scene.addShape(path3D);
 
             // Add back
@@ -105,5 +124,15 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             path3DBack.reverse();
             _scene.addShape(path3DBack);
         }
+    }
+
+    /**
+     * Returns color for mesh point z value.
+     */
+    private Color getContourColor(double aZ, double minZ, double maxZ, int contourCount, ContourHelper contourHelper)
+    {
+        int contourIndex = (int) Math.round(MathUtils.mapRangeValueToFractional(aZ, minZ, maxZ) * contourCount);
+        contourIndex = MathUtils.clamp(contourIndex, 0, contourCount - 1);
+        return contourHelper.getContourColor(contourIndex);
     }
 }
