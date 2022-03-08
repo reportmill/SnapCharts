@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.geom.Path2D;
 import snap.gfx.Color;
 import snap.gfx3d.*;
 import snapcharts.model.*;
@@ -217,7 +216,8 @@ public abstract class AxisBoxSceneBuilder {
         side.setName(sideZ == 0 ? "AxisBack" : "AxisFront");
         side.setOpacity(.8f);
         side.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
-        side.setStroke(Color.BLACK, 1); //if (_backStroke!=null) back.setStroke(_backStroke.getColor(),_backStroke.getWidth());
+
+        // Add side points
         side.moveTo(0, 0, sideZ);
         side.lineTo(0, height, sideZ);
         side.lineTo(width, height, sideZ);
@@ -229,18 +229,18 @@ public abstract class AxisBoxSceneBuilder {
         if (!side.getNormal().equals(normal))
             side.reverse();
 
+        // Create Painter3D for side border/grid, paint border, add to side
+        Painter3D gridPainter = new Painter3D(width, height);
+        gridPainter.addLayerOffset(1);
+        gridPainter.drawRect(0, 0, width, height);
+        side.setPainter(gridPainter);
+
         // Get 2D grid
         AxisType[] gridAxisTypes = getAxesForSide(Side3D.FRONT);
         Intervals intervalsAcross = getIntervalsForAxisType(gridAxisTypes[0]);
         Intervals intervalsDown = getIntervalsForAxisType(gridAxisTypes[1]);
-        Path2D gridX = getGridX(null, intervalsAcross, width, height);
-        Path2D gridXY = getGridY(gridX, intervalsDown, width, height);
-
-        // Create Grid shape and add to wall
-        Path3D grid3D = new Path3D(gridXY, sideZ);
-        grid3D.setName(side.getName() + "Grid");
-        grid3D.setStroke(Color.BLACK, 1);
-        side.addLayer(grid3D);
+        paintGridX(gridPainter, intervalsAcross, width, height);
+        paintGridY(gridPainter, intervalsDown, width, height);
 
         // Add to scene
         _scene.addShape(side);
@@ -255,8 +255,9 @@ public abstract class AxisBoxSceneBuilder {
         Path3D side = new Path3D();
         side.setName(sideX == 0 ? "AxisLeft" : "AxisRight");
         side.setColor(Color.WHITE);
-        side.setStroke(Color.BLACK, 1);
         side.setOpacity(.8f);
+
+        // Add side points
         side.moveTo(sideX, 0, 0);
         side.lineTo(sideX, height, 0);
         side.lineTo(sideX, height, depth);
@@ -268,22 +269,18 @@ public abstract class AxisBoxSceneBuilder {
         if (!side.getNormal().equals(normal))
             side.reverse();
 
-        // Get 2D grid
+        // Create Painter3D for side border/grid, paint border, add to side
+        Painter3D gridPainter = new Painter3D(depth, height);
+        gridPainter.addLayerOffset(.5);
+        gridPainter.drawRect(0, 0, depth, height);
+        side.setPainter(gridPainter);
+
+        // Paint grid
         AxisType[] gridAxisTypes = getAxesForSide(Side3D.LEFT);
         Intervals intervalsAcross = getIntervalsForAxisType(gridAxisTypes[0]);
         Intervals intervalsDown = getIntervalsForAxisType(gridAxisTypes[1]);
-        Path2D gridAcross = getGridX(null, intervalsAcross, depth, height);
-        Path2D gridAcrossDown = getGridY(gridAcross, intervalsDown, depth, height);
-
-        // Add grid to wall
-        Path3D grid3D = new Path3D(gridAcrossDown, 0);
-        grid3D.setName(side.getName() + "Grid");
-        grid3D.setStroke(Color.BLACK, 1);
-        side.addLayer(grid3D);
-
-        // Transform grid to wall coords
-        Transform3D gridTrans = new Transform3D().rotateY(-90).translate(sideX, 0, 0);
-        grid3D.transform(gridTrans);
+        paintGridX(gridPainter, intervalsAcross, depth, height);
+        paintGridY(gridPainter, intervalsDown, depth, height);
 
         // Add to scene and return
         _scene.addShape(side);
@@ -298,34 +295,27 @@ public abstract class AxisBoxSceneBuilder {
         Path3D side = new Path3D();
         side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
         side.setColor(Color.LIGHTGRAY);
-        side.setStroke(Color.BLACK, 1);
         side.setOpacity(.8f);
+
+        // Add side points
         side.moveTo(0, sideY, 0);
         side.lineTo(width, sideY, 0);
         side.lineTo(width, sideY, depth);
         side.lineTo(0, sideY, depth);
         side.close();
 
-        // Get 2D grid
+        // Create Painter3D for side border/grid, paint border, add to side
+        Painter3D gridPainter = new Painter3D(width, depth);
+        gridPainter.addLayerOffset(.5);
+        gridPainter.drawRect(0, 0, width, depth);
+        side.setPainter(gridPainter);
+
+        // Paint grid
         AxisType[] gridAxisTypes = getAxesForSide(Side3D.TOP);
         Intervals intervalsAcross = getIntervalsForAxisType(gridAxisTypes[0]);
         Intervals intervalsDown = getIntervalsForAxisType(gridAxisTypes[1]);
-        Path2D gridX = getGridX(null, intervalsAcross, width, depth);
-        Path2D gridXY = getGridY(gridX, intervalsDown, width, depth);
-
-        // Add grid to side
-        if (gridXY != null) {
-
-            // Create/configure shape for grid and add to side
-            Path3D grid3D = new Path3D(gridXY, 0);
-            grid3D.setName(side.getName() + "Grid");
-            grid3D.setStroke(Color.BLACK, 1);
-            side.addLayer(grid3D);
-
-            // Transform grid to wall coords
-            Transform3D gridTrans = new Transform3D().rotateX(90).translate(0, sideY, 0);
-            grid3D.transform(gridTrans);
-        }
+        paintGridX(gridPainter, intervalsAcross, width, depth);
+        paintGridY(gridPainter, intervalsDown, width, depth);
 
         // Add to scene and return
         _scene.addShape(side);
@@ -337,54 +327,46 @@ public abstract class AxisBoxSceneBuilder {
     }
 
     /**
-     * Returns the grid path for X axis.
+     * Paints the grid path for X axis.
      */
-    private Path2D getGridX(Path2D aPath, Intervals theIntervals, double aWidth, double aHeight)
+    private void paintGridX(Painter3D aPntr, Intervals theIntervals, double aWidth, double aHeight)
     {
-        // If no intervals, just return path
-        if (theIntervals == null) return aPath;
+        // If no intervals, just return
+        if (theIntervals == null) return;
 
-        // Create path and get X end points
-        Path2D path = aPath != null ? aPath : new Path2D();
+        // Get X end points
         int intervalCount = theIntervals.getCount() - 1;
         double y1 = 0;
         double y2 = aHeight;
 
-        // Iterate over intervals and add grid line
+        // Iterate over intervals and paint grid line path
         for (int i = 1; i < intervalCount; i++) {
             double intervalRatio = i / (double) intervalCount;
             double lineX = aWidth * intervalRatio;
-            path.moveTo(lineX, y1);
-            path.lineTo(lineX, y2);
+            aPntr.moveTo(lineX, y1);
+            aPntr.lineTo(lineX, y2);
         }
-
-        // Return path
-        return path;
     }
 
     /**
-     * Returns the grid path for Y axis.
+     * Paints the grid path for Y axis.
      */
-    private Path2D getGridY(Path2D aPath, Intervals theIntervals, double aWidth, double aHeight)
+    private void paintGridY(Painter3D aPntr, Intervals theIntervals, double aWidth, double aHeight)
     {
-        // If no intervals, just return path
-        if (theIntervals == null) return aPath;
+        // If no intervals, just return
+        if (theIntervals == null) return;
 
-        // Create path and get X end points
-        Path2D path = aPath != null ? aPath : new Path2D();
+        // Get X end points
         int intervalCount = theIntervals.getCount() - 1;
         double x1 = 0;
         double x2 = aWidth;
 
-        // Iterate over intervals and add grid line
+        // Iterate over intervals and paint grid line path
         for (int i = 1; i < intervalCount; i++) {
             double intervalRatio = i / (double) intervalCount;
             double lineY = aHeight * intervalRatio;
-            path.moveTo(x1, lineY);
-            path.lineTo(x2, lineY);
+            aPntr.moveTo(x1, lineY);
+            aPntr.lineTo(x2, lineY);
         }
-
-        // Return path
-        return path;
     }
 }
