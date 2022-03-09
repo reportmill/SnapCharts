@@ -68,12 +68,8 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         Path3D areaPath = new Path3D(path, lineZ);
         areaPath.setColor(dataFillColor);
         areaPath.setStroke(dataStrokeColor, 1);
+        areaPath.setDoubleSided(true);
         _scene.addShape(areaPath);
-
-        // Create backside path3d and add to scene
-        Path3D areaPathBack = areaPath.clone();
-        areaPathBack.reverse();
-        _scene.addShape(areaPathBack);
     }
 
     /**

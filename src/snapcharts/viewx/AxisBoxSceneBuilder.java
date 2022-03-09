@@ -296,6 +296,7 @@ public abstract class AxisBoxSceneBuilder {
         side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
         side.setColor(Color.LIGHTGRAY);
         side.setOpacity(.8f);
+        side.setDoubleSided(true);
 
         // Add side points
         side.moveTo(0, sideY, 0);
@@ -319,11 +320,6 @@ public abstract class AxisBoxSceneBuilder {
 
         // Add to scene and return
         _scene.addShape(side);
-
-        // Add another side shape facing opposite direction
-        Path3D backSide = side.clone();
-        backSide.reverse();
-        _scene.addShape(backSide);
     }
 
     /**

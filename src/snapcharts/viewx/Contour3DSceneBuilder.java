@@ -107,6 +107,7 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
 
             // Create/config path for triangle
             Path3D path3D = new Path3D();
+            path3D.setDoubleSided(true);
             path3D.moveTo(p1x, p1z, p1y);
             path3D.lineTo(p2x, p2z, p2y);
             path3D.lineTo(p3x, p3z, p3y);
@@ -118,11 +119,6 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             path3D.addColor(contourColor3);
 
             _scene.addShape(path3D);
-
-            // Add back
-            Path3D path3DBack = path3D.clone();
-            path3DBack.reverse();
-            _scene.addShape(path3DBack);
         }
     }
 
