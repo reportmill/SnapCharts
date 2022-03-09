@@ -4,6 +4,7 @@
 package snapcharts.viewx;
 import snap.gfx.Color;
 import snap.gfx3d.*;
+import snap.util.MathUtils;
 import snapcharts.model.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.DataArea;
@@ -219,14 +220,14 @@ public abstract class AxisBoxSceneBuilder {
 
         // Add side points
         side.moveTo(0, 0, sideZ);
-        side.lineTo(0, height, sideZ);
-        side.lineTo(width, height, sideZ);
         side.lineTo(width, 0, sideZ);
+        side.lineTo(width, height, sideZ);
+        side.lineTo(0, height, sideZ);
         side.close();
 
         // If facing wrong direction, reverse
-        Vector3D normal = new Vector3D(0, 0, sideZ == 0 ? 1 : -1);
-        if (!side.getNormal().equals(normal))
+        double normalZ = sideZ == 0 ? 1 : -1;
+        if (!MathUtils.equals(side.getNormal().z, normalZ))
             side.reverse();
 
         // Create Painter3D for side border/grid, paint border, add to side
@@ -265,8 +266,8 @@ public abstract class AxisBoxSceneBuilder {
         side.close();
 
         // If facing wrong direction, reverse
-        Vector3D normal = new Vector3D(sideX == 0 ? 1 : -1, 0, 0);
-        if (!side.getNormal().equals(normal))
+        double normalX = sideX == 0 ? 1 : -1;
+        if (!MathUtils.equals(side.getNormal().x, normalX))
             side.reverse();
 
         // Create Painter3D for side border/grid, paint border, add to side
@@ -300,9 +301,9 @@ public abstract class AxisBoxSceneBuilder {
 
         // Add side points
         side.moveTo(0, sideY, 0);
-        side.lineTo(width, sideY, 0);
-        side.lineTo(width, sideY, depth);
         side.lineTo(0, sideY, depth);
+        side.lineTo(width, sideY, depth);
+        side.lineTo(width, sideY, 0);
         side.close();
 
         // Create Painter3D for side border/grid, paint border, add to side

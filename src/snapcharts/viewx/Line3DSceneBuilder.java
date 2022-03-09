@@ -8,7 +8,6 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
-import snapcharts.model.Intervals;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
 
@@ -69,6 +68,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         areaPath.setColor(dataFillColor);
         areaPath.setStroke(dataStrokeColor, 1);
         areaPath.setDoubleSided(true);
+        areaPath.reverse();
         _scene.addShape(areaPath);
     }
 
