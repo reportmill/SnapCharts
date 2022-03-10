@@ -18,7 +18,7 @@ public abstract class AxisBoxSceneBuilder {
     private DataArea  _dataArea;
 
     // The Scene
-    protected Scene3D  _scene;
+    private Scene3D  _scene;
 
     /**
      * Constructor.
@@ -188,29 +188,53 @@ public abstract class AxisBoxSceneBuilder {
     protected void rebuildScene()
     {
         // Remove all existing children
-        _scene.removeShapes();
+        _scene.removeChildren();
 
+        // Get AxisBoxShape and add to scene
+        Shape3D axisBoxShape = getAxisBoxShape();
+        _scene.addChild(axisBoxShape);
+    }
+
+    /**
+     * Rebuilds the chart.
+     */
+    public Shape3D getAxisBoxShape()
+    {
+        Shape3D axisBoxShape = createAxisBoxShape();
+        return axisBoxShape;
+    }
+
+    /**
+     * Rebuilds the chart.
+     */
+    protected ParentShape3D createAxisBoxShape()
+    {
         // Get preferred width, height, depth
         double width = getPrefWidth();
         double height = getPrefHeight();
         double depth = getPrefDepth();
 
         // Add shape for front/back sides
-        addSideFrontBack(width, height, 0);
-        addSideFrontBack(width, height, depth);
+        Shape3D frontShape = addSideFrontBack(width, height, 0);
+        Shape3D backShape = addSideFrontBack(width, height, depth);
 
         // Add shape for left/right sides
-        addSideLeftRight(0, height, depth);
-        addSideLeftRight(width, height, depth);
+        Shape3D leftShape = addSideLeftRight(0, height, depth);
+        Shape3D rightShape = addSideLeftRight(width, height, depth);
 
         // Add shape for top/bottom sides
-        addSideTopBottom(width, 0, depth);
+        Shape3D bottomShape = addSideTopBottom(width, 0, depth);
+
+        // Reset shapes
+        ParentShape3D axisBoxShape = new ParentShape3D();
+        axisBoxShape.setChildren(frontShape, backShape, leftShape, rightShape, bottomShape);
+        return axisBoxShape;
     }
 
     /**
      * Adds geometry for front/back sides.
      */
-    private void addSideFrontBack(double width, double height, double sideZ)
+    private Shape3D addSideFrontBack(double width, double height, double sideZ)
     {
         // Create wall shape
         Path3D side = new Path3D();
@@ -243,14 +267,14 @@ public abstract class AxisBoxSceneBuilder {
         paintGridX(gridPainter, intervalsAcross, width, height);
         paintGridY(gridPainter, intervalsDown, width, height);
 
-        // Add to scene
-        _scene.addShape(side);
+        // Return
+        return side;
     }
 
     /**
      * Add geometry for left/right sides.
      */
-    private void addSideLeftRight(double sideX, double height, double depth)
+    private Shape3D addSideLeftRight(double sideX, double height, double depth)
     {
         // Create side shape
         Path3D side = new Path3D();
@@ -283,14 +307,14 @@ public abstract class AxisBoxSceneBuilder {
         paintGridX(gridPainter, intervalsAcross, depth, height);
         paintGridY(gridPainter, intervalsDown, depth, height);
 
-        // Add to scene and return
-        _scene.addShape(side);
+        // Return
+        return side;
     }
 
     /**
      * Adds geometry for top/bottom sides.
      */
-    private void addSideTopBottom(double width, double sideY, double depth)
+    private Shape3D addSideTopBottom(double width, double sideY, double depth)
     {
         // Create side shape
         Path3D side = new Path3D();
@@ -319,8 +343,8 @@ public abstract class AxisBoxSceneBuilder {
         paintGridX(gridPainter, intervalsAcross, width, depth);
         paintGridY(gridPainter, intervalsDown, width, depth);
 
-        // Add to scene and return
-        _scene.addShape(side);
+        // Return
+        return side;
     }
 
     /**

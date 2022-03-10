@@ -6,8 +6,10 @@ import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.Color;
+import snap.gfx3d.ParentShape3D;
 import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
+import snap.gfx3d.Shape3D;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
 
@@ -29,12 +31,13 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     }
 
     /**
-     * Rebuilds the chart.
+     * Override to add contour chart.
      */
-    protected void rebuildScene()
+    @Override
+    protected ParentShape3D createAxisBoxShape()
     {
         // Do normal version
-        super.rebuildScene();
+        ParentShape3D axisBoxShape = super.createAxisBoxShape();
 
         // Get Trace info
         TraceList traceList = _dataArea.getTraceList();
@@ -44,14 +47,18 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         // Iterate over traces and add Line3D shape for each
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            addLine3D(trace, i, traceCount);
+            Shape3D lineShape = addLine3D(trace, i, traceCount);
+            axisBoxShape.addChild(lineShape);
         }
+
+        // Return
+        return axisBoxShape;
     }
 
     /**
      * Adds the Line3D shape for Trace.
      */
-    protected void addLine3D(Trace aTrace, int anIndex, int aCount)
+    protected Shape3D addLine3D(Trace aTrace, int anIndex, int aCount)
     {
         // Create 2d path
         Shape path = createDataPath(aTrace);
@@ -69,7 +76,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         areaPath.setStroke(dataStrokeColor, 1);
         areaPath.setDoubleSided(true);
         areaPath.reverse();
-        _scene.addShape(areaPath);
+        return areaPath;
     }
 
     /**

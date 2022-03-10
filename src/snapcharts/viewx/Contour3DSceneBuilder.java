@@ -3,6 +3,7 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Color;
+import snap.gfx3d.ParentShape3D;
 import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
 import snap.util.MathUtils;
@@ -41,12 +42,13 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
     }
 
     /**
-     * Rebuilds the chart.
+     * Override to add contour chart.
      */
-    protected void rebuildScene()
+    @Override
+    protected ParentShape3D createAxisBoxShape()
     {
         // Do normal version
-        super.rebuildScene();
+        ParentShape3D axisBoxShape = super.createAxisBoxShape();
 
         // Get axis box size
         double prefW = getPrefWidth();
@@ -118,8 +120,11 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             path3D.addColor(contourColor2);
             path3D.addColor(contourColor3);
 
-            _scene.addShape(path3D);
+            axisBoxShape.addChild(path3D);
         }
+
+        // Return
+        return axisBoxShape;
     }
 
     /**

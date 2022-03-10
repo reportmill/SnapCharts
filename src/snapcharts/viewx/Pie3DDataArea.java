@@ -63,7 +63,7 @@ public class Pie3DDataArea extends PieDataArea {
     protected void rebuildScene()
     {
         // Remove Shape3Ds
-        _scene.removeShapes();
+        _scene.removeChildren();
 
         // Iterate over wedges and add them as 3D
         Wedge[] wedges = getWedges();
@@ -103,7 +103,7 @@ public class Pie3DDataArea extends PieDataArea {
         PathBox3D bar = new PathBox3D(path, z0, z1);
         bar.setColor(aColor);
         bar.setStroke(Color.BLACK, 1);
-        _scene.addShape(bar);
+        _scene.addChild(bar);
     }
 
     /**
