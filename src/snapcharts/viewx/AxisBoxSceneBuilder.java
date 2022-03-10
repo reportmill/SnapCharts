@@ -201,6 +201,11 @@ public abstract class AxisBoxSceneBuilder {
     public Shape3D getAxisBoxShape()
     {
         Shape3D axisBoxShape = createAxisBoxShape();
+        double width = getPrefWidth();
+        double height = getPrefHeight();
+        double depth = getPrefDepth();
+        Box3D boundsBox = new Box3D(0, width, 0, height, 0, depth);
+        axisBoxShape.setBoundsBox(boundsBox);
         return axisBoxShape;
     }
 
