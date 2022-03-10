@@ -64,7 +64,7 @@ public enum ChartType {
      */
     public boolean isContourType()
     {
-        return this == CONTOUR || this == POLAR_CONTOUR;
+        return this == CONTOUR || this == POLAR_CONTOUR || this == CONTOUR_3D;
     }
 
     /**

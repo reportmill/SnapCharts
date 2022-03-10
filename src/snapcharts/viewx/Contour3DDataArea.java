@@ -78,25 +78,6 @@ public class Contour3DDataArea extends DataArea {
     }
 
     /**
-     * Override to rebuild chart.
-     */
-    /*public void setReveal(double aValue)
-    {
-        super.setReveal(aValue);
-        _camView.relayout();
-        if (aValue==0) {
-            _camView.setYaw(90);
-            _camView.setPitch(0);
-            _camView.setOffsetZ(200);
-            ViewAnim anim = _camView.getAnimCleared(1000);
-            anim.setValue(CameraView.Yaw_Prop,26);
-            anim.setValue(CameraView.Pitch_Prop,10);
-            anim.setValue(CameraView.OffsetZ_Prop,0).setLinear();
-            anim.play();
-        }
-    }*/
-
-    /**
      * Override to resize CamView.
      */
     protected void layoutImpl()

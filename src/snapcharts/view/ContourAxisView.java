@@ -4,6 +4,7 @@ import snap.gfx.*;
 import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.model.*;
+import snapcharts.viewx.Contour3DChartHelper;
 import snapcharts.viewx.ContourChartHelper;
 import snapcharts.viewx.ContourHelper;
 import snapcharts.viewx.PolarContourChartHelper;
@@ -69,6 +70,8 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
             _contourHelper = ((ContourChartHelper) chartHelper).getContourHelper();
         else if (chartHelper instanceof PolarContourChartHelper)
             _contourHelper = ((PolarContourChartHelper) chartHelper).getContourHelper();
+        else if (chartHelper instanceof Contour3DChartHelper)
+            _contourHelper = ((Contour3DChartHelper) chartHelper).getContourHelper();
 
         // Do normal version
         super.resetView();
