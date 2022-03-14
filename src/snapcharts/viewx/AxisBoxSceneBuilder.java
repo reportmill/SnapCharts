@@ -204,7 +204,7 @@ public abstract class AxisBoxSceneBuilder {
         double width = getPrefWidth();
         double height = getPrefHeight();
         double depth = getPrefDepth();
-        Bounds3D bounds3D = new Bounds3D(0, width, 0, height, 0, depth);
+        Bounds3D bounds3D = new Bounds3D(0, 0, 0, width, height, depth);
         axisBoxShape.setBounds3D(bounds3D);
         return axisBoxShape;
     }
