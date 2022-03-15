@@ -3,9 +3,7 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Color;
-import snap.gfx3d.ParentShape3D;
-import snap.gfx3d.Path3D;
-import snap.gfx3d.Scene3D;
+import snap.gfx3d.*;
 import snap.util.MathUtils;
 import snapcharts.data.DataSet;
 import snapcharts.model.Intervals;
@@ -73,6 +71,12 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
         ContourHelper contourHelper = chartHelper.getContourHelper();
         int contourCount = contourHelper.getContourCount();
 
+        // Create VertexArrayShape
+        VertexArrayShape vertexArrayShape = new VertexArrayShape();
+        vertexArrayShape.setDoubleSided(true);
+        VertexArray vertexArray = vertexArrayShape.getVertexArray();
+        axisBoxShape.addChild(vertexArrayShape);
+
         // Iterate over triangles and add shape for each
         for (Mesh.Triangle triangle : triangles) {
 
@@ -108,19 +112,14 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             p3z = MathUtils.mapValueForRanges(p3z, minZ, maxZ, 0, prefH);
 
             // Create/config path for triangle
-            Path3D path3D = new Path3D();
-            path3D.setDoubleSided(true);
-            path3D.moveTo(p1x, p1z, p1y);
-            path3D.lineTo(p2x, p2z, p2y);
-            path3D.lineTo(p3x, p3z, p3y);
-            path3D.close();
+            vertexArray.addPoint(p1x, p1z, p1y);
+            vertexArray.addPoint(p2x, p2z, p2y);
+            vertexArray.addPoint(p3x, p3z, p3y);
 
             // Add triangle vertex colors
-            path3D.addColor(contourColor1);
-            path3D.addColor(contourColor2);
-            path3D.addColor(contourColor3);
-
-            axisBoxShape.addChild(path3D);
+            vertexArray.addColor(contourColor1);
+            vertexArray.addColor(contourColor2);
+            vertexArray.addColor(contourColor3);
         }
 
         // Return
