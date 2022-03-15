@@ -28,6 +28,9 @@ public class Line3DDataArea extends DataArea {
     // The SceneBuilder
     private Line3DSceneBuilder  _sceneBuilder;
 
+    // Runnables to rebuild chart deferred/coalesced
+    private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
+
     /**
      * Constructor.
      */
@@ -42,9 +45,7 @@ public class Line3DDataArea extends DataArea {
         }
 
         // Create/add CameraView
-        _camView = new CameraView() {
-            protected void layoutImpl() { rebuildScene(); }
-        };
+        _camView = new CameraView();
         addChild(_camView);
 
         // Get Sceme
@@ -68,9 +69,20 @@ public class Line3DDataArea extends DataArea {
     /**
      * Rebuilds the chart.
      */
-    protected void rebuildScene()
+    protected void rebuildChart()
+    {
+        if (_rebuildChartRun == null)
+            getEnv().runLater(_rebuildChartRun = _rebuildChartRunImpl);
+    }
+
+    /**
+     * Rebuilds the chart immediately.
+     */
+    protected void rebuildChartNow()
     {
         _sceneBuilder.rebuildScene();
+        _camView.repaint();
+        _rebuildChartRun = null;
     }
 
     /**
@@ -97,10 +109,16 @@ public class Line3DDataArea extends DataArea {
      */
     protected void layoutImpl()
     {
-        if (!isVisible()) return; // Shouldn't need this!
+        // Shouldn't need this!
+        if (!isVisible()) return;
+
+        // If CamView.Size needs update, setCamView size and rebuildChart()
         double viewW = getWidth();
         double viewH = getHeight();
-        _camView.setSize(viewW, viewH);
+        if (viewW != _camView.getWidth() || viewH != _camView.getHeight()) {
+            _camView.setSize(viewW, viewH);
+            rebuildChart();
+        }
     }
 
     /**
@@ -136,14 +154,14 @@ public class Line3DDataArea extends DataArea {
         if (_camView == null)
             return;
 
-        // Handle Trace changes: Rebuild scene
+        // Handle Trace changes: Rebuild chart
         Object source = aPC.getSource();
         if (source instanceof Trace || source instanceof TraceList)
-            _camView.relayout();
+            rebuildChart();
 
-        // Handle Scene changes: Rebuild scene
+        // Handle Scene changes: Rebuild chart
         if (source instanceof Scene)
-            _camView.relayout();
+            rebuildChart();
     }
 
     /**

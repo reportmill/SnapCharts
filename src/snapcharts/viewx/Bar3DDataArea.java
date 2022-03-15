@@ -29,6 +29,9 @@ public class Bar3DDataArea extends BarDataArea {
     // The SceneBuilder
     private Bar3DSceneBuilder  _sceneBuilder;
 
+    // Runnables to rebuild chart deferred/coalesced
+    private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
+
     // Constants
     private static final double DEFAULT_YAW = 26;
     private static final double DEFAULT_PITCH = 10;
@@ -46,9 +49,7 @@ public class Bar3DDataArea extends BarDataArea {
             return;
         }
 
-        _camView = new CameraView() {
-            protected void layoutImpl() { rebuildScene(); }
-        };
+        _camView = new CameraView();
         addChild(_camView);
         _camera = _camView.getCamera();
         _scene = _camView.getScene();
@@ -88,9 +89,20 @@ public class Bar3DDataArea extends BarDataArea {
     /**
      * Rebuilds the chart.
      */
-    protected void rebuildScene()
+    protected void rebuildChart()
+    {
+        if (_rebuildChartRun == null)
+            getEnv().runLater(_rebuildChartRun = _rebuildChartRunImpl);
+    }
+
+    /**
+     * Rebuilds the chart immediately.
+     */
+    protected void rebuildChartNow()
     {
         _sceneBuilder.rebuildScene();
+        _camView.repaint();
+        _rebuildChartRun = null;
     }
 
     /**
@@ -103,7 +115,7 @@ public class Bar3DDataArea extends BarDataArea {
         super.setReveal(aValue);
 
         if (_camView == null) return;
-        _camView.relayout();
+        rebuildChart();
 
         // Animate camera rotation
         Camera3D camera3D = _camView.getCamera();
@@ -127,10 +139,16 @@ public class Bar3DDataArea extends BarDataArea {
      */
     protected void layoutImpl()
     {
-        if (!isVisible()) return; // Shouldn't need this!
+        // Shouldn't need this!
+        if (!isVisible()) return;
+
+        // If CamView.Size needs update, setCamView size and rebuildChart()
         double viewW = getWidth();
         double viewH = getHeight();
-        _camView.setSize(viewW, viewH);
+        if (viewW != _camView.getWidth() || viewH != _camView.getHeight()) {
+            _camView.setSize(viewW, viewH);
+            rebuildChart();
+        }
     }
 
     /**
@@ -165,13 +183,17 @@ public class Bar3DDataArea extends BarDataArea {
         // Do normal version
         super.chartPartDidChange(aPC);
 
+        // If not visible, just return
+        if (!isVisible())
+            return;
+
         // Handle Trace changes: Rebuild scene
         Object source = aPC.getSource();
         if (source instanceof Trace || source instanceof TraceList)
-            _camView.relayout();
+            rebuildChart();
 
         // If Chart.Scene change, rebuild scene
         if (source instanceof Scene)
-            _camView.relayout();
+            rebuildChart();
     }
 }
