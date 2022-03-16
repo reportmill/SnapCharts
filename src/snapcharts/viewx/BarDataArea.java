@@ -199,7 +199,7 @@ public class BarDataArea extends DataArea {
         // Iterate over sections (points) and bars (trace) and if bar contains point, return data point
         for (int i=0; i<_pointCount; i++) { Section section = sections[i];
             for (int j = 0; j< _traceCount; j++) { Bar bar = section.bars[j];
-                if (bar.point == aDP) {
+                if (bar.point.equals(aDP)) {
                     double dispX = Math.round(bar.x + bar.width/2);
                     double dispY = Math.round(bar.y);
                     return new Point(dispX, dispY);
@@ -207,8 +207,9 @@ public class BarDataArea extends DataArea {
             }
         }
 
-        // Return null since bar not found for point
-        return null;
+        // Return zero point since bar not found for point - should not be possible
+        System.err.println("BarDataArea.getLocalXYForDataPoint: Point not found");
+        return new Point(0, 0);
     }
 
     /**
