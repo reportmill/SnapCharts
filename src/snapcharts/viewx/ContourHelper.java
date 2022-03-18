@@ -166,6 +166,40 @@ public class ContourHelper {
     }
 
     /**
+     * Returns the contour color for Z value.
+     */
+    public Color getContourColorForZ(double aValue)
+    {
+        // Get ColorCount and RangeCount
+        int colorCount = getContourCount();
+        int rangeCount = colorCount - 1;
+
+        // Get contour data min/max
+        Trace trace = _chartHelper.getTraceList().getTrace(0);
+        double zmin = trace.getMinZ();
+        double zmax = trace.getMaxZ();
+        double rangeLength = (zmax - zmin) / rangeCount;
+
+        // Iterate over ranges until we find containing range
+        for (int i = 0; i < rangeCount; i++) {
+
+            // If value within range, calculate fraction of range and blend colors
+            double rangeMax = zmin + rangeLength * i;
+            if (aValue <= rangeMax) {
+                double rangeMin = rangeMax - rangeLength;
+                double val = Math.max(aValue - rangeMin, 0);
+                double fract = val / rangeLength;
+                Color c1 = getContourColor(i);
+                Color c2 = getContourColor(i + 1);
+                return c1.blend(c2, fract);
+            }
+        }
+
+        // Return last color
+        return getContourColor(colorCount - 1);
+    }
+
+    /**
      * Resets cached values.
      */
     public void resetCachedValues()

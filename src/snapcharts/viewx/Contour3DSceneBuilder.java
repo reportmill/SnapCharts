@@ -97,9 +97,9 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
             double p3z = mesh.getZ(v3);
 
             // Get vertex colors
-            Color contourColor1 = getContourColor(p1z, minZ, maxZ, contourCount, contourHelper);
-            Color contourColor2 = getContourColor(p2z, minZ, maxZ, contourCount, contourHelper);
-            Color contourColor3 = getContourColor(p3z, minZ, maxZ, contourCount, contourHelper);
+            Color contourColor1 = contourHelper.getContourColorForZ(p1z);
+            Color contourColor2 = contourHelper.getContourColorForZ(p2z);
+            Color contourColor3 = contourHelper.getContourColorForZ(p3z);
 
             p1x = MathUtils.mapValueForRanges(p1x, minX, maxX, 0, prefW);
             p1y = MathUtils.mapValueForRanges(p1y, minY, maxY, 0, prefD);
@@ -124,15 +124,5 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
 
         // Return
         return axisBoxShape;
-    }
-
-    /**
-     * Returns color for mesh point z value.
-     */
-    private Color getContourColor(double aZ, double minZ, double maxZ, int contourCount, ContourHelper contourHelper)
-    {
-        int contourIndex = (int) Math.round(MathUtils.mapRangeValueToFractional(aZ, minZ, maxZ) * contourCount);
-        contourIndex = MathUtils.clamp(contourIndex, 0, contourCount - 1);
-        return contourHelper.getContourColor(contourIndex);
     }
 }
