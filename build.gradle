@@ -32,7 +32,7 @@ dependencies {
     // If Local SnapKit project, use it
     if (findProject(':SnapKit') != null) {
         println 'Using local SnapKit project'
-        compile project(':SnapKit')
+        implementation project(':SnapKit')
     }
 
     // Otherwise use GitHub SnapKit repo build
