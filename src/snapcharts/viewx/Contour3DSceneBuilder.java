@@ -43,10 +43,10 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
      * Override to add contour chart.
      */
     @Override
-    protected ParentShape3D createAxisBoxShape()
+    protected ParentShape createAxisBoxShape()
     {
         // Do normal version
-        ParentShape3D axisBoxShape = super.createAxisBoxShape();
+        ParentShape axisBoxShape = super.createAxisBoxShape();
 
         // Get axis box size
         double prefW = getPrefWidth();

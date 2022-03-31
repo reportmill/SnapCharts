@@ -6,7 +6,7 @@ import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.Color;
-import snap.gfx3d.ParentShape3D;
+import snap.gfx3d.ParentShape;
 import snap.gfx3d.Path3D;
 import snap.gfx3d.Scene3D;
 import snap.gfx3d.Shape3D;
@@ -34,10 +34,10 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
      * Override to add contour chart.
      */
     @Override
-    protected ParentShape3D createAxisBoxShape()
+    protected ParentShape createAxisBoxShape()
     {
         // Do normal version
-        ParentShape3D axisBoxShape = super.createAxisBoxShape();
+        ParentShape axisBoxShape = super.createAxisBoxShape();
 
         // Get Trace info
         TraceList traceList = _dataArea.getTraceList();

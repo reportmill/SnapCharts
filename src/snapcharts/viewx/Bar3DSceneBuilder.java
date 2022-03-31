@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Path;
 import snap.geom.Rect;
 import snap.gfx.Color;
-import snap.gfx3d.ParentShape3D;
+import snap.gfx3d.ParentShape;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
 
@@ -35,10 +35,10 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
      * Override to add bar chart.
      */
     @Override
-    protected ParentShape3D createAxisBoxShape()
+    protected ParentShape createAxisBoxShape()
     {
         // Do normal version
-        ParentShape3D axisBoxShape = super.createAxisBoxShape();
+        ParentShape axisBoxShape = super.createAxisBoxShape();
 
         // Iterate over sections
         int traceCount = _dataArea._traceCount;
@@ -61,7 +61,7 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     /**
      * Adds a 3d bar to scene.
      */
-    private void addBar(ParentShape3D axisBoxShape, double aX, double aY, double aW, double aH, Color aColor)
+    private void addBar(ParentShape axisBoxShape, double aX, double aY, double aW, double aH, Color aColor)
     {
         // If reveal is set, modify Y/H
         double reveal = _dataArea.getReveal();

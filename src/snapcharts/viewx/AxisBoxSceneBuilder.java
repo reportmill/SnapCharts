@@ -212,7 +212,7 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Rebuilds the chart.
      */
-    protected ParentShape3D createAxisBoxShape()
+    protected ParentShape createAxisBoxShape()
     {
         // Get preferred width, height, depth
         double width = getPrefWidth();
@@ -231,7 +231,7 @@ public abstract class AxisBoxSceneBuilder {
         Shape3D bottomShape = addSideTopBottom(width, 0, depth);
 
         // Reset shapes
-        ParentShape3D axisBoxShape = new ParentShape3D();
+        ParentShape axisBoxShape = new ParentShape();
         axisBoxShape.setChildren(frontShape, backShape, leftShape, rightShape, bottomShape);
         return axisBoxShape;
     }
@@ -242,17 +242,16 @@ public abstract class AxisBoxSceneBuilder {
     private Shape3D addSideFrontBack(double width, double height, double sideZ)
     {
         // Create wall shape
-        Path3D side = new Path3D();
+        Poly3D side = new Poly3D();
         side.setName(sideZ == 0 ? "AxisBack" : "AxisFront");
         side.setOpacity(.8f);
         side.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
 
         // Add side points
-        side.moveTo(0, 0, sideZ);
-        side.lineTo(width, 0, sideZ);
-        side.lineTo(width, height, sideZ);
-        side.lineTo(0, height, sideZ);
-        side.close();
+        side.addPoint(0, 0, sideZ);
+        side.addPoint(width, 0, sideZ);
+        side.addPoint(width, height, sideZ);
+        side.addPoint(0, height, sideZ);
 
         // If facing wrong direction, reverse
         double normalZ = sideZ == 0 ? 1 : -1;
@@ -282,17 +281,16 @@ public abstract class AxisBoxSceneBuilder {
     private Shape3D addSideLeftRight(double sideX, double height, double depth)
     {
         // Create side shape
-        Path3D side = new Path3D();
+        Poly3D side = new Poly3D();
         side.setName(sideX == 0 ? "AxisLeft" : "AxisRight");
         side.setColor(Color.WHITE);
         side.setOpacity(.8f);
 
         // Add side points
-        side.moveTo(sideX, 0, 0);
-        side.lineTo(sideX, height, 0);
-        side.lineTo(sideX, height, depth);
-        side.lineTo(sideX, 0, depth);
-        side.close();
+        side.addPoint(sideX, 0, 0);
+        side.addPoint(sideX, height, 0);
+        side.addPoint(sideX, height, depth);
+        side.addPoint(sideX, 0, depth);
 
         // If facing wrong direction, reverse
         double normalX = sideX == 0 ? 1 : -1;
@@ -322,18 +320,17 @@ public abstract class AxisBoxSceneBuilder {
     private Shape3D addSideTopBottom(double width, double sideY, double depth)
     {
         // Create side shape
-        Path3D side = new Path3D();
+        Poly3D side = new Poly3D();
         side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
         side.setColor(Color.LIGHTGRAY);
         side.setOpacity(.8f);
         side.setDoubleSided(true);
 
         // Add side points
-        side.moveTo(0, sideY, 0);
-        side.lineTo(0, sideY, depth);
-        side.lineTo(width, sideY, depth);
-        side.lineTo(width, sideY, 0);
-        side.close();
+        side.addPoint(0, sideY, 0);
+        side.addPoint(0, sideY, depth);
+        side.addPoint(width, sideY, depth);
+        side.addPoint(width, sideY, 0);
 
         // Create Painter3D for side border/grid, paint border, add to side
         Painter3D gridPainter = new Painter3D(width, depth);
