@@ -2,12 +2,13 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.geom.Path;
 import snap.geom.Rect;
+import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.ParentShape;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Scene3D;
+import snap.util.MathUtils;
 
 /**
  * This class builds the Bar3D scene.
@@ -39,6 +40,11 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     {
         // Do normal version
         ParentShape axisBoxShape = super.createAxisBoxShape();
+
+        // If Reveal is zero, just return
+        double reveal = _dataArea.getReveal();
+        if (MathUtils.equalsZero(reveal))
+            return axisBoxShape;
 
         // Iterate over sections
         int traceCount = _dataArea._traceCount;
@@ -75,10 +81,10 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
         double z1 = sceneDepth / 2 + barDepth / 2;
 
         // Create/configure bar path/path3d and add to scene
-        Path path = new Path(new Rect(aX, aY, aW, aH));
-        PathBox3D bar = new PathBox3D(path, z0, z1);
-        bar.setColor(aColor);
-        bar.setStroke(Color.BLACK, 1);
-        axisBoxShape.addChild(bar);
+        Shape barShape = new Rect(aX, aY, aW, aH);
+        PathBox3D barShape3D = new PathBox3D(barShape, z0, z1);
+        barShape3D.setColor(aColor);
+        barShape3D.setStroke(Color.BLACK, 1);
+        axisBoxShape.addChild(barShape3D);
     }
 }

@@ -6,10 +6,7 @@ import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.Color;
-import snap.gfx3d.ParentShape;
-import snap.gfx3d.Path3D;
-import snap.gfx3d.Scene3D;
-import snap.gfx3d.Shape3D;
+import snap.gfx3d.*;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
 
@@ -70,8 +67,8 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
         double sectionDepth = prefDepth / aCount;
         double lineZ = sectionDepth * (anIndex + .5);
 
-        // Create/configure line area path3d and add to scene
-        Path3D areaPath = new Path3D(path, lineZ);
+        // Create/configure line area Poly3D and add to scene
+        Poly3D areaPath = new Poly3D(path, lineZ);
         areaPath.setColor(dataFillColor);
         areaPath.setStroke(dataStrokeColor, 1);
         areaPath.setDoubleSided(true);
