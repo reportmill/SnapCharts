@@ -4,13 +4,11 @@
 package snapcharts.viewx;
 import snap.gfx.*;
 import snap.gfx3d.*;
+import snap.util.MathUtils;
 import snap.util.PropChange;
 import snap.view.ViewAnim;
-import snapcharts.model.Scene;
-import snapcharts.model.Trace;
-import snapcharts.model.TraceList;
-import snapcharts.view.AxisViewY;
-import snapcharts.view.ChartHelper;
+import snapcharts.model.*;
+import snapcharts.view.*;
 
 /**
  * A DataArea subclass to display the contents of bar chart.
@@ -166,13 +164,82 @@ public class Bar3DDataArea extends BarDataArea {
      * Override to suppress.
      */
     @Override
-    protected void paintFront(Painter aPntr) { }
+    protected void paintDataAreaAbove(Painter aPntr)
+    {
+        // If no AxisBox yet, just return
+        if (_scene.getChildCount() == 0) return;
+
+        // Paint Axis X tick labels
+        paintTickLabelsX(aPntr);
+    }
 
     /**
      * Override to suppress.
      */
-    @Override
-    protected void paintDataArea(Painter aPntr)  { }
+    protected void paintTickLabelsX(Painter aPntr)
+    {
+        // Get Axis intervals and Y+Z location of label in data space
+        //Intervals intervalsX = _sceneBuilder.getIntervalsX();
+        Intervals intervalsY = _sceneBuilder.getIntervalsY();
+        Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        double dataY = intervalsY.getMin();
+        double dataZ = intervalsZ.getMax() * 1.2;
+
+        // Get StringView
+        AxisViewX axisViewX = getAxisViewX();
+        Axis axisX = axisViewX.getAxis();
+        TickLabel tickLabel = new TickLabel(0);
+
+        // Get Trace and pointCount
+        TraceList traceList = getTraceList();
+        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
+        int pointCount = traceList.getPointCount();
+
+        // Get TickLabel attributes
+        Font tickLabelFont = axisX.getFont();
+        Paint tickTextFill = axisX.getTextFill();
+        tickLabel.setFont(tickLabelFont);
+        tickLabel.setTextFill(tickTextFill);
+
+        // Iterate over points and create/set TickLabel
+        for (int i = 0; i < pointCount; i++) {
+
+            // Get 3D point for label
+            double dataX = i + .5;
+            Point3D pointInView = convertDataToView(dataX, dataY, dataZ);
+
+            // Configure TickLabel and paint
+            String tickStr = trace.getString(i);
+            tickLabel.setText(tickStr);
+            tickLabel.setSizeToPrefSize();
+            tickLabel.setCenteredXY(pointInView.x, pointInView.y);
+            tickLabel.paintStringView(aPntr);
+        }
+    }
+
+    /**
+     * Returns given XYZ data point as Point3D in View coords.
+     */
+    public Point3D convertDataToView(double aX, double aY, double aZ)
+    {
+        // Get intervals and AxisBox
+        Intervals intervalsX = _sceneBuilder.getIntervalsX();
+        Intervals intervalsY = _sceneBuilder.getIntervalsY();
+        Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        Shape3D axisBox = _scene.getChild(0);
+
+        // Get XYZ in AxisBox space
+        double axisBoxX = MathUtils.mapValueForRanges(aX, intervalsX.getMin(), intervalsX.getMax(), axisBox.getMinX(), axisBox.getMaxX());
+        double axisBoxY = MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), axisBox.getMinY(), axisBox.getMaxY());
+        double axisBoxZ = MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), axisBox.getMinZ(), axisBox.getMaxZ());
+
+        // Transform point from AxisBox (Scene) to View space
+        Matrix3D sceneToView = _camera.getSceneToView();
+        Point3D pointInView = sceneToView.transformPoint(axisBoxX, axisBoxY, axisBoxZ);
+
+        // Return
+        return pointInView;
+    }
 
     /**
      * Override to rebuild Scene.

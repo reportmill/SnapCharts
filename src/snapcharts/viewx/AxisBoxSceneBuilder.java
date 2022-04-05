@@ -166,7 +166,8 @@ public abstract class AxisBoxSceneBuilder {
             return Intervals.getIntervalsSimple(0, traceCount);
         }
 
-        return null;
+        // Just return default { 0, 1 } Intervals for Bar3D
+        return Intervals.getIntervalsSimple(0, 1);
     }
 
     /**
