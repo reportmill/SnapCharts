@@ -4,6 +4,7 @@
 package snapcharts.viewx;
 import snap.gfx.*;
 import snap.gfx3d.*;
+import snap.text.TextFormat;
 import snap.util.MathUtils;
 import snap.util.PropChange;
 import snap.view.ViewAnim;
@@ -164,13 +165,20 @@ public class Bar3DDataArea extends BarDataArea {
      * Override to suppress.
      */
     @Override
+    protected void paintDataArea(Painter aPntr)  { }
+
+    /**
+     * Override to suppress.
+     */
+    @Override
     protected void paintDataAreaAbove(Painter aPntr)
     {
         // If no AxisBox yet, just return
-        if (_scene.getChildCount() == 0) return;
+        if (_scene == null || _scene.getChildCount() == 0) return;
 
         // Paint Axis X tick labels
         paintTickLabelsX(aPntr);
+        //paintTickLabelsY(aPntr);
     }
 
     /**
@@ -179,27 +187,21 @@ public class Bar3DDataArea extends BarDataArea {
     protected void paintTickLabelsX(Painter aPntr)
     {
         // Get Axis intervals and Y+Z location of label in data space
-        //Intervals intervalsX = _sceneBuilder.getIntervalsX();
         Intervals intervalsY = _sceneBuilder.getIntervalsY();
         Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
         double dataY = intervalsY.getMin();
         double dataZ = intervalsZ.getMax() * 1.2;
 
-        // Get StringView
-        AxisViewX axisViewX = getAxisViewX();
-        Axis axisX = axisViewX.getAxis();
+        // Create/configure TickLabel
         TickLabel tickLabel = new TickLabel(0);
+        Axis axisX = getAxisViewX().getAxis();
+        tickLabel.setFont(axisX.getFont());
+        tickLabel.setTextFill(axisX.getTextFill());
 
         // Get Trace and pointCount
         TraceList traceList = getTraceList();
         Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
         int pointCount = traceList.getPointCount();
-
-        // Get TickLabel attributes
-        Font tickLabelFont = axisX.getFont();
-        Paint tickTextFill = axisX.getTextFill();
-        tickLabel.setFont(tickLabelFont);
-        tickLabel.setTextFill(tickTextFill);
 
         // Iterate over points and create/set TickLabel
         for (int i = 0; i < pointCount; i++) {
@@ -210,6 +212,44 @@ public class Bar3DDataArea extends BarDataArea {
 
             // Configure TickLabel and paint
             String tickStr = trace.getString(i);
+            tickLabel.setText(tickStr);
+            tickLabel.setSizeToPrefSize();
+            tickLabel.setCenteredXY(pointInView.x, pointInView.y);
+            tickLabel.paintStringView(aPntr);
+        }
+    }
+
+    /**
+     * Override to suppress.
+     */
+    protected void paintTickLabelsY(Painter aPntr)
+    {
+        // Get Axis intervals and Y+Z location of label in data space
+        Intervals intervalsX = _sceneBuilder.getIntervalsX();
+        Intervals intervalsY = _sceneBuilder.getIntervalsY();
+        Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        double dataX = intervalsX.getMin();
+        double dataZ = intervalsZ.getMin();
+
+        // Create/configure TickLabel
+        TickLabel tickLabel = new TickLabel(0);
+        Axis axisY = getAxisViewY().getAxis();
+        tickLabel.setFont(axisY.getFont());
+        tickLabel.setTextFill(axisY.getTextFill());
+        TextFormat tickFormat = axisY.getTextFormat();
+
+        // Iterate over points and create/set TickLabel
+        for (int i = 0, iMax = intervalsY.getCount(); i < iMax; i++) {
+
+            // If not full interval, just skip
+            if (!intervalsY.isFullInterval(i)) continue;
+
+            // Get 3D point for label
+            double dataY = intervalsY.getInterval(i);
+            Point3D pointInView = convertDataToView(dataX, dataY, dataZ);
+
+            // Configure TickLabel and paint
+            String tickStr = tickFormat.format(dataY);
             tickLabel.setText(tickStr);
             tickLabel.setSizeToPrefSize();
             tickLabel.setCenteredXY(pointInView.x, pointInView.y);
