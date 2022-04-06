@@ -77,7 +77,7 @@ task buildExecJar(type: Jar) {
     }
     archiveBaseName = 'SnapChartsAll'
     from {
-        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     with jar
 }
