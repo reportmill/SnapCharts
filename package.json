@@ -12,7 +12,6 @@
     "jar": "build/libs/SnapChartsAll-1.0.0.jar",
     "javafx": false,
     "title": "SnapCharts",
-    "iconUrl": "scripts/icon.png",
     "documentTypes" : [
       {
         "extension" : "charts",

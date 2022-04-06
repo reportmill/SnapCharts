@@ -4,6 +4,7 @@
 /out/
 /target/
 .gradle
+/jdeploy-bundle/
 
 .DS_Store
 Project.settings
