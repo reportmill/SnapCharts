@@ -393,4 +393,20 @@ public abstract class AxisBoxSceneBuilder {
             aPntr.lineTo(x2, lineY);
         }
     }
+
+    /**
+     * Returns the side shape.
+     */
+    public FacetShape getSideShape(Side3D aSide)
+    {
+        ParentShape axisBoxShape = (ParentShape) _scene.getChild(0);
+        switch (aSide) {
+            case FRONT: return (FacetShape) axisBoxShape.getChild(0);
+            case BACK: return (FacetShape) axisBoxShape.getChild(1);
+            case LEFT: return (FacetShape) axisBoxShape.getChild(2);
+            case RIGHT: return (FacetShape) axisBoxShape.getChild(3);
+            case BOTTOM: return (FacetShape) axisBoxShape.getChild(4);
+            default: return null;
+        }
+    }
 }

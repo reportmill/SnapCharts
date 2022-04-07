@@ -2,6 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
+import snap.geom.Point;
+import snap.geom.Rect;
 import snap.gfx.*;
 import snap.gfx3d.*;
 import snap.text.TextFormat;
@@ -178,11 +180,11 @@ public class Bar3DDataArea extends BarDataArea {
 
         // Paint Axis X tick labels
         paintTickLabelsX(aPntr);
-        //paintTickLabelsY(aPntr);
+        paintTickLabelsY(aPntr);
     }
 
     /**
-     * Override to suppress.
+     * Paint TickLabels for X axis.
      */
     protected void paintTickLabelsX(Painter aPntr)
     {
@@ -190,13 +192,15 @@ public class Bar3DDataArea extends BarDataArea {
         Intervals intervalsY = _sceneBuilder.getIntervalsY();
         Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
         double dataY = intervalsY.getMin();
-        double dataZ = intervalsZ.getMax() * 1.2;
+        double dataZ1 = intervalsZ.getMin();
+        double dataZ2 = intervalsZ.getMax();
 
         // Create/configure TickLabel
         TickLabel tickLabel = new TickLabel(0);
         Axis axisX = getAxisViewX().getAxis();
         tickLabel.setFont(axisX.getFont());
         tickLabel.setTextFill(axisX.getTextFill());
+        tickLabel.setPadding(8, 8, 8, 8);
 
         // Get Trace and pointCount
         TraceList traceList = getTraceList();
@@ -208,19 +212,20 @@ public class Bar3DDataArea extends BarDataArea {
 
             // Get 3D point for label
             double dataX = i + .5;
-            Point3D pointInView = convertDataToView(dataX, dataY, dataZ);
+            Point3D axisPoint1 = convertDataToView(dataX, dataY, dataZ1);
+            Point3D axisPoint2 = convertDataToView(dataX, dataY, dataZ2);
 
             // Configure TickLabel and paint
             String tickStr = trace.getString(i);
             tickLabel.setText(tickStr);
-            tickLabel.setSizeToPrefSize();
-            tickLabel.setCenteredXY(pointInView.x, pointInView.y);
-            tickLabel.paintStringView(aPntr);
+
+            // Paint TickLabel with correct bounds for axis line
+            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
         }
     }
 
     /**
-     * Override to suppress.
+     * Paint TickLabels for Y axis.
      */
     protected void paintTickLabelsY(Painter aPntr)
     {
@@ -228,8 +233,18 @@ public class Bar3DDataArea extends BarDataArea {
         Intervals intervalsX = _sceneBuilder.getIntervalsX();
         Intervals intervalsY = _sceneBuilder.getIntervalsY();
         Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        double dataZ1 = intervalsZ.getMin();
+        double dataZ2 = intervalsZ.getMax();
+
+        // Get DataX: Either Min/Max depending on which side is facing camera
         double dataX = intervalsX.getMin();
-        double dataZ = intervalsZ.getMin();
+        FacetShape axisSide = _sceneBuilder.getSideShape(Side3D.LEFT);
+        Vector3D axisSideNormal = axisSide.getNormal();
+        Matrix3D sceneToCamera = _camera.getSceneToCamera();
+        Vector3D axisSideNormalInCamera = sceneToCamera.transformVector(axisSideNormal.clone());
+        Vector3D cameraNormal = _camera.getNormal();
+        if (axisSideNormalInCamera.isAligned(cameraNormal, false))
+            dataX = intervalsX.getMax();
 
         // Create/configure TickLabel
         TickLabel tickLabel = new TickLabel(0);
@@ -237,6 +252,7 @@ public class Bar3DDataArea extends BarDataArea {
         tickLabel.setFont(axisY.getFont());
         tickLabel.setTextFill(axisY.getTextFill());
         TextFormat tickFormat = axisY.getTextFormat();
+        tickLabel.setPadding(8, 8, 8, 8);
 
         // Iterate over points and create/set TickLabel
         for (int i = 0, iMax = intervalsY.getCount(); i < iMax; i++) {
@@ -246,15 +262,49 @@ public class Bar3DDataArea extends BarDataArea {
 
             // Get 3D point for label
             double dataY = intervalsY.getInterval(i);
-            Point3D pointInView = convertDataToView(dataX, dataY, dataZ);
+            Point3D axisPoint1 = convertDataToView(dataX, dataY, dataZ1);
+            Point3D axisPoint2 = convertDataToView(dataX, dataY, dataZ2);
 
-            // Configure TickLabel and paint
+            // Get/set TickLabel.Text
             String tickStr = tickFormat.format(dataY);
             tickLabel.setText(tickStr);
-            tickLabel.setSizeToPrefSize();
-            tickLabel.setCenteredXY(pointInView.x, pointInView.y);
-            tickLabel.paintStringView(aPntr);
+
+            // Paint TickLabel with correct bounds for axis line
+            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
         }
+    }
+
+    /**
+     * Paints TickLabel for given axis line.
+     */
+    private void paintTickLabelForPoints(Painter aPntr, TickLabel tickLabel, Point3D axisPoint1, Point3D axisPoint2)
+    {
+        // Make sure axisPoint1 is the close point
+        if (axisPoint2.z < axisPoint1.z) {
+            Point3D temp = axisPoint2;
+            axisPoint2 = axisPoint1;
+            axisPoint1 = temp;
+        }
+
+        // Get radial angle
+        double dx = axisPoint2.x - axisPoint1.x;
+        double dy = axisPoint1.y - axisPoint2.y;
+        double angleDeg = -getAngleBetweenPoints(1, 0, dx, dy);
+
+        // Set TickLabel size and get rect
+        tickLabel.setSizeToPrefSize();
+        Rect tickLabelBounds = tickLabel.getBoundsLocal();
+
+        // Position tickLabel so that
+        Point perimiterPoint = tickLabelBounds.getPerimeterPointForRadial(angleDeg, true);
+        double tickLabelX = axisPoint1.x - perimiterPoint.x;
+        double tickLabelY = axisPoint1.y - perimiterPoint.y;
+        tickLabel.setXY(tickLabelX, tickLabelY);
+        tickLabel.paintStringView(aPntr);
+
+        //tickLabel.setBorder(Color.PINK, 1);
+        //aPntr.setColor(Color.GREEN); aPntr.fill(new snap.geom.Ellipse(axisPoint1.x - 3, axisPoint1.y - 3, 6, 6));
+        //aPntr.setColor(Color.ORANGE); aPntr.fill(new snap.geom.Ellipse(axisPoint2.x - 3, axisPoint2.y - 3, 6, 6));
     }
 
     /**
@@ -302,5 +352,15 @@ public class Bar3DDataArea extends BarDataArea {
         // If Chart.Scene change, rebuild scene
         if (source instanceof Scene)
             rebuildChart();
+    }
+
+    /**
+     * Returns the angle between two XY points.
+     */
+    private static double getAngleBetweenPoints(double x1, double y1, double x2, double y2)
+    {
+        double angle = Math.atan2(y2 - y1, x2 - x1);
+        double angleDeg = Math.toDegrees(angle);
+        return angleDeg;
     }
 }
