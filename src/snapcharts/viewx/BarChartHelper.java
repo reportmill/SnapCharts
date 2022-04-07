@@ -39,11 +39,20 @@ public class BarChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
+        // Get traces
         TraceList traceList = getTraceList();
-        if (traceList.getTraceCount() == 0)
-            return new DataArea[0];
-        Trace trace = traceList.getTrace(0);
-        return new DataArea[] { new BarDataArea(this, trace) };
+        Trace[] traces = traceList.getTraces();
+        int traceCount = traces.length;
+
+        // Create DataArea for each Trace
+        DataArea[] dataAreas = new DataArea[traceCount];
+        for (int i = 0; i < traceCount; i++) {
+            Trace trace = traces[i];
+            dataAreas[i] = new BarDataArea(this, trace, i == 0);
+        }
+
+        // Return DataAreas
+        return dataAreas;
     }
 
     /**

@@ -39,7 +39,7 @@ public class Bar3DDataArea extends BarDataArea {
      */
     public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
-        super(aChartHelper, aTrace);
+        super(aChartHelper, aTrace, isVisible);
 
         // If not visible, just return
         if (!isVisible) {

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snap.geom.Point;
 import snap.geom.Rect;
@@ -28,9 +31,14 @@ public class BarDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public BarDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public BarDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace);
+
+        // If not visible, just return
+        if (!isVisible) {
+            setVisible(false);
+        }
 
         // Add top so top axis line isn't on edge
         //setPadding(5,0,0,0);
@@ -41,11 +49,16 @@ public class BarDataArea extends DataArea {
      */
     public BarStyle getBarStyle()
     {
+        // If already set, just return
         if (_barStyle != null) return _barStyle;
+
+        // Get/set BarStyle
         Trace trace = getTrace();
         TraceStyle traceStyle = trace.getTraceStyle();
         if (traceStyle instanceof BarStyle)
             return _barStyle = (BarStyle) traceStyle;
+
+        // Complain and create bogus new
         System.err.println("BarDataArea.getBarStyle: Trace doesn't have BarStyle");
         return _barStyle = new TraceStyleHpr(trace).getBarStyle();
     }
@@ -73,30 +86,30 @@ public class BarDataArea extends DataArea {
         // Get number of traces, points and section width
         _traceCount = traceCount;
         _pointCount = pointCount;
-        double sectionWidth = getWidth()/_pointCount;
+        double sectionWidth = getWidth() / _pointCount;
 
         // Get group widths
-        double groupWidthRatio = 1 - groupPad*2;
-        double groupWidth = groupWidthRatio>=0 ? groupWidthRatio*sectionWidth : 1;
-        double groupPadWidth = (sectionWidth - groupWidth)/2;
+        double groupWidthRatio = 1 - groupPad * 2;
+        double groupWidth = groupWidthRatio >= 0 ? groupWidthRatio * sectionWidth : 1;
+        double groupPadWidth = (sectionWidth - groupWidth) / 2;
 
         // Get width of individual bar (bar count + bar spaces + bar&space at either end)
-        double barWidthRatio = 1 - barPad*2;
-        double barWidth = barWidthRatio>=0 ? barWidthRatio*groupWidth/ _traceCount : 1;
-        double barPadWidth = barWidthRatio>=0 ? barPad*groupWidth/ _traceCount : 1;
+        double barWidthRatio = 1 - barPad * 2;
+        double barWidth = barWidthRatio >= 0 ? barWidthRatio * groupWidth / _traceCount : 1;
+        double barPadWidth = barWidthRatio >= 0 ? barPad * groupWidth / _traceCount : 1;
 
         // Create new bars array
         Section[] sections = new Section[pointCount];
 
         // Iterate over sections
-        for (int i=0;i<_pointCount;i++) {
+        for (int i = 0; i < _pointCount; i++) {
 
             // Create/set new section and section.bars
-            Section section = sections[i] = new Section(i*sectionWidth, 0, sectionWidth, viewHeight);
+            Section section = sections[i] = new Section(i * sectionWidth, 0, sectionWidth, viewHeight);
             section.bars = new Bar[_traceCount];
 
             // Iterate over traces
-            for (int j = 0; j< _traceCount; j++) {
+            for (int j = 0; j < _traceCount; j++) {
 
                 // Get data point
                 Trace trace = traces[j];
@@ -106,7 +119,7 @@ public class BarDataArea extends DataArea {
 
                 // Draw bar
                 Color color = colorTraces ? trace.getLineColor() : getColorMapColor(i);
-                double barX = i*sectionWidth + groupPadWidth + (j*2+1)*barPadWidth + j*barWidth;
+                double barX = i * sectionWidth + groupPadWidth + (j * 2 + 1) * barPadWidth + j * barWidth;
                 double barHeight = viewHeight - dispY;
                 section.bars[j] = new Bar(dataPoint, barX, dispY, barWidth, barHeight, color);
             }
@@ -132,7 +145,7 @@ public class BarDataArea extends DataArea {
     {
         // Get selected point index (section index)
         TracePoint dataPoint = getChartView().getTargDataPoint();
-        int selIndex = dataPoint!=null ? dataPoint.getIndex() : -1;
+        int selIndex = dataPoint != null ? dataPoint.getIndex() : -1;
 
         double viewW = getWidth();
         double viewH = getHeight();
@@ -141,32 +154,34 @@ public class BarDataArea extends DataArea {
         // If reveal is not full (1) then clip
         if (getReveal() < 1) {
             aPntr.save();
-            aPntr.clipRect(0,viewH*(1-getReveal()), viewW,viewH*getReveal());
+            aPntr.clipRect(0, viewH * (1 - getReveal()), viewW, viewH * getReveal());
         }
 
         // Iterate over sections
-        for (int i=0; i<_pointCount; i++) { Section section = sections[i];
+        for (int i = 0; i < _pointCount; i++) {
+            Section section = sections[i];
 
             // If selected section, draw background
             if (i == selIndex) {
                 aPntr.setColor(Color.get("#4488FF09"));
-                aPntr.fillRect(i*section.width, 0, section.width, viewH);
+                aPntr.fillRect(i * section.width, 0, section.width, viewH);
             }
 
             // Iterate over traces and draw bars
-            for (int j = 0; j< _traceCount; j++) { Bar bar = section.bars[j];
+            for (int j = 0; j < _traceCount; j++) {
+                Bar bar = section.bars[j];
                 aPntr.setColor(bar.color);
                 aPntr.fillRect(bar.x, bar.y, bar.width, bar.height - .5);
             }
         }
 
-        // If reveal not full, resture gstate
-        if (getReveal() < 1) aPntr.restore();
+        // If reveal not full, restore gstate
+        if (getReveal() < 1)
+            aPntr.restore();
     }
 
     /**
      * Returns the data point best associated with given x/y (null if none).
-     * @return
      */
     @Override
     public TracePoint getDataPointForLocalXY(double aX, double aY)
@@ -175,8 +190,10 @@ public class BarDataArea extends DataArea {
         Section[] sections = getSections();
 
         // Iterate over sections (points) and bars (trace) and if bar contains point, return data point
-        for (int i = 0; i < _pointCount; i++) { Section section = sections[i];
-            for (int j = 0; j < _traceCount; j++) { Bar bar = section.bars[j];
+        for (int i = 0; i < _pointCount; i++) {
+            Section section = sections[i];
+            for (int j = 0; j < _traceCount; j++) {
+                Bar bar = section.bars[j];
                 if (bar.contains(aX, aY))
                     return bar.point;
             }
@@ -188,6 +205,7 @@ public class BarDataArea extends DataArea {
 
     /**
      * Returns the given data point X/Y in this view coords.
+     *
      * @param aDP
      */
     @Override
@@ -197,10 +215,12 @@ public class BarDataArea extends DataArea {
         Section[] sections = getSections();
 
         // Iterate over sections (points) and bars (trace) and if bar contains point, return data point
-        for (int i=0; i<_pointCount; i++) { Section section = sections[i];
-            for (int j = 0; j< _traceCount; j++) { Bar bar = section.bars[j];
+        for (int i = 0; i < _pointCount; i++) {
+            Section section = sections[i];
+            for (int j = 0; j < _traceCount; j++) {
+                Bar bar = section.bars[j];
                 if (bar.point.equals(aDP)) {
-                    double dispX = Math.round(bar.x + bar.width/2);
+                    double dispX = Math.round(bar.x + bar.width / 2);
                     double dispY = Math.round(bar.y);
                     return new Point(dispX, dispY);
                 }
@@ -234,7 +254,7 @@ public class BarDataArea extends DataArea {
     @Override
     public void setWidth(double aValue)
     {
-        if (aValue==getWidth()) return;
+        if (aValue == getWidth()) return;
         super.setWidth(aValue);
         clearSections();
     }
@@ -245,7 +265,7 @@ public class BarDataArea extends DataArea {
     @Override
     public void setHeight(double aValue)
     {
-        if (aValue==getHeight()) return;
+        if (aValue == getHeight()) return;
         super.setHeight(aValue);
         clearSections();
     }
@@ -259,13 +279,20 @@ public class BarDataArea extends DataArea {
         double x, y, width, height;
         Bar bars[];
 
-        /** Creates a Section. */
+        /**
+         * Creates a Section.
+         */
         public Section(double aX, double aY, double aW, double aH)
         {
-            x = aX; y = aY; width = aW; height = aH;
+            x = aX;
+            y = aY;
+            width = aW;
+            height = aH;
         }
 
-        /** Returns whether section contains point. */
+        /**
+         * Returns whether section contains point.
+         */
         public boolean contains(double aX, double aY)
         {
             return Rect.contains(x, y, width, height, aX, aY);
@@ -282,15 +309,22 @@ public class BarDataArea extends DataArea {
         double x, y, width, height;
         Color color;
 
-        /** Creates a bar. */
+        /**
+         * Creates a bar.
+         */
         public Bar(TracePoint aDP, double aX, double aY, double aW, double aH, Color aColor)
         {
             point = aDP;
-            x = aX; y = aY; width = aW; height = aH;
+            x = aX;
+            y = aY;
+            width = aW;
+            height = aH;
             color = aColor;
         }
 
-        /** Returns whether bar contains point. */
+        /**
+         * Returns whether bar contains point.
+         */
         public boolean contains(double aX, double aY)
         {
             return Rect.contains(x, y, width, height, aX, aY);
