@@ -30,9 +30,6 @@ public class Bar3DDataArea extends BarDataArea {
     // The ChartBuilder to build chart shape
     private Bar3DChartBuilder  _chartBuilder;
 
-    // Runnables to rebuild chart deferred/coalesced
-    private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
-
     // Constants
     private static final double DEFAULT_YAW = 26;
     private static final double DEFAULT_PITCH = 10;
@@ -92,18 +89,7 @@ public class Bar3DDataArea extends BarDataArea {
      */
     protected void rebuildChart()
     {
-        if (_rebuildChartRun == null)
-            getEnv().runLater(_rebuildChartRun = _rebuildChartRunImpl);
-    }
-
-    /**
-     * Rebuilds the chart immediately.
-     */
-    protected void rebuildChartNow()
-    {
-        _chartBuilder.rebuildScene();
-        _camView.repaint();
-        _rebuildChartRun = null;
+        _chartBuilder.rebuildAxisBox();
     }
 
     /**

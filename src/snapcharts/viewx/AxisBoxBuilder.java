@@ -5,6 +5,7 @@ package snapcharts.viewx;
 import snap.gfx.Color;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
+import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.DataArea;
@@ -21,6 +22,9 @@ public abstract class AxisBoxBuilder {
     // The Scene
     private Scene3D  _scene;
 
+    // Runnables to rebuild chart deferred/coalesced
+    private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildAxisBoxNow();
+
     /**
      * Constructor.
      */
@@ -28,6 +32,32 @@ public abstract class AxisBoxBuilder {
     {
         _dataArea = aDataArea;
         _scene = aScene;
+    }
+
+    /**
+     * Rebuilds the chart.
+     */
+    protected void rebuildAxisBox()
+    {
+        if (_rebuildChartRun == null)
+            ViewUtils.runLater(_rebuildChartRun = _rebuildChartRunImpl);
+    }
+
+    /**
+     * Rebuilds the chart immediately.
+     */
+    protected void rebuildAxisBoxNow()
+    {
+        // Remove all existing children
+        _scene.removeChildren();
+
+        // Get AxisBoxShape and add to scene
+        Shape3D axisBoxShape = getAxisBoxShape();
+        _scene.addChild(axisBoxShape);
+
+        // Repaint DataArea and reset runnable
+        _dataArea.repaint();
+        _rebuildChartRun = null;
     }
 
     /**
@@ -182,19 +212,6 @@ public abstract class AxisBoxBuilder {
             case Z: return getIntervalsZ();
             default: throw new RuntimeException("AxisBoxBuilder.getIntervalsForAxis: Invalid axis: " + anAxisType);
         }
-    }
-
-    /**
-     * Rebuilds the chart.
-     */
-    protected void rebuildScene()
-    {
-        // Remove all existing children
-        _scene.removeChildren();
-
-        // Get AxisBoxShape and add to scene
-        Shape3D axisBoxShape = getAxisBoxShape();
-        _scene.addChild(axisBoxShape);
     }
 
     /**

@@ -32,9 +32,6 @@ public class Contour3DDataArea extends DataArea {
     // The ChartBuilder to build chart shape
     private Contour3DChartBuilder  _chartBuilder;
 
-    // Runnables to rebuild chart deferred/coalesced
-    private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
-
     /**
      * Constructor.
      */
@@ -75,18 +72,7 @@ public class Contour3DDataArea extends DataArea {
      */
     protected void rebuildChart()
     {
-        if (_rebuildChartRun == null)
-            getEnv().runLater(_rebuildChartRun = _rebuildChartRunImpl);
-    }
-
-    /**
-     * Rebuilds the chart immediately.
-     */
-    protected void rebuildChartNow()
-    {
-        _chartBuilder.rebuildScene();
-        _camView.repaint();
-        _rebuildChartRun = null;
+        _chartBuilder.rebuildAxisBox();
     }
 
     /**
