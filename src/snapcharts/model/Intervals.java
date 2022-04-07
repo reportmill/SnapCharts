@@ -151,6 +151,29 @@ public class Intervals {
     }
 
     /**
+     * Return intervals for a category axis { .5, 1, 2, ..., Count, Count + .5 }.
+     */
+    public static Intervals getCategoryIntervals(int aCount)
+    {
+        // Create/init Intervals
+        Intervals ivals = new Intervals();
+        ivals._minVal = .5;
+        ivals._maxVal = aCount + .5;
+        ivals._delta = 1;
+        ivals._count = aCount + 2;
+
+        // Create/init divs
+        int len = aCount + 2;
+        ivals._divs = new double[len];
+        ivals._divs[0] = ivals._minVal;
+        for (int i = 1; i < len - 1; i++) ivals._divs[i] = i;
+        ivals._divs[len - 1] = ivals._maxVal;
+
+        // Set delta
+        return ivals;
+    }
+
+    /**
      * Just returns intervals of whole numbers from min (floor) to max (ceil), incremented by 1.
      */
     public static Intervals getIntervalsSimple(double aMin, double aMax, boolean minFixed, boolean maxFixed)

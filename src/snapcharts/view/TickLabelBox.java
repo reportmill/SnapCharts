@@ -104,13 +104,15 @@ public class TickLabelBox extends ChildView {
      */
     public static TickLabel[] createTickLabels(AxisView axisView)
     {
-        // Handle Category axis special
-        if (axisView.isCategoryAxis())
-            return createTickLabelsForCategoryAxis(axisView);
-
         // Get Intervals info
         Intervals intervals = axisView.getIntervals();
         int intervalCount = intervals.getCount();
+
+        // Handle category axis
+        boolean isCategoryAxis = axisView.isCategoryAxis();
+        TraceList traceList = axisView.getTraceList();
+        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
+        int pointCount = traceList.getPointCount();
 
         // Get TickLabel attributes
         Axis axis = axisView.getAxis();
@@ -132,9 +134,13 @@ public class TickLabelBox extends ChildView {
             // Get interval
             double dataX = intervals.getInterval(i);
 
+            // Get label string
+            String str = isCategoryAxis && i - 1 < pointCount ?
+                    trace.getString(i - 1) :
+                    tickFormat.format(dataX);
+
             // Create/config/add TickLabel
             TickLabel tickLabel = new TickLabel(dataX);
-            String str = tickFormat.format(dataX);
             tickLabel.setText(str);
             tickLabel.setFont(tickLabelFont);
             tickLabel.setTextFill(tickTextFill);
@@ -143,35 +149,6 @@ public class TickLabelBox extends ChildView {
 
         // Create/return array of TickLabels
         return tickLabels.toArray(new TickLabel[0]);
-    }
-
-    /**
-     * Creates TickLabels for Category Axis (e.g. for Bar charts).
-     */
-    public static TickLabel[] createTickLabelsForCategoryAxis(AxisView axisView)
-    {
-        // Get Trace and pointCount
-        TraceList traceList = axisView.getTraceList();
-        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
-        int pointCount = traceList.getPointCount();
-        TickLabel[] tickLabels = new TickLabel[pointCount];
-
-        // Get TickLabel attributes
-        Axis axis = axisView.getAxis();
-        Font tickLabelFont = axis.getFont();
-        Paint tickTextFill = axis.getTextFill();
-
-        // Iterate over points and create/set TickLabel
-        for (int i = 0; i < pointCount; i++) {
-            TickLabel tickLabel = tickLabels[i] = new TickLabel(i + .5);
-            String str = trace.getString(i); // was getC(i)
-            tickLabel.setText(str);
-            tickLabel.setFont(tickLabelFont);
-            tickLabel.setTextFill(tickTextFill);
-        }
-
-        // Return TickLabels
-        return tickLabels;
     }
 
     /**

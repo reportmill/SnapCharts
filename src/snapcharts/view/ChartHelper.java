@@ -369,11 +369,9 @@ public abstract class ChartHelper {
      */
     protected Intervals createIntervalsForCategoryAxis()
     {
-        boolean isBar = getChartType().isBarType();
         TraceList traceList = getTraceList();
         int pointCount = traceList.getPointCount();
-        int maxX = isBar ? pointCount : pointCount - 1;
-        return Intervals.getIntervalsSimple(0, maxX);
+        return Intervals.getCategoryIntervals(pointCount);
     }
 
     /**
