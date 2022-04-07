@@ -8,11 +8,12 @@ import snap.util.MathUtils;
 import snapcharts.model.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.DataArea;
+import snapcharts.view.TickLabel;
 
 /**
- * A Scene to draw an axis box.
+ * This class builds the AxisBox shape to hold most 3D chart shapes.
  */
-public abstract class AxisBoxSceneBuilder {
+public abstract class AxisBoxBuilder {
 
     // The DataArea
     private DataArea  _dataArea;
@@ -23,7 +24,7 @@ public abstract class AxisBoxSceneBuilder {
     /**
      * Constructor.
      */
-    public AxisBoxSceneBuilder(DataArea aDataArea, Scene3D aScene)
+    public AxisBoxBuilder(DataArea aDataArea, Scene3D aScene)
     {
         _dataArea = aDataArea;
         _scene = aScene;
@@ -110,7 +111,7 @@ public abstract class AxisBoxSceneBuilder {
             case TOP: case BOTTOM: return new AxisType[] { AxisType.X, AxisType.Y };
 
             // Other is error
-            default: throw new RuntimeException("AxisBoxSceneBuilder.getAxesForSide: Invalid side: " + aSide);
+            default: throw new RuntimeException("AxisBoxBuilder.getAxesForSide: Invalid side: " + aSide);
         }
     }
 
@@ -131,7 +132,7 @@ public abstract class AxisBoxSceneBuilder {
             case TOP: case BOTTOM: return new AxisType[] { AxisType.X, AxisType.Z };
 
             // Other is error
-            default: throw new RuntimeException("AxisBoxSceneBuilder.getAxesForSide: Invalid side: " + aSide);
+            default: throw new RuntimeException("AxisBoxBuilder.getAxesForSide: Invalid side: " + aSide);
         }
     }
 
@@ -179,7 +180,7 @@ public abstract class AxisBoxSceneBuilder {
             case X: return getIntervalsX();
             case Y: return getIntervalsY();
             case Z: return getIntervalsZ();
-            default: throw new RuntimeException("AxisBoxSceneBuilder.getIntervalsForAxis: Invalid axis: " + anAxisType);
+            default: throw new RuntimeException("AxisBoxBuilder.getIntervalsForAxis: Invalid axis: " + anAxisType);
         }
     }
 
@@ -408,5 +409,35 @@ public abstract class AxisBoxSceneBuilder {
             case BOTTOM: return (FacetShape) axisBoxShape.getChild(4);
             default: return null;
         }
+    }
+
+    /**
+     * Returns whether given side is facing camera.
+     */
+    public boolean isSideFacingCamera(Side3D aSide)
+    {
+        FacetShape axisSide = getSideShape(aSide);
+        Vector3D axisSideNormal = axisSide.getNormal();
+        Camera3D camera = _scene.getCamera();
+        Matrix3D sceneToCamera = camera.getSceneToCamera();
+        Vector3D axisSideNormalInCamera = sceneToCamera.transformVector(axisSideNormal.clone());
+        Vector3D cameraNormal = camera.getNormal();
+        boolean isFacing = !axisSideNormalInCamera.isAligned(cameraNormal, false);
+        return isFacing;
+    }
+
+    /**
+     * Returns a TickLabel for given AxisType.
+     */
+    public TickLabel getTickLabelForAxis(AxisType axisType)
+    {
+        Chart chart = _dataArea.getChart();
+        Axis axis = chart.getAxisForType(axisType);
+
+        TickLabel tickLabel = new TickLabel(0);
+        tickLabel.setFont(axis.getFont());
+        tickLabel.setTextFill(axis.getTextFill());
+        tickLabel.setPadding(8, 8, 8, 8);
+        return tickLabel;
     }
 }

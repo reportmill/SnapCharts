@@ -29,8 +29,8 @@ public class Contour3DDataArea extends DataArea {
     // The Scene
     private Scene3D _scene;
 
-    // The SceneBuilder
-    private Contour3DSceneBuilder  _sceneBuilder;
+    // The ChartBuilder to build chart shape
+    private Contour3DChartBuilder  _chartBuilder;
 
     // Runnables to rebuild chart deferred/coalesced
     private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
@@ -55,8 +55,8 @@ public class Contour3DDataArea extends DataArea {
         // Get Sceme
         _scene = _camView.getScene();
 
-        // Create/set Contour3DSceneBuilder to create 3D scene
-        _sceneBuilder = new Contour3DSceneBuilder(this, _scene);
+        // Create/set ChartBuilder
+        _chartBuilder = new Contour3DChartBuilder(this, _scene);
 
         // Get/configure camera
         _camera = _camView.getCamera();
@@ -84,7 +84,7 @@ public class Contour3DDataArea extends DataArea {
      */
     protected void rebuildChartNow()
     {
-        _sceneBuilder.rebuildScene();
+        _chartBuilder.rebuildScene();
         _camView.repaint();
         _rebuildChartRun = null;
     }

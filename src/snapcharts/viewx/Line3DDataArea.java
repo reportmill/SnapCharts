@@ -25,8 +25,8 @@ public class Line3DDataArea extends DataArea {
     // The Scene
     private Scene3D _scene;
 
-    // The SceneBuilder
-    private Line3DSceneBuilder  _sceneBuilder;
+    // The ChartBuilder to build chart shape
+    private Line3DChartBuilder  _chartBuilder;
 
     // Runnables to rebuild chart deferred/coalesced
     private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
@@ -51,8 +51,8 @@ public class Line3DDataArea extends DataArea {
         // Get Sceme
         _scene = _camView.getScene();
 
-        // Create/set Bar3DSceneBuilder to create 3D scene
-        _sceneBuilder = new Line3DSceneBuilder(this, _scene);
+        // Create/set ChartBuilder
+        _chartBuilder = new Line3DChartBuilder(this, _scene);
 
         // Get/configure camera
         _camera = _camView.getCamera();
@@ -80,7 +80,7 @@ public class Line3DDataArea extends DataArea {
      */
     protected void rebuildChartNow()
     {
-        _sceneBuilder.rebuildScene();
+        _chartBuilder.rebuildScene();
         _camView.repaint();
         _rebuildChartRun = null;
     }

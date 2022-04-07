@@ -12,7 +12,7 @@ import snapcharts.util.Mesh;
 /**
  * This class builds the Line3D scene.
  */
-public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
+public class Contour3DChartBuilder extends AxisBoxBuilder {
 
     // The Line3DDataArea
     private Contour3DDataArea  _dataArea;
@@ -20,7 +20,7 @@ public class Contour3DSceneBuilder extends AxisBoxSceneBuilder {
     /**
      * Constructor.
      */
-    public Contour3DSceneBuilder(Contour3DDataArea aDataArea, Scene3D aScene)
+    public Contour3DChartBuilder(Contour3DDataArea aDataArea, Scene3D aScene)
     {
         super(aDataArea, aScene);
         _dataArea = aDataArea;

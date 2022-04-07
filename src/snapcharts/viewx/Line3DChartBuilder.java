@@ -13,7 +13,7 @@ import snapcharts.model.TraceList;
 /**
  * This class builds the Line3D scene.
  */
-public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
+public class Line3DChartBuilder extends AxisBoxBuilder {
 
     // The Line3DDataArea
     private Line3DDataArea  _dataArea;
@@ -21,7 +21,7 @@ public class Line3DSceneBuilder extends AxisBoxSceneBuilder {
     /**
      * Constructor.
      */
-    public Line3DSceneBuilder(Line3DDataArea aDataArea, Scene3D aScene)
+    public Line3DChartBuilder(Line3DDataArea aDataArea, Scene3D aScene)
     {
         super(aDataArea, aScene);
         _dataArea = aDataArea;

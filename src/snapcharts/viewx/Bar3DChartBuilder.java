@@ -13,7 +13,7 @@ import snap.util.MathUtils;
 /**
  * This class builds the Bar3D scene.
  */
-public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
+public class Bar3DChartBuilder extends AxisBoxBuilder {
 
     // The Bar3DDataArea
     private Bar3DDataArea  _dataArea;
@@ -21,7 +21,7 @@ public class Bar3DSceneBuilder extends AxisBoxSceneBuilder {
     /**
      * Constructor.
      */
-    public Bar3DSceneBuilder(Bar3DDataArea aDataArea, Scene3D aScene)
+    public Bar3DChartBuilder(Bar3DDataArea aDataArea, Scene3D aScene)
     {
         super(aDataArea, aScene);
         _dataArea = aDataArea;

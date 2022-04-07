@@ -27,8 +27,8 @@ public class Bar3DDataArea extends BarDataArea {
     // The Scene
     private Scene3D  _scene;
 
-    // The SceneBuilder
-    private Bar3DSceneBuilder  _sceneBuilder;
+    // The ChartBuilder to build chart shape
+    private Bar3DChartBuilder  _chartBuilder;
 
     // Runnables to rebuild chart deferred/coalesced
     private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
@@ -55,8 +55,8 @@ public class Bar3DDataArea extends BarDataArea {
         _camera = _camView.getCamera();
         _scene = _camView.getScene();
 
-        // Create/set Bar3DSceneBuilder to create 3D scene
-        _sceneBuilder = new Bar3DSceneBuilder(this, _scene);
+        // Create/set ChartBuilder
+        _chartBuilder = new Bar3DChartBuilder(this, _scene);
 
         setDefaultViewTransform();
     }
@@ -101,7 +101,7 @@ public class Bar3DDataArea extends BarDataArea {
      */
     protected void rebuildChartNow()
     {
-        _sceneBuilder.rebuildScene();
+        _chartBuilder.rebuildScene();
         _camView.repaint();
         _rebuildChartRun = null;
     }
@@ -189,18 +189,14 @@ public class Bar3DDataArea extends BarDataArea {
     protected void paintTickLabelsX(Painter aPntr)
     {
         // Get Axis intervals and Y+Z location of label in data space
-        Intervals intervalsY = _sceneBuilder.getIntervalsY();
-        Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        Intervals intervalsY = _chartBuilder.getIntervalsY();
+        Intervals intervalsZ = _chartBuilder.getIntervalsZ();
         double dataY = intervalsY.getMin();
         double dataZ1 = intervalsZ.getMin();
         double dataZ2 = intervalsZ.getMax();
 
         // Create/configure TickLabel
-        TickLabel tickLabel = new TickLabel(0);
-        Axis axisX = getAxisViewX().getAxis();
-        tickLabel.setFont(axisX.getFont());
-        tickLabel.setTextFill(axisX.getTextFill());
-        tickLabel.setPadding(8, 8, 8, 8);
+        TickLabel tickLabel = _chartBuilder.getTickLabelForAxis(AxisType.X);
 
         // Get Trace and pointCount
         TraceList traceList = getTraceList();
@@ -230,29 +226,20 @@ public class Bar3DDataArea extends BarDataArea {
     protected void paintTickLabelsY(Painter aPntr)
     {
         // Get Axis intervals and Y+Z location of label in data space
-        Intervals intervalsX = _sceneBuilder.getIntervalsX();
-        Intervals intervalsY = _sceneBuilder.getIntervalsY();
-        Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        Intervals intervalsX = _chartBuilder.getIntervalsX();
+        Intervals intervalsY = _chartBuilder.getIntervalsY();
+        Intervals intervalsZ = _chartBuilder.getIntervalsZ();
         double dataZ1 = intervalsZ.getMin();
         double dataZ2 = intervalsZ.getMax();
 
         // Get DataX: Either Min/Max depending on which side is facing camera
-        double dataX = intervalsX.getMin();
-        FacetShape axisSide = _sceneBuilder.getSideShape(Side3D.LEFT);
-        Vector3D axisSideNormal = axisSide.getNormal();
-        Matrix3D sceneToCamera = _camera.getSceneToCamera();
-        Vector3D axisSideNormalInCamera = sceneToCamera.transformVector(axisSideNormal.clone());
-        Vector3D cameraNormal = _camera.getNormal();
-        if (axisSideNormalInCamera.isAligned(cameraNormal, false))
-            dataX = intervalsX.getMax();
+        boolean isLeftSideFacingCamera = _chartBuilder.isSideFacingCamera(Side3D.LEFT);
+        double dataX = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
 
         // Create/configure TickLabel
-        TickLabel tickLabel = new TickLabel(0);
-        Axis axisY = getAxisViewY().getAxis();
-        tickLabel.setFont(axisY.getFont());
-        tickLabel.setTextFill(axisY.getTextFill());
-        TextFormat tickFormat = axisY.getTextFormat();
-        tickLabel.setPadding(8, 8, 8, 8);
+        TickLabel tickLabel = _chartBuilder.getTickLabelForAxis(AxisType.Y);
+        Axis axis = getChart().getAxisForType(AxisType.Y);
+        TextFormat tickFormat = axis.getTextFormat();
 
         // Iterate over points and create/set TickLabel
         for (int i = 0, iMax = intervalsY.getCount(); i < iMax; i++) {
@@ -313,9 +300,9 @@ public class Bar3DDataArea extends BarDataArea {
     public Point3D convertDataToView(double aX, double aY, double aZ)
     {
         // Get intervals and AxisBox
-        Intervals intervalsX = _sceneBuilder.getIntervalsX();
-        Intervals intervalsY = _sceneBuilder.getIntervalsY();
-        Intervals intervalsZ = _sceneBuilder.getIntervalsZ();
+        Intervals intervalsX = _chartBuilder.getIntervalsX();
+        Intervals intervalsY = _chartBuilder.getIntervalsY();
+        Intervals intervalsZ = _chartBuilder.getIntervalsZ();
         Shape3D axisBox = _scene.getChild(0);
 
         // Get XYZ in AxisBox space
