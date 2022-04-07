@@ -376,15 +376,21 @@ public abstract class AxisBoxBuilder {
         // If no intervals, just return
         if (theIntervals == null) return;
 
-        // Get X end points
-        int intervalCount = theIntervals.getCount() - 1;
+        // Get interval min/max and Y end points
+        double ivalMin = theIntervals.getMin();
+        double ivalMax = theIntervals.getMax();
         double y1 = 0;
         double y2 = aHeight;
 
         // Iterate over intervals and paint grid line path
-        for (int i = 1; i < intervalCount; i++) {
-            double intervalRatio = i / (double) intervalCount;
-            double lineX = aWidth * intervalRatio;
+        for (int i = 0, iMax = theIntervals.getCount(); i < iMax; i++) {
+
+            // If not full interval, just skip
+            if (!theIntervals.isFullInterval(i)) continue;
+
+            // Get interval, map to Width and draw line
+            double ival = theIntervals.getInterval(i);
+            double lineX = MathUtils.mapValueForRanges(ival, ivalMin, ivalMax, 0, aWidth);
             aPntr.moveTo(lineX, y1);
             aPntr.lineTo(lineX, y2);
         }
@@ -398,15 +404,21 @@ public abstract class AxisBoxBuilder {
         // If no intervals, just return
         if (theIntervals == null) return;
 
-        // Get X end points
-        int intervalCount = theIntervals.getCount() - 1;
+        // Get interval min/max and X end points
+        double ivalMin = theIntervals.getMin();
+        double ivalMax = theIntervals.getMax();
         double x1 = 0;
         double x2 = aWidth;
 
         // Iterate over intervals and paint grid line path
-        for (int i = 1; i < intervalCount; i++) {
-            double intervalRatio = i / (double) intervalCount;
-            double lineY = aHeight * intervalRatio;
+        for (int i = 0, iMax = theIntervals.getCount(); i < iMax; i++) {
+
+            // If not full interval, just skip
+            if (!theIntervals.isFullInterval(i)) continue;
+
+            // Get interval, map to Height and draw line
+            double ival = theIntervals.getInterval(i);
+            double lineY = MathUtils.mapValueForRanges(ival, ivalMin, ivalMax, 0, aHeight);
             aPntr.moveTo(x1, lineY);
             aPntr.lineTo(x2, lineY);
         }

@@ -175,6 +175,7 @@ public class Bar3DDataArea extends BarDataArea {
     protected void paintTickLabelsX(Painter aPntr)
     {
         // Get Axis intervals and Y+Z location of label in data space
+        Intervals intervalsX = _chartBuilder.getIntervalsX();
         Intervals intervalsY = _chartBuilder.getIntervalsY();
         Intervals intervalsZ = _chartBuilder.getIntervalsZ();
         double dataY = intervalsY.getMin();
@@ -183,22 +184,33 @@ public class Bar3DDataArea extends BarDataArea {
 
         // Create/configure TickLabel
         TickLabel tickLabel = _chartBuilder.getTickLabelForAxis(AxisType.X);
+        Axis axis = getChart().getAxisForType(AxisType.X);
+        TextFormat tickFormat = axis.getTextFormat();
 
-        // Get Trace and pointCount
-        TraceList traceList = getTraceList();
+        // Handle category axis
+        AxisViewX axisViewX = getAxisViewX();
+        boolean isCategoryAxis = axisViewX.isCategoryAxis();
+        TraceList traceList = axisViewX.getTraceList();
         Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
         int pointCount = traceList.getPointCount();
 
-        // Iterate over points and create/set TickLabel
-        for (int i = 0; i < pointCount; i++) {
+        // Iterate over intervals and configure/paint TickLabel for each
+        for (int i = 0, iMax = intervalsX.getCount(); i < iMax; i++) {
+
+            // If not full interval, just skip
+            if (!intervalsX.isFullInterval(i)) continue;
 
             // Get 3D point for label
-            double dataX = i + .5;
+            double dataX = intervalsX.getInterval(i);
             Point3D axisPoint1 = convertDataToView(dataX, dataY, dataZ1);
             Point3D axisPoint2 = convertDataToView(dataX, dataY, dataZ2);
 
+            // Get label string
+            String tickStr = isCategoryAxis && i - 1 < pointCount ?
+                    trace.getString(i - 1) :
+                    tickFormat.format(dataX);
+
             // Configure TickLabel and paint
-            String tickStr = trace.getString(i);
             tickLabel.setText(tickStr);
 
             // Paint TickLabel with correct bounds for axis line
@@ -227,7 +239,7 @@ public class Bar3DDataArea extends BarDataArea {
         Axis axis = getChart().getAxisForType(AxisType.Y);
         TextFormat tickFormat = axis.getTextFormat();
 
-        // Iterate over points and create/set TickLabel
+        // Iterate over intervals and configure/paint TickLabel for each
         for (int i = 0, iMax = intervalsY.getCount(); i < iMax; i++) {
 
             // If not full interval, just skip

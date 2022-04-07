@@ -135,13 +135,13 @@ public class TickLabelBox extends ChildView {
             double dataX = intervals.getInterval(i);
 
             // Get label string
-            String str = isCategoryAxis && i - 1 < pointCount ?
+            String tickStr = isCategoryAxis && i - 1 < pointCount ?
                     trace.getString(i - 1) :
                     tickFormat.format(dataX);
 
             // Create/config/add TickLabel
             TickLabel tickLabel = new TickLabel(dataX);
-            tickLabel.setText(str);
+            tickLabel.setText(tickStr);
             tickLabel.setFont(tickLabelFont);
             tickLabel.setTextFill(tickTextFill);
             tickLabels.add(tickLabel);
