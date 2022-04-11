@@ -172,7 +172,8 @@ public class Line3DDataArea extends DataArea {
         if (_scene == null || _scene.getChildCount() == 0) return;
 
         // Paint Axis X tick labels
-        _chartBuilder.paintTickLabelsX(aPntr);
-        _chartBuilder.paintTickLabelsY(aPntr);
+        AxisBoxPainter axisBoxPainter = _chartBuilder.getAxisBoxPainter();
+        axisBoxPainter.paintTickLabelsX(aPntr);
+        axisBoxPainter.paintTickLabelsY(aPntr);
     }
 }
