@@ -2,12 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.geom.Point;
-import snap.geom.Rect;
 import snap.gfx.*;
 import snap.gfx3d.*;
-import snap.text.TextFormat;
-import snap.util.MathUtils;
 import snap.util.PropChange;
 import snap.view.ViewAnim;
 import snapcharts.model.*;
@@ -22,7 +18,7 @@ public class Bar3DDataArea extends BarDataArea {
     protected CameraView  _camView;
     
     // The Camera
-    private Camera3D _camera;
+    private Camera3D  _camera;
     
     // The Scene
     private Scene3D  _scene;
@@ -165,155 +161,8 @@ public class Bar3DDataArea extends BarDataArea {
         if (_scene == null || _scene.getChildCount() == 0) return;
 
         // Paint Axis X tick labels
-        paintTickLabelsX(aPntr);
-        paintTickLabelsY(aPntr);
-    }
-
-    /**
-     * Paint TickLabels for X axis.
-     */
-    protected void paintTickLabelsX(Painter aPntr)
-    {
-        // Get Axis intervals and Y+Z location of label in data space
-        Intervals intervalsX = _chartBuilder.getIntervalsX();
-        Intervals intervalsY = _chartBuilder.getIntervalsY();
-        Intervals intervalsZ = _chartBuilder.getIntervalsZ();
-        double dataY = intervalsY.getMin();
-        double dataZ1 = intervalsZ.getMin();
-        double dataZ2 = intervalsZ.getMax();
-
-        // Create/configure TickLabel
-        TickLabel tickLabel = _chartBuilder.getTickLabelForAxis(AxisType.X);
-        Axis axis = getChart().getAxisForType(AxisType.X);
-        TextFormat tickFormat = axis.getTextFormat();
-
-        // Handle category axis
-        AxisViewX axisViewX = getAxisViewX();
-        boolean isCategoryAxis = axisViewX.isCategoryAxis();
-        TraceList traceList = axisViewX.getTraceList();
-        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
-        int pointCount = traceList.getPointCount();
-
-        // Iterate over intervals and configure/paint TickLabel for each
-        for (int i = 0, iMax = intervalsX.getCount(); i < iMax; i++) {
-
-            // If not full interval, just skip
-            if (!intervalsX.isFullInterval(i)) continue;
-
-            // Get 3D point for label
-            double dataX = intervalsX.getInterval(i);
-            Point3D axisPoint1 = convertDataToView(dataX, dataY, dataZ1);
-            Point3D axisPoint2 = convertDataToView(dataX, dataY, dataZ2);
-
-            // Get label string
-            String tickStr = isCategoryAxis && i - 1 < pointCount ?
-                    trace.getString(i - 1) :
-                    tickFormat.format(dataX);
-
-            // Configure TickLabel and paint
-            tickLabel.setText(tickStr);
-
-            // Paint TickLabel with correct bounds for axis line
-            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
-        }
-    }
-
-    /**
-     * Paint TickLabels for Y axis.
-     */
-    protected void paintTickLabelsY(Painter aPntr)
-    {
-        // Get Axis intervals and Y+Z location of label in data space
-        Intervals intervalsX = _chartBuilder.getIntervalsX();
-        Intervals intervalsY = _chartBuilder.getIntervalsY();
-        Intervals intervalsZ = _chartBuilder.getIntervalsZ();
-        double dataZ1 = intervalsZ.getMin();
-        double dataZ2 = intervalsZ.getMax();
-
-        // Get DataX: Either Min/Max depending on which side is facing camera
-        boolean isLeftSideFacingCamera = _chartBuilder.isSideFacingCamera(Side3D.LEFT);
-        double dataX = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
-
-        // Create/configure TickLabel
-        TickLabel tickLabel = _chartBuilder.getTickLabelForAxis(AxisType.Y);
-        Axis axis = getChart().getAxisForType(AxisType.Y);
-        TextFormat tickFormat = axis.getTextFormat();
-
-        // Iterate over intervals and configure/paint TickLabel for each
-        for (int i = 0, iMax = intervalsY.getCount(); i < iMax; i++) {
-
-            // If not full interval, just skip
-            if (!intervalsY.isFullInterval(i)) continue;
-
-            // Get 3D point for label
-            double dataY = intervalsY.getInterval(i);
-            Point3D axisPoint1 = convertDataToView(dataX, dataY, dataZ1);
-            Point3D axisPoint2 = convertDataToView(dataX, dataY, dataZ2);
-
-            // Get/set TickLabel.Text
-            String tickStr = tickFormat.format(dataY);
-            tickLabel.setText(tickStr);
-
-            // Paint TickLabel with correct bounds for axis line
-            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
-        }
-    }
-
-    /**
-     * Paints TickLabel for given axis line.
-     */
-    private void paintTickLabelForPoints(Painter aPntr, TickLabel tickLabel, Point3D axisPoint1, Point3D axisPoint2)
-    {
-        // Make sure axisPoint1 is the close point
-        if (axisPoint2.z < axisPoint1.z) {
-            Point3D temp = axisPoint2;
-            axisPoint2 = axisPoint1;
-            axisPoint1 = temp;
-        }
-
-        // Get radial angle
-        double dx = axisPoint2.x - axisPoint1.x;
-        double dy = axisPoint1.y - axisPoint2.y;
-        double angleDeg = -getAngleBetweenPoints(1, 0, dx, dy);
-
-        // Set TickLabel size and get rect
-        tickLabel.setSizeToPrefSize();
-        Rect tickLabelBounds = tickLabel.getBoundsLocal();
-
-        // Position tickLabel so that
-        Point perimiterPoint = tickLabelBounds.getPerimeterPointForRadial(angleDeg, true);
-        double tickLabelX = axisPoint1.x - perimiterPoint.x;
-        double tickLabelY = axisPoint1.y - perimiterPoint.y;
-        tickLabel.setXY(tickLabelX, tickLabelY);
-        tickLabel.paintStringView(aPntr);
-
-        //tickLabel.setBorder(Color.PINK, 1);
-        //aPntr.setColor(Color.GREEN); aPntr.fill(new snap.geom.Ellipse(axisPoint1.x - 3, axisPoint1.y - 3, 6, 6));
-        //aPntr.setColor(Color.ORANGE); aPntr.fill(new snap.geom.Ellipse(axisPoint2.x - 3, axisPoint2.y - 3, 6, 6));
-    }
-
-    /**
-     * Returns given XYZ data point as Point3D in View coords.
-     */
-    public Point3D convertDataToView(double aX, double aY, double aZ)
-    {
-        // Get intervals and AxisBox
-        Intervals intervalsX = _chartBuilder.getIntervalsX();
-        Intervals intervalsY = _chartBuilder.getIntervalsY();
-        Intervals intervalsZ = _chartBuilder.getIntervalsZ();
-        Shape3D axisBox = _scene.getChild(0);
-
-        // Get XYZ in AxisBox space
-        double axisBoxX = MathUtils.mapValueForRanges(aX, intervalsX.getMin(), intervalsX.getMax(), axisBox.getMinX(), axisBox.getMaxX());
-        double axisBoxY = MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), axisBox.getMinY(), axisBox.getMaxY());
-        double axisBoxZ = MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), axisBox.getMinZ(), axisBox.getMaxZ());
-
-        // Transform point from AxisBox (Scene) to View space
-        Matrix3D sceneToView = _camera.getSceneToView();
-        Point3D pointInView = sceneToView.transformPoint(axisBoxX, axisBoxY, axisBoxZ);
-
-        // Return
-        return pointInView;
+        _chartBuilder.paintTickLabelsX(aPntr);
+        _chartBuilder.paintTickLabelsY(aPntr);
     }
 
     /**
@@ -337,15 +186,5 @@ public class Bar3DDataArea extends BarDataArea {
         // If Chart.Scene change, rebuild scene
         if (source instanceof Scene)
             rebuildChart();
-    }
-
-    /**
-     * Returns the angle between two XY points.
-     */
-    private static double getAngleBetweenPoints(double x1, double y1, double x2, double y2)
-    {
-        double angle = Math.atan2(y2 - y1, x2 - x1);
-        double angleDeg = Math.toDegrees(angle);
-        return angleDeg;
     }
 }

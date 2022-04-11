@@ -161,4 +161,18 @@ public class Line3DDataArea extends DataArea {
      */
     @Override
     protected void paintDataArea(Painter aPntr)  { }
+
+    /**
+     * Override to suppress.
+     */
+    @Override
+    protected void paintDataAreaAbove(Painter aPntr)
+    {
+        // If no AxisBox yet, just return
+        if (_scene == null || _scene.getChildCount() == 0) return;
+
+        // Paint Axis X tick labels
+        _chartBuilder.paintTickLabelsX(aPntr);
+        _chartBuilder.paintTickLabelsY(aPntr);
+    }
 }
