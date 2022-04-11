@@ -132,12 +132,37 @@ public abstract class AxisBoxBuilder {
     }
 
     /**
+     * Returns whether the XY data plane is pointed forward, which happens for Bar3D, Line3D charts.
+     */
+    public boolean isForwardXY()
+    {
+        return _dataArea.getChartType() == ChartType.BAR_3D || _dataArea.getChartType() == ChartType.LINE_3D;
+    }
+
+    /**
+     * Returns the View axis for given Data axis.
+     */
+    public AxisType getViewAxisForDataAxis(AxisType anAxisType)
+    {
+        // Handle weird Bar3D and Line3D: Data axis is same as View axis
+        if (isForwardXY())
+            return anAxisType;
+
+        // Handle standard 3D where Z values go up/down and Y values are forward/back (Y & Z are swapped)
+        if (anAxisType == AxisType.Z)
+            return AxisType.Y;
+        if (anAxisType == AxisType.Y)
+            return AxisType.Z;
+        return anAxisType;
+    }
+
+    /**
      * Returns the axes pair for each axis box side.
      */
     protected AxisType[] getAxesForSide(Side3D aSide)
     {
         // Handle weird Bar3D and Line3D
-        if (_dataArea.getChartType() == ChartType.BAR_3D || _dataArea.getChartType() == ChartType.LINE_3D)
+        if (isForwardXY())
             return getAxesForSideForForwardZ(aSide);
 
         // Handle standard XYZ (Z Up) AxisBox
@@ -476,12 +501,22 @@ public abstract class AxisBoxBuilder {
         Intervals intervalsX = getIntervalsX();
         Intervals intervalsY = getIntervalsY();
         Intervals intervalsZ = getIntervalsZ();
+
+        // Get AxisBox
         Shape3D axisBox = _scene.getChild(0);
+        double minX = axisBox.getMinX(), maxX = axisBox.getMaxX();
+        double minY = axisBox.getMinY(), maxY = axisBox.getMaxY();
+        double minZ = axisBox.getMinZ(), maxZ = axisBox.getMaxZ();
 
         // Get XYZ in AxisBox space
-        double axisBoxX = MathUtils.mapValueForRanges(aX, intervalsX.getMin(), intervalsX.getMax(), axisBox.getMinX(), axisBox.getMaxX());
-        double axisBoxY = MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), axisBox.getMinY(), axisBox.getMaxY());
-        double axisBoxZ = MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), axisBox.getMinZ(), axisBox.getMaxZ());
+        boolean isForwardXY = isForwardXY();
+        double axisBoxX = MathUtils.mapValueForRanges(aX, intervalsX.getMin(), intervalsX.getMax(), minX, maxX);
+        double axisBoxY = isForwardXY ?
+                          MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), minY, maxY) :
+                          MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), minY, maxY);
+        double axisBoxZ = isForwardXY ?
+                          MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), minZ, maxZ) :
+                          MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), minZ, maxZ);
 
         // Transform point from AxisBox (Scene) to View space
         Matrix3D sceneToView = _camera.getSceneToView();

@@ -162,8 +162,7 @@ public class Bar3DDataArea extends BarDataArea {
 
         // Paint Axis X tick labels
         AxisBoxPainter axisBoxPainter = _chartBuilder.getAxisBoxPainter();
-        axisBoxPainter.paintTickLabelsX(aPntr);
-        axisBoxPainter.paintTickLabelsY(aPntr);
+        axisBoxPainter.paintTickLabels(aPntr);
     }
 
     /**

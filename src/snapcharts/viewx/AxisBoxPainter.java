@@ -8,10 +8,7 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.text.TextFormat;
-import snap.util.MathUtils;
-import snap.view.ViewUtils;
 import snapcharts.model.*;
-import snapcharts.view.AxisView;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.DataArea;
 import snapcharts.view.TickLabel;
@@ -37,18 +34,15 @@ public class AxisBoxPainter {
     }
 
     /**
-     * Returns a TickLabel for given AxisType.
+     * Paint TickLabels for X axis.
      */
-    public TickLabel getTickLabelForAxis(AxisType axisType)
+    protected void paintTickLabels(Painter aPntr)
     {
-        Chart chart = _dataArea.getChart();
-        Axis axis = chart.getAxisForType(axisType);
+        paintTickLabelsX(aPntr);
+        paintTickLabelsY(aPntr);
 
-        TickLabel tickLabel = new TickLabel(0);
-        tickLabel.setFont(axis.getFont());
-        tickLabel.setTextFill(axis.getTextFill());
-        tickLabel.setPadding(8, 8, 8, 8);
-        return tickLabel;
+        if (_dataArea.getChartType() != ChartType.BAR_3D)
+            paintTickLabelsZ(aPntr);
     }
 
     /**
@@ -60,9 +54,24 @@ public class AxisBoxPainter {
         Intervals intervalsX = _axisBoxBuilder.getIntervalsX();
         Intervals intervalsY = _axisBoxBuilder.getIntervalsY();
         Intervals intervalsZ = _axisBoxBuilder.getIntervalsZ();
-        double dataY = intervalsY.getMin();
+        double dataY1 = intervalsY.getMin();
+        double dataY2 = dataY1;
         double dataZ1 = intervalsZ.getMin();
         double dataZ2 = intervalsZ.getMax();
+
+        // If not Forward XY (Bar3D/Line3D), make DataZ1/DataZ2 constant and set DataY1/DataY2 to opposite points
+        boolean isForwardXY = _axisBoxBuilder.isForwardXY();
+        if (!isForwardXY) {
+
+            // If top side is facing camera, swap
+            boolean isTopSideFacingCamera = !_axisBoxBuilder.isSideFacingCamera(Side3D.BOTTOM);
+            dataZ1 = dataZ2 = isTopSideFacingCamera ? intervalsZ.getMax() : intervalsZ.getMin();
+
+            // Reset dataY1 dataY2
+            boolean isBackSideFacingCamera = _axisBoxBuilder.isSideFacingCamera(Side3D.BACK);
+            dataY1 = isBackSideFacingCamera ? intervalsY.getMin() : intervalsY.getMax();
+            dataY2 = isBackSideFacingCamera ? intervalsY.getMax() : intervalsY.getMin();
+        }
 
         // Create/configure TickLabel
         TickLabel tickLabel = getTickLabelForAxis(AxisType.X);
@@ -84,8 +93,8 @@ public class AxisBoxPainter {
 
             // Get 3D point for label
             double dataX = intervalsX.getInterval(i);
-            Point3D axisPoint1 = _axisBoxBuilder.convertDataToView(dataX, dataY, dataZ1);
-            Point3D axisPoint2 = _axisBoxBuilder.convertDataToView(dataX, dataY, dataZ2);
+            Point3D axisPoint1 = _axisBoxBuilder.convertDataToView(dataX, dataY1, dataZ1);
+            Point3D axisPoint2 = _axisBoxBuilder.convertDataToView(dataX, dataY2, dataZ2);
 
             // Get label string
             String tickStr = isCategoryAxis && i - 1 < pointCount ?
@@ -114,7 +123,21 @@ public class AxisBoxPainter {
 
         // Get DataX: Either Min/Max depending on which side is facing camera
         boolean isLeftSideFacingCamera = _axisBoxBuilder.isSideFacingCamera(Side3D.LEFT);
-        double dataX = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
+        double dataX1 = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
+        double dataX2 = dataX1;
+
+        // If not Forward XY (Bar3D/Line3D), make DataZ1/DataZ2 constant and set DataX1/DataX2 to opposite points
+        boolean isForwardXY = _axisBoxBuilder.isForwardXY();
+        if (!isForwardXY) {
+
+            // If top side is facing camera, swap
+            boolean isTopSideFacingCamera = !_axisBoxBuilder.isSideFacingCamera(Side3D.BOTTOM);
+            dataZ1 = dataZ2 = isTopSideFacingCamera ? intervalsZ.getMax() : intervalsZ.getMin();
+
+            // Reset dataX1 dataX2
+            dataX1 = isLeftSideFacingCamera ? intervalsX.getMax() : intervalsX.getMin();
+            dataX2 = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
+        }
 
         // Create/configure TickLabel
         TickLabel tickLabel = getTickLabelForAxis(AxisType.Y);
@@ -129,11 +152,68 @@ public class AxisBoxPainter {
 
             // Get 3D point for label
             double dataY = intervalsY.getInterval(i);
-            Point3D axisPoint1 = _axisBoxBuilder.convertDataToView(dataX, dataY, dataZ1);
-            Point3D axisPoint2 = _axisBoxBuilder.convertDataToView(dataX, dataY, dataZ2);
+            Point3D axisPoint1 = _axisBoxBuilder.convertDataToView(dataX1, dataY, dataZ1);
+            Point3D axisPoint2 = _axisBoxBuilder.convertDataToView(dataX2, dataY, dataZ2);
 
             // Get/set TickLabel.Text
             String tickStr = tickFormat.format(dataY);
+            tickLabel.setText(tickStr);
+
+            // Paint TickLabel with correct bounds for axis line
+            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
+        }
+    }
+
+    /**
+     * Paint TickLabels for Z axis.
+     */
+    protected void paintTickLabelsZ(Painter aPntr)
+    {
+        // Get Axis intervals
+        Intervals intervalsX = _axisBoxBuilder.getIntervalsX();
+        Intervals intervalsY = _axisBoxBuilder.getIntervalsY();
+        Intervals intervalsZ = _axisBoxBuilder.getIntervalsZ();
+
+        // Get DataX: Either Min/Max depending on which side is facing camera
+        boolean isLeftSideFacingCamera = _axisBoxBuilder.isSideFacingCamera(Side3D.LEFT);
+        double dataX1 = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
+        double dataX2 = isLeftSideFacingCamera ? intervalsX.getMax() : intervalsX.getMin();
+
+        // Get DataY: Either Min/Max depending on which side is facing camera
+        double dataY1 = intervalsY.getMin();
+        double dataY2 = dataY1;
+
+        // If not Forward XY (Bar3D/Line3D), make DataZ1/DataZ2 constant and set DataX1/DataX2 to opposite points
+        boolean isForwardXY = _axisBoxBuilder.isForwardXY();
+        if (!isForwardXY) {
+
+            // If left side is facing camera, swap
+            //dataX1 = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsZ.getMin();
+
+            // Reset dataX1 dataX2
+            //boolean isLeftSideFacingCamera = !_axisBoxBuilder.isSideFacingCamera(Side3D.BOTTOM);
+            //dataX1 = isLeftSideFacingCamera ? intervalsX.getMax() : intervalsX.getMin();
+            //dataX2 = isLeftSideFacingCamera ? intervalsX.getMin() : intervalsX.getMax();
+        }
+
+        // Create/configure TickLabel
+        TickLabel tickLabel = getTickLabelForAxis(AxisType.Y);
+        Axis axis = _dataArea.getChart().getAxisForType(AxisType.Y);
+        TextFormat tickFormat = axis.getTextFormat();
+
+        // Iterate over intervals and configure/paint TickLabel for each
+        for (int i = 0, iMax = intervalsZ.getCount(); i < iMax; i++) {
+
+            // If not full interval, just skip
+            if (!intervalsZ.isFullInterval(i)) continue;
+
+            // Get 3D point for label
+            double dataZ = intervalsZ.getInterval(i);
+            Point3D axisPoint1 = _axisBoxBuilder.convertDataToView(dataX1, dataY1, dataZ);
+            Point3D axisPoint2 = _axisBoxBuilder.convertDataToView(dataX2, dataY2, dataZ);
+
+            // Get/set TickLabel.Text
+            String tickStr = tickFormat.format(dataZ);
             tickLabel.setText(tickStr);
 
             // Paint TickLabel with correct bounds for axis line
@@ -172,6 +252,21 @@ public class AxisBoxPainter {
         //tickLabel.setBorder(Color.PINK, 1);
         //aPntr.setColor(Color.GREEN); aPntr.fill(new snap.geom.Ellipse(axisPoint1.x - 3, axisPoint1.y - 3, 6, 6));
         //aPntr.setColor(Color.ORANGE); aPntr.fill(new snap.geom.Ellipse(axisPoint2.x - 3, axisPoint2.y - 3, 6, 6));
+    }
+
+    /**
+     * Returns a TickLabel for given AxisType.
+     */
+    public TickLabel getTickLabelForAxis(AxisType axisType)
+    {
+        Chart chart = _dataArea.getChart();
+        Axis axis = chart.getAxisForType(axisType);
+
+        TickLabel tickLabel = new TickLabel(0);
+        tickLabel.setFont(axis.getFont());
+        tickLabel.setTextFill(axis.getTextFill());
+        tickLabel.setPadding(8, 8, 8, 8);
+        return tickLabel;
     }
 
     /**
