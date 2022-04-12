@@ -40,11 +40,14 @@ public abstract class ChartHelper {
     // The AxisViews array
     private AxisView[]  _axisViewsArray;
 
-    // The X axis
+    // The AxisView for X Axis
     private AxisViewX  _axisX;
 
-    // The Y axis
+    // The AxisView for Y Axis
     private AxisViewY  _axisY;
+
+    // The AxisView for Z Axis
+    private AxisViewZ  _axisZ;
 
     // The DataAreas
     private DataArea[]  _dataAreas;
@@ -154,6 +157,15 @@ public abstract class ChartHelper {
     }
 
     /**
+     * Returns the Z AxisView.
+     */
+    public AxisViewZ getAxisViewZ()
+    {
+        if (_axisZ != null) return _axisZ;
+        return _axisZ = (AxisViewZ) getAxisView(AxisType.Z);
+    }
+
+    /**
      * Returns the AxisView for given type.
      */
     public AxisView getAxisView(AxisType anAxisType)
@@ -203,6 +215,8 @@ public abstract class ChartHelper {
             return new AxisViewX();
         if (anAxisType.isAnyY())
             return new AxisViewY(anAxisType);
+        if (anAxisType == AxisType.Z)
+            return new AxisViewZ();
         throw new RuntimeException("ChartHelper.createAxisView: Unknown type: " + anAxisType);
     }
 

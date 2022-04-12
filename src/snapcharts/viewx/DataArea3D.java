@@ -10,10 +10,7 @@ import snap.util.PropChange;
 import snapcharts.model.Scene;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceList;
-import snapcharts.view.AxisViewX;
-import snapcharts.view.AxisViewY;
-import snapcharts.view.ChartHelper;
-import snapcharts.view.DataArea;
+import snapcharts.view.*;
 
 /**
  * This DataArea subclass forms the basis for 3D DataAreas.
@@ -71,9 +68,12 @@ public abstract class DataArea3D extends DataArea {
      */
     public AxisBoxBuilder getChartBuilder()
     {
+        // If already set, just return
         if (_chartBuilder != null) return _chartBuilder;
-        _chartBuilder = createChartBuilder();
-        return _chartBuilder;
+
+        // Create, set and return
+        AxisBoxBuilder chartBuilder = createChartBuilder();
+        return _chartBuilder = chartBuilder;
     }
 
     /**
@@ -134,8 +134,19 @@ public abstract class DataArea3D extends DataArea {
 
         // Paint Axis X tick labels
         AxisBoxBuilder chartBuilder = getChartBuilder();
-        AxisBoxPainter axisBoxPainter = _chartBuilder.getAxisBoxPainter();
+        AxisBoxPainter axisBoxPainter = chartBuilder.getAxisBoxPainter();
         axisBoxPainter.paintTickLabels(aPntr);
+    }
+
+    /**
+     * Override to properly size hidden X Axis.
+     */
+    @Override
+    public AxisViewX getAxisViewX()
+    {
+        AxisViewX axisViewX = super.getAxisViewX();
+        axisViewX.setWidth(getWidth());
+        return axisViewX;
     }
 
     /**
@@ -150,14 +161,14 @@ public abstract class DataArea3D extends DataArea {
     }
 
     /**
-     * Override to properly size hidden X Axis.
+     * Override to properly size hidden Z Axis.
      */
     @Override
-    public AxisViewX getAxisViewX()
+    public AxisViewZ getAxisViewZ()
     {
-        AxisViewX axisViewX = super.getAxisViewX();
-        axisViewX.setWidth(getWidth());
-        return axisViewX;
+        AxisViewZ axisViewZ = super.getAxisViewZ();
+        axisViewZ.setHeight(getHeight());
+        return axisViewZ;
     }
 
     /**

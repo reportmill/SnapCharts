@@ -102,6 +102,14 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
+     * Returns the Z axis view.
+     */
+    public AxisViewZ getAxisViewZ()
+    {
+        return _chartHelper.getAxisViewZ();
+    }
+
+    /**
      * Returns the TraceList of active data sets.
      */
     public TraceList getTraceList()

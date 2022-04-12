@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.gfx.Painter;
 import snap.util.PropChange;
 import snapcharts.model.*;
 import snapcharts.modelx.ContourStyle;
@@ -61,8 +60,8 @@ public class Contour3DChartHelper extends ChartHelper {
      */
     protected AxisType[] getAxisTypesImpl()
     {
-        //return new AxisType[] { AxisType.X, AxisType.Y, AxisType.Z };
-        return new AxisType[] { AxisType.X, AxisType.Y };
+        return new AxisType[] { AxisType.X, AxisType.Y, AxisType.Z };
+        //return new AxisType[] { AxisType.X, AxisType.Y };
     }
 
     /**
