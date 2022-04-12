@@ -2,96 +2,30 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.gfx.*;
 import snap.gfx3d.*;
-import snap.util.PropChange;
 import snap.view.ViewAnim;
 import snapcharts.model.*;
 import snapcharts.view.*;
 
 /**
- * A DataArea subclass to display the contents of bar chart.
+ * A DataArea subclass to display the contents of Bar3D chart.
  */
-public class Bar3DDataArea extends DataArea {
+public class Bar3DDataArea extends DataArea3D {
     
-    // The Camera
-    protected CameraView  _camView;
-    
-    // The Camera
-    private Camera3D  _camera;
-    
-    // The Scene
-    private Scene3D  _scene;
-
-    // The ChartBuilder to build chart shape
-    private Bar3DChartBuilder  _chartBuilder;
-
     // The BarDataArea (2D) to build the 2D bar shapes
     protected BarDataArea  _barDataArea;
-
-    // Constants
-    private static final double DEFAULT_YAW = 26;
-    private static final double DEFAULT_PITCH = 10;
 
     /**
      * Constructor.
      */
     public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
-        super(aChartHelper, aTrace);
-
-        // If not visible, just return
-        if (!isVisible) {
-            setVisible(false);
+        super(aChartHelper, aTrace, isVisible);
+        if (!isVisible)
             return;
-        }
-
-        _camView = new CameraView();
-        addChild(_camView);
-        _camera = _camView.getCamera();
-        _scene = _camView.getScene();
-
-        // Create/set ChartBuilder
-        _chartBuilder = new Bar3DChartBuilder(this, _scene);
 
         // Create/set BarDataArea (2D)
         _barDataArea = new BarDataArea(aChartHelper, aTrace, isVisible);
-
-        setDefaultViewTransform();
-    }
-
-    /**
-     * Returns the CameraView.
-     */
-    public CameraView getCameraView()  { return _camView; }
-
-    /**
-     * Resets the default view transform.
-     */
-    private void setDefaultViewTransform()
-    {
-        _camera.setYaw(DEFAULT_YAW);
-        _camera.setPitch(DEFAULT_PITCH);
-        _camera.setFocalLength(8 * 72);
-    }
-
-    /**
-     * Override to properly size hidden Y Axis.
-     */
-    @Override
-    public AxisViewY getAxisViewY()
-    {
-        AxisViewY axisViewY = super.getAxisViewY();
-        axisViewY.setHeight(getHeight());
-        return axisViewY;
-    }
-
-    /**
-     * Rebuilds the chart.
-     */
-    protected void rebuildChart()
-    {
-        _chartBuilder.rebuildAxisBox();
     }
 
     /**
@@ -131,61 +65,21 @@ public class Bar3DDataArea extends DataArea {
      */
     protected void layoutImpl()
     {
+        // Do normal version
+        super.layoutImpl();
+
         // Shouldn't need this!
         if (!isVisible()) return;
 
-        // If CamView.Size needs update, setCamView size and rebuildChart()
-        double viewW = getWidth();
-        double viewH = getHeight();
-        if (viewW != _camView.getWidth() || viewH != _camView.getHeight()) {
-            _camView.setSize(viewW, viewH);
-            rebuildChart();
-        }
-
         // Set size of BarDataArea (2D)
-        _barDataArea.setSize(viewW, viewH);
+        _barDataArea.setSize(getWidth(), getHeight());
     }
 
     /**
-     * Override to suppress.
+     * Override to return new Bar3DChartBuilder.
      */
-    @Override
-    protected void paintDataArea(Painter aPntr)  { }
-
-    /**
-     * Override to suppress.
-     */
-    @Override
-    protected void paintDataAreaAbove(Painter aPntr)
+    protected AxisBoxBuilder createChartBuilder()
     {
-        // If no AxisBox yet, just return
-        if (_scene == null || _scene.getChildCount() == 0) return;
-
-        // Paint Axis X tick labels
-        AxisBoxPainter axisBoxPainter = _chartBuilder.getAxisBoxPainter();
-        axisBoxPainter.paintTickLabels(aPntr);
-    }
-
-    /**
-     * Override to rebuild Scene.
-     */
-    @Override
-    protected void chartPartDidChange(PropChange aPC)
-    {
-        // Do normal version
-        super.chartPartDidChange(aPC);
-
-        // If not visible, just return
-        if (!isVisible())
-            return;
-
-        // Handle Trace changes: Rebuild scene
-        Object source = aPC.getSource();
-        if (source instanceof Trace || source instanceof TraceList)
-            rebuildChart();
-
-        // If Chart.Scene change, rebuild scene
-        if (source instanceof Scene)
-            rebuildChart();
+        return new Bar3DChartBuilder(this, _scene);
     }
 }
