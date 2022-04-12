@@ -12,7 +12,7 @@ import snapcharts.view.*;
 /**
  * A DataArea subclass to display the contents of bar chart.
  */
-public class Bar3DDataArea extends BarDataArea {
+public class Bar3DDataArea extends DataArea {
     
     // The Camera
     protected CameraView  _camView;
@@ -26,6 +26,9 @@ public class Bar3DDataArea extends BarDataArea {
     // The ChartBuilder to build chart shape
     private Bar3DChartBuilder  _chartBuilder;
 
+    // The BarDataArea (2D) to build the 2D bar shapes
+    protected BarDataArea  _barDataArea;
+
     // Constants
     private static final double DEFAULT_YAW = 26;
     private static final double DEFAULT_PITCH = 10;
@@ -35,7 +38,7 @@ public class Bar3DDataArea extends BarDataArea {
      */
     public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
-        super(aChartHelper, aTrace, isVisible);
+        super(aChartHelper, aTrace);
 
         // If not visible, just return
         if (!isVisible) {
@@ -50,6 +53,9 @@ public class Bar3DDataArea extends BarDataArea {
 
         // Create/set ChartBuilder
         _chartBuilder = new Bar3DChartBuilder(this, _scene);
+
+        // Create/set BarDataArea (2D)
+        _barDataArea = new BarDataArea(aChartHelper, aTrace, isVisible);
 
         setDefaultViewTransform();
     }
@@ -104,6 +110,9 @@ public class Bar3DDataArea extends BarDataArea {
         Camera3D camera3D = _camView.getCamera();
         camera3D.setYaw(90 + (DEFAULT_YAW - 90) * aValue);
         camera3D.setPitch(0 + (DEFAULT_PITCH - 0) * aValue);
+
+        // Forward to BarDataArea (2D)
+        _barDataArea.setReveal(aValue);
     }
 
     /**
@@ -132,17 +141,9 @@ public class Bar3DDataArea extends BarDataArea {
             _camView.setSize(viewW, viewH);
             rebuildChart();
         }
-    }
 
-    /**
-     * Clears the sections when needed (change of data, size)
-     */
-    @Override
-    protected void clearSections()
-    {
-        super.clearSections();
-        if (_camView == null) return;
-        _camView.relayout();
+        // Set size of BarDataArea (2D)
+        _barDataArea.setSize(viewW, viewH);
     }
 
     /**

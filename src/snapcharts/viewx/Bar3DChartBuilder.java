@@ -28,11 +28,6 @@ public class Bar3DChartBuilder extends AxisBoxBuilder {
     }
 
     /**
-     * Returns the section count.
-     */
-    public int getSectionCount()  { return _dataArea.getSections().length; }
-
-    /**
      * Override to add bar chart.
      */
     @Override
@@ -46,10 +41,15 @@ public class Bar3DChartBuilder extends AxisBoxBuilder {
         if (MathUtils.equalsZero(reveal))
             return axisBoxShape;
 
+        // Get BarDataArea and reset
+        BarDataArea barDataArea = _dataArea._barDataArea;
+        barDataArea.clearSections();
+        barDataArea.getSections();
+
         // Iterate over sections
-        int traceCount = _dataArea._traceCount;
-        int pointCount = _dataArea._pointCount;
-        BarDataArea.Section[] sections = _dataArea.getSections();
+        int traceCount = barDataArea._traceCount;
+        int pointCount = barDataArea._pointCount;
+        BarDataArea.Section[] sections = barDataArea.getSections();
         for (int i = 0; i < pointCount; i++) {
             BarDataArea.Section section = sections[i];
 
