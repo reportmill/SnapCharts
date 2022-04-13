@@ -226,16 +226,8 @@ public abstract class AxisBoxBuilder {
      */
     public Intervals getIntervalsZ()
     {
-        // Handle Line3D: Return intervals from 0 to TraceCount
-        ChartType chartType = _dataArea.getChartType();
-        if (chartType == ChartType.LINE_3D) {
-            TraceList traceList = _dataArea.getTraceList();
-            int traceCount = traceList.getTraceCount();
-            return Intervals.getIntervalsSimple(0, traceCount);
-        }
-
-        // Just return default { 0, 1 } Intervals for Bar3D
-        return Intervals.getIntervalsSimple(0, 1);
+        AxisView axisView = _dataArea.getAxisViewZ();
+        return axisView.getIntervals();
     }
 
     /**

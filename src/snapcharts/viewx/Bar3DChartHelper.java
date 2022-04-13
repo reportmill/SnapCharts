@@ -64,6 +64,20 @@ public class Bar3DChartHelper extends ChartHelper {
     }
 
     /**
+     * Override to handle Z axis special.
+     */
+    protected Intervals createIntervals(AxisView axisView)
+    {
+        // Handle Z Axis: Just return default { 0, 1 } because there really is no Z axis
+        AxisType axisType = axisView.getAxisType();
+        if (axisType == AxisType.Z)
+            return Intervals.getIntervalsSimple(0, 1);
+
+        // Do normal version
+        return super.createIntervals(axisView);
+    }
+
+    /**
      * Override for chart type.
      */
     @Override

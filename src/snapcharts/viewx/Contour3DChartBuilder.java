@@ -6,7 +6,6 @@ import snap.gfx.Color;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
 import snapcharts.data.DataSet;
-import snapcharts.model.Intervals;
 import snapcharts.util.Mesh;
 
 /**
@@ -24,19 +23,6 @@ public class Contour3DChartBuilder extends AxisBoxBuilder {
     {
         super(aDataArea, aScene);
         _dataArea = aDataArea;
-    }
-
-    /**
-     * Override to return intervals for Z.
-     */
-    @Override
-    public Intervals getIntervalsZ()
-    {
-        DataSet dataSet = _dataArea.getStagedData();
-        double minZ = dataSet.getMinZ();
-        double maxZ = dataSet.getMaxZ();
-        Intervals intervals= Intervals.getIntervalsForMinMaxLen(minZ, maxZ, 400, 40, false, false);
-        return intervals;
     }
 
     /**

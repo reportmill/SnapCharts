@@ -67,6 +67,23 @@ public class Line3DChartHelper extends ChartHelper {
     }
 
     /**
+     * Override to handle Z axis special.
+     */
+    protected Intervals createIntervals(AxisView axisView)
+    {
+        // Handle Z Axis: Just return simple integer intervals { 0, TraceCount } because there really is no Z axis
+        AxisType axisType = axisView.getAxisType();
+        if (axisType == AxisType.Z) {
+            TraceList traceList = getTraceList();
+            int traceCount = traceList.getTraceCount();
+            return Intervals.getIntervalsSimple(0, traceCount);
+        }
+
+        // Do normal version
+        return super.createIntervals(axisView);
+    }
+
+    /**
      * Override for chart type.
      */
     public void resetView()

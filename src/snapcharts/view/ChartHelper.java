@@ -405,7 +405,7 @@ public abstract class ChartHelper {
         // If Axis.MinBound is user configured use MinValue, Otherwise get from axis StagedData
         double min = axis.getMinValue();
         if (minBound != AxisBound.VALUE)
-            min = getMinMaxForAxisStagedData(axisType).getMinE();
+            min = getStagedDataMinMaxForAxis(axisType).getMinE();
 
         // If ZeroRequired and min greater than zero, reset min
         if (axis.isZeroRequired() && min > 0)
@@ -432,7 +432,7 @@ public abstract class ChartHelper {
         // If Axis.MaxBound is user configured use MaxValue, Otherwise get from axis StagedData
         double max = axis.getMaxValue();
         if (maxBound != AxisBound.VALUE)
-            max = getMinMaxForAxisStagedData(axisType).getMaxE();
+            max = getStagedDataMinMaxForAxis(axisType).getMaxE();
 
         // If ZeroRequired and max less than zero, reset max
         if (axis.isZeroRequired() && max < 0)
@@ -445,7 +445,7 @@ public abstract class ChartHelper {
     /**
      * Returns the MinMax for given axis.
      */
-    private MinMax getMinMaxForAxisStagedData(AxisType anAxisType)
+    private MinMax getStagedDataMinMaxForAxis(AxisType anAxisType)
     {
         // Get active DataAreas for given AxisType (if none, just return silly MinMax)
         DataArea[] dataAreas = getDataAreasForAxisType(anAxisType, false);
@@ -454,7 +454,9 @@ public abstract class ChartHelper {
 
         // Get Data channel
         boolean isX = anAxisType == AxisType.X;
-        if (!isX && !anAxisType.isAnyY())
+        boolean isY = anAxisType.isAnyY();
+        boolean isZ = anAxisType == AxisType.Z;
+        if (!isX && !isY && !isZ)
             throw new RuntimeException("ChartHelper.getMinMaxForAxis: Unknown axis: " + anAxisType);
 
         // Get Min/Max
@@ -462,8 +464,8 @@ public abstract class ChartHelper {
         double max = -Double.MAX_VALUE;
         for (DataArea dataArea : dataAreas) {
             DataSet stagedData = dataArea.getStagedData();
-            double minVal = isX ? stagedData.getMinX() : stagedData.getMinY();
-            double maxVal = isX ? stagedData.getMaxX() : stagedData.getMaxY();
+            double minVal = isX ? stagedData.getMinX() : isY ? stagedData.getMinY() : stagedData.getMinZ();
+            double maxVal = isX ? stagedData.getMaxX() : isY ? stagedData.getMaxY() : stagedData.getMaxZ();
             min = Math.min(min, minVal);
             max = Math.max(max, maxVal);
         }
