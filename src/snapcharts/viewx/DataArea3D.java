@@ -3,13 +3,11 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Painter;
-import snap.gfx3d.Camera3D;
-import snap.gfx3d.CameraView;
-import snap.gfx3d.Scene3D;
+import snap.gfx3d.*;
+import snap.util.MathUtils;
 import snap.util.PropChange;
-import snapcharts.model.Scene;
-import snapcharts.model.Trace;
-import snapcharts.model.TraceList;
+import snap.view.ViewUtils;
+import snapcharts.model.*;
 import snapcharts.view.*;
 
 /**
@@ -26,8 +24,14 @@ public abstract class DataArea3D extends DataArea {
     // The Scene
     protected Scene3D  _scene;
 
-    // The ChartBuilder
-    protected AxisBoxBuilder  _chartBuilder;
+    // The AxisBox
+    protected AxisBoxShape _axisBoxShape;
+
+    // The AxisBoxPainter to paint tick labels
+    private AxisBoxTextPainter _axisBoxPainter;
+
+    // Runnables to rebuild chart deferred/coalesced
+    private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
 
     // Constants
     public static final double DEFAULT_YAW = 26;
@@ -54,6 +58,9 @@ public abstract class DataArea3D extends DataArea {
         _camera = _camView.getCamera();
         _scene = _camView.getScene();
 
+        // Create/set painter
+        _axisBoxPainter = new AxisBoxTextPainter(this, _scene);
+
         // Set default
         setDefaultViewTransform();
     }
@@ -64,22 +71,22 @@ public abstract class DataArea3D extends DataArea {
     public CameraView getCameraView()  { return _camView; }
 
     /**
-     * Returns the ChartBuilder.
+     * Rebuilds the chart.
      */
-    public AxisBoxBuilder getChartBuilder()
+    public AxisBoxShape getAxisBoxShape()
     {
-        // If already set, just return
-        if (_chartBuilder != null) return _chartBuilder;
-
-        // Create, set and return
-        AxisBoxBuilder chartBuilder = createChartBuilder();
-        return _chartBuilder = chartBuilder;
+        if (_axisBoxShape != null) return _axisBoxShape;
+        AxisBoxShape axisBoxShape = createAxisBoxShape();
+        return axisBoxShape;
     }
 
     /**
-     * Creates the ChartBuilder.
+     * Rebuilds the chart.
      */
-    protected abstract AxisBoxBuilder createChartBuilder();
+    protected AxisBoxShape createAxisBoxShape()
+    {
+        return new AxisBoxShape(this);
+    }
 
     /**
      * Resets the default view transform.
@@ -96,8 +103,26 @@ public abstract class DataArea3D extends DataArea {
      */
     protected void rebuildChart()
     {
-        AxisBoxBuilder chartBuilder = getChartBuilder();
-        chartBuilder.rebuildAxisBox();
+        if (_rebuildChartRun == null)
+            ViewUtils.runLater(_rebuildChartRun = _rebuildChartRunImpl);
+    }
+
+    /**
+     * Rebuilds the chart immediately.
+     */
+    protected void rebuildChartNow()
+    {
+        // Remove all existing children
+        _scene.removeChildren();
+
+        // Get AxisBoxShape and add to scene
+        _axisBoxShape = null;
+        Shape3D axisBoxShape = getAxisBoxShape();
+        _scene.addChild(axisBoxShape);
+
+        // Repaint DataArea and reset runnable
+        repaint();
+        _rebuildChartRun = null;
     }
 
     /**
@@ -118,6 +143,162 @@ public abstract class DataArea3D extends DataArea {
     }
 
     /**
+     * Returns whether the XY data plane is pointed forward, which happens for Bar3D, Line3D charts.
+     */
+    public boolean isForwardXY()
+    {
+        ChartType chartType = getChartType();
+        return chartType == ChartType.BAR_3D || chartType == ChartType.LINE_3D;
+    }
+
+    /**
+     * Returns the View axis for given Data axis.
+     */
+    public AxisType getViewAxisForDataAxis(AxisType anAxisType)
+    {
+        // Handle weird Bar3D and Line3D: Data axis is same as View axis
+        if (isForwardXY())
+            return anAxisType;
+
+        // Handle standard 3D where Z values go up/down and Y values are forward/back (Y & Z are swapped)
+        if (anAxisType == AxisType.Z)
+            return AxisType.Y;
+        if (anAxisType == AxisType.Y)
+            return AxisType.Z;
+        return anAxisType;
+    }
+
+    /**
+     * Returns the axes pair for each axis box side.
+     */
+    protected AxisType[] getAxesForSide(Side3D aSide)
+    {
+        // Handle weird Bar3D and Line3D
+        if (isForwardXY()) {
+            switch (aSide) {
+
+                // Handle Front/Back: XY plane
+                case FRONT: case BACK: return new AxisType[] { AxisType.X, AxisType.Y };
+
+                // Handle Left/Right: YZ plane
+                case LEFT: case RIGHT: return new AxisType[] { AxisType.Z, AxisType.Y };
+
+                // Handle Top/Bottom: XZ plane
+                case TOP: case BOTTOM: return new AxisType[] { AxisType.X, AxisType.Z };
+
+                // Other is error
+                default: throw new RuntimeException("AxisBoxBuilder.getAxesForSide: Invalid side: " + aSide);
+            }
+        }
+
+        // Handle standard XYZ (Z Up) AxisBox
+        switch (aSide) {
+
+            // Front/Back is XZ plane
+            case FRONT: case BACK: return new AxisType[] { AxisType.X, AxisType.Z };
+
+            // Left/Right is YZ plane
+            case LEFT: case RIGHT: return new AxisType[] { AxisType.Y, AxisType.Z };
+
+            // Top/Bottom is XY plane
+            case TOP: case BOTTOM: return new AxisType[] { AxisType.X, AxisType.Y };
+
+            // Other is error
+            default: throw new RuntimeException("AxisBoxBuilder.getAxesForSide: Invalid side: " + aSide);
+        }
+    }
+
+    /**
+     * Returns the intervals for X axis.
+     */
+    public Intervals getIntervalsX()
+    {
+        AxisView axisView = getAxisViewX();
+        return axisView.getIntervals();
+    }
+
+    /**
+     * Returns the intervals for Y axis.
+     */
+    public Intervals getIntervalsY()
+    {
+        AxisView axisView = getAxisViewY();
+        return axisView.getIntervals();
+    }
+
+    /**
+     * Returns the intervals for Z axis.
+     */
+    public Intervals getIntervalsZ()
+    {
+        AxisView axisView = getAxisViewZ();
+        return axisView.getIntervals();
+    }
+
+    /**
+     * Returns the intervals for given axis type.
+     */
+    protected Intervals getIntervalsForAxisType(AxisType anAxisType)
+    {
+        switch (anAxisType) {
+            case X: return getIntervalsX();
+            case Y: return getIntervalsY();
+            case Z: return getIntervalsZ();
+            default: throw new RuntimeException("AxisBoxBuilder.getIntervalsForAxis: Invalid axis: " + anAxisType);
+        }
+    }
+
+    /**
+     * Returns whether given side is facing camera.
+     */
+    public boolean isSideFacingCamera(Side3D aSide)
+    {
+        AxisBoxShape axisBoxShape = getAxisBoxShape();
+        FacetShape axisSide = axisBoxShape.getSideShape(aSide);
+        Vector3D axisSideNormal = axisSide.getNormal();
+        Camera3D camera = _scene.getCamera();
+        Matrix3D sceneToCamera = camera.getSceneToCamera();
+        Vector3D axisSideNormalInCamera = sceneToCamera.transformVector(axisSideNormal.clone());
+        Vector3D cameraNormal = camera.getNormal();
+        boolean isFacing = !axisSideNormalInCamera.isAligned(cameraNormal, false);
+        return isFacing;
+    }
+
+    /**
+     * Returns given XYZ data point as Point3D in View coords.
+     */
+    public Point3D convertDataToView(double aX, double aY, double aZ)
+    {
+        // Get intervals and AxisBox
+        Intervals intervalsX = getIntervalsX();
+        Intervals intervalsY = getIntervalsY();
+        Intervals intervalsZ = getIntervalsZ();
+
+        // Get AxisBox
+        Shape3D axisBox = _scene.getChild(0);
+        double minX = axisBox.getMinX(), maxX = axisBox.getMaxX();
+        double minY = axisBox.getMinY(), maxY = axisBox.getMaxY();
+        double minZ = axisBox.getMinZ(), maxZ = axisBox.getMaxZ();
+
+        // Get XYZ in AxisBox space
+        boolean isForwardXY = isForwardXY();
+        double axisBoxX = MathUtils.mapValueForRanges(aX, intervalsX.getMin(), intervalsX.getMax(), minX, maxX);
+        double axisBoxY = isForwardXY ?
+                MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), minY, maxY) :
+                MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), minY, maxY);
+        double axisBoxZ = isForwardXY ?
+                MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), minZ, maxZ) :
+                MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), minZ, maxZ);
+
+        // Transform point from AxisBox (Scene) to View space
+        Matrix3D sceneToView = _camera.getSceneToView();
+        Point3D pointInView = sceneToView.transformPoint(axisBoxX, axisBoxY, axisBoxZ);
+
+        // Return
+        return pointInView;
+    }
+
+    /**
      * Override to suppress.
      */
     @Override
@@ -132,10 +313,8 @@ public abstract class DataArea3D extends DataArea {
         // If no AxisBox yet, just return
         if (_scene == null || _scene.getChildCount() == 0) return;
 
-        // Paint Axis X tick labels
-        AxisBoxBuilder chartBuilder = getChartBuilder();
-        AxisBoxPainter axisBoxPainter = chartBuilder.getAxisBoxPainter();
-        axisBoxPainter.paintTickLabels(aPntr);
+        // Paint Axis tick labels
+        _axisBoxPainter.paintAxisBoxText(aPntr);
     }
 
     /**
@@ -193,5 +372,4 @@ public abstract class DataArea3D extends DataArea {
         if (source instanceof Scene)
             rebuildChart();
     }
-
 }

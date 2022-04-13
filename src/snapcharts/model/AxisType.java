@@ -15,6 +15,9 @@ public enum AxisType {
     Y4,
     Z;
 
+    // Constant for XYZ Axes
+    public static final AxisType[] XYZ_AXES = { X, Y, Z };
+
     /**
      * Returns whether AxisType is Y type.
      */
