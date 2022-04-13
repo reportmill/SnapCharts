@@ -29,7 +29,7 @@ public class Bar3DChartHelper extends ChartHelper {
      */
     protected AxisType[] getAxisTypesImpl()
     {
-        return new AxisType[] { AxisType.X, AxisType.Y };
+        return new AxisType[] { AxisType.X, AxisType.Y, AxisType.Z };
     }
 
     /**

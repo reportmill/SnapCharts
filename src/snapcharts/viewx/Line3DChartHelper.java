@@ -32,7 +32,7 @@ public class Line3DChartHelper extends ChartHelper {
      */
     protected AxisType[] getAxisTypesImpl()
     {
-        return new AxisType[] { AxisType.X, AxisType.Y };
+        return new AxisType[] { AxisType.X, AxisType.Y, AxisType.Z };
     }
 
     /**
@@ -76,7 +76,7 @@ public class Line3DChartHelper extends ChartHelper {
         if (axisType == AxisType.Z) {
             TraceList traceList = getTraceList();
             int traceCount = traceList.getTraceCount();
-            return Intervals.getIntervalsSimple(0, traceCount);
+            return Intervals.getCategoryIntervals(traceCount);
         }
 
         // Do normal version
