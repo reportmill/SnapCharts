@@ -18,6 +18,15 @@ public class AxisBoxShape extends ParentShape {
     // The DataArea3D
     private DataArea3D  _dataArea;
 
+    // The Front/Back sides
+    private FacetShape  _frontSide, _backSide;
+
+    // The Left/Right sides
+    private FacetShape  _leftSide, _rightSide;
+
+    // The Top/Bottom sides
+    private FacetShape  _topSide, _bottomSide;
+
     /**
      * Constructor.
      */
@@ -35,11 +44,12 @@ public class AxisBoxShape extends ParentShape {
     public FacetShape getSideShape(Side3D aSide)
     {
         switch (aSide) {
-            case FRONT: return (FacetShape) getChild(0);
-            case BACK: return (FacetShape) getChild(1);
-            case LEFT: return (FacetShape) getChild(2);
-            case RIGHT: return (FacetShape) getChild(3);
-            case BOTTOM: return (FacetShape) getChild(4);
+            case FRONT: return _frontSide;
+            case BACK: return _backSide;
+            case LEFT: return _leftSide;
+            case RIGHT: return _rightSide;
+            case TOP: return _topSide;
+            case BOTTOM: return _bottomSide;
             default: return null;
         }
     }
@@ -104,6 +114,32 @@ public class AxisBoxShape extends ParentShape {
     }
 
     /**
+     * Updates the visibility of AxisBoxShape sides for camera.
+     */
+    public void setSidesVisibleForCamera()
+    {
+        boolean frontFacing = _dataArea.isSideFacingCamera(Side3D.FRONT);
+        boolean leftFacing = _dataArea.isSideFacingCamera(Side3D.LEFT);
+        boolean topFacing = !_dataArea.isSideFacingCamera(Side3D.BOTTOM);
+        setSidesVisible(frontFacing, leftFacing, topFacing);
+    }
+
+    /**
+     * Updates the visibility of AxisBoxShape sides for camera.
+     */
+    public void setSidesVisible(boolean frontFacing, boolean leftFacing, boolean topFacing)
+    {
+        _frontSide.setVisible(frontFacing);
+        _backSide.setVisible(!frontFacing);
+        _leftSide.setVisible(leftFacing);
+        _rightSide.setVisible(!leftFacing);
+        if (_topSide != null) {
+            _topSide.setVisible(topFacing);
+            _bottomSide.setVisible(!topFacing);
+        }
+    }
+
+    /**
      * Build sides.
      */
     private void addSides()
@@ -114,18 +150,23 @@ public class AxisBoxShape extends ParentShape {
         double depth = getPrefDepth();
 
         // Add shape for front/back sides
-        Shape3D frontShape = addSideFrontBack(width, height, 0);
-        Shape3D backShape = addSideFrontBack(width, height, depth);
+        _frontSide = addSideFrontBack(width, height, depth);
+        _backSide = addSideFrontBack(width, height, 0);
 
         // Add shape for left/right sides
-        Shape3D leftShape = addSideLeftRight(0, height, depth);
-        Shape3D rightShape = addSideLeftRight(width, height, depth);
+        _leftSide = addSideLeftRight(0, height, depth);
+        _rightSide = addSideLeftRight(width, height, depth);
 
         // Add shape for top/bottom sides
-        Shape3D bottomShape = addSideTopBottom(width, 0, depth);
+        _bottomSide = addSideTopBottom(width, 0, depth);
+        if (!_dataArea.isForwardXY())
+            _topSide = addSideTopBottom(width, height, depth);
+        else _bottomSide.setDoubleSided(true);
 
         // Reset shapes
-        setChildren(frontShape, backShape, leftShape, rightShape, bottomShape);
+        if (_topSide != null)
+            setChildren(_frontSide, _backSide, _leftSide, _rightSide, _topSide, _bottomSide);
+        else setChildren(_frontSide, _backSide, _leftSide, _rightSide, _bottomSide);
 
         // Go ahead and set Bounds to avoid calculation
         Bounds3D bounds3D = new Bounds3D(0, 0, 0, width, height, depth);
@@ -135,7 +176,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Adds geometry for front/back sides.
      */
-    private Shape3D addSideFrontBack(double width, double height, double sideZ)
+    private FacetShape addSideFrontBack(double width, double height, double sideZ)
     {
         // Create wall shape
         Poly3D side = new Poly3D();
@@ -174,7 +215,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Add geometry for left/right sides.
      */
-    private Shape3D addSideLeftRight(double sideX, double height, double depth)
+    private FacetShape addSideLeftRight(double sideX, double height, double depth)
     {
         // Create side shape
         Poly3D side = new Poly3D();
@@ -213,20 +254,24 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Adds geometry for top/bottom sides.
      */
-    private Shape3D addSideTopBottom(double width, double sideY, double depth)
+    private FacetShape addSideTopBottom(double width, double sideY, double depth)
     {
         // Create side shape
         Poly3D side = new Poly3D();
         side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
-        side.setColor(Color.LIGHTGRAY);
+        side.setColor(sideY == 0 ? Color.LIGHTGRAY : Color.WHITE);
         side.setOpacity(.8f);
-        side.setDoubleSided(true);
 
         // Add side points
         side.addPoint(0, sideY, 0);
         side.addPoint(0, sideY, depth);
         side.addPoint(width, sideY, depth);
         side.addPoint(width, sideY, 0);
+
+        // If facing wrong direction, reverse
+        double normalY = sideY == 0 ? 1 : -1;
+        if (!MathUtils.equals(side.getNormal().y, normalY))
+            side.reverse();
 
         // Create Painter3D for side border/grid, paint border, add to side
         Painter3D gridPainter = new Painter3D(width, depth);

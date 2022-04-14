@@ -77,7 +77,7 @@ public abstract class DataArea3D extends DataArea {
     {
         if (_axisBoxShape != null) return _axisBoxShape;
         AxisBoxShape axisBoxShape = createAxisBoxShape();
-        return axisBoxShape;
+        return _axisBoxShape = axisBoxShape;
     }
 
     /**
@@ -302,7 +302,12 @@ public abstract class DataArea3D extends DataArea {
      * Override to suppress.
      */
     @Override
-    protected void paintDataArea(Painter aPntr)  { }
+    protected void paintDataArea(Painter aPntr)
+    {
+        // Update AxisBoxShape Sides Visibility
+        AxisBoxShape axisBoxShape = getAxisBoxShape();
+        axisBoxShape.setSidesVisibleForCamera();
+    }
 
     /**
      * Override to suppress.
@@ -313,8 +318,15 @@ public abstract class DataArea3D extends DataArea {
         // If no AxisBox yet, just return
         if (_scene == null || _scene.getChildCount() == 0) return;
 
+        // Clip AxisBox text (axis and tick labels)
+        aPntr.save();
+        aPntr.clipRect(0, 0, getWidth(), getHeight());
+
         // Paint Axis tick labels
         _axisBoxPainter.paintAxisBoxText(aPntr);
+
+        // Restore clip
+        aPntr.restore();
     }
 
     /**
