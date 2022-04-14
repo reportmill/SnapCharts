@@ -32,7 +32,7 @@ public class Line3DDataArea extends DataArea3D {
     {
         // Do normal version
         AxisBoxShape axisBoxShape = super.createAxisBoxShape();
-        double prefDepth = axisBoxShape.getPrefDepth();
+        double prefDepth = getAxisBoxPrefDepth();
 
         // Get Trace info
         TraceList traceList = getTraceList();

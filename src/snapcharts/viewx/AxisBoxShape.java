@@ -6,9 +6,7 @@ import snap.gfx.Color;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
 import snapcharts.model.AxisType;
-import snapcharts.model.Chart;
 import snapcharts.model.Intervals;
-import snapcharts.model.Scene;
 
 /**
  * This ParentShape subclass displays an axis box.
@@ -55,65 +53,6 @@ public class AxisBoxShape extends ParentShape {
     }
 
     /**
-     * Returns the preferred width of the scene.
-     */
-    public double getPrefWidth()
-    {
-        // Get Scene (3D chart info) and DataView size
-        Chart chart = _dataArea.getChart();
-        Scene scene = chart.getScene();
-        double viewW = _dataArea.getWidth();
-        double viewH = _dataArea.getHeight();
-
-        // Get Aspect for Y Axis and PrefHeight
-        double aspectY = scene.getAspect(AxisType.Y, viewW, viewH);
-        double prefH = aspectY * viewH;
-
-        // Calculate PrefWidth using AspectY and PrefHeight
-        double aspectX = scene.getAspect(AxisType.X, viewW, viewH);
-        double prefW = prefH / aspectY * aspectX;
-        return prefW;
-    }
-
-    /**
-     * Returns the preferred height of the scene.
-     */
-    public double getPrefHeight()
-    {
-        // Get Scene (3D chart info) and DataView size
-        Chart chart = _dataArea.getChart();
-        Scene scene = chart.getScene();
-        double viewW = _dataArea.getWidth();
-        double viewH = _dataArea.getHeight();
-
-        // Get Aspect for Y Axis and PrefHeight
-        double aspectY = scene.getAspect(AxisType.Y, viewW, viewH);
-        double prefH = aspectY * viewH;
-        return prefH;
-    }
-
-    /**
-     * Returns the preferred depth of the scene.
-     */
-    public double getPrefDepth()
-    {
-        // Get Scene (3D chart info) and DataView size
-        Chart chart = _dataArea.getChart();
-        Scene scene = chart.getScene();
-        double viewW = _dataArea.getWidth();
-        double viewH = _dataArea.getHeight();
-
-        // Get Aspect for Y Axis and PrefHeight
-        double aspectY = scene.getAspect(AxisType.Y, viewW, viewH);
-        double prefH = aspectY * viewH;
-
-        // Calculate PrefDepth using AspectY and PrefHeight
-        double aspectZ = scene.getAspect(AxisType.Z, viewW, viewH);
-        double prefD = prefH / aspectY * aspectZ;
-        return prefD;
-    }
-
-    /**
      * Updates the visibility of AxisBoxShape sides for camera.
      */
     public void setSidesVisibleForCamera()
@@ -145,9 +84,9 @@ public class AxisBoxShape extends ParentShape {
     private void addSides()
     {
         // Get preferred width, height, depth
-        double width = getPrefWidth();
-        double height = getPrefHeight();
-        double depth = getPrefDepth();
+        double width = _dataArea.getAxisBoxPrefWidth();
+        double height = _dataArea.getAxisBoxPrefHeight();
+        double depth = _dataArea.getAxisBoxPrefDepth();
 
         // Add shape for front/back sides
         _frontSide = addSideFrontBack(width, height, depth);
@@ -195,19 +134,6 @@ public class AxisBoxShape extends ParentShape {
         if (!MathUtils.equals(side.getNormal().z, normalZ))
             side.reverse();
 
-        // Create Painter3D for side border/grid, paint border, add to side
-        Painter3D gridPainter = new Painter3D(width, height);
-        gridPainter.addLayerOffset(1);
-        gridPainter.drawRect(0, 0, width, height);
-        side.setPainter(gridPainter);
-
-        // Get 2D grid
-        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.FRONT);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxisType(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxisType(gridAxisTypes[1]);
-        paintGridX(gridPainter, intervalsAcross, width, height);
-        paintGridY(gridPainter, intervalsDown, width, height);
-
         // Return
         return side;
     }
@@ -233,19 +159,6 @@ public class AxisBoxShape extends ParentShape {
         double normalX = sideX == 0 ? 1 : -1;
         if (!MathUtils.equals(side.getNormal().x, normalX))
             side.reverse();
-
-        // Create Painter3D for side border/grid, paint border, add to side
-        Painter3D gridPainter = new Painter3D(depth, height);
-        gridPainter.addLayerOffset(.5);
-        gridPainter.drawRect(0, 0, depth, height);
-        side.setPainter(gridPainter);
-
-        // Paint grid
-        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.LEFT);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxisType(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxisType(gridAxisTypes[1]);
-        paintGridX(gridPainter, intervalsAcross, depth, height);
-        paintGridY(gridPainter, intervalsDown, depth, height);
 
         // Return
         return side;
@@ -281,13 +194,95 @@ public class AxisBoxShape extends ParentShape {
 
         // Paint grid
         AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.TOP);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxisType(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxisType(gridAxisTypes[1]);
+        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
         paintGridX(gridPainter, intervalsAcross, width, depth);
         paintGridY(gridPainter, intervalsDown, width, depth);
 
         // Return
         return side;
+    }
+
+    /**
+     * Adds grids to side shapes by creating/setting a Painter3D for each.
+     */
+    public void addSideGrids()
+    {
+        // Get preferred width, height, depth
+        double width = _dataArea.getAxisBoxPrefWidth();
+        double height = _dataArea.getAxisBoxPrefHeight();
+        double depth = _dataArea.getAxisBoxPrefDepth();
+
+        addSideGridFrontBack(width, height);
+        addSideGridLeftRight(height, depth);
+        addSideGridTopBottom(width, depth);
+    }
+
+    /**
+     * Adds geometry for front/back sides.
+     */
+    private void addSideGridFrontBack(double width, double height)
+    {
+        // Create Painter3D for side border/grid, paint border, add to side
+        Painter3D gridPainter = new Painter3D(width, height);
+        gridPainter.addLayerOffset(1);
+        gridPainter.drawRect(0, 0, width, height);
+
+        // Get 2D grid
+        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.FRONT);
+        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
+        paintGridX(gridPainter, intervalsAcross, width, height);
+        paintGridY(gridPainter, intervalsDown, width, height);
+
+        // Add to front/back
+        _frontSide.setPainter(gridPainter);
+        _backSide.setPainter(gridPainter.clone());
+    }
+
+    /**
+     * Add geometry for left/right sides.
+     */
+    private void addSideGridLeftRight(double height, double depth)
+    {
+        // Create Painter3D for side border/grid, paint border, add to side
+        Painter3D gridPainter = new Painter3D(depth, height);
+        gridPainter.addLayerOffset(.5);
+        gridPainter.drawRect(0, 0, depth, height);
+
+        // Paint grid
+        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.LEFT);
+        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
+        paintGridX(gridPainter, intervalsAcross, depth, height);
+        paintGridY(gridPainter, intervalsDown, depth, height);
+
+        // Add to left/right
+        _leftSide.setPainter(gridPainter);
+        _rightSide.setPainter(gridPainter.clone());
+    }
+
+    /**
+     * Adds geometry for top/bottom sides.
+     */
+    private void addSideGridTopBottom(double width, double depth)
+    {
+        // Create Painter3D for side border/grid, paint border, add to side
+        Painter3D gridPainter = new Painter3D(width, depth);
+        gridPainter.addLayerOffset(.5);
+        gridPainter.drawRect(0, 0, width, depth);
+
+        // Paint grid
+        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.TOP);
+        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
+        paintGridX(gridPainter, intervalsAcross, width, depth);
+        paintGridY(gridPainter, intervalsDown, width, depth);
+
+        // Add to top/bottom
+        _bottomSide.setPainter(gridPainter);
+        if (_topSide != null)
+            _topSide.setPainter(gridPainter.clone());
     }
 
     /**

@@ -124,6 +124,20 @@ public class Intervals {
     public double[] getDivs()  { return _divs; }
 
     /**
+     * Standard equals implementation.
+     */
+    public boolean equals(Object anObj)
+    {
+        Intervals other = anObj instanceof Intervals ? (Intervals) anObj : null; if (other == null) return false;
+        if (other.getCount() != getCount()) return false;
+        if (!MathUtils.equals(other.getDelta(), getDelta())) return false;
+        for (int i = 0, iMax = getCount(); i < iMax; i++)
+            if (!MathUtils.equals(other.getInterval(i), getInterval(i)))
+                return false;
+        return true;
+    }
+
+    /**
      * Standard toString implementation.
      */
     @Override

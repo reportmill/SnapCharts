@@ -80,7 +80,7 @@ public class Bar3DDataArea extends DataArea3D {
             aH *= reveal;
 
         // Get depth, and Z values for back/front
-        double sceneDepth = axisBoxShape.getPrefDepth();
+        double sceneDepth = getAxisBoxPrefDepth();
         double barDepth = Math.min(aW, sceneDepth * .8);
         double z0 = sceneDepth / 2 - barDepth / 2;
         double z1 = sceneDepth / 2 + barDepth / 2;
@@ -102,11 +102,11 @@ public class Bar3DDataArea extends DataArea3D {
         // Do normal version
         super.setReveal(aValue);
 
-        if (_camView == null) return;
+        if (_cameraView == null) return;
         rebuildChart();
 
         // Animate camera rotation
-        Camera3D camera3D = _camView.getCamera();
+        Camera3D camera3D = _cameraView.getCamera();
         camera3D.setYaw(90 + (DEFAULT_YAW - 90) * aValue);
         camera3D.setPitch(0 + (DEFAULT_PITCH - 0) * aValue);
 
@@ -119,7 +119,7 @@ public class Bar3DDataArea extends DataArea3D {
      */
     public void resetViewMatrixAnimated()
     {
-        ViewAnim anim = _camView.getAnimCleared(1000);
+        ViewAnim anim = _cameraView.getAnimCleared(1000);
         anim.setValue(CameraView.Yaw_Prop, DEFAULT_YAW);
         anim.setValue(CameraView.Pitch_Prop, DEFAULT_PITCH);
         anim.play();

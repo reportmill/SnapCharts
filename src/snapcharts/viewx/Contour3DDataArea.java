@@ -34,9 +34,9 @@ public class Contour3DDataArea extends DataArea3D {
         AxisBoxShape axisBoxShape = super.createAxisBoxShape();
 
         // Get axis box size
-        double prefW = axisBoxShape.getPrefWidth();
-        double prefH = axisBoxShape.getPrefHeight();
-        double prefD = axisBoxShape.getPrefDepth();
+        double prefW = getAxisBoxPrefWidth();
+        double prefH = getAxisBoxPrefHeight();
+        double prefD = getAxisBoxPrefDepth();
 
         // Get dataset info
         DataSet dataSet = getStagedData();
