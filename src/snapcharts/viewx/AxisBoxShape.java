@@ -53,6 +53,22 @@ public class AxisBoxShape extends ParentShape {
     }
 
     /**
+     * Returns whether given side is visible.
+     */
+    public boolean isSideVisible(Side3D aSide)
+    {
+        switch (aSide) {
+            case FRONT: return _frontSide.isVisible();
+            case BACK: return _backSide.isVisible();
+            case LEFT: return _leftSide.isVisible();
+            case RIGHT: return _rightSide.isVisible();
+            case BOTTOM: return _bottomSide.isVisible();
+            case TOP: return !_bottomSide.isVisible();
+            default: throw new RuntimeException("AxisBoxShape.isSideVisible: Unknown side: " + aSide);
+        }
+    }
+
+    /**
      * Updates the visibility of AxisBoxShape sides for camera.
      */
     public void setSidesVisibleForCamera()

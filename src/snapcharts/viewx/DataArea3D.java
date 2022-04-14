@@ -274,59 +274,95 @@ public abstract class DataArea3D extends DataArea {
      */
     public boolean updateIntervalsIfNeeded()
     {
+        // Get AxisTypes and didUpdate flag
+        AxisType[] axisTypes = _chartHelper.getAxisTypes();
         boolean didUpdate = false;
 
-        for (AxisType axisType : AxisType.XYZ_AXES) {
+        // Iterate over axes types and recalc intervals for each axis length in view coords (based on chart orientation)
+        for (AxisType axisType : axisTypes) {
 
             // Get preferred intervals and min/max
             Intervals prefIntervals = getPrefIntervalsForAxis(axisType);
             double prefMin = prefIntervals.getMin();
             double prefMax = prefIntervals.getMax();
 
+            // Handle Category axis special
+            if (axisType == AxisType.X && getAxisViewX().isCategoryAxis()) {
+                if (getIntervalsX() == null)
+                    setIntervalsForAxis(axisType, prefIntervals);
+                continue;
+            }
+
             // Calculate intervals for current axis length
-            double axisLen = getAxisLengthForAxis(axisType);
+            double axisLen = getAxisLengthInViewForAxis(axisType);
             //Size labelSize = _dataArea.getChartHelper().getAxisView(axisType).getMaxTickLabelRotatedSize();
             double divLen = 40;
-            //Intervals intervals = Intervals.getIntervalsForMinMaxLen(prefMin, prefMax, axisLen, divLen, true, true);
-            Intervals intervals = prefIntervals;
+            Intervals intervals = Intervals.getIntervalsForMinMaxLen(prefMin, prefMax, axisLen, divLen, true, true);
 
-            // If not equal, then set
+            // If not equal, then set updated intervals and mark didUpdate
             if (!intervals.equals(getIntervalsForAxis(axisType))) {
                 setIntervalsForAxis(axisType, intervals);
                 didUpdate = true;
             }
         }
 
+        // Return
         return didUpdate;
     }
 
     /**
      * Returns the axis length for given axis type.
      */
-    public double getAxisLengthForAxis(AxisType anAxisType)
+    public double getAxisLengthInViewForAxis(AxisType anAxisType)
     {
-        // Get AxisType in View coords
-        AxisType axisType = getViewAxisForDataAxis(anAxisType);
+        // Get AxisLine in Data space
+        Line3D axisLine = getAxisLineInDataSpace(anAxisType);
 
-        // Handle X
-        if (axisType == AxisType.X) {
-            double axisLen = getAxisBoxPrefWidth();
-            return axisLen;
-        }
+        // Convert line to view coords
+        convertDataToView(axisLine.getP1());
+        convertDataToView(axisLine.getP2());
 
-        if (axisType == AxisType.Z)
-            return getAxisBoxPrefDepth();
-        return getAxisBoxPrefHeight();
+        // Return distance between line XY points
+        return axisLine.getDistance2D();
     }
 
     /**
      * Returns the axis length for given axis type.
      */
-    public double getAxisLineForAxisX()
+    public Line3D getAxisLineInDataSpace(AxisType axisType)
     {
+        // Get intervals
+        Intervals intervalsX = getPrefIntervalsX();
+        Intervals intervalsY = getPrefIntervalsY();
+        Intervals intervalsZ = getPrefIntervalsZ();
+
+        // Get axis info
         AxisBoxShape axisBoxShape = getAxisBoxShape();
-        boolean isFrontVisible = isSideFacingCamera(Side3D.FRONT);
-        return 0;
+        boolean isForwardXY = isForwardXY();
+        boolean isX = axisType == AxisType.X;
+        boolean isY = axisType.isAnyY();
+        boolean isZ = axisType == AxisType.Z;
+
+        // Get X component of line points
+        Side3D xSide = Side3D.FRONT;
+        boolean isXSideVisible = axisBoxShape.isSideVisible(xSide);
+        double dataX1 = isX || isXSideVisible ? intervalsX.getMin() : intervalsX.getMax();
+        double dataX2 = isX ? intervalsX.getMax() : dataX1;
+
+        // Get Y component of line points
+        Side3D ySide = isForwardXY ? Side3D.BOTTOM : Side3D.FRONT;
+        boolean isYSideVisible = axisBoxShape.isSideVisible(ySide);
+        double dataY1 = isY || isYSideVisible ? intervalsY.getMin() : intervalsY.getMax();
+        double dataY2 = isY ? intervalsY.getMax() : dataY1;
+
+        // Get Z component of line points
+        Side3D zSide = isForwardXY ? Side3D.FRONT : Side3D.TOP;
+        boolean isZSideVisible = axisBoxShape.isSideVisible(zSide);
+        double dataZ1 = isZ || isZSideVisible ? intervalsZ.getMin() : intervalsZ.getMax();
+        double dataZ2 = isZ ? intervalsZ.getMax() : dataZ1;
+
+        // Return line
+        return new Line3D(dataX1, dataY1, dataZ1, dataX2, dataY2, dataZ2);
     }
 
     /**
@@ -373,35 +409,43 @@ public abstract class DataArea3D extends DataArea {
     /**
      * Returns given XYZ data point as Point3D in View coords.
      */
-    public Point3D convertDataToView(double aX, double aY, double aZ)
+    public void convertDataToView(Point3D aPoint)
     {
         // Get intervals and AxisBox
         Intervals intervalsX = getPrefIntervalsX();
         Intervals intervalsY = getPrefIntervalsY();
         Intervals intervalsZ = getPrefIntervalsZ();
 
-        // Get AxisBox
-        Shape3D axisBox = _scene.getChild(0);
-        double minX = axisBox.getMinX(), maxX = axisBox.getMaxX();
-        double minY = axisBox.getMinY(), maxY = axisBox.getMaxY();
-        double minZ = axisBox.getMinZ(), maxZ = axisBox.getMaxZ();
+        // Get AxisBox size
+        double prefW = getAxisBoxPrefWidth();
+        double prefH = getAxisBoxPrefHeight();
+        double prefD = getAxisBoxPrefDepth();
+
+        // If not ForwardXY, swap Y & Z axes
+        boolean isForwardXY = isForwardXY();
+        if (!isForwardXY) {
+            double temp = aPoint.y; aPoint.y = aPoint.z; aPoint.z = temp;
+            Intervals tempi = intervalsY; intervalsY = intervalsZ; intervalsZ = tempi;
+        }
 
         // Get XYZ in AxisBox space
-        boolean isForwardXY = isForwardXY();
-        double axisBoxX = MathUtils.mapValueForRanges(aX, intervalsX.getMin(), intervalsX.getMax(), minX, maxX);
-        double axisBoxY = isForwardXY ?
-                MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), minY, maxY) :
-                MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), minY, maxY);
-        double axisBoxZ = isForwardXY ?
-                MathUtils.mapValueForRanges(aZ, intervalsZ.getMin(), intervalsZ.getMax(), minZ, maxZ) :
-                MathUtils.mapValueForRanges(aY, intervalsY.getMin(), intervalsY.getMax(), minZ, maxZ);
+        aPoint.x = MathUtils.mapValueForRanges(aPoint.x, intervalsX.getMin(), intervalsX.getMax(), 0, prefW);
+        aPoint.y = MathUtils.mapValueForRanges(aPoint.y, intervalsY.getMin(), intervalsY.getMax(), 0, prefH);
+        aPoint.z = MathUtils.mapValueForRanges(aPoint.z, intervalsZ.getMin(), intervalsZ.getMax(), 0, prefD);
 
         // Transform point from AxisBox (Scene) to View space
         Matrix3D sceneToView = _camera.getSceneToView();
-        Point3D pointInView = sceneToView.transformPoint(axisBoxX, axisBoxY, axisBoxZ);
+        sceneToView.transformPoint(aPoint);
+    }
 
-        // Return
-        return pointInView;
+    /**
+     * Returns given XYZ data point as Point3D in View coords.
+     */
+    public Point3D convertDataToView(double aX, double aY, double aZ)
+    {
+        Point3D point = new Point3D(aX, aY, aZ);
+        convertDataToView(point);
+        return point;
     }
 
     /**
