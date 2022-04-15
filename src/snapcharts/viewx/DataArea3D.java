@@ -64,7 +64,7 @@ public abstract class DataArea3D extends DataArea {
         _scene = _cameraView.getScene();
 
         // Create/set painter
-        _axisBoxPainter = new AxisBoxTextPainter(this, _scene);
+        _axisBoxPainter = new AxisBoxTextPainter(this);
 
         // Set default
         setDefaultViewTransform();
@@ -327,7 +327,7 @@ public abstract class DataArea3D extends DataArea {
     }
 
     /**
-     * Returns the axis length for given axis type.
+     * Returns the axis line for given axis type.
      */
     public Line3D getAxisLineInDataSpace(AxisType axisType)
     {
@@ -344,25 +344,138 @@ public abstract class DataArea3D extends DataArea {
         boolean isZ = axisType == AxisType.Z;
 
         // Get X component of line points
-        Side3D xSide = Side3D.FRONT;
-        boolean isXSideVisible = axisBoxShape.isSideVisible(xSide);
-        double dataX1 = isX || isXSideVisible ? intervalsX.getMin() : intervalsX.getMax();
-        double dataX2 = isX ? intervalsX.getMax() : dataX1;
+        double dataX1 = intervalsX.getMin();
+        double dataX2 = intervalsX.getMax();
+        if (!isX) {
+            if (isForwardXY) {
+                boolean isMinX = axisBoxShape.isSideVisible(Side3D.RIGHT);
+                dataX1 = dataX2 = isMinX ? dataX1 : dataX2;
+            }
+            else {
+                if (isY) {
+                    boolean isMinX = axisBoxShape.isSideVisible(Side3D.RIGHT);
+                    dataX1 = dataX2 = isMinX ? dataX1 : dataX2;
+                }
+                else {
+                    boolean isMinX = axisBoxShape.isSideVisible(Side3D.BACK);
+                    dataX1 = dataX2 = isMinX ? dataX1 : dataX2;
+                }
+            }
+        }
 
         // Get Y component of line points
-        Side3D ySide = isForwardXY ? Side3D.BOTTOM : Side3D.FRONT;
-        boolean isYSideVisible = axisBoxShape.isSideVisible(ySide);
-        double dataY1 = isY || isYSideVisible ? intervalsY.getMin() : intervalsY.getMax();
-        double dataY2 = isY ? intervalsY.getMax() : dataY1;
+        double dataY1 = intervalsY.getMin();
+        double dataY2 = intervalsY.getMax();
+        if (!isY) {
+            if (isForwardXY) {
+                boolean isMinY = axisBoxShape.isSideVisible(Side3D.BOTTOM);
+                dataY1 = dataY2 = isMinY ? dataY1 : dataY2;
+            }
+            else {
+                if (isX) {
+                    boolean isMinY = axisBoxShape.isSideVisible(Side3D.FRONT);
+                    dataY1 = dataY2 = isMinY ? dataY1 : dataY2;
+                }
+                else {
+                    boolean isMinY = axisBoxShape.isSideVisible(Side3D.RIGHT);
+                    dataY1 = dataY2 = isMinY ? dataY1 : dataY2;
+                }
+            }
+        }
 
         // Get Z component of line points
-        Side3D zSide = isForwardXY ? Side3D.FRONT : Side3D.TOP;
-        boolean isZSideVisible = axisBoxShape.isSideVisible(zSide);
-        double dataZ1 = isZ || isZSideVisible ? intervalsZ.getMin() : intervalsZ.getMax();
-        double dataZ2 = isZ ? intervalsZ.getMax() : dataZ1;
+        double dataZ1 = intervalsZ.getMin();
+        double dataZ2 = intervalsZ.getMax();
+        if (!isZ) {
+            if (isForwardXY) {
+                if (isX) {
+                    boolean isMinZ = axisBoxShape.isSideVisible(Side3D.FRONT);
+                    dataZ1 = dataZ2 = isMinZ ? dataZ1 : dataZ2;
+                }
+                else {
+                    boolean isMinZ = axisBoxShape.isSideVisible(Side3D.BACK);
+                    dataZ1 = dataZ2 = isMinZ ? dataZ1 : dataZ2;
+                }
+            }
+            else {
+                boolean isMinZ = axisBoxShape.isSideVisible(Side3D.BOTTOM);
+                dataZ1 = dataZ2 = isMinZ ? dataZ1 : dataZ2;
+            }
+        }
 
         // Return line
         return new Line3D(dataX1, dataY1, dataZ1, dataX2, dataY2, dataZ2);
+    }
+
+    /**
+     * Returns the axis grid line at axis min for given axis type (perpendicular to axis line).
+     */
+    public Line3D getAxisGridLineInDataSpace(AxisType axisType)
+    {
+        // Get axis line
+        Line3D line = getAxisLineInDataSpace(axisType);
+        Point3D p1 = line.getP1();
+        Point3D p2 = line.getP2();
+
+        boolean isForwardXY = isForwardXY();
+        boolean spreadX = false;
+        boolean spreadY = false;
+        boolean spreadZ = false;
+
+        // Handle X axis
+        if (axisType == AxisType.X) {
+            p2.x = p1.x;
+            if (isForwardXY)
+                spreadZ = true;
+            else spreadY = true;
+        }
+
+        // Handle Y axis
+        else if (axisType.isAnyY()) {
+            p2.y = p1.y;
+            if (isForwardXY)
+                spreadX = true;
+            else spreadX = true;
+        }
+
+        // Handle Z axis
+        else if (axisType == AxisType.Z) {
+            p2.z = p1.z;
+            if (isForwardXY)
+                spreadX = true;
+            else {
+                AxisBoxShape axisBoxShape = getAxisBoxShape();
+                boolean isRightVisible = axisBoxShape.isSideVisible(Side3D.RIGHT);
+                Intervals intervalsX = getPrefIntervalsX();
+                boolean isZX = isRightVisible ? MathUtils.equals(p1.x, intervalsX.getMin()) : MathUtils.equals(p1.x, intervalsX.getMax());
+                if (isZX)
+                    spreadX = true;
+                else spreadY = true;
+            }
+        }
+
+        // Handle spreading of grid line point component
+        if (spreadX) {
+            Intervals intervalsX = getPrefIntervalsX();
+            boolean isMaxX = MathUtils.equals(p1.x, intervalsX.getMax());
+            p1.x = isMaxX ? intervalsX.getMin() : intervalsX.getMax();
+            p2.x = isMaxX ? intervalsX.getMax() : intervalsX.getMin();
+        }
+        else if (spreadY) {
+            Intervals intervalsY = getPrefIntervalsY();
+            boolean isMaxY = MathUtils.equals(p1.y, intervalsY.getMax());
+            p1.y = isMaxY ? intervalsY.getMin() : intervalsY.getMax();
+            p2.y = isMaxY ? intervalsY.getMax() : intervalsY.getMin();
+        }
+        else if (spreadZ) {
+            Intervals intervalsZ = getPrefIntervalsZ();
+            boolean isMaxZ = MathUtils.equals(p1.z, intervalsZ.getMax());
+            p1.z = isMaxZ ? intervalsZ.getMin() : intervalsZ.getMax();
+            p2.z = isMaxZ ? intervalsZ.getMax() : intervalsZ.getMin();
+        }
+
+        // Return
+        return line;
     }
 
     /**
