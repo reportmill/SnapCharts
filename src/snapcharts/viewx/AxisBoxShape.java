@@ -25,6 +25,13 @@ public class AxisBoxShape extends ParentShape {
     // The Top/Bottom sides
     private FacetShape  _topSide, _bottomSide;
 
+    // Constants
+    private static final Color SIDE_COLOR = Color.WHITE;
+    private static final Color SIDE_BORDER_COLOR = Color.BLACK;
+    private static final Color BOTTOM_COLOR = Color.LIGHTGRAY.brighter().brighter();
+    private static final Color MINOR_GRID_COLOR = Color.LIGHTGRAY;
+    private static final Color GRID_COLOR = Color.DARKGRAY;
+
     /**
      * Constructor.
      */
@@ -137,7 +144,7 @@ public class AxisBoxShape extends ParentShape {
         Poly3D side = new Poly3D();
         side.setName(sideZ == 0 ? "AxisBack" : "AxisFront");
         side.setOpacity(.8f);
-        side.setColor(Color.WHITE); //if (_backFill!=null) back.setColor(_backFill.getColor());
+        side.setColor(SIDE_COLOR); //if (_backFill!=null) back.setColor(_backFill.getColor());
 
         // Add side points
         side.addPoint(0, 0, sideZ);
@@ -162,7 +169,7 @@ public class AxisBoxShape extends ParentShape {
         // Create side shape
         Poly3D side = new Poly3D();
         side.setName(sideX == 0 ? "AxisLeft" : "AxisRight");
-        side.setColor(Color.WHITE);
+        side.setColor(SIDE_COLOR);
         side.setOpacity(.8f);
 
         // Add side points
@@ -188,7 +195,7 @@ public class AxisBoxShape extends ParentShape {
         // Create side shape
         Poly3D side = new Poly3D();
         side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
-        side.setColor(sideY == 0 ? Color.LIGHTGRAY : Color.WHITE);
+        side.setColor(sideY == 0 ? BOTTOM_COLOR : SIDE_COLOR);
         side.setOpacity(.8f);
 
         // Add side points
@@ -201,19 +208,6 @@ public class AxisBoxShape extends ParentShape {
         double normalY = sideY == 0 ? 1 : -1;
         if (!MathUtils.equals(side.getNormal().y, normalY))
             side.reverse();
-
-        // Create Painter3D for side border/grid, paint border, add to side
-        Painter3D gridPainter = new Painter3D(width, depth);
-        gridPainter.addLayerOffset(.5);
-        gridPainter.drawRect(0, 0, width, depth);
-        side.setPainter(gridPainter);
-
-        // Paint grid
-        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.TOP);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        paintGridX(gridPainter, intervalsAcross, width, depth);
-        paintGridY(gridPainter, intervalsDown, width, depth);
 
         // Return
         return side;
@@ -241,15 +235,35 @@ public class AxisBoxShape extends ParentShape {
     {
         // Create Painter3D for side border/grid, paint border, add to side
         Painter3D gridPainter = new Painter3D(width, height);
-        gridPainter.addLayerOffset(1);
-        gridPainter.drawRect(0, 0, width, height);
+        gridPainter.addLayerOffset(.5);
+        if (SIDE_BORDER_COLOR != null) {
+            gridPainter.setColor(SIDE_BORDER_COLOR);
+            gridPainter.drawRect(0, 0, width, height);
+        }
 
         // Get 2D grid
         AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.FRONT);
         Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
         Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        paintGridX(gridPainter, intervalsAcross, width, height);
-        paintGridY(gridPainter, intervalsDown, width, height);
+        Intervals intervalsAcrossPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDownPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[1]);
+
+        // Maybe paint minor intervals
+        boolean doMinorAcross = intervalsAcrossPref.getCount() > intervalsAcross.getCount();
+        boolean doMinorDown = intervalsDownPref.getCount() > intervalsDown.getCount();
+        if (doMinorAcross || doMinorDown) {
+            gridPainter.setColor(MINOR_GRID_COLOR);
+            if (doMinorAcross)
+                paintGridX(gridPainter, intervalsAcross, width, height, true);
+            if (doMinorDown)
+                paintGridY(gridPainter, intervalsDown, width, height, true);
+            gridPainter.addLayerOffset(.25);
+        }
+
+        // Paint intervals
+        gridPainter.setColor(GRID_COLOR);
+        paintGridX(gridPainter, intervalsAcross, width, height, false);
+        paintGridY(gridPainter, intervalsDown, width, height, false);
 
         // Add to front/back
         _frontSide.setPainter(gridPainter);
@@ -264,14 +278,34 @@ public class AxisBoxShape extends ParentShape {
         // Create Painter3D for side border/grid, paint border, add to side
         Painter3D gridPainter = new Painter3D(depth, height);
         gridPainter.addLayerOffset(.5);
-        gridPainter.drawRect(0, 0, depth, height);
+        if (SIDE_BORDER_COLOR != null) {
+            gridPainter.setColor(SIDE_BORDER_COLOR);
+            gridPainter.drawRect(0, 0, depth, height);
+        }
 
         // Paint grid
         AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.LEFT);
         Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
         Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        paintGridX(gridPainter, intervalsAcross, depth, height);
-        paintGridY(gridPainter, intervalsDown, depth, height);
+        Intervals intervalsAcrossPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDownPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[1]);
+
+        // Maybe paint minor intervals
+        boolean doMinorAcross = intervalsAcrossPref.getCount() > intervalsAcross.getCount();
+        boolean doMinorDown = intervalsDownPref.getCount() > intervalsDown.getCount();
+        if (doMinorAcross || doMinorDown) {
+            gridPainter.setColor(MINOR_GRID_COLOR);
+            if (doMinorAcross)
+                paintGridX(gridPainter, intervalsAcross, depth, height, true);
+            if (doMinorDown)
+                paintGridY(gridPainter, intervalsDown, depth, height, true);
+            gridPainter.addLayerOffset(.25);
+        }
+
+        // Paint intervals
+        gridPainter.setColor(GRID_COLOR);
+        paintGridX(gridPainter, intervalsAcross, depth, height, false);
+        paintGridY(gridPainter, intervalsDown, depth, height, false);
 
         // Add to left/right
         _leftSide.setPainter(gridPainter);
@@ -286,14 +320,34 @@ public class AxisBoxShape extends ParentShape {
         // Create Painter3D for side border/grid, paint border, add to side
         Painter3D gridPainter = new Painter3D(width, depth);
         gridPainter.addLayerOffset(.5);
-        gridPainter.drawRect(0, 0, width, depth);
+        if (SIDE_BORDER_COLOR != null) {
+            gridPainter.setColor(SIDE_BORDER_COLOR);
+            gridPainter.drawRect(0, 0, width, depth);
+        }
 
         // Paint grid
         AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.TOP);
         Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
         Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        paintGridX(gridPainter, intervalsAcross, width, depth);
-        paintGridY(gridPainter, intervalsDown, width, depth);
+        Intervals intervalsAcrossPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDownPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[1]);
+
+        // Maybe paint minor intervals
+        boolean doMinorAcross = intervalsAcrossPref.getCount() > intervalsAcross.getCount();
+        boolean doMinorDown = intervalsDownPref.getCount() > intervalsDown.getCount();
+        if (doMinorAcross || doMinorDown) {
+            gridPainter.setColor(MINOR_GRID_COLOR);
+            if (doMinorAcross)
+                paintGridX(gridPainter, intervalsAcross, width, depth, true);
+            if (doMinorDown)
+                paintGridY(gridPainter, intervalsDown, width, depth, true);
+            gridPainter.addLayerOffset(.25);
+        }
+
+        // Paint intervals
+        gridPainter.setColor(GRID_COLOR);
+        paintGridX(gridPainter, intervalsAcross, width, depth, false);
+        paintGridY(gridPainter, intervalsDown, width, depth, false);
 
         // Add to top/bottom
         _bottomSide.setPainter(gridPainter);
@@ -304,7 +358,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Paints the grid path for X axis.
      */
-    private void paintGridX(Painter3D aPntr, Intervals theIntervals, double aWidth, double aHeight)
+    private void paintGridX(Painter3D aPntr, Intervals theIntervals, double aWidth, double aHeight, boolean doMinor)
     {
         // If no intervals, just return
         if (theIntervals == null) return;
@@ -314,15 +368,17 @@ public class AxisBoxShape extends ParentShape {
         double ivalMax = theIntervals.getMax();
         double y1 = 0;
         double y2 = aHeight;
+        double offset = doMinor ? theIntervals.getDelta() / 2 : 0;
 
         // Iterate over intervals and paint grid line path
         for (int i = 0, iMax = theIntervals.getCount(); i < iMax; i++) {
 
             // If not full interval, just skip
             if (!theIntervals.isFullInterval(i)) continue;
+            if (doMinor && i + 1 == iMax) continue;
 
             // Get interval, map to Width and draw line
-            double ival = theIntervals.getInterval(i);
+            double ival = theIntervals.getInterval(i) + offset;
             double lineX = MathUtils.mapValueForRanges(ival, ivalMin, ivalMax, 0, aWidth);
             aPntr.moveTo(lineX, y1);
             aPntr.lineTo(lineX, y2);
@@ -332,7 +388,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Paints the grid path for Y axis.
      */
-    private void paintGridY(Painter3D aPntr, Intervals theIntervals, double aWidth, double aHeight)
+    private void paintGridY(Painter3D aPntr, Intervals theIntervals, double aWidth, double aHeight, boolean doMinor)
     {
         // If no intervals, just return
         if (theIntervals == null) return;
@@ -342,15 +398,17 @@ public class AxisBoxShape extends ParentShape {
         double ivalMax = theIntervals.getMax();
         double x1 = 0;
         double x2 = aWidth;
+        double offset = doMinor ? theIntervals.getDelta() / 2 : 0;
 
         // Iterate over intervals and paint grid line path
         for (int i = 0, iMax = theIntervals.getCount(); i < iMax; i++) {
 
             // If not full interval, just skip
             if (!theIntervals.isFullInterval(i)) continue;
+            if (doMinor && i + 1 == iMax) continue;
 
             // Get interval, map to Height and draw line
-            double ival = theIntervals.getInterval(i);
+            double ival = theIntervals.getInterval(i) + offset;
             double lineY = MathUtils.mapValueForRanges(ival, ivalMin, ivalMax, 0, aHeight);
             aPntr.moveTo(x1, lineY);
             aPntr.lineTo(x2, lineY);

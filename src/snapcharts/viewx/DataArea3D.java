@@ -274,40 +274,54 @@ public abstract class DataArea3D extends DataArea {
      */
     public boolean updateIntervalsIfNeeded()
     {
-        // Get AxisTypes and didUpdate flag
+        // Iterate over axes types and updateIntervals for each
         AxisType[] axisTypes = _chartHelper.getAxisTypes();
         boolean didUpdate = false;
+        for (AxisType axisType : axisTypes)
+            didUpdate |= updateIntervalsForAxisIfNeeded(axisType);
 
-        // Iterate over axes types and recalc intervals for each axis length in view coords (based on chart orientation)
-        for (AxisType axisType : axisTypes) {
 
-            // Get preferred intervals and min/max
-            Intervals prefIntervals = getPrefIntervalsForAxis(axisType);
-            double prefMin = prefIntervals.getMin();
-            double prefMax = prefIntervals.getMax();
+        // Return whether any updated
+        return didUpdate;
+    }
 
-            // Handle Category axis special
-            if (axisType == AxisType.X && getAxisViewX().isCategoryAxis()) {
-                if (getIntervalsX() == null)
-                    setIntervalsForAxis(axisType, prefIntervals);
-                continue;
-            }
+    /**
+     * Checks to see if intervals have changed due to AxisBox orientation change for given axis.
+     */
+    protected boolean updateIntervalsForAxisIfNeeded(AxisType axisType)
+    {
+        // Get preferred intervals and min/max
+        Intervals prefIntervals = getPrefIntervalsForAxis(axisType);
+        double prefMin = prefIntervals.getMin();
+        double prefMax = prefIntervals.getMax();
 
-            // Calculate intervals for current axis length
-            double axisLen = getAxisLengthInViewForAxis(axisType);
-            //Size labelSize = _dataArea.getChartHelper().getAxisView(axisType).getMaxTickLabelRotatedSize();
-            double divLen = 40;
-            Intervals intervals = Intervals.getIntervalsForMinMaxLen(prefMin, prefMax, axisLen, divLen, true, true);
-
-            // If not equal, then set updated intervals and mark didUpdate
-            if (!intervals.equals(getIntervalsForAxis(axisType))) {
-                setIntervalsForAxis(axisType, intervals);
-                didUpdate = true;
-            }
+        // Handle Category axis special
+        if (axisType == AxisType.X && getAxisViewX().isCategoryAxis()) {
+            if (getIntervalsX() == null)
+                setIntervalsForAxis(axisType, prefIntervals);
+            return false;
         }
 
-        // Return
-        return didUpdate;
+        // Handle Bar3D Z axis special
+        if (axisType == AxisType.Z && getChartType() == ChartType.BAR_3D) {
+            if (getIntervalsZ() == null)
+                setIntervalsForAxis(axisType, prefIntervals);
+            return false;
+        }
+
+        // Calculate intervals for current axis length
+        double axisLen = getAxisLengthInViewForAxis(axisType);
+        //Size labelSize = _dataArea.getChartHelper().getAxisView(axisType).getMaxTickLabelRotatedSize();
+        double divLen = 40;
+        Intervals intervals = Intervals.getIntervalsForMinMaxLen(prefMin, prefMax, axisLen, divLen, true, true);
+
+        // If equal, then set updated intervals and mark didUpdate
+        if (intervals.equals(getIntervalsForAxis(axisType)))
+            return false;
+
+        // Set updated intervals and return true
+        setIntervalsForAxis(axisType, intervals);
+        return true;
     }
 
     /**
@@ -567,6 +581,9 @@ public abstract class DataArea3D extends DataArea {
     @Override
     protected void paintDataArea(Painter aPntr)
     {
+        // If no content yet, just return
+        if (_scene.getChildCount() == 0) return;
+
         // Update AxisBoxShape Sides Visibility
         AxisBoxShape axisBoxShape = getAxisBoxShape();
         axisBoxShape.setSidesVisibleForCamera();
@@ -575,17 +592,16 @@ public abstract class DataArea3D extends DataArea {
         boolean didUpdateIntervals = updateIntervalsIfNeeded();
         if (didUpdateIntervals)
             axisBoxShape.addSideGrids();
+
+        // Paint AxisBoxText
+        paintAxisBoxText(aPntr);
     }
 
     /**
-     * Override to suppress.
+     * Paints the axis box text (axis and tick labels).
      */
-    @Override
-    protected void paintDataAreaAbove(Painter aPntr)
+    protected void paintAxisBoxText(Painter aPntr)
     {
-        // If no AxisBox yet, just return
-        if (_scene == null || _scene.getChildCount() == 0) return;
-
         // Clip AxisBox text (axis and tick labels)
         aPntr.save();
         aPntr.clipRect(0, 0, getWidth(), getHeight());
