@@ -4,6 +4,7 @@ import snap.geom.Side;
 import snap.gfx.Color;
 import snap.text.NumberFormat;
 import snap.text.TextFormat;
+import snap.util.ArrayUtils;
 import snap.util.FileUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
@@ -165,6 +166,10 @@ public class OpenInPlotly {
 
         // Write the legend layout
         writeChartLegendLayout(aChart, layoutJS);
+
+        // Write the chart Scene (3D) layout
+        if (aChart.getType().is3D())
+            writeChartSceneLayout(aChart, layoutJS);
 
         // Write layout
         _sb.append("var layout").append(" = ");
@@ -455,6 +460,35 @@ public class OpenInPlotly {
         // Add to layout node
         if (legendJS.getNodeCount() > 0)
             layoutJS.addKeyValue("legend", legendJS);
+    }
+
+    /**
+     * Writes the chart Scene (3D) layout.
+     */
+    private void writeChartSceneLayout(Chart aChart, JSONNode layoutJS)
+    {
+        // Create Scene JSON
+        JSONNode sceneJS = new JSONNode();
+
+        // Get AxisTypes
+        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
+        if (!ArrayUtils.contains(axisTypes, AxisType.Z))
+            axisTypes = ArrayUtils.add(axisTypes, AxisType.Z);
+
+        // Iterate over axisTypes and add to Scene JSON
+        for (AxisType axisType : axisTypes) {
+
+            String key = getAxisName(axisType);
+            JSONNode axisJS = layoutJS.getNode(key);
+            if (axisJS != null) {
+                layoutJS.removeNode(axisJS);
+                sceneJS.addKeyValue(key, axisJS);
+            }
+        }
+
+        // Add to layout node
+        if (sceneJS.getNodeCount() > 0)
+            layoutJS.addKeyValue("scene", sceneJS);
     }
 
     /**
