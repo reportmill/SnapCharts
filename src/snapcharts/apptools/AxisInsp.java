@@ -1,7 +1,9 @@
 package snapcharts.apptools;
-import snap.gfx.Color;
+import snap.geom.Pos;
 import snap.text.NumberFormat;
-import snap.view.TextField;
+import snap.view.ButtonBase;
+import snap.view.ParentView;
+import snap.view.View;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
@@ -87,11 +89,21 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("Y2AxisButton", axisType == AxisType.Y2);
         setViewValue("Y3AxisButton", axisType == AxisType.Y3);
         setViewValue("Y4AxisButton", axisType == AxisType.Y4);
+        setViewValue("ZAxisButton", axisType == AxisType.Z);
         setViewEnabled("XAxisButton", chartHelper.getAxisView(AxisType.X) != null);
         setViewEnabled("YAxisButton", chartHelper.getAxisView(AxisType.Y) != null);
-        setViewEnabled("Y2AxisButton", chartHelper.getAxisView(AxisType.Y2) != null);
-        setViewEnabled("Y3AxisButton", chartHelper.getAxisView(AxisType.Y3) != null);
-        setViewEnabled("Y4AxisButton", chartHelper.getAxisView(AxisType.Y4) != null);
+        setViewVisible("Y2AxisButton", chartHelper.getAxisView(AxisType.Y2) != null);
+        setViewVisible("Y3AxisButton", chartHelper.getAxisView(AxisType.Y3) != null);
+        setViewVisible("Y4AxisButton", chartHelper.getAxisView(AxisType.Y4) != null);
+        setViewVisible("ZAxisButton", chartHelper.getAxisView(AxisType.Z) != null);
+
+        // Fix Button.Position for AxisButtons
+        ParentView axisButtonParent = getView("XAxisButton").getParent();
+        View[] axisButtons = axisButtonParent.getChildrenManaged();
+        for (int i = 0, iMax = axisButtons.length; i < iMax; i++) {
+            ButtonBase child = (ButtonBase) axisButtons[i];
+            child.setPosition(i == 0? Pos.CENTER_LEFT : i + 1 == iMax ? Pos.CENTER_RIGHT : Pos.CENTER);
+        }
 
         // Get AxisView
         AxisView axisView = getAxisView();
