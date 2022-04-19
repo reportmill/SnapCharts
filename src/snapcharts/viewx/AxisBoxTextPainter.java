@@ -7,6 +7,7 @@ import snap.geom.Rect;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.text.TextFormat;
+import snap.view.StringView;
 import snapcharts.model.*;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.TickLabel;
@@ -57,7 +58,7 @@ public class AxisBoxTextPainter {
         int pointCount = traceList.getPointCount();
 
         // Get axis grid line end points
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.X);
+        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.X, 0);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
 
@@ -84,8 +85,11 @@ public class AxisBoxTextPainter {
             tickLabel.setText(tickStr);
 
             // Paint TickLabel with correct bounds for axis line
-            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
+            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2, false);
         }
+
+        // Paint AxisLabel
+        paintAxisLabelForAxis(aPntr, tickLabel, AxisType.X);
     }
 
     /**
@@ -99,7 +103,7 @@ public class AxisBoxTextPainter {
         TextFormat tickFormat = axis.getTextFormat();
 
         // Get axis grid line end points
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.Y);
+        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.Y, 0);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
 
@@ -122,8 +126,11 @@ public class AxisBoxTextPainter {
             tickLabel.setText(tickStr);
 
             // Paint TickLabel with correct bounds for axis line
-            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
+            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2, false);
         }
+
+        // Paint AxisLabel
+        paintAxisLabelForAxis(aPntr, tickLabel, AxisType.Y);
     }
 
     /**
@@ -132,12 +139,12 @@ public class AxisBoxTextPainter {
     protected void paintTickLabelsZ(Painter aPntr)
     {
         // Create/configure TickLabel
-        TickLabel tickLabel = getTickLabelForAxis(AxisType.Y);
-        Axis axis = _dataArea.getChart().getAxisForType(AxisType.Y);
+        TickLabel tickLabel = getTickLabelForAxis(AxisType.Z);
+        Axis axis = _dataArea.getChart().getAxisForType(AxisType.Z);
         TextFormat tickFormat = axis.getTextFormat();
 
         // Get axis grid line end points
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.Z);
+        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.Z, 0);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
 
@@ -160,14 +167,17 @@ public class AxisBoxTextPainter {
             tickLabel.setText(tickStr);
 
             // Paint TickLabel with correct bounds for axis line
-            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2);
+            paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2, false);
         }
+
+        // Paint AxisLabel
+        paintAxisLabelForAxis(aPntr, tickLabel, AxisType.Z);
     }
 
     /**
      * Paints TickLabel for given axis line.
      */
-    private static void paintTickLabelForPoints(Painter aPntr, TickLabel tickLabel, Point3D axisPoint1, Point3D axisPoint2)
+    private static void paintTickLabelForPoints(Painter aPntr, TickLabel tickLabel, Point3D axisPoint1, Point3D axisPoint2, boolean doRotate)
     {
         // Get radial angle
         double dx = axisPoint2.x - axisPoint1.x;
@@ -183,10 +193,63 @@ public class AxisBoxTextPainter {
         double tickLabelX = axisPoint2.x - perimiterPoint.x;
         double tickLabelY = axisPoint2.y - perimiterPoint.y;
         tickLabel.setXY(tickLabelX, tickLabelY);
-        tickLabel.paintStringView(aPntr);
 
+        // Maybe do rotate
+        if (doRotate)
+            tickLabel.setRotate(angleDeg + 90);
+
+        // Paint string
         //tickLabel.setBorder(Color.PINK, 1);
+        tickLabel.paintStringView(aPntr);
+        if (doRotate)
+            tickLabel.setRotate(0);
+
         //paintPoint(aPntr, axisPoint1, Color.GREEN); paintPoint(aPntr, axisPoint2, Color.ORANGE);
+    }
+
+    /**
+     * Paint Axis label.
+     */
+    private void paintAxisLabelForAxis(Painter aPntr, StringView aStringView, AxisType axisType)
+    {
+        // Configure axis label text
+        Axis axis = _dataArea.getChart().getAxisForType(axisType);
+        String axisLabelText = axis.getTitle();
+        if (axisLabelText == null || axisLabelText.length() == 0)
+            return;
+        aStringView.setText(axisLabelText);
+        aStringView.setPadding(32, 32, 32, 32);
+        aStringView.setSizeToPrefSize();
+
+        // Get center grid line in camera space
+        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(axisType, .5);
+        Point3D gridLineP1 = gridLine.getP1();
+        Point3D gridLineP2 = gridLine.getP2();
+        _dataArea.convertDataToView(gridLineP1);
+        _dataArea.convertDataToView(gridLineP2);
+
+        // Get rotation of axis line in View coords
+        Line3D axisLine = _dataArea.getAxisLineInDataSpace(axisType);
+        _dataArea.convertDataToView(axisLine.getP1());
+        _dataArea.convertDataToView(axisLine.getP2());
+        double angleDeg = axisLine.getAngle2DInDeg();
+        aStringView.setRotate(angleDeg);
+
+        // Get radial angle
+        double dx = gridLineP2.x - gridLineP1.x;
+        double dy = gridLineP2.y - gridLineP1.y;
+        double angleDeg2 = getAngleBetweenPoints(1, 0, -dx, -dy);
+
+        // Position label so that
+        Rect labelBounds = aStringView.getBoundsLocal();
+        labelBounds.x = (labelBounds.width - 80) / 2; labelBounds.width = 80;
+        Point perimiterPoint = labelBounds.getPerimeterPointForRadial(angleDeg2, true);
+        double labelX = gridLine.getP2().x - perimiterPoint.x;
+        double labelY = gridLine.getP2().y - perimiterPoint.y;
+        aStringView.setXY(labelX, labelY);
+
+        // Paint
+        aStringView.paintStringView(aPntr);
     }
 
     /**

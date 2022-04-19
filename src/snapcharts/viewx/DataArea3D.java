@@ -337,7 +337,7 @@ public abstract class DataArea3D extends DataArea {
         convertDataToView(axisLine.getP2());
 
         // Return distance between line XY points
-        return axisLine.getDistance2D();
+        return axisLine.getLengthXY();
     }
 
     /**
@@ -424,8 +424,13 @@ public abstract class DataArea3D extends DataArea {
     /**
      * Returns the axis grid line at axis min for given axis type (perpendicular to axis line).
      */
-    public Line3D getAxisGridLineInDataSpace(AxisType axisType)
+    public Line3D getAxisGridLineInDataSpace(AxisType axisType, double aFractionalOnAxisLine)
     {
+        // Get intervals
+        Intervals intervalsX = getPrefIntervalsX();
+        Intervals intervalsY = getPrefIntervalsY();
+        Intervals intervalsZ = getPrefIntervalsZ();
+
         // Get axis line
         Line3D line = getAxisLineInDataSpace(axisType);
         Point3D p1 = line.getP1();
@@ -438,7 +443,7 @@ public abstract class DataArea3D extends DataArea {
 
         // Handle X axis
         if (axisType == AxisType.X) {
-            p2.x = p1.x;
+            p2.x = p1.x = MathUtils.mapFractionalToRangeValue(aFractionalOnAxisLine, intervalsX.getMin(), intervalsX.getMax());
             if (isForwardXY)
                 spreadZ = true;
             else spreadY = true;
@@ -446,7 +451,7 @@ public abstract class DataArea3D extends DataArea {
 
         // Handle Y axis
         else if (axisType.isAnyY()) {
-            p2.y = p1.y;
+            p2.y = p1.y = MathUtils.mapFractionalToRangeValue(aFractionalOnAxisLine, intervalsY.getMin(), intervalsY.getMax());
             if (isForwardXY)
                 spreadX = true;
             else spreadX = true;
@@ -454,13 +459,12 @@ public abstract class DataArea3D extends DataArea {
 
         // Handle Z axis
         else if (axisType == AxisType.Z) {
-            p2.z = p1.z;
+            p2.z = p1.z = MathUtils.mapFractionalToRangeValue(aFractionalOnAxisLine, intervalsZ.getMin(), intervalsZ.getMax());
             if (isForwardXY)
                 spreadX = true;
             else {
                 AxisBoxShape axisBoxShape = getAxisBoxShape();
                 boolean isRightVisible = axisBoxShape.isSideVisible(Side3D.RIGHT);
-                Intervals intervalsX = getPrefIntervalsX();
                 boolean isZX = isRightVisible ? MathUtils.equals(p1.x, intervalsX.getMin()) : MathUtils.equals(p1.x, intervalsX.getMax());
                 if (isZX)
                     spreadX = true;
@@ -470,19 +474,16 @@ public abstract class DataArea3D extends DataArea {
 
         // Handle spreading of grid line point component
         if (spreadX) {
-            Intervals intervalsX = getPrefIntervalsX();
             boolean isMaxX = MathUtils.equals(p1.x, intervalsX.getMax());
             p1.x = isMaxX ? intervalsX.getMin() : intervalsX.getMax();
             p2.x = isMaxX ? intervalsX.getMax() : intervalsX.getMin();
         }
         else if (spreadY) {
-            Intervals intervalsY = getPrefIntervalsY();
             boolean isMaxY = MathUtils.equals(p1.y, intervalsY.getMax());
             p1.y = isMaxY ? intervalsY.getMin() : intervalsY.getMax();
             p2.y = isMaxY ? intervalsY.getMax() : intervalsY.getMin();
         }
         else if (spreadZ) {
-            Intervals intervalsZ = getPrefIntervalsZ();
             boolean isMaxZ = MathUtils.equals(p1.z, intervalsZ.getMax());
             p1.z = isMaxZ ? intervalsZ.getMin() : intervalsZ.getMax();
             p2.z = isMaxZ ? intervalsZ.getMax() : intervalsZ.getMin();
@@ -536,7 +537,7 @@ public abstract class DataArea3D extends DataArea {
     /**
      * Returns given XYZ data point as Point3D in View coords.
      */
-    public void convertDataToView(Point3D aPoint)
+    public void convertDataToScene(Point3D aPoint)
     {
         // Get intervals and AxisBox
         Intervals intervalsX = getPrefIntervalsX();
@@ -559,10 +560,15 @@ public abstract class DataArea3D extends DataArea {
         aPoint.x = MathUtils.mapValueForRanges(aPoint.x, intervalsX.getMin(), intervalsX.getMax(), 0, prefW);
         aPoint.y = MathUtils.mapValueForRanges(aPoint.y, intervalsY.getMin(), intervalsY.getMax(), 0, prefH);
         aPoint.z = MathUtils.mapValueForRanges(aPoint.z, intervalsZ.getMin(), intervalsZ.getMax(), 0, prefD);
+    }
 
-        // Transform point from AxisBox (Scene) to View space
-        Matrix3D sceneToView = _camera.getSceneToView();
-        sceneToView.transformPoint(aPoint);
+    /**
+     * Returns given XYZ data point as Point3D in View coords.
+     */
+    public void convertDataToView(Point3D aPoint)
+    {
+        convertDataToScene(aPoint);
+        convertSceneToView(aPoint);
     }
 
     /**
@@ -573,6 +579,15 @@ public abstract class DataArea3D extends DataArea {
         Point3D point = new Point3D(aX, aY, aZ);
         convertDataToView(point);
         return point;
+    }
+
+    /**
+     * Returns given XYZ data point as Point3D in View coords.
+     */
+    public void convertSceneToView(Point3D aPoint)
+    {
+        Matrix3D sceneToView = _camera.getSceneToView();
+        sceneToView.transformPoint(aPoint);
     }
 
     /**
