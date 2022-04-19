@@ -242,7 +242,7 @@ public class AxisBoxTextPainter {
 
         // Position label so that
         Rect labelBounds = aStringView.getBoundsLocal();
-        labelBounds.x = (labelBounds.width - 80) / 2; labelBounds.width = 80;
+        if (labelBounds.width > 80) { labelBounds.x = (labelBounds.width - 80) / 2; labelBounds.width = 80; }
         Point perimiterPoint = labelBounds.getPerimeterPointForRadial(angleDeg2, true);
         double labelX = gridLine.getP2().x - perimiterPoint.x;
         double labelY = gridLine.getP2().y - perimiterPoint.y;
