@@ -4,10 +4,12 @@
 package snapcharts.viewx;
 import snap.geom.Point;
 import snap.geom.Rect;
+import snap.geom.Transform;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.text.TextFormat;
 import snap.view.StringView;
+import snap.view.View;
 import snapcharts.model.*;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.TickLabel;
@@ -19,6 +21,9 @@ public class AxisBoxTextPainter {
 
     // The DataArea
     private DataArea3D  _dataArea;
+
+    // The X axis bounds
+    private View  _axisProxyX, _axisProxyY, _axisProxyZ;
 
     /**
      * Constructor.
@@ -88,8 +93,13 @@ public class AxisBoxTextPainter {
             paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2, false);
         }
 
-        // Paint AxisLabel
-        paintAxisLabelForAxis(aPntr, tickLabel, AxisType.X);
+        // Configure and paint AxisLabel
+        configureAxisLabelForAxis(tickLabel, AxisType.X);
+        tickLabel.paintStringView(aPntr);
+
+        // Configure AxisProxy from AxisLabel
+        configureAxisProxyForAxis(tickLabel, AxisType.X);
+        _axisProxyX = tickLabel;
     }
 
     /**
@@ -129,8 +139,13 @@ public class AxisBoxTextPainter {
             paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2, false);
         }
 
-        // Paint AxisLabel
-        paintAxisLabelForAxis(aPntr, tickLabel, AxisType.Y);
+        // Configure and paint AxisLabel
+        configureAxisLabelForAxis(tickLabel, AxisType.Y);
+        tickLabel.paintStringView(aPntr);
+
+        // Configure AxisProxy from AxisLabel
+        configureAxisProxyForAxis(tickLabel, AxisType.Y);
+        _axisProxyY = tickLabel;
     }
 
     /**
@@ -170,8 +185,13 @@ public class AxisBoxTextPainter {
             paintTickLabelForPoints(aPntr, tickLabel, axisPoint1, axisPoint2, false);
         }
 
-        // Paint AxisLabel
-        paintAxisLabelForAxis(aPntr, tickLabel, AxisType.Z);
+        // Configure and paint AxisLabel
+        configureAxisLabelForAxis(tickLabel, AxisType.Z);
+        tickLabel.paintStringView(aPntr);
+
+        // Configure AxisProxy from AxisLabel
+        configureAxisProxyForAxis(tickLabel, AxisType.Z);
+        _axisProxyZ = tickLabel;
     }
 
     /**
@@ -208,15 +228,13 @@ public class AxisBoxTextPainter {
     }
 
     /**
-     * Paint Axis label.
+     * Calculates and sets text, bounds and rotation for axis label StringView.
      */
-    private void paintAxisLabelForAxis(Painter aPntr, StringView aStringView, AxisType axisType)
+    private void configureAxisLabelForAxis(StringView aStringView, AxisType axisType)
     {
         // Configure axis label text
         Axis axis = _dataArea.getChart().getAxisForType(axisType);
-        String axisLabelText = axis.getTitle();
-        if (axisLabelText == null || axisLabelText.length() == 0)
-            return;
+        String axisLabelText = axis.getTitle(); if (axisLabelText == null) axisLabelText = "";
         aStringView.setText(axisLabelText);
         aStringView.setPadding(32, 32, 32, 32);
         aStringView.setSizeToPrefSize();
@@ -233,6 +251,8 @@ public class AxisBoxTextPainter {
         _dataArea.convertDataToView(axisLine.getP1());
         _dataArea.convertDataToView(axisLine.getP2());
         double angleDeg = axisLine.getAngle2DInDeg();
+        if (angleDeg > 110) angleDeg -= 180;
+        else if (angleDeg < -110) angleDeg += 180;
         aStringView.setRotate(angleDeg);
 
         // Get radial angle
@@ -247,9 +267,39 @@ public class AxisBoxTextPainter {
         double labelX = gridLine.getP2().x - perimiterPoint.x;
         double labelY = gridLine.getP2().y - perimiterPoint.y;
         aStringView.setXY(labelX, labelY);
+    }
 
-        // Paint
-        aStringView.paintStringView(aPntr);
+    /**
+     * Calculates and sets bounds and rotation for axis view (assumes it is already configured as axis label view).
+     */
+    private void configureAxisProxyForAxis(View axisView, AxisType axisType)
+    {
+        // Calculate X AxisBounds
+        Rect axisBounds = axisView.getBoundsLocal();
+        double inset = axisView.getPadding().top - 5;
+        axisBounds.inset(inset);
+
+        // Get AxisLine in DataArea coords
+        Line3D axisLine = _dataArea.getAxisLineInDataSpace(axisType);
+        Point3D axisLineP1 = axisLine.getP1(); _dataArea.convertDataToView(axisLineP1);
+        Point3D axisLineP2 = axisLine.getP2(); _dataArea.convertDataToView(axisLineP2);
+
+        // Get AxisLine points in AxisView coords and add to bounds
+        Transform parentToLocal = axisView.getParentToLocal();
+        Point axisLineP1InAxisView = parentToLocal.transform(axisLineP1.x, axisLineP1.y);
+        Point axisLineP2InAxisView = parentToLocal.transform(axisLineP2.x, axisLineP2.y);
+
+        // Add AxisLine points to AxisView bounds
+        axisBounds.add(axisLineP1InAxisView.x, axisLineP1InAxisView.y);
+        axisBounds.add(axisLineP2InAxisView.x, axisLineP2InAxisView.y);
+
+        // Get new Axis bounds in DataArea
+        Point midPoint = axisView.localToParent(axisBounds.getMidX(), axisBounds.getMidY());
+        double axisX = Math.round(midPoint.x - axisBounds.width / 2) + _dataArea.getParent().getX();
+        double axisY = Math.round(midPoint.y - axisBounds.height / 2) + _dataArea.getParent().getY();
+        double axisW = Math.round(axisBounds.width);
+        double axisH = Math.round(axisBounds.height);
+        axisView.setBounds(axisX, axisY, axisW, axisH);
     }
 
     /**
