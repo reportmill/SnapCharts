@@ -10,7 +10,7 @@ import snapcharts.view.*;
 /**
  * A ChartHelper for common Contour types.
  */
-public class Contour3DChartHelper extends ChartHelper {
+public class Contour3DChartHelper extends ChartHelper3D {
 
     // An object to help with Contours
     protected ContourHelper  _contourHelper;

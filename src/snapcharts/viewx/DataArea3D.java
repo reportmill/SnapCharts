@@ -6,6 +6,7 @@ import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
 import snap.util.PropChange;
+import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.view.*;
 
@@ -33,10 +34,16 @@ public abstract class DataArea3D extends DataArea {
     protected AxisBoxShape  _axisBoxShape;
 
     // The AxisBoxPainter to paint tick labels
-    private AxisBoxTextPainter  _axisBoxPainter;
+    protected AxisBoxTextPainter  _axisBoxPainter;
+
+    // The X axis bounds
+    protected ChartPartView  _axisProxyX, _axisProxyY, _axisProxyZ;
 
     // Runnables to rebuild chart deferred/coalesced
     private Runnable  _rebuildChartRun, _rebuildChartRunImpl = () -> rebuildChartNow();
+
+    // Runnables to rebuild AxisProxy views when camera changes (deferred/coalesced)
+    private Runnable  _cameraChangeRun, _cameraChangeRunImpl = () -> cameraDidChangeImpl();
 
     // Constants
     public static final double DEFAULT_YAW = 26;
@@ -63,11 +70,29 @@ public abstract class DataArea3D extends DataArea {
         _camera = _cameraView.getCamera();
         _scene = _cameraView.getScene();
 
+        // Add listener for Camera changes to update AxisProxy bounds
+        _camera.addPropChangeListener(pc -> cameraDidChange());
+
         // Create/set painter
         _axisBoxPainter = new AxisBoxTextPainter(this);
 
         // Set default
         setDefaultViewTransform();
+
+        // Create/add AxisProxy views which allow for axis selection
+        Chart chart = aChartHelper.getChart();
+        _axisProxyX = new ChartPartView(chart.getAxisForType(AxisType.X));
+        _axisProxyX.setPaintable(false);
+        _axisProxyX.setPickable(false);
+        addChild(_axisProxyX);
+        _axisProxyY = new ChartPartView(chart.getAxisForType(AxisType.Y));
+        _axisProxyY.setPaintable(false);
+        _axisProxyY.setPickable(false);
+        addChild(_axisProxyY);
+        _axisProxyZ = new ChartPartView(chart.getAxisForType(AxisType.Z));
+        _axisProxyZ.setPaintable(false);
+        _axisProxyZ.setPickable(false);
+        addChild(_axisProxyZ);
     }
 
     /**
@@ -643,6 +668,29 @@ public abstract class DataArea3D extends DataArea {
             _cameraView.setSize(viewW, viewH);
             rebuildChart();
         }
+    }
+
+    /**
+     * Called when camera changes.
+     */
+    protected void cameraDidChange()
+    {
+        if (_cameraChangeRun == null) {
+            if (ViewUtils.isMouseDown())
+                ViewUtils.runOnMouseUp(_cameraChangeRun = _cameraChangeRunImpl);
+            else getEnv().runLater(_cameraChangeRun = _cameraChangeRunImpl);
+        }
+    }
+
+    /**
+     * Called when camera changes.
+     */
+    protected void cameraDidChangeImpl()
+    {
+        _axisBoxPainter.configureAxisProxyForAxis(_axisProxyX, AxisType.X);
+        _axisBoxPainter.configureAxisProxyForAxis(_axisProxyY, AxisType.Y);
+        _axisBoxPainter.configureAxisProxyForAxis(_axisProxyZ, AxisType.Z);
+        _cameraChangeRun = null;
     }
 
     /**

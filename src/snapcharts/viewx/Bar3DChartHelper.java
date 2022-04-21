@@ -5,7 +5,7 @@ import snapcharts.view.*;
 /**
  * A ChartHelper for ChartType BAR_3D.
  */
-public class Bar3DChartHelper extends ChartHelper {
+public class Bar3DChartHelper extends ChartHelper3D {
 
     /**
      * Constructor.

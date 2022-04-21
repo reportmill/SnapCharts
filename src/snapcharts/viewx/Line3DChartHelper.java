@@ -8,7 +8,7 @@ import snapcharts.view.DataArea;
 /**
  * A ChartHelper for 3D Line chart (ChartType.LINE_3D).
  */
-public class Line3DChartHelper extends ChartHelper {
+public class Line3DChartHelper extends ChartHelper3D {
 
     /**
      * Constructor.

@@ -340,7 +340,7 @@ public class ChartPaneSel {
             return markerView;
 
         // Get deepest selectable view for X/Y
-        View view = _chartView.getChildChartPartViewForXY(aX, aY);
+        View view = _chartView.getChildChartPartViewDeepForXY(aX, aY);
 
         // Correct for Selecting/Targeting
         //while (view != null && !isSelectableView(view)) view = view.getParent();

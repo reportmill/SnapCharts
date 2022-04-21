@@ -2,14 +2,14 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.geom.Pos;
 import snap.view.ParentView;
+import snap.view.View;
 import snap.view.ViewEvent;
-import snap.view.ViewUtils;
 import snapcharts.model.*;
 
 /**
  * A superclass for ChartView views.
  */
-public abstract class ChartPartView<T extends ChartPart> extends ParentView {
+public class ChartPartView<T extends ChartPart> extends ParentView {
 
     // The ChartPart
     protected T  _chartPart;
@@ -82,17 +82,34 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     }
 
     /**
-     * Returns the ChartPart for given point XY in ChartView coords.
+     * Returns the child of given class hit by coords.
      */
     public ChartPartView getChildChartPartViewForXY(double aX, double aY)
     {
+        View[] children = getChildren();
+        for (int i = children.length - 1; i >= 0; i--) {
+            View child = children[i];
+            Point pointInChild = child.parentToLocal(aX, aY);
+            if (!child.isVisible())
+                continue;
+            if (child instanceof ChartPartView && child.contains(pointInChild.x, pointInChild.y))
+                return (ChartPartView) child;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the ChartPart for given point XY in ChartView coords.
+     */
+    public ChartPartView getChildChartPartViewDeepForXY(double aX, double aY)
+    {
         // Get child ChartPartView at point
-        ChartPartView chartPartChild = ViewUtils.getChildAt(this, aX, aY, ChartPartView.class);
+        ChartPartView chartPartChild = getChildChartPartViewForXY(aX, aY);
 
         // If found, recurse
         if (chartPartChild != null) {
             Point pointInChild = chartPartChild.parentToLocal(aX, aY);
-            ChartPartView chartPartChildDeep = chartPartChild.getChildChartPartViewForXY(pointInChild.x, pointInChild.y);
+            ChartPartView chartPartChildDeep = chartPartChild.getChildChartPartViewDeepForXY(pointInChild.x, pointInChild.y);
             if (chartPartChildDeep != null)
                 return chartPartChildDeep;
         }

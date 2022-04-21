@@ -22,9 +22,6 @@ public class AxisBoxTextPainter {
     // The DataArea
     private DataArea3D  _dataArea;
 
-    // The X axis bounds
-    private View  _axisProxyX, _axisProxyY, _axisProxyZ;
-
     /**
      * Constructor.
      */
@@ -96,10 +93,6 @@ public class AxisBoxTextPainter {
         // Configure and paint AxisLabel
         configureAxisLabelForAxis(tickLabel, AxisType.X);
         tickLabel.paintStringView(aPntr);
-
-        // Configure AxisProxy from AxisLabel
-        configureAxisProxyForAxis(tickLabel, AxisType.X);
-        _axisProxyX = tickLabel;
     }
 
     /**
@@ -142,10 +135,6 @@ public class AxisBoxTextPainter {
         // Configure and paint AxisLabel
         configureAxisLabelForAxis(tickLabel, AxisType.Y);
         tickLabel.paintStringView(aPntr);
-
-        // Configure AxisProxy from AxisLabel
-        configureAxisProxyForAxis(tickLabel, AxisType.Y);
-        _axisProxyY = tickLabel;
     }
 
     /**
@@ -188,10 +177,6 @@ public class AxisBoxTextPainter {
         // Configure and paint AxisLabel
         configureAxisLabelForAxis(tickLabel, AxisType.Z);
         tickLabel.paintStringView(aPntr);
-
-        // Configure AxisProxy from AxisLabel
-        configureAxisProxyForAxis(tickLabel, AxisType.Z);
-        _axisProxyZ = tickLabel;
     }
 
     /**
@@ -272,8 +257,12 @@ public class AxisBoxTextPainter {
     /**
      * Calculates and sets bounds and rotation for axis view (assumes it is already configured as axis label view).
      */
-    private void configureAxisProxyForAxis(View axisView, AxisType axisType)
+    protected void configureAxisProxyForAxis(View axisProxy, AxisType axisType)
     {
+        // Get axis label for axis title
+        TickLabel axisView = getTickLabelForAxis(axisType);
+        configureAxisLabelForAxis(axisView, axisType);
+
         // Calculate X AxisBounds
         Rect axisBounds = axisView.getBoundsLocal();
         double inset = axisView.getPadding().top - 5;
@@ -292,14 +281,19 @@ public class AxisBoxTextPainter {
         // Add AxisLine points to AxisView bounds
         axisBounds.add(axisLineP1InAxisView.x, axisLineP1InAxisView.y);
         axisBounds.add(axisLineP2InAxisView.x, axisLineP2InAxisView.y);
+        axisBounds.inset(-20, 0);
 
         // Get new Axis bounds in DataArea
         Point midPoint = axisView.localToParent(axisBounds.getMidX(), axisBounds.getMidY());
-        double axisX = Math.round(midPoint.x - axisBounds.width / 2) + _dataArea.getParent().getX();
-        double axisY = Math.round(midPoint.y - axisBounds.height / 2) + _dataArea.getParent().getY();
+        double axisX = Math.round(midPoint.x - axisBounds.width / 2);
+        double axisY = Math.round(midPoint.y - axisBounds.height / 2);
         double axisW = Math.round(axisBounds.width);
         double axisH = Math.round(axisBounds.height);
         axisView.setBounds(axisX, axisY, axisW, axisH);
+
+        // Apply to DataArea3D.AxisProxy
+        axisProxy.setBounds(axisView.getBounds());
+        axisProxy.setRotate(axisView.getRotate());
     }
 
     /**
