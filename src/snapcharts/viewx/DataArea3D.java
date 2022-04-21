@@ -133,7 +133,7 @@ public abstract class DataArea3D extends DataArea {
      */
     protected void rebuildChart()
     {
-        if (_rebuildChartRun == null)
+        if (_rebuildChartRun == null && isShowing())
             getUpdater().runBeforeUpdate(_rebuildChartRun = _rebuildChartRunImpl);
     }
 
@@ -167,6 +167,7 @@ public abstract class DataArea3D extends DataArea {
         axisBoxShape.addSideGrids();
 
         // Repaint DataArea and reset runnable
+        resetAxisProxyBounds();
         repaint();
         _rebuildChartRun = null;
     }
@@ -687,10 +688,18 @@ public abstract class DataArea3D extends DataArea {
      */
     protected void cameraDidChangeImpl()
     {
+        resetAxisProxyBounds();
+        _cameraChangeRun = null;
+    }
+
+    /**
+     * Called when AxisProxy bounds may have changed.
+     */
+    protected void resetAxisProxyBounds()
+    {
         _axisBoxPainter.configureAxisProxyForAxis(_axisProxyX, AxisType.X);
         _axisBoxPainter.configureAxisProxyForAxis(_axisProxyY, AxisType.Y);
         _axisBoxPainter.configureAxisProxyForAxis(_axisProxyZ, AxisType.Z);
-        _cameraChangeRun = null;
     }
 
     /**
@@ -713,6 +722,10 @@ public abstract class DataArea3D extends DataArea {
 
         // If Chart.Scene change, rebuild scene
         if (source instanceof Scene)
+            rebuildChart();
+
+        // If Chart.Axis change, rebuild chart
+        if (source instanceof Axis)
             rebuildChart();
     }
 
