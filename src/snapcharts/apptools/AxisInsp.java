@@ -10,7 +10,6 @@ import snapcharts.app.ChartPane;
 import snapcharts.util.MinMax;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartHelper;
-import snapcharts.view.ChartPartView;
 
 /**
  * A class to manage UI to edit a ChartView.
@@ -46,8 +45,10 @@ public class AxisInsp extends ChartPartInsp {
      */
     public AxisView getAxisView()
     {
-        ChartPartView chartPartView = getChartPane().getSel().getSelView();
-        AxisView axisView = chartPartView instanceof AxisView ? (AxisView) chartPartView : null;
+        Axis axis = getAxis();
+        AxisType axisType = axis.getType();
+        ChartHelper chartHelper = getChartPane().getChartHelper();
+        AxisView axisView = chartHelper.getAxisView(axisType);
         return axisView;
     }
 
@@ -118,7 +119,7 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("MinBoundAutoButton", minBound == AxisBound.AUTO);
         setViewValue("MinBoundDataButton", minBound == AxisBound.DATA);
         setViewValue("MinBoundValueButton", minBound == AxisBound.VALUE);
-        double minVal = axisView.getChartHelper().getAxisMinForIntervalCalc(axisView);
+        double minVal = chartHelper.getAxisMinForIntervalCalc(axisView);
         setViewValue("MinBoundText", minVal);
         setViewVisible("MinBoundText", minBound != AxisBound.AUTO);
         setViewEnabled("MinBoundText", minBound == AxisBound.VALUE);
@@ -128,7 +129,7 @@ public class AxisInsp extends ChartPartInsp {
         setViewValue("MaxBoundAutoButton", maxBound == AxisBound.AUTO);
         setViewValue("MaxBoundDataButton", maxBound == AxisBound.DATA);
         setViewValue("MaxBoundValueButton", maxBound == AxisBound.VALUE);
-        double maxVal = axisView.getChartHelper().getAxisMaxForIntervalCalc(axisView);
+        double maxVal = chartHelper.getAxisMaxForIntervalCalc(axisView);
         setViewValue("MaxBoundText", maxVal);
         setViewVisible("MaxBoundText", maxBound != AxisBound.AUTO);
         setViewEnabled("MaxBoundText", maxBound == AxisBound.VALUE);
