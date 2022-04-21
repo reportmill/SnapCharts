@@ -1,7 +1,9 @@
 package snapcharts.view;
+import snap.geom.Point;
 import snap.geom.Pos;
 import snap.view.ParentView;
 import snap.view.ViewEvent;
+import snap.view.ViewUtils;
 import snapcharts.model.*;
 
 /**
@@ -77,6 +79,26 @@ public abstract class ChartPartView<T extends ChartPart> extends ParentView {
     {
         ChartView chartView = getChartView();
         return chartView.getDataView();
+    }
+
+    /**
+     * Returns the ChartPart for given point XY in ChartView coords.
+     */
+    public ChartPartView getChildChartPartViewForXY(double aX, double aY)
+    {
+        // Get child ChartPartView at point
+        ChartPartView chartPartChild = ViewUtils.getChildAt(this, aX, aY, ChartPartView.class);
+
+        // If found, recurse
+        if (chartPartChild != null) {
+            Point pointInChild = chartPartChild.parentToLocal(aX, aY);
+            ChartPartView chartPartChildDeep = chartPartChild.getChildChartPartViewForXY(pointInChild.x, pointInChild.y);
+            if (chartPartChildDeep != null)
+                return chartPartChildDeep;
+        }
+
+        // Return child
+        return chartPartChild;
     }
 
     /**

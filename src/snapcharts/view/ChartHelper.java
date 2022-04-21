@@ -328,6 +328,49 @@ public abstract class ChartHelper {
     }
 
     /**
+     * Returns the ChartPartView for given ChartPart.
+     */
+    public ChartPartView getChartPartViewForPart(ChartPart aChartPart)
+    {
+        // Handle Chart
+        if (aChartPart instanceof Chart)
+            return _chartView;
+
+        // Handle Header
+        if (aChartPart instanceof Header)
+            return _chartView.getHeaderView();
+
+        // Handle Axis
+        if (aChartPart instanceof Axis) {
+            Axis axis = (Axis) aChartPart;
+            AxisType axisType = axis.getType();
+            return _chartView.getChartHelper().getAxisView(axisType);
+        }
+
+        // Handle ContourAxis
+        if (aChartPart instanceof ContourAxis)
+            return _chartView.getContourAxisView();
+
+        // Handle Legend
+        if (aChartPart instanceof Legend)
+            return _chartView.getLegendView();
+
+        // Handle Marker
+        if (aChartPart instanceof Marker) {
+            for (MarkerView markerView : _chartView.getMarkerViews())
+                if (markerView.getMarker() == aChartPart)
+                    return markerView;
+        }
+
+        // Handle Trace
+        if (aChartPart instanceof TraceList || aChartPart instanceof Trace)
+            return _chartView.getDataView();
+
+        // Handle unknown
+        return null;
+    }
+
+    /**
      * Paints chart axis lines.
      */
     public void paintGridlines(Painter aPntr)  { }

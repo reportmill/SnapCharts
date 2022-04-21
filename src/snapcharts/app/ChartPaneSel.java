@@ -159,42 +159,8 @@ public class ChartPaneSel {
      */
     private ChartPartView getChartPartViewForPart(ChartPart aChartPart)
     {
-        // Handle Chart
-        if (aChartPart instanceof Chart)
-            return _chartView;
-
-        // Handle Header
-        if (aChartPart instanceof Header)
-            return _chartView.getHeaderView();
-
-        // Handle Axis
-        if (aChartPart instanceof Axis) {
-            Axis axis = (Axis) aChartPart;
-            AxisType axisType = axis.getType();
-            return _chartView.getChartHelper().getAxisView(axisType);
-        }
-
-        // Handle ContourAxis
-        if (aChartPart instanceof ContourAxis)
-            return _chartView.getContourAxisView();
-
-        // Handle Legend
-        if (aChartPart instanceof Legend)
-            return _chartView.getLegendView();
-
-        // Handle Marker
-        if (aChartPart instanceof Marker) {
-            for (MarkerView markerView : _chartView.getMarkerViews())
-                if (markerView.getMarker() == aChartPart)
-                    return markerView;
-        }
-
-        // Handle Trace
-        if (aChartPart instanceof TraceList || aChartPart instanceof Trace)
-            return _chartView.getDataView();
-
-        // Handle unknown
-        return null;
+        ChartHelper chartHelper = _chartView.getChartHelper();
+        return chartHelper.getChartPartViewForPart(aChartPart);
     }
 
     /**
@@ -374,11 +340,10 @@ public class ChartPaneSel {
             return markerView;
 
         // Get deepest selectable view for X/Y
-        View view = ViewUtils.getDeepestChildAt(_chartView, aX, aY, ChartPartView.class);
+        View view = _chartView.getChildChartPartViewForXY(aX, aY);
 
         // Correct for Selecting/Targeting
-        while (view != null && !isSelectableView(view))
-            view = view.getParent();
+        //while (view != null && !isSelectableView(view)) view = view.getParent();
 
         // If as ChartPartView (or null)
         return view instanceof ChartPartView ? (ChartPartView) view : null;
