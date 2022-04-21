@@ -34,6 +34,12 @@ public class ChartPaneSel {
     // The handle being resized
     private Pos  _resizeHandle;
 
+    // Records the time of last scroll so paint can happen with/without selection
+    private long  _lastScrollTime;
+
+    // Constant for max time between scroll events to be considered part of same scroll loop
+    private static int SCROLL_TIMEOUT = 100;
+
     // Constants
     private static Color  SEL_COLOR = Color.get("#039ED3");
     private static Effect  SEL_EFFECT = new ShadowEffect(8, SEL_COLOR.darker(), 0, 0);
@@ -54,6 +60,7 @@ public class ChartPaneSel {
 
         // Start listening to ChartView MouseEvents (for selection/targeting)
         _chartView.addEventFilter(e -> chartViewMouseEvent(e), View.MouseEvents);
+        _chartView.addEventFilter(e -> repaintOnScrollStop(), View.Scroll);
 
         // Start listening to ChartBox MousePress (for select Chart)
         _chartPane._chartBox.addEventHandler(e -> chartBoxMousePress(e), View.MousePress);
@@ -196,7 +203,7 @@ public class ChartPaneSel {
             mouseDragged(anEvent);
         else if (anEvent.isMouseRelease()) {
             mouseReleased(anEvent);
-            _chartView.repaint();
+            _chartPane.getUI().repaint();
             _chartPane.resetLater();
         }
     }
@@ -231,7 +238,7 @@ public class ChartPaneSel {
      */
     private void mousePressed(ViewEvent anEvent)
     {
-        _chartView.repaint();
+        _chartPane.getUI().repaint();
         _lastMouseEvent = anEvent;
 
         // If event over SelView and resizable, and over handle, set handle and return
@@ -398,7 +405,7 @@ public class ChartPaneSel {
     protected void paintSelection(Painter aPntr, View aHostView)
     {
         // If MouseDown, just skip (because shadow render is kinda slow)
-        if (ViewUtils.isMouseDown())
+        if (ViewUtils.isMouseDown() || _lastScrollTime > 0)
             return;
 
         // If SelView set, paint it
@@ -602,7 +609,7 @@ public class ChartPaneSel {
     /**
      * Returns an image for given effect and shape.
      */
-    public static ImageBox getImageBoxForShapeAndEffect(Shape aShape, Effect anEffect, Border aBorder)
+    private static ImageBox getImageBoxForShapeAndEffect(Shape aShape, Effect anEffect, Border aBorder)
     {
         // Create ShapeView for given Shape, effect and border
         Rect bnds = aShape.getBounds();
@@ -625,5 +632,37 @@ public class ChartPaneSel {
 
         // Return image
         return imgBox;
+    }
+
+    /**
+     * Called to register for repaint
+     */
+    protected void repaintOnScrollStop()
+    {
+        // If not scrolling, set time, check for stop and repaint
+        if (_lastScrollTime == 0) {
+            _lastScrollTime = System.currentTimeMillis();
+            checkScrollStop();
+            _chartPane.getUI().repaint();
+        }
+
+        // If scrolling, just update last time
+        else _lastScrollTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Called periodically to see if scrolling has stopped.
+     */
+    private void checkScrollStop()
+    {
+        // If max time between last scroll event has elapsed, reset LastScrollTime and repaint
+        long time = System.currentTimeMillis();
+        if (time - _lastScrollTime > SCROLL_TIMEOUT) {
+            _lastScrollTime = 0;
+            _chartPane.getUI().repaint();
+        }
+
+        // Otherwise kick off another periodic check
+        else ViewUtils.runDelayed(() -> checkScrollStop(), SCROLL_TIMEOUT, true);
     }
 }
