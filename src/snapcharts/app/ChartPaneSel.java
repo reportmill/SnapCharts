@@ -408,6 +408,11 @@ public class ChartPaneSel {
         if (ViewUtils.isMouseDown() || _lastScrollTime > 0)
             return;
 
+        // Clip to ChartView
+        aPntr.save();
+        Rect clipBounds = _chartView.localToParent(_chartView.getBoundsLocal(), aHostView).getBounds();
+        aPntr.clip(clipBounds);
+
         // If SelView set, paint it
         ChartPartView selView = getSelView();
         if (selView != null && selView != _chartView) {
@@ -421,6 +426,9 @@ public class ChartPaneSel {
             if (targView.isShowing())
                 paintTargView(aPntr, targView, aHostView);
         }
+
+        // Restore
+        aPntr.restore();
     }
 
     /**

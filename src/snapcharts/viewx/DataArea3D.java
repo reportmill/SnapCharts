@@ -156,12 +156,13 @@ public abstract class DataArea3D extends DataArea {
             return;
         }
 
-        // Reset intervals
-        updateIntervalsIfNeeded();
-
         // Get AxisBoxShape and add to scene
         AxisBoxShape axisBoxShape = getAxisBoxShape();
+        axisBoxShape.setSidesVisibleForCamera();
         _scene.addChild(axisBoxShape);
+
+        // Reset intervals
+        updateIntervalsIfNeeded();
 
         // Update grids
         axisBoxShape.addSideGrids();
