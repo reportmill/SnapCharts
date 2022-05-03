@@ -117,7 +117,7 @@ public class Content3DInsp extends ChartPartInsp {
         Chart chart = getChart();
         Scene scene = chart.getScene();
         CameraView cameraView = getCameraView(); if (cameraView == null) return;
-        Camera3D camera = cameraView.getCamera();
+        Camera camera = cameraView.getCamera();
 
         // Reset AspectModeViewButton, AspectModeDataButton, AspectModeDirectButton
         Scene.AspectMode aspectMode = scene.getAspectMode();
@@ -178,7 +178,7 @@ public class Content3DInsp extends ChartPartInsp {
         Chart chart = getChart();
         Scene scene = chart.getScene();
         CameraView cameraView = getCameraView(); if (cameraView == null) return;
-        Camera3D camera = cameraView.getCamera();
+        Camera camera = cameraView.getCamera();
 
         // Handle AspectModeViewButton, AspectModeDataButton, AspectModeDirectButton
         if (anEvent.equals("AspectModeViewButton"))

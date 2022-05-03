@@ -19,7 +19,7 @@ public abstract class DataArea3D extends DataArea {
     protected CameraView  _cameraView;
 
     // The Camera
-    protected Camera3D  _camera;
+    protected Camera  _camera;
 
     // The Scene
     protected Scene3D  _scene;
@@ -736,7 +736,7 @@ public abstract class DataArea3D extends DataArea {
     public boolean isSideFacingCamera(Side3D aSide)
     {
         Vector3D sideNormal = aSide.getNormalInward();
-        Camera3D camera = _scene.getCamera();
+        Camera camera = _scene.getCamera();
         Matrix3D sceneToCamera = camera.getSceneToCamera();
         Vector3D sideNormalInCamera = sceneToCamera.transformVector(sideNormal.clone());
         Vector3D cameraNormal = camera.getNormal();

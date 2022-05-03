@@ -106,9 +106,9 @@ public class Bar3DDataArea extends DataArea3D {
         rebuildChart();
 
         // Animate camera rotation
-        Camera3D camera3D = _cameraView.getCamera();
-        camera3D.setYaw(90 + (DEFAULT_YAW - 90) * aValue);
-        camera3D.setPitch(0 + (DEFAULT_PITCH - 0) * aValue);
+        Camera camera = _cameraView.getCamera();
+        camera.setYaw(90 + (DEFAULT_YAW - 90) * aValue);
+        camera.setPitch(0 + (DEFAULT_PITCH - 0) * aValue);
 
         // Forward to BarDataArea (2D)
         _barDataArea.setReveal(aValue);
