@@ -68,4 +68,18 @@
       </Button>
     </RowView>
   </TitleView>
+  <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Default Camera Views">
+    <RowView Padding="0,4,0,0" Spacing="5">
+      <Button Name="TopViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" text="T" />
+      <Button Name="BottomViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" text="B" />
+      <Button Name="LeftViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Left View" text="L" />
+      <Button Name="RightViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" text="R" />
+      <Button Name="FrontViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Front View" text="F" />
+      <Button Name="BackViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Back View" text="B" />
+      <Button Name="CameraViewResetButton" PrefWidth="20" PrefHeight="20" Padding="2" ToolTip="Default View" text="&#10226;" ShowArea="false">
+        <font name="Arial" size="12" />
+      </Button>
+      <CheckBox Name="OrthoViewButton" Align="CENTER" Spacing="5" LeanX="RIGHT" text="Ortho" />
+    </RowView>
+  </TitleView>
 </ColView>

@@ -12,13 +12,9 @@ import snapcharts.model.AxisType;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Scene;
-import snapcharts.view.DataArea;
-import snapcharts.viewx.Bar3DDataArea;
+import snapcharts.view.ChartHelper;
+import snapcharts.viewx.*;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataView;
-import snapcharts.viewx.Contour3DDataArea;
-import snapcharts.viewx.Line3DDataArea;
-import snapcharts.viewx.Pie3DDataArea;
 
 /**
  * Tool for visual editing RMScene3D.
@@ -55,34 +51,26 @@ public class Content3DInsp extends ChartPartInsp {
     }
 
     /**
+     * Returns the DataArea3D.
+     */
+    public DataArea3D getDataArea3D()
+    {
+        ChartView chartView = _chartPane.getChartView();
+        ChartHelper chartHelper = chartView.getChartHelper();
+        ChartHelper3D chartHelper3D = chartHelper instanceof ChartHelper3D ? (ChartHelper3D) chartHelper : null;
+        if (chartHelper3D == null)
+            return null;
+        return chartHelper3D.getDataArea3D();
+    }
+
+    /**
      * Returns the Camera View.
      */
     public CameraView getCameraView()
     {
-        // Get DataArea
-        ChartView chartView = _chartPane.getChartView();
-        DataView dataView = chartView.getDataView();
-        DataArea[] dataAreas = dataView.getDataAreas();
-        DataArea dataArea = dataAreas.length > 0 ? dataAreas[0] : null;
-
-        // Handle Bar3DDataArea
-        if (dataArea instanceof Bar3DDataArea)
-            return ((Bar3DDataArea) dataArea).getCameraView();
-
-        // Handle Line3DDataArea
-        if (dataArea instanceof Line3DDataArea)
-            return ((Line3DDataArea) dataArea).getCameraView();
-
-        // Handle Pie3DDataArea
-        if (dataArea instanceof Pie3DDataArea)
-            return ((Pie3DDataArea) dataArea).getCameraView();
-
-        // Handle Contour3DDataArea
-        if (dataArea instanceof Contour3DDataArea)
-            return ((Contour3DDataArea) dataArea).getCameraView();
-
-        // Return null
-        return null;
+        DataArea3D dataArea3D = getDataArea3D();
+        CameraView cameraView = dataArea3D != null ? dataArea3D.getCameraView() : null;
+        return cameraView;
     }
 
     /**
@@ -167,6 +155,9 @@ public class Content3DInsp extends ChartPartInsp {
         getView("GimbalRadiusResetButton").setPaintable(gimbalRadiusSet);
         Color gimbalRadiusTextColor = gimbalRadiusSet ? Color.BLACK : Color.GRAY;
         getView("GimbalRadiusText", TextField.class).setTextFill(gimbalRadiusTextColor);
+
+        // Reset OrthoViewButton
+        setViewValue("OrthoViewButton", camera.isOrtho());
     }
 
     /**
@@ -243,5 +234,54 @@ public class Content3DInsp extends ChartPartInsp {
         // Handle GimbalRadiusResetButton
         if (anEvent.equals("GimbalRadiusResetButton"))
             camera.setPrefGimbalRadius(0);
+
+        // Handle TopViewButton, BottomViewButton, LeftViewButton, RightViewButton, FrontViewButton, BackViewButton
+        if (anEvent.equals("TopViewButton")) setCameraViewToSide(Side3D.TOP);
+        if (anEvent.equals("BottomViewButton")) setCameraViewToSide(Side3D.BOTTOM);
+        if (anEvent.equals("LeftViewButton")) setCameraViewToSide(Side3D.LEFT);
+        if (anEvent.equals("RightViewButton")) setCameraViewToSide(Side3D.RIGHT);
+        if (anEvent.equals("FrontViewButton")) setCameraViewToSide(Side3D.FRONT);
+        if (anEvent.equals("BackViewButton")) setCameraViewToSide(Side3D.BACK);
+        if (anEvent.equals("CameraViewResetButton")) setCameraViewToSide(null);
+
+        // Handle OrthoViewButton
+        if (anEvent.equals("OrthoViewButton"))
+            camera.setOrtho(anEvent.getBoolValue());
+    }
+
+    /**
+     * Set camera view to given side.
+     */
+    private void setCameraViewToSide(Side3D aSide)
+    {
+        // Reset PrefGimbalRadius
+        CameraView cameraView = getCameraView(); if (cameraView == null) return;
+        Camera camera = cameraView.getCamera();
+        boolean isPrefGimbalRadiusSet = camera.isPrefGimbalRadiusSet();
+
+        // Get animator and startAutoRegisterChanges
+        ViewAnim anim = cameraView.getAnimCleared(1000);
+        anim.startAutoRegisterChanges(Camera.Yaw_Prop, Camera.Pitch_Prop, Camera.Roll_Prop, Camera.PrefGimbalRadius_Prop);
+
+        // Change Camera to view side
+        if (aSide == null) {
+            DataArea3D dataArea3D = getDataArea3D();
+            dataArea3D.setDefaultViewTransform();
+        }
+        else camera.setYawPitchRollForSide(aSide);
+
+        // If PrefGimbalRadius set, reset to pref radius in final orientation
+        if (isPrefGimbalRadiusSet) {
+            double prefGR = camera.calcPrefGimbalRadius();
+            camera.setPrefGimbalRadius(prefGR);
+        }
+
+        // stopAutoRegisterChanges and register to clear PrefGimbalRadius if it was set
+        anim.stopAutoRegisterChanges();
+        if (isPrefGimbalRadiusSet)
+            anim.setOnFinish(() -> camera.setPrefGimbalRadius(0));
+
+        // Play animations
+        anim.play();
     }
 }
