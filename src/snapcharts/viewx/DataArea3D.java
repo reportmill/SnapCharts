@@ -45,6 +45,9 @@ public abstract class DataArea3D extends DataArea {
     // Runnables to rebuild AxisProxy views when camera changes (deferred/coalesced)
     private Runnable  _cameraChangeRun, _cameraChangeRunImpl = () -> cameraDidChangeImpl();
 
+    // Whether this DataArea is used just for projection
+    private boolean  _isProjection;
+
     // Constants
     public static final double DEFAULT_YAW = 26;
     public static final double DEFAULT_PITCH = 10;
@@ -159,6 +162,7 @@ public abstract class DataArea3D extends DataArea {
         // Get AxisBoxShape and add to scene
         AxisBoxShape axisBoxShape = getAxisBoxShape();
         axisBoxShape.setSidesVisibleForCamera();
+        axisBoxShape.addSideProjections();
         _scene.addChild(axisBoxShape);
 
         // Reset intervals
@@ -617,6 +621,12 @@ public abstract class DataArea3D extends DataArea {
         sceneToView.transformPoint(aPoint);
     }
 
+    public boolean isProjection()
+    {
+        String name = getName();
+        return name != null && name.equals("ProjectionDataArea");
+    }
+
     /**
      * Override to suppress.
      */
@@ -636,7 +646,8 @@ public abstract class DataArea3D extends DataArea {
             axisBoxShape.addSideGrids();
 
         // Paint AxisBoxText
-        paintAxisBoxText(aPntr);
+        if (!isProjection())
+            paintAxisBoxText(aPntr);
     }
 
     /**

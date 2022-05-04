@@ -3,8 +3,10 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Color;
+import snap.gfx.Image;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
+import snap.view.ViewUtils;
 import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
 
@@ -17,13 +19,13 @@ public class AxisBoxShape extends ParentShape {
     private DataArea3D  _dataArea;
 
     // The Front/Back sides
-    private FacetShape  _frontSide, _backSide;
+    private Poly3D  _frontSide, _backSide;
 
     // The Left/Right sides
-    private FacetShape  _leftSide, _rightSide;
+    private Poly3D  _leftSide, _rightSide;
 
     // The Top/Bottom sides
-    private FacetShape  _topSide, _bottomSide;
+    private Poly3D  _topSide, _bottomSide;
 
     // Constants
     private static final Color SIDE_COLOR = Color.WHITE;
@@ -46,7 +48,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Returns the side shape.
      */
-    public FacetShape getSideShape(Side3D aSide)
+    public Poly3D getSideShape(Side3D aSide)
     {
         switch (aSide) {
             case FRONT: return _frontSide;
@@ -126,7 +128,8 @@ public class AxisBoxShape extends ParentShape {
         else _bottomSide.setDoubleSided(true);
 
         // Reset shapes
-        if (_topSide != null)
+        if (_dataArea.isProjection());
+        else if (_topSide != null)
             setChildren(_frontSide, _backSide, _leftSide, _rightSide, _topSide, _bottomSide);
         else setChildren(_frontSide, _backSide, _leftSide, _rightSide, _bottomSide);
 
@@ -138,7 +141,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Adds geometry for front/back sides.
      */
-    private FacetShape addSideFrontBack(double width, double height, double sideZ)
+    private Poly3D addSideFrontBack(double width, double height, double sideZ)
     {
         // Create wall shape
         Poly3D side = new Poly3D();
@@ -164,7 +167,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Add geometry for left/right sides.
      */
-    private FacetShape addSideLeftRight(double sideX, double height, double depth)
+    private Poly3D addSideLeftRight(double sideX, double height, double depth)
     {
         // Create side shape
         Poly3D side = new Poly3D();
@@ -173,15 +176,22 @@ public class AxisBoxShape extends ParentShape {
         side.setOpacity(.8f);
 
         // Add side points
-        side.addPoint(sideX, 0, 0);
-        side.addPoint(sideX, height, 0);
-        side.addPoint(sideX, height, depth);
-        side.addPoint(sideX, 0, depth);
+        if (sideX == 0) {
+            side.addPoint(sideX, 0, depth);
+            side.addPoint(sideX, 0, 0);
+            side.addPoint(sideX, height, 0);
+            side.addPoint(sideX, height, depth);
+        }
+        else {
+            side.addPoint(sideX, 0, 0);
+            side.addPoint(sideX, 0, depth);
+            side.addPoint(sideX, height, depth);
+            side.addPoint(sideX, height, 0);
+        }
 
         // If facing wrong direction, reverse
-        double normalX = sideX == 0 ? 1 : -1;
-        if (!MathUtils.equals(side.getNormal().x, normalX))
-            side.reverse();
+        //double normalX = sideX == 0 ? 1 : -1;
+        //if (!MathUtils.equals(side.getNormal().x, normalX)) side.reverse();
 
         // Return
         return side;
@@ -190,7 +200,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Adds geometry for top/bottom sides.
      */
-    private FacetShape addSideTopBottom(double width, double sideY, double depth)
+    private Poly3D addSideTopBottom(double width, double sideY, double depth)
     {
         // Create side shape
         Poly3D side = new Poly3D();
@@ -413,5 +423,70 @@ public class AxisBoxShape extends ParentShape {
             aPntr.moveTo(x1, lineY);
             aPntr.lineTo(x2, lineY);
         }
+    }
+
+    /**
+     * Add side projections.
+     */
+    public void addSideProjections()
+    {
+        if (_dataArea.isProjection()) return;
+        if (_backSide.getTexture() != null) return;
+        if (!(_dataArea instanceof Contour3DDataArea)) return;
+
+        // Get ProjectionDataArea
+        ChartHelper3D chartHelper3D = (ChartHelper3D) _dataArea.getChartHelper();
+        DataArea3D projDataArea = chartHelper3D.getProjectionDataArea();
+
+        // Set optimal size
+        double width = getBounds3D().getWidth();
+        projDataArea.setSize(width, width);
+        CameraView cameraView = projDataArea.getCameraView();
+        cameraView.setSize(width, width);
+
+        // Rebuild chart
+        projDataArea.resetAxisProxyBounds();
+        projDataArea.rebuildChartNow();
+
+        // Create and set texture for back
+        Texture backTexture = createTextureForSide(cameraView, Side3D.BACK);
+        setTextureForSide(backTexture, Side3D.BACK);
+
+        // Create and set texture for left
+        Texture leftTexture = createTextureForSide(cameraView, Side3D.LEFT);
+        setTextureForSide(leftTexture, Side3D.LEFT);
+
+        // Create and set texture for right
+        Texture rightTexture = createTextureForSide(cameraView, Side3D.RIGHT);
+        setTextureForSide(rightTexture, Side3D.RIGHT);
+    }
+
+    /**
+     * Generates the texture for a given side.
+     */
+    private Texture createTextureForSide(CameraView cameraView, Side3D aSide)
+    {
+        // Get camera and configure for side
+        Camera camera = cameraView.getCamera();
+        camera.setYawPitchRollForSide(aSide);
+        camera.setOrtho(true);
+
+        // Create image/texture and return
+        Image image = ViewUtils.getImageForScale(cameraView, 1);
+        Texture texture = new Texture(image);
+        return texture;
+    }
+
+    /**
+     * Sets the texture for a given side.
+     */
+    private void setTextureForSide(Texture aTexture, Side3D aSide)
+    {
+        Poly3D sideShape = getSideShape(aSide);
+        sideShape.setTexture(aTexture);
+        sideShape.addTexCoord(0, 0);
+        sideShape.addTexCoord(1, 0);
+        sideShape.addTexCoord(1, 1);
+        sideShape.addTexCoord(0, 1);
     }
 }

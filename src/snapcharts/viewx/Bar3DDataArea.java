@@ -48,6 +48,7 @@ public class Bar3DDataArea extends DataArea3D {
 
         // Get BarDataArea and reset
         BarDataArea barDataArea = _barDataArea;
+        _barDataArea.setSize(getWidth(), getHeight());
         barDataArea.clearSections();
         barDataArea.getSections();
 
@@ -123,20 +124,5 @@ public class Bar3DDataArea extends DataArea3D {
         anim.setValue(CameraView.Yaw_Prop, DEFAULT_YAW);
         anim.setValue(CameraView.Pitch_Prop, DEFAULT_PITCH);
         anim.play();
-    }
-
-    /**
-     * Override to resize CamView.
-     */
-    protected void layoutImpl()
-    {
-        // Do normal version
-        super.layoutImpl();
-
-        // Shouldn't need this!
-        if (!isVisible()) return;
-
-        // Set size of BarDataArea (2D)
-        _barDataArea.setSize(getWidth(), getHeight());
     }
 }

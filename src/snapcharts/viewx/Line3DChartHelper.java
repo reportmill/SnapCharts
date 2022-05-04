@@ -67,6 +67,17 @@ public class Line3DChartHelper extends ChartHelper3D {
     }
 
     /**
+     * Creates a DataArea3D for projections.
+     */
+    protected DataArea3D createProjectionDataArea()
+    {
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        Trace trace = traces.length > 0 ? traces[0] : null;
+        return trace != null ? new Line3DDataArea(this, trace, true) : null;
+    }
+
+    /**
      * Override to handle Z axis special.
      */
     protected Intervals createIntervals(AxisView axisView)

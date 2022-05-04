@@ -2,18 +2,19 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
+import snap.view.ViewUtils;
 import snapcharts.model.Axis;
 import snapcharts.model.AxisType;
 import snapcharts.model.ChartPart;
-import snapcharts.view.ChartHelper;
-import snapcharts.view.ChartPartView;
-import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.*;
 
 /**
  * This ChartHelper subclass adds support for 3D.
  */
 public abstract class ChartHelper3D extends ChartHelper {
+
+    // A DataArea for projections
+    private DataArea3D  _projectionDataData;
 
     /**
      * Constructor.
@@ -53,4 +54,22 @@ public abstract class ChartHelper3D extends ChartHelper {
         // Do normal version
         return super.getChartPartViewForPart(aChartPart);
     }
+
+    /**
+     * Returns a DataArea3D for projections.
+     */
+    public DataArea3D getProjectionDataArea()
+    {
+        if (_projectionDataData != null) return _projectionDataData;
+        DataArea3D dataArea3D = createProjectionDataArea();
+        DataView dataView = getDataView();
+        ViewUtils.setParent(dataArea3D, dataView);
+        dataArea3D.setName("ProjectionDataArea");
+        return _projectionDataData = dataArea3D;
+    }
+
+    /**
+     * Creates a DataArea3D for projections.
+     */
+    protected abstract DataArea3D createProjectionDataArea();
 }

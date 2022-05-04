@@ -97,6 +97,17 @@ public class Contour3DChartHelper extends ChartHelper3D {
     }
 
     /**
+     * Creates a DataArea3D for projections.
+     */
+    protected DataArea3D createProjectionDataArea()
+    {
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getTraces();
+        Trace trace = traces.length > 0 ? traces[0] : null;
+        return trace != null ? new Contour3DDataArea(this, trace, true) : null;
+    }
+
+    /**
      * Called when a ChartPart changes.
      */
     @Override
