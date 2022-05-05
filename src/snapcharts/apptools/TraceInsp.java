@@ -100,9 +100,13 @@ public class TraceInsp extends ChartPartInsp {
         _pointStyleInsp = new TracePointStyleInsp(_chartPane, this);
         _tagStyleInsp = new TraceTagStyleInsp(_chartPane, this);
 
+        // Get index
+        View traceStyleInspSep = getView("TraceStyleInspSep");
+        int spacingInspInsertIndex = traceStyleInspSep.indexInParent();
+
         // Add SpacingInsp
         _spacingInsp = new TraceSpacingInsp(_chartPane);
-        ViewUtils.addChild(getUI(ParentView.class), _spacingInsp.getUI());
+        ViewUtils.addChild(getUI(ParentView.class), _spacingInsp.getUI(), spacingInspInsertIndex);
         _spacingInsp.getUI().setVisible(false);
 
         // Get TraceStyleInspBox
