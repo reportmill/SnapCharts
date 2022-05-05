@@ -2,11 +2,9 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
-
-import snap.util.PropDefaults;
-import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
+import snap.gfx3d.Side3D;
+import snap.util.*;
+import java.util.Arrays;
 
 /**
  * This class holds attributes for Chart3D.
@@ -20,6 +18,9 @@ public class Scene extends ParentPart {
     private double  _aspectScaleX = 1;
     private double  _aspectScaleY = 1;
     private double  _aspectScaleZ = 1;
+
+    // The sides that show projections
+    private Side3D[]  _projectedSides;
 
     // Constants for how X-Y-Z aspects are calculated
     public enum AspectMode {
@@ -39,6 +40,7 @@ public class Scene extends ParentPart {
     public static final String AspectScaleX_Prop = "AspectScaleX";
     public static final String AspectScaleY_Prop = "AspectScaleY";
     public static final String AspectScaleZ_Prop = "AspectScaleZ";
+    public static final String ProjectedSides_Prop = "ProjectedSides";
 
     /**
      * Constructor.
@@ -102,6 +104,55 @@ public class Scene extends ParentPart {
     {
         if (aValue == getAspectScaleZ()) return;
         firePropChange(AspectScaleZ_Prop, _aspectScaleZ, _aspectScaleZ = aValue);
+    }
+
+    /**
+     * Returns the projected sides.
+     */
+    public Side3D[] getProjectedSides()  { return _projectedSides; }
+
+    /**
+     * Sets the projected sides.
+     */
+    public void setProjectedSides(Side3D[] theSides)
+    {
+        // If already set, just return
+        Side3D[] sides = theSides != null ? theSides : new Side3D[0];
+        Arrays.sort(sides, (s1, s2) -> Integer.valueOf(s1.ordinal()).compareTo(s2.ordinal()));
+        if (Arrays.equals(sides, _projectedSides != null ? _projectedSides : new Side3D[0])) return;
+
+        // Set and firePropChange
+        firePropChange(ProjectedSides_Prop, _projectedSides, _projectedSides = sides.length > 0 ? sides : null);
+    }
+
+    /**
+     * Returns whether given side is selected.
+     */
+    public boolean isProjectedSide(Side3D aSide)
+    {
+        return _projectedSides != null && ArrayUtils.containsId(_projectedSides, aSide);
+    }
+
+    /**
+     * Adds a projected side.
+     */
+    public void addProjectedSide(Side3D aSide)
+    {
+        Side3D[] sides = getProjectedSides();
+        if (sides != null && ArrayUtils.containsId(sides, aSide)) return;
+        sides = sides != null ? ArrayUtils.add(sides, aSide) : new Side3D[] { aSide };
+        setProjectedSides(sides);
+    }
+
+    /**
+     * Removes a projected side.
+     */
+    public void removeProjectedSide(Side3D aSide)
+    {
+        Side3D[] sides = getProjectedSides();
+        if (sides == null || !ArrayUtils.containsId(sides, aSide)) return;
+        sides = ArrayUtils.removeId(sides, aSide);
+        setProjectedSides(sides);
     }
 
     /**
@@ -181,7 +232,8 @@ public class Scene extends ParentPart {
         super.initPropDefaults(aPropDefaults);
 
         // Add Props
-        aPropDefaults.addProps(AspectMode_Prop, AspectScaleX_Prop, AspectScaleY_Prop, AspectScaleZ_Prop);
+        aPropDefaults.addProps(AspectMode_Prop, AspectScaleX_Prop, AspectScaleY_Prop, AspectScaleZ_Prop,
+            ProjectedSides_Prop);
     }
 
     /**
@@ -201,6 +253,9 @@ public class Scene extends ParentPart {
             case AspectScaleY_Prop: return getAspectScaleY();
             case AspectScaleZ_Prop: return getAspectScaleZ();
 
+            // ProjectedSides
+            case ProjectedSides_Prop: return getProjectedSides();
+
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
         }
@@ -219,9 +274,12 @@ public class Scene extends ParentPart {
             case AspectMode_Prop: setAspectMode((AspectMode) aValue); break;
 
             // AspectScaleX, AspectScaleY, AspectScaleZ
-            case AspectScaleX_Prop: setAspectScaleX(SnapUtils.doubleValue(aValue));
-            case AspectScaleY_Prop: setAspectScaleY(SnapUtils.doubleValue(aValue));
-            case AspectScaleZ_Prop: setAspectScaleZ(SnapUtils.doubleValue(aValue));
+            case AspectScaleX_Prop: setAspectScaleX(SnapUtils.doubleValue(aValue)); break;
+            case AspectScaleY_Prop: setAspectScaleY(SnapUtils.doubleValue(aValue)); break;
+            case AspectScaleZ_Prop: setAspectScaleZ(SnapUtils.doubleValue(aValue)); break;
+
+            // ProjectedSides
+            case ProjectedSides_Prop: setProjectedSides((Side3D[])aValue); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -244,6 +302,9 @@ public class Scene extends ParentPart {
             case AspectScaleX_Prop: return getAspectScaleDefault(AxisType.X);
             case AspectScaleY_Prop: return getAspectScaleDefault(AxisType.Y);
             case AspectScaleZ_Prop: return getAspectScaleDefault(AxisType.Z);
+
+            // ProjectedSides
+            case ProjectedSides_Prop: return null;
 
             // Superclass properties
             default: return super.getPropDefault(aPropName);
@@ -293,6 +354,13 @@ public class Scene extends ParentPart {
         if (!isPropDefault(AspectScaleZ_Prop))
             e.add(AspectScaleZ_Prop, getAspectScaleZ());
 
+        // Archive ProjectedSides
+        if (!isPropDefault(ProjectedSides_Prop)) {
+            Side3D[] sides = getProjectedSides();
+            String sidesString = EnumUtils.getNamesStringFromEnumArray(sides);
+            e.add(ProjectedSides_Prop, sidesString);
+        }
+
         // Return xml
         return e;
     }
@@ -317,6 +385,13 @@ public class Scene extends ParentPart {
             setAspectScaleY(anElement.getAttributeDoubleValue(AspectScaleY_Prop));
         if (anElement.hasAttribute(AspectScaleZ_Prop))
             setAspectScaleZ(anElement.getAttributeDoubleValue(AspectScaleZ_Prop));
+
+        // Archive ProjectedSides
+        if (anElement.hasAttribute(ProjectedSides_Prop)) {
+            String sidesStr = anElement.getAttributeValue(ProjectedSides_Prop);
+            Side3D[] sides = EnumUtils.getEnumArrayFromNamesString(Side3D.class, sidesStr);
+            setProjectedSides(sides);
+        }
 
         // Return
         return this;

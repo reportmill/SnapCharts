@@ -158,6 +158,10 @@ public class Content3DInsp extends ChartPartInsp {
 
         // Reset OrthoViewButton
         setViewValue("OrthoViewButton", camera.isOrtho());
+
+        // Reset ProjSideButtonXXX
+        for (Side3D side : Side3D.values())
+            setViewValue("ProjSideButton" + side, scene.isProjectedSide(side));
     }
 
     /**
@@ -247,6 +251,18 @@ public class Content3DInsp extends ChartPartInsp {
         // Handle OrthoViewButton
         if (anEvent.equals("OrthoViewButton"))
             camera.setOrtho(anEvent.getBoolValue());
+
+        // Handle ProjSideButtonXXX
+        String eventName = anEvent.getName();
+        if (eventName.startsWith("ProjSideButton")) {
+            String sideName = eventName.replace("ProjSideButton", "");
+            Side3D side = Side3D.valueOf(sideName);
+            if (side != null) {
+                if (anEvent.getBoolValue())
+                    scene.addProjectedSide(side);
+                else scene.removeProjectedSide(side);
+            }
+        }
     }
 
     /**

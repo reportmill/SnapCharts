@@ -420,7 +420,8 @@ public class Chart extends ParentPart {
         XMLElement e = super.toXML(anArchiver);
 
         // Archive Type
-        e.add(Type_Prop, getType());
+        ChartType chartType = getType();
+        e.add(Type_Prop, chartType);
 
         // Archive Header
         XMLElement header_XML = anArchiver.toXML(_header);
@@ -433,7 +434,7 @@ public class Chart extends ParentPart {
         e.add(axisY_XML);
 
         // Archive ContourAxis
-        if (getType().isContourType()) {
+        if (chartType.isContourType()) {
             XMLElement contourAxisXML = anArchiver.toXML(_contourAxis);
             if (contourAxisXML.getAttributeCount() > 0 || contourAxisXML.getElementCount() > 0)
                 e.add(contourAxisXML);
@@ -444,6 +445,13 @@ public class Chart extends ParentPart {
             XMLElement legendXML = anArchiver.toXML(_legend);
             if (legendXML.getAttributeCount() > 0 || legendXML.getElementCount() > 0)
                 e.add(legendXML);
+        }
+
+        // Archive Scene
+        if (chartType.is3D()) {
+            XMLElement sceneXML = anArchiver.toXML(_scene);
+            if (sceneXML.getAttributeCount() > 0 || sceneXML.getElementCount() > 0)
+                e.add(sceneXML);
         }
 
         // Archive Markers
@@ -505,6 +513,11 @@ public class Chart extends ParentPart {
         XMLElement legend_XML = anElement.get("Legend");
         if (legend_XML != null)
             anArchiver.fromXML(legend_XML, _legend, this);
+
+        // Unarchive Scene
+        XMLElement scene_XML = anElement.get("Scene");
+        if (scene_XML != null)
+            anArchiver.fromXML(scene_XML, _scene, this);
 
         // Unarchive Markers
         XMLElement markersXML = anElement.getElement("Markers");

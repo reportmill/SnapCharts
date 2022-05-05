@@ -104,6 +104,15 @@ public abstract class DataArea3D extends DataArea {
     public CameraView getCameraView()  { return _cameraView; }
 
     /**
+     * Returns the Chart.Scene
+     */
+    public Scene getChartScene()
+    {
+        Chart chart = getChart();
+        return chart.getScene();
+    }
+
+    /**
      * Rebuilds the chart.
      */
     public AxisBoxShape getAxisBoxShape()
@@ -162,7 +171,6 @@ public abstract class DataArea3D extends DataArea {
         // Get AxisBoxShape and add to scene
         AxisBoxShape axisBoxShape = getAxisBoxShape();
         axisBoxShape.setSidesVisibleForCamera();
-        axisBoxShape.addSideProjections();
         _scene.addChild(axisBoxShape);
 
         // Reset intervals
@@ -175,6 +183,12 @@ public abstract class DataArea3D extends DataArea {
         resetAxisProxyBounds();
         repaint();
         _rebuildChartRun = null;
+
+        // Add side projects after delay
+        Scene chartScene = getChartScene();
+        Side3D[] projectedSides = !isProjection() ? chartScene.getProjectedSides() : null;
+        if (projectedSides != null)
+            getEnv().runLater(() -> axisBoxShape.addSideProjections());
     }
 
     /**

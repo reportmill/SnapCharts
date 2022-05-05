@@ -9,6 +9,7 @@ import snap.util.MathUtils;
 import snap.view.ViewUtils;
 import snapcharts.model.AxisType;
 import snapcharts.model.Intervals;
+import snapcharts.model.Scene;
 
 /**
  * This ParentShape subclass displays an axis box.
@@ -430,10 +431,6 @@ public class AxisBoxShape extends ParentShape {
      */
     public void addSideProjections()
     {
-        if (_dataArea.isProjection()) return;
-        if (_backSide.getTexture() != null) return;
-        if (!(_dataArea instanceof Contour3DDataArea)) return;
-
         // Get ProjectionDataArea
         ChartHelper3D chartHelper3D = (ChartHelper3D) _dataArea.getChartHelper();
         DataArea3D projDataArea = chartHelper3D.getProjectionDataArea();
@@ -448,17 +445,16 @@ public class AxisBoxShape extends ParentShape {
         projDataArea.resetAxisProxyBounds();
         projDataArea.rebuildChartNow();
 
-        // Create and set texture for back
-        Texture backTexture = createTextureForSide(cameraView, Side3D.BACK);
-        setTextureForSide(backTexture, Side3D.BACK);
+        // Create and set texture for projected sides
+        Scene chartScene = _dataArea.getChartScene();
+        Side3D[] projectedSides = chartScene.getProjectedSides();
+        for (Side3D side : projectedSides) {
+            Texture texture = createTextureForSide(cameraView, side);
+            setTextureForSide(texture, side);
+        }
 
-        // Create and set texture for left
-        Texture leftTexture = createTextureForSide(cameraView, Side3D.LEFT);
-        setTextureForSide(leftTexture, Side3D.LEFT);
-
-        // Create and set texture for right
-        Texture rightTexture = createTextureForSide(cameraView, Side3D.RIGHT);
-        setTextureForSide(rightTexture, Side3D.RIGHT);
+        // Repaint DataArea
+        _dataArea.repaint();
     }
 
     /**
