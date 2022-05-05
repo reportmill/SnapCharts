@@ -90,6 +90,7 @@
       <ToggleButton Name="ProjSideButtonRIGHT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" text="R" />
       <ToggleButton Name="ProjSideButtonTOP" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" text="T" />
       <ToggleButton Name="ProjSideButtonBOTTOM" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" text="B" />
+      <Button Name="AllClearButton" PrefWidth="50" PrefHeight="22" Padding="2" LeanX="RIGHT" ToolTip="Set/Clear all projected sides" text="All" />
     </RowView>
   </TitleView>
 </ColView>

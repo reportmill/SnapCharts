@@ -151,15 +151,22 @@ public class AxisBoxShape extends ParentShape {
         side.setColor(SIDE_COLOR); //if (_backFill!=null) back.setColor(_backFill.getColor());
 
         // Add side points
-        side.addPoint(0, 0, sideZ);
-        side.addPoint(width, 0, sideZ);
-        side.addPoint(width, height, sideZ);
-        side.addPoint(0, height, sideZ);
+        if (sideZ == 0) {
+            side.addPoint(0, 0, sideZ);
+            side.addPoint(width, 0, sideZ);
+            side.addPoint(width, height, sideZ);
+            side.addPoint(0, height, sideZ);
+        }
+        else {
+            side.addPoint(width, 0, sideZ);
+            side.addPoint(0, 0, sideZ);
+            side.addPoint(0, height, sideZ);
+            side.addPoint(width, height, sideZ);
+        }
 
         // If facing wrong direction, reverse
-        double normalZ = sideZ == 0 ? 1 : -1;
-        if (!MathUtils.equals(side.getNormal().z, normalZ))
-            side.reverse();
+        //double normalZ = sideZ == 0 ? 1 : -1;
+        //if (!MathUtils.equals(side.getNormal().z, normalZ)) side.reverse();
 
         // Return
         return side;
@@ -210,10 +217,18 @@ public class AxisBoxShape extends ParentShape {
         side.setOpacity(.8f);
 
         // Add side points
-        side.addPoint(0, sideY, 0);
-        side.addPoint(0, sideY, depth);
-        side.addPoint(width, sideY, depth);
-        side.addPoint(width, sideY, 0);
+        if (sideY == 0) {
+            side.addPoint(width, sideY, 0);
+            side.addPoint(0, sideY, 0);
+            side.addPoint(0, sideY, depth);
+            side.addPoint(width, sideY, depth);
+        }
+        else {
+            side.addPoint(width, sideY, depth);
+            side.addPoint(0, sideY, depth);
+            side.addPoint(0, sideY, 0);
+            side.addPoint(width, sideY, 0);
+        }
 
         // If facing wrong direction, reverse
         double normalY = sideY == 0 ? 1 : -1;
@@ -480,9 +495,9 @@ public class AxisBoxShape extends ParentShape {
     {
         Poly3D sideShape = getSideShape(aSide);
         sideShape.setTexture(aTexture);
-        sideShape.addTexCoord(0, 0);
         sideShape.addTexCoord(1, 0);
-        sideShape.addTexCoord(1, 1);
+        sideShape.addTexCoord(0, 0);
         sideShape.addTexCoord(0, 1);
+        sideShape.addTexCoord(1, 1);
     }
 }

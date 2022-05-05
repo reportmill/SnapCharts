@@ -162,6 +162,9 @@ public class Content3DInsp extends ChartPartInsp {
         // Reset ProjSideButtonXXX
         for (Side3D side : Side3D.values())
             setViewValue("ProjSideButton" + side, scene.isProjectedSide(side));
+
+        // Reset AllClearButton
+        setViewText("AllClearButton", scene.getProjectedSides() == null ? "All" : "Clear");
     }
 
     /**
@@ -262,6 +265,13 @@ public class Content3DInsp extends ChartPartInsp {
                     scene.addProjectedSide(side);
                 else scene.removeProjectedSide(side);
             }
+        }
+
+        // Handle AllClearButton
+        if (anEvent.equals("AllClearButton")) {
+            if (scene.getProjectedSides() != null)
+                scene.setProjectedSides(null);
+            else scene.setProjectedSides(Side3D.values());
         }
     }
 
