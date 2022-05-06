@@ -184,6 +184,11 @@ public abstract class DataArea3D extends DataArea {
         repaint();
         _rebuildChartRun = null;
 
+        // If not in PageView, make sure CubeView is on (bogus)
+        PageView pageView = getParent(PageView.class);
+        if (pageView == null)
+            _cameraView.setShowCubeView(true);
+
         // Add side projects after delay
         Scene chartScene = getChartScene();
         Side3D[] projectedSides = !isProjection() ? chartScene.getProjectedSides() : null;
