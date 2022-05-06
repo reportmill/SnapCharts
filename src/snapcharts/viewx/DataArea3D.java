@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
+import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
@@ -64,6 +65,9 @@ public abstract class DataArea3D extends DataArea {
             setVisible(false);
             return;
         }
+
+        // Add LightGray border
+        setBorder(Color.LIGHTGRAY, 1);
 
         // Create and install CameraView
         _cameraView = new CameraView();
