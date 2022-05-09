@@ -47,7 +47,7 @@ public abstract class DataArea3D extends DataArea {
     private Runnable  _cameraChangeRun, _cameraChangeRunImpl = () -> cameraDidChangeImpl();
 
     // Whether this DataArea is used just for projection
-    private boolean  _isProjection;
+    private boolean  _projection;
 
     // Constants
     public static final double DEFAULT_YAW = 26;
@@ -190,12 +190,13 @@ public abstract class DataArea3D extends DataArea {
 
         // If not in PageView, make sure CubeView is on (bogus)
         PageView pageView = getParent(PageView.class);
-        if (pageView == null)
+        boolean isProjection = isProjection();
+        if (pageView == null && !isProjection)
             _cameraView.setShowCubeView(true);
 
         // Add side projects after delay
         Scene chartScene = getChartScene();
-        Side3D[] projectedSides = !isProjection() ? chartScene.getProjectedSides() : null;
+        Side3D[] projectedSides = !isProjection ? chartScene.getProjectedSides() : null;
         if (projectedSides != null)
             getEnv().runLater(() -> axisBoxShape.addSideProjections());
     }
@@ -644,10 +645,17 @@ public abstract class DataArea3D extends DataArea {
         sceneToView.transformPoint(aPoint);
     }
 
-    public boolean isProjection()
+    /**
+     * Returns whether this DataArea is just used to generate projections.
+     */
+    public boolean isProjection()  { return _projection; }
+
+    /**
+     * Sets whether this DataArea is just used to generate projections.
+     */
+    public void setProjection(boolean aValue)
     {
-        String name = getName();
-        return name != null && name.equals("ProjectionDataArea");
+        _projection = aValue;
     }
 
     /**

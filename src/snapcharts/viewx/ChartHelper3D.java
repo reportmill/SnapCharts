@@ -64,7 +64,7 @@ public abstract class ChartHelper3D extends ChartHelper {
         DataArea3D dataArea3D = createProjectionDataArea();
         DataView dataView = getDataView();
         ViewUtils.setParent(dataArea3D, dataView);
-        dataArea3D.setName("ProjectionDataArea");
+        dataArea3D.setProjection(true);
         return _projectionDataData = dataArea3D;
     }
 

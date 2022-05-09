@@ -483,9 +483,7 @@ public class AxisBoxShape extends ParentShape {
         camera.setOrtho(true);
 
         // Create image
-        if (cameraView.isShowCubeView()) cameraView.getCubeView().setVisible(false);
         Image image = ViewUtils.getImageForScale(cameraView, 1);
-        if (cameraView.isShowCubeView()) cameraView.getCubeView().setVisible(true);
 
         // Create image/texture and return
         Texture texture = new Texture(image);
