@@ -5,6 +5,8 @@ package snapcharts.app;
 import snap.geom.Point;
 import snap.geom.Pos;
 import snap.gfx.*;
+import snap.gfx3d.CameraView;
+import snap.gfx3d.CubeView;
 import snap.util.*;
 import snap.view.*;
 import snapcharts.doc.*;
@@ -12,6 +14,7 @@ import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataView;
+import snapcharts.viewx.DataArea3D;
 
 import java.util.List;
 
@@ -362,6 +365,43 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // If DataSetMode, showTraceTabView
         if (_dataSetMode)
             runLater(() -> showTraceTabView());
+
+        // Trigger initChartLoaded (more needs to be done when ChartView supports Loaded property)
+        runLater(() -> initChartLoaded());
+    }
+
+    /**
+     * Called to do initialization after chart is loaded.
+     */
+    private void initChartLoaded()
+    {
+        ChartType chartType = getChart().getType();
+        if (chartType.is3D())
+            registerForCubeViewClick();
+    }
+
+    /**
+     * Called to register to get 3D chart CubeView mousePress.
+     */
+    private void registerForCubeViewClick()
+    {
+        DataView dataView = _chartView.getDataView();
+        View dataViewChild = dataView.getChildCount() > 0 ? dataView.getChild(0) : null;
+        if (dataViewChild instanceof DataArea3D) {
+            DataArea3D dataArea3D = (DataArea3D) dataViewChild;
+            CameraView cameraView = dataArea3D.getCameraView();
+            CubeView cubeView = cameraView.getCubeView();
+            cubeView.addEventFilter(e -> cubeViewDidMouseRelease(e), View.MouseRelease);
+        }
+    }
+
+    /**
+     * Called when 3D chart CubeView gets MouseRelease.
+     */
+    private void cubeViewDidMouseRelease(ViewEvent anEvent)
+    {
+        if (anEvent.isMouseClick())
+            _insp.showSceneInspector();
     }
 
     /**

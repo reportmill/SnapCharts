@@ -229,6 +229,15 @@ public class ChartPaneInsp extends ViewOwner {
     }
 
     /**
+     * Shows the Scene inspector.
+     */
+    public void showSceneInspector()
+    {
+        chartPartInspLabelMousePress(_dataViewInsp);
+        _dataViewInsp.showContent3D();
+    }
+
+    /**
      * Sets a view that overrides normal inspector UI.
      */
     public void setOverrideInspectorView(View aView)

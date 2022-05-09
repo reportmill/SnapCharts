@@ -125,4 +125,12 @@ public class DataViewInsp extends ChartPartInsp {
         if(_extraInsp != null)
             _extraInspBox.addChild(_extraInsp.getUI());
     }
+
+    /**
+     * Shows the 3D inspector.
+     */
+    public void showContent3D()
+    {
+        getView("3DButton", ButtonBase.class).fire();
+    }
 }
