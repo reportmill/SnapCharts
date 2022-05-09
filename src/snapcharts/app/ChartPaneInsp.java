@@ -105,36 +105,36 @@ public class ChartPaneInsp extends ViewOwner {
 
             // Create/add ChartInsp
             _chartInsp = new ChartInsp(_chartPane);
-            addInspector(_chartInsp, false);
+            addInspector(_chartInsp);
 
             // Create/add HeaderInsp
             _headerInsp = new HeaderInsp(_chartPane);
-            addInspector(_headerInsp, false);
+            addInspector(_headerInsp);
 
             // Create/add AxisInsp
             _axisInsp = new AxisInsp(_chartPane);
-            addInspector(_axisInsp, false);
+            addInspector(_axisInsp);
 
             // Create/add ContourAxisInsp
             _contourAxisInsp = new ContourAxisInsp(_chartPane);
-            addInspector(_contourAxisInsp, false);
+            addInspector(_contourAxisInsp);
 
             // Create/add LegendInsp
             _legendInsp = new LegendInsp(_chartPane);
-            addInspector(_legendInsp, false);
+            addInspector(_legendInsp);
 
             // Create/add MarkerInsp
             _markerInsp = new MarkerInsp(_chartPane);
-            addInspector(_markerInsp, false);
+            addInspector(_markerInsp);
 
             // Create/add DataViewInsp
             _dataViewInsp = new DataViewInsp(_chartPane);
-            addInspector(_dataViewInsp, false);
+            addInspector(_dataViewInsp);
         }
 
         // Add TraceInsp
         _traceInsp = new TraceInsp(_chartPane);
-        addInspector(_traceInsp, false);
+        addInspector(_traceInsp);
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _contourAxisInsp,
@@ -156,7 +156,7 @@ public class ChartPaneInsp extends ViewOwner {
     /**
      * Adds an inspector.
      */
-    private void addInspector(ChartPartInsp aChartPartInsp, boolean isShowing)
+    private void addInspector(ChartPartInsp aChartPartInsp)
     {
         // Get UI view and add to inspector
         View inspUI = aChartPartInsp.getUI();
@@ -164,8 +164,7 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Trigger Collapser create
         Collapser collapser = aChartPartInsp.getCollapser();
-        if (!isShowing)
-            collapser.setCollapsed(true);
+         collapser.setCollapsed(true);
 
         // Add listener to update ChartPartInsp.Sel when label is clicked
         Label label = aChartPartInsp.getLabel();
@@ -235,15 +234,6 @@ public class ChartPaneInsp extends ViewOwner {
     {
         chartPartInspLabelMousePress(_dataViewInsp);
         _dataViewInsp.showContent3D();
-    }
-
-    /**
-     * Sets a view that overrides normal inspector UI.
-     */
-    public void setOverrideInspectorView(View aView)
-    {
-        View inspContent = aView != null ? aView : _inspColView;
-        _inspScroll.setContent(inspContent);
     }
 
     /**
