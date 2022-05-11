@@ -479,7 +479,7 @@ public class AxisBoxShape extends ParentShape {
     {
         // Get camera and configure for side
         Camera camera = cameraView.getCamera();
-        camera.setYawPitchRollForSide(aSide);
+        camera.setYawPitchRollForSideAndPos(aSide, null);
         camera.setOrtho(true);
 
         // Create image

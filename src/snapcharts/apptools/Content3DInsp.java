@@ -294,7 +294,7 @@ public class Content3DInsp extends ChartPartInsp {
             DataArea3D dataArea3D = getDataArea3D();
             dataArea3D.setDefaultViewTransform();
         }
-        else camera.setYawPitchRollForSide(aSide);
+        else camera.setYawPitchRollForSideAndPos(aSide, null);
 
         // If PrefGimbalRadius set, reset to pref radius in final orientation
         if (isPrefGimbalRadiusSet) {

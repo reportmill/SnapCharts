@@ -8,6 +8,7 @@ import snap.gfx3d.VertexArrayShape;
 import snap.util.MathUtils;
 import snapcharts.data.DataSet;
 import snapcharts.model.Trace;
+import snapcharts.model.TracePoint;
 import snapcharts.util.Mesh;
 import snapcharts.view.ChartHelper;
 
@@ -109,5 +110,16 @@ public class Contour3DDataArea extends DataArea3D {
 
         // Return
         return axisBoxShape;
+    }
+
+    /**
+     * Override for Contour3D.
+     */
+    @Override
+    public TracePoint getDataPointForLocalXY(double aX, double aY)
+    {
+        if (aX > getWidth() - 100 && aY < 100)
+            return null;
+        return super.getDataPointForLocalXY(aX, aY);
     }
 }
