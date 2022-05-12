@@ -132,9 +132,24 @@ public class DataView extends ChartPartView<TraceList> {
 
         // Paint Chart Border
         _chartHelper.paintBorder(aPntr);
+    }
+
+    /**
+     * Override to forward to PanZoom.
+     */
+    @Override
+    protected void paintAbove(Painter aPntr)
+    {
+        // Paint Tags
+        DataArea[] dataAreas = getDataAreas();
+        for (DataArea dataArea : dataAreas)
+            dataArea.paintDataAreaAbove(aPntr);
 
         // Paint Chart Markers
         paintMarkers(aPntr);
+
+        // Forward to ChartHelper hook
+        _chartHelper.paintAboveForChartPartView(this, aPntr);
     }
 
     /**
@@ -178,21 +193,6 @@ public class DataView extends ChartPartView<TraceList> {
             // Restore graphics state
             aPntr.restore();
         }
-    }
-
-    /**
-     * Override to forward to PanZoom.
-     */
-    @Override
-    protected void paintAbove(Painter aPntr)
-    {
-        // Paint Tags
-        DataArea[] dataAreas = getDataAreas();
-        for (DataArea dataArea : dataAreas)
-            dataArea.paintDataAreaAbove(aPntr);
-
-        // Forward to ChartHelper hook
-        _chartHelper.paintAboveForChartPartView(this, aPntr);
     }
 
     /**
