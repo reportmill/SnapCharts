@@ -60,7 +60,7 @@ public class Contour3DDataArea extends DataArea3D {
         // Create VertexArrayShape
         VertexArrayShape vertexArrayShape = new VertexArrayShape();
         vertexArrayShape.setDoubleSided(true);
-        VertexArray vertexArray = vertexArrayShape.getVertexArray();
+        VertexArray vertexArray = vertexArrayShape.getTriangleArray();
         axisBoxShape.addChild(vertexArrayShape);
 
         // Iterate over triangles and add shape for each
