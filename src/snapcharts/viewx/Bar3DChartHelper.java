@@ -103,16 +103,4 @@ public class Bar3DChartHelper extends ChartHelper3D {
         // Do normal version
         super.resetView();
     }
-
-    /**
-     * Override to reset view transform.
-     */
-    @Override
-    public void resetAxesAnimated()
-    {
-        DataArea[] dataAreas = getDataAreas();
-        for (DataArea dataArea : dataAreas)
-            if (dataArea instanceof Bar3DDataArea)
-                ((Bar3DDataArea)dataArea).resetViewMatrixAnimated();
-    }
 }

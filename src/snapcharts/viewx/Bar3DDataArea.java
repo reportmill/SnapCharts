@@ -7,7 +7,6 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
-import snap.view.ViewAnim;
 import snapcharts.model.*;
 import snapcharts.view.*;
 
@@ -113,16 +112,5 @@ public class Bar3DDataArea extends DataArea3D {
 
         // Forward to BarDataArea (2D)
         _barDataArea.setReveal(aValue);
-    }
-
-    /**
-     * Resets the ViewMatrix animated.
-     */
-    public void resetViewMatrixAnimated()
-    {
-        ViewAnim anim = _cameraView.getAnimCleared(1000);
-        anim.setValue(CameraView.Yaw_Prop, DEFAULT_YAW);
-        anim.setValue(CameraView.Pitch_Prop, DEFAULT_PITCH);
-        anim.play();
     }
 }

@@ -2,6 +2,9 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
+import snap.gfx3d.Camera;
+import snap.gfx3d.CameraView;
+import snap.view.ViewAnim;
 import snap.view.ViewUtils;
 import snapcharts.model.Axis;
 import snapcharts.model.AxisType;
@@ -72,4 +75,44 @@ public abstract class ChartHelper3D extends ChartHelper {
      * Creates a DataArea3D for projections.
      */
     protected abstract DataArea3D createProjectionDataArea();
+
+    /**
+     * Override to reset view transform.
+     */
+    @Override
+    public void resetAxesAnimated()
+    {
+        DataArea3D dataArea3D = getDataArea3D();
+        CameraView cameraView = dataArea3D.getCameraView();
+        Camera camera = cameraView.getCamera();
+        camera.setPrefGimbalRadius(camera.getPrefGimbalRadius());
+
+        ViewAnim anim = cameraView.getAnimCleared(600);
+        anim.startAutoRegisterChanges(Camera.Yaw_Prop, Camera.Pitch_Prop, Camera.Roll_Prop, Camera.PrefGimbalRadius_Prop);
+        camera.setYaw(DataArea3D.DEFAULT_YAW);
+        camera.setPitch(DataArea3D.DEFAULT_PITCH);
+        camera.setRoll(0);
+        camera.setPrefGimbalRadius(camera.calcPrefGimbalRadius());
+        anim.stopAutoRegisterChanges();
+        anim.setOnFinish(() -> camera.setPrefGimbalRadius(0));
+        anim.play();
+    }
+
+    /**
+     * Override for 3D.
+     */
+    @Override
+    public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
+    {
+        double scale = aScale > 1.5 ? 1.5 : aScale < .75 ? .75 : aScale;
+        DataArea3D dataArea3D = getDataArea3D();
+        CameraView cameraView = dataArea3D.getCameraView();
+        Camera camera = cameraView.getCamera();
+        double gimbalRad = camera.getGimbalRadius();
+        double gimbalRad2 = gimbalRad * scale;
+
+        ViewAnim anim = cameraView.getAnimCleared(600);
+        anim.setValue(CameraView.PrefGimbalRadius_Prop, gimbalRad2);
+        anim.play();
+    }
 }
