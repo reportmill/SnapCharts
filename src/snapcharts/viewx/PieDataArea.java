@@ -25,6 +25,9 @@ public class PieDataArea extends DataArea {
     
     // The pie radius and diameter
     private double  _pieR, _pieD;
+
+    // Bogus hole ratio
+    public double  _holeRatio;
     
     // The last MouseMove point
     //private Point _lastMouseMovePoint;
@@ -437,7 +440,7 @@ public class PieDataArea extends DataArea {
         public Arc getArc()
         {
             if (_arc!=null) return _arc;
-            return _arc = new Arc(_pieX, _pieY, _pieD, _pieD, getAngleStart(), _angle);
+            return _arc = new Arc(_pieX, _pieY, _pieD, _pieD, getAngleStart(), _angle, _holeRatio);
         }
 
         /** Returns the arc with given reveal or selection status. */
@@ -480,7 +483,7 @@ public class PieDataArea extends DataArea {
             }
 
             // Create arc and return
-            return new Arc(px, py, diam, diam, start, angle);
+            return new Arc(px, py, diam, diam, start, angle, _holeRatio);
         }
 
         /** Returns the mid angle. */

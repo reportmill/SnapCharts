@@ -1,15 +1,16 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.viewx;
 import snapcharts.model.*;
+import snapcharts.view.AxisView;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataArea;
 
 /**
- * A ChartHelper for ChartType PIE.
+ * A ChartHelper for ChartType PIE_3D.
  */
-public class Pie3DChartHelper extends PieChartHelper {
-
-    // Constant for default chart depth
-    public static final double DEFAULT_DEPTH = 50;
+public class Pie3DChartHelper extends ChartHelper3D {
 
     /**
      * Constructor.
@@ -28,21 +29,56 @@ public class Pie3DChartHelper extends PieChartHelper {
     /**
      * Returns the AxisTypes.
      */
-    @Override
-    protected AxisType[] getAxisTypesImpl()  { return new AxisType[0]; }
+    protected AxisType[] getAxisTypesImpl()
+    {
+        // return new AxisType[0];
+        return new AxisType[] { AxisType.X, AxisType.Y, AxisType.Z };
+    }
+
+    /**
+     * Creates an AxisView for given type.
+     */
+    protected AxisView createAxisView(AxisType anAxisType)
+    {
+        AxisView axisView = super.createAxisView(anAxisType);
+        axisView.setVisible(false);
+        axisView.setPickable(false);
+        return axisView;
+    }
+
+    /**
+     * Override to return placeholder intervals.
+     */
+    protected Intervals createIntervals(AxisView axisView)
+    {
+        return Intervals.getIntervalsSimple(0, 1);
+    }
+
+    /**
+     * Returns a trace.
+     */
+    public Trace getTrace()
+    {
+        TraceList traceList = getTraceList();
+        Trace[] traces = traceList.getEnabledTraces();
+        if (traces.length == 0)
+            traces = traceList.getTraces();
+        return traces.length > 0 ? traces[0] : null;
+    }
 
     /**
      * Creates the DataAreas.
      */
     protected DataArea[] createDataAreas()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getEnabledTraces();
-        if (traces.length == 0)
-            traces = traceList.getTraces();
-        if (traces.length == 0)
-            return new DataArea[0];
-        Trace trace = traces[0];
-        return new DataArea[] { _dataArea = new Pie3DDataArea(this, trace) };
+        Trace trace = getTrace();
+        return new DataArea[] { new Pie3DDataArea(this, trace) };
+    }
+
+    @Override
+    protected DataArea3D createProjectionDataArea()
+    {
+        Trace trace = getTrace();
+        return new Pie3DDataArea(this, trace);
     }
 }
