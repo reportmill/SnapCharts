@@ -394,7 +394,33 @@ public class AxisBoxShape extends ParentShape {
         double ivalMax = theIntervals.getMax();
         double y1 = 0;
         double y2 = aHeight;
-        double offset = doMinor ? theIntervals.getDelta() / 2 : 0;
+
+        // Handle minor grid special
+        if (doMinor) {
+
+            // Get minor interval delta: Usually half Intervals.Delta, but go with 1/5 if Intervals are factor of 5
+            double delta = theIntervals.getDelta();
+            double deltaBase = delta; while (deltaBase < 5) deltaBase *= 10; while (deltaBase > 5) deltaBase /= 10;
+            boolean factorOf5 = MathUtils.equals(deltaBase, 5);
+            double incr = factorOf5 ? delta / 5 : delta / 2;
+            if (factorOf5)
+                aPntr.setColor(aPntr.getColor().blend(Color.WHITE, .5));
+
+            // Calculate start point (back down from interval 1)
+            double ival0 = theIntervals.getInterval(0);
+            double ival1 = theIntervals.getInterval(1);
+            double dataX = ival1 - incr * 4; while (dataX < ival0) dataX += incr;
+
+            // Iterate to end of intervals by delta and paint minor lines
+            double lastIval = theIntervals.getInterval(theIntervals.getCount() - 1);
+            while (dataX < lastIval) {
+                double lineX = MathUtils.mapValueForRanges(dataX, ivalMin, ivalMax, 0, aWidth);
+                aPntr.moveTo(lineX, y1);
+                aPntr.lineTo(lineX, y2);
+                dataX += incr;
+            }
+            return;
+        }
 
         // Iterate over intervals and paint grid line path
         for (int i = 0, iMax = theIntervals.getCount(); i < iMax; i++) {
@@ -404,7 +430,7 @@ public class AxisBoxShape extends ParentShape {
             if (doMinor && i + 1 == iMax) continue;
 
             // Get interval, map to Width and draw line
-            double ival = theIntervals.getInterval(i) + offset;
+            double ival = theIntervals.getInterval(i);
             double lineX = MathUtils.mapValueForRanges(ival, ivalMin, ivalMax, 0, aWidth);
             aPntr.moveTo(lineX, y1);
             aPntr.lineTo(lineX, y2);
@@ -424,7 +450,32 @@ public class AxisBoxShape extends ParentShape {
         double ivalMax = theIntervals.getMax();
         double x1 = 0;
         double x2 = aWidth;
-        double offset = doMinor ? theIntervals.getDelta() / 2 : 0;
+
+        if (doMinor) {
+
+            // Get minor interval delta: Usually half Intervals.Delta, but go with 1/5 if Intervals are factor of 5
+            double delta = theIntervals.getDelta();
+            double deltaBase = delta; while (deltaBase < 5) deltaBase *= 10; while (deltaBase > 5) deltaBase /= 10;
+            boolean factorOf5 = MathUtils.equals(deltaBase, 5);
+            double incr = factorOf5 ? delta / 5 : delta / 2;
+            if (factorOf5)
+                aPntr.setColor(aPntr.getColor().blend(Color.WHITE, .5));
+
+            // Calculate start point (back down from interval 1)
+            double ival0 = theIntervals.getInterval(0);
+            double ival1 = theIntervals.getInterval(1);
+            double dataY = ival1 - incr * 4; while (dataY < ival0) dataY += incr;
+
+            // Iterate to end of intervals by delta and paint minor lines
+            double lastIval = theIntervals.getInterval(theIntervals.getCount() - 1);
+            while (dataY < lastIval) {
+                double lineY = MathUtils.mapValueForRanges(dataY, ivalMin, ivalMax, 0, aHeight);
+                aPntr.moveTo(x1, lineY);
+                aPntr.lineTo(x2, lineY);
+                dataY += incr;
+            }
+            return;
+        }
 
         // Iterate over intervals and paint grid line path
         for (int i = 0, iMax = theIntervals.getCount(); i < iMax; i++) {
@@ -434,7 +485,7 @@ public class AxisBoxShape extends ParentShape {
             if (doMinor && i + 1 == iMax) continue;
 
             // Get interval, map to Height and draw line
-            double ival = theIntervals.getInterval(i) + offset;
+            double ival = theIntervals.getInterval(i);
             double lineY = MathUtils.mapValueForRanges(ival, ivalMin, ivalMax, 0, aHeight);
             aPntr.moveTo(x1, lineY);
             aPntr.lineTo(x2, lineY);
