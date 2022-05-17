@@ -31,8 +31,9 @@ public class AxisBoxShape extends ParentShape {
     // Constants
     private static final Color SIDE_COLOR = Color.WHITE;
     private static final Color SIDE_BORDER_COLOR = Color.BLACK;
-    private static final Color BOTTOM_COLOR = Color.LIGHTGRAY.brighter().brighter();
+    private static final Color BOTTOM_COLOR = Color.LIGHTGRAY.blend(Color.WHITE, .8);
     private static final Color MINOR_GRID_COLOR = Color.LIGHTGRAY;
+    private static final Color MINOR_GRID_COLOR_LIGHTER = Color.LIGHTGRAY.blend(Color.WHITE, .5);
     private static final Color GRID_COLOR = Color.DARKGRAY;
 
     /**
@@ -292,6 +293,7 @@ public class AxisBoxShape extends ParentShape {
         // Add to front/back
         _frontSide.setPainter(gridPainter);
         _backSide.setPainter(gridPainter.clone());
+        gridPainter.flipX();
     }
 
     /**
@@ -334,6 +336,7 @@ public class AxisBoxShape extends ParentShape {
         // Add to left/right
         _leftSide.setPainter(gridPainter);
         _rightSide.setPainter(gridPainter.clone());
+        gridPainter.flipX();
     }
 
     /**
@@ -377,6 +380,7 @@ public class AxisBoxShape extends ParentShape {
         _bottomSide.setPainter(gridPainter);
         if (_topSide != null)
             _topSide.setPainter(gridPainter.clone());
+        gridPainter.flipY();
     }
 
     /**
@@ -402,7 +406,7 @@ public class AxisBoxShape extends ParentShape {
             boolean factorOf5 = MathUtils.equals(deltaBase, 5);
             double incr = factorOf5 ? delta / 5 : delta / 2;
             if (factorOf5)
-                aPntr.setColor(aPntr.getColor().blend(Color.WHITE, .5));
+                aPntr.setColor(MINOR_GRID_COLOR_LIGHTER);
 
             // Calculate start point (back down from interval 1)
             double ival0 = theIntervals.getInterval(0);
@@ -417,6 +421,7 @@ public class AxisBoxShape extends ParentShape {
                 aPntr.lineTo(lineX, y2);
                 dataX += incr;
             }
+            aPntr.setColor(MINOR_GRID_COLOR);
             return;
         }
 
@@ -457,7 +462,7 @@ public class AxisBoxShape extends ParentShape {
             boolean factorOf5 = MathUtils.equals(deltaBase, 5);
             double incr = factorOf5 ? delta / 5 : delta / 2;
             if (factorOf5)
-                aPntr.setColor(aPntr.getColor().blend(Color.WHITE, .5));
+                aPntr.setColor(MINOR_GRID_COLOR_LIGHTER);
 
             // Calculate start point (back down from interval 1)
             double ival0 = theIntervals.getInterval(0);

@@ -104,7 +104,7 @@ public abstract class ChartHelper3D extends ChartHelper {
     @Override
     public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
     {
-        double scale = aScale > 1.5 ? 1.5 : aScale < .75 ? .75 : aScale;
+        double scale = aScale > 1.6 ? 1.6 : aScale < .625 ? .625 : aScale;
         DataArea3D dataArea3D = getDataArea3D();
         CameraView cameraView = dataArea3D.getCameraView();
         Camera camera = cameraView.getCamera();
