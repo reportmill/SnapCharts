@@ -11,6 +11,8 @@ import snapcharts.model.TracePoint;
 import snapcharts.util.Mesh;
 import snapcharts.view.ChartHelper;
 
+import java.util.BitSet;
+
 /**
  * A DataArea3D subclass to display the contents of Contour3D chart.
  */
@@ -63,9 +65,15 @@ public class Contour3DDataArea extends DataArea3D {
         VertexArray vertexArray = new VertexArray();
         vertexArray.setDoubleSided(true);
 
+        // Get sizes
+        double width = getAxisBoxPrefWidth();
+        double height = getAxisBoxPrefHeight();
+        double depth = getAxisBoxPrefDepth();
+
         // Iterate over triangles and add shape for each
         int pointCount = mesh.getPointCount();
         Point3D meshPoint = new Point3D();
+        BitSet outOfBoundsIndexes = new BitSet(pointCount);
         for (int i = 0; i < pointCount; i++) {
 
             // Get mesh point in scene coords
@@ -80,6 +88,11 @@ public class Contour3DDataArea extends DataArea3D {
             // Add vertex color and add
             Color contourColor1 = contourHelper.getContourColorForZ(pz);
             vertexArray.addColor(contourColor1);
+
+            // If point out of axis box bounds, mark in OutOfBoundsIndexes bit set
+            if (meshPoint.x < 0 || meshPoint.y < 0 || meshPoint.z < 0 ||
+                meshPoint.x > width || meshPoint.y > height || meshPoint.z > depth)
+                outOfBoundsIndexes.set(i);
         }
 
         // Create indexArray for triangles and set
@@ -87,6 +100,12 @@ public class Contour3DDataArea extends DataArea3D {
         int[] indexArray = new int[indexCount];
         int index = 0;
         for (Mesh.Triangle triangle : triangles) {
+
+            // If any triangle index out of bounds, skip triangle
+            if (outOfBoundsIndexes.get(triangle.v1) || outOfBoundsIndexes.get(triangle.v2) || outOfBoundsIndexes.get(triangle.v3))
+                continue;
+
+            // Add triangle indexes
             indexArray[index++] = triangle.v1;
             indexArray[index++] = triangle.v2;
             indexArray[index++] = triangle.v3;
@@ -116,10 +135,8 @@ public class Contour3DDataArea extends DataArea3D {
         // Do hit detection (just return null if missed)
         HitDetector hitDetector = new HitDetector();
         boolean isHit = hitDetector.isRayHitShape(rayOrigin, rayDir, camera.getScene());
-        if (!isHit) {
-            System.out.println("Missed");
+        if (!isHit)
             return null;
-        }
 
         // Get hit shape
         Shape3D hitShape = hitDetector.getHitShape();
