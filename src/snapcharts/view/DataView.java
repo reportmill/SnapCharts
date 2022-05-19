@@ -36,6 +36,9 @@ public class DataView extends ChartPartView<TraceList> {
         // Config
         //setCursor(Cursor.MOVE);
         enableEvents(MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
+
+        // Add event filter to clear/reset ChartView.TargPoint on MouseDrag/Release
+        addEventFilter(e -> processFilterEvent(e), MouseDrag, MouseRelease);
     }
 
     /**
@@ -224,6 +227,22 @@ public class DataView extends ChartPartView<TraceList> {
 
         // Do normal version
         super.processEvent(anEvent);
+    }
+
+    /**
+     * Override to clear/reset ChartView.TargPoint on MouseDrag/Release.
+     */
+    private void processFilterEvent(ViewEvent anEvent)
+    {
+        // If MouseDrag, clear ChartView.TargPoint
+        if (anEvent.isMouseDrag())
+            _chartView.setTargPoint(null);
+
+        // If MouseRelease, reset ChartView.TargPoint
+        else if (anEvent.isMouseRelease()) {
+            Point point = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
+            _chartView.setTargPoint(point);
+        }
     }
 
     /**
