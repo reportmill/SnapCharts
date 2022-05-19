@@ -10,7 +10,6 @@ import snapcharts.model.Trace;
 import snapcharts.model.TracePoint;
 import snapcharts.util.Mesh;
 import snapcharts.view.ChartHelper;
-
 import java.util.BitSet;
 
 /**
@@ -37,6 +36,7 @@ public class Contour3DDataArea extends DataArea3D {
     {
         // Do normal version to get AxisBoxShape
         AxisBoxShape axisBoxShape = super.createAxisBoxShape();
+        axisBoxShape.setShowHighliner(true);
 
         // Get TriangleArray, create/add to VertexArrayShape
         _triangleArray = createTriangleArray();

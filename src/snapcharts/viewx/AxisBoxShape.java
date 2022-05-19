@@ -28,6 +28,9 @@ public class AxisBoxShape extends ParentShape {
     // The Top/Bottom sides
     private Poly3D  _topSide, _bottomSide;
 
+    // The highliner
+    private AxisBoxHighliner  _highliner;
+
     // Constants
     private static final Color SIDE_COLOR = Color.WHITE;
     private static final Color SIDE_BORDER_COLOR = Color.BLACK;
@@ -45,6 +48,26 @@ public class AxisBoxShape extends ParentShape {
         _dataArea = aDataArea;
 
         addSides();
+    }
+
+    /**
+     * Returns whether to show target data point highlight lines.
+     */
+    public boolean isShowHighliner()  { return _highliner != null; }
+
+    /**
+     * Sets whether to show target data point highlight lines.
+     */
+    public void setShowHighliner(boolean aValue)
+    {
+        // if already set, just return
+        if (aValue == isShowHighliner()) return;
+
+        // If activating, create/add Highliner
+        if (aValue) {
+            _highliner = new AxisBoxHighliner(this, _dataArea);
+            addChild(_highliner);
+        }
     }
 
     /**
@@ -84,10 +107,15 @@ public class AxisBoxShape extends ParentShape {
      */
     public void setSidesVisibleForCamera()
     {
+        // Get visible sides and update
         boolean frontFacing = _dataArea.isSideFacingCamera(Side3D.FRONT);
         boolean leftFacing = _dataArea.isSideFacingCamera(Side3D.LEFT);
         boolean topFacing = !_dataArea.isSideFacingCamera(Side3D.BOTTOM);
         setSidesVisible(frontFacing, leftFacing, topFacing);
+
+        // If Hightliner set, update lines
+        if (_highliner != null)
+            _highliner.updateLines();
     }
 
     /**
