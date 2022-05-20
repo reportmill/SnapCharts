@@ -207,7 +207,7 @@ public class ContourHelper {
         }
 
         // Create GradientPath with Stops at 90 deg and return
-        return new GradientPaint(90, stops);
+        return new GradientPaint(-90, stops);
     }
 
     /**

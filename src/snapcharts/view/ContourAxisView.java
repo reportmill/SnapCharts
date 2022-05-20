@@ -4,6 +4,7 @@ import snap.gfx.*;
 import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.model.*;
+import snapcharts.util.MinMax;
 import snapcharts.viewx.Contour3DChartHelper;
 import snapcharts.viewx.ContourChartHelper;
 import snapcharts.viewx.ContourHelper;
@@ -96,17 +97,22 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
 
         // Iterate over ContourRanges and add label for each min val
         int contourCount = getContourCount();
-        for (int i=0; i<contourCount; i++) {
-            double val = _contourHelper.getContourRange(i).getMin();
+        for (int i = 0; i < contourCount; i++) {
+            MinMax contourRange = _contourHelper.getContourRange(contourCount - i - 1);
+            double val = contourRange.getMin();
             View entryView = createContourEntry(val);
             _entryBox.addChild(entryView);
         }
 
         // Add final label using final contour max val
-        double lastVal = _contourHelper.getContourRange(contourCount-1).getMax();
+        MinMax contourRangeLast = _contourHelper.getContourRange(contourCount-1);
+        double lastVal = contourRangeLast.getMax();
         View entryView = createContourEntry(lastVal);
-        entryView.setGrowHeight(false);
-        _entryBox.addChild(entryView);
+        _entryBox.addChild(entryView, 0);
+
+        // Make last entry not grow so it will sit flush on bottom
+        View lastEntry = _entryBox.getChildLast();
+        lastEntry.setGrowHeight(false);
     }
 
     /**
@@ -146,19 +152,21 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
     @Override
     protected void layoutImpl()
     {
+        // Layout entries
         RowView.layout(this, true);
-
-        if (_entryBox.getChildCount()==0)
+        if (_entryBox.getChildCount() == 0)
             return;
 
+        // Calculate ColorBox Y/H and set
         Insets pad = _entryBox.getPadding();
         Label label = (Label) _entryBox.getChild(0);
         StringView strView = label.getStringView();
         double strH = strView.getTextHeight();
         double halfH = Math.ceil(strH/2);
-
-        _colorBox.setY(_entryBox.getY() + pad.top + halfH);
-        _colorBox.setHeight(_entryBox.getHeight() - pad.bottom - strH);
+        double colorBoxY = _entryBox.getY() + pad.top + halfH;
+        double colorBoxH = _entryBox.getHeight() - pad.bottom - strH;
+        _colorBox.setY(colorBoxY);
+        _colorBox.setHeight(colorBoxH);
     }
 
     /**
@@ -184,8 +192,8 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
             double areaX = 0;
             double areaW = getWidth();
             double areaH = getHeight();
-            int count = getContourCount();
-            double sliceH = areaH / count;
+            int contourCount = getContourCount();
+            double sliceH = areaH / contourCount;
 
             // Handle RenderSmooth
             if (_renderSmooth) {
@@ -198,11 +206,11 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
                 return;
             }
 
-            // Handle render blocks
-            for (int i = 0; i < count; i++) {
+            // Handle render blocks (last contour on top)
+            for (int i = 0; i < contourCount; i++) {
                 int sliceY = (int) Math.round(sliceH * i);
                 int sliceY2 = (int) Math.round(sliceH * (i+1));
-                Color color = _contourHelper.getContourColor(i);
+                Color color = _contourHelper.getContourColor(contourCount - i - 1);
                 aPntr.setColor(color);
                 aPntr.fillRect(areaX, sliceY, areaW, sliceY2 - sliceY);
             }
