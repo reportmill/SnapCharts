@@ -33,6 +33,9 @@ public class ContourHelper {
     // The array of colors
     private Color[]  _colors;
 
+    // GradientPaint if RenderSmooth
+    private GradientPaint  _gradientPaint;
+
     /**
      * Constructor.
      */
@@ -129,22 +132,11 @@ public class ContourHelper {
     public Color[] getContourColors()
     {
         // If colors already set, just return
-        if (_colors!=null) return _colors;
+        if (_colors != null) return _colors;
 
         // Create Gradient
-        String[] chex = {
-                "071E91", "163BA4", "2E6BB9", "469CD0",
-                "5DCAE6", "75FBFD", "82FCC3", "A2FC8E",
-                "CEFE64", "FFFF54", "F5C142", "ED8732",
-                "E85127", "E63222", "AD2317", "75140C"
-        };
-        Color[] gcols = new Color[chex.length];
-        for (int i=0; i<chex.length; i++) gcols[i] = new Color("#" + chex[i]);
-        double[] offsets = new double[chex.length];
-        for (int i=0; i<chex.length; i++) offsets[i] = 1d/(chex.length-1) * i;
-        offsets[chex.length-1] = 1;
-
-        GradientPaint paint = new GradientPaint(0, GradientPaint.getStops(offsets, gcols));
+        GradientPaint gradientVert = getColorMapGradientPaint();
+        GradientPaint paint = new GradientPaint(0, gradientVert.getStops());
 
         // Expand to rect
         int count = getContourCount();
@@ -158,11 +150,64 @@ public class ContourHelper {
 
         // Get colors for each step
         Color[] colors = new Color[count];
-        for (int i=0; i<count; i++)
+        for (int i = 0; i < count; i++)
             colors[i] = new Color(img.getRGB(i, 0));
 
         // Return colors
         return _colors = colors;
+    }
+
+    /**
+     * Returns the color map colors.
+     */
+    public Color[] getColorMapColors()
+    {
+        // Create Gradient
+        String[] colorMapHexStrings = {
+                "071E91", "163BA4", "2E6BB9", "469CD0",
+                "5DCAE6", "75FBFD", "82FCC3", "A2FC8E",
+                "CEFE64", "FFFF54", "F5C142", "ED8732",
+                "E85127", "E63222", "AD2317", "75140C"
+        };
+
+        // Create ColorMapColors array and fill with colors from ColorMapHexStrings
+        Color[] colorMapColors = new Color[colorMapHexStrings.length];
+        for (int i = 0; i < colorMapHexStrings.length; i++)
+            colorMapColors[i] = new Color("#" + colorMapHexStrings[i]);
+
+        // Return
+        return colorMapColors;
+    }
+
+    /**
+     * Returns gradient paint for contours.
+     */
+    public GradientPaint getColorMapGradientPaint()
+    {
+        if (_gradientPaint != null) return _gradientPaint;
+        GradientPaint gradientPaint = createColorMapGradientPaint();
+        return _gradientPaint = gradientPaint;
+    }
+
+    /**
+     * Returns gradient paint for contours.
+     */
+    private GradientPaint createColorMapGradientPaint()
+    {
+        // Get ColorMapColors color array
+        Color[] colorMapColors = getColorMapColors();
+        int count = colorMapColors.length;
+        double incr = 1d / (count - 1);
+
+        // Create stops array and fill with stops
+        GradientPaint.Stop[] stops = new GradientPaint.Stop[count];
+        for (int i = 0; i < count; i++) {
+            Color color = colorMapColors[i];
+            stops[i] = new GradientPaint.Stop(incr * i, color);
+        }
+
+        // Create GradientPath with Stops at 90 deg and return
+        return new GradientPaint(90, stops);
     }
 
     /**
@@ -207,5 +252,6 @@ public class ContourHelper {
         _levelsCount = 0;
         _contourRanges = null;
         _colors = null;
+        _gradientPaint = null;
     }
 }

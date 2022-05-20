@@ -17,6 +17,9 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
     // The Contour helper
     private ContourHelper  _contourHelper;
 
+    // Whether to render as smooth gradient
+    private boolean  _renderSmooth;
+
     // The view to hold color scale
     private ColorBox  _colorBox;
 
@@ -72,6 +75,9 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
             _contourHelper = ((PolarContourChartHelper) chartHelper).getContourHelper();
         else if (chartHelper instanceof Contour3DChartHelper)
             _contourHelper = ((Contour3DChartHelper) chartHelper).getContourHelper();
+
+        // Set RenderSmooth property
+        _renderSmooth = chartHelper instanceof Contour3DChartHelper;
 
         // Do normal version
         super.resetView();
@@ -174,13 +180,26 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
         @Override
         protected void paintFront(Painter aPntr)
         {
+            // Get info
             double areaX = 0;
             double areaW = getWidth();
             double areaH = getHeight();
             int count = getContourCount();
             double sliceH = areaH / count;
 
-            for (int i=0; i<count; i++) {
+            // Handle RenderSmooth
+            if (_renderSmooth) {
+                GradientPaint gradientPaint = _contourHelper.getColorMapGradientPaint();
+                aPntr.setPaint(gradientPaint);
+                aPntr.fillRect(areaX, 0, areaW, areaH);
+                aPntr.setPaint(Color.BLACK);
+                aPntr.setStroke(Stroke.Stroke1);
+                aPntr.drawRect(areaX, 0, areaW, areaH);
+                return;
+            }
+
+            // Handle render blocks
+            for (int i = 0; i < count; i++) {
                 int sliceY = (int) Math.round(sliceH * i);
                 int sliceY2 = (int) Math.round(sliceH * (i+1));
                 Color color = _contourHelper.getContourColor(i);
