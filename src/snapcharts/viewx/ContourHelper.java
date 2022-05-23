@@ -33,8 +33,11 @@ public class ContourHelper {
     // The array of colors
     private Color[]  _colors;
 
-    // GradientPaint if RenderSmooth
-    private GradientPaint  _gradientPaint;
+    // The ColorMap GradientPaint if RenderSmooth
+    private GradientPaint  _colorMapPaint;
+
+    // The ColorMap image
+    private Image  _colorMapImage;
 
     /**
      * Constructor.
@@ -135,17 +138,17 @@ public class ContourHelper {
         if (_colors != null) return _colors;
 
         // Create Gradient
-        GradientPaint gradientVert = getColorMapGradientPaint();
-        GradientPaint paint = new GradientPaint(0, gradientVert.getStops());
+        GradientPaint colorMapPaintV = getColorMapPaint();
+        GradientPaint colorMapPaintH = new GradientPaint(0, colorMapPaintV.getStops());
 
         // Expand to rect
         int count = getContourCount();
-        paint = paint.copyForRect(new Rect(0, 0, count, 1));
+        colorMapPaintH = colorMapPaintH.copyForRect(new Rect(0, 0, count, 1));
 
         // Create image and fill with gradient
         Image img = Image.getImageForSizeAndScale(count, 1, false, 1);
         Painter pntr = img.getPainter();
-        pntr.setPaint(paint);
+        pntr.setPaint(colorMapPaintH);
         pntr.fillRect(0, 0, count, 1);
 
         // Get colors for each step
@@ -182,17 +185,17 @@ public class ContourHelper {
     /**
      * Returns gradient paint for contours.
      */
-    public GradientPaint getColorMapGradientPaint()
+    public GradientPaint getColorMapPaint()
     {
-        if (_gradientPaint != null) return _gradientPaint;
-        GradientPaint gradientPaint = createColorMapGradientPaint();
-        return _gradientPaint = gradientPaint;
+        if (_colorMapPaint != null) return _colorMapPaint;
+        GradientPaint gradientPaint = createColorMapPaint();
+        return _colorMapPaint = gradientPaint;
     }
 
     /**
      * Returns gradient paint for contours.
      */
-    private GradientPaint createColorMapGradientPaint()
+    private GradientPaint createColorMapPaint()
     {
         // Get ColorMapColors color array
         Color[] colorMapColors = getColorMapColors();
@@ -208,6 +211,29 @@ public class ContourHelper {
 
         // Create GradientPath with Stops at 90 deg and return
         return new GradientPaint(-90, stops);
+    }
+
+    /**
+     * Returns an image for color map.
+     */
+    public Image getColorMapImage()
+    {
+        if (_colorMapImage != null) return _colorMapImage;
+        Image image = createColorMapImage();
+        return _colorMapImage = image;
+    }
+
+    /**
+     * Creates an image for color map.
+     */
+    private Image createColorMapImage()
+    {
+        Image image = Image.getImageForSizeAndScale(1, 200, false, 1);
+        Painter pntr = image.getPainter();
+        GradientPaint colorMapPaint = getColorMapPaint();
+        pntr.setPaint(colorMapPaint);
+        pntr.fillRect(0, 0, 1, 200);
+        return image;
     }
 
     /**
@@ -252,6 +278,6 @@ public class ContourHelper {
         _levelsCount = 0;
         _contourRanges = null;
         _colors = null;
-        _gradientPaint = null;
+        _colorMapPaint = null;
     }
 }

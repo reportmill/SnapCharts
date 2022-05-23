@@ -197,8 +197,8 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
 
             // Handle RenderSmooth
             if (_renderSmooth) {
-                GradientPaint gradientPaint = _contourHelper.getColorMapGradientPaint();
-                aPntr.setPaint(gradientPaint);
+                GradientPaint colorMapPaint = _contourHelper.getColorMapPaint();
+                aPntr.setPaint(colorMapPaint);
                 aPntr.fillRect(areaX, 0, areaW, areaH);
                 aPntr.setPaint(Color.BLACK);
                 aPntr.setStroke(Stroke.Stroke1);

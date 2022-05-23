@@ -4,7 +4,9 @@
 package snapcharts.viewx;
 import snap.geom.Point;
 import snap.gfx.Color;
+import snap.gfx.Image;
 import snap.gfx3d.*;
+import snap.util.MathUtils;
 import snapcharts.data.DataSet;
 import snapcharts.model.Trace;
 import snapcharts.model.TracePoint;
@@ -64,11 +66,22 @@ public class Contour3DDataArea extends DataArea3D {
         // Create VertexArray
         VertexArray vertexArray = new VertexArray();
         vertexArray.setDoubleSided(true);
+        vertexArray.setColor(Color.BLACK);
+
+        // Set ColorMapImage as texture
+        Image colorMapImage = contourHelper.getColorMapImage();
+        Texture colorMapTexture = new Texture(colorMapImage);
+        vertexArray.setTexture(colorMapTexture);
 
         // Get sizes
         double width = getAxisBoxPrefWidth();
         double height = getAxisBoxPrefHeight();
         double depth = getAxisBoxPrefDepth();
+
+        // Get contour data min/max
+        Trace trace = _chartHelper.getTraceList().getTrace(0);
+        double zmin = trace.getMinZ();
+        double zmax = trace.getMaxZ();
 
         // Iterate over triangles and add shape for each
         int pointCount = mesh.getPointCount();
@@ -85,9 +98,9 @@ public class Contour3DDataArea extends DataArea3D {
             // Get vertex point and add (notice we swap Y and Z)
             vertexArray.addPoint(meshPoint.x, meshPoint.y, meshPoint.z);
 
-            // Add vertex color and add
-            Color contourColor1 = contourHelper.getContourColorForZ(pz);
-            vertexArray.addColor(contourColor1);
+            // Calculate Z fraction and add as texture coord
+            double fractionalZ = MathUtils.mapRangeValueToFractional(pz, zmin, zmax);
+            vertexArray.addTexCoord(.5, fractionalZ);
 
             // If point out of axis box bounds, mark in OutOfBoundsIndexes bit set
             if (meshPoint.x < 0 || meshPoint.y < 0 || meshPoint.z < 0 ||
