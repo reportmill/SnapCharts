@@ -13,14 +13,14 @@ import java.util.Map;
  */
 public class Notebook {
 
-    // The list of Snippets
+    // The list of Request entries
     private List<Request>  _requests = new ArrayList<>();
 
-    // A map of processed snippets
-    private Map<Request, Response>  _responses = new HashMap<>();
+    // A map of Response entries
+    private Map<Request,Response>  _responses = new HashMap<>();
 
     /**
-     * Returns the snippets.
+     * Returns the Requests.
      */
     public List<Request> getRequests()  { return _requests; }
 
@@ -41,15 +41,19 @@ public class Notebook {
     }
 
     /**
-     * Returns the snippet out for a snippet.
+     * Returns the Response for a given request.
      */
     public Response getResponseForRequest(Request aRequest)
     {
+        // Get response from map - just return if found
         Response response = _responses.get(aRequest);
         if (response != null)
             return response;
 
+        // Create Response for Request
         response = createResponseForRequest(aRequest);
+
+        // Add to map and return
         _responses.put(aRequest, response);
         return response;
     }
@@ -59,12 +63,16 @@ public class Notebook {
      */
     protected Response createResponseForRequest(Request aRequest)
     {
-        Response response = new Response();
-
+        // Get Request.Text as String and KeyChain
         String text = aRequest.getText();
         KeyChain keyChain = KeyChain.getKeyChain(text);
-        String outString = KeyChain.getStringValue(new Object(), keyChain);
-        response.setText(outString);
+
+        // Process keyChain
+        String responseStr = KeyChain.getStringValue(new Object(), keyChain);
+
+        // Create Response, set Text and return
+        Response response = new Response();
+        response.setText(responseStr);
         return response;
     }
 }
