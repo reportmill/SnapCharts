@@ -19,6 +19,9 @@ public class Notebook {
     // A map of Response entries
     private Map<Request,Response>  _responses = new HashMap<>();
 
+    // The Processor
+    private Processor  _processor = new Processor();
+
     /**
      * Returns the Requests.
      */
@@ -68,7 +71,7 @@ public class Notebook {
         KeyChain keyChain = KeyChain.getKeyChain(text);
 
         // Process keyChain
-        String responseStr = KeyChain.getStringValue(new Object(), keyChain);
+        String responseStr = _processor.getStringValue(this, keyChain);
 
         // Create Response, set Text and return
         Response response = new Response();
