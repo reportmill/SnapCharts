@@ -15,7 +15,7 @@ public class NotebookView extends ParentView {
     // The notebook
     private Notebook  _notebook;
 
-    // A pending snippet used to add another snippet
+    // A pending request used to add new request
     private Request  _pendingRequest;
 
     // A map of EntryView for Entries
@@ -30,7 +30,7 @@ public class NotebookView extends ParentView {
 
         setPadding(25, 5, 5, 40);
 
-        // Create the PendingSnippet
+        // Create the PendingRequest
         _pendingRequest = new Request();
 
         resetEntriesLater();
@@ -68,7 +68,7 @@ public class NotebookView extends ParentView {
     /**
      * Creates an EntryView for given Entry.
      */
-    public EntryView createEntryView(Entry anEntry)
+    protected EntryView createEntryView(Entry anEntry)
     {
         // Handle Request
         if (anEntry instanceof Request)
@@ -83,6 +83,14 @@ public class NotebookView extends ParentView {
     }
 
     /**
+     * Removes an entry view from cache.
+     */
+    public void removeEntryView(Entry anEntry)
+    {
+        _entryViews.remove(anEntry);
+    }
+
+    /**
      * Resets entry views.
      */
     protected void resetEntries()
@@ -90,23 +98,23 @@ public class NotebookView extends ParentView {
         // Remove all children
         removeChildren();
 
-        // Get list of snippets
+        // Get list of requests
         List<Request> requests = _notebook.getRequests();
 
-        // Iterate over snippets and add
+        // Iterate over requests and add request/response views
         for (Request request : requests) {
 
             // Get EntryView and add
             EntryView requestView = getEntryView(request);
             addChild(requestView);
 
-            // Get snippet out
+            // Get Response and ResponseView and add
             Response response = _notebook.getResponseForRequest(request);
             EntryView responseView = getEntryView(response);
             addChild(responseView);
         }
 
-        // Add pending snippet
+        // Add pending request
         Request pendingRequest = _pendingRequest;
         EntryView pendingView = getEntryView(pendingRequest);
         addChild(pendingView);
@@ -124,15 +132,24 @@ public class NotebookView extends ParentView {
     }
 
     /**
-     * Process snippet.
+     * Process Request
      */
     public void processRequest(Request aRequest)
     {
+        // If Request is PendingRequest, add to Notebook and queue up new PendingRequest
         if (aRequest == _pendingRequest) {
             _notebook.addRequest(_pendingRequest);
             _pendingRequest = new Request();
-            resetEntriesLater();
         }
+
+        // Otherwise remove Response and ResponseView for Request
+        else {
+            _notebook.removeResponseForRequest(aRequest);
+            removeEntryView(aRequest);
+        }
+
+        // Reset Entries
+        resetEntriesLater();
     }
 
     @Override

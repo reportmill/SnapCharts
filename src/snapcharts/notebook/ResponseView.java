@@ -45,7 +45,8 @@ public class ResponseView extends EntryView<Response> {
     private ChartView createChartViewForChartString(String chartString)
     {
         // Debug
-        System.out.println(chartString);
+        if (chartString.length() < 5000)
+            System.out.println(chartString);
 
         // Create Chart from chartString
         ChartArchiver chartArchiver = new ChartArchiver();

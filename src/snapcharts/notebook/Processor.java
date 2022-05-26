@@ -85,7 +85,7 @@ public class Processor implements KeyChain.FunctionHandler {
         String name2 = arg3.getChildString(0);
         KeyChain valueArray2KeyChain = arg3.getChildKeyChain(1);
         double[] valueArray2 = getValueAsDoubleArray(anObj, valueArray2KeyChain);
-        int count2 = valueArray1.length;
+        int count2 = valueArray2.length;
 
         // Create valueArray for expression
         double[] valueArray3 = new double[count1 * count2];
@@ -106,7 +106,7 @@ public class Processor implements KeyChain.FunctionHandler {
 
                 // Get/set valueArray3
                 double val = KeyChain.getDoubleValue(_variables, expr);
-                valueArray3[i * count1 + j] = val;
+                valueArray3[i * count2 + j] = val;
             }
         }
 

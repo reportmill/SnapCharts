@@ -84,6 +84,14 @@ public class Notebook extends PropObject {
     }
 
     /**
+     * Removes the response for a given request.
+     */
+    public void removeResponseForRequest(Request aRequest)
+    {
+        _responses.remove(aRequest);
+    }
+
+    /**
      * Returns the snippet out for a snippet.
      */
     protected Response createResponseForRequest(Request aRequest)

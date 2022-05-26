@@ -18,7 +18,7 @@ public class RequestView extends EntryView<Request> {
 
         // Register TextArea
         _textArea.setEditable(true);
-        _textArea.addEventHandler(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
+        _textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
     }
 
     /**
@@ -38,6 +38,8 @@ public class RequestView extends EntryView<Request> {
 
             // Process request
             _notebookView.processRequest(request);
+            _textArea.setSel(text.length());
+            anEvent.consume();
         }
     }
 
