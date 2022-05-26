@@ -21,9 +21,6 @@ public class NotebookView extends ParentView {
     // A map of EntryView for Entries
     private Map<Entry,EntryView>  _entryViews = new HashMap<>();
 
-    // The ColView to hold SnippetView and SnippetOutView
-    private ColView  _colView;
-
     /**
      * Constructor.
      */
@@ -32,11 +29,6 @@ public class NotebookView extends ParentView {
         super();
 
         setPadding(25, 5, 5, 40);
-
-        // Create ColView to hold entries and add
-        _colView = new ColView();
-        _colView.setFillWidth(true);
-        addChild(_colView);
 
         // Create the PendingSnippet
         _pendingRequest = new Request();
@@ -96,7 +88,7 @@ public class NotebookView extends ParentView {
     protected void resetEntries()
     {
         // Remove all children
-        _colView.removeChildren();
+        removeChildren();
 
         // Get list of snippets
         List<Request> requests = _notebook.getRequests();
@@ -106,18 +98,18 @@ public class NotebookView extends ParentView {
 
             // Get EntryView and add
             EntryView requestView = getEntryView(request);
-            _colView.addChild(requestView);
+            addChild(requestView);
 
             // Get snippet out
             Response response = _notebook.getResponseForRequest(request);
             EntryView responseView = getEntryView(response);
-            _colView.addChild(responseView);
+            addChild(responseView);
         }
 
         // Add pending snippet
         Request pendingRequest = _pendingRequest;
         EntryView pendingView = getEntryView(pendingRequest);
-        _colView.addChild(pendingView);
+        addChild(pendingView);
 
         // Focus pending
         pendingView.requestFocus();
@@ -146,18 +138,31 @@ public class NotebookView extends ParentView {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        return BoxView.getPrefWidth(this, _colView, aH);
+        ColViewProxy viewProxy = getViewProxy();
+        double prefW = viewProxy.getPrefWidth(aH);
+        return prefW;
     }
 
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        return BoxView.getPrefHeight(this, _colView, aW);
+        ColViewProxy viewProxy = getViewProxy();
+        double prefH = viewProxy.getPrefHeight(aW);
+        return prefH;
     }
 
     @Override
     protected void layoutImpl()
     {
-        BoxView.layout(this, _colView, true, true);
+        ColViewProxy viewProxy = getViewProxy();
+        viewProxy.layoutView();
+    }
+
+    @Override
+    protected ColViewProxy<?> getViewProxy()
+    {
+        ColViewProxy colViewProxy = new ColViewProxy(this);
+        colViewProxy.setFillWidth(true);
+        return colViewProxy;
     }
 }

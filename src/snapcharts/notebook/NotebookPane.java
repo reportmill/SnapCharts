@@ -52,6 +52,7 @@ public class NotebookPane extends ViewOwner {
 
         ScrollView scrollView = new ScrollView(_notebookView);
         //scrollView.setMinSize(800, 800);
+        scrollView.setFillWidth(true);
         return scrollView;
     }
 

@@ -544,22 +544,25 @@ public class ChartView extends ChartPartView<Chart> {
     }
 
     /**
-     * Override to use ColView layout.
+     * Override to return default chart width.
      */
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        return 640;
+        return CHART_WIDTH;
     }
 
     /**
-     * Override to use ColView layout.
+     * Override to return default chart height (or proportional height if given width).
      */
     @Override
     protected double getPrefHeightImpl(double aW)
     {
         // Return proportional height for given width, to retain aspect ratio
-        return aW>0 ? Math.round(aW*CHART_HEIGHT/CHART_WIDTH) : CHART_HEIGHT;
+        double prefH = CHART_HEIGHT;
+        if (aW > 0)
+            prefH = Math.round(aW * CHART_HEIGHT / CHART_WIDTH);
+        return prefH;
     }
 
     /**

@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.view.BoxView;
 import snapcharts.doc.ChartArchiver;
@@ -31,7 +32,10 @@ public class ResponseView extends EntryView<Response> {
         String text = aResponse.getText();
         if (text.startsWith("<")) {
             _chartView = createChartViewForChartString(text);
-            addChild(_chartView);
+            _chartView.setLean(Pos.TOP_LEFT);
+            _chartView.setGrowWidth(false);
+            BoxView boxView = new BoxView(_chartView, false, false);
+            addChild(boxView);
         }
     }
 
@@ -50,6 +54,7 @@ public class ResponseView extends EntryView<Response> {
         // Create ChartView for Chart
         ChartView chartView = new ChartView();
         chartView.setChart(chart);
+        chartView.setPrefSize(640, 400);
 
         // Return
         return chartView;
@@ -59,7 +64,7 @@ public class ResponseView extends EntryView<Response> {
     protected double getPrefWidthImpl(double aH)
     {
         if (_chartView != null)
-            return BoxView.getPrefWidth(this, _chartView, aH);
+            return BoxView.getPrefWidth(this, _chartView.getParent(), aH);
         return super.getPrefWidthImpl(aH);
     }
 
@@ -67,7 +72,7 @@ public class ResponseView extends EntryView<Response> {
     protected double getPrefHeightImpl(double aW)
     {
         if (_chartView != null)
-            return BoxView.getPrefHeight(this, _chartView, aW);
+            return BoxView.getPrefHeight(this, _chartView.getParent(), aW);
         return super.getPrefHeightImpl(aW);
     }
 
@@ -75,7 +80,7 @@ public class ResponseView extends EntryView<Response> {
     protected void layoutImpl()
     {
         if (_chartView != null)
-            BoxView.layout(this, _chartView, true, true);
+            BoxView.layout(this, _chartView.getParent(), true, true);
         else super.layoutImpl();
     }
 }
