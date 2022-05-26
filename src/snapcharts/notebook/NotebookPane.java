@@ -11,8 +11,34 @@ import snap.view.ViewOwner;
  */
 public class NotebookPane extends ViewOwner {
 
+    // The Notebook
+    private Notebook  _notebook;
+
     // The NotebookView
     private NotebookView  _notebookView;
+
+    /**
+     * Returns the Notebook.
+     */
+    public Notebook getNotebook()
+    {
+        if (_notebook != null) return _notebook;
+        Notebook notebook = new Notebook();
+        return _notebook = notebook;
+    }
+
+    /**
+     * Sets the Notebook.
+     */
+    public void setNotebook(Notebook aNotebook)
+    {
+        _notebook = aNotebook;
+
+        if (_notebookView != null) {
+            _notebookView.setNotebook(aNotebook);
+            _notebookView.resetEntriesLater();
+        }
+    }
 
     /**
      * Create UI.
@@ -20,12 +46,12 @@ public class NotebookPane extends ViewOwner {
     @Override
     protected View createUI()
     {
-        Notebook notebook = new Notebook();
+        Notebook notebook = getNotebook();
         _notebookView = new NotebookView();
         _notebookView.setNotebook(notebook);
 
         ScrollView scrollView = new ScrollView(_notebookView);
-        scrollView.setMinSize(800, 800);
+        //scrollView.setMinSize(800, 800);
         return scrollView;
     }
 
@@ -43,6 +69,8 @@ public class NotebookPane extends ViewOwner {
      */
     public static void main(String[] args)
     {
-        new NotebookPane().setWindowVisible(true);
+        NotebookPane notebookPane = new NotebookPane();
+        notebookPane.getUI().setPrefSize(800, 800);
+        notebookPane.setWindowVisible(true);
     }
 }

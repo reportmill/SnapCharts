@@ -3,6 +3,7 @@
  */
 package snapcharts.notebook;
 import snap.util.KeyChain;
+import snap.util.PropObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,10 @@ import java.util.Map;
 /**
  * This class manages collections of snippets.
  */
-public class Notebook {
+public class Notebook extends PropObject {
+
+    // The name
+    private String  _name;
 
     // The list of Request entries
     private List<Request>  _requests = new ArrayList<>();
@@ -21,6 +25,24 @@ public class Notebook {
 
     // The Processor
     private Processor  _processor = new Processor();
+
+    /**
+     * Constructor.
+     */
+    public Notebook()  { }
+
+    /**
+     * Returns the name.
+     */
+    public String getName()  { return _name; }
+
+    /**
+     * Sets the name.
+     */
+    public void setName(String aName)
+    {
+        _name = aName;
+    }
 
     /**
      * Returns the Requests.

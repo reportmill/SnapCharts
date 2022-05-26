@@ -17,6 +17,9 @@ import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.appmisc.SamplesPane;
 import snapcharts.doc.*;
 import snapcharts.model.*;
+import snapcharts.notebook.DocItemPaneNotebook;
+import snapcharts.notebook.Notebook;
+import snapcharts.notebook.DocItemNotebook;
 
 import java.io.File;
 import java.util.*;
@@ -414,6 +417,10 @@ public class DocPane extends ViewOwner {
         if (anItem instanceof DocItemGroup)
             return new ChartSetPane((DocItemGroup) anItem);
 
+        // Handle DocItemNotebook
+        if (anItem instanceof DocItemNotebook)
+            return new DocItemPaneNotebook((DocItemNotebook) anItem);
+
         // Complain (bitterly)
         throw new RuntimeException("DocItemPane.createItemPane: Unknown item: " + anItem);
     }
@@ -648,7 +655,7 @@ public class DocPane extends ViewOwner {
             close(); anEvent.consume(); }
 
         // Handle NewAction
-        if (anEvent.equals("AddButton")) {
+        if (anEvent.equals("NewButton")) {
             respondToNewAction();
             //getSelItemPane().sendEvent(New_Action);
         }
@@ -723,6 +730,7 @@ public class DocPane extends ViewOwner {
         Map<String,Class> docItemTypes = new TreeMap<>();
         docItemTypes.put("Chart", Chart.class);
         docItemTypes.put("DataSet", Trace.class);
+        docItemTypes.put("Notebook", Notebook.class);
         return docItemTypes;
     }
 
@@ -759,6 +767,25 @@ public class DocPane extends ViewOwner {
             DocItem newDataSetItem = selItem.addChartPart(trace, null);
             if (!(selItem instanceof DocItemChart))
                 setSelItem(newDataSetItem);
+        }
+
+        // Handle Notebook
+        else if (aClass == Notebook.class) {
+
+            // Create new Notebook
+            Notebook notebook = new Notebook();
+            notebook.setName("New Notebook");
+
+            // Get sel index
+            DocItem item = getSelItem();
+            while (item != null && item != getDoc() && item.getParent() != getDoc()) item = item.getParent();
+            int index = item == null || item == getDoc() ? 0 : (item.getIndex() + 1);
+
+            // Add to SelItem
+            DocItem notebookDocItem = new DocItemNotebook(notebook);
+            Doc doc = getDoc();
+            doc.addItem(notebookDocItem, index);
+            setSelItem(notebookDocItem);
         }
     }
 

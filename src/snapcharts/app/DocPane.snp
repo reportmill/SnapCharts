@@ -12,15 +12,17 @@
     <Separator PrefHeight="18" Vertical="true" />
     <Button Name="UndoButton" PrefWidth="22" PrefHeight="22" ToolTip="Undo" image="Edit_Undo.png" ShowArea="false" />
     <Button Name="RedoButton" PrefWidth="22" PrefHeight="22" ToolTip="Redo" image="Edit_Redo.png" ShowArea="false" />
+    <Separator PrefHeight="18" Vertical="true" />
+    <Button Name="NewButton" Padding="2" text="New..." />
     <RowView PrefWidth="300" LeanX="RIGHT">
       <Button Name="WebButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Web" />
       <Button Name="SamplesButton" PrefWidth="72" PrefHeight="22" Margin="0,40,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Samples" />
-      <Button Name="InspectorButton" PrefWidth="30" PrefHeight="30" Margin="0" ToolTip="Save" image="Inspector.png" ShowArea="false" />
+      <Button Name="InspectorButton" PrefWidth="30" PrefHeight="30" ToolTip="Save" image="Inspector.png" ShowArea="false" />
     </RowView>
   </RowView>
   <SplitView Name="SplitView" GrowHeight="true">
     <ColView Name="SidebarView" FillWidth="true">
-      <RowView Margin="2" Padding="4" GrowWidth="true" Spacing="4">
+      <RowView Margin="2" Padding="4" Spacing="4" GrowWidth="true">
         <BevelBorder />
         <Label text="Charts">
           <font name="Arial" size="14" />
