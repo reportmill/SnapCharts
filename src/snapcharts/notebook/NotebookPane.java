@@ -46,13 +46,17 @@ public class NotebookPane extends ViewOwner {
     @Override
     protected View createUI()
     {
+        // Create NotebookView
         Notebook notebook = getNotebook();
         _notebookView = new NotebookView();
+        _notebookView.setGrowHeight(true);
         _notebookView.setNotebook(notebook);
 
+        // Create ScrollView for NotebookView
         ScrollView scrollView = new ScrollView(_notebookView);
-        //scrollView.setMinSize(800, 800);
         scrollView.setFillWidth(true);
+
+        // Return
         return scrollView;
     }
 

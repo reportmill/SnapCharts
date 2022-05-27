@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.gfx.Color;
 import snap.view.*;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,9 @@ public class NotebookView extends ParentView {
     // A map of EntryView for Entries
     private Map<Entry,EntryView>  _entryViews = new HashMap<>();
 
+    // Constants
+    public static Color BACK_FILL = new Color(226, 232, 246);
+
     /**
      * Constructor.
      */
@@ -28,6 +32,7 @@ public class NotebookView extends ParentView {
     {
         super();
 
+        setFill(BACK_FILL);
         setPadding(25, 5, 5, 40);
 
         // Create the PendingRequest
