@@ -42,8 +42,17 @@ public class Processor implements KeyChain.FunctionHandler {
      */
     public String getStringValue(Object anObj, KeyChain aKC)
     {
-        Object value = getValue(anObj, aKC);
-        String str = SnapUtils.stringValue(value);
+        // Get value
+        Object value;
+        try { value = getValue(anObj, aKC); }
+
+        // If exception, set as response
+        catch (Exception e) {
+            value = e.toString();
+        }
+
+        // Convert to string and return
+        String str = value != null ? SnapUtils.stringValue(value) : "null";
         return str;
     }
 
@@ -134,6 +143,9 @@ public class Processor implements KeyChain.FunctionHandler {
         // Create Chart with Trace
         Chart chart = new Chart();
         chart.setType(ChartType.CONTOUR_3D);
+        chart.getAxisX().setTitle("X");
+        chart.getAxisY().setTitle("Y");
+        chart.getAxisZ().setTitle("Z");
         chart.addTrace(trace);
 
         // Write chart to string

@@ -128,7 +128,7 @@ public abstract class Axis extends ChartPart {
     public static final Color  DEFAULT_GRID_COLOR = Color.get("#E6");
     public static final int  DEFAULT_GRID_WIDTH = 1;
     public static final double[]  DEFAULT_GRID_DASH = Stroke.DASH_SOLID;
-    public static final int  DEFAULT_TICK_LENGTH = 7;
+    public static final double  DEFAULT_TICK_LENGTH = 7;
     public static final TickPos  DEFAULT_TICK_POS = TickPos.Inside;
     public static final int  DEFAULT_MINOR_TICK_COUNT = 0;
     public static final boolean  DEFAULT_SHOW_TICK_LABELS = true;
@@ -169,6 +169,7 @@ public abstract class Axis extends ChartPart {
         _tickPos = DEFAULT_TICK_POS;
         _showTickLabels = DEFAULT_SHOW_TICK_LABELS;
         _textFormat = DEFAULT_AXIS_TEXT_FORMAT;
+        _tickLabelAutoRotate = DEFAULT_TICK_LABEL_AUTO_ROTATE;
 
         // Override default property values
         _lineColor = DEFAULT_AXIS_LINE_COLOR;
@@ -721,8 +722,8 @@ public abstract class Axis extends ChartPart {
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return AxisBound.AUTO;
             case MaxBound_Prop: return AxisBound.AUTO;
-            case MinValue_Prop: return 0;
-            case MaxValue_Prop: return 5;
+            case MinValue_Prop: return 0d;
+            case MaxValue_Prop: return 5d;
 
             // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
             case ZeroRequired_Prop: return DEFAULT_ZERO_REQUIRED;
@@ -731,8 +732,8 @@ public abstract class Axis extends ChartPart {
             case ShowLogMinorLabels_Prop: return DEFAULT_SHOW_LOG_MINOR_LABELS;
 
             // GridSpacing, GridBase
-            case GridSpacing_Prop: return 0;
-            case GridBase_Prop: return 0;
+            case GridSpacing_Prop: return 0d;
+            case GridBase_Prop: return 0d;
 
             // TickLength, TickPos, MinorTickCount
             case TickLength_Prop: return DEFAULT_TICK_LENGTH;
@@ -769,9 +770,9 @@ public abstract class Axis extends ChartPart {
             e.add(MinBound_Prop, getMinBound());
         if (!isPropDefault(MaxBound_Prop))
             e.add(MaxBound_Prop, getMaxBound());
-        if (!isPropDefault(MinValue_Prop))
+        if (getMinBound() == AxisBound.VALUE)
             e.add(MinValue_Prop, getMinValue());
-        if (!isPropDefault(MaxValue_Prop))
+        if (getMaxBound() == AxisBound.VALUE)
             e.add(MaxValue_Prop, getMaxValue());
 
         // Archive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels

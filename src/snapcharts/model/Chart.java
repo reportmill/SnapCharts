@@ -427,11 +427,22 @@ public class Chart extends ParentPart {
         XMLElement header_XML = anArchiver.toXML(_header);
         e.add(header_XML);
 
-        // Archive AxisX, AxisY
+        // Archive AxisX
         XMLElement axisX_XML = anArchiver.toXML(_axisX);
-        e.add(axisX_XML);
+        if (axisX_XML.getAttributeCount() > 0 || axisX_XML.getElementCount() > 0)
+            e.add(axisX_XML);
+
+        // Archive AxisY
         XMLElement axisY_XML = anArchiver.toXML(_axisY);
-        e.add(axisY_XML);
+        if (axisY_XML.getAttributeCount() > 0 || axisY_XML.getElementCount() > 0)
+            e.add(axisY_XML);
+
+        // Archive AxisZ
+        if (chartType == ChartType.CONTOUR_3D) {
+            XMLElement axisZ_XML = anArchiver.toXML(_axisZ);
+            if (axisZ_XML.getAttributeCount() > 0 || axisZ_XML.getElementCount() > 0)
+                e.add(axisZ_XML);
+        }
 
         // Archive ContourAxis
         if (chartType.isContourType()) {
@@ -501,13 +512,20 @@ public class Chart extends ParentPart {
         if (contourAxisXML != null)
             anArchiver.fromXML(contourAxisXML, _contourAxis, this);
 
-        // Unarchive AxisX, AxisY
+        // Unarchive AxisX
         XMLElement axisX_XML = anElement.get("AxisX");
         if (axisX_XML != null)
             anArchiver.fromXML(axisX_XML, _axisX, this);
+
+        // Unarchive AxisY
         XMLElement axisY_XML = anElement.get("AxisY");
         if (axisY_XML != null)
             anArchiver.fromXML(axisY_XML, _axisY, this);
+
+        // Unarchive AxisZ
+        XMLElement axisZ_XML = anElement.get("AxisZ");
+        if (axisZ_XML != null)
+            anArchiver.fromXML(axisZ_XML, _axisZ, this);
 
         // Unarchive Legend
         XMLElement legend_XML = anElement.get("Legend");
