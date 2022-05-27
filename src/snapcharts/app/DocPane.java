@@ -727,10 +727,10 @@ public class DocPane extends ViewOwner {
      */
     protected Map<String,Class> getDocItemTypes()
     {
-        Map<String,Class> docItemTypes = new TreeMap<>();
+        Map<String,Class> docItemTypes = new LinkedHashMap<>();
+        docItemTypes.put("Notebook", Notebook.class);
         docItemTypes.put("Chart", Chart.class);
         docItemTypes.put("DataSet", Trace.class);
-        docItemTypes.put("Notebook", Notebook.class);
         return docItemTypes;
     }
 
