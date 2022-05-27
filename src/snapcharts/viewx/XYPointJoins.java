@@ -350,12 +350,12 @@ public class XYPointJoins {
         {
             // Shift Seg1 to Seg0
             _seg0 = _seg1;
-            _segPoint0.setXY(_segPoint1);
+            _segPoint0.setPoint(_segPoint1);
             _segVect0.setXY(_segVect1);
 
             // Shift Seg2 to Seg1
             _seg1 = _seg2;
-            _segPoint1.setXY(_segPoint2);
+            _segPoint1.setPoint(_segPoint2);
 
             // Clear Seg2
             _seg2 = null;

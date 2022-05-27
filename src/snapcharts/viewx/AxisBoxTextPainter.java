@@ -275,8 +275,8 @@ public class AxisBoxTextPainter {
 
         // Get AxisLine points in AxisView coords and add to bounds
         Transform parentToLocal = axisView.getParentToLocal();
-        Point axisLineP1InAxisView = parentToLocal.transform(axisLineP1.x, axisLineP1.y);
-        Point axisLineP2InAxisView = parentToLocal.transform(axisLineP2.x, axisLineP2.y);
+        Point axisLineP1InAxisView = parentToLocal.transformXY(axisLineP1.x, axisLineP1.y);
+        Point axisLineP2InAxisView = parentToLocal.transformXY(axisLineP2.x, axisLineP2.y);
 
         // Add AxisLine points to AxisView bounds
         axisBounds.add(axisLineP1InAxisView.x, axisLineP1InAxisView.y);
