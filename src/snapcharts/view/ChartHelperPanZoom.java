@@ -181,6 +181,10 @@ public class ChartHelperPanZoom {
             if (dataView.isMouseDown()) return;
             scaleAxesMinMaxForViewAndScroll(dataView, anEvent);
         }
+
+        // Consume event
+        if (anEvent.isMouseEvent() || anEvent.isScroll())
+            anEvent.consume();
     }
 
     /**
@@ -253,6 +257,10 @@ public class ChartHelperPanZoom {
             if (axisView.isMouseDown()) return;
             scaleAxesMinMaxForViewAndScroll(axisView, anEvent);
         }
+
+        // Consume event
+        if (anEvent.isMouseEvent() || anEvent.isScroll())
+            anEvent.consume();
     }
 
     /**

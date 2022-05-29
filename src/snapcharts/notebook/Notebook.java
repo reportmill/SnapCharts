@@ -66,6 +66,24 @@ public class Notebook extends PropObject {
     }
 
     /**
+     * Removes a Request at given index.
+     */
+    public void removeRequest(int anIndex)
+    {
+        _requests.remove(anIndex);
+    }
+
+    /**
+     * Removes given request.
+     */
+    public void removeRequest(Request aRequest)
+    {
+        int index = _requests.indexOf(aRequest);
+        if (index >= 0)
+            removeRequest(index);
+    }
+
+    /**
      * Returns the Response for a given request.
      */
     public Response getResponseForRequest(Request aRequest)

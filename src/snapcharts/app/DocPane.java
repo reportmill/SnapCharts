@@ -205,9 +205,15 @@ public class DocPane extends ViewOwner {
      */
     public DocPane newDoc()
     {
+        // Create/set new doc
         Doc doc = new Doc();
         doc.setName("Untitled");
         setDoc(doc);
+
+        // What the heck, let's throw in a free Notebook
+        createNewDocItem(Notebook.class);
+
+        // Return
         return this;
     }
 

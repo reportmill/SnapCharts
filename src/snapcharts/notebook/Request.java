@@ -8,4 +8,12 @@ package snapcharts.notebook;
  */
 public class Request extends Entry {
 
+    /**
+     * Returns whether request is empty.
+     */
+    public boolean isEmpty()
+    {
+        String text = getText().trim();
+        return text.length() == 0;
+    }
 }

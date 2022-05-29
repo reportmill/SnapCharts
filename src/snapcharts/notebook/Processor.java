@@ -219,6 +219,10 @@ public class Processor implements KeyChain.FunctionHandler {
         chart.getAxisY().setTitle("Y");
         chart.addTrace(trace);
 
+        // Set title from KeyChain
+        KeyChain exprKeyChain = aKeyChain.getChildKeyChain(0);
+        chart.getHeader().setTitle("Plot of " + exprKeyChain);
+
         // Write chart to string
         ChartArchiver chartArchiver = new ChartArchiver();
         String chartStr = chartArchiver.writeToXML(chart).toString();
@@ -246,6 +250,10 @@ public class Processor implements KeyChain.FunctionHandler {
         chart.getAxisY().setTitle("Y");
         chart.getAxisZ().setTitle("Z");
         chart.addTrace(trace);
+
+        // Set title from KeyChain
+        KeyChain exprKeyChain = aKeyChain.getChildKeyChain(0);
+        chart.getHeader().setTitle("Plot of " + exprKeyChain);
 
         // Write chart to string
         ChartArchiver chartArchiver = new ChartArchiver();

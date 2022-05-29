@@ -141,8 +141,15 @@ public class NotebookView extends ParentView {
      */
     public void processRequest(Request aRequest)
     {
+        // If empty request remove request and response from notebook
+        if (aRequest.isEmpty()) {
+            _notebook.removeRequest(aRequest);
+            _notebook.removeResponseForRequest(aRequest);
+            removeEntryView(aRequest);
+        }
+
         // If Request is PendingRequest, add to Notebook and queue up new PendingRequest
-        if (aRequest == _pendingRequest) {
+        else if (aRequest == _pendingRequest) {
             _notebook.addRequest(_pendingRequest);
             _pendingRequest = new Request();
         }
