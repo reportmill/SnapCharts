@@ -11,9 +11,6 @@ public class Response extends Entry {
     // The response as a value
     private Object  _value;
 
-    // The response as text
-    private String  _valueStr;
-
     /**
      * Returns the response as a value.
      */
@@ -25,20 +22,23 @@ public class Response extends Entry {
     public void setValue(Object aValue)
     {
         _value = aValue;
-
-        if (aValue instanceof String)
-            setText((String) aValue);
     }
 
     /**
-     * Returns the response as a string.
+     * Override to dynamically get text from value.
      */
-    public String getValueString()
+    @Override
+    public String getText()
     {
-        if (_valueStr != null) return _valueStr;
+        // Do normal version - just return if non-null
+        String text = super.getText();
+        if (text != null) return text;
 
+        // Get text from value
         Object value = getValue();
-        String valueStr = ""; //getStringForValue(value);
-        return _valueStr = valueStr;
+        text = ProcessorUtils.getStringForValue(value);
+
+        // Set and return
+        return _text = text;
     }
 }

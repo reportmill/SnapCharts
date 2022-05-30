@@ -6,7 +6,7 @@ package snapcharts.notebook;
 public class Entry {
 
     // The text
-    private String  _text;
+    protected String  _text;
 
     // The index in notebook request/response list
     private int  _index;

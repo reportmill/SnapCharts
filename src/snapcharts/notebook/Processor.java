@@ -8,7 +8,6 @@ import snap.util.SnapUtils;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataSetUtils;
 import snapcharts.data.DataType;
-import snapcharts.doc.ChartArchiver;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
 import snapcharts.model.Trace;
@@ -22,6 +21,26 @@ public class Processor implements KeyChain.FunctionHandler {
 
     // A map holding values
     private Map<String,Double>  _variables = new HashMap<>();
+
+    /**
+     * Returns the snippet out for a snippet.
+     */
+    public Response createResponseForRequest(Request aRequest)
+    {
+        // Get Request.Text as String and KeyChain
+        String text = aRequest.getText();
+        KeyChain keyChain = KeyChain.getKeyChain(text);
+
+        // Process keyChain
+        Object responseValue = getValue(this, keyChain);
+
+        // Create Response and set value
+        Response response = new Response();
+        response.setValue(responseValue);
+
+        // Return
+        return response;
+    }
 
     /**
      * Returns a value for given object and keychain.
@@ -265,29 +284,8 @@ public class Processor implements KeyChain.FunctionHandler {
     {
         KeyChain keyChain = aKeyChain.getChildKeyChain(0);
         Object value = getValue(anObj, keyChain);
-        String str = getStringForValue(value);
+        String str = ProcessorUtils.getStringForValue(value);
         return str;
-    }
-
-    /**
-     * Returns the value as a string.
-     */
-    protected String getStringForValue(Object aValue)
-    {
-        if (aValue instanceof String)
-            return (String) aValue;
-
-        if (aValue instanceof Chart) {
-            Chart chart = (Chart) aValue;
-            ChartArchiver chartArchiver = new ChartArchiver();
-            String chartStr = chartArchiver.writeToXML(chart).toString();
-            return chartStr;
-        }
-
-        if (aValue == null)
-            return "null";
-
-        return aValue.toString();
     }
 
     /**

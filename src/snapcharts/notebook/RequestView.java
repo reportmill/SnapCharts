@@ -18,6 +18,15 @@ public class RequestView extends EntryView<Request> {
     }
 
     /**
+     * Returns the TextArea.
+     */
+    public TextArea getTextArea()
+    {
+        View content = getContent();
+        return content instanceof TextArea ? (TextArea) content : null;
+    }
+
+    /**
      * Override for custom request TextArea.
      */
     @Override
@@ -49,6 +58,12 @@ public class RequestView extends EntryView<Request> {
             // Process request
             _notebookView.processRequest(request);
             textArea.setSel(text.length());
+            anEvent.consume();
+        }
+
+        // Handle tab key
+        else if (anEvent.isTabKey()) {
+            _notebookView.handleTabKey(anEvent);
             anEvent.consume();
         }
     }

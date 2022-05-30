@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.util.KeyChain;
 import snap.util.PropObject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,7 +95,6 @@ public class Notebook extends PropObject {
 
         // Create Response for Request
         response = createResponseForRequest(aRequest);
-        response.setIndex(aRequest.getIndex());
 
         // Add to map and return
         _responses.put(aRequest, response);
@@ -116,18 +114,8 @@ public class Notebook extends PropObject {
      */
     protected Response createResponseForRequest(Request aRequest)
     {
-        // Get Request.Text as String and KeyChain
-        String text = aRequest.getText();
-        KeyChain keyChain = KeyChain.getKeyChain(text);
-
-        // Process keyChain
-        Object responseValue = _processor.getValue(this, keyChain);
-
-        // Create Response and set value
-        Response response = new Response();
-        response.setValue(responseValue);
-
-        // Return
+        Response response = _processor.createResponseForRequest(aRequest);
+        response.setIndex(aRequest.getIndex());
         return response;
     }
 }

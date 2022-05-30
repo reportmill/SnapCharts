@@ -166,6 +166,31 @@ public class NotebookView extends ParentView {
         resetEntriesLater();
     }
 
+    /**
+     * Called when Request view gets tab key.
+     */
+    protected void handleTabKey(ViewEvent anEvent)
+    {
+        // Get current request
+        RequestView requestView = anEvent.getView().getParent(RequestView.class); if (requestView == null) return;
+        requestView.getTextArea().setSel(1000);
+        Request request = requestView.getEntry();
+
+        // Get next request (depending on tab or shift-tab)
+        int index = request.getIndex();
+        int offset = anEvent.isShiftDown() ? -1 : 1;
+        int index2 = index - 1 + offset;
+        List<Request> requests = _notebook.getRequests();
+        Request nextRequest = index2 < 0 ? null : index2 < requests.size() ? requests.get(index2) : _pendingRequest;
+        if (nextRequest == null) return;
+
+        // Get next request TextArea and select/focus
+        RequestView nextRequestView = (RequestView) getEntryView(nextRequest);
+        TextArea textArea = nextRequestView.getTextArea();
+        textArea.selectAll();
+        textArea.requestFocus();
+    }
+
     @Override
     protected double getPrefWidthImpl(double aH)
     {
