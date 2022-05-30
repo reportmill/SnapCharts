@@ -80,12 +80,16 @@ public class DocPaneCopyPaster {
      */
     public void paste()
     {
-        // Get Clipboard
-        Clipboard cb = Clipboard.get();
+        // Get clipboard - if not loaded, come back loaded
+        Clipboard clipboard = Clipboard.get();
+        if (!clipboard.isLoaded()) {
+            clipboard.addLoadListener(() -> paste());
+            return;
+        }
 
         // Handle SNAP_XML: Get bytes, unarchive view and add
-        if (cb.hasData(SNAPCHART_XML_TYPE)) {
-            byte[] bytes = cb.getDataBytes(SNAPCHART_XML_TYPE);
+        if (clipboard.hasData(SNAPCHART_XML_TYPE)) {
+            byte[] bytes = clipboard.getDataBytes(SNAPCHART_XML_TYPE);
             ChartPart chartPart = new ChartArchiver().getChartPartFromXMLSource(bytes);
             _docPane.addChartPart(chartPart);
         }
