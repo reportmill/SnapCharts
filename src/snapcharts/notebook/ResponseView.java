@@ -4,6 +4,7 @@
 package snapcharts.notebook;
 import snap.geom.Pos;
 import snap.gfx.Color;
+import snap.gfx.ShadowEffect;
 import snap.view.BoxView;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.Chart;
@@ -35,7 +36,8 @@ public class ResponseView extends EntryView<Response> {
             _chartView.setLean(Pos.TOP_LEFT);
             _chartView.setGrowWidth(false);
             BoxView boxView = new BoxView(_chartView, false, false);
-            addChild(boxView);
+            boxView.setPadding(0, 0, 0, 12);
+            setContent(boxView);
         }
     }
 
@@ -55,33 +57,18 @@ public class ResponseView extends EntryView<Response> {
         // Create ChartView for Chart
         ChartView chartView = new ChartView();
         chartView.setChart(chart);
-        chartView.setPrefSize(640, 400);
+        chartView.setPrefSize(560, 340);
+
+        // Style
+        chartView.setEffect(new ShadowEffect(8, Color.GRAY3, 0, 0));
 
         // Return
         return chartView;
     }
 
+    /**
+     * Override for response.
+     */
     @Override
-    protected double getPrefWidthImpl(double aH)
-    {
-        if (_chartView != null)
-            return BoxView.getPrefWidth(this, _chartView.getParent(), aH);
-        return super.getPrefWidthImpl(aH);
-    }
-
-    @Override
-    protected double getPrefHeightImpl(double aW)
-    {
-        if (_chartView != null)
-            return BoxView.getPrefHeight(this, _chartView.getParent(), aW);
-        return super.getPrefHeightImpl(aW);
-    }
-
-    @Override
-    protected void layoutImpl()
-    {
-        if (_chartView != null)
-            BoxView.layout(this, _chartView.getParent(), true, true);
-        else super.layoutImpl();
-    }
+    protected String getLabelPrefix()  { return "Out"; }
 }

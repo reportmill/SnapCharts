@@ -27,7 +27,7 @@ public class RequestView extends EntryView<Request> {
     private void textAreaKeyPressed(ViewEvent anEvent)
     {
         // Handle Shift+Enter
-        if (anEvent.getKeyCode() == KeyCode.ENTER && anEvent.isShiftDown()) {
+        if (anEvent.getKeyCode() == KeyCode.ENTER && !anEvent.isShiftDown()) {
 
             // Get TextArea.Text and
             Request request = getEntry();

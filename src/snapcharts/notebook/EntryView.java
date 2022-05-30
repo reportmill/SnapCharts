@@ -2,6 +2,9 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.geom.Pos;
+import snap.geom.RoundRect;
+import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.view.*;
@@ -17,6 +20,12 @@ public class EntryView<T extends Entry> extends ParentView {
     // The entry
     private T  _entry;
 
+    // The label
+    private Label  _label;
+
+    // The content view
+    private View  _content;
+
     // The TextArea
     protected TextArea  _textArea;
 
@@ -26,14 +35,28 @@ public class EntryView<T extends Entry> extends ParentView {
     public EntryView(NotebookView aNotebookView, T anEntry)
     {
         super();
-        _notebookView = aNotebookView;
 
+        // Set notebookView and entry
+        _notebookView = aNotebookView;
+        setEntry(anEntry);
+
+        // Basic style config
+        setSpacing(10);
         setPadding(5, 5, 5, 5);
 
-        _textArea = createTextArea();
-        addChild(_textArea);
+        // Create/add entry label
+        _label = createLabel();
+        addChild(_label);
 
-        setEntry(anEntry);
+        // Set label text
+        String labelText = getLabelPrefix() + "[" + anEntry.getIndex() + "] = ";
+        _label.setText(labelText);
+
+        // Create/add entry textArea (content)
+        _textArea = createTextArea();
+        setContent(_textArea);
+
+        // Set entry textArea text
         String text = anEntry.getText();
         _textArea.setText(text);
     }
@@ -52,15 +75,51 @@ public class EntryView<T extends Entry> extends ParentView {
     }
 
     /**
+     * Returns the prefix string for label.
+     */
+    protected String getLabelPrefix()  { return "In"; }
+
+    /**
+     * Returns the content.
+     */
+    public View getContent()  { return _content; }
+
+    /**
+     * Sets the content.
+     */
+    public void setContent(View aView)
+    {
+        if (_content != null)
+            removeChild(_content);
+        _content = aView;
+        if (_content != null)
+            addChild(_content);
+    }
+
+    /**
+     * Creates the label.
+     */
+    protected Label createLabel()
+    {
+        Label label = new Label();
+        label.setFont(Font.Arial14.getItalic());
+        label.setTextFill(Color.GRAY4);
+        label.setAlign(Pos.CENTER_RIGHT);
+        label.setPrefWidth(50);
+        return label;
+    }
+
+    /**
      * Creates the TextArea.
      */
     protected TextArea createTextArea()
     {
-        TextArea textArea = new TextArea();
+        TextArea textArea = new EntryTextArea();
         textArea.setFill(Color.WHITE);
-        textArea.setBorder(Color.BLACK, 1);
+        textArea.setBorder(Color.GRAY7, 1);
         textArea.setFont(Font.Arial14);
         textArea.setPadding(4, 4, 4, 4);
+        textArea.setGrowWidth(true);
         textArea.setMinSize(30, 30);
         return textArea;
     }
@@ -74,18 +133,30 @@ public class EntryView<T extends Entry> extends ParentView {
     @Override
     protected double getPrefWidthImpl(double aH)
     {
-        return BoxView.getPrefWidth(this, _textArea, aH);
+        return RowView.getPrefWidth(this, aH);
     }
 
     @Override
     protected double getPrefHeightImpl(double aW)
     {
-        return BoxView.getPrefHeight(this, _textArea, aW);
+        return RowView.getPrefHeight(this, aW);
     }
 
     @Override
     protected void layoutImpl()
     {
-        BoxView.layout(this, _textArea, true, true);
+        RowView.layout(this, true);
+    }
+
+    /**
+     * TextArea subclass for round corners.
+     */
+    private static class EntryTextArea extends TextArea {
+
+        @Override
+        public Shape getBoundsShape()
+        {
+            return new RoundRect(0,0, getWidth(), getHeight(), 4);
+        }
     }
 }

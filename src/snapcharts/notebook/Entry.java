@@ -8,6 +8,9 @@ public class Entry {
     // The text
     private String  _text;
 
+    // The index in notebook request/response list
+    private int  _index;
+
     /**
      * Constructor.
      */
@@ -24,6 +27,19 @@ public class Entry {
     public void setText(String aValue)
     {
         _text = aValue;
+    }
+
+    /**
+     * Returns the index in Notebook request/response list.
+     */
+    public int getIndex()  { return _index; }
+
+    /**
+     * Sets the index in Notebook request/response list.
+     */
+    public void setIndex(int anIndex)
+    {
+        _index = anIndex;
     }
 
     /**

@@ -63,6 +63,7 @@ public class Notebook extends PropObject {
     public void addRequest(Request aRequest, int anIndex)
     {
         _requests.add(anIndex, aRequest);
+        aRequest.setIndex(anIndex + 1);
     }
 
     /**
@@ -95,6 +96,7 @@ public class Notebook extends PropObject {
 
         // Create Response for Request
         response = createResponseForRequest(aRequest);
+        response.setIndex(aRequest.getIndex());
 
         // Add to map and return
         _responses.put(aRequest, response);

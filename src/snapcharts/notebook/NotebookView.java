@@ -37,6 +37,7 @@ public class NotebookView extends ParentView {
 
         // Create the PendingRequest
         _pendingRequest = new Request();
+        _pendingRequest.setIndex(1);
 
         resetEntriesLater();
     }
@@ -152,6 +153,7 @@ public class NotebookView extends ParentView {
         else if (aRequest == _pendingRequest) {
             _notebook.addRequest(_pendingRequest);
             _pendingRequest = new Request();
+            _pendingRequest.setIndex(_notebook.getRequests().size() + 1);
         }
 
         // Otherwise remove Response and ResponseView for Request
