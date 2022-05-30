@@ -15,10 +15,18 @@ public class RequestView extends EntryView<Request> {
     public RequestView(NotebookView aNotebookView, Request aRequest)
     {
         super(aNotebookView, aRequest);
+    }
 
-        // Register TextArea
-        _textArea.setEditable(true);
-        _textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
+    /**
+     * Override for custom request TextArea.
+     */
+    @Override
+    protected TextArea createTextArea()
+    {
+        TextArea textArea = super.createTextArea();
+        textArea.setEditable(true);
+        textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
+        return textArea;
     }
 
     /**
@@ -26,26 +34,22 @@ public class RequestView extends EntryView<Request> {
      */
     private void textAreaKeyPressed(ViewEvent anEvent)
     {
+        TextArea textArea = (TextArea) getContent();
+
         // Handle Shift+Enter
         if (anEvent.getKeyCode() == KeyCode.ENTER && !anEvent.isShiftDown()) {
 
             // Get TextArea.Text and
             Request request = getEntry();
-            String text = _textArea.getText().trim();
+            String text = textArea.getText().trim();
             request.setText(text);
-            if (!text.equals(_textArea.getText()))
-                _textArea.setText(text);
+            if (!text.equals(textArea.getText()))
+                textArea.setText(text);
 
             // Process request
             _notebookView.processRequest(request);
-            _textArea.setSel(text.length());
+            textArea.setSel(text.length());
             anEvent.consume();
         }
-    }
-
-    @Override
-    public void requestFocus()
-    {
-        _textArea.requestFocus();
     }
 }

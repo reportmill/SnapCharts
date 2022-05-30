@@ -26,9 +26,6 @@ public class EntryView<T extends Entry> extends ParentView {
     // The content view
     private View  _content;
 
-    // The TextArea
-    protected TextArea  _textArea;
-
     /**
      * Constructor.
      */
@@ -53,12 +50,8 @@ public class EntryView<T extends Entry> extends ParentView {
         _label.setText(labelText);
 
         // Create/add entry textArea (content)
-        _textArea = createTextArea();
-        setContent(_textArea);
-
-        // Set entry textArea text
-        String text = anEntry.getText();
-        _textArea.setText(text);
+        View contentView = createContentViewForEntry(anEntry);
+        setContent(contentView);
     }
 
     /**
@@ -110,6 +103,17 @@ public class EntryView<T extends Entry> extends ParentView {
     }
 
     /**
+     * Returns a content view for given response.
+     */
+    protected View createContentViewForEntry(Entry anEntry)
+    {
+        String entryText = anEntry.getText();
+        TextArea textArea = createTextArea();
+        textArea.setText(entryText);
+        return textArea;
+    }
+
+    /**
      * Creates the TextArea.
      */
     protected TextArea createTextArea()
@@ -128,7 +132,8 @@ public class EntryView<T extends Entry> extends ParentView {
     @Override
     public void requestFocus()
     {
-        _textArea.requestFocus();
+        if (_content != null)
+            _content.requestFocus();
     }
 
     @Override

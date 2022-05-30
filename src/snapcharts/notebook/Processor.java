@@ -79,6 +79,9 @@ public class Processor implements KeyChain.FunctionHandler {
             // Handle Plot3D
             case "plot3d": return plot3D(anObj, argList);
 
+            // Handle text
+            case "text": return text(anObj, argList);
+
             // Handle Sin, Cos
             case "sin": return sinFunc(anObj, argList);
             case "cos": return cosFunc(anObj, argList);
@@ -198,7 +201,7 @@ public class Processor implements KeyChain.FunctionHandler {
     /**
      * Creates and returns a Plot.
      */
-    public String plot(Object anObj, KeyChain aKeyChain)
+    public Chart plot(Object anObj, KeyChain aKeyChain)
     {
         // Get DataSet
         DataSet dataSet = dataSet(anObj, aKeyChain);
@@ -223,18 +226,14 @@ public class Processor implements KeyChain.FunctionHandler {
         KeyChain exprKeyChain = aKeyChain.getChildKeyChain(0);
         chart.getHeader().setTitle("Plot of " + exprKeyChain);
 
-        // Write chart to string
-        ChartArchiver chartArchiver = new ChartArchiver();
-        String chartStr = chartArchiver.writeToXML(chart).toString();
-
         // Return
-        return chartStr;
+        return chart;
     }
 
     /**
      * Creates and returns a Plot3D.
      */
-    public String plot3D(Object anObj, KeyChain aKeyChain)
+    public Chart plot3D(Object anObj, KeyChain aKeyChain)
     {
         // Get DataSet
         DataSet dataSet = dataSet(anObj, aKeyChain);
@@ -255,12 +254,40 @@ public class Processor implements KeyChain.FunctionHandler {
         KeyChain exprKeyChain = aKeyChain.getChildKeyChain(0);
         chart.getHeader().setTitle("Plot of " + exprKeyChain);
 
-        // Write chart to string
-        ChartArchiver chartArchiver = new ChartArchiver();
-        String chartStr = chartArchiver.writeToXML(chart).toString();
-
         // Return
-        return chartStr;
+        return chart;
+    }
+
+    /**
+     * Returns the nested keyChain as a string.
+     */
+    public String text(Object anObj, KeyChain aKeyChain)
+    {
+        KeyChain keyChain = aKeyChain.getChildKeyChain(0);
+        Object value = getValue(anObj, keyChain);
+        String str = getStringForValue(value);
+        return str;
+    }
+
+    /**
+     * Returns the value as a string.
+     */
+    protected String getStringForValue(Object aValue)
+    {
+        if (aValue instanceof String)
+            return (String) aValue;
+
+        if (aValue instanceof Chart) {
+            Chart chart = (Chart) aValue;
+            ChartArchiver chartArchiver = new ChartArchiver();
+            String chartStr = chartArchiver.writeToXML(chart).toString();
+            return chartStr;
+        }
+
+        if (aValue == null)
+            return "null";
+
+        return aValue.toString();
     }
 
     /**

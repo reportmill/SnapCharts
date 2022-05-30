@@ -6,7 +6,8 @@ import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx.ShadowEffect;
 import snap.view.BoxView;
-import snapcharts.doc.ChartArchiver;
+import snap.view.TextArea;
+import snap.view.View;
 import snapcharts.model.Chart;
 import snapcharts.view.ChartView;
 
@@ -15,9 +16,6 @@ import snapcharts.view.ChartView;
  */
 public class ResponseView extends EntryView<Response> {
 
-    // A ChartView for Chart response
-    private ChartView  _chartView;
-
     /**
      * Constructor.
      */
@@ -25,39 +23,53 @@ public class ResponseView extends EntryView<Response> {
     {
         // Do normal version
         super(aNotebookView, aResponse);
-
-        // Set TextArea background to gray
-        _textArea.setFill(Color.GRAY9);
-
-        // Handle Chart response
-        String text = aResponse.getText();
-        if (text.startsWith("<")) {
-            _chartView = createChartViewForChartString(text);
-            _chartView.setLean(Pos.TOP_LEFT);
-            _chartView.setGrowWidth(false);
-            BoxView boxView = new BoxView(_chartView, false, false);
-            boxView.setPadding(0, 0, 0, 12);
-            setContent(boxView);
-        }
     }
 
     /**
-     * Creates ChartView for string.
+     * Override to support custom content views for response values.
      */
-    private ChartView createChartViewForChartString(String chartString)
+    @Override
+    protected View createContentViewForEntry(Entry anEntry)
     {
-        // Debug
-        if (chartString.length() < 5000)
-            System.out.println(chartString);
+        // Get entry as response and get response.Value
+        Response response = (Response) anEntry;
+        Object value = response.getValue();
 
-        // Create Chart from chartString
-        ChartArchiver chartArchiver = new ChartArchiver();
-        Chart chart = (Chart) chartArchiver.readFromXMLString(chartString);
+        // Handle Chart
+        if (value instanceof Chart) {
+            Chart chart = (Chart) value;
+            ChartView chartView = createChartViewForChartString(chart);
+            BoxView boxView = new BoxView(chartView, false, false);
+            boxView.setPadding(0, 0, 0, 12);
+            return boxView;
+        }
 
+        // Do normal version
+        return super.createContentViewForEntry(anEntry);
+    }
+
+    /**
+     * Override to make gray.
+     */
+    @Override
+    protected TextArea createTextArea()
+    {
+        TextArea textArea = super.createTextArea();
+        textArea.setFill(Color.GRAY9);
+        return textArea;
+    }
+
+    /**
+     * Creates ChartView for chart.
+     */
+    private ChartView createChartViewForChartString(Chart aChart)
+    {
         // Create ChartView for Chart
         ChartView chartView = new ChartView();
-        chartView.setChart(chart);
+        chartView.setChart(aChart);
         chartView.setPrefSize(560, 340);
+        chartView.setLean(Pos.TOP_LEFT);
+        chartView.setGrowWidth(false);
 
         // Style
         chartView.setEffect(new ShadowEffect(8, Color.GRAY3, 0, 0));

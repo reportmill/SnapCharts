@@ -121,11 +121,13 @@ public class Notebook extends PropObject {
         KeyChain keyChain = KeyChain.getKeyChain(text);
 
         // Process keyChain
-        String responseStr = _processor.getStringValue(this, keyChain);
+        Object responseValue = _processor.getValue(this, keyChain);
 
-        // Create Response, set Text and return
+        // Create Response and set value
         Response response = new Response();
-        response.setText(responseStr);
+        response.setValue(responseValue);
+
+        // Return
         return response;
     }
 }
