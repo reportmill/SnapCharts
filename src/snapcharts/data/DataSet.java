@@ -2,10 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.MinMax;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * This class is the representation of a data set for SnapCharts. Conceptually it holds an array of points, which are
@@ -15,6 +17,9 @@ import java.util.Arrays;
  * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
 public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
+
+    // The name
+    private String  _name;
 
     // The format of the data
     private DataType  _dataType;
@@ -44,6 +49,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public enum ThetaUnit { Degrees, Radians }
 
     // Properties
+    public static final String Name_Prop = "Name";
     public static final String DataType_Prop = "DataType";
     public static final String ThetaUnit_Prop = "ThetaUnit";
 
@@ -61,6 +67,20 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
+     * Returns the name.
+     */
+    public String getName()  { return _name; }
+
+    /**
+     * Sets the name.
+     */
+    public void setName(String aName)
+    {
+        if (Objects.equals(aName, _name)) return;
+        _name = aName;
+    }
+
+    /**
      * Returns the DataType.
      */
     public DataType getDataType()  { return _dataType; }
@@ -70,6 +90,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public void setDataType(DataType aDataType)
     {
+        if (Objects.equals(aDataType, _dataType)) return;
         _dataType = aDataType;
     }
 
@@ -300,6 +321,72 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         String[] vals = new String[count];
         for (int i=0; i<count; i++) vals[i] = getC(i);
         return vals;
+    }
+
+    /**
+     * Returns the value for channel and record index.
+     */
+    public Object getValueForChannel(DataChan aChan, int anIndex)
+    {
+        switch (aChan) {
+            case X: return getValueX(anIndex);
+            case Y: return getValueY(anIndex);
+            case Z: return getValueZ(anIndex);
+            case I: return anIndex;
+            case C: return getC(anIndex);
+            case T: return getValueX(anIndex);
+            case R: return getValueY(anIndex);
+            default: throw new RuntimeException("DataSet.getValueForChannel: Unknown channel: " + aChan);
+        }
+    }
+
+    /**
+     * Sets the value for channel and record index.
+     */
+    public void setValueForChannel(Object aValue, DataChan aChan, int anIndex)
+    {
+        switch (aChan) {
+            case X:
+                Double valX = aValue != null ? SnapUtils.doubleValue(aValue) : null;
+                setValueX(valX, anIndex);
+                break;
+            case Y:
+                Double valY = aValue != null ? SnapUtils.doubleValue(aValue) : null;
+                setValueY(valY, anIndex);
+                break;
+            case Z:
+                Double valZ = aValue != null ? SnapUtils.doubleValue(aValue) : null;
+                setValueZ(valZ, anIndex);
+                break;
+            case I:
+                System.err.println("DataSet.setValueForChannel: Shouldn't set value for index channel");
+                break;
+            case C:
+                String valC = aValue != null ? SnapUtils.stringValue(aValue) : null;
+                setC(valC, anIndex);
+                break;
+            default: throw new RuntimeException("DataSet.setValueForChannel: Unknown channel: " + aChan);
+        }
+    }
+
+    /**
+     * Returns the value for given channel index and record index.
+     */
+    public Object getValueForChannelIndex(int aChanIndex, int anIndex)
+    {
+        DataType dataType = getDataType();
+        DataChan chan = dataType.getChannel(aChanIndex);
+        return getValueForChannel(chan, anIndex);
+    }
+
+    /**
+     * Sets given value for given channel index and record index.
+     */
+    public void setValueForChannelIndex(Object aValue, int aChanIndex, int anIndex)
+    {
+        DataType dataType = getDataType();
+        DataChan chan = dataType.getChannel(aChanIndex);
+        setValueForChannel(aValue, chan, anIndex);
     }
 
     /**

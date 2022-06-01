@@ -22,6 +22,9 @@ public class Processor implements KeyChain.FunctionHandler {
     // A map holding values
     private Map<String,Double>  _variables = new HashMap<>();
 
+    // The last dataset
+    private DataSet  _lastDataSet;
+
     /**
      * Returns the snippet out for a snippet.
      */
@@ -116,6 +119,10 @@ public class Processor implements KeyChain.FunctionHandler {
      */
     public DataSet dataSet(Object anObj, KeyChain aKeyChain)
     {
+        // If no args, return LastDataSet
+        if (aKeyChain.getChildCount() == 0)
+            return _lastDataSet;
+
         // Get function expression to plot
         KeyChain functExprKeyChain = aKeyChain.getChildKeyChain(0);
         int argCount = aKeyChain.getChildCount();
@@ -127,7 +134,12 @@ public class Processor implements KeyChain.FunctionHandler {
 
         // If only two args, get XY DataSet and return
         if (aKeyChain.getChildCount() < 3) {
+
+            // Get XY DataSet
             DataSet dataSet = getDataSetXY(functExprKeyChain, dataXKeyVal);
+
+            // Set LastDataSet and return
+            _lastDataSet = dataSet;
             return dataSet;
         }
 
@@ -137,6 +149,9 @@ public class Processor implements KeyChain.FunctionHandler {
 
         // Create DataSet
         DataSet dataSet = getDataSetXYZZ(functExprKeyChain, dataXKeyVal, dataYKeyVal);
+
+        // Set LastDataSet and return
+        _lastDataSet = dataSet;
         return dataSet;
     }
 
@@ -165,8 +180,9 @@ public class Processor implements KeyChain.FunctionHandler {
             dataY[i] = val;
         }
 
-        // Create DataSet, return
+        // Create DataSet, set name to expr and return
         DataSet dataSet = DataSet.newDataSetForTypeAndValues(DataType.XY, dataX, dataY);
+        dataSet.setName(exprKeyChain.toString());
         return dataSet;
     }
 
@@ -210,6 +226,7 @@ public class Processor implements KeyChain.FunctionHandler {
 
         // Create DataSet
         DataSet dataSet = DataSet.newDataSet();
+        dataSet.setName(exprKeyChain.toString());
         dataSet.setDataType(DataType.XYZZ);
         DataSetUtils.addDataPointsXYZZ(dataSet, dataX, dataY, dataZ);
 
@@ -269,9 +286,8 @@ public class Processor implements KeyChain.FunctionHandler {
         chart.getAxisZ().setTitle("Z");
         chart.addTrace(trace);
 
-        // Set title from KeyChain
-        KeyChain exprKeyChain = aKeyChain.getChildKeyChain(0);
-        chart.getHeader().setTitle("Plot of " + exprKeyChain);
+        // Set title from LastDataSetTitle
+        chart.getHeader().setTitle("Plot of " + dataSet.getName());
 
         // Return
         return chart;
