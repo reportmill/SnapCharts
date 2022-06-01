@@ -416,7 +416,7 @@ public class DocPane extends ViewOwner {
             return new ChartPane(anItem);
 
         // Handle DocItemDataSet
-        if (anItem instanceof DocItemDataSet)
+        if (anItem instanceof DocItemTrace)
             return new ChartPane(anItem);
 
         // Handle DocItemGroup
@@ -903,7 +903,7 @@ public class DocPane extends ViewOwner {
         {
             if (anItem instanceof Doc) return ICON_DIR;
             if (anItem instanceof DocItemChart) return ICON_CHART;
-            if (anItem instanceof DocItemDataSet) return ICON_DATA;
+            if (anItem instanceof DocItemTrace) return ICON_DATA;
             if (anItem instanceof DocItemGroup) return ICON_GROUP;
             return ICON_PLAIN;
         }

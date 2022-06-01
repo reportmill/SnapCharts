@@ -3,7 +3,7 @@ import snap.gfx.Image;
 import snap.util.XMLElement;
 import snap.view.*;
 import snapcharts.doc.ChartArchiver;
-import snapcharts.doc.DocItemDataSet;
+import snapcharts.doc.DocItemTrace;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.doc.DocItem;
@@ -116,9 +116,9 @@ public class DocPaneCopyPaster {
         _docPane.selectBestDocItemPeer(selItem);
 
         // Handle DataSet type
-        if (selItem instanceof DocItemDataSet) {
-            DocItemDataSet docItemDataSet = (DocItemDataSet) selItem;
-            Trace trace = docItemDataSet.getTrace();
+        if (selItem instanceof DocItemTrace) {
+            DocItemTrace docItemTrace = (DocItemTrace) selItem;
+            Trace trace = docItemTrace.getTrace();
             Chart chart = trace.getChart();
             chart.getTraceList().removeTrace(trace);
         }

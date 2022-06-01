@@ -21,7 +21,7 @@ public class DocItemChart extends DocItem<Chart> {
         // Add Items for Traces
         TraceList traceList = _content.getTraceList();
         for (Trace trace : traceList.getTraces())
-            addItem(new DocItemDataSet(trace));
+            addItem(new DocItemTrace(trace));
 
         // Start listening to prop changes
         _content.addPropChangeListener(aPC -> chartDidPropChange(aPC));
@@ -83,7 +83,7 @@ public class DocItemChart extends DocItem<Chart> {
             int ind = aPC.getIndex(); if (ind < 0) return;
             Trace newVal = (Trace) aPC.getNewValue();
             if (newVal != null)
-                addItem(new DocItemDataSet(newVal));
+                addItem(new DocItemTrace(newVal));
             else removeItem(ind);
         }
     }

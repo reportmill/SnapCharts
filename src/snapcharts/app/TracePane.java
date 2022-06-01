@@ -6,7 +6,7 @@ import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.appmisc.SheetView;
-import snapcharts.doc.DocItemDataSet;
+import snapcharts.doc.DocItemTrace;
 import snapcharts.data.DataChan;
 import snapcharts.model.Trace;
 import snapcharts.data.DataSet;
@@ -15,9 +15,9 @@ import snapcharts.util.TraceUtils;
 import snapcharts.data.DataUtils;
 
 /**
- * A ViewOwner to handle display of whole ChartDoc.
+ * This ViewOwner subclass provides display and editing of a Trace and its DataSet.
  */
-public class DataSetPane extends DocItemPane<DocItemDataSet> {
+public class TracePane extends DocItemPane<DocItemTrace> {
 
     // The Trace
     private Trace  _trace;
@@ -34,7 +34,7 @@ public class DataSetPane extends DocItemPane<DocItemDataSet> {
     /**
      * Constructor.
      */
-    public DataSetPane(DocItemDataSet aDataSet)
+    public TracePane(DocItemTrace aDataSet)
     {
         super(aDataSet);
 

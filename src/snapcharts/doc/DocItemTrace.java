@@ -5,12 +5,12 @@ import snapcharts.model.Trace;
 /**
  * A DocItem subclass to hold a chart.
  */
-public class DocItemDataSet extends DocItem<Trace> {
+public class DocItemTrace extends DocItem<Trace> {
 
     /**
      * Constructor.
      */
-    public DocItemDataSet(Trace aTrace)
+    public DocItemTrace(Trace aTrace)
     {
         super(aTrace);
     }
