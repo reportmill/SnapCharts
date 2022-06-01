@@ -258,9 +258,8 @@ public class Processor implements KeyChain.FunctionHandler {
         chart.getAxisY().setTitle("Y");
         chart.addTrace(trace);
 
-        // Set title from KeyChain
-        KeyChain exprKeyChain = aKeyChain.getChildKeyChain(0);
-        chart.getHeader().setTitle("Plot of " + exprKeyChain);
+        // Set title from LastDataSetTitle
+        chart.getHeader().setTitle("Plot of " + dataSet.getName());
 
         // Return
         return chart;
