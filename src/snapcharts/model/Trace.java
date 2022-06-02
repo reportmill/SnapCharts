@@ -507,15 +507,6 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Clears all points.
-     */
-    public void clearPoints()
-    {
-        _dataSet.clearPoints();
-        clearCachedData();
-    }
-
-    /**
      * Return data point as a string (either C or X).
      */
     public String getString(int anIndex)
@@ -526,21 +517,18 @@ public class Trace extends ChartPart {
         if(str != null)
             return str;
 
-        // If categories, return that
+        // If categories, return category at index
         Chart chart = getChart();
         List<String> categories = chart.getAxisX().getCategories();
         if (categories != null && anIndex < categories.size())
             return categories.get(anIndex);
 
-        // If start value is set
-        int startValue = getTraceList().getStartValue();
-        if (startValue != 0)
-            return String.valueOf(startValue + anIndex);
-
-        // Otherwise return x val (as int, if whole number)
+        // If X value is int, return as int string
         double val = procData.getX(anIndex);
         if (val == (int) val)
             return String.valueOf((int) val);
+
+        // Return formatted X value
         return DataUtils.formatValue(val);
     }
 
@@ -710,6 +698,15 @@ public class Trace extends ChartPart {
     public boolean isBorderSupported()  { return false; }
 
     /**
+     * Called when a child chart part has prop change.
+     */
+    private void childChartPartDidPropChange(PropChange aPC)
+    {
+        Chart chart = getChart();
+        chart.chartPartDidPropChange(aPC);
+    }
+
+    /**
      * Standard toStringProps implementation.
      */
     @Override
@@ -717,7 +714,7 @@ public class Trace extends ChartPart {
     {
         // Do normal version
         String superProps = super.toStringProps();
-        StringBuffer sb = new StringBuffer(superProps).append(superProps.length() > 0 ? ", " : "");
+        StringBuilder sb = new StringBuilder(superProps).append(superProps.length() > 0 ? ", " : "");
 
         // Add DataType, PointCount
         sb.append("DataType=").append(getDataType());
@@ -734,15 +731,6 @@ public class Trace extends ChartPart {
 
         // Return
         return sb.toString();
-    }
-
-    /**
-     * Called when a child chart part has prop change.
-     */
-    private void childChartPartDidPropChange(PropChange aPC)
-    {
-        Chart chart = getChart();
-        chart.chartPartDidPropChange(aPC);
     }
 
     /**

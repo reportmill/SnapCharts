@@ -19,9 +19,6 @@ public class TraceList extends ChartPart {
     // The list of traces
     private List<Trace> _traceList = new ArrayList<>();
 
-    // The trace start value
-    private int _startValue = 0;
-
     // The Traces array
     private Trace[]  _traces;
 
@@ -35,7 +32,6 @@ public class TraceList extends ChartPart {
     private Map<AxisType,MinMax>  _minMaxs = new HashMap<>();
 
     // Constants for properties
-    public static final String StartValue_Prop = "StartValue";
     public static final String Trace_Prop = "Trace";
 
     // Constants for property defaults
@@ -60,9 +56,12 @@ public class TraceList extends ChartPart {
      */
     public Trace[] getTraces()
     {
+        // If already set, just return
         if (_traces != null) return _traces;
 
-        return _traces = _traceList.toArray(new Trace[0]);
+        // Create, set, return
+        Trace[] traces = _traceList.toArray(new Trace[0]);
+        return _traces = traces;
     }
 
     /**
@@ -144,7 +143,7 @@ public class TraceList extends ChartPart {
      */
     public void clear()
     {
-        while (getTraceCount()!=0)
+        while (getTraceCount() != 0)
             removeTrace(getTraceCount()-1);
         clearCachedValues();
     }
@@ -167,7 +166,7 @@ public class TraceList extends ChartPart {
     public AxisType[] getAxisTypes()
     {
         // If already set, just return
-        if (_axisTypes!=null) return _axisTypes;
+        if (_axisTypes != null) return _axisTypes;
 
         // Get set of unique axes
         Set<AxisType> typesSet = new HashSet<>();
@@ -188,7 +187,7 @@ public class TraceList extends ChartPart {
     public MinMax getMinMaxForAxis(AxisType anAxisType)
     {
         MinMax minMax = _minMaxs.get(anAxisType);
-        if (minMax!=null)
+        if (minMax != null)
             return minMax;
 
         minMax = getMinMaxForAxisImpl(anAxisType);
@@ -229,7 +228,7 @@ public class TraceList extends ChartPart {
                     max = Math.max(max, procData.getMaxY());
                 }
             }
-            if (min==Double.MAX_VALUE)
+            if (min == Double.MAX_VALUE)
                 return new MinMax(0, 5);
             return new MinMax(min, max);
         }
@@ -255,20 +254,6 @@ public class TraceList extends ChartPart {
     }
 
     /**
-     * Returns the start value of the trace.
-     */
-    public int getStartValue()  { return _startValue; }
-
-    /**
-     * Sets the start of the trace.
-     */
-    public void setStartValue(int aValue)
-    {
-        if (aValue == _startValue) return;
-        firePropChange(StartValue_Prop, _startValue, _startValue = aValue);
-    }
-
-    /**
      * Returns the number of points in traces.
      */
     public int getPointCount()
@@ -288,18 +273,6 @@ public class TraceList extends ChartPart {
         Trace[] traces = getTraces();
         for (Trace trace : traces)
             trace.setPointCount(aValue);
-    }
-
-    /**
-     * Returns whether slice at point index is empty.
-     */
-    public boolean isSliceEmpty(int anIndex)
-    {
-        Trace[] traces = getEnabledTraces();
-        for (Trace trace : traces)
-            if (trace.getPoint(anIndex).getValueY() != null)
-                return false;
-        return true;
     }
 
     /**
