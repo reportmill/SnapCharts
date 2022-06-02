@@ -23,7 +23,7 @@ public class Notebook extends PropObject {
     private Map<Request,Response>  _responses = new HashMap<>();
 
     // The Processor
-    private Processor  _processor = new Processor();
+    private Processor  _processor;
 
     /**
      * Constructor.
@@ -84,6 +84,14 @@ public class Notebook extends PropObject {
     }
 
     /**
+     * Returns whether Response for a given request is set.
+     */
+    public boolean isResponseForRequestSet(Request aRequest)
+    {
+        return _responses.containsKey(aRequest);
+    }
+
+    /**
      * Returns the Response for a given request.
      */
     public Response getResponseForRequest(Request aRequest)
@@ -114,8 +122,52 @@ public class Notebook extends PropObject {
      */
     protected Response createResponseForRequest(Request aRequest)
     {
-        Response response = _processor.createResponseForRequest(aRequest);
+        Processor processor = getProcessor();
+        Response response = processor.createResponseForRequest(aRequest);
         response.setIndex(aRequest.getIndex());
         return response;
+    }
+
+    /**
+     * Returns the processor.
+     */
+    public Processor getProcessor()
+    {
+        if (_processor != null) return _processor;
+        Processor processor = new Processor(this);
+        return _processor = processor;
+    }
+
+    /**
+     * Returns the last response of given class.
+     */
+    public Response getLastResponseForValueClass(Class aClass)
+    {
+        // Get list of Requests
+        List<Request> requests = getRequests();
+
+        // Iterate over requests (backwards) and return first Response.Value for given class
+        for (int i = requests.size() - 1; i >= 0; i--) {
+            Request request = requests.get(i);
+            if (!isResponseForRequestSet(request))
+                continue;
+            Response response = getResponseForRequest(request);
+            Object responseValue = response.getValue();
+            if (aClass.isInstance(responseValue))
+                return response;
+        }
+
+        // Return null since none found
+        return null;
+    }
+
+    /**
+     * Returns the last response of given class.
+     */
+    public <T> T getLastResponseValueForClass(Class<T> aClass)
+    {
+        Response response = getLastResponseForValueClass(aClass);
+        T responseValue = response != null ? (T) response.getValue() : null;
+        return responseValue;
     }
 }

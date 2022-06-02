@@ -93,7 +93,8 @@ public class ResponseView extends EntryView<Response> {
         // Create/configure DataSetPane
         DataSetPane dataSetPane = new DataSetPane(dataSet);
         View dataSetPaneView = dataSetPane.getUI();
-        dataSetPaneView.setPrefSize(560, 340);
+        dataSetPaneView.setPrefWidth(560);
+        dataSetPaneView.setMaxHeight(300);
 
         // Create BoxView wrapper
         BoxView boxView = new BoxView(dataSetPaneView, false, false) {

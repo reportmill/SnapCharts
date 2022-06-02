@@ -6,7 +6,6 @@ import snap.util.KeyChain;
 import snap.util.KeyValue;
 import snap.util.SnapUtils;
 import snapcharts.data.DataSet;
-import snapcharts.data.DataSetUtils;
 import snapcharts.data.DataType;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
@@ -19,11 +18,24 @@ import java.util.Map;
  */
 public class Processor implements KeyChain.FunctionHandler {
 
+    // The Notebook this processor works with
+    private Notebook  _notebook;
+
     // A map holding values
     private Map<String,Double>  _variables = new HashMap<>();
 
-    // The last dataset
-    private DataSet  _lastDataSet;
+    /**
+     * Constructor.
+     */
+    public Processor(Notebook aNotebook)
+    {
+        _notebook = aNotebook;
+    }
+
+    /**
+     * Returns the Notebook this processor works with.
+     */
+    public Notebook getNotebook()  { return _notebook; }
 
     /**
      * Returns the snippet out for a snippet.
@@ -93,7 +105,8 @@ public class Processor implements KeyChain.FunctionHandler {
         switch (functionName) {
 
             // Handle DataSet
-            case "dataset": return dataSet(anObj, argList);
+            case "dataset": return dataSetOrSample(anObj, argList);
+            case "dataset3d": return dataSetOrSample3D(anObj, argList);
 
             // Handle Plot
             case "plot": return plot(anObj, argList);
@@ -120,8 +133,10 @@ public class Processor implements KeyChain.FunctionHandler {
     public DataSet dataSet(Object anObj, KeyChain aKeyChain)
     {
         // If no args, return LastDataSet
-        if (aKeyChain.getChildCount() == 0)
-            return _lastDataSet;
+        if (aKeyChain.getChildCount() == 0) {
+            Notebook notebook = getNotebook();
+            return notebook.getLastResponseValueForClass(DataSet.class);
+        }
 
         // Get function expression to plot
         KeyChain functExprKeyChain = aKeyChain.getChildKeyChain(0);
@@ -133,26 +148,15 @@ public class Processor implements KeyChain.FunctionHandler {
         KeyValue<double[]> dataXKeyVal = getValueAsDoubleArrayKeyValue(anObj, exprX, defaultDataLen);
 
         // If only two args, get XY DataSet and return
-        if (aKeyChain.getChildCount() < 3) {
-
-            // Get XY DataSet
-            DataSet dataSet = getDataSetXY(functExprKeyChain, dataXKeyVal);
-
-            // Set LastDataSet and return
-            _lastDataSet = dataSet;
-            return dataSet;
-        }
+        if (aKeyChain.getChildCount() < 3)
+            return getDataSetXY(functExprKeyChain, dataXKeyVal);
 
         // Get Y expression KeyChain (arg 3) and evaluate for dataX KeyValue<double[]>
         KeyChain exprY = aKeyChain.getChildKeyChain(2);
         KeyValue<double[]> dataYKeyVal = getValueAsDoubleArrayKeyValue(anObj, exprY, defaultDataLen);
 
-        // Create DataSet
-        DataSet dataSet = getDataSetXYZZ(functExprKeyChain, dataXKeyVal, dataYKeyVal);
-
-        // Set LastDataSet and return
-        _lastDataSet = dataSet;
-        return dataSet;
+        // Create DataSet and return
+        return getDataSetXYZZ(functExprKeyChain, dataXKeyVal, dataYKeyVal);
     }
 
     /**
@@ -233,14 +237,34 @@ public class Processor implements KeyChain.FunctionHandler {
     }
 
     /**
+     * Same as dataSet(), but returns sample DataSet if can't create/find one.
+     */
+    public DataSet dataSetOrSample(Object anObj, KeyChain aKeyChain)
+    {
+        DataSet dataSet = dataSet(anObj, aKeyChain);
+        if (dataSet == null)
+            dataSet = ProcessorUtils.getSampleDataSetXY();
+        return dataSet;
+    }
+
+    /**
+     * Same as dataSet(), but returns sample DataSet if can't create/find one.
+     */
+    public DataSet dataSetOrSample3D(Object anObj, KeyChain aKeyChain)
+    {
+        DataSet dataSet = dataSet(anObj, aKeyChain);
+        if (dataSet == null)
+            dataSet = ProcessorUtils.getSampleDataSetXYZZ();
+        return dataSet;
+    }
+
+    /**
      * Creates and returns a Plot.
      */
     public Chart plot(Object anObj, KeyChain aKeyChain)
     {
-        // Get DataSet (if none, use sample DataSet)
-        DataSet dataSet = dataSet(anObj, aKeyChain);
-        if (dataSet == null)
-            dataSet = ProcessorUtils.getSampleDataSetXY();
+        // Get DataSet
+        DataSet dataSet = dataSetOrSample(anObj, aKeyChain);
 
         // Create Trace for DataSet
         Trace trace = new Trace();
@@ -270,10 +294,8 @@ public class Processor implements KeyChain.FunctionHandler {
      */
     public Chart plot3D(Object anObj, KeyChain aKeyChain)
     {
-        // Get DataSet (if none, use sample DataSet)
-        DataSet dataSet = dataSet(anObj, aKeyChain);
-        if (dataSet == null)
-            dataSet = ProcessorUtils.getSampleDataSetXYZZ();
+        // Get DataSet
+        DataSet dataSet = dataSetOrSample3D(anObj, aKeyChain);
 
         // Create Trace for DataSet
         Trace trace = new Trace();
