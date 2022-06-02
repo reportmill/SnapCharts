@@ -1,7 +1,6 @@
 package snapcharts.appmisc;
 import java.util.*;
 import java.util.function.Consumer;
-
 import snap.geom.HPos;
 import snap.geom.Insets;
 import snap.view.*;
@@ -9,7 +8,7 @@ import snap.view.*;
 /**
  * A TableView subclass to emulate a spreadsheet.
  */
-public class SheetView extends TableView <Object> {
+public class SheetView extends TableView<Object> {
 
     // The min row counts
     private int  _minRowCount;
@@ -18,19 +17,28 @@ public class SheetView extends TableView <Object> {
     private int  _minColCount;
 
     // The extra row counts
-    private int  _extraRowCount = 1;
-    
+    private int  _extraRowCount;
+
     // The extra row/col counts
-    private int  _extraColCount = 1;
+    private int  _extraColCount;
+
+    // Whether to pad columns
+    private boolean  _padCols;
+
+    // Whether to pad rows
+    private boolean  _padRows;
 
     // The default preferred width of columns
-    private double  _prefColWidth = 80;
-    
+    private double  _prefColWidth = DEFAULT_PREF_COL_WIDTH;
+
     // The Column Configure method
     private Consumer<TableCol>  _colConf;
-    
+
     // The Rebuild run
     private Runnable  _rebuildRun, _rebuildRunCached = () -> { rebuildImpl(); _rebuildRun = null; };
+
+    // Constants
+    private static final double DEFAULT_PREF_COL_WIDTH = 80;
     
     /**
      * Creates a SheetView.
@@ -58,7 +66,7 @@ public class SheetView extends TableView <Object> {
     public void setMinRowCount(int aValue)
     {
         // If already set, just return
-        if (aValue==getMinRowCount()) return;
+        if (aValue == getMinRowCount()) return;
 
         // Set and rebuild
         _minRowCount = aValue;
@@ -76,7 +84,7 @@ public class SheetView extends TableView <Object> {
     public void setMinColCount(int aValue)
     {
         // If already set, just return
-        if (aValue==getMinColCount()) return;
+        if (aValue == getMinColCount()) return;
 
         // Set and rebuild
         _minColCount = aValue;
@@ -93,6 +101,10 @@ public class SheetView extends TableView <Object> {
      */
     public void setExtraRowCount(int aValue)
     {
+        // If already set, just return
+        if (aValue == getExtraRowCount()) return;
+
+        // Set and rebuild
         _extraRowCount = aValue;
         rebuild();
     }
@@ -107,6 +119,10 @@ public class SheetView extends TableView <Object> {
      */
     public void setExtraColCount(int aValue)
     {
+        // If already set, just return
+        if (aValue == getExtraColCount()) return;
+
+        // Set and rebuild
         _extraColCount = aValue;
         rebuild();
     }
@@ -128,22 +144,26 @@ public class SheetView extends TableView <Object> {
     /**
      * Returns method to configure column (and column header).
      */
-    public Consumer <TableCol> getColConfigure()  { return _colConf; }
+    public Consumer<TableCol> getColConfigure()  { return _colConf; }
 
     /**
      * Sets method to configure column (and column header).
      */
-    public void setColConfigure(Consumer <TableCol> aCC)  { _colConf = aCC; }
+    public void setColConfigure(Consumer<TableCol> aCC)
+    {
+        _colConf = aCC;
+        rebuild();
+    }
 
     /**
      * Return column at index, adding if needed.
      */
-    public TableCol getColForce(int anIndex)
+    protected TableCol getColAddIfAbsent(int anIndex)
     {
         // If column count too low, add columns
-        if (anIndex>=getColCount()) {
+        if (anIndex >= getColCount()) {
             double colWidth = getPrefColWidth();
-            while (anIndex>=getColCount()) {
+            while (anIndex >= getColCount()) {
                 TableCol col = new TableCol();
                 col.setPrefWidth(colWidth);
                 col.setWidth(colWidth);
@@ -162,8 +182,13 @@ public class SheetView extends TableView <Object> {
      */
     protected void rebuild()
     {
-        if (_rebuildRun==null && getUpdater()!=null)
-            getEnv().runLater(_rebuildRun=_rebuildRunCached);
+        if (_rebuildRun == null) {
+            _rebuildRun = _rebuildRunCached;
+            ViewUpdater viewUpdater = getUpdater();
+            if (viewUpdater != null)
+                viewUpdater.runBeforeUpdate(_rebuildRun);
+            else getEnv().runLater(_rebuildRun);
+        }
     }
 
     /**
@@ -175,62 +200,34 @@ public class SheetView extends TableView <Object> {
         int colCount = getMinColCount() + getExtraColCount();
 
         // If too few columns, add more
-        while (getColCount()<colCount)
-            getColForce(getColCount());
+        while (getColCount() < colCount)
+            getColAddIfAbsent(getColCount());
 
-        // Get width of all columns
-        double totalWidth = 0;
-        for (TableCol col : getCols())
-            totalWidth += col.getWidth() + TableView.DIVIDER_SPAN;
-
-        // If extra space, add more columns
-        if (totalWidth<getWidth()) {
-            while (totalWidth < getWidth()) {
-                TableCol col = getColForce(getColCount());
-                totalWidth += col.getWidth() + 2;
-            }
-        }
-
-        // If too many columns, remove them
-        else {
-            while (getColCount()>colCount && totalWidth>getWidth()) {
-                TableCol lastCol = getCol(getColCount()-1);
-                if (totalWidth - lastCol.getWidth() - 2>getWidth())
-                    removeCol(getColCount()-1);
-                else break;
-            }
-        }
+        // Add or remove pad columns
+        if (_padCols)
+            addOrRemovePadColumns();
 
         // Configure columns/headers
         configureColumns();
 
+        // Set last column to grow
+        TableCol lastCol = getCol(getColCount() - 1);
+        lastCol.setGrowWidth(true);
+
         // Calculate row count
         int rowCount = getMinRowCount() + getExtraRowCount();
-        double rowHeight = getRowHeight();
 
         // If too few rows, add more
-        List items = new ArrayList(getItems());
-        while (items.size()<rowCount)
-            items.add(items.size());
-
-        // If still extra height, add more extra rows
-        double totalHeight = items.size()*rowHeight;
-        double tableHeight = getScrollView().getScroller().getHeight();
-        if (totalHeight<tableHeight) {
-            while (totalHeight<tableHeight) {
+        List items = getItems();
+        if (items.size() < rowCount) {
+            items = new ArrayList(items);
+            while (items.size() < rowCount)
                 items.add(items.size());
-                totalHeight += rowHeight;
-            }
         }
 
-        // If too many columns, remove them
-        else {
-            while (items.size()>rowCount && totalHeight>tableHeight) {
-                if (totalHeight - rowHeight>getHeight())
-                    items.remove(items.size()-1);
-                else break;
-            }
-        }
+        // Add or remove pad rows
+        if (_padRows)
+            addOrRemovePadRows(items);
 
         // Reset items and update all
         setItems(items);
@@ -238,16 +235,82 @@ public class SheetView extends TableView <Object> {
     }
 
     /**
+     * Add or remove pad columns depending on available space.
+     */
+    private void addOrRemovePadColumns()
+    {
+        // Get width of all columns
+        double totalW = 0;
+        for (TableCol col : getCols())
+            totalW += col.getWidth() + TableView.DIVIDER_SPAN;
+
+        // If extra space, add more columns
+        double tableW = getScrollView().getScroller().getWidth();
+        if (totalW < tableW) {
+            while (totalW < tableW) {
+                TableCol col = getColAddIfAbsent(getColCount());
+                totalW += col.getWidth() + TableView.DIVIDER_SPAN;
+            }
+        }
+
+        // If too many columns, remove them
+        else {
+            int colCount = getMinColCount() + getExtraColCount();
+            while (getColCount() > colCount && totalW > tableW) {
+                TableCol lastCol = getCol(getColCount() - 1);
+                if (totalW - lastCol.getWidth() - TableView.DIVIDER_SPAN > tableW)
+                    removeCol(getColCount() - 1);
+                else break;
+            }
+        }
+    }
+
+    /**
+     * Add or remove pad rows depending on available space.
+     */
+    private void addOrRemovePadRows(List items)
+    {
+        // If still extra height, add more extra rows
+        double rowHeight = getRowHeight();
+        double totalH = items.size() * rowHeight;
+
+        // If extra space, add rows
+        double tableH = getScrollView().getScroller().getHeight();
+        if (totalH < tableH) {
+            while (totalH < tableH) {
+                items.add(items.size());
+                totalH += rowHeight;
+            }
+        }
+
+        // If too many columns, remove them
+        else {
+            int rowCount = getMinRowCount() + getExtraRowCount();
+            while (items.size() > rowCount && totalH > tableH) {
+                if (totalH - rowHeight > tableH)
+                    items.remove(items.size() - 1);
+                else break;
+            }
+        }
+    }
+
+    /**
      * Called to configure columns/headers.
      */
     protected void configureColumns()
     {
-        Consumer <TableCol> colConf = getColConfigure();
-        for (int i=0; i<getColCount(); i++) {
+        // Get column configure
+        Consumer<TableCol> colConf = getColConfigure();
+
+        // Iterate over columns and configure
+        for (int i = 0; i < getColCount(); i++) {
             TableCol col = getCol(i);
-            if (colConf!=null)
+            if (colConf != null)
                 colConf.accept(col);
-            else col.getHeader().setText(String.valueOf((char)('A' + i)));
+            else {
+                Label colHeader = col.getHeader();
+                colHeader.setText(String.valueOf((char) ('A' + i)));
+            }
         }
     }
 }

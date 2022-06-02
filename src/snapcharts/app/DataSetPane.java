@@ -112,6 +112,8 @@ public class DataSetPane extends ViewOwner {
     {
         // Get/configure SheetView
         _sheetView = getView("SheetView", SheetView.class);
+        _sheetView.setPrefColWidth(100);
+        _sheetView.setExtraColCount(1);
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.setCellConfigure(c -> configureCell(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
@@ -123,15 +125,6 @@ public class DataSetPane extends ViewOwner {
         addKeyActionHandler(SelectAll_Action, "Shortcut+A");
         //addKeyActionFilter(Delete_Action, "DELETE");
         //addKeyActionFilter(Delete_Action, "BACKSPACE");
-    }
-
-    /**
-     * Initialization for first showing.
-     */
-    protected void initShowing()
-    {
-        // This sucks - twice to run after resetUI() + SheetView.rebuild()
-        runLater(() -> runLater(() -> _sheetView.setSelRowColIndex(0, 0)));
     }
 
     /**
@@ -149,7 +142,7 @@ public class DataSetPane extends ViewOwner {
 
         // Set TableView row & col count
         int pointCount = dataSet.getPointCount();
-        int rowCount = pointCount + 1;
+        int rowCount = pointCount;
         int colCount = dataType.getChannelCount();
         _sheetView.setMinRowCount(rowCount);
         _sheetView.setMinColCount(colCount);
@@ -207,7 +200,6 @@ public class DataSetPane extends ViewOwner {
         // Set Column.Header.Text and PrefWidth
         Label header = aCol.getHeader();
         header.setText(headerText);
-        aCol.setPrefWidth(80);
     }
 
     /**
