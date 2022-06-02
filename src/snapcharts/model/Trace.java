@@ -571,30 +571,12 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Sets the C value at given index.
-     */
-    public void setValueC(String aValue, int anIndex)
-    {
-        _dataSet.setC(aValue, anIndex);
-        clearCachedData();
-    }
-
-    /**
      * Returns the X value at given index (null if not set).
      */
     public Double getValueX(int anIndex)
     {
         DataSet procData = getProcessedData();
         return procData.getValueX(anIndex);
-    }
-
-    /**
-     * Sets the X value at given index.
-     */
-    public void setValueX(Double aValue, int anIndex)
-    {
-        _dataSet.setValueX(aValue, anIndex);
-        clearCachedData();
     }
 
     /**
@@ -607,15 +589,6 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Sets the Y value at given index.
-     */
-    public void setValueY(Double aValue, int anIndex)
-    {
-        _dataSet.setValueY(aValue, anIndex);
-        clearCachedData();
-    }
-
-    /**
      * Returns the Z value at given index (null if not set).
      */
     public Double getValueZ(int anIndex)
@@ -625,39 +598,30 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Sets the Z value at given index.
-     */
-    public void setValueZ(Double aValue, int anIndex)
-    {
-        _dataSet.setValueZ(aValue, anIndex);
-        clearCachedData();
-    }
-
-    /**
      * Return data point as a string (either C or X).
      */
     public String getString(int anIndex)
     {
         // If point string is set, just return it
         String str = getC(anIndex);
-        if(str!=null)
+        if(str != null)
             return str;
 
         // If categories, return that
         Chart chart = getChart();
-        List <String> cats = chart.getAxisX().getCategories();
-        if (cats!=null && anIndex<cats.size())
-            return cats.get(anIndex);
+        List<String> categories = chart.getAxisX().getCategories();
+        if (categories != null && anIndex < categories.size())
+            return categories.get(anIndex);
 
         // If start value is set
         int startValue = getTraceList().getStartValue();
-        if (startValue!=0)
+        if (startValue != 0)
             return String.valueOf(startValue + anIndex);
 
         // Otherwise return x val (as int, if whole number)
         double val = getX(anIndex);
-        if (val==(int)val)
-            return String.valueOf((int)val);
+        if (val == (int) val)
+            return String.valueOf((int) val);
         return DataUtils.formatValue(val);
     }
 
@@ -666,16 +630,12 @@ public class Trace extends ChartPart {
      */
     public Object getValueForChannel(DataChan aChan, int anIndex)
     {
-        switch (aChan) {
-            case X: return getValueX(anIndex);
-            case Y: return getValueY(anIndex);
-            case Z: return getValueZ(anIndex);
-            case I: return anIndex;
-            case C: return getString(anIndex);
-            case T: return getValueX(anIndex);
-            case R: return getValueY(anIndex);
-            default: throw new RuntimeException("Trace.getValueForChannelAndIndex: Unknown channel: " + aChan);
-        }
+        // Handle C special
+        if (aChan == DataChan.C)
+            return getString(anIndex);
+
+        // Forward to DataSet
+        return _dataSet.getValueForChannel(aChan, anIndex);
     }
 
     /**
@@ -683,35 +643,16 @@ public class Trace extends ChartPart {
      */
     public void setValueForChannel(Object aValue, DataChan aChan, int anIndex)
     {
-        // Get point
+        // Get original point
         DataPoint dataPoint = getPoint(anIndex);
 
-        switch (aChan) {
-            case X:
-                Double valX = aValue!=null ? SnapUtils.doubleValue(aValue) : null;
-                setValueX(valX, anIndex);
-                break;
-            case Y:
-                Double valY = aValue!=null ? SnapUtils.doubleValue(aValue) : null;
-                setValueY(valY, anIndex);
-                break;
-            case Z:
-                Double valZ = aValue!=null ? SnapUtils.doubleValue(aValue) : null;
-                setValueZ(valZ, anIndex);
-                break;
-            case I:
-                System.err.println("Trace.setValueForChannel: Shouldn't set value for index channel");
-                break;
-            case C:
-                String valC = aValue!=null ? SnapUtils.stringValue(aValue) : null;
-                setValueC(valC, anIndex);
-                break;
-            default: throw new RuntimeException("Trace.getValueForChannelAndIndex: Unknown channel: " + aChan);
-        }
+        // Forward to DataSet
+        _dataSet.setValueForChannel(aValue, aChan, anIndex);
 
-        // Get point
+        // Get new point
         DataPoint dataPoint2 = getPoint(anIndex);
         firePropChange(Point_Prop, dataPoint, dataPoint2, anIndex);
+        clearCachedData();
     }
 
     /**

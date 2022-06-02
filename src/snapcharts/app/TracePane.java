@@ -144,7 +144,7 @@ public class TracePane extends DocItemPane<DocItemTrace> {
         // Set TableView row & col count
         int pointCount = trace.getPointCount();
         int rowCount = pointCount + 1;
-        int colCount = dataType.getChannelCount();
+        int colCount = dataType.getChannelCount() + 1;
         _sheetView.setMinRowCount(rowCount);
         _sheetView.setMinColCount(colCount);
 
