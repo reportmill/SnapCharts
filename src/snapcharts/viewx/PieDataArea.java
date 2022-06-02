@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import snap.geom.*;
 import snap.gfx.*;
 import snap.util.*;
+import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
@@ -73,13 +74,14 @@ public class PieDataArea extends DataArea {
     public double[] getAngles()
     {
         Trace trace = getTrace();
-        int count = trace.getPointCount();
+        DataSet dataSet = trace.getProcessedData();
+        int pointCount = dataSet.getPointCount();
 
         // Get/set ratios, angles
-        double[] ratios = getRatiosYtoTotalY(trace);
-        double[] angles = new double[count];
-        for (int i = 0; i < count; i++)
-            angles[i] = Math.round(ratios[i] * 360);
+        double[] ratiosY = getRatiosYtoTotalY(dataSet);
+        double[] angles = new double[pointCount];
+        for (int i = 0; i < pointCount; i++)
+            angles[i] = Math.round(ratiosY[i] * 360);
         return angles;
     }
 
@@ -89,11 +91,12 @@ public class PieDataArea extends DataArea {
     protected Wedge[] getWedges()
     {
         // If wedges cached, just return
-        if (_wedges!=null) return _wedges;
+        if (_wedges != null) return _wedges;
 
         // Get ratios and angles
         Trace trace = getTrace();
-        double[] ratios = getRatiosYtoTotalY(trace);
+        DataSet dataSet = trace.getProcessedData();
+        double[] ratios = getRatiosYtoTotalY(dataSet);
         double[] angles = getAngles();
 
         // Get area bounds
@@ -110,14 +113,15 @@ public class PieDataArea extends DataArea {
         _pieY = areaY + Math.round((areaH - _pieD)/2);
 
         // Iterate over angles and create/configure wedges
-        Wedge wedges[] = new Wedge[angles.length];
+        Wedge[] wedges = new Wedge[angles.length];
         double start = 0;
-        for (int i = 0; i < angles.length; i++) { double angle = angles[i];
+        for (int i = 0; i < angles.length; i++) {
+            double angle = angles[i];
             Wedge wedge = wedges[i] = new Wedge();
             wedge._start = start;
             wedge._angle = angle;
             String text = trace.getString(i);
-            if (text!=null && text.length()>0)
+            if (text != null && text.length() > 0)
                 wedge._text = text + ": " + _fmt.format(ratios[i]);
             start += angle;
         }
@@ -144,7 +148,7 @@ public class PieDataArea extends DataArea {
     protected void paintDataArea(Painter aPntr)
     {
         // Get wedges and other paint info
-        Wedge wedges[] = getWedges();
+        Wedge[] wedges = getWedges();
         int selIndex = getSelPointIndex();
         int targIndex = getTargPointIndex();
         int selIndexLast = getSelPointLastIndex();
@@ -399,25 +403,23 @@ public class PieDataArea extends DataArea {
     /**
      * Returns an array of trace ratios.
      */
-    private static double[] getRatiosYtoTotalY(Trace aTrace)
+    private static double[] getRatiosYtoTotalY(DataSet aDataSet)
     {
-        double total = getTotalY(aTrace);
-        int count = aTrace.getPointCount();
-        double ratios[] = new double[count];
-        for (int i=0;i<count;i++) ratios[i] = aTrace.getY(i)/total;
-        return ratios;
-    }
+        // Get pointCount
+        int pointCount = aDataSet.getPointCount();
 
-    /**
-     * Returns the total of all values.
-     */
-    private static double getTotalY(Trace aTrace)
-    {
-        double total = 0;
-        int count = aTrace.getPointCount();
-        for (int i=0; i<count; i++)
-            total += aTrace.getY(i);
-        return total;
+        // Get totalY
+        double totalY = 0;
+        for (int i = 0; i < pointCount; i++)
+            totalY += aDataSet.getY(i);
+
+        // Create/load ratios of Y to TotalY for each DataSet point
+        double[] ratios = new double[pointCount];
+        for (int i = 0; i < pointCount; i++)
+            ratios[i] = aDataSet.getY(i) / totalY;
+
+        // Return
+        return ratios;
     }
 
     /**

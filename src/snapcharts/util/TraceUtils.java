@@ -1,6 +1,7 @@
 package snapcharts.util;
 import snap.util.ListSel;
 import snap.util.SnapUtils;
+import snapcharts.data.DataPoint;
 import snapcharts.data.DataUtils;
 import snapcharts.model.Trace;
 import snapcharts.data.DataType;
@@ -26,50 +27,53 @@ public class TraceUtils {
     /**
      * Replaces data for given Trace and selection.
      */
-    public static void replaceDataForSelection(Trace aDatatSet, ListSel aSel, String[][] theCells)
+    public static void replaceDataForSelection(Trace aTrace, ListSel aSel, String[][] theCells)
     {
-        DataType dataType = aDatatSet.getDataType();
+        DataType dataType = aTrace.getDataType();
         int[] indexes = aSel.getIndexes();
 
         // Remove currently selected cells
-        for (int i=indexes.length-1; i>=0; i--) {
-            int ind = indexes[i];
-            if (ind<aDatatSet.getPointCount())
-                aDatatSet.removePoint(ind);
+        for (int i = indexes.length-1; i >= 0; i--) {
+            int index = indexes[i];
+            if (index < aTrace.getPointCount())
+                aTrace.removePoint(index);
         }
 
         // Update DataType
-        if (dataType==DataType.UNKNOWN || aDatatSet.getPointCount()==0) {
+        if (dataType == DataType.UNKNOWN || aTrace.getPointCount() == 0)
             dataType = DataUtils.guessDataType(theCells);
-        }
 
         // Add Cells
         for (String[] line : theCells) {
 
             if (line.length == 0) continue;
 
-            // Get vals: If only one val on line it's Y, X is index
-            String valX = line.length > 1 ? line[0] : null;
-            String valY = line.length > 1 ? line[1] : line[0];
+            // Get x/y val strings: If only one val on line it's Y, X is index
+            String xStr = line.length > 1 ? line[0] : null;
+            String yStr = line.length > 1 ? line[1] : line[0];
 
+            // Get x/y/c vals
+            Double valX = null;
+            Double valY = null;
+            String valC = null;
+
+            // Get DataPoint for DataType
             switch (dataType) {
 
                 case IY: {
-                    double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    aDatatSet.addPointXYZC(null, y, null, null);
+                    valY = yStr != null ? SnapUtils.doubleValue(yStr) : 0;
                     break;
                 }
 
                 case XY: {
-                    double x = valX != null ? SnapUtils.doubleValue(valX) : 0;
-                    double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    aDatatSet.addPointXYZC(x, y, null, null);
+                    valX = xStr != null ? SnapUtils.doubleValue(xStr) : 0;
+                    valY = yStr != null ? SnapUtils.doubleValue(yStr) : 0;
                     break;
                 }
 
                 case CY: {
-                    double y = valY != null ? SnapUtils.doubleValue(valY) : 0;
-                    aDatatSet.addPointXYZC(null, y, null, valX);
+                    valY = yStr != null ? SnapUtils.doubleValue(yStr) : 0;
+                    valC = xStr;
                     break;
                 }
 
@@ -77,6 +81,10 @@ public class TraceUtils {
                     System.out.println("TraceUtils.replaceData: Unsupported data type: " + dataType);
                     return;
             }
+
+            // Create/add data point
+            DataPoint dataPoint = new DataPoint(valX, valY, null, valC);
+            aTrace.addPoint(dataPoint, aTrace.getPointCount());
         }
     }
 }

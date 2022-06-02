@@ -8,6 +8,7 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.Poly3D;
 import snap.gfx3d.Shape3D;
+import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 
@@ -56,7 +57,8 @@ public class Line3DDataArea extends DataArea3D {
     protected Shape3D addLine3D(Trace aTrace, int anIndex, int aCount, double prefDepth)
     {
         // Create 2d path
-        Shape path = createDataPath(aTrace);
+        DataSet dataSet = aTrace.getProcessedData();
+        Shape path = createDataPath(dataSet);
         Color dataStrokeColor = aTrace.getLineColor();
         Color dataFillColor = dataStrokeColor.blend(Color.CLEARWHITE, .25);
 
@@ -74,12 +76,12 @@ public class Line3DDataArea extends DataArea3D {
     }
 
     /**
-     * Returns Path2D for painting Trace.
+     * Returns Path2D for painting DataSet.
      */
-    protected Shape createDataPath(Trace aTrace)
+    protected Shape createDataPath(DataSet aDataSet)
     {
         // Create/add path for trace
-        int pointCount = aTrace.getPointCount();
+        int pointCount = aDataSet.getPointCount();
         Path2D path = new Path2D();
 
         // Get area bounds
@@ -95,8 +97,8 @@ public class Line3DDataArea extends DataArea3D {
         for (int j = 0; j < pointCount; j++) {
 
             // Get data point in display coords
-            double dataX = aTrace.getX(j);
-            double dataY = aTrace.getY(j);
+            double dataX = aDataSet.getX(j);
+            double dataY = aDataSet.getY(j);
             Point dispXY = dataToView(dataX, dataY);
 
             // Clamp to area/axis bounds

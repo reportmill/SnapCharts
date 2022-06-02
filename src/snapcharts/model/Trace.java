@@ -456,16 +456,6 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the number of rows.
-     */
-    public int getRowCount()  { return _dataSet.getRowCount(); }
-
-    /**
-     * Returns the number of columns.
-     */
-    public int getColCount()  { return _dataSet.getColCount(); }
-
-    /**
      * Returns the number of points.
      */
     public int getPointCount()
@@ -526,84 +516,13 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Adds a point for X/Y/Z/C values.
-     */
-    public void addPointXYZC(Double aX, Double aY, Double aZ, String aC)
-    {
-        DataPoint dpnt = new DataPoint(aX, aY, aZ, aC);
-        addPoint(dpnt, getPointCount());
-    }
-
-    /**
-     * Returns the X value at given index.
-     */
-    public double getX(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getX(anIndex);
-    }
-
-    /**
-     * Returns the Y value at given index.
-     */
-    public double getY(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getY(anIndex);
-    }
-
-    /**
-     * Returns the Z value at given index.
-     */
-    public double getZ(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getZ(anIndex);
-    }
-
-    /**
-     * Returns the C value at given index.
-     */
-    public String getC(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getC(anIndex);
-    }
-
-    /**
-     * Returns the X value at given index (null if not set).
-     */
-    public Double getValueX(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getValueX(anIndex);
-    }
-
-    /**
-     * Returns the Y value at given index (null if not set).
-     */
-    public Double getValueY(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getValueY(anIndex);
-    }
-
-    /**
-     * Returns the Z value at given index (null if not set).
-     */
-    public Double getValueZ(int anIndex)
-    {
-        DataSet procData = getProcessedData();
-        return procData.getValueZ(anIndex);
-    }
-
-    /**
      * Return data point as a string (either C or X).
      */
     public String getString(int anIndex)
     {
         // If point string is set, just return it
-        String str = getC(anIndex);
+        DataSet procData = getProcessedData();
+        String str = procData.getC(anIndex);
         if(str != null)
             return str;
 
@@ -619,7 +538,7 @@ public class Trace extends ChartPart {
             return String.valueOf(startValue + anIndex);
 
         // Otherwise return x val (as int, if whole number)
-        double val = getX(anIndex);
+        double val = procData.getX(anIndex);
         if (val == (int) val)
             return String.valueOf((int) val);
         return DataUtils.formatValue(val);
@@ -712,7 +631,8 @@ public class Trace extends ChartPart {
     {
         // If already set, just return
         int index = (doLogX && doLogY) ? 2 : doLogX ? 0 : 1;
-        if (_logData != null && _logData[index] != null) return _logData[index];
+        if (_logData != null && _logData[index] != null)
+            return _logData[index];
 
         // Make sure LogData array is present
         if (_logData == null)
@@ -767,7 +687,7 @@ public class Trace extends ChartPart {
      */
     public boolean isClear()
     {
-        if (getName()!=null && getName().length()>0)
+        if (getName() != null && getName().length() > 0)
             return false;
         return _dataSet.isClear();
     }
@@ -790,20 +710,30 @@ public class Trace extends ChartPart {
     public boolean isBorderSupported()  { return false; }
 
     /**
-     * Standard toString implementation.
+     * Standard toStringProps implementation.
      */
     @Override
-    public String toString()
+    public String toStringProps()
     {
-        DataType dataType = getDataType();
-        String str = "Trace { " + "Name=" + getName() + ", DataType=" + dataType + ", PointCount=" + getPointCount();
+        // Do normal version
+        String superProps = super.toStringProps();
+        StringBuffer sb = new StringBuffer(superProps).append(superProps.length() > 0 ? ", " : "");
+
+        // Add DataType, PointCount
+        sb.append("DataType=").append(getDataType());
+        sb.append(", PointCount=").append(getPointCount());
+
+        // Add DataChan Min/Max
         DataSet dataSet = getDataSet();
-        DataChan[] dataChans = dataType.getChannels();
+        DataChan[] dataChans = getDataType().getChannels();
         for (DataChan chan : dataChans) {
             MinMax minMax = dataSet.getMinMax(chan);
-            str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
+            sb.append(", Min").append(chan).append('=').append(minMax.getMin());
+            sb.append(", Max").append(chan).append('=').append(minMax.getMax());
         }
-        return str + '}';
+
+        // Return
+        return sb.toString();
     }
 
     /**

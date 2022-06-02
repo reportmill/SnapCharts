@@ -4,13 +4,11 @@
 package snapcharts.model;
 import java.util.*;
 import java.util.stream.Stream;
-
 import snap.geom.Insets;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.util.*;
 import snapcharts.data.DataSet;
-import snapcharts.data.DataType;
 import snapcharts.util.MinMax;
 
 /**
@@ -81,25 +79,6 @@ public class TraceList extends ChartPart {
     public int getTraceCount()
     {
         return _traceList.size();
-    }
-
-    /**
-     * Sets the number of traces.
-     */
-    public void setTraceCount(int aValue)
-    {
-        // Ignore silly values
-        if (aValue < 1 || aValue > 20) return;
-
-        // If value larger than cound, create empty trace
-        while (aValue > getTraceCount()) {
-            Trace trace = addTraceForNameAndValues(null, (Double) null);
-            trace.setPointCount(getPointCount());
-        }
-
-        // If value smaller than count, remove trace
-        while (aValue < getTraceCount())
-            removeTrace(getTraceCount() - 1);
     }
 
     /**
@@ -273,23 +252,6 @@ public class TraceList extends ChartPart {
     public double getMaxForAxis(AxisType anAxisType)
     {
         return getMinMaxForAxis(anAxisType).getMax();
-    }
-
-    /**
-     * Adds a new trace for given name and values.
-     */
-    public Trace addTraceForNameAndValues(String aName, Double ... theVals)
-    {
-        // Create new Trace, set Name and add Y values
-        Trace trace = new Trace();
-        trace.setName(aName);
-        trace.setDataType(DataType.IY);
-        for (Double val : theVals)
-            trace.addPointXYZC(null, val, null, null);
-
-        // Add Trace and return
-        addTrace(trace);
-        return trace;
     }
 
     /**

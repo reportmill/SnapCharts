@@ -891,4 +891,27 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         // Return this part
         return this;
     }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        String className = getClass().getSimpleName();
+        String propStrings = toStringProps();
+        return className + "{ " + propStrings + " }";
+    }
+
+    /**
+     * Standard toString implementation.
+     */
+    public String toStringProps()
+    {
+        StringBuffer sb = new StringBuffer();
+        String name = getName();
+        if (name != null)
+            sb.append("Name=").append(getName());
+        return sb.toString();
+    }
 }
