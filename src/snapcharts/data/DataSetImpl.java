@@ -36,6 +36,15 @@ public class DataSetImpl extends DataSet {
     {
         setDataType(aDataType);
 
+        // Handle XYZZ special
+        if (aDataType == DataType.XYZZ) {
+            double[] dataX = (double[]) theValues[0];
+            double[] dataY = (double[]) theValues[1];
+            double[] dataZ = (double[]) theValues[2];
+            DataSetUtils.addDataPointsXYZZ(this, dataX, dataY, dataZ);
+            return;
+        }
+
         DataChan[] channels = aDataType.getChannelsXY();
         for (int i = 0; i < channels.length; i++) {
             DataChan chan = channels[i];

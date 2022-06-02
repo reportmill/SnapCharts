@@ -3,6 +3,7 @@
  */
 package snapcharts.notebook;
 import snapcharts.data.DataSet;
+import snapcharts.data.DataType;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.Chart;
 
@@ -42,5 +43,29 @@ public class ProcessorUtils {
 
         // Handle anything
         return aValue.toString();
+    }
+
+    /**
+     * Returns a sample XY DataSet.
+     */
+    public static DataSet getSampleDataSetXY()
+    {
+        double[] dataX = new double[] { 1, 2, 3, 4 };
+        double[] dataY = new double[] { 1, 4, 3, 6 };
+        return DataSet.newDataSetForTypeAndValues(DataType.XY, dataX, dataY);
+    }
+
+    /**
+     * Returns a sample XYZZ DataSet.
+     */
+    public static DataSet getSampleDataSetXYZZ()
+    {
+        double[] dataX = new double[] { 1, 2, 3, 4 };
+        double[] dataY = new double[] { 1, 2, 3, 4 };
+        double[] dataZ = new double[dataX.length * dataY.length];
+        for (int i = 0; i < dataX.length; i++)
+            for (int j = 0; j < dataY.length; j++)
+                dataZ[i * dataY.length + j] = dataX[i] * dataY[j];
+        return DataSet.newDataSetForTypeAndValues(DataType.XYZZ, dataX, dataY, dataZ);
     }
 }

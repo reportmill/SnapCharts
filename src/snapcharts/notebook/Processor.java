@@ -225,10 +225,8 @@ public class Processor implements KeyChain.FunctionHandler {
         }
 
         // Create DataSet
-        DataSet dataSet = DataSet.newDataSet();
+        DataSet dataSet = DataSet.newDataSetForTypeAndValues(DataType.XYZZ, dataX, dataY, dataZ);
         dataSet.setName(exprKeyChain.toString());
-        dataSet.setDataType(DataType.XYZZ);
-        DataSetUtils.addDataPointsXYZZ(dataSet, dataX, dataY, dataZ);
 
         // Return
         return dataSet;
@@ -239,8 +237,10 @@ public class Processor implements KeyChain.FunctionHandler {
      */
     public Chart plot(Object anObj, KeyChain aKeyChain)
     {
-        // Get DataSet
+        // Get DataSet (if none, use sample DataSet)
         DataSet dataSet = dataSet(anObj, aKeyChain);
+        if (dataSet == null)
+            dataSet = ProcessorUtils.getSampleDataSetXY();
 
         // Create Trace for DataSet
         Trace trace = new Trace();
@@ -270,8 +270,10 @@ public class Processor implements KeyChain.FunctionHandler {
      */
     public Chart plot3D(Object anObj, KeyChain aKeyChain)
     {
-        // Get DataSet
+        // Get DataSet (if none, use sample DataSet)
         DataSet dataSet = dataSet(anObj, aKeyChain);
+        if (dataSet == null)
+            dataSet = ProcessorUtils.getSampleDataSetXYZZ();
 
         // Create Trace for DataSet
         Trace trace = new Trace();
