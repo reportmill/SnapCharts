@@ -763,24 +763,6 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the minimum Z value in this trace.
-     */
-    public double getMinZ()
-    {
-        DataSet procData = getProcessedData();
-        return procData.getMinZ();
-    }
-
-    /**
-     * Returns the maximum Z value in this trace.
-     */
-    public double getMaxZ()
-    {
-        DataSet procData = getProcessedData();
-        return procData.getMaxZ();
-    }
-
-    /**
      * Returns whether this trace is clear (no name and no values).
      */
     public boolean isClear()

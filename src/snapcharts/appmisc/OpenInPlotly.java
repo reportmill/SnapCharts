@@ -9,6 +9,7 @@ import snap.util.FileUtils;
 import snap.util.JSONNode;
 import snap.util.SnapUtils;
 import snapcharts.data.DataChan;
+import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
 
@@ -278,11 +279,6 @@ public class OpenInPlotly {
      */
     private void writeTrace(Trace aTrace, int anIndex)
     {
-        // Get Trace info
-        int pointCount = aTrace.getPointCount();
-        DataType dataType = aTrace.getDataType();
-        int chanCount = dataType.getChannelCount();
-
         // Create new TraceJSON
         JSONNode traceJS = new JSONNode();
 
@@ -343,6 +339,12 @@ public class OpenInPlotly {
             }
         }
 
+        // Get Trace DataSet info
+        DataSet dataSet = aTrace.getProcessedData();
+        int pointCount = dataSet.getPointCount();
+        DataType dataType = dataSet.getDataType();
+        int chanCount = dataType.getChannelCount();
+
         // If ChartType.CONTOUR, add: colorscale: 'Jet'
         if (chartType == ChartType.CONTOUR) {
 
@@ -359,9 +361,9 @@ public class OpenInPlotly {
             traceJS.addKeyValue("ncontours", "16");
 
             JSONNode contourJS = new JSONNode("contours", null);
-            contourJS.addKeyValue("start", aTrace.getMinZ());
-            contourJS.addKeyValue("end", aTrace.getMaxZ());
-            contourJS.addKeyValue("size", (aTrace.getMaxZ() - aTrace.getMinZ()) / 16);
+            contourJS.addKeyValue("start", dataSet.getMinZ());
+            contourJS.addKeyValue("end", dataSet.getMaxZ());
+            contourJS.addKeyValue("size", (dataSet.getMaxZ() - dataSet.getMinZ()) / 16);
             traceJS.addKeyValue("contours", contourJS);
         }
 
@@ -376,15 +378,15 @@ public class OpenInPlotly {
             traceJS.addKeyValue("ncontours", "16");
 
             JSONNode contourJS = new JSONNode("contours", null);
-            contourJS.addKeyValue("start", aTrace.getMinZ());
-            contourJS.addKeyValue("end", aTrace.getMaxZ());
-            contourJS.addKeyValue("size", (aTrace.getMaxZ() - aTrace.getMinZ()) / 16);
+            contourJS.addKeyValue("start", dataSet.getMinZ());
+            contourJS.addKeyValue("end", dataSet.getMaxZ());
+            contourJS.addKeyValue("size", (dataSet.getMaxZ() - dataSet.getMinZ()) / 16);
             traceJS.addKeyValue("contours", contourJS);
 
             // Set intensity to Z values
             JSONNode intensityJS = new JSONNode();
             for (int i = 0; i < pointCount; i++) {
-                Object val = aTrace.getZ(i);
+                Object val = dataSet.getZ(i);
                 intensityJS.addValue(val);
             }
             traceJS.addKeyValue("intensity", intensityJS);
@@ -412,7 +414,7 @@ public class OpenInPlotly {
 
             // Iterate over values and add to valsJS
             for (int j = 0; j < pointCount; j++) {
-                Object val = aTrace.getValueForChannel(dataChan, j);
+                Object val = dataSet.getValueForChannel(dataChan, j);
                 valsJS.addValue(val);
             }
         }
@@ -427,8 +429,9 @@ public class OpenInPlotly {
         }
 
         // If Y axis is Y1/Y2/Y3, swap that in
-        if (aTrace.getAxisTypeY() != AxisType.Y)
-            traceJS.addKeyValue("yaxis", aTrace.getAxisTypeY().toString().toLowerCase());
+        AxisType axisTypeY = aTrace.getAxisTypeY();
+        if (axisTypeY != AxisType.Y)
+            traceJS.addKeyValue("yaxis", axisTypeY.toString().toLowerCase());
 
         // Write trace
         _sb.append("var trace").append(anIndex).append(" = ");

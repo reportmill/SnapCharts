@@ -4,6 +4,7 @@ import snap.gfx.Color;
 import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
+import snapcharts.data.DataSet;
 import snapcharts.model.Chart;
 import snapcharts.model.ContourAxis;
 import snapcharts.modelx.ContourStyle;
@@ -101,8 +102,9 @@ public class ContourHelper {
 
         // Get contour data min/max
         Trace trace = _chartHelper.getTraceList().getTrace(0);
-        double zmin = trace.getMinZ();
-        double zmax = trace.getMaxZ();
+        DataSet dataSet = trace.getProcessedData();
+        double zmin = dataSet.getMinZ();
+        double zmax = dataSet.getMaxZ();
 
         // Get contour count and delta
         int count = getContourCount();
@@ -247,8 +249,9 @@ public class ContourHelper {
 
         // Get contour data min/max
         Trace trace = _chartHelper.getTraceList().getTrace(0);
-        double zmin = trace.getMinZ();
-        double zmax = trace.getMaxZ();
+        DataSet dataSet = trace.getProcessedData();
+        double zmin = dataSet.getMinZ();
+        double zmax = dataSet.getMaxZ();
         double rangeLength = (zmax - zmin) / rangeCount;
 
         // Iterate over ranges until we find containing range

@@ -79,9 +79,8 @@ public class Contour3DDataArea extends DataArea3D {
         double depth = getAxisBoxPrefDepth();
 
         // Get contour data min/max
-        Trace trace = _chartHelper.getTraceList().getTrace(0);
-        double zmin = trace.getMinZ();
-        double zmax = trace.getMaxZ();
+        double zmin = dataSet.getMinZ();
+        double zmax = dataSet.getMaxZ();
 
         // Iterate over triangles and add shape for each
         int pointCount = mesh.getPointCount();
