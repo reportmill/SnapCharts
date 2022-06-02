@@ -4,6 +4,7 @@ import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.data.DataChan;
+import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
 import java.text.DecimalFormat;
@@ -14,7 +15,7 @@ import java.text.DecimalFormat;
 public class ToolTipView extends ColView {
     
     // The ChartView
-    private ChartView _chartView;
+    private ChartView  _chartView;
     
     // A runnable to reload contents
     private Runnable  _reloadLater, _reloadRun = () -> { reloadContentsNow(); _reloadLater = null; };
@@ -28,7 +29,8 @@ public class ToolTipView extends ColView {
     public ToolTipView(ChartView aCV)
     {
         _chartView = aCV;
-        setManaged(false); setPickable(false);
+        setManaged(false);
+        setPickable(false);
     }
 
     /**
@@ -36,7 +38,7 @@ public class ToolTipView extends ColView {
      */
     public void reloadContents()
     {
-        if (_reloadLater==null)
+        if (_reloadLater == null)
             getEnv().runLater(_reloadLater = _reloadRun);
     }
 
@@ -58,9 +60,8 @@ public class ToolTipView extends ColView {
         TracePoint dataPoint = _chartView.getTargDataPoint();
         Trace trace = dataPoint.getTrace();
 
-        // Remove children and reset opacity, padding and spacing
+        // Remove children and reset padding
         removeChildren();
-        setOpacity(1);
         setPadding(5,5,10,5);
 
         // Create RowView: BulletView
@@ -83,13 +84,15 @@ public class ToolTipView extends ColView {
             pointIndex = pointIndex % pointCount;
         }
 
-        // Add children
-        int chanCount = trace.getDataType().getChannelCount();
-        for (int i=0; i<chanCount; i++) {
+        // Add row entry for each DataSet.DataType.DataChan
+        DataSet dataSet = trace.getProcessedData();
+        DataType dataType = dataSet.getDataType();
+        int dataChanCount = dataType.getChannelCount();
+        for (int i = 0; i < dataChanCount; i++) {
 
             // Get text
-            DataChan chan = trace.getDataType().getChannel(i);
-            Object val = trace.getValueForChannel(chan, pointIndex);
+            DataChan chan = dataType.getChannel(i);
+            Object val = dataSet.getValueForChannel(chan, pointIndex);
             String valStr = val instanceof String ? (String) val : _fmt.format(val);
             String text = chan + ": " + valStr;
 
@@ -104,19 +107,19 @@ public class ToolTipView extends ColView {
         double newWidth = getPrefWidth();
         double newHeight = getPrefHeight();
         setSize(newWidth, newHeight);
-        setX(getX() - Math.round(newWidth/2 - oldWidth/2));
-        setY(getY() - Math.round(newHeight/2 - oldHeight/2));
+        setX(getX() - Math.round(newWidth / 2 - oldWidth / 2));
+        setY(getY() - Math.round(newHeight / 2 - oldHeight / 2));
 
         // Create background shape
-        RoundRect shp0 = new RoundRect(1,1,newWidth-2,newHeight-8,3);
+        RoundRect shp0 = new RoundRect(1,1,newWidth - 2,newHeight - 8,3);
         double midx = shp0.getMidX();
-        Shape shp1 = new Polygon(midx-6, newHeight-8, midx+6, newHeight-8, midx, newHeight-2);
+        Shape shp1 = new Polygon(midx - 6, newHeight - 8, midx + 6, newHeight - 8, midx, newHeight-2);
         Shape shp2 = Shape.add(shp0, shp1);
 
         // Create background shape view and add
         ShapeView shpView = new ShapeView(shp2);
         shpView.setManaged(false);
-        shpView.setPrefSize(newWidth,newHeight+10);
+        shpView.setPrefSize(newWidth,newHeight + 10);
         shpView.setFill(Color.get("#F8F8F8DD"));
         shpView.setBorder(color,1); //shpView.setEffect(new ShadowEffect());
         addChild(shpView, 0);
@@ -124,7 +127,7 @@ public class ToolTipView extends ColView {
         // Calc new location
         ChartHelper chartHelper = _chartView.getChartHelper();
         Point targPoint = chartHelper.getViewXYForDataPoint(_chartView, dataPoint);
-        double ttipX = targPoint.x - getWidth()/2;
+        double ttipX = targPoint.x - getWidth() / 2;
         double ttipY = targPoint.y - getHeight() - 8;
 
         // If outside DataView, just return
@@ -156,15 +159,13 @@ public class ToolTipView extends ColView {
     public void showWindowAt(double aX, double aY)
     {
         // If not onscreen, add and return
-        if (getParent()==null) {
-            setXY(aX, aY);
+        if (getParent() == null)
             ViewUtils.addChild(_chartView, this);
-            return;
-        }
 
-        // Otherwise animate move
-        //getAnimCleared(300).setX(aX).setY(aY).play();
+        // Set location, reset opacity and make visible
         setXY(aX, aY);
+        setOpacity(1);
+        setVisible(true);
     }
 
     /**
@@ -172,7 +173,13 @@ public class ToolTipView extends ColView {
      */
     public void hideWindow()
     {
-        if (getParent()==null) return;
-        getAnimCleared(300).setOpacity(0).setOnFinish(a -> ViewUtils.removeChild(_chartView, this)).play();
+        // If not showing, just return
+        if (getParent() == null) return;
+
+        // Register anim to hide this view
+        ViewAnim anim = getAnimCleared(300);
+        anim.setOpacity(0);
+        anim.setOnFinish(a -> setVisible(false));
+        anim.play();
     }
 }
