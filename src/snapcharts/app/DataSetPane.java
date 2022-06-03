@@ -6,10 +6,7 @@ import snap.util.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.appmisc.SheetView;
-import snapcharts.data.DataChan;
-import snapcharts.data.DataSet;
-import snapcharts.data.DataType;
-import snapcharts.data.DataUtils;
+import snapcharts.data.*;
 
 /**
  * This ViewOwner subclass provides display and editing of a DataSet.
@@ -17,23 +14,22 @@ import snapcharts.data.DataUtils;
 public class DataSetPane extends ViewOwner {
 
     // The DataSet
-    private DataSet  _dataSet;
+    protected DataSet  _dataSet;
 
     // The SheetView
-    private SheetView  _sheetView;
+    protected SheetView  _sheetView;
 
     // Constants for actions
     private final String Cut_Action = "CutAction";
     private final String Paste_Action = "PasteAction";
     private final String SelectAll_Action = "SelectAllAction";
-    private final String Delete_Action = "DeleteAction";
+    //private final String Delete_Action = "DeleteAction";
 
     /**
      * Constructor.
      */
     public DataSetPane(DataSet aDataSet)
     {
-
         setDataSet(aDataSet);
     }
 
@@ -48,9 +44,6 @@ public class DataSetPane extends ViewOwner {
     protected void setDataSet(DataSet aDataSet)
     {
         _dataSet = aDataSet;
-
-        // Start listening to changes
-        //_dataSet.addPropChangeListener(pc -> dataSetDidChange(pc));
     }
 
     /**
@@ -71,12 +64,8 @@ public class DataSetPane extends ViewOwner {
         // Get cells
         String[][] cells = DataUtils.getCellData(str);
         if (cells != null) {
-            DataSet dataSet = getDataSet();
             ListSel sel = _sheetView.getSel();
-
-            // FIX THIS!!!
-            ViewUtils.beep();
-            //TraceUtils.replaceDataForSelection(dataSet, sel, cells);
+            replaceDataForSelection(sel, cells);
         }
 
         // Reset
@@ -86,7 +75,7 @@ public class DataSetPane extends ViewOwner {
     /**
      * Called to delete selection.
      */
-    private void delete()
+    public void delete()
     {
         // Just return if editing
         if (_sheetView.getEditingCell() != null) return;
@@ -94,12 +83,8 @@ public class DataSetPane extends ViewOwner {
         // Get selection (just return if empty)
         ListSel sel = _sheetView.getSel(); if (sel.isEmpty()) return;
 
-        // Get DataSet
-        DataSet dataSet = getDataSet();
-
-        // FIX THIS!!!
-        ViewUtils.beep();
-        //TraceUtils.deleteDataForSelection(dataSet, sel);
+        // Delete data for selection
+        deleteDataForSelection(sel);
 
         // Reset selection
         _sheetView.setSelIndex(sel.getMin()-1);
@@ -117,14 +102,12 @@ public class DataSetPane extends ViewOwner {
         _sheetView.setColConfigure(c -> configureColumn(c));
         _sheetView.setCellConfigure(c -> configureCell(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
-        //setFirstFocus(_sheetView);
 
         // Add PasteAction
         addKeyActionHandler(Cut_Action, "Shortcut+X");
         addKeyActionHandler(Paste_Action, "Shortcut+V");
         addKeyActionHandler(SelectAll_Action, "Shortcut+A");
-        //addKeyActionFilter(Delete_Action, "DELETE");
-        //addKeyActionFilter(Delete_Action, "BACKSPACE");
+        //addKeyActionFilter(Delete_Action, "DELETE") / (Delete_Action, "BACKSPACE");
     }
 
     /**
@@ -226,7 +209,7 @@ public class DataSetPane extends ViewOwner {
         }
 
         // Get/set Cell value/text
-        Object val = dataSet.getValueForChannelIndex(col, row);
+        Object val = getValueForChannelIndex(col, row);
         String valStr = SnapUtils.stringValue(val);
         aCell.setText(valStr);
         aCell.setAlignX(HPos.RIGHT);
@@ -237,9 +220,6 @@ public class DataSetPane extends ViewOwner {
      */
     private void editingCellChanged(PropChange aPC)
     {
-        // Get DataSet info
-        DataSet dataSet = getDataSet();
-
         // If cell that stopped editing (just return if null)
         ListCell cell = (ListCell) aPC.getOldValue(); if (cell == null) return;
 
@@ -250,7 +230,7 @@ public class DataSetPane extends ViewOwner {
         expandDataSetSize(row);
 
         // Set value
-        dataSet.setValueForChannelIndex(text, col, row);
+        setValueForChannelIndex(text, col, row);
 
         // Update row and trim DataSet in case dataSet/points were cleared
         _sheetView.updateItems(cell.getItem());
@@ -283,16 +263,39 @@ public class DataSetPane extends ViewOwner {
     }
 
     /**
-     * Called when DataSet has prop change.
+     * Returns the value for given channel index and record index.
      */
-    private void dataSetDidChange(PropChange aPC)
+    public Object getValueForChannelIndex(int aChanIndex, int anIndex)
     {
-        String propName = aPC.getPropName();
+        // Get DataChan for ChanIndex
+        DataType dataType = _dataSet.getDataType();
+        DataChan chan = dataType.getChannel(aChanIndex);
 
-        // Handle DataSet.DataType change
-        if (propName == DataSet.DataType_Prop) {
-            _sheetView.setMinColCount(0);
-            resetLater();
-        }
+        // Return DataSet value for channel and index
+        return _dataSet.getValueForChannel(chan, anIndex);
+    }
+
+    /**
+     * Sets given value for given channel index and record index.
+     */
+    public void setValueForChannelIndex(Object aValue, int aChanIndex, int anIndex)
+    {
+        ViewUtils.beep();
+    }
+
+    /**
+     * Deletes data for given Trace and selection.
+     */
+    public void deleteDataForSelection(ListSel aSel)
+    {
+        ViewUtils.beep();
+    }
+
+    /**
+     * Replaces data for given Trace and selection.
+     */
+    public void replaceDataForSelection(ListSel aSel, String[][] theCells)
+    {
+        ViewUtils.beep();
     }
 }

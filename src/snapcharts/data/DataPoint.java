@@ -2,11 +2,12 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.util.SnapUtils;
 
 /**
  * A class to represent a data point.
  */
-public class DataPoint {
+public class DataPoint implements Cloneable {
 
     // The X/Y/Z, if cached
     protected Double  _x, _y, _z;
@@ -134,6 +135,39 @@ public class DataPoint {
             return index;
         int colCount = _dataSet.getColCount(); if (colCount == 0) return index;
         return index / colCount;
+    }
+
+    /**
+     * Returns a copy of this point with new value for given channel.
+     */
+    public DataPoint copyForChannelValue(DataChan aChan, Object aValue)
+    {
+        // Do normal clone
+        DataPoint clone = clone();
+
+        // Change clone channel value
+        switch (aChan) {
+            case X: clone._x = SnapUtils.getDouble(aValue); break;
+            case Y: clone._y = SnapUtils.getDouble(aValue); break;
+            case Z: clone._z = SnapUtils.getDouble(aValue); break;
+            case C: clone._c = SnapUtils.stringValue(aValue); break;
+            default: System.err.println("DataPoint.copyForChannelValue: Unsupported channel: " + aChan);
+        }
+
+        // Return
+        return clone;
+    }
+
+    /**
+     * Standard clone implementation.
+     */
+    @Override
+    public DataPoint clone()
+    {
+        DataPoint clone;
+        try { clone = (DataPoint) super.clone(); }
+        catch (Exception e) { throw new RuntimeException(e); }
+        return clone;
     }
 
     /**

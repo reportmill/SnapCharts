@@ -211,6 +211,8 @@ public class SheetView extends TableView<Object> {
         configureColumns();
 
         // Set last column to grow
+        for (TableCol tableCol : getCols())
+            tableCol.setGrowWidth(false);
         TableCol lastCol = getCol(getColCount() - 1);
         lastCol.setGrowWidth(true);
 

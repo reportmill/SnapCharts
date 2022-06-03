@@ -169,6 +169,12 @@ public class DataSetWrapper extends DataSet {
     }
 
     @Override
+    public void setPoint(DataPoint aPoint, int anIndex)
+    {
+        throw new RuntimeException("DataSetWrapper: setPoint not implemented");
+    }
+
+    @Override
     public void clearPoints()
     {
         _dataSet.clearPoints();

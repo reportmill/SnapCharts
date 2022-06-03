@@ -418,7 +418,7 @@ public class Trace extends ChartPart {
      */
     public void setStacked(boolean aValue)
     {
-        if (aValue==isStacked()) return;
+        if (aValue == isStacked()) return;
         firePropChange(Stacked_Prop, _stacked, _stacked = aValue);
     }
 
@@ -432,7 +432,7 @@ public class Trace extends ChartPart {
      */
     public void setDisabled(boolean aValue)
     {
-        if (aValue==isDisabled()) return;
+        if (aValue == isDisabled()) return;
         firePropChange(Disabled_Prop, _disabled, _disabled = aValue);
     }
 
@@ -451,17 +451,14 @@ public class Trace extends ChartPart {
      */
     public void setShowLegendEntry(boolean aValue)
     {
-        if (aValue==isShowLegendEntry()) return;
+        if (aValue == isShowLegendEntry()) return;
         firePropChange(ShowLegendEntry_Prop, _showLegendEntry, _showLegendEntry = aValue);
     }
 
     /**
      * Returns the number of points.
      */
-    public int getPointCount()
-    {
-        return _dataSet.getPointCount();
-    }
+    public int getPointCount()  { return _dataSet.getPointCount(); }
 
     /**
      * Sets the number of points.
@@ -480,11 +477,14 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Adds a point for given components at given index.
+     * Adds a given point at given index.
      */
     public void addPoint(DataPoint aPoint, int anIndex)
     {
+        // Forward to DataSet
         _dataSet.addPoint(aPoint, anIndex);
+
+        // Clear cache and firePropChange
         clearCachedData();
         firePropChange(Point_Prop, aPoint, null, anIndex);
     }
@@ -492,18 +492,33 @@ public class Trace extends ChartPart {
     /**
      * Removes a point at given index.
      */
-    public DataPoint removePoint(int anIndex)
+    public void removePoint(int anIndex)
     {
         // Get point at index
         DataPoint dataPoint = getPoint(anIndex);
 
-        // Remove point from DataSet
+        // Forward to DataSet
         _dataSet.removePoint(anIndex);
+
+        // Clear cache and firePropChange
         clearCachedData();
         firePropChange(Point_Prop, dataPoint, null, anIndex);
+    }
 
-        // Return point
-        return dataPoint;
+    /**
+     * Sets a given point at given index.
+     */
+    public void setPoint(DataPoint aPoint, int anIndex)
+    {
+        // Get point at index
+        DataPoint dataPoint = getPoint(anIndex);
+
+        // Forward to DataSet
+        _dataSet.setPoint(aPoint, anIndex);
+
+        // Clear cache and firePropChange
+        clearCachedData();
+        firePropChange(Point_Prop, aPoint, dataPoint, anIndex);
     }
 
     /**
@@ -530,56 +545,6 @@ public class Trace extends ChartPart {
 
         // Return formatted X value
         return DataUtils.formatValue(val);
-    }
-
-    /**
-     * Returns the value for channel and record index.
-     */
-    public Object getValueForChannel(DataChan aChan, int anIndex)
-    {
-        // Handle C special
-        if (aChan == DataChan.C)
-            return getString(anIndex);
-
-        // Forward to DataSet
-        return _dataSet.getValueForChannel(aChan, anIndex);
-    }
-
-    /**
-     * Sets the value for channel and record index.
-     */
-    public void setValueForChannel(Object aValue, DataChan aChan, int anIndex)
-    {
-        // Get original point
-        DataPoint dataPoint = getPoint(anIndex);
-
-        // Forward to DataSet
-        _dataSet.setValueForChannel(aValue, aChan, anIndex);
-
-        // Get new point
-        DataPoint dataPoint2 = getPoint(anIndex);
-        firePropChange(Point_Prop, dataPoint, dataPoint2, anIndex);
-        clearCachedData();
-    }
-
-    /**
-     * Returns the value for given channel index and record index.
-     */
-    public Object getValueForChannelIndex(int aChanIndex, int anIndex)
-    {
-        DataType dataType = getDataType();
-        DataChan chan = dataType.getChannel(aChanIndex);
-        return getValueForChannel(chan, anIndex);
-    }
-
-    /**
-     * Sets given value for given channel index and record index.
-     */
-    public void setValueForChannelIndex(Object aValue, int aChanIndex, int anIndex)
-    {
-        DataType dataType = getDataType();
-        DataChan chan = dataType.getChannel(aChanIndex);
-        setValueForChannel(aValue, chan, anIndex);
     }
 
     /**
@@ -714,7 +679,8 @@ public class Trace extends ChartPart {
     {
         // Do normal version
         String superProps = super.toStringProps();
-        StringBuilder sb = new StringBuilder(superProps).append(superProps.length() > 0 ? ", " : "");
+        StringBuilder sb = new StringBuilder(superProps);
+        if (superProps.length() > 0) sb.append(", ");
 
         // Add DataType, PointCount
         sb.append("DataType=").append(getDataType());

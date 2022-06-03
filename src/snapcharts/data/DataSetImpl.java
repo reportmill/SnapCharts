@@ -148,23 +148,11 @@ public class DataSetImpl extends DataSet {
             }
         }
 
-        // Set channel values
-        for (DataChan chan : dataChans) {
-            switch (chan) {
-                case X: _dataX[anIndex] = aPoint.getX(); break;
-                case Y: _dataY[anIndex] = aPoint.getY(); break;
-                case Z: _dataZ[anIndex] = aPoint.getZ(); break;
-                case C: _dataC[anIndex] = aPoint.getC(); break;
-                default: break;
-            }
-        }
-
-
         // Update point
         _pointCount++;
 
-        // Notify pointsDidChange
-        pointsDidChange();
+        // Set channel values
+        setPoint(aPoint, anIndex);
     }
 
     /**
@@ -195,6 +183,31 @@ public class DataSetImpl extends DataSet {
 
         // Update point
         _pointCount--;
+
+        // Notify pointsDidChange
+        pointsDidChange();
+    }
+
+    /**
+     * Sets a point for X and Y values.
+     */
+    @Override
+    public void setPoint(DataPoint aPoint, int anIndex)
+    {
+        // Get DataType
+        DataType dataType = getDataType();
+        DataChan[] dataChans = dataType.getChannelsXY();
+
+        // Set channel values
+        for (DataChan chan : dataChans) {
+            switch (chan) {
+                case X: _dataX[anIndex] = aPoint.getX(); break;
+                case Y: _dataY[anIndex] = aPoint.getY(); break;
+                case Z: _dataZ[anIndex] = aPoint.getZ(); break;
+                case C: _dataC[anIndex] = aPoint.getC(); break;
+                default: break;
+            }
+        }
 
         // Notify pointsDidChange
         pointsDidChange();

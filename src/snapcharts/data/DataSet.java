@@ -209,6 +209,14 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public abstract void setValueZ(Double aValue, int anIndex);
 
     /**
+     * Returns the data point at given index.
+     */
+    public DataPoint getPoint(int anIndex)
+    {
+        return new DataPoint(this, anIndex);
+    }
+
+    /**
      * Adds a point for X and Y values.
      */
     public abstract void addPoint(DataPoint aPoint, int anIndex);
@@ -217,6 +225,11 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      * Removes a point at index.
      */
     public abstract void removePoint(int anIndex);
+
+    /**
+     * Sets a point for X and Y values.
+     */
+    public abstract void setPoint(DataPoint aPoint, int anIndex);
 
     /**
      * Clears all points.
