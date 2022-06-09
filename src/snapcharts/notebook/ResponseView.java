@@ -10,6 +10,7 @@ import snap.gfx.ShadowEffect;
 import snap.view.BoxView;
 import snap.view.TextArea;
 import snap.view.View;
+import snap.view.ViewOwner;
 import snapcharts.app.DataSetPane;
 import snapcharts.data.DataSet;
 import snapcharts.model.Chart;
@@ -19,6 +20,9 @@ import snapcharts.view.ChartView;
  * This View subclass shows snippets.
  */
 public class ResponseView extends EntryView<Response> {
+
+    // Constants
+    public static final ShadowEffect DEFAULT_SHADOW = new ShadowEffect(8, Color.GRAY3, 0, 0);
 
     /**
      * Constructor.
@@ -38,6 +42,10 @@ public class ResponseView extends EntryView<Response> {
         // Get entry as response and get response.Value
         Response response = (Response) anEntry;
         Object value = response.getValue();
+
+        // Handle ViewOwner
+        if (value instanceof ViewOwner)
+            return createContentViewForViewOwner((ViewOwner) value);
 
         // Handle Chart
         if (value instanceof Chart)
@@ -63,6 +71,15 @@ public class ResponseView extends EntryView<Response> {
     }
 
     /**
+     * Creates content view for ViewOwner.
+     */
+    private View createContentViewForViewOwner(ViewOwner aViewOwner)
+    {
+        View view = aViewOwner.getUI();
+        return createContentViewBoxForView(view);
+    }
+
+    /**
      * Creates content view for Chart.
      */
     private View createContentViewForChart(Chart aChart)
@@ -74,15 +91,8 @@ public class ResponseView extends EntryView<Response> {
         chartView.setLean(Pos.TOP_LEFT);
         chartView.setGrowWidth(false);
 
-        // Style
-        chartView.setEffect(new ShadowEffect(8, Color.GRAY3, 0, 0));
-
-        // Create BoxView wrapper
-        BoxView boxView = new BoxView(chartView, false, false);
-        boxView.setPadding(0, 0, 0, 12);
-
         // Return
-        return boxView;
+        return createContentViewBoxForView(chartView);
     }
 
     /**
@@ -96,15 +106,24 @@ public class ResponseView extends EntryView<Response> {
         dataSetPaneView.setPrefWidth(560);
         dataSetPaneView.setMaxHeight(300);
 
+        // Return
+        return createContentViewBoxForView(dataSetPaneView);
+    }
+
+    /**
+     * Creates content view for DataSet.
+     */
+    private View createContentViewBoxForView(View aView)
+    {
         // Create BoxView wrapper
-        BoxView boxView = new BoxView(dataSetPaneView, false, false) {
+        BoxView boxView = new BoxView(aView, false, false) {
             public Shape getBoundsShape()
             {
                 return new RoundRect(0,0, getWidth(), getHeight(), 4);
             }
         };
         boxView.setFill(Color.WHITE);
-        boxView.setEffect(new ShadowEffect(8, Color.GRAY3, 0, 0));
+        boxView.setEffect(DEFAULT_SHADOW);
         boxView.setMargin(0, 0, 0, 22);
 
         // Return

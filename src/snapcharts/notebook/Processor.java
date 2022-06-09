@@ -120,6 +120,9 @@ public class Processor implements KeyChain.FunctionHandler {
             // Handle Sin, Cos
             case "sin": return sinFunc(anObj, argList);
             case "cos": return cosFunc(anObj, argList);
+
+            // Handle UI
+            case "slider": return new UIProcessor().sliderBlock(anObj, argList);
         }
 
         // Complain and return null since function not found
