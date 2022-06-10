@@ -9,13 +9,35 @@ import snap.view.*;
 /**
  * This class processes UI requests.
  */
-public class UIProcessor {
+public class SubProcUI extends SubProc {
+
+    /**
+     * Constructor.
+     */
+    public SubProcUI(Processor aProcessor)
+    {
+        super(aProcessor);
+    }
+
+    /**
+     * Handles processing functions supported by this class.
+     */
+    public Object getValueFunctionCall(Object aRoot, Object anObj, String functionName, KeyChain argListKC)
+    {
+        switch (functionName) {
+
+            case "slider": return sliderBlock(anObj, argListKC);
+        }
+
+        return null;
+    }
 
     /**
      * Returns a slider block.
      */
     public SliderBlock sliderBlock(Object anObj, KeyChain aKeyChain)
     {
+        // Get the variable name
         String title = "Title:";
         double min = 0;
         double max = 100;
