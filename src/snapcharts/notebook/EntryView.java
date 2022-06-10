@@ -95,8 +95,8 @@ public class EntryView<T extends Entry> extends ParentView {
     protected Label createLabel()
     {
         Label label = new Label();
-        label.setFont(Font.Arial14.getItalic());
-        label.setTextFill(Color.GRAY4);
+        label.setFont(Font.Arial12.getItalic());
+        label.setTextFill(Color.GRAY6);
         label.setAlign(Pos.CENTER_RIGHT);
         label.setPrefWidth(50);
         return label;

@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.geom.Pos;
 import snap.util.KeyChain;
 import snap.view.*;
 
@@ -71,6 +72,7 @@ public class UIProcessor {
 
             // Create TextField
             _textField = new TextField();
+            _textField.setAlign(Pos.CENTER);
             _textField.setColCount(6);
 
             // Create/config RowView

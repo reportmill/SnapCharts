@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.gfx.Font;
 import snap.view.*;
 
 /**
@@ -33,6 +34,8 @@ public class RequestView extends EntryView<Request> {
     protected TextArea createTextArea()
     {
         TextArea textArea = super.createTextArea();
+        textArea.setPadding(5, 5, 2, 5);
+        textArea.setFont(new Font("Courier New", 16));
         textArea.setEditable(true);
         textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
         return textArea;
