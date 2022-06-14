@@ -3,6 +3,8 @@
  */
 package snapcharts.notebook;
 import snap.util.KeyChain;
+import snap.util.SnapUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,5 +44,16 @@ public class SubProc {
     public Object getValueFunctionCall(Object aRoot, Object anObj, String functionName, KeyChain argListKC)
     {
         return null;
+    }
+
+    /**
+     * Returns the double value for arg at given index in given arg list key chain.
+     */
+    public Double getDoubleValueForArgListArg(Object anObj, KeyChain argListKeyChain, int anIndex)
+    {
+        int argCount = argListKeyChain.getChildCount();
+        KeyChain argKeyChain = argCount > anIndex ? argListKeyChain.getChildKeyChain(anIndex) : null;
+        Object value = KeyChain.getValue(anObj, argKeyChain);
+        return SnapUtils.getDouble(value);
     }
 }

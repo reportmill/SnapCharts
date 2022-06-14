@@ -35,13 +35,28 @@ public class SubProcUI extends SubProc {
     /**
      * Returns a slider block.
      */
-    public SliderBlock sliderBlock(Object anObj, KeyChain aKeyChain)
+    public SliderBlock sliderBlock(Object anObj, KeyChain argListKey)
     {
+        int argCount = argListKey.getChildCount();
+
         // Get the variable name
-        String title = "Title:";
-        double min = 0;
-        double max = 100;
-        return new SliderBlock(title, min, max);
+        String varName = "x";
+        if (argCount > 0) {
+            KeyChain varNameKey = argListKey.getChildKeyChain(0);
+            if (varNameKey.getOp() == KeyChain.Op.Key)
+                varName = varNameKey.getValueString();
+        }
+
+        // Get min
+        Double minVal = getDoubleValueForArgListArg(anObj, argListKey, 1);
+        double min = minVal != null ? minVal : 0;
+
+        // Get max
+        Double maxVal = getDoubleValueForArgListArg(anObj, argListKey, 2);
+        double max = maxVal != null ? maxVal : 100;
+
+        // Create/return SliderBlock
+        return new SliderBlock(varName, min, max);
     }
 
     /**
@@ -49,8 +64,8 @@ public class SubProcUI extends SubProc {
      */
     private static class SliderBlock extends ViewOwner {
 
-        // The title
-        private String  _title;
+        // The variable name
+        private String  _varName;
 
         // The Slider min/max
         private double  _min, _max;
@@ -70,9 +85,9 @@ public class SubProcUI extends SubProc {
         /**
          * Constructor.
          */
-        public SliderBlock(String aTitle, double aMin, double aMax)
+        public SliderBlock(String aVarName, double aMin, double aMax)
         {
-            _title = aTitle;
+            _varName = aVarName;
             _min = aMin;
             _max = aMax;
         }
@@ -84,7 +99,7 @@ public class SubProcUI extends SubProc {
         protected View createUI()
         {
             // Create label
-            _label = new Label(_title);
+            _label = new Label(_varName + ':');
 
             // Create Slider
             _slider = new Slider();
