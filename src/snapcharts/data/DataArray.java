@@ -3,7 +3,6 @@
  */
 package snapcharts.data;
 import snap.util.SnapUtils;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -44,6 +43,11 @@ public abstract class DataArray implements Cloneable {
      * Returns the component type.
      */
     public abstract Class getComponentType();
+
+    /**
+     * Returns the Object value at index.
+     */
+    public abstract Object getValue(int anIndex);
 
     /**
      * Returns the length.
@@ -120,9 +124,17 @@ public abstract class DataArray implements Cloneable {
     public abstract void setString(String aValue, int anIndex);
 
     /**
-     * Returns the Object value at index.
+     * Adds the String value at end.
      */
-    public abstract Object getValue(int anIndex);
+    public void addString(String aValue)
+    {
+        addString(aValue, getLength());
+    }
+
+    /**
+     * Adds the String value at index.
+     */
+    public abstract void addString(String aValue, int anIndex);
 
     /**
      * Returns the float array.
@@ -201,99 +213,23 @@ public abstract class DataArray implements Cloneable {
     }
 
     /**
-     * This DataArray subclass uses doubles.
+     * Creates a new DataArray for given value array.
      */
-    public static class Double extends DataArray {
+    public static DataArray newDataArrayForArray(Object anArray)
+    {
+        // Handle double
+        if (anArray instanceof double[])
+            return new DataArrays.Double((double[]) anArray);
 
-        /**
-         * Constructor.
-         */
-        public Double()
-        {
-            _doubleArray = new double[10];
-        }
+        // Handle float
+        if (anArray instanceof float[])
+            return new DataArrays.Float((float[]) anArray);
 
-        /**
-         * Constructor.
-         */
-        public Double(double[] doubleArray)
-        {
-            _doubleArray = doubleArray.clone();
-        }
+        // Handle String
+        if (anArray instanceof String[])
+            return new DataArrays.String((String[]) anArray);
 
-        /**
-         * Returns the component type.
-         */
-        public Class getComponentType()  { return double.class; }
-
-        /**
-         * Returns the double value at index.
-         */
-        public final double getDouble(int anIndex)
-        {
-            return _doubleArray[anIndex];
-        }
-
-        /**
-         * Sets the double value at index.
-         */
-        public final void setDouble(double aValue, int anIndex)
-        {
-            // Set value
-            _doubleArray[anIndex] = aValue;
-
-            // Clear caches
-            _floatArray = null;
-            _stringArray = null;
-        }
-
-        /**
-         * Adds the double value at index.
-         */
-        public void addDouble(double aValue, int anIndex)
-        {
-            // Expand components array if needed
-            if (_length == _doubleArray.length)
-                _doubleArray = Arrays.copyOf(_doubleArray, Math.max(_doubleArray.length * 2, 20));
-
-            // If index is inside current length, shift existing elements over
-            if (anIndex < _length)
-                System.arraycopy(_doubleArray, anIndex, _doubleArray, anIndex + 1, _length - anIndex);
-
-            // Set value and increment length
-            _doubleArray[anIndex] = aValue;
-            _length++;
-
-            // Clear caches
-            _floatArray = null;
-            _stringArray = null;
-        }
-
-        /**
-         * Returns the Object value at index.
-         */
-        public java.lang.Double getValue(int anIndex)
-        {
-            return _doubleArray[anIndex];
-        }
-
-        /**
-         * Sets the String value at index.
-         */
-        public void setString(String aValue, int anIndex)
-        {
-            double value = SnapUtils.doubleValue(aValue);
-            setDouble(value, anIndex);
-        }
-
-        /**
-         * Override to trim array.
-         */
-        public double[] getDoubleArray()
-        {
-            if (_length != _doubleArray.length)
-                _doubleArray = Arrays.copyOf(_doubleArray, _length);
-            return _doubleArray;
-        }
+        // Throw a fit
+        throw new RuntimeException("DataArray.newDataArrayForArray: Unsupported array type: " + anArray.getClass());
     }
 }
