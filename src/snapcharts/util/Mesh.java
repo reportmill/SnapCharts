@@ -2,6 +2,7 @@ package snapcharts.util;
 import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
+import snapcharts.data.DataSetXYZZ;
 import snapcharts.data.DataType;
 import snapcharts.data.DataSet;
 
@@ -330,8 +331,8 @@ public class Mesh {
     private Triangle[] getTrianglesXYZZ()
     {
         // Get dataset row/col counts
-        int colCount = _dataSet.getColCount();
-        int rowCount = _dataSet.getRowCount();
+        int colCount = _dataSet instanceof DataSetXYZZ ? ((DataSetXYZZ) _dataSet).getColCount() : 0;
+        int rowCount = _dataSet instanceof DataSetXYZZ ? ((DataSetXYZZ) _dataSet).getRowCount() : 0;
 
         // Create triangles array (2 triangles for every grid square)
         int triangleCount = (colCount - 1) * (rowCount - 1) * 2;

@@ -114,30 +114,6 @@ public class DataPoint implements Cloneable {
     public int getIndex()  { return _index; }
 
     /**
-     * Returns the column index.
-     */
-    public int getColIndex()
-    {
-        if (_dataSet == null || _dataSet.getDataType() != DataType.XYZZ)
-            return 0;
-        int index = getIndex();
-        int colCount = _dataSet.getColCount(); if (colCount == 0) return index;
-        return index % colCount;
-    }
-
-    /**
-     * Returns the row index.
-     */
-    public int getRowIndex()
-    {
-        int index = getIndex();
-        if (_dataSet == null || _dataSet.getDataType() != DataType.XYZZ)
-            return index;
-        int colCount = _dataSet.getColCount(); if (colCount == 0) return index;
-        return index / colCount;
-    }
-
-    /**
      * Returns a copy of this point with new value for given channel.
      */
     public DataPoint copyForChannelValue(DataChan aChan, Object aValue)

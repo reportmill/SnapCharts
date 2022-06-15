@@ -26,7 +26,7 @@ public class DataSetUtils {
             return;
 
         // Iterate over data arrays and add to DataSet
-        for (int i=0; i<len; i++) {
+        for (int i = 0; i < len; i++) {
             Double valX = dataX != null ? dataX[i] : null;
             Double valY = dataY != null ? dataY[i] : null;
             Double valZ = dataZ != null ? dataZ[i] : null;
@@ -34,40 +34,6 @@ public class DataSetUtils {
             DataPoint dataPoint = new DataPoint(valX, valY, valZ, valC);
             int index = aDataSet.getPointCount();
             aDataSet.addPoint(dataPoint, index);
-        }
-    }
-
-    /**
-     * Adds data points to given DataSet for given data arrays.
-     */
-    public static void addDataPointsXYZZ(DataSet aDataSet, double[] dataX, double[] dataY, double[] dataZZ)
-    {
-        // Get rows and cols
-        int colCount = dataX.length;
-        int rowCount = dataY.length;
-
-        // Set in DataSet
-        aDataSet.setColCount(colCount);
-        aDataSet.setRowCount(rowCount);
-
-        // If insufficient Z, complain and pad with zero
-        int pointCount = colCount * rowCount;
-        if (pointCount>dataZZ.length) {
-            System.err.println("DataSetUtils.addDataPointsXYZZ: Insufficient number of Z values");
-            dataZZ = Arrays.copyOf(dataZZ, pointCount);
-        }
-
-        // Iterate over rows/cols and add points
-        for (int row=0; row<rowCount; row++) {
-            for (int col=0; col<colCount; col++) {
-                double xval = dataX[col];
-                double yval = dataY[row];
-                int zind = row * colCount + col;
-                double zval = dataZZ[zind];
-                DataPoint dataPoint = new DataPoint(xval, yval, zval, null);
-                int index = aDataSet.getPointCount();
-                aDataSet.addPoint(dataPoint, index);
-            }
         }
     }
 

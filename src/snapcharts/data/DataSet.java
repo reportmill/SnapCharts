@@ -27,20 +27,11 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     // The units for theta
     private ThetaUnit  _thetaUnit;
 
-    // The number of rows
-    private int  _rowCount;
-
-    // The number of columns
-    private int  _colCount;
-
     // Cached arrays of X/Y/Z data (and X/Y for ZZ)
     private double[]  _dataX, _dataY, _dataZ;
 
     // Cached array of C data
     private String[]  _dataC;
-
-    // Cached arrays of X/Y for ZZ (for ZZ data types)
-    private double[]  _dataXZZ, _dataYZZ;
 
     // Min/Max values for X/Y/Z
     private MinMax  _minMaxX, _minMaxY, _minMaxZ;
@@ -106,26 +97,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     {
         _thetaUnit = aValue;
     }
-
-    /**
-     * Returns the number of rows.
-     */
-    public int getRowCount()  { return _rowCount; }
-
-    /**
-     * Sets the number of rows.
-     */
-    public void setRowCount(int aValue)  { _rowCount = aValue; }
-
-    /**
-     * Returns the number of columns.
-     */
-    public int getColCount()  { return _colCount; }
-
-    /**
-     * Sets the number of columns.
-     */
-    public void setColCount(int aValue)  { _colCount = aValue; }
 
     /**
      * Returns the number of points.
@@ -383,26 +354,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the value for given channel index and record index.
-     */
-    public Object getValueForChannelIndex(int aChanIndex, int anIndex)
-    {
-        DataType dataType = getDataType();
-        DataChan chan = dataType.getChannel(aChanIndex);
-        return getValueForChannel(chan, anIndex);
-    }
-
-    /**
-     * Sets given value for given channel index and record index.
-     */
-    public void setValueForChannelIndex(Object aValue, int aChanIndex, int anIndex)
-    {
-        DataType dataType = getDataType();
-        DataChan chan = dataType.getChannel(aChanIndex);
-        setValueForChannel(aValue, chan, anIndex);
-    }
-
-    /**
      * Returns the minimum X value in this dataset.
      */
     public double getMinX()  { return getMinMaxX().getMin(); }
@@ -522,43 +473,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the dataX values for ZZ.
-     */
-    public double[] getDataXforZZ()
-    {
-        // If already set, just return
-        if (_dataXZZ != null) return _dataXZZ;
-
-        // Create X array and load
-        int colCount = getColCount();
-        double[] dataX = new double[colCount];
-        for (int i=0; i<colCount; i++)
-            dataX[i] = getX(i);
-
-        // Set/return
-        return _dataXZZ = dataX;
-    }
-
-    /**
-     * Returns the dataY values for ZZ.
-     */
-    public double[] getDataYforZZ()
-    {
-        // If already set, just return
-        if (_dataYZZ != null) return _dataYZZ;
-
-        // Create Y array and load
-        int rowCount = getRowCount();
-        int colCount = getColCount();
-        double[] dataY = new double[rowCount];
-        for (int i=0; i<rowCount; i++)
-            dataY[i] = getY(i * colCount);
-
-        // Set/return
-        return _dataYZZ = dataY;
-    }
-
-    /**
      * Returns the Y value for given X value.
      */
     public double getYForX(double aX)
@@ -601,7 +515,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     protected void pointsDidChange()
     {
-        _dataX = _dataY = _dataZ = _dataXZZ = _dataYZZ = null;
+        _dataX = _dataY = _dataZ = null;
         _dataC = null;
         _minMaxX = _minMaxY = _minMaxZ = null;
     }
@@ -645,14 +559,14 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         // If DataType has X, add DataX values
         DataType dataTypeXY = dataType.getDataTypeXY();
         if (dataTypeXY.hasChannel(DataChan.X)) {
-            double[] dataX = dataType != DataType.XYZZ ? getDataX() : getDataXforZZ();
+            double[] dataX = getDataX();
             String dataStr = DataUtils.getStringForDoubleArray(dataX);
             e.add(new XMLElement("DataX", dataStr));
         }
 
         // If DataType has Y, add DataY values
         if (dataTypeXY.hasChannel(DataChan.Y)) {
-            double[] dataY = dataTypeXY != DataType.XYZZ ? getDataY() : getDataYforZZ();
+            double[] dataY = getDataY();
             String dataStr = DataUtils.getStringForDoubleArray(dataY);
             e.add(new XMLElement("DataY", dataStr));
         }
@@ -684,6 +598,10 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         String dataTypeStr = anElement.getAttributeValue(DataType_Prop);
         DataType dataType = DataType.valueOf(dataTypeStr);
         setDataType(dataType);
+
+        // Handle XYZZ special
+        if (dataType == DataType.XYZZ)
+            return new DataSetXYZZ().fromXML(anArchiver, anElement);
 
         // Unarchive ThetaUnit
         if (anElement.hasAttribute(ThetaUnit_Prop))
@@ -722,9 +640,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         }
 
         // Add Data points
-        if (dataType == DataType.XYZZ)
-            DataSetUtils.addDataPointsXYZZ(this, dataX, dataY, dataZ);
-        else if (dataType != DataType.UNKNOWN)
+        if (dataType != DataType.UNKNOWN)
             DataSetUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
 
         // Return this part
@@ -758,6 +674,11 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public static DataSet newDataSetForTypeAndValues(DataType aDataType, Object ... theArrays)
     {
+        // Handle XYZZ special
+        if (aDataType == DataType.XYZZ)
+            return DataSetXYZZ.newDataSetForValues(theArrays);
+
+        // Handle other
         return new DataSetImpl(aDataType, theArrays);
     }
 }

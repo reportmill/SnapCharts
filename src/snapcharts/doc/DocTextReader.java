@@ -333,7 +333,8 @@ public class DocTextReader {
         // Add points XYZZ
         DataSet dataSet = _trace.getDataSet();
         if (dataType == DataType.XYZZ)
-            DataSetUtils.addDataPointsXYZZ(dataSet, _dataX, _dataY, _dataZZ);
+            System.err.println("DocTextReader: XYZZ Dataset not supported");
+            //DataSetUtils.addDataPointsXYZZ(dataSet, _dataX, _dataY, _dataZZ);
 
         // Add points other
         else DataSetUtils.addDataPoints(dataSet, _dataX, _dataY, _dataZ, _dataC);

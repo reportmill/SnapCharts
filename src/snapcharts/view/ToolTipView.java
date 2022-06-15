@@ -5,6 +5,7 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.data.DataChan;
 import snapcharts.data.DataSet;
+import snapcharts.data.DataSetXYZZ;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
 import java.text.DecimalFormat;
@@ -71,8 +72,10 @@ public class ToolTipView extends ColView {
         int pointIndex = dataPoint.getIndex();
         if (ViewUtils.isAltDown()) {
             if (trace.getDataType() == DataType.XYZZ) {
-                addChild(createToolTipEntry("Row: " + dataPoint.getRowIndex()));
-                addChild(createToolTipEntry("Col: " + dataPoint.getColIndex()));
+                int rowIndex = DataSetXYZZ.getRowIndex(dataPoint);
+                int colIndex = DataSetXYZZ.getColIndex(dataPoint);
+                addChild(createToolTipEntry("Row: " + rowIndex));
+                addChild(createToolTipEntry("Col: " + colIndex));
             }
             addChild(createToolTipEntry("Index: " + pointIndex));
         }
