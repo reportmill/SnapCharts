@@ -2,7 +2,7 @@ package snapcharts.apptools;
 import snap.gfx.Color;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.data.DataSet;
+import snapcharts.data.DataUnit;
 import snapcharts.model.*;
 import snapcharts.data.DataType;
 
@@ -84,8 +84,8 @@ public class TraceInsp extends ChartPartInsp {
         dataTypeComboBox.setItems(DataType.values());
 
         // Configure ThetaUnitComboBox
-        ComboBox<DataSet.ThetaUnit> thetaUnitComboBox = getView("ThetaUnitComboBox", ComboBox.class);
-        thetaUnitComboBox.setItems(DataSet.ThetaUnit.values());
+        ComboBox<DataUnit> thetaUnitComboBox = getView("ThetaUnitComboBox", ComboBox.class);
+        thetaUnitComboBox.setItems(DataUnit.getAllUnits());
 
         getView("ExprXText", TextField.class).setPromptText("x * 2 + 5");
         getView("ExprYText", TextField.class).setPromptText("y * 2 + 5");
@@ -218,7 +218,7 @@ public class TraceInsp extends ChartPartInsp {
 
         // Handle ThetaUnitComboBox
         if (anEvent.equals("ThetaUnitComboBox")) {
-            DataSet.ThetaUnit thetaUnit = (DataSet.ThetaUnit) anEvent.getSelItem();
+            DataUnit thetaUnit = (DataUnit) anEvent.getSelItem();
             trace.setThetaUnit(thetaUnit);
         }
 

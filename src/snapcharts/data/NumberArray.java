@@ -11,6 +11,9 @@ import java.util.Arrays;
  */
 public class NumberArray extends DataArray {
 
+    // The units
+    private DataUnit  _unit;
+
     // The double array
     protected double[]  _doubleArray;
 
@@ -35,6 +38,19 @@ public class NumberArray extends DataArray {
     {
         _doubleArray = doubleArray.clone();
         _length = _doubleArray.length;
+    }
+
+    /**
+     * Returns the unit for data values.
+     */
+    public DataUnit getUnit()  { return _unit; }
+
+    /**
+     * Sets the unit for data values.
+     */
+    public void setUnit(DataUnit aValue)
+    {
+        _unit = aValue;
     }
 
     /**

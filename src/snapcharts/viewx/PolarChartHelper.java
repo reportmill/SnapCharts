@@ -256,7 +256,7 @@ public class PolarChartHelper extends ChartHelper {
         Trace[] traces = traceList.getEnabledTraces();
         for (Trace trace : traces) {
             DataSet dataSet = trace.getProcessedData();
-            NumberArray dataArrayR = dataSet.getNumberDataArrayForChannel(DataChan.R);
+            NumberArray dataArrayR = dataSet.getNumberArrayForChannel(DataChan.R);
             MinMax minMax = dataArrayR != null ? dataArrayR.getMinMax() : new MinMax(0, 0);
             min = Math.min(min, minMax.getMin());
             max = Math.max(max, minMax.getMax());

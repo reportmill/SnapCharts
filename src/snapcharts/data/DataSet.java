@@ -33,12 +33,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     // Cached DataArrays for common channel C
     protected StringArray _dataC;
 
-    // The units for theta
-    private ThetaUnit  _thetaUnit;
-
-    // Constant for ThetaUnits
-    public enum ThetaUnit { Degrees, Radians }
-
     // Properties
     public static final String Name_Prop = "Name";
     public static final String DataType_Prop = "DataType";
@@ -46,7 +40,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
 
     // Constants for defaults
     public final DataType DEFAULT_DATA_TYPE = DataType.XY;
-    public final ThetaUnit DEFAULT_THETA_UNIT = ThetaUnit.Degrees;
 
     /**
      * Constructor.
@@ -54,7 +47,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public DataSet()
     {
         _dataType = DEFAULT_DATA_TYPE;
-        _thetaUnit = DEFAULT_THETA_UNIT;
     }
 
     /**
@@ -134,9 +126,9 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the DataArray for given channel.
+     * Returns the NumberArray for given channel.
      */
-    public NumberArray getNumberDataArrayForChannel(DataChan aChan)
+    public NumberArray getNumberArrayForChannel(DataChan aChan)
     {
         DataArray dataArray = getDataArrayForChannel(aChan);
         return dataArray instanceof NumberArray ? (NumberArray) dataArray : null;
@@ -145,14 +137,22 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     /**
      * Returns the units for Theta data.
      */
-    public ThetaUnit getThetaUnit()  { return _thetaUnit; }
+    public DataUnit getThetaUnit()
+    {
+        NumberArray thetaArray = getNumberArrayForChannel(DataChan.T);
+        DataUnit thetaUnit = thetaArray != null ? thetaArray.getUnit() : null;
+        return thetaUnit != null ? thetaUnit : DataUnit.DEFAULT_THETA_UNIT;
+    }
 
     /**
      * Sets the units for Theta data.
      */
-    public void setThetaUnit(ThetaUnit aValue)
+    public void setThetaUnit(DataUnit aValue)
     {
-        _thetaUnit = aValue;
+        NumberArray thetaArray = getNumberArrayForChannel(DataChan.T);
+        if (thetaArray != null)
+            thetaArray.setUnit(aValue);
+        else System.out.println("DataSet.setThetaUnit: Theta data not found");
     }
 
     /**
@@ -381,7 +381,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         e.add(DataType_Prop, dataType);
 
         // Archive ThetaUnit
-        if (dataType.isPolar() && getThetaUnit() != DEFAULT_THETA_UNIT)
+        if (dataType.isPolar() && getThetaUnit() != DataUnit.DEFAULT_THETA_UNIT)
             e.add(ThetaUnit_Prop, getThetaUnit());
 
         // If DataType has X, add DataX values
@@ -432,8 +432,11 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
             return new DataSetXYZZ().fromXML(anArchiver, anElement);
 
         // Unarchive ThetaUnit
-        if (anElement.hasAttribute(ThetaUnit_Prop))
-            setThetaUnit(anElement.getAttributeEnumValue(ThetaUnit_Prop, ThetaUnit.class, DEFAULT_THETA_UNIT));
+        if (anElement.hasAttribute(ThetaUnit_Prop)) {
+            String unitName = anElement.getAttributeValue(ThetaUnit_Prop);
+            DataUnit dataUnit = DataUnit.getUnitForName(unitName, DataUnit.DEFAULT_THETA_UNIT);
+            setThetaUnit(dataUnit);
+        }
 
         // Get DataX
         double[] dataX = null;

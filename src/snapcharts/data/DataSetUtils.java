@@ -199,7 +199,7 @@ public class DataSetUtils {
 
         // Create new DataSet for type and values and return
         DataSet polarData = DataSet.newDataSetForTypeAndValues(aDataType, dataT, dataR, dataZ);
-        polarData.setThetaUnit(DataSet.ThetaUnit.Radians);
+        polarData.setThetaUnit(DataUnit.Radians);
         return polarData;
     }
 
@@ -219,7 +219,7 @@ public class DataSetUtils {
         double[] dataY = new double[pointCount];
 
         // Get whether to convert to radians
-        boolean convertToRadians = aDataSet.getThetaUnit() != DataSet.ThetaUnit.Radians;
+        boolean convertToRadians = aDataSet.getThetaUnit() != DataUnit.Radians;
 
         // Iterate over X values and convert to 0 - 360 scale
         for (int i = 0; i < pointCount; i++) {

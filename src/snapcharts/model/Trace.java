@@ -5,7 +5,6 @@ package snapcharts.model;
 import snap.gfx.Color;
 import snap.util.*;
 import snapcharts.data.*;
-import snapcharts.util.MinMax;
 
 import java.util.*;
 
@@ -323,18 +322,18 @@ public class Trace extends ChartPart {
     /**
      * Returns the units for Theta data.
      */
-    public DataSet.ThetaUnit getThetaUnit()  { return _dataSet.getThetaUnit(); }
+    public DataUnit getThetaUnit()  { return _dataSet.getThetaUnit(); }
 
     /**
      * Sets the units for Theta data.
      */
-    public void setThetaUnit(DataSet.ThetaUnit aValue)
+    public void setThetaUnit(DataUnit aValue)
     {
         // If already set, just return
         if (aValue == getThetaUnit()) return;
 
         // Forward to DataSet
-        DataSet.ThetaUnit old = getThetaUnit();
+        DataUnit old = getThetaUnit();
         _dataSet.setThetaUnit(aValue);
 
         // Clear cached data and firePropChange

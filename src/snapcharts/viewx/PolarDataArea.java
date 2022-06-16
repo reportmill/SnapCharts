@@ -9,6 +9,7 @@ import snap.gfx.Stroke;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataSetImpl;
 import snapcharts.data.DataType;
+import snapcharts.data.DataUnit;
 import snapcharts.model.*;
 import snapcharts.view.*;
 
@@ -56,7 +57,7 @@ public class PolarDataArea extends DataArea {
         int pointCount = polarData.getPointCount();
 
         // Get whether to convert to radians
-        boolean convertToRadians = trace.getThetaUnit() != DataSet.ThetaUnit.Radians;
+        boolean convertToRadians = trace.getThetaUnit() != DataUnit.Radians;
 
         // Create points array
         double[] dispX = new double[pointCount];
