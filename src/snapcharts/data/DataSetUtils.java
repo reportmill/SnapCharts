@@ -250,7 +250,7 @@ public class DataSetUtils {
     {
         // Get new DataSet
         DataSet dataSet = aDataSet1.clone();
-        DataArrays.Number dataArrayY = dataSet.getDataArrayY();
+        NumberArray dataArrayY = dataSet.getDataArrayY();
 
         // If DataSets have identical DataX, just add Y values
         if (isAlignedX(aDataSet1, aDataSet2)) {

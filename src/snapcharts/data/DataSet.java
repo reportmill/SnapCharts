@@ -28,10 +28,10 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     protected DataArray[]  _dataArrays;
 
     // Cached DataArrays for common channels X/Y/Z
-    protected DataArrays.Number  _dataX, _dataY, _dataZ;
+    protected NumberArray _dataX, _dataY, _dataZ;
 
     // Cached DataArrays for common channel C
-    protected DataArrays.String  _dataC;
+    protected StringArray _dataC;
 
     // The units for theta
     private ThetaUnit  _thetaUnit;
@@ -93,22 +93,22 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     /**
      * Returns an array of dataset X values.
      */
-    public DataArrays.Number getDataArrayX()  { return _dataX; }
+    public NumberArray getDataArrayX()  { return _dataX; }
 
     /**
      * Returns an array of dataset Y values.
      */
-    public DataArrays.Number getDataArrayY()  { return _dataY; }
+    public NumberArray getDataArrayY()  { return _dataY; }
 
     /**
      * Returns an array of dataset Z values.
      */
-    public DataArrays.Number getDataArrayZ()  { return _dataZ; }
+    public NumberArray getDataArrayZ()  { return _dataZ; }
 
     /**
      * Returns an array of dataset C values.
      */
-    public DataArrays.String getDataArrayC()  { return _dataC; }
+    public StringArray getDataArrayC()  { return _dataC; }
 
     /**
      * Returns the DataArray for given channel.
@@ -136,10 +136,10 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     /**
      * Returns the DataArray for given channel.
      */
-    public DataArrays.Number getNumberDataArrayForChannel(DataChan aChan)
+    public NumberArray getNumberDataArrayForChannel(DataChan aChan)
     {
         DataArray dataArray = getDataArrayForChannel(aChan);
-        return dataArray instanceof DataArrays.Number ? (DataArrays.Number) dataArray : null;
+        return dataArray instanceof NumberArray ? (NumberArray) dataArray : null;
     }
 
     /**
@@ -260,7 +260,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public double[] getDataX()
     {
-        DataArrays.Number dataArray = getDataArrayX();
+        NumberArray dataArray = getDataArrayX();
         return dataArray != null ? dataArray.getDoubleArray() : null;
     }
 
@@ -269,7 +269,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public double[] getDataY()
     {
-        DataArrays.Number dataArray = getDataArrayY();
+        NumberArray dataArray = getDataArrayY();
         return dataArray != null ? dataArray.getDoubleArray() : null;
     }
 
@@ -278,7 +278,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public double[] getDataZ()
     {
-        DataArrays.Number dataArray = getDataArrayZ();
+        NumberArray dataArray = getDataArrayZ();
         return dataArray != null ? dataArray.getDoubleArray() : null;
     }
 
@@ -287,7 +287,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public String[] getDataC()
     {
-        DataArrays.String dataArray = getDataArrayC();
+        StringArray dataArray = getDataArrayC();
         return dataArray != null ? dataArray.getStringArray() : null;
     }
 
@@ -326,7 +326,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMaxX()
     {
-        DataArrays.Number dataArray = getDataArrayX();
+        NumberArray dataArray = getDataArrayX();
         return dataArray != null ? dataArray.getMinMax() : new MinMax(0, 0);
     }
 
@@ -335,7 +335,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMaxY()
     {
-        DataArrays.Number dataArray = getDataArrayY();
+        NumberArray dataArray = getDataArrayY();
         return dataArray != null ? dataArray.getMinMax() : new MinMax(0, 0);
     }
 
@@ -344,7 +344,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMaxZ()
     {
-        DataArrays.Number dataArray = getDataArrayZ();
+        NumberArray dataArray = getDataArrayZ();
         return dataArray != null ? dataArray.getMinMax() : new MinMax(0, 0);
     }
 

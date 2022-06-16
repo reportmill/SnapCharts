@@ -52,10 +52,10 @@ public class DataSetImpl extends DataSet {
             DataChan chan = channels[i];
             DataArray dataArray = _dataArrays[i];
             switch (chan) {
-                case X: _dataX = (DataArrays.Number) dataArray; break;
-                case Y: _dataY = (DataArrays.Number) dataArray; break;
-                case Z: _dataZ = (DataArrays.Number) dataArray; break;
-                case C: _dataC = (DataArrays.String) dataArray; break;
+                case X: _dataX = (NumberArray) dataArray; break;
+                case Y: _dataY = (NumberArray) dataArray; break;
+                case Z: _dataZ = (NumberArray) dataArray; break;
+                case C: _dataC = (StringArray) dataArray; break;
                 default: break;
             }
         }
@@ -86,10 +86,10 @@ public class DataSetImpl extends DataSet {
         // Add points
         while (aValue < _pointCount) {
             for (DataArray dataArray : _dataArrays) {
-                if (dataArray instanceof DataArrays.Number)
-                    ((DataArrays.Number) dataArray).addDouble(0);
-                if (dataArray instanceof DataArrays.String)
-                    ((DataArrays.String) dataArray).addString(null);
+                if (dataArray instanceof NumberArray)
+                    ((NumberArray) dataArray).addDouble(0);
+                if (dataArray instanceof StringArray)
+                    ((StringArray) dataArray).addString(null);
             }
             _pointCount++;
         }

@@ -45,9 +45,9 @@ public class DataSetXYZZ extends DataSet {
         setDataType(DataType.XYZZ);
 
         // Create/set DataArrays
-        _dataX = new DataArrays.Number(dataX);
-        _dataY = new DataArrays.Number(dataY);
-        _dataZ = new DataArrays.Number(dataZ);
+        _dataX = new NumberArray(dataX);
+        _dataY = new NumberArray(dataY);
+        _dataZ = new NumberArray(dataZ);
         _dataArrays = new DataArray[] { _dataX, _dataY, _dataZ };
     }
 
@@ -136,9 +136,9 @@ public class DataSetXYZZ extends DataSet {
 
         // Set DataArrays
         _dataArrays = DataArray.newDataArraysForArrays(dataX, dataY, dataZ);
-        _dataX = (DataArrays.Number) _dataArrays[0];
-        _dataY = (DataArrays.Number) _dataArrays[1];
-        _dataZ = (DataArrays.Number) _dataArrays[2];
+        _dataX = (NumberArray) _dataArrays[0];
+        _dataY = (NumberArray) _dataArrays[1];
+        _dataZ = (NumberArray) _dataArrays[2];
 
         // Return
         return this;
