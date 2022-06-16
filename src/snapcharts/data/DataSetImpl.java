@@ -95,13 +95,10 @@ public class DataSetImpl extends DataSet {
         // Add points
         while (aValue < _pointCount) {
             for (DataArray dataArray : _dataArrays) {
-                Class componentType = dataArray.getComponentType();
-                if (componentType == float.class)
-                    dataArray.addFloat(0);
-                else if (componentType == double.class)
-                    dataArray.addDouble(0);
-                else if (componentType == String.class)
-                    dataArray.addString(null);
+                if (dataArray instanceof DataArrays.Number)
+                    ((DataArrays.Number) dataArray).addDouble(0);
+                if (dataArray instanceof DataArrays.String)
+                    ((DataArrays.String) dataArray).addString(null);
             }
             _pointCount++;
         }

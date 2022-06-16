@@ -2,18 +2,28 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snap.util.SnapUtils;
 import java.util.Arrays;
 
 /**
  * This class manages an array of primitive data values (float, double, String).
  */
-public abstract class DataArrays implements Cloneable {
+public class DataArrays {
+
+    /**
+     * Constructor to stop construction.
+     */
+    private DataArrays()  { }
 
     /**
      * This DataArray subclass uses doubles.
      */
     public static class Number extends DataArray {
+
+        // The double array
+        protected double[]  _doubleArray;
+
+        // The float array
+        protected float[]  _floatArray;
 
         /**
          * Constructor.
@@ -31,12 +41,6 @@ public abstract class DataArrays implements Cloneable {
             _doubleArray = doubleArray.clone();
             _length = _doubleArray.length;
         }
-
-        /**
-         * Returns the component type.
-         */
-        @Override
-        public Class getComponentType()  { return double.class; }
 
         /**
          * Returns the Object value at index.
@@ -61,14 +65,12 @@ public abstract class DataArrays implements Cloneable {
             _length = aValue;
 
             // Clear caches
-            _floatArray = null;
-            _stringArray = null;
+            clearCaches();
         }
 
         /**
          * Returns the double value at index.
          */
-        @Override
         public final double getDouble(int anIndex)
         {
             return _doubleArray[anIndex];
@@ -77,21 +79,26 @@ public abstract class DataArrays implements Cloneable {
         /**
          * Sets the double value at index.
          */
-        @Override
         public final void setDouble(double aValue, int anIndex)
         {
             // Set value
             _doubleArray[anIndex] = aValue;
 
             // Clear caches
-            _floatArray = null;
-            _stringArray = null;
+            clearCaches();
+        }
+
+        /**
+         * Adds the double value at end.
+         */
+        public void addDouble(double aValue)
+        {
+            addDouble(aValue, getLength());
         }
 
         /**
          * Adds the double value at index.
          */
-        @Override
         public void addDouble(double aValue, int anIndex)
         {
             // Expand components array if needed
@@ -107,28 +114,39 @@ public abstract class DataArrays implements Cloneable {
             _length++;
 
             // Clear caches
-            _floatArray = null;
-            _stringArray = null;
+            clearCaches();
         }
 
         /**
-         * Sets the String value at index.
+         * Returns the float value at index.
          */
-        @Override
-        public void setString(java.lang.String aValue, int anIndex)
+        public float getFloat(int anIndex)
         {
-            double value = SnapUtils.doubleValue(aValue);
-            setDouble(value, anIndex);
+            return (float) getDouble(anIndex);
         }
 
         /**
-         * Adds the String value at index.
+         * Sets the float value at index.
          */
-        @Override
-        public void addString(java.lang.String aValue, int anIndex)
+        public void setFloat(float aValue, int anIndex)
         {
-            double value = SnapUtils.doubleValue(aValue);
-            addDouble(value, anIndex);
+            setDouble(aValue, anIndex);
+        }
+
+        /**
+         * Adds the float value at end.
+         */
+        public void addFloat(float aValue)
+        {
+            addFloat(aValue, getLength());
+        }
+
+        /**
+         * Adds the float value at index.
+         */
+        public void addFloat(float aValue, int anIndex)
+        {
+            addDouble(aValue, anIndex);
         }
 
         /**
@@ -141,14 +159,12 @@ public abstract class DataArrays implements Cloneable {
             _length--;
 
             // Clear caches
-            _floatArray = null;
-            _stringArray = null;
+            clearCaches();
         }
 
         /**
-         * Override to trim array.
+         * Returns the simple double array (trimmed to length).
          */
-        @Override
         public double[] getDoubleArray()
         {
             if (_length != _doubleArray.length)
@@ -157,12 +173,48 @@ public abstract class DataArrays implements Cloneable {
         }
 
         /**
+         * Returns the float array.
+         */
+        public float[] getFloatArray()
+        {
+            // If already set, just return
+            if (_floatArray != null) return _floatArray;
+
+            // Create/load array
+            double[] doubleArray = getDoubleArray();
+            int length = doubleArray.length;
+            float[] floatArray = new float[length];
+            for (int i = 0; i < length; i++)
+                floatArray[i] = (float) doubleArray[i];
+
+            // Set and return
+            return _floatArray = floatArray;
+        }
+
+        /**
          * Override to return as this subclass.
          */
         @Override
         protected Number clone()
         {
-            return (Number) super.clone();
+            // Do normal version
+            Number clone = (Number) super.clone();
+
+            // Clone arrays
+            if (_doubleArray != null)
+                clone._doubleArray = _doubleArray.clone();
+
+            // Return
+            return clone;
+        }
+
+        /**
+         * Called to clear caches.
+         */
+        public void clearCaches()
+        {
+            super.clearCaches();
+            _floatArray = null;
         }
     }
 
@@ -170,6 +222,9 @@ public abstract class DataArrays implements Cloneable {
      * This DataArray subclass uses Strings.
      */
     public static class String extends DataArray {
+
+        // The String array
+        protected java.lang.String[]  _stringArray;
 
         /**
          * Constructor.
@@ -187,12 +242,6 @@ public abstract class DataArrays implements Cloneable {
             _stringArray = stringArray.clone();
             _length = _stringArray.length;
         }
-
-        /**
-         * Returns the component type.
-         */
-        @Override
-        public Class getComponentType()  { return String.class; }
 
         /**
          * Returns the Object value at index.
@@ -217,58 +266,40 @@ public abstract class DataArrays implements Cloneable {
             _length = aValue;
 
             // Clear caches
-            _floatArray = null;
-            _doubleArray = null;
+            clearCaches();
         }
 
         /**
-         * Returns the double value at index.
+         * Returns the String value at index.
          */
-        @Override
-        public final double getDouble(int anIndex)
+        public java.lang.String getString(int anIndex)
         {
-            java.lang.String str = getString(anIndex);
-            return SnapUtils.doubleValue(str);
-        }
-
-        /**
-         * Sets the double value at index.
-         */
-        @Override
-        public final void setDouble(double aValue, int anIndex)
-        {
-            java.lang.String str = SnapUtils.stringValue(aValue);
-            setString(str, anIndex);
-        }
-
-        /**
-         * Adds the double value at index.
-         */
-        @Override
-        public void addDouble(double aValue, int anIndex)
-        {
-            java.lang.String str = SnapUtils.stringValue(aValue);
-            addString(str, anIndex);
+            return _stringArray[anIndex];
         }
 
         /**
          * Sets the String value at index.
          */
-        @Override
         public void setString(java.lang.String aValue, int anIndex)
         {
             // Set value
             _stringArray[anIndex] = aValue;
 
             // Clear caches
-            _floatArray = null;
-            _doubleArray = null;
+            clearCaches();
         }
 
         /**
          * Adds the String value at index.
          */
-        @Override
+        public void addString(java.lang.String aValue)
+        {
+            addString(aValue, getLength());
+        }
+
+        /**
+         * Adds the String value at index.
+         */
         public void addString(java.lang.String aValue, int anIndex)
         {
             // Expand components array if needed
@@ -284,8 +315,7 @@ public abstract class DataArrays implements Cloneable {
             _length++;
 
             // Clear caches
-            _floatArray = null;
-            _doubleArray = null;
+            clearCaches();
         }
 
         /**
@@ -298,14 +328,12 @@ public abstract class DataArrays implements Cloneable {
             _length--;
 
             // Clear caches
-            _floatArray = null;
-            _doubleArray = null;
+            clearCaches();
         }
 
         /**
-         * Override to trim array.
+         * Returns the simple String array (trimmed to length).
          */
-        @Override
         public java.lang.String[] getStringArray()
         {
             if (_length != _stringArray.length)
@@ -319,7 +347,15 @@ public abstract class DataArrays implements Cloneable {
         @Override
         protected String clone()
         {
-            return (String) super.clone();
+            // Do normal version
+            String clone = (String) super.clone();
+
+            // Clone arrays
+            if (_stringArray != null)
+                clone._stringArray = _stringArray.clone();
+
+            // Return
+            return clone;
         }
     }
 }
