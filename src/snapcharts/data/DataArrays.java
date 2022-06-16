@@ -11,187 +11,14 @@ import java.util.Arrays;
 public abstract class DataArrays implements Cloneable {
 
     /**
-     * This DataArray subclass uses floats.
-     */
-    public static class Float extends DataArray {
-
-        /**
-         * Constructor.
-         */
-        public Float()
-        {
-            _floatArray = new float[10];
-        }
-
-        /**
-         * Constructor.
-         */
-        public Float(float[] floatArray)
-        {
-            _floatArray = floatArray.clone();
-        }
-
-        /**
-         * Returns the component type.
-         */
-        @Override
-        public Class getComponentType()  { return float.class; }
-
-        /**
-         * Returns the Object value at index.
-         */
-        @Override
-        public java.lang.Float getValue(int anIndex)
-        {
-            return _floatArray[anIndex];
-        }
-
-        /**
-         * Sets the length.
-         */
-        @Override
-        public void setLength(int aValue)
-        {
-            // Expand components array if needed
-            if (aValue >= _length)
-                _floatArray = Arrays.copyOf(_floatArray, aValue);
-
-            // Set length
-            _length = aValue;
-
-            // Clear caches
-            _doubleArray = null;
-            _stringArray = null;
-        }
-
-        /**
-         * Returns the float value at index.
-         */
-        @Override
-        public final float getFloat(int anIndex)
-        {
-            return _floatArray[anIndex];
-        }
-
-        /**
-         * Returns the double value at index.
-         */
-        @Override
-        public final double getDouble(int anIndex)
-        {
-            return _floatArray[anIndex];
-        }
-
-        /**
-         * Sets the float value at index.
-         */
-        @Override
-        public final void setFloat(float aValue, int anIndex)
-        {
-            // Set value
-            _floatArray[anIndex] = aValue;
-
-            // Clear caches
-            _doubleArray = null;
-            _stringArray = null;
-        }
-
-        /**
-         * Sets the float value at index.
-         */
-        @Override
-        public final void setDouble(double aValue, int anIndex)
-        {
-            setFloat((float) aValue, anIndex);
-        }
-
-        /**
-         * Adds the double value at index.
-         */
-        @Override
-        public void addFloat(float aValue, int anIndex)
-        {
-            // Expand components array if needed
-            if (_length == _floatArray.length)
-                _floatArray = Arrays.copyOf(_floatArray, Math.max(_floatArray.length * 2, 20));
-
-            // If index is inside current length, shift existing elements over
-            if (anIndex < _length)
-                System.arraycopy(_floatArray, anIndex, _floatArray, anIndex + 1, _length - anIndex);
-
-            // Set value and increment length
-            _floatArray[anIndex] = aValue;
-            _length++;
-
-            // Clear caches
-            _doubleArray = null;
-            _stringArray = null;
-        }
-
-        /**
-         * Adds the double value at index.
-         */
-        @Override
-        public void addDouble(double aValue, int anIndex)
-        {
-            addFloat((float) aValue, anIndex);
-        }
-
-        /**
-         * Sets the String value at index.
-         */
-        @Override
-        public void setString(java.lang.String aValue, int anIndex)
-        {
-            float value = SnapUtils.floatValue(aValue);
-            setFloat(value, anIndex);
-        }
-
-        /**
-         * Adds the String value at index.
-         */
-        @Override
-        public void addString(java.lang.String aValue, int anIndex)
-        {
-            float value = SnapUtils.floatValue(aValue);
-            addFloat(value, anIndex);
-        }
-
-        /**
-         * Removes the float value at index.
-         */
-        public void removeIndex(int anIndex)
-        {
-            // Shift remaining elements in
-            System.arraycopy(_floatArray, anIndex + 1, _floatArray, anIndex, _length - anIndex - 1);
-            _length--;
-
-            // Clear caches
-            _doubleArray = null;
-            _stringArray = null;
-        }
-
-        /**
-         * Override to trim array.
-         */
-        @Override
-        public float[] getFloatArray()
-        {
-            if (_length != _floatArray.length)
-                _floatArray = Arrays.copyOf(_floatArray, _length);
-            return _floatArray;
-        }
-    }
-
-    /**
      * This DataArray subclass uses doubles.
      */
-    public static class Double extends DataArray {
+    public static class Number extends DataArray {
 
         /**
          * Constructor.
          */
-        public Double()
+        public Number()
         {
             _doubleArray = new double[10];
         }
@@ -199,9 +26,10 @@ public abstract class DataArrays implements Cloneable {
         /**
          * Constructor.
          */
-        public Double(double[] doubleArray)
+        public Number(double[] doubleArray)
         {
             _doubleArray = doubleArray.clone();
+            _length = _doubleArray.length;
         }
 
         /**
@@ -327,6 +155,15 @@ public abstract class DataArrays implements Cloneable {
                 _doubleArray = Arrays.copyOf(_doubleArray, _length);
             return _doubleArray;
         }
+
+        /**
+         * Override to return as this subclass.
+         */
+        @Override
+        protected Number clone()
+        {
+            return (Number) super.clone();
+        }
     }
 
     /**
@@ -348,6 +185,7 @@ public abstract class DataArrays implements Cloneable {
         public String(java.lang.String[] stringArray)
         {
             _stringArray = stringArray.clone();
+            _length = _stringArray.length;
         }
 
         /**
@@ -473,6 +311,15 @@ public abstract class DataArrays implements Cloneable {
             if (_length != _stringArray.length)
                 _stringArray = Arrays.copyOf(_stringArray, _length);
             return _stringArray;
+        }
+
+        /**
+         * Override to return as this subclass.
+         */
+        @Override
+        protected String clone()
+        {
+            return (String) super.clone();
         }
     }
 }

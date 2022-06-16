@@ -68,6 +68,30 @@ public class DataSetWrapper extends DataSet {
         return _wrapPointCount;
     }
 
+    /**
+     * Returns an array of dataset X values.
+     */
+    @Override
+    public DataArrays.Number getDataArrayX()  { return _dataSet.getDataArrayX(); }
+
+    /**
+     * Returns an array of dataset Y values.
+     */
+    @Override
+    public DataArrays.Number getDataArrayY()  { return _dataSet.getDataArrayY(); }
+
+    /**
+     * Returns an array of dataset Z values.
+     */
+    @Override
+    public DataArrays.Number getDataArrayZ()  { return _dataSet.getDataArrayZ(); }
+
+    /**
+     * Returns an array of dataset C values.
+     */
+    @Override
+    public DataArrays.String getDataArrayC()  { return _dataSet.getDataArrayC(); }
+
     @Override
     public double getX(int anIndex)
     {

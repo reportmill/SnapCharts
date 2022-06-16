@@ -7,8 +7,11 @@ import snap.util.XMLElement;
  */
 public class DataSetXYZZ extends DataSet {
 
-    // Cached arrays of X/Y/Z data
-    private double[]  _dataX, _dataY, _dataZ;
+    // The DataArrays
+    protected DataArray[]  _dataArrays;
+
+    // Cached DataArrays for common channels X/Y/Z
+    protected DataArrays.Number  _dataX, _dataY, _dataZ;
 
     /**
      * Constructor.
@@ -16,6 +19,12 @@ public class DataSetXYZZ extends DataSet {
     public DataSetXYZZ()
     {
         setDataType(DataType.XYZZ);
+
+        // Create/set default DataArrays
+        _dataX = new DataArrays.Number(new double[0]);
+        _dataY = new DataArrays.Number(new double[0]);
+        _dataZ = new DataArrays.Number(new double[0]);
+        _dataArrays = new DataArray[] { _dataX, _dataY, _dataZ };
     }
 
     /**
@@ -25,20 +34,22 @@ public class DataSetXYZZ extends DataSet {
     {
         setDataType(DataType.XYZZ);
 
-        _dataX = dataX;
-        _dataY = dataY;
-        _dataZ = dataZ;
+        // Create/set DataArrays
+        _dataX = new DataArrays.Number(dataX);
+        _dataY = new DataArrays.Number(dataY);
+        _dataZ = new DataArrays.Number(dataZ);
+        _dataArrays = new DataArray[] { _dataX, _dataY, _dataZ };
     }
 
     /**
      * Returns the number of rows.
      */
-    public int getRowCount()  { return _dataY.length; }
+    public int getRowCount()  { return _dataY.getLength(); }
 
     /**
      * Returns the number of columns.
      */
-    public int getColCount()  { return _dataX.length; }
+    public int getColCount()  { return _dataX.getLength(); }
 
     /**
      * Returns the number of points.
@@ -46,7 +57,7 @@ public class DataSetXYZZ extends DataSet {
     @Override
     public int getPointCount()
     {
-        return _dataZ.length;
+        return _dataZ.getLength();
     }
 
     @Override
@@ -55,12 +66,36 @@ public class DataSetXYZZ extends DataSet {
         throw new RuntimeException("DataSetXYZZ.setPointCount: XYZZ cannot add points dynamically");
     }
 
+    /**
+     * Returns an array of dataset X values.
+     */
+    @Override
+    public DataArrays.Number getDataArrayX()  { return _dataX; }
+
+    /**
+     * Returns an array of dataset Y values.
+     */
+    @Override
+    public DataArrays.Number getDataArrayY()  { return _dataY; }
+
+    /**
+     * Returns an array of dataset Z values.
+     */
+    @Override
+    public DataArrays.Number getDataArrayZ()  { return _dataZ; }
+
+    /**
+     * Returns an array of dataset C values.
+     */
+    @Override
+    public DataArrays.String getDataArrayC()  { return null; }
+
     @Override
     public double getX(int anIndex)
     {
         int colCount = getColCount();
         int index = colCount > 0 ? anIndex % colCount : anIndex;
-        return _dataX[index];
+        return _dataX.getDouble(index);
     }
 
     @Override
@@ -68,13 +103,13 @@ public class DataSetXYZZ extends DataSet {
     {
         int colCount = getColCount();
         int index = colCount > 0 ? anIndex / colCount : anIndex;
-        return _dataY[index];
+        return _dataY.getDouble(index);
     }
 
     @Override
     public double getZ(int anIndex)
     {
-        return _dataZ[anIndex];
+        return _dataZ.getDouble(anIndex);
     }
 
     @Override
@@ -132,25 +167,34 @@ public class DataSetXYZZ extends DataSet {
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
         // Get DataX
+        double[] dataX = null;
         XMLElement dataX_XML = anElement.get("DataX");
         if (dataX_XML != null) {
             String dataXStr = dataX_XML.getValue();
-            _dataX = DataUtils.getDoubleArrayForString(dataXStr);
+            dataX = DataUtils.getDoubleArrayForString(dataXStr);
         }
 
         // Get DataY
+        double[] dataY = null;
         XMLElement dataY_XML = anElement.get("DataY");
         if (dataY_XML != null) {
             String dataYStr = dataY_XML.getValue();
-            _dataY = DataUtils.getDoubleArrayForString(dataYStr);
+            dataY = DataUtils.getDoubleArrayForString(dataYStr);
         }
 
         // Get DataZ
+        double[] dataZ = null;
         XMLElement dataZ_XML = anElement.get("DataZ");
         if (dataZ_XML != null) {
             String dataZStr = dataZ_XML.getValue();
-            _dataZ = DataUtils.getDoubleArrayForString(dataZStr);
+            dataZ = DataUtils.getDoubleArrayForString(dataZStr);
         }
+
+        // Set DataArrays
+        _dataArrays = DataArray.newDataArraysForArrays(dataX, dataY, dataZ);
+        _dataX = (DataArrays.Number) _dataArrays[0];
+        _dataY = (DataArrays.Number) _dataArrays[1];
+        _dataZ = (DataArrays.Number) _dataArrays[2];
 
         // Return
         return this;

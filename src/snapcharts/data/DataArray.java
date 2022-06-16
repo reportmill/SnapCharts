@@ -3,6 +3,7 @@
  */
 package snapcharts.data;
 import snap.util.SnapUtils;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -229,11 +230,7 @@ public abstract class DataArray implements Cloneable {
     {
         // Handle double
         if (anArray instanceof double[])
-            return new DataArrays.Double((double[]) anArray);
-
-        // Handle float
-        if (anArray instanceof float[])
-            return new DataArrays.Float((float[]) anArray);
+            return new DataArrays.Number((double[]) anArray);
 
         // Handle String
         if (anArray instanceof String[])
@@ -241,5 +238,54 @@ public abstract class DataArray implements Cloneable {
 
         // Throw a fit
         throw new RuntimeException("DataArray.newDataArrayForArray: Unsupported array type: " + anArray.getClass());
+    }
+
+    /**
+     * Returns an array of DataArray for given double/String arrays.
+     */
+    public static DataArray[] newDataArraysForArrays(Object ... theValues)
+    {
+        // Get DataArrays
+        int arrayCount = 0;
+        DataArray[] dataArrays = new DataArray[theValues.length];
+        for (Object valueArray : theValues) {
+            if (valueArray == null)
+                continue;
+            DataArray dataArray = DataArray.newDataArrayForArray(valueArray);
+            dataArrays[arrayCount++] = dataArray;
+        }
+
+        // Trim to size
+        if (arrayCount != dataArrays.length)
+            dataArrays = Arrays.copyOf(dataArrays, arrayCount);
+
+        // Return
+        return dataArrays;
+    }
+
+    /**
+     * Creates a new DataArray for given value array.
+     */
+    public static DataArray[] newDataArraysForDataType(DataType dataType)
+    {
+        // Get channels and DataArrays
+        DataChan[] channels = dataType.getChannelsXY();
+        int channelCount = channels.length;
+        DataArray[] dataArrays = new DataArray[channelCount];
+
+        // Add DataArrays
+        for (int i = 0; i < channelCount; i++) {
+            DataChan chan = channels[i];
+            switch (chan) {
+                case X:
+                case Y:
+                case Z: dataArrays[i] = new DataArrays.Number(new double[0]); break;
+                case C: dataArrays[i] = new DataArrays.String(new String[0]); break;
+                default: break;
+            }
+        }
+
+        // Return
+        return dataArrays;
     }
 }

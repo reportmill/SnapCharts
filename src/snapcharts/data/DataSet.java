@@ -27,12 +27,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     // The units for theta
     private ThetaUnit  _thetaUnit;
 
-    // Cached arrays of X/Y/Z data (and X/Y for ZZ)
-    private double[]  _dataX, _dataY, _dataZ;
-
-    // Cached array of C data
-    private String[]  _dataC;
-
     // Min/Max values for X/Y/Z
     private MinMax  _minMaxX, _minMaxY, _minMaxZ;
 
@@ -215,10 +209,30 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     /**
      * Returns an array of dataset X values.
      */
+    public abstract DataArrays.Number getDataArrayX();
+
+    /**
+     * Returns an array of dataset Y values.
+     */
+    public abstract DataArrays.Number getDataArrayY();
+
+    /**
+     * Returns an array of dataset Z values.
+     */
+    public abstract DataArrays.Number getDataArrayZ();
+
+    /**
+     * Returns an array of dataset C values.
+     */
+    public abstract DataArrays.String getDataArrayC();
+
+    /**
+     * Returns an array of dataset X values.
+     */
     public double[] getDataX()
     {
-        if (_dataX!=null) return _dataX;
-        return _dataX = getDataXImpl();
+        DataArrays.Number dataArray = getDataArrayX();
+        return dataArray != null ? dataArray.getDoubleArray() : null;
     }
 
     /**
@@ -226,8 +240,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public double[] getDataY()
     {
-        if (_dataY !=null) return _dataY;
-        return _dataY = getDataYImpl();
+        DataArrays.Number dataArray = getDataArrayY();
+        return dataArray != null ? dataArray.getDoubleArray() : null;
     }
 
     /**
@@ -235,8 +249,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public double[] getDataZ()
     {
-        if (_dataZ !=null) return _dataZ;
-        return _dataZ = getDataZImpl();
+        DataArrays.Number dataArray = getDataArrayZ();
+        return dataArray != null ? dataArray.getDoubleArray() : null;
     }
 
     /**
@@ -244,8 +258,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public String[] getDataC()
     {
-        if (_dataC !=null) return _dataC;
-        return _dataC = getDataCImpl();
+        DataArrays.String dataArray = getDataArrayC();
+        return dataArray != null ? dataArray.getStringArray() : null;
     }
 
     /**
@@ -261,50 +275,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
             case R: return getDataY();
             default: throw new RuntimeException("DataSet.getDataArrayForChannel: Invalid channel: " + aChannel);
         }
-    }
-
-    /**
-     * Returns an array of dataset X values.
-     */
-    protected double[] getDataXImpl()
-    {
-        int count = getPointCount();
-        double[] vals = new double[count];
-        for (int i=0; i<count; i++) vals[i] = getX(i);
-        return vals;
-    }
-
-    /**
-     * Returns an array of dataset Y values.
-     */
-    protected double[] getDataYImpl()
-    {
-        int count = getPointCount();
-        double[] vals = new double[count];
-        for (int i=0; i<count; i++) vals[i] = getY(i);
-        return vals;
-    }
-
-    /**
-     * Returns an array of dataset Z values.
-     */
-    protected double[] getDataZImpl()
-    {
-        int count = getPointCount();
-        double[] vals = new double[count];
-        for (int i=0; i<count; i++) vals[i] = getZ(i);
-        return vals;
-    }
-
-    /**
-     * Returns an array of dataset C values.
-     */
-    protected String[] getDataCImpl()
-    {
-        int count = getPointCount();
-        String[] vals = new String[count];
-        for (int i=0; i<count; i++) vals[i] = getC(i);
-        return vals;
     }
 
     /**
@@ -515,8 +485,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     protected void pointsDidChange()
     {
-        _dataX = _dataY = _dataZ = null;
-        _dataC = null;
         _minMaxX = _minMaxY = _minMaxZ = null;
     }
 
@@ -640,11 +608,18 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         }
 
         // Add Data points
-        if (dataType != DataType.UNKNOWN)
-            DataSetUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
+        setDataArraysFromArrays(dataC, dataX, dataY, dataZ);
 
         // Return this part
         return this;
+    }
+
+    /**
+     * Sets DataArrays from data.
+     */
+    public void setDataArraysFromArrays(Object ... theArrays)
+    {
+        //DataSetUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
     }
 
     /**
