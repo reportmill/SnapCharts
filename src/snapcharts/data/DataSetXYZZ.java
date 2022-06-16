@@ -122,36 +122,6 @@ public class DataSetXYZZ extends DataSet {
     public String getC(int anIndex)  { return null; }
 
     @Override
-    public void setC(String aValue, int anIndex)  { }
-
-    @Override
-    public Double getValueX(int anIndex)
-    {
-        return getX(anIndex);
-    }
-
-    @Override
-    public void setValueX(Double aValue, int anIndex)  { }
-
-    @Override
-    public Double getValueY(int anIndex)
-    {
-        return getY(anIndex);
-    }
-
-    @Override
-    public void setValueY(Double aValue, int anIndex)  { }
-
-    @Override
-    public Double getValueZ(int anIndex)
-    {
-        return getZ(anIndex);
-    }
-
-    @Override
-    public void setValueZ(Double aValue, int anIndex)  { }
-
-    @Override
     public void addPoint(DataPoint aPoint, int anIndex)  { }
 
     @Override

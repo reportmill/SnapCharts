@@ -41,10 +41,10 @@ public class DataPoint implements Cloneable {
     {
         _dataSet = aDataSet;
         _index = anIndex;
-        _x = aDataSet.getValueX(anIndex);
-        _y = aDataSet.getValueY(anIndex);
-        _z = aDataSet.getValueZ(anIndex);
-        _c = aDataSet.getC(anIndex);
+        _x = (Double) aDataSet.getValueForChannel(DataChan.X, anIndex);
+        _y = (Double) aDataSet.getValueForChannel(DataChan.Y, anIndex);
+        _z = (Double) aDataSet.getValueForChannel(DataChan.Z, anIndex);
+        _c = (String) aDataSet.getValueForChannel(DataChan.C, anIndex);
     }
 
     /**

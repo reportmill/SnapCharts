@@ -133,51 +133,9 @@ public class DataSetWrapper extends DataSet {
     }
 
     @Override
-    public Double getValueX(int anIndex)
-    {
-        return getX(anIndex);
-    }
-
-    @Override
-    public Double getValueY(int anIndex)
-    {
-        return getY(anIndex);
-    }
-
-    @Override
-    public Double getValueZ(int anIndex)
-    {
-        return getZ(anIndex);
-    }
-
-    @Override
     public void setPointCount(int aValue)
     {
         throw new RuntimeException("DataSetWrapper: setPointCount not implemented");
-    }
-
-    @Override
-    public void setC(String aValue, int anIndex)
-    {
-        throw new RuntimeException("DataSetWrapper: setC not implemented");
-    }
-
-    @Override
-    public void setValueX(Double aValue, int anIndex)
-    {
-        throw new RuntimeException("DataSetWrapper: setValueX not implemented");
-    }
-
-    @Override
-    public void setValueY(Double aValue, int anIndex)
-    {
-        throw new RuntimeException("DataSetWrapper: setValueY not implemented");
-    }
-
-    @Override
-    public void setValueZ(Double aValue, int anIndex)
-    {
-        throw new RuntimeException("DataSetWrapper: setValueZ not implemented");
     }
 
     @Override
@@ -217,7 +175,7 @@ public class DataSetWrapper extends DataSet {
     {
         double range1 = aMax1 - aMin1;
 
-        // Caculate cycle start
+        // Calculate cycle start
         int cycleStart = 0;
         for (double min1 = aMin1; min1 > aMin2; min1 -= range1)
             cycleStart--;

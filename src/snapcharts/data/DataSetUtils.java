@@ -250,6 +250,7 @@ public class DataSetUtils {
     {
         // Get new DataSet
         DataSet dataSet = aDataSet1.clone();
+        DataArrays.Number dataArrayY = dataSet.getDataArrayY();
 
         // If DataSets have identical DataX, just add Y values
         if (isAlignedX(aDataSet1, aDataSet2)) {
@@ -258,7 +259,7 @@ public class DataSetUtils {
                 double y1 = aDataSet1.getY(i);
                 double y2 = aDataSet2.getY(i);
                 double y3 = y1 + y2;
-                dataSet.setValueY(y3, i);
+                dataArrayY.setDouble(y3, i);
             }
         }
 
@@ -270,7 +271,7 @@ public class DataSetUtils {
                 double y1 = aDataSet1.getY(i);
                 double y2 = getYForX(aDataSet2, x1);
                 double y3 = y1 + y2;
-                dataSet.setValueY(y3, i);
+                dataArrayY.setDouble(y3, i);
             }
         }
 

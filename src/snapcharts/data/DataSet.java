@@ -120,11 +120,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public abstract String getC(int anIndex);
 
     /**
-     * Sets the C value at given index.
-     */
-    public abstract void setC(String aValue, int anIndex);
-
-    /**
      * Returns the Theta value at given index.
      */
     public double getT(int anIndex)
@@ -141,34 +136,13 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the X value at given index (null if not set).
+     * Returns the value for channel and record index.
      */
-    public abstract Double getValueX(int anIndex);
-
-    /**
-     * Sets the X value at given index.
-     */
-    public abstract void setValueX(Double aValue, int anIndex);
-
-    /**
-     * Returns the Y value at given index (null if not set).
-     */
-    public abstract Double getValueY(int anIndex);
-
-    /**
-     * Sets the Y value at given index.
-     */
-    public abstract void setValueY(Double aValue, int anIndex);
-
-    /**
-     * Returns the Y value at given index (null if not set).
-     */
-    public abstract Double getValueZ(int anIndex);
-
-    /**
-     * Sets the Z value at given index.
-     */
-    public abstract void setValueZ(Double aValue, int anIndex);
+    public Object getValueForChannel(DataChan aChan, int anIndex)
+    {
+        DataArray dataArray = getDataArrayForChannel(aChan);
+        return dataArray != null ? dataArray.getValue(anIndex) : null;
+    }
 
     /**
      * Returns the data point at given index.
@@ -294,15 +268,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     {
         DataArrays.String dataArray = getDataArrayC();
         return dataArray != null ? dataArray.getStringArray() : null;
-    }
-
-    /**
-     * Returns the value for channel and record index.
-     */
-    public Object getValueForChannel(DataChan aChan, int anIndex)
-    {
-        DataArray dataArray = getDataArrayForChannel(aChan);
-        return dataArray != null ? dataArray.getValue(anIndex) : null;
     }
 
     /**
