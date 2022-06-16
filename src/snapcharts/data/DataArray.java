@@ -71,6 +71,30 @@ public abstract class DataArray implements Cloneable {
     }
 
     /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        String className = getClass().getSimpleName();
+        String propStrings = toStringProps();
+        return className + "{ " + propStrings + " }";
+    }
+
+    /**
+     * Standard toStringProps implementation.
+     */
+    public String toStringProps()
+    {
+        StringBuffer sb = new StringBuffer();
+        String name = getName();
+        if (name != null)
+            sb.append("Name=").append(getName()).append(", ");
+        sb.append("Length=").append(getLength());
+        return sb.toString();
+    }
+
+    /**
      * Creates a new DataArray for given value array.
      */
     public static DataArray newDataArrayForArray(Object anArray)

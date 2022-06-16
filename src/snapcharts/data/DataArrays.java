@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snapcharts.util.MinMax;
 import java.util.Arrays;
 
 /**
@@ -24,6 +25,9 @@ public class DataArrays {
 
         // The float array
         protected float[]  _floatArray;
+
+        // Min/Max for values
+        private MinMax  _minMax;
 
         /**
          * Constructor.
@@ -192,6 +196,32 @@ public class DataArrays {
         }
 
         /**
+         * Returns the minimum X value in this dataset.
+         */
+        public MinMax getMinMax()
+        {
+            // If already set, just return
+            if (_minMax != null) return _minMax;
+
+            // If no points, just return 0,0
+            int length = getLength();
+            if (length == 0)
+                return _minMax = new MinMax(0, 0);
+
+            // Iterate over values to get min/max
+            double min = Float.MAX_VALUE;
+            double max = -Float.MAX_VALUE;
+            for (int i = 0; i < length; i++) {
+                double value = getDouble(i);
+                min = Math.min(min, value);
+                max = Math.max(max, value);
+            }
+
+            // Return MinMax
+            return _minMax = new MinMax(min, max);
+        }
+
+        /**
          * Override to return as this subclass.
          */
         @Override
@@ -215,6 +245,19 @@ public class DataArrays {
         {
             super.clearCaches();
             _floatArray = null;
+            _minMax = null;
+        }
+
+        /**
+         * Standard toStringProps implementation.
+         */
+        public java.lang.String toStringProps()
+        {
+            StringBuffer sb = new StringBuffer(super.toStringProps());
+            MinMax minMax = getMinMax();
+            sb.append(", Min=").append(minMax.getMin());
+            sb.append(", Max=").append(minMax.getMax());
+            return sb.toString();
         }
     }
 

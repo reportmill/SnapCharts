@@ -268,7 +268,7 @@ public class DataSetUtils {
             for (int i = 0; i < pointCount; i++) {
                 double x1 = aDataSet1.getX(i);
                 double y1 = aDataSet1.getY(i);
-                double y2 = aDataSet2.getYForX(x1);
+                double y2 = getYForX(aDataSet2, x1);
                 double y3 = y1 + y2;
                 dataSet.setValueY(y3, i);
             }
@@ -298,5 +298,43 @@ public class DataSetUtils {
 
         // Return true since X coords are aligned
         return true;
+    }
+
+    /**
+     * Returns the Y value for given X value.
+     */
+    public static double getYForX(DataSet aDataSet, double aX)
+    {
+        // If empty, just return
+        int pointCount = aDataSet.getPointCount();
+        if (pointCount == 0)
+            return 0;
+
+        // Get index for given X value
+        double[] dataX = aDataSet.getDataX();
+        int index = Arrays.binarySearch(dataX, aX);
+        if (index >= 0)
+            return aDataSet.getY(index);
+
+        // Get lower/upper indexes
+        int highIndex = -index - 1;
+        int lowIndex = highIndex - 1;
+
+        // If beyond end, just return last Y
+        if (highIndex >= pointCount)
+            return aDataSet.getY(pointCount - 1);
+
+        // If before start, just return first Y
+        if (lowIndex < 0)
+            return aDataSet.getY(0);
+
+        // Otherwise, return weighted average
+        double x0 = aDataSet.getX(lowIndex);
+        double y0 = aDataSet.getY(lowIndex);
+        double x1 = aDataSet.getX(highIndex);
+        double y1 = aDataSet.getY(highIndex);
+        double weightX = (aX - x0) / (x1 - x0);
+        double y = weightX * (y1 - y0) + y0;
+        return y;
     }
 }

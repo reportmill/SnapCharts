@@ -67,6 +67,12 @@ public class DataSetXYZZ extends DataSet {
     }
 
     /**
+     * Returns the DataArrays.
+     */
+    @Override
+    public DataArray[] getDataArrays()  { return _dataArrays; }
+
+    /**
      * Returns an array of dataset X values.
      */
     @Override

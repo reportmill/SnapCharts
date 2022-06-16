@@ -6,6 +6,9 @@ import snap.geom.Rect;
 import snap.gfx.Painter;
 import snap.util.MathUtils;
 import snap.util.PropChange;
+import snapcharts.data.DataArray;
+import snapcharts.data.DataArrays;
+import snapcharts.data.DataChan;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;
@@ -256,7 +259,8 @@ public class PolarChartHelper extends ChartHelper {
         Trace[] traces = traceList.getEnabledTraces();
         for (Trace trace : traces) {
             DataSet dataSet = trace.getProcessedData();
-            MinMax minMax = dataSet.getMinMaxR();
+            DataArrays.Number dataArrayR = dataSet.getNumberDataArrayForChannel(DataChan.R);
+            MinMax minMax = dataArrayR != null ? dataArrayR.getMinMax() : new MinMax(0, 0);
             min = Math.min(min, minMax.getMin());
             max = Math.max(max, minMax.getMax());
         }

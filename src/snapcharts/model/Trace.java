@@ -678,9 +678,8 @@ public class Trace extends ChartPart {
     public String toStringProps()
     {
         // Do normal version
-        String superProps = super.toStringProps();
-        StringBuilder sb = new StringBuilder(superProps);
-        if (superProps.length() > 0) sb.append(", ");
+        StringBuilder sb = new StringBuilder(super.toStringProps());
+        if (sb.length() > 0) sb.append(", ");
 
         // Add DataType, PointCount
         sb.append("DataType=").append(getDataType());
@@ -688,12 +687,8 @@ public class Trace extends ChartPart {
 
         // Add DataChan Min/Max
         DataSet dataSet = getDataSet();
-        DataChan[] dataChans = getDataType().getChannels();
-        for (DataChan chan : dataChans) {
-            MinMax minMax = dataSet.getMinMax(chan);
-            sb.append(", Min").append(chan).append('=').append(minMax.getMin());
-            sb.append(", Max").append(chan).append('=').append(minMax.getMax());
-        }
+        String dataSetProps = dataSet.toStringProps();
+        sb.append(", DataSet={ ").append(dataSetProps).append(" }");
 
         // Return
         return sb.toString();

@@ -141,9 +141,6 @@ public class DataSetImpl extends DataSet {
 
         // Update point
         _pointCount--;
-
-        // Notify pointsDidChange
-        pointsDidChange();
     }
 
     /**
@@ -166,9 +163,6 @@ public class DataSetImpl extends DataSet {
                 default: break;
             }
         }
-
-        // Notify pointsDidChange
-        pointsDidChange();
     }
 
     /**
@@ -181,8 +175,13 @@ public class DataSetImpl extends DataSet {
             dataArray.setLength(0);
 
         _pointCount = 0;
-        pointsDidChange();
     }
+
+    /**
+     * Returns the DataArrays.
+     */
+    @Override
+    public DataArray[] getDataArrays()  { return _dataArrays; }
 
     /**
      * Returns an array of dataset X values.
@@ -272,7 +271,6 @@ public class DataSetImpl extends DataSet {
 
         // Set new value
         _dataX.setDouble(aValue, anIndex);
-        pointsDidChange();
     }
 
     /**
@@ -294,7 +292,6 @@ public class DataSetImpl extends DataSet {
 
         // Set new value
         _dataY.setDouble(aValue, anIndex);
-        pointsDidChange();
     }
 
     /**
@@ -316,7 +313,6 @@ public class DataSetImpl extends DataSet {
 
         // Set new value
         _dataZ.setDouble(aValue, anIndex);
-        pointsDidChange();
     }
 
     /**

@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snap.util.SnapUtils;
+import snap.util.ArrayUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.MinMax;
@@ -26,9 +26,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
 
     // The units for theta
     private ThetaUnit  _thetaUnit;
-
-    // Min/Max values for X/Y/Z
-    private MinMax  _minMaxX, _minMaxY, _minMaxZ;
 
     // Constant for ThetaUnits
     public enum ThetaUnit { Degrees, Radians }
@@ -207,6 +204,43 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public abstract boolean isClear();
 
     /**
+     * Returns the DataArrays.
+     */
+    public DataArray[] getDataArrays()  { return null; }
+
+    /**
+     * Returns the DataArray for given channel.
+     */
+    public DataArray getDataArrayForChannel(DataChan aChan)
+    {
+        // Get chan
+        DataChan chan = aChan;
+        if (chan == DataChan.T)  chan = DataChan.X;
+        else if (chan == DataChan.R)  chan = DataChan.Y;
+
+        // Get index of channel
+        DataType dataType = getDataType();
+        int index = ArrayUtils.indexOfId(dataType.getChannels(), chan);
+        if (index < 0)
+            index = ArrayUtils.indexOfId(dataType.getChannelsXY(), chan);
+
+        // Get DataArray at index
+        DataArray[] dataArrays = getDataArrays();
+        if (dataArrays != null && index >= 0 && index < dataArrays.length)
+            return dataArrays[index];
+        return null;
+    }
+
+    /**
+     * Returns the DataArray for given channel.
+     */
+    public DataArrays.Number getNumberDataArrayForChannel(DataChan aChan)
+    {
+        DataArray dataArray = getDataArrayForChannel(aChan);
+        return dataArray instanceof DataArrays.Number ? (DataArrays.Number) dataArray : null;
+    }
+
+    /**
      * Returns an array of dataset X values.
      */
     public abstract DataArrays.Number getDataArrayX();
@@ -263,64 +297,12 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
-     * Returns the data array for given channel.
-     */
-    public double[] getDataArrayForChannel(DataChan aChannel)
-    {
-        switch (aChannel) {
-            case X: return getDataX();
-            case Y: return getDataY();
-            case Z: return getDataZ();
-            case T: return getDataX();
-            case R: return getDataY();
-            default: throw new RuntimeException("DataSet.getDataArrayForChannel: Invalid channel: " + aChannel);
-        }
-    }
-
-    /**
      * Returns the value for channel and record index.
      */
     public Object getValueForChannel(DataChan aChan, int anIndex)
     {
-        switch (aChan) {
-            case X: return getValueX(anIndex);
-            case Y: return getValueY(anIndex);
-            case Z: return getValueZ(anIndex);
-            case I: return anIndex;
-            case C: return getC(anIndex);
-            case T: return getValueX(anIndex);
-            case R: return getValueY(anIndex);
-            default: throw new RuntimeException("DataSet.getValueForChannel: Unknown channel: " + aChan);
-        }
-    }
-
-    /**
-     * Sets the value for channel and record index.
-     */
-    public void setValueForChannel(Object aValue, DataChan aChan, int anIndex)
-    {
-        switch (aChan) {
-            case X:
-                Double valX = aValue != null ? SnapUtils.doubleValue(aValue) : null;
-                setValueX(valX, anIndex);
-                break;
-            case Y:
-                Double valY = aValue != null ? SnapUtils.doubleValue(aValue) : null;
-                setValueY(valY, anIndex);
-                break;
-            case Z:
-                Double valZ = aValue != null ? SnapUtils.doubleValue(aValue) : null;
-                setValueZ(valZ, anIndex);
-                break;
-            case I:
-                System.err.println("DataSet.setValueForChannel: Shouldn't set value for index channel");
-                break;
-            case C:
-                String valC = aValue != null ? SnapUtils.stringValue(aValue) : null;
-                setC(valC, anIndex);
-                break;
-            default: throw new RuntimeException("DataSet.setValueForChannel: Unknown channel: " + aChan);
-        }
+        DataArray dataArray = getDataArrayForChannel(aChan);
+        return dataArray != null ? dataArray.getValue(anIndex) : null;
     }
 
     /**
@@ -358,9 +340,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMaxX()
     {
-        if (_minMaxX != null) return _minMaxX;
-        MinMax minMax = getMinMaxImpl(DataChan.X);
-        return _minMaxX = minMax;
+        DataArrays.Number dataArray = getDataArrayX();
+        return dataArray != null ? dataArray.getMinMax() : new MinMax(0, 0);
     }
 
     /**
@@ -368,9 +349,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMaxY()
     {
-        if (_minMaxY != null) return _minMaxY;
-        MinMax minMax = getMinMaxImpl(DataChan.Y);
-        return _minMaxY = minMax;
+        DataArrays.Number dataArray = getDataArrayY();
+        return dataArray != null ? dataArray.getMinMax() : new MinMax(0, 0);
     }
 
     /**
@@ -378,114 +358,8 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      */
     public MinMax getMinMaxZ()
     {
-        if (_minMaxZ != null) return _minMaxZ;
-        MinMax minMax = getMinMaxImpl(DataChan.Z);
-        return _minMaxZ = minMax;
-    }
-
-    /**
-     * Returns the MinMax of Theta in this dataset.
-     */
-    public MinMax getMinMaxT()
-    {
-        return getMinMaxX();
-    }
-
-    /**
-     * Returns the MinMax of Radius in this dataset.
-     */
-    public MinMax getMinMaxR()
-    {
-        return getMinMaxY();
-    }
-
-    /**
-     * Returns the minimum X value in this dataset.
-     */
-    public MinMax getMinMax(DataChan aChan)
-    {
-        switch (aChan) {
-            case X: return getMinMaxX();
-            case Y: return getMinMaxY();
-            case Z: return getMinMaxZ();
-            case T: return getMinMaxT();
-            case R: return getMinMaxR();
-            case I: return new MinMax(0, getPointCount());
-            default: return new MinMax(0, 0);
-        }
-    }
-
-    /**
-     * Returns the minimum X value in this dataset.
-     */
-    protected MinMax getMinMaxImpl(DataChan aChan)
-    {
-        // If no points, just return 0,0
-        int pointCount = getPointCount();
-        if (pointCount == 0)
-            return new MinMax(0, 0);
-
-        // If Index Channel
-        if (aChan == DataChan.I)
-            return new MinMax(0, pointCount);
-
-        // Get DataArray for channel and iterate over to get min/max values
-        double[] dataVals = getDataArrayForChannel(aChan);
-        double min = Float.MAX_VALUE;
-        double max = -Float.MAX_VALUE;
-        for (int i = 0; i < pointCount; i++) {
-            min = Math.min(min, dataVals[i]);
-            max = Math.max(max, dataVals[i]);
-        }
-
-        // Return MinMax
-        return new MinMax(min, max);
-    }
-
-    /**
-     * Returns the Y value for given X value.
-     */
-    public double getYForX(double aX)
-    {
-        // If empty, just return
-        int pointCount = getPointCount();
-        if (pointCount == 0)
-            return 0;
-
-        // Get index for given X value
-        double[] dataX = getDataX();
-        int index = Arrays.binarySearch(dataX, aX);
-        if (index >= 0)
-            return getY(index);
-
-        // Get lower/upper indexes
-        int highIndex = -index - 1;
-        int lowIndex = highIndex - 1;
-
-        // If beyond end, just return last Y
-        if (highIndex >= pointCount)
-            return getY(pointCount - 1);
-
-        // If before start, just return first Y
-        if (lowIndex < 0)
-            return getY(0);
-
-        // Otherwise, return weighted average
-        double x0 = getX(lowIndex);
-        double y0 = getY(lowIndex);
-        double x1 = getX(highIndex);
-        double y1 = getY(highIndex);
-        double weightX = (aX - x0) / (x1 - x0);
-        double y = weightX * (y1 - y0) + y0;
-        return y;
-    }
-
-    /**
-     * Called when points are added, removed or modified.
-     */
-    protected void pointsDidChange()
-    {
-        _minMaxX = _minMaxY = _minMaxZ = null;
+        DataArrays.Number dataArray = getDataArrayZ();
+        return dataArray != null ? dataArray.getMinMax() : new MinMax(0, 0);
     }
 
     /**
@@ -628,12 +502,39 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     @Override
     public String toString()
     {
-        String str = "DataSet { " + "DataType=" + getDataType() + ", PointCount=" + getPointCount();
-        for (DataChan chan : getDataType().getChannels()) {
-            MinMax minMax = getMinMax(chan);
-            str += ", Min" + chan + "=" + minMax.getMin() + ", Max" + chan + "=" + minMax.getMax();
+        String className = getClass().getSimpleName();
+        String propString = toStringProps();
+        return className + "{ " + propString + " }";
+    }
+
+    /**
+     * Standard toStringProps implementation.
+     */
+    public String toStringProps()
+    {
+        // Add Name
+        StringBuffer sb = new StringBuffer();
+        String name = getName();
+        if (name != null)
+            sb.append("Name=").append(getName()).append(", ");
+
+        // Add DataType
+        DataType dataType = getDataType();
+        sb.append("DataType=").append(dataType);
+
+        // Add PointCount
+        sb.append(", PointCount=").append(getPointCount());
+
+        // Add DataArrays
+        DataChan[] dataChans = dataType.getChannels();
+        for (DataChan dataChan : dataChans) {
+            DataArray dataArray = getDataArrayForChannel(dataChan);
+            if (dataArray != null)
+                sb.append(",\nData").append(dataChan).append("={ ").append(dataArray.toStringProps()).append(" }");
         }
-        return str + '}';
+
+        // Return string
+        return sb.toString();
     }
 
     /**
