@@ -24,6 +24,15 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     // The format of the data
     private DataType  _dataType;
 
+    // The DataArrays
+    protected DataArray[]  _dataArrays;
+
+    // Cached DataArrays for common channels X/Y/Z
+    protected DataArrays.Number  _dataX, _dataY, _dataZ;
+
+    // Cached DataArrays for common channel C
+    protected DataArrays.String  _dataC;
+
     // The units for theta
     private ThetaUnit  _thetaUnit;
 
@@ -77,6 +86,63 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
+     * Returns the DataArrays.
+     */
+    public DataArray[] getDataArrays()  { return _dataArrays; }
+
+    /**
+     * Returns an array of dataset X values.
+     */
+    public DataArrays.Number getDataArrayX()  { return _dataX; }
+
+    /**
+     * Returns an array of dataset Y values.
+     */
+    public DataArrays.Number getDataArrayY()  { return _dataY; }
+
+    /**
+     * Returns an array of dataset Z values.
+     */
+    public DataArrays.Number getDataArrayZ()  { return _dataZ; }
+
+    /**
+     * Returns an array of dataset C values.
+     */
+    public DataArrays.String getDataArrayC()  { return _dataC; }
+
+    /**
+     * Returns the DataArray for given channel.
+     */
+    public DataArray getDataArrayForChannel(DataChan aChan)
+    {
+        // Get chan
+        DataChan chan = aChan;
+        if (chan == DataChan.T)  chan = DataChan.X;
+        else if (chan == DataChan.R)  chan = DataChan.Y;
+
+        // Get index of channel
+        DataType dataType = getDataType();
+        int index = ArrayUtils.indexOfId(dataType.getChannels(), chan);
+        if (index < 0)
+            index = ArrayUtils.indexOfId(dataType.getChannelsXY(), chan);
+
+        // Get DataArray at index
+        DataArray[] dataArrays = getDataArrays();
+        if (dataArrays != null && index >= 0 && index < dataArrays.length)
+            return dataArrays[index];
+        return null;
+    }
+
+    /**
+     * Returns the DataArray for given channel.
+     */
+    public DataArrays.Number getNumberDataArrayForChannel(DataChan aChan)
+    {
+        DataArray dataArray = getDataArrayForChannel(aChan);
+        return dataArray instanceof DataArrays.Number ? (DataArrays.Number) dataArray : null;
+    }
+
+    /**
      * Returns the units for Theta data.
      */
     public ThetaUnit getThetaUnit()  { return _thetaUnit; }
@@ -102,22 +168,34 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     /**
      * Returns the X value at given index.
      */
-    public abstract double getX(int anIndex);
+    public double getX(int anIndex)
+    {
+        return _dataX != null ? _dataX.getDouble(anIndex) : anIndex;
+    }
 
     /**
      * Returns the Y value at given index.
      */
-    public abstract double getY(int anIndex);
+    public double getY(int anIndex)
+    {
+        return _dataY != null ? _dataY.getDouble(anIndex) : 0;
+    }
 
     /**
      * Returns the Z value at given index.
      */
-    public abstract double getZ(int anIndex);
+    public double getZ(int anIndex)
+    {
+        return _dataZ != null ? _dataZ.getDouble(anIndex) : 0;
+    }
 
     /**
      * Returns the C value at given index.
      */
-    public abstract String getC(int anIndex);
+    public String getC(int anIndex)
+    {
+        return _dataC != null ? _dataC.getString(anIndex) : null;
+    }
 
     /**
      * Returns the Theta value at given index.
@@ -176,63 +254,6 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
      * Returns whether this dataset is clear (no name and no values).
      */
     public abstract boolean isClear();
-
-    /**
-     * Returns the DataArrays.
-     */
-    public DataArray[] getDataArrays()  { return null; }
-
-    /**
-     * Returns the DataArray for given channel.
-     */
-    public DataArray getDataArrayForChannel(DataChan aChan)
-    {
-        // Get chan
-        DataChan chan = aChan;
-        if (chan == DataChan.T)  chan = DataChan.X;
-        else if (chan == DataChan.R)  chan = DataChan.Y;
-
-        // Get index of channel
-        DataType dataType = getDataType();
-        int index = ArrayUtils.indexOfId(dataType.getChannels(), chan);
-        if (index < 0)
-            index = ArrayUtils.indexOfId(dataType.getChannelsXY(), chan);
-
-        // Get DataArray at index
-        DataArray[] dataArrays = getDataArrays();
-        if (dataArrays != null && index >= 0 && index < dataArrays.length)
-            return dataArrays[index];
-        return null;
-    }
-
-    /**
-     * Returns the DataArray for given channel.
-     */
-    public DataArrays.Number getNumberDataArrayForChannel(DataChan aChan)
-    {
-        DataArray dataArray = getDataArrayForChannel(aChan);
-        return dataArray instanceof DataArrays.Number ? (DataArrays.Number) dataArray : null;
-    }
-
-    /**
-     * Returns an array of dataset X values.
-     */
-    public abstract DataArrays.Number getDataArrayX();
-
-    /**
-     * Returns an array of dataset Y values.
-     */
-    public abstract DataArrays.Number getDataArrayY();
-
-    /**
-     * Returns an array of dataset Z values.
-     */
-    public abstract DataArrays.Number getDataArrayZ();
-
-    /**
-     * Returns an array of dataset C values.
-     */
-    public abstract DataArrays.String getDataArrayC();
 
     /**
      * Returns an array of dataset X values.
@@ -517,7 +538,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     {
         // Handle XYZZ special
         if (aDataType == DataType.XYZZ)
-            return DataSetXYZZ.newDataSetForValues(theArrays);
+            return new DataSetXYZZ(theArrays);
 
         // Handle other
         return new DataSetImpl(aDataType, theArrays);

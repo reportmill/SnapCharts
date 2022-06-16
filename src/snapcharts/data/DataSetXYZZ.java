@@ -7,24 +7,25 @@ import snap.util.XMLElement;
  */
 public class DataSetXYZZ extends DataSet {
 
-    // The DataArrays
-    protected DataArray[]  _dataArrays;
-
-    // Cached DataArrays for common channels X/Y/Z
-    protected DataArrays.Number  _dataX, _dataY, _dataZ;
-
     /**
      * Constructor.
      */
     public DataSetXYZZ()
     {
-        setDataType(DataType.XYZZ);
+        double[] doubleArray = new double[0];
+        initFromArraysXYZ(doubleArray, doubleArray, doubleArray);
+    }
 
-        // Create/set default DataArrays
-        _dataX = new DataArrays.Number(new double[0]);
-        _dataY = new DataArrays.Number(new double[0]);
-        _dataZ = new DataArrays.Number(new double[0]);
-        _dataArrays = new DataArray[] { _dataX, _dataY, _dataZ };
+    /**
+     * Constructor.
+     */
+    public DataSetXYZZ(Object ... theArrays)
+    {
+        // Create/set DataArrays
+        double[] dataX = (double[]) theArrays[0];
+        double[] dataY = (double[]) theArrays[1];
+        double[] dataZ = (double[]) theArrays[2];
+        initFromArraysXYZ(dataX, dataY, dataZ);
     }
 
     /**
@@ -32,6 +33,15 @@ public class DataSetXYZZ extends DataSet {
      */
     public DataSetXYZZ(double[] dataX, double[] dataY, double[] dataZ)
     {
+        initFromArraysXYZ(dataX, dataY, dataZ);
+    }
+
+    /**
+     * Sets DataArrays.
+     */
+    private void initFromArraysXYZ(double[] dataX, double[] dataY, double[] dataZ)
+    {
+        // Set DataType XYZZ
         setDataType(DataType.XYZZ);
 
         // Create/set DataArrays
@@ -55,46 +65,13 @@ public class DataSetXYZZ extends DataSet {
      * Returns the number of points.
      */
     @Override
-    public int getPointCount()
-    {
-        return _dataZ.getLength();
-    }
+    public int getPointCount()  { return _dataZ.getLength(); }
 
     @Override
     public void setPointCount(int aValue)
     {
         throw new RuntimeException("DataSetXYZZ.setPointCount: XYZZ cannot add points dynamically");
     }
-
-    /**
-     * Returns the DataArrays.
-     */
-    @Override
-    public DataArray[] getDataArrays()  { return _dataArrays; }
-
-    /**
-     * Returns an array of dataset X values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayX()  { return _dataX; }
-
-    /**
-     * Returns an array of dataset Y values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayY()  { return _dataY; }
-
-    /**
-     * Returns an array of dataset Z values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayZ()  { return _dataZ; }
-
-    /**
-     * Returns an array of dataset C values.
-     */
-    @Override
-    public DataArrays.String getDataArrayC()  { return null; }
 
     @Override
     public double getX(int anIndex)
@@ -111,15 +88,6 @@ public class DataSetXYZZ extends DataSet {
         int index = colCount > 0 ? anIndex / colCount : anIndex;
         return _dataY.getDouble(index);
     }
-
-    @Override
-    public double getZ(int anIndex)
-    {
-        return _dataZ.getDouble(anIndex);
-    }
-
-    @Override
-    public String getC(int anIndex)  { return null; }
 
     @Override
     public void addPoint(DataPoint aPoint, int anIndex)  { }
@@ -204,16 +172,5 @@ public class DataSetXYZZ extends DataSet {
         DataSetXYZZ dataSetXYZZ = (DataSetXYZZ) dataSet;
         int colCount = dataSetXYZZ.getColCount(); if (colCount == 0) return index;
         return index / colCount;
-    }
-
-    /**
-     * Returns new DataSet instance for type and array values.
-     */
-    public static DataSetXYZZ newDataSetForValues(Object ... theArrays)
-    {
-        double[] dataX = (double[]) theArrays[0];
-        double[] dataY = (double[]) theArrays[1];
-        double[] dataZ = (double[]) theArrays[2];
-        return new DataSetXYZZ(dataX, dataY, dataZ);
     }
 }

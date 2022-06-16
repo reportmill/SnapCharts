@@ -15,9 +15,6 @@ public class DataSetWrapper extends DataSet {
     // The raw min/max X
     private double  _rawMinX, _rawMaxX;
 
-    // The wrap min/max X
-    private double  _wrapMinX, _wrapMaxX;
-
     // The raw pointCount
     private int  _rawPointCount;
 
@@ -38,13 +35,18 @@ public class DataSetWrapper extends DataSet {
      */
     public DataSetWrapper(DataSet aDataSet, double aRawMinX, double aRawMaxX, double aWrapMinX, double aWrapMaxX)
     {
-        // Get info
+        // Get DataSet info
         _dataSet = aDataSet;
+        _dataArrays = _dataSet.getDataArrays();
+        _dataX = _dataSet.getDataArrayX();
+        _dataY = _dataSet.getDataArrayY();
+        _dataZ = _dataSet.getDataArrayZ();
+        _dataC = _dataSet.getDataArrayC();
+
+        // Get info
         _rawPointCount = aDataSet.getPointCount();
         _rawMinX = aRawMinX;
         _rawMaxX = aRawMaxX;
-        _wrapMinX = aWrapMinX;
-        _wrapMaxX = aWrapMaxX;
 
         // Get cycle range (make sure cycles * points doesn't exceed MAX_WRAPPED_POINTS)
         Range cycleRange = getCycleRange(aRawMinX, aRawMaxX, aWrapMinX, aWrapMaxX);
@@ -68,30 +70,6 @@ public class DataSetWrapper extends DataSet {
         return _wrapPointCount;
     }
 
-    /**
-     * Returns an array of dataset X values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayX()  { return _dataSet.getDataArrayX(); }
-
-    /**
-     * Returns an array of dataset Y values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayY()  { return _dataSet.getDataArrayY(); }
-
-    /**
-     * Returns an array of dataset Z values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayZ()  { return _dataSet.getDataArrayZ(); }
-
-    /**
-     * Returns an array of dataset C values.
-     */
-    @Override
-    public DataArrays.String getDataArrayC()  { return _dataSet.getDataArrayC(); }
-
     @Override
     public double getX(int anIndex)
     {
@@ -112,24 +90,6 @@ public class DataSetWrapper extends DataSet {
         int rawIndex = floorMod(_start + anIndex, _rawPointCount);
         double valY = _dataSet.getY(rawIndex);
         return valY;
-    }
-
-    @Override
-    public double getZ(int anIndex)
-    {
-        // Get index of wrapped DataSet point and get value Y
-        int rawIndex = floorMod(_start + anIndex, _rawPointCount);
-        double valZ = _dataSet.getZ(rawIndex);
-        return valZ;
-    }
-
-    @Override
-    public String getC(int anIndex)
-    {
-        // Get index of wrapped DataSet point and get value Y
-        int rawIndex = floorMod(_start + anIndex, _rawPointCount);
-        String valC = _dataSet.getC(rawIndex);
-        return valC;
     }
 
     @Override

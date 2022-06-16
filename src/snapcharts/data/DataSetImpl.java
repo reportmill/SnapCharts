@@ -8,17 +8,8 @@ package snapcharts.data;
  */
 public class DataSetImpl extends DataSet {
 
-    // The DataArrays
-    protected DataArray[]  _dataArrays;
-
     // The number of points
     private int  _pointCount;
-
-    // Cached DataArrays for common channels X/Y/Z
-    protected DataArrays.Number  _dataX, _dataY, _dataZ;
-
-    // Cached DataArrays for common channel C
-    protected DataArrays.String  _dataC;
 
     // Constants
     private int MAX_POINT_COUNT = 2000000;
@@ -175,68 +166,6 @@ public class DataSetImpl extends DataSet {
             dataArray.setLength(0);
 
         _pointCount = 0;
-    }
-
-    /**
-     * Returns the DataArrays.
-     */
-    @Override
-    public DataArray[] getDataArrays()  { return _dataArrays; }
-
-    /**
-     * Returns an array of dataset X values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayX()  { return _dataX; }
-
-    /**
-     * Returns an array of dataset Y values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayY()  { return _dataY; }
-
-    /**
-     * Returns an array of dataset Z values.
-     */
-    @Override
-    public DataArrays.Number getDataArrayZ()  { return _dataZ; }
-
-    /**
-     * Returns an array of dataset C values.
-     */
-    @Override
-    public DataArrays.String getDataArrayC()  { return _dataC; }
-
-    /**
-     * Returns the X value at given index.
-     */
-    public double getX(int anIndex)
-    {
-        return _dataX != null ? _dataX.getDouble(anIndex) : anIndex;
-    }
-
-    /**
-     * Returns the Y value at given index.
-     */
-    public double getY(int anIndex)
-    {
-        return _dataY != null ? _dataY.getDouble(anIndex) : 0;
-    }
-
-    /**
-     * Returns the Z value at given index.
-     */
-    public double getZ(int anIndex)
-    {
-        return _dataZ != null ? _dataZ.getDouble(anIndex) : 0;
-    }
-
-    /**
-     * Returns the C value at given index.
-     */
-    public String getC(int anIndex)
-    {
-        return _dataC != null ? _dataC.getString(anIndex) : null;
     }
 
     /**
