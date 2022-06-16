@@ -55,6 +55,11 @@ public abstract class DataArray implements Cloneable {
     public final int getLength()  { return _length; }
 
     /**
+     * Sets the length.
+     */
+    public abstract void setLength(int aValue);
+
+    /**
      * Returns the float value at index.
      */
     public float getFloat(int anIndex)
@@ -135,6 +140,11 @@ public abstract class DataArray implements Cloneable {
      * Adds the String value at index.
      */
     public abstract void addString(String aValue, int anIndex);
+
+    /**
+     * Removes the float value at index.
+     */
+    public abstract void removeIndex(int anIndex);
 
     /**
      * Returns the float array.

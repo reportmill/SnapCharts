@@ -47,6 +47,24 @@ public abstract class DataArrays implements Cloneable {
         }
 
         /**
+         * Sets the length.
+         */
+        @Override
+        public void setLength(int aValue)
+        {
+            // Expand components array if needed
+            if (aValue >= _length)
+                _floatArray = Arrays.copyOf(_floatArray, aValue);
+
+            // Set length
+            _length = aValue;
+
+            // Clear caches
+            _doubleArray = null;
+            _stringArray = null;
+        }
+
+        /**
          * Returns the float value at index.
          */
         @Override
@@ -140,6 +158,20 @@ public abstract class DataArrays implements Cloneable {
         }
 
         /**
+         * Removes the float value at index.
+         */
+        public void removeIndex(int anIndex)
+        {
+            // Shift remaining elements in
+            System.arraycopy(_floatArray, anIndex + 1, _floatArray, anIndex, _length - anIndex - 1);
+            _length--;
+
+            // Clear caches
+            _doubleArray = null;
+            _stringArray = null;
+        }
+
+        /**
          * Override to trim array.
          */
         @Override
@@ -185,6 +217,24 @@ public abstract class DataArrays implements Cloneable {
         public java.lang.Double getValue(int anIndex)
         {
             return _doubleArray[anIndex];
+        }
+
+        /**
+         * Sets the length.
+         */
+        @Override
+        public void setLength(int aValue)
+        {
+            // Expand components array if needed
+            if (aValue >= _length)
+                _doubleArray = Arrays.copyOf(_doubleArray, aValue);
+
+            // Set length
+            _length = aValue;
+
+            // Clear caches
+            _floatArray = null;
+            _stringArray = null;
         }
 
         /**
@@ -254,6 +304,20 @@ public abstract class DataArrays implements Cloneable {
         }
 
         /**
+         * Removes the value at index.
+         */
+        public void removeIndex(int anIndex)
+        {
+            // Shift remaining elements in
+            System.arraycopy(_doubleArray, anIndex + 1, _doubleArray, anIndex, _length - anIndex - 1);
+            _length--;
+
+            // Clear caches
+            _floatArray = null;
+            _stringArray = null;
+        }
+
+        /**
          * Override to trim array.
          */
         @Override
@@ -296,9 +360,27 @@ public abstract class DataArrays implements Cloneable {
          * Returns the Object value at index.
          */
         @Override
-        public java.lang.Double getValue(int anIndex)
+        public java.lang.String getValue(int anIndex)
         {
-            return _doubleArray[anIndex];
+            return _stringArray[anIndex];
+        }
+
+        /**
+         * Sets the length.
+         */
+        @Override
+        public void setLength(int aValue)
+        {
+            // Expand components array if needed
+            if (aValue >= _length)
+                _stringArray = Arrays.copyOf(_stringArray, aValue);
+
+            // Set length
+            _length = aValue;
+
+            // Clear caches
+            _floatArray = null;
+            _doubleArray = null;
         }
 
         /**
@@ -362,6 +444,20 @@ public abstract class DataArrays implements Cloneable {
             // Set value and increment length
             _stringArray[anIndex] = aValue;
             _length++;
+
+            // Clear caches
+            _floatArray = null;
+            _doubleArray = null;
+        }
+
+        /**
+         * Removes the value at index.
+         */
+        public void removeIndex(int anIndex)
+        {
+            // Shift remaining elements in
+            System.arraycopy(_stringArray, anIndex + 1, _stringArray, anIndex, _length - anIndex - 1);
+            _length--;
 
             // Clear caches
             _floatArray = null;
