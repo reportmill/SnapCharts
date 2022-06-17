@@ -5,6 +5,7 @@ package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
+import snap.props.PropDefaults;
 import snap.text.NumberFormat;
 import snap.text.NumberFormat.ExpStyle;
 import snap.util.*;

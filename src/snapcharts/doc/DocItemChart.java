@@ -1,6 +1,6 @@
 package snapcharts.doc;
-import snap.util.PropChange;
-import snap.util.PropDefaults;
+import snap.props.PropChange;
+import snap.props.PropDefaults;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Trace;

@@ -1,4 +1,6 @@
 package snapcharts.doc;
+import snap.props.PropDefaults;
+import snap.props.PropObject;
 import snap.util.*;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;

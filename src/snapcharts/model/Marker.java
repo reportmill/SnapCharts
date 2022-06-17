@@ -1,7 +1,7 @@
 package snapcharts.model;
 import snap.geom.Pos;
 import snap.gfx.Image;
-import snap.util.PropDefaults;
+import snap.props.PropDefaults;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;

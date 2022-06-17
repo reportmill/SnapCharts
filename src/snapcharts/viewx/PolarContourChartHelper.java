@@ -1,5 +1,5 @@
 package snapcharts.viewx;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snapcharts.model.*;
 import snapcharts.modelx.ContourStyle;
 import snapcharts.view.*;

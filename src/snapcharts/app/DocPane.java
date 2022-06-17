@@ -8,6 +8,8 @@ import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.GFXEnv;
 import snap.gfx.Image;
+import snap.props.PropArchiver;
+import snap.props.PropNode;
 import snap.util.*;
 import snap.view.*;
 import snap.viewx.*;

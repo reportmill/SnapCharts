@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.util.PropObject;
+import snap.props.PropObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

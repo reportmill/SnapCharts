@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.app;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.view.View;
 import snap.view.ViewAnimUtils;
 import snap.view.ViewOwner;

@@ -6,6 +6,7 @@ import snap.geom.Insets;
 import snap.geom.Point;
 import snap.geom.Pos;
 import snap.geom.Size;
+import snap.props.PropDefaults;
 import snap.util.*;
 import snapcharts.data.DataUtils;
 

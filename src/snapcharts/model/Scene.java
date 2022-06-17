@@ -3,6 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx3d.Side3D;
+import snap.props.PropDefaults;
 import snap.util.*;
 import java.util.Arrays;
 

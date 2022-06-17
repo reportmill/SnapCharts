@@ -3,11 +3,10 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
-import snap.util.PropDefaults;
+import snap.props.PropDefaults;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
-import snapcharts.util.MinMax;
 
 /**
  * A class to represent a Chart Axis.

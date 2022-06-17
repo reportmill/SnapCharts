@@ -1,7 +1,7 @@
 package snapcharts.app;
 import snap.gfx.*;
 import snap.styler.Styler;
-import snap.util.Undoer;
+import snap.props.Undoer;
 import snap.view.View;
 import snapcharts.model.ChartPart;
 

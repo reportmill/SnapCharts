@@ -4,6 +4,8 @@
 package snapcharts.model;
 import snap.geom.Insets;
 import snap.gfx.Color;
+import snap.props.PropChange;
+import snap.props.PropDefaults;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;

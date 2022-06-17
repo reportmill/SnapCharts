@@ -3,7 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
-import snap.util.PropDefaults;
+import snap.props.PropDefaults;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;

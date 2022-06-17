@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import snap.geom.Insets;
 import snap.gfx.Border;
 import snap.gfx.Color;
+import snap.props.PropChange;
 import snap.util.*;
 import snapcharts.data.DataSet;
 import snapcharts.util.MinMax;

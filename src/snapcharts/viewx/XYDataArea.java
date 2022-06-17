@@ -4,7 +4,7 @@
 package snapcharts.viewx;
 import snap.geom.*;
 import snap.gfx.*;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;

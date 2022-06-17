@@ -7,6 +7,10 @@ import snap.geom.Pos;
 import snap.gfx.*;
 import snap.gfx3d.CameraView;
 import snap.gfx3d.CubeView;
+import snap.props.DeepChangeListener;
+import snap.props.PropChange;
+import snap.props.PropChangeListener;
+import snap.props.Undoer;
 import snap.util.*;
 import snap.view.*;
 import snapcharts.doc.*;
@@ -54,13 +58,13 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     private ChartStyler  _styler = new ChartStyler(this);
 
     // The PropChangeListener
-    private PropChangeListener  _pcl = pc -> chartPartDidPropChange(pc);
+    private PropChangeListener _pcl = pc -> chartPartDidPropChange(pc);
 
     // The DeepChangeListener
-    private DeepChangeListener  _dcl = (src, pc) -> chartPartDidPropChange(pc);
+    private DeepChangeListener _dcl = (src, pc) -> chartPartDidPropChange(pc);
 
     // The undoer
-    private Undoer  _undoer;
+    private Undoer _undoer;
 
     // Constants
     public static Border CHART_BORDER = Border.createLineBorder(Color.GRAY, 1);

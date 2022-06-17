@@ -1,6 +1,6 @@
 package snapcharts.doc;
 import snap.util.FilePathUtils;
-import snap.util.PropObject;
+import snap.props.PropObject;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snap.web.WebURL;

@@ -3,7 +3,7 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Painter;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snapcharts.model.Axis;
 import snapcharts.model.TraceStyle;
 import snapcharts.model.Trace;

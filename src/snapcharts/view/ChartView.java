@@ -1,5 +1,8 @@
 package snapcharts.view;
 import snap.geom.*;
+import snap.props.DeepChangeListener;
+import snap.props.PropChange;
+import snap.props.PropChangeListener;
 import snap.util.*;
 import snap.view.*;
 import snapcharts.app.AppEnv;
@@ -64,10 +67,10 @@ public class ChartView extends ChartPartView<Chart> {
     private Runnable  _resetViewRunShared = () -> { resetView(); _resetViewRun = null; };
 
     // The PropChangeListener
-    private PropChangeListener  _pcl = pc -> chartDidPropChange(pc);
+    private PropChangeListener _pcl = pc -> chartDidPropChange(pc);
     
     // The DeepChangeListener
-    private DeepChangeListener  _dcl = (src,pc) -> chartDidDeepChange(pc);
+    private DeepChangeListener _dcl = (src, pc) -> chartDidDeepChange(pc);
 
     // Constants for properties
     public static String   Reveal_Prop = "Reveal";

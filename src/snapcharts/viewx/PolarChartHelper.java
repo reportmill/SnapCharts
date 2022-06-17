@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Rect;
 import snap.gfx.Painter;
 import snap.util.MathUtils;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snapcharts.data.*;
 import snapcharts.model.*;
 import snapcharts.util.MinMax;

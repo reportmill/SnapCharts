@@ -2,7 +2,7 @@ package snapcharts.app;
 import snap.geom.HPos;
 import snap.util.FormatUtils;
 import snap.util.ListSel;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.appmisc.SheetView;

@@ -5,6 +5,7 @@ package snapcharts.viewx;
 import java.text.DecimalFormat;
 import snap.geom.*;
 import snap.gfx.*;
+import snap.props.PropChange;
 import snap.util.*;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;

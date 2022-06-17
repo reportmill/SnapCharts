@@ -3,7 +3,7 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.gfx.Painter;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.view.*;
 import snapcharts.doc.DocItem;
 import snapcharts.doc.DocItemChart;

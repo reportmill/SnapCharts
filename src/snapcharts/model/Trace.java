@@ -3,6 +3,8 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.props.PropChange;
+import snap.props.PropDefaults;
 import snap.util.*;
 import snapcharts.data.*;
 

@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.app;
-import snap.util.Undoer;
+import snap.props.Undoer;
 import snap.view.MenuBar;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;

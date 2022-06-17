@@ -5,7 +5,7 @@ package snapcharts.view;
 import snap.geom.Point;
 import snap.geom.Size;
 import snap.gfx.*;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.data.DataType;

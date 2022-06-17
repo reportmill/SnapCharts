@@ -6,7 +6,7 @@ import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.util.ArrayUtils;
 import snap.util.MathUtils;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;

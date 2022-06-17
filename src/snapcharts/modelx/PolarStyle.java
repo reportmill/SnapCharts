@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.modelx;
-import snap.util.PropDefaults;
+import snap.props.PropDefaults;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.model.TraceStyle;

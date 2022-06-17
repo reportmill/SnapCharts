@@ -6,7 +6,7 @@ import snap.geom.HPos;
 import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.VPos;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.util.Range;
 import snap.util.StringUtils;
 import snap.view.*;

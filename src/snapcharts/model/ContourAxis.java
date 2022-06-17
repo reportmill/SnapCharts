@@ -3,6 +3,7 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
+import snap.props.PropDefaults;
 import snap.util.*;
 import snapcharts.util.MinMax;
 import java.util.Objects;

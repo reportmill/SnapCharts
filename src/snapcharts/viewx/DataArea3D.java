@@ -6,7 +6,7 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.view.ViewUtils;
 import snapcharts.model.*;
 import snapcharts.view.*;

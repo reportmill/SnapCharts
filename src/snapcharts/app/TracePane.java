@@ -1,6 +1,6 @@
 package snapcharts.app;
 import snap.util.ListSel;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snap.view.*;
 import snapcharts.data.DataChan;
 import snapcharts.data.DataPoint;

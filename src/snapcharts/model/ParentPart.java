@@ -3,8 +3,8 @@
  */
 package snapcharts.model;
 import snap.util.ArrayUtils;
-import snap.util.PropChange;
-import snap.util.PropDefaults;
+import snap.props.PropChange;
+import snap.props.PropDefaults;
 
 /**
  * This ChartPart class can have child ChartParts.

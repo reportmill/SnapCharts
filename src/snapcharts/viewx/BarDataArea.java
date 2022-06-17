@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
-import snap.util.PropChange;
+import snap.props.PropChange;
 import snapcharts.model.*;
 import snapcharts.modelx.BarStyle;
 import snapcharts.view.ChartHelper;

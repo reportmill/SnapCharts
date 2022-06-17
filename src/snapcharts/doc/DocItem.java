@@ -1,4 +1,8 @@
 package snapcharts.doc;
+import snap.props.PropChange;
+import snap.props.PropChangeSupport;
+import snap.props.PropDefaults;
+import snap.props.PropObject;
 import snap.util.*;
 import snapcharts.model.ChartPart;
 import java.util.ArrayList;
