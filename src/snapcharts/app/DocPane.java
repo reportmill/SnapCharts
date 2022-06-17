@@ -580,7 +580,7 @@ public class DocPane extends ViewOwner {
         addKeyActionHandler("DeleteAction", "DELETE");
         addKeyActionHandler("DeleteAction", "BACK_SPACE");
         addKeyActionHandler("EscapeAction", "ESCAPE");
-        //addKeyActionHandler("PropArchiverAction", "H");
+        addKeyActionHandler("PropArchiverAction", "H");
     }
 
     /**
@@ -680,8 +680,8 @@ public class DocPane extends ViewOwner {
                 setSelItem(parItem);
         }
 
-        if (anEvent.equals("PropArchiverAction"))
-            performPropArchiverTest();
+        if (anEvent.equals("PropArchiverAction") && anEvent.isAltDown())
+            performPropArchiverTest(anEvent);
     }
 
     /**
@@ -846,21 +846,29 @@ public class DocPane extends ViewOwner {
     /**
      * Writes the doc to a file and opens in editor.
      */
-    private void performPropArchiverTest()
+    private void performPropArchiverTest(ViewEvent anEvent)
     {
+        // Archive Doc to PropNode
         Doc doc = getDoc();
         PropArchiver propArchiver = new PropArchiver();
         PropNode propNode = propArchiver.propObjectToPropNode(doc);
+
+        // Get XML and XML bytes
         XMLElement xml = propNode.getXML("Doc");
         byte[] xmlBytes = xml.getBytes();
+
+        // Write to file and open
         File file = new File("/tmp/PropArchTest.charts");
         try {
             FileUtils.writeBytes(file, xmlBytes);
             GFXEnv.getEnv().openTextFile(file);
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        // Catch exceptions
+        catch (Exception e) { e.printStackTrace(); }
+
+        // Consume event
+        anEvent.consume();
     }
 
     // Constants for images
