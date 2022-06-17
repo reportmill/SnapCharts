@@ -5,7 +5,7 @@ package snapcharts.model;
 import snap.geom.Insets;
 import snap.gfx.Color;
 import snap.props.PropChange;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
@@ -346,14 +346,14 @@ public class Chart extends ParentPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props and relations
-        aPropDefaults.addProps(Type_Prop);
-        aPropDefaults.addRelations(AxisX_Rel, AxisY_Rel, Legend_Rel, Markers_Rel);
+        aPropSet.addProps(Type_Prop);
+        aPropSet.addRelations(AxisX_Rel, AxisY_Rel, Legend_Rel, Markers_Rel);
     }
 
     /**

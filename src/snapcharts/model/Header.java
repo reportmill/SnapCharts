@@ -4,7 +4,7 @@
 package snapcharts.model;
 import snap.geom.Insets;
 import snap.gfx.*;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -98,13 +98,13 @@ public class Header extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(Title_Prop, Subtitle_Prop);
+        aPropSet.addProps(Title_Prop, Subtitle_Prop);
     }
 
     /**

@@ -3,7 +3,7 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -61,13 +61,13 @@ public class AxisY extends Axis {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(ShowLegendGraphic_Prop);
+        aPropSet.addProps(ShowLegendGraphic_Prop);
     }
 
     /**

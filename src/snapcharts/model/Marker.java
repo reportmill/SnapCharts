@@ -1,7 +1,7 @@
 package snapcharts.model;
 import snap.geom.Pos;
 import snap.gfx.Image;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -353,13 +353,13 @@ public class Marker extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(X_Prop, Y_Prop, Width_Prop, Height_Prop,
+        aPropSet.addProps(X_Prop, Y_Prop, Width_Prop, Height_Prop,
                 CoordSpaceX_Prop, CoordSpaceY_Prop, FractionalX_Prop, FractionalY_Prop,
                 Text_Prop, TextOutsideX_Prop, TextOutsideY_Prop, FitTextToBounds_Prop, ShowTextInAxis_Prop,
                 SVG_Prop);

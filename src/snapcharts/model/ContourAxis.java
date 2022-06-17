@@ -3,7 +3,7 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.util.MinMax;
 import java.util.Objects;
@@ -150,13 +150,13 @@ public class ContourAxis extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(MinBound_Prop, MaxBound_Prop, MinValue_Prop, MaxValue_Prop, LevelCount_Prop);
+        aPropSet.addProps(MinBound_Prop, MaxBound_Prop, MinValue_Prop, MaxValue_Prop, LevelCount_Prop);
     }
 
     /**

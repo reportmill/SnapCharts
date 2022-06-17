@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.modelx;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.model.TraceStyle;
@@ -24,13 +24,13 @@ public class PolarStyle extends TraceStyle {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        //aPropDefaults.addProps(ThetaUnit_Prop);
+        //aPropSet.addPropNamed(ThetaUnit_Prop);
     }
 
     /**

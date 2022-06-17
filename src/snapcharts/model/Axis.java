@@ -5,7 +5,7 @@ package snapcharts.model;
 import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.text.NumberFormat;
 import snap.text.NumberFormat.ExpStyle;
 import snap.util.*;
@@ -120,6 +120,8 @@ public abstract class Axis extends ChartPart {
     public static final String TickLabelRotation_Prop = "TickLabelRotation";
 
     // Constants for default values
+    public static final String DEFAULT_TITLE = null;
+    public static final double DEFAULT_TITLE_ROTATION = 0;
     public static final boolean  DEFAULT_ZERO_REQUIRED = false;
     public static final boolean  DEFAULT_SHOW_ZERO_LINE = false;
     public static final boolean  DEFAULT_LOG = false;
@@ -600,16 +602,52 @@ public abstract class Axis extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
-        // Add Props
-        aPropDefaults.addProps(MinBound_Prop, MaxBound_Prop, MinValue_Prop, MaxValue_Prop,
-            GridSpacing_Prop, GridBase_Prop,
-            TickLength_Prop, TickPos_Prop,
-            ShowTickLabels_Prop, TickLabelRotation_Prop);
+        // Override super defaults: LineWidth, LineColor, TextFill, TextFormat, Align, Spacing
+        aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_AXIS_LINE_WIDTH);
+        aPropSet.getPropForName(LineColor_Prop).setDefaultValue(DEFAULT_AXIS_LINE_COLOR);
+        aPropSet.getPropForName(TextFill_Prop).setDefaultValue(DEFAULT_AXIS_TEXT_FILL);
+        aPropSet.getPropForName(TextFormat_Prop).setDefaultValue(DEFAULT_AXIS_TEXT_FORMAT);
+        aPropSet.getPropForName(Align_Prop).setDefaultValue(DEFAULT_AXIS_ALIGN);
+        aPropSet.getPropForName(Spacing_Prop).setDefaultValue(DEFAULT_AXIS_SPACING);
+
+        // Title, TitleRotation
+        aPropSet.addPropNamed(Title_Prop, String.class, DEFAULT_TITLE);
+        aPropSet.addPropNamed(TitleRotation_Prop, double.class, DEFAULT_TITLE_ROTATION);
+
+        // MinBound, MaxBound, MinValue, MaxValue
+        aPropSet.addPropNamed(MinBound_Prop, AxisBound.class, AxisBound.AUTO);
+        aPropSet.addPropNamed(MaxBound_Prop, AxisBound.class, AxisBound.AUTO);
+        aPropSet.addPropNamed(MinValue_Prop, double.class, 0d);
+        aPropSet.addPropNamed(MaxValue_Prop, double.class, 5d);
+
+        // WrapAxis, WrapMinMax
+        aPropSet.addPropNamed(WrapAxis_Prop, boolean.class, false);
+        aPropSet.addPropNamed(WrapMinMax_Prop, MinMax.class, DEFAULT_WRAP_MINMAX);
+
+        // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
+        aPropSet.addPropNamed(ZeroRequired_Prop, boolean.class, DEFAULT_ZERO_REQUIRED);
+        aPropSet.addPropNamed(ShowZeroLine_Prop, boolean.class, DEFAULT_SHOW_ZERO_LINE);
+        aPropSet.addPropNamed(Log_Prop, boolean.class, DEFAULT_LOG);
+        aPropSet.addPropNamed(ShowLogMinorLabels_Prop, boolean.class, DEFAULT_SHOW_LOG_MINOR_LABELS);
+
+        // GridSpacing, GridBase
+        aPropSet.addPropNamed(GridSpacing_Prop, double.class, 0d);
+        aPropSet.addPropNamed(GridBase_Prop, double.class, 0d);
+
+        // TickLength, TickPos, MinorTickCount
+        aPropSet.addPropNamed(TickLength_Prop, double.class, DEFAULT_TICK_LENGTH);
+        aPropSet.addPropNamed(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS);
+        aPropSet.addPropNamed(MinorTickCount_Prop, int.class, DEFAULT_MINOR_TICK_COUNT);
+
+        // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
+        aPropSet.addPropNamed(ShowTickLabels_Prop, boolean.class, DEFAULT_SHOW_TICK_LABELS);
+        aPropSet.addPropNamed(TickLabelAutoRotate_Prop, boolean.class, DEFAULT_TICK_LABEL_AUTO_ROTATE);
+        aPropSet.addPropNamed(TickLabelRotation_Prop, double.class, DEFAULT_TICK_LABEL_AUTO_ROTATE);
     }
 
     /**
@@ -621,11 +659,19 @@ public abstract class Axis extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
+            // Title, TitleRotation
+            case Title_Prop: return getTitle();
+            case TitleRotation_Prop: return getTitleRotation();
+
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return getMinBound();
             case MaxBound_Prop: return getMaxBound();
             case MinValue_Prop: return getMinValue();
             case MaxValue_Prop: return getMaxValue();
+
+            // WrapAxis, WrapMinMax
+            case WrapAxis_Prop: return isWrapAxis();
+            case WrapMinMax_Prop: return getWrapMinMax();
 
             // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
             case ZeroRequired_Prop: return isZeroRequired();
@@ -661,13 +707,18 @@ public abstract class Axis extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
+            // Title, TitleRotation
+            case Title_Prop: setTitle(SnapUtils.stringValue(aValue)); break;
+            case TitleRotation_Prop: setTitleRotation(SnapUtils.doubleValue(aValue)); break;
+
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: setMinBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
             case MaxBound_Prop: setMaxBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
             case MinValue_Prop: setMinValue(SnapUtils.doubleValue(aValue)); break;
             case MaxValue_Prop: setMaxValue(SnapUtils.doubleValue(aValue)); break;
 
-            // Handle WrapMinMax
+            // WrapAxis, WrapMinMax
+            case WrapAxis_Prop: setWrapAxis(SnapUtils.boolValue(aValue)); break;
             case WrapMinMax_Prop: {
                 MinMax minMax = MinMax.getMinMax(aValue);
                 setWrapMinMax(minMax);
@@ -684,7 +735,7 @@ public abstract class Axis extends ChartPart {
             case GridSpacing_Prop: setGridSpacing(SnapUtils.doubleValue(aValue)); break;
             case GridBase_Prop: setGridBase(SnapUtils.doubleValue(aValue)); break;
 
-            // TickLength, TickPos
+            // TickLength, TickPos, MinorTickCount
             case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
             case TickPos_Prop: setTickPos((TickPos) aValue); break;
             case MinorTickCount_Prop: setMinorTickCount(SnapUtils.intValue(aValue)); break;
@@ -696,58 +747,6 @@ public abstract class Axis extends ChartPart {
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
-        }
-    }
-
-    /**
-     * Returns the prop default value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // LineWidth
-            case LineWidth_Prop: return DEFAULT_AXIS_LINE_WIDTH;
-            case LineColor_Prop: return DEFAULT_AXIS_LINE_COLOR;
-
-            // TextFill, TextFormat
-            case TextFill_Prop: return DEFAULT_AXIS_TEXT_FILL;
-            case TextFormat_Prop: return DEFAULT_AXIS_TEXT_FORMAT;
-
-            // Align, Spacing
-            case Align_Prop: return DEFAULT_AXIS_ALIGN;
-            case Spacing_Prop: return DEFAULT_AXIS_SPACING;
-
-            // MinBound, MaxBound, MinValue, MaxValue
-            case MinBound_Prop: return AxisBound.AUTO;
-            case MaxBound_Prop: return AxisBound.AUTO;
-            case MinValue_Prop: return 0d;
-            case MaxValue_Prop: return 5d;
-
-            // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
-            case ZeroRequired_Prop: return DEFAULT_ZERO_REQUIRED;
-            case ShowZeroLine_Prop: return DEFAULT_SHOW_ZERO_LINE;
-            case Log_Prop: return DEFAULT_LOG;
-            case ShowLogMinorLabels_Prop: return DEFAULT_SHOW_LOG_MINOR_LABELS;
-
-            // GridSpacing, GridBase
-            case GridSpacing_Prop: return 0d;
-            case GridBase_Prop: return 0d;
-
-            // TickLength, TickPos, MinorTickCount
-            case TickLength_Prop: return DEFAULT_TICK_LENGTH;
-            case TickPos_Prop: return DEFAULT_TICK_POS;
-            case MinorTickCount_Prop: return DEFAULT_MINOR_TICK_COUNT;
-
-            // ShowTickLabels, TickLabelAutoRotate. TickLabelRotation_Prop
-            case ShowTickLabels_Prop: return DEFAULT_SHOW_TICK_LABELS;
-            case TickLabelAutoRotate_Prop: return DEFAULT_TICK_LABEL_AUTO_ROTATE;
-            case TickLabelRotation_Prop: return isTickLabelAutoRotate() ? getTickLabelRotation() : 0;
-
-            // Superclass properties
-            default: return super.getPropDefault(aPropName);
         }
     }
 

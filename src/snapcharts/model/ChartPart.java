@@ -7,9 +7,8 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.VPos;
 import snap.gfx.*;
-import snap.props.PropChange;
 import snap.props.PropChangeSupport;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.text.TextFormat;
 import snap.util.*;
@@ -559,35 +558,41 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
-     * Override to forward to PropSheet - for now.
-     */
-    @Override
-    protected void firePropChange(PropChange aPC)
-    {
-        super.firePropChange(aPC);
-
-        // Forward to PropSheet because accessors aren't doing this
-        getPropSheet().setPropValue(aPC.getPropName(), aPC.getNewValue());
-    }
-
-    /**
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
-        // Add Props
-        aPropDefaults.addProps(Name_Prop,
-                Border_Prop, Fill_Prop, Effect_Prop, Opacity_Prop,
-                LineColor_Prop, LineWidth_Prop, LineDash_Prop,
-                Font_Prop, TextFill_Prop,
-                Align_Prop, Margin_Prop, Padding_Prop, Spacing_Prop);
+        // Name
+        aPropSet.addPropNamed(Name_Prop, String.class, null);
+
+        // Border, Fill, Effect, Opacity
+        aPropSet.addPropNamed(Border_Prop, Border.class, DEFAULT_BORDER);
+        aPropSet.addPropNamed(Fill_Prop, Paint.class, DEFAULT_FILL);
+        aPropSet.addPropNamed(Effect_Prop, Effect.class, DEFAULT_EFFECT);
+        aPropSet.addPropNamed(Opacity_Prop, double.class, DEFAULT_OPACTIY);
+
+        // LineColor, LineWidth, LineDash
+        aPropSet.addPropNamed(LineColor_Prop, Color.class, DEFAULT_LINE_COLOR);
+        aPropSet.addPropNamed(LineWidth_Prop, int.class, DEFAULT_LINE_WIDTH);
+        aPropSet.addPropNamed(LineDash_Prop, double[].class, DEFAULT_LINE_DASH);
+
+        // Font, TextFill, TextFormat
+        aPropSet.addPropNamed(Font_Prop, Font.class, DEFAULT_FONT);
+        aPropSet.addPropNamed(TextFill_Prop, Paint.class, DEFAULT_TEXT_FILL);
+        aPropSet.addPropNamed(TextFormat_Prop, TextFormat.class, DEFAULT_TEXT_FORMAT);
+
+        // Align, Margin, Padding, Spacing
+        aPropSet.addPropNamed(Align_Prop, Pos.class, DEFAULT_ALIGN);
+        aPropSet.addPropNamed(Margin_Prop, Insets.class, DEFAULT_MARGIN);
+        aPropSet.addPropNamed(Padding_Prop, Insets.class, DEFAULT_PADDING);
+        aPropSet.addPropNamed(Spacing_Prop, double.class, DEFAULT_SPACING);
 
         // Add Relations
-        aPropDefaults.addRelations(TextFormat_Prop);
+        aPropSet.addRelations(TextFormat_Prop);
     }
 
     /**
@@ -680,46 +685,6 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
 
         // Do normal version
         return super.isPropDefault(aPropName);
-    }
-
-    /**
-     * Returns the value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // Name
-            case Name_Prop: return null;
-
-            // Border
-            case Border_Prop: return DEFAULT_BORDER;
-
-            // LineColor, LineWidth, LineDash
-            case LineColor_Prop: return DEFAULT_LINE_COLOR;
-            case LineWidth_Prop: return DEFAULT_LINE_WIDTH;
-            case LineDash_Prop: return DEFAULT_LINE_DASH;
-
-            // Fill, Effect
-            case Fill_Prop: return DEFAULT_FILL;
-            case Effect_Prop: return DEFAULT_EFFECT;
-
-            // Font, TextFill
-            case Font_Prop: return DEFAULT_FONT;
-            case TextFill_Prop: return DEFAULT_TEXT_FILL;
-            case TextFormat_Prop: return DEFAULT_TEXT_FORMAT;
-
-            // Align, Margin, Padding, Spacing
-            case Align_Prop: return DEFAULT_ALIGN;
-            case Margin_Prop: return DEFAULT_MARGIN;
-            case Padding_Prop: return DEFAULT_PADDING;
-            case Spacing_Prop: return DEFAULT_SPACING;
-
-            // Superclass props
-            default: System.err.println("ChartPart.getPropDefault: Unknown prop: " + aPropName); return null;
-        }
     }
 
     /**

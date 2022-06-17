@@ -3,7 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -172,13 +172,13 @@ public class PointStyle extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(SymbolSize_Prop, SymbolId_Prop, PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
+        aPropSet.addProps(SymbolSize_Prop, SymbolId_Prop, PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
     }
 
     /**

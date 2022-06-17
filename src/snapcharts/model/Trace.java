@@ -4,7 +4,7 @@
 package snapcharts.model;
 import snap.gfx.Color;
 import snap.props.PropChange;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.data.*;
 
@@ -699,17 +699,17 @@ public class Trace extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(ShowLine_Prop, ShowArea_Prop, ShowPoints_Prop, ShowTags_Prop,
+        aPropSet.addProps(ShowLine_Prop, ShowArea_Prop, ShowPoints_Prop, ShowTags_Prop,
                 PointJoin_Prop, FillMode_Prop);
 
         // Add Relations
-        aPropDefaults.addRelations(PointStyle_Rel, TagStyle_Rel, TraceStyle_Rel);
+        aPropSet.addRelations(PointStyle_Rel, TagStyle_Rel, TraceStyle_Rel);
     }
 
     /**

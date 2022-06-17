@@ -1,7 +1,6 @@
 package snapcharts.doc;
-import snap.props.PropChange;
 import snap.props.PropChangeSupport;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.util.*;
 import snapcharts.model.ChartPart;
@@ -179,26 +178,14 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     }
 
     /**
-     * Override to forward to PropSheet - for now.
-     */
-    @Override
-    protected void firePropChange(PropChange aPC)
-    {
-        super.firePropChange(aPC);
-
-        // Forward to PropSheet because accessors aren't doing this
-        getPropSheet().setPropValue(aPC.getPropName(), aPC.getNewValue());
-    }
-
-    /**
      * Override to provide prop/relation names.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
-        super.initPropDefaults(aPropDefaults);
-        aPropDefaults.addProps(Name_Prop);
-        aPropDefaults.addRelations(Content_Rel, Items_Prop);
+        super.initProps(aPropSet);
+        aPropSet.addProps(Name_Prop);
+        aPropSet.addRelations(Content_Rel, Items_Prop);
     }
 
     /**

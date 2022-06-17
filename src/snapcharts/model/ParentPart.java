@@ -4,7 +4,7 @@
 package snapcharts.model;
 import snap.util.ArrayUtils;
 import snap.props.PropChange;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 
 /**
  * This ChartPart class can have child ChartParts.
@@ -68,13 +68,13 @@ public class ParentPart extends ChartPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addRelations(Children_Rel);
+        aPropSet.addRelations(Children_Rel);
     }
 
     /**

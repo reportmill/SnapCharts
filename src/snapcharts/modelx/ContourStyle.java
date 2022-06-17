@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.modelx;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -55,13 +55,13 @@ public class ContourStyle extends TraceStyle {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(ShowLines_Prop, ShowMesh_Prop);
+        aPropSet.addProps(ShowLines_Prop, ShowMesh_Prop);
     }
 
     /**

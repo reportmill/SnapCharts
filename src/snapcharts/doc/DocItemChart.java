@@ -1,6 +1,6 @@
 package snapcharts.doc;
 import snap.props.PropChange;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Trace;
@@ -92,12 +92,12 @@ public class DocItemChart extends DocItem<Chart> {
      * Override to provide prop/relation names.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Remove Items so DocItemDataSets don't get archived (they are archived with chart)
-        aPropDefaults.removeRelations(Items_Prop);
+        aPropSet.removeRelationNamed(Items_Prop);
     }
 }

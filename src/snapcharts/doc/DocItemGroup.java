@@ -1,5 +1,5 @@
 package snapcharts.doc;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.util.*;
 import snapcharts.model.Chart;
@@ -202,18 +202,16 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
      * Override to provide prop/relation names.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
-        super.initPropDefaults(aPropDefaults);
+        // Do normal version
+        super.initProps(aPropSet);
 
-        // Add properties
-        aPropDefaults.addProps(Portrait_Prop, PageDisplay_Prop, ItemsPerPage_Prop, ChartScale_Prop);
-
-        // Set defaults
-        aPropDefaults.setPropDefault(Portrait_Prop, DEFAULT_PORTRAIT);
-        aPropDefaults.setPropDefault(PageDisplay_Prop, DEFAULT_PAGE_DISPLAY);
-        aPropDefaults.setPropDefault(ItemsPerPage_Prop, DEFAULT_ITEMS_PER_PAGE);
-        aPropDefaults.setPropDefault(ChartScale_Prop, DEFAULT_CHART_SCALE);
+        // Add Portrait, PageDisplay, ItemsPerPage, ChartScale
+        aPropSet.addPropNamed(Portrait_Prop, boolean.class, DEFAULT_PORTRAIT);
+        aPropSet.addPropNamed(PageDisplay_Prop, PageDisplay.class, DEFAULT_PAGE_DISPLAY);
+        aPropSet.addPropNamed(ItemsPerPage_Prop, int.class, DEFAULT_ITEMS_PER_PAGE);
+        aPropSet.addPropNamed(ChartScale_Prop, double.class, DEFAULT_CHART_SCALE);
     }
 
     /**

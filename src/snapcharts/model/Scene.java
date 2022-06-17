@@ -3,7 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx3d.Side3D;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.*;
 import java.util.Arrays;
 
@@ -227,13 +227,13 @@ public class Scene extends ParentPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(AspectMode_Prop, AspectScaleX_Prop, AspectScaleY_Prop, AspectScaleZ_Prop,
+        aPropSet.addProps(AspectMode_Prop, AspectScaleX_Prop, AspectScaleY_Prop, AspectScaleZ_Prop,
             ProjectedSides_Prop);
     }
 

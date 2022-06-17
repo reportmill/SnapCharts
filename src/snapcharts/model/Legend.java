@@ -6,7 +6,7 @@ import snap.geom.Insets;
 import snap.geom.Point;
 import snap.geom.Pos;
 import snap.geom.Size;
-import snap.props.PropDefaults;
+import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.data.DataUtils;
 
@@ -147,13 +147,13 @@ public class Legend extends ParentPart {
      * Override to register props.
      */
     @Override
-    protected void initPropDefaults(PropDefaults aPropDefaults)
+    protected void initProps(PropSet aPropSet)
     {
         // Do normal version
-        super.initPropDefaults(aPropDefaults);
+        super.initProps(aPropSet);
 
         // Add Props
-        aPropDefaults.addProps(ShowLegend_Prop, Position_Prop, Inside_Prop);
+        aPropSet.addProps(ShowLegend_Prop, Position_Prop, Inside_Prop);
     }
 
     /**
