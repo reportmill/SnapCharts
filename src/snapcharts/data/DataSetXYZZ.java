@@ -89,6 +89,24 @@ public class DataSetXYZZ extends DataSet {
         return _dataY.getDouble(index);
     }
 
+    /**
+     * Override to forward to getX/Y.
+     */
+    @Override
+    public Object getValueForChannel(DataChan aChan, int anIndex)
+    {
+        // Handle X
+        if (aChan == DataChan.X)
+            return getX(anIndex);
+
+        // Handle Y
+        if (aChan == DataChan.Y)
+            return getY(anIndex);
+
+        // Do normal version
+        return super.getValueForChannel(aChan, anIndex);
+    }
+
     @Override
     public void addPoint(DataPoint aPoint, int anIndex)  { }
 
