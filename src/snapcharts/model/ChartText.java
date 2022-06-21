@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
+import snap.props.PropSet;
 import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
@@ -30,6 +31,19 @@ public class ChartText extends ChartPart {
     {
         if (Objects.equals(aString, getText())) return;
         firePropChange(Text_Prop, _text, _text = aString);
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initProps(PropSet aPropSet)
+    {
+        // Do normal version
+        super.initProps(aPropSet);
+
+        // Text
+        aPropSet.addPropNamed(Text_Prop, String.class, null);
     }
 
     /**

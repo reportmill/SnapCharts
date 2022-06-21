@@ -4,6 +4,7 @@
 package snapcharts.model;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.props.PropSet;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 
@@ -47,6 +48,19 @@ public class TagStyle extends ChartPart {
     public boolean isBorderSupported()  { return false; }
 
     /**
+     * Override to register props.
+     */
+    @Override
+    protected void initProps(PropSet aPropSet)
+    {
+        // Do normal version
+        super.initProps(aPropSet);
+
+        // Override Font, Margin, Spacing
+        aPropSet.getPropForName(Font_Prop).setDefaultValue(DEFAULT_TAG_FONT);
+    }
+
+    /**
      * Override to provide TagStyle defaults.
      */
     @Override
@@ -54,14 +68,9 @@ public class TagStyle extends ChartPart {
     {
         switch (aPropName) {
 
-            // Handle LineColor
-            case LineColor_Prop: return _trace.getLineColor();
-
-            // Handle LineColor
+            // Handle Fill, LineColor
             case Fill_Prop: return getDefaultFill();
-
-            // Handle Font
-            case Font_Prop: return DEFAULT_TAG_FONT;
+            case LineColor_Prop: return _trace.getLineColor();
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

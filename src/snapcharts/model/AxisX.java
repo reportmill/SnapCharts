@@ -4,6 +4,8 @@
 package snapcharts.model;
 import snap.geom.Insets;
 import snap.geom.Side;
+import snap.props.PropSet;
+
 import java.util.List;
 
 /**
@@ -47,19 +49,15 @@ public class AxisX extends Axis {
     }
 
     /**
-     * Returns the prop default value for given key.
+     * Override to configure props for this class.
      */
     @Override
-    public Object getPropDefault(String aPropName)
+    protected void initProps(PropSet aPropSet)
     {
-        // Handle properties
-        switch (aPropName) {
+        // Do normal version
+        super.initProps(aPropSet);
 
-            // Padding
-            case Padding_Prop: return DEFAULT_AXIS_X_PADDING;
-
-            // Superclass properties
-            default: return super.getPropDefault(aPropName);
-        }
+        // Override super defaults: Padding
+        aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_AXIS_X_PADDING);
     }
 }

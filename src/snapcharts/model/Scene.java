@@ -232,9 +232,16 @@ public class Scene extends ParentPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(AspectMode_Prop, AspectScaleX_Prop, AspectScaleY_Prop, AspectScaleZ_Prop,
-            ProjectedSides_Prop);
+        // AspectMode
+        aPropSet.addPropNamed(AspectMode_Prop, AspectMode.class, AspectMode.View);
+
+        // AspectScaleX, AspectScaleY, AspectScaleZ
+        aPropSet.addPropNamed(AspectScaleX_Prop, double.class, 0d);
+        aPropSet.addPropNamed(AspectScaleY_Prop, double.class, 0d);
+        aPropSet.addPropNamed(AspectScaleZ_Prop, double.class, 0d);
+
+        // ProjectedSides
+        aPropSet.addPropNamed(ProjectedSides_Prop, Side3D[].class, null);
     }
 
     /**
@@ -303,9 +310,6 @@ public class Scene extends ParentPart {
             case AspectScaleX_Prop: return getAspectScaleDefault(AxisType.X);
             case AspectScaleY_Prop: return getAspectScaleDefault(AxisType.Y);
             case AspectScaleZ_Prop: return getAspectScaleDefault(AxisType.Z);
-
-            // ProjectedSides
-            case ProjectedSides_Prop: return null;
 
             // Superclass properties
             default: return super.getPropDefault(aPropName);

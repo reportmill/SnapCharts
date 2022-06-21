@@ -704,12 +704,23 @@ public class Trace extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(ShowLine_Prop, ShowArea_Prop, ShowPoints_Prop, ShowTags_Prop,
-                PointJoin_Prop, FillMode_Prop);
+        // Override LineWidth
+        aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_LINE_WIDTH);
 
-        // Add Relations
-        aPropSet.addRelations(PointStyle_Rel, TagStyle_Rel, TraceStyle_Rel);
+        // Handle ShowLine, ShowArea, ShowPoints, ShowTags
+        aPropSet.addPropNamed(ShowLine_Prop, boolean.class, false);
+        aPropSet.addPropNamed(ShowArea_Prop, boolean.class, false);
+        aPropSet.addPropNamed(ShowPoints_Prop, boolean.class, false);
+        aPropSet.addPropNamed(ShowTags_Prop, boolean.class, false);
+
+        // PointJoin, FillMode
+        aPropSet.addPropNamed(PointJoin_Prop, PointJoin.class, DEFAULT_POINT_JOIN);
+        aPropSet.addPropNamed(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE);
+
+        // Handle PointStyleRel, TagStyle_Rel, TraceStyle_Rel
+        aPropSet.addPropNamed(PointStyle_Rel, PointStyle.class, null);
+        aPropSet.addPropNamed(TagStyle_Rel, TagStyle.class, null);
+        aPropSet.addPropNamed(TraceStyle_Rel, TraceStyle.class, null);
     }
 
     /**
@@ -773,16 +784,9 @@ public class Trace extends ChartPart {
     {
         switch (aPropName) {
 
-            // Override LineColor_Prop, LineWidth_Prop
-            case LineColor_Prop: return getDefaultLineColor();
-            case LineWidth_Prop: return DEFAULT_LINE_WIDTH;
-
-            // Override Fill
+            // Override Fill, LineColor
             case Fill_Prop: return getFillColorDefault();
-
-            // PointJoin, FillMode
-            case PointJoin_Prop: return DEFAULT_POINT_JOIN;
-            case FillMode_Prop: return DEFAULT_FILL_MODE;
+            case LineColor_Prop: return getDefaultLineColor();
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

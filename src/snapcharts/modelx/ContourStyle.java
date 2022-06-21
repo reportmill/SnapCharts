@@ -52,7 +52,7 @@ public class ContourStyle extends TraceStyle {
     }
 
     /**
-     * Override to register props.
+     * Override to configure props for this class.
      */
     @Override
     protected void initProps(PropSet aPropSet)
@@ -60,8 +60,9 @@ public class ContourStyle extends TraceStyle {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(ShowLines_Prop, ShowMesh_Prop);
+        // ShowLines, ShowMesh
+        aPropSet.addPropNamed(ShowLines_Prop, boolean.class, false);
+        aPropSet.addPropNamed(ShowMesh_Prop, boolean.class, false);
     }
 
     /**
@@ -97,24 +98,6 @@ public class ContourStyle extends TraceStyle {
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
-        }
-    }
-
-    /**
-     * Returns the prop default value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // Handle ShowLines, ShowMesh_Prop
-            case ShowLines_Prop: return false;
-            case Spacing_Prop: return false;
-
-            // Do normal version
-            default: return super.getPropDefault(aPropName);
         }
     }
 

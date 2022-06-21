@@ -590,9 +590,6 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         aPropSet.addPropNamed(Margin_Prop, Insets.class, DEFAULT_MARGIN);
         aPropSet.addPropNamed(Padding_Prop, Insets.class, DEFAULT_PADDING);
         aPropSet.addPropNamed(Spacing_Prop, double.class, DEFAULT_SPACING);
-
-        // Add Relations
-        aPropSet.addRelations(TextFormat_Prop);
     }
 
     /**

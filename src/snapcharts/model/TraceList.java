@@ -8,6 +8,7 @@ import snap.geom.Insets;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.props.PropChange;
+import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.data.DataSet;
 import snapcharts.util.MinMax;
@@ -18,7 +19,7 @@ import snapcharts.util.MinMax;
 public class TraceList extends ChartPart {
 
     // The list of traces
-    private List<Trace> _traceList = new ArrayList<>();
+    private List<Trace>  _traceList = new ArrayList<>();
 
     // The Traces array
     private Trace[]  _traces;
@@ -34,6 +35,7 @@ public class TraceList extends ChartPart {
 
     // Constants for properties
     public static final String Trace_Prop = "Trace";
+    public static final String Traces_Prop = "Traces";
 
     // Constants for property defaults
     public static final Border DEFAULT_BORDER = Border.createLineBorder(Color.GRAY, 1).copyForInsets(Insets.EMPTY);
@@ -63,6 +65,20 @@ public class TraceList extends ChartPart {
         // Create, set, return
         Trace[] traces = _traceList.toArray(new Trace[0]);
         return _traces = traces;
+    }
+
+    /**
+     * Sets the array of traces.
+     */
+    public void setTraces(Trace[] theTraces)
+    {
+        // Remove current traces
+        while (getTraceCount() > 0)
+            removeTrace(0);
+
+        // Add new traces
+        for (Trace trace : theTraces)
+            addTrace(trace);
     }
 
     /**
@@ -310,14 +326,51 @@ public class TraceList extends ChartPart {
     }
 
     /**
-     * Override to customize default Border.
+     * Override to register props.
      */
     @Override
-    public Object getPropDefault(String aPropName)
+    protected void initProps(PropSet aPropSet)
     {
-        if (aPropName == Border_Prop)
-            return DEFAULT_BORDER;
-        return super.getPropDefault(aPropName);
+        // Do normal version
+        super.initProps(aPropSet);
+
+        // Override super defaults: Border
+        aPropSet.getPropForName(Border_Prop).setDefaultValue(DEFAULT_BORDER);
+
+        // Traces
+        aPropSet.addPropNamed(Traces_Prop, Trace[].class, new Trace[0]);
+    }
+
+    /**
+     * Override to support properties for this class.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        switch (aPropName) {
+
+            // Traces
+            case Traces_Prop: return getTraces();
+
+            // Do normal version
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Override to support properties for this class.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        switch (aPropName) {
+
+            // Traces
+            case Trace_Prop: setTraces((Trace[]) aValue); break;
+
+            // Do normal version
+            default: super.setPropValue(aPropName, aValue); break;
+        }
     }
 
     /**

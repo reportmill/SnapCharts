@@ -13,9 +13,6 @@ import java.util.Objects;
  */
 public class Marker extends ChartPart {
 
-    // The name of marker
-    private String  _name;
-
     // The marker location
     private double  _x, _y;
 
@@ -69,7 +66,6 @@ public class Marker extends ChartPart {
     }
 
     // Constants for properties
-    public static final String Name_Prop = "Name";
     public static final String X_Prop = "X";
     public static final String Y_Prop = "Y";
     public static final String Width_Prop = "Width";
@@ -103,20 +99,6 @@ public class Marker extends ChartPart {
         // Set default values
         _coordSpaceX = DEFAULT_COORD_SPACE;
         _coordSpaceY = DEFAULT_COORD_SPACE;
-    }
-
-    /**
-     * Returns the name of marker.
-     */
-    public String getName()  { return _name; }
-
-    /**
-     * Sets the name of marker.
-     */
-    public void setName(String aString)
-    {
-        if (Objects.equals(aString, _name)) return;
-        firePropChange(Name_Prop, _name, _name = aString);
     }
 
     /**
@@ -358,11 +340,31 @@ public class Marker extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(X_Prop, Y_Prop, Width_Prop, Height_Prop,
-                CoordSpaceX_Prop, CoordSpaceY_Prop, FractionalX_Prop, FractionalY_Prop,
-                Text_Prop, TextOutsideX_Prop, TextOutsideY_Prop, FitTextToBounds_Prop, ShowTextInAxis_Prop,
-                SVG_Prop);
+        // Override super props: Align
+        aPropSet.getPropForName(Align_Prop).setDefaultValue(DEFAULT_MARKER_ALIGN);
+
+        // X, Y, Width, Height
+        aPropSet.addPropNamed(X_Prop, double.class, 0d);
+        aPropSet.addPropNamed(Y_Prop, double.class, 0d);
+        aPropSet.addPropNamed(Width_Prop, double.class, 0d);
+        aPropSet.addPropNamed(Height_Prop, double.class, 0d);
+
+        // CoordSpaceX, CoordSpaceY, FractionalX, FractionalY
+        aPropSet.addPropNamed(CoordSpaceX_Prop, double.class, DEFAULT_COORD_SPACE);
+        aPropSet.addPropNamed(CoordSpaceY_Prop, double.class, DEFAULT_COORD_SPACE);
+        aPropSet.addPropNamed(FractionalX_Prop, double.class, false);
+        aPropSet.addPropNamed(FractionalY_Prop, double.class, false);
+
+        // Text, TextOutsideX, TextOutsideY, FitTextToBounds, ShowTextInAxis
+        aPropSet.addPropNamed(Text_Prop, double.class, null);
+        aPropSet.addPropNamed(TextOutsideX_Prop, double.class, false);
+        aPropSet.addPropNamed(TextOutsideY_Prop, double.class, false);
+        aPropSet.addPropNamed(FitTextToBounds_Prop, double.class, false);
+        aPropSet.addPropNamed(ShowTextInAxis_Prop, double.class, false);
+
+        // Image, SVG
+        aPropSet.addPropNamed(Image_Prop, double.class, null);
+        aPropSet.addPropNamed(SVG_Prop, double.class, null);
     }
 
     /**
@@ -440,45 +442,6 @@ public class Marker extends ChartPart {
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);
-        }
-    }
-
-    /**
-     * Override for subclass properties.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        switch (aPropName) {
-
-            // Align
-            case Align_Prop: return DEFAULT_MARKER_ALIGN;
-
-            // X, Y, Width, Height
-            case X_Prop: return 0;
-            case Y_Prop: return 0;
-            case Width_Prop: return 0;
-            case Height_Prop: return 0;
-
-            // CoordSpaceX, CoordSpaceY, FractionalX, FractionalY
-            case CoordSpaceX_Prop: return DEFAULT_COORD_SPACE;
-            case CoordSpaceY_Prop: return DEFAULT_COORD_SPACE;
-            case FractionalX_Prop: return false;
-            case FractionalY_Prop: return false;
-
-            // Text, TextOutsideX, TextOutsideY, FitTextToBounds, ShowTextInAxis
-            case Text_Prop: return null;
-            case TextOutsideX_Prop: return false;
-            case TextOutsideY_Prop: return false;
-            case FitTextToBounds_Prop: return false;
-            case ShowTextInAxis_Prop: return false;
-
-            // Image, SVG
-            case Image_Prop: return null;
-            case SVG_Prop: return null;
-
-            // Do normal version
-            default: return super.getPropDefault(aPropName);
         }
     }
 

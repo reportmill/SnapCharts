@@ -178,14 +178,20 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     }
 
     /**
-     * Override to provide prop/relation names.
+     * Override to configure props for this class.
      */
     @Override
     protected void initProps(PropSet aPropSet)
     {
+        // Do normal version
         super.initProps(aPropSet);
-        aPropSet.addProps(Name_Prop);
-        aPropSet.addRelations(Content_Rel, Items_Prop);
+
+        // Name
+        aPropSet.addPropNamed(Name_Prop, String.class, null);
+
+        // Content, Items
+        aPropSet.addPropNamed(Content_Rel, PropObject.class, null);
+        aPropSet.addPropNamed(Items_Prop, DocItem[].class, null);
     }
 
     /**

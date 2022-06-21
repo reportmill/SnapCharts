@@ -66,8 +66,12 @@ public class AxisY extends Axis {
         // Do normal version
         super.initProps(aPropSet);
 
+        // Override super defaults: Padding
+        aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_AXIS_Y_PADDING);
+
         // Add Props
-        aPropSet.addProps(ShowLegendGraphic_Prop);
+        aPropSet.addPropNamed(ShowLegendGraphic_Prop, boolean.class, DEFAULT_SHOW_LEGEND_GRAPHIC);
+        aPropSet.addPropNamed(ShowLegendGraphic_Prop, boolean.class, DEFAULT_SHOW_LEGEND_GRAPHIC);
     }
 
     /**
@@ -101,26 +105,6 @@ public class AxisY extends Axis {
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
-        }
-    }
-
-    /**
-     * Returns the prop default value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // ShowLegendGraphic
-            case ShowLegendGraphic_Prop: return DEFAULT_SHOW_LEGEND_GRAPHIC;
-
-            // Padding
-            case Padding_Prop: return DEFAULT_AXIS_Y_PADDING;
-
-            // Superclass properties
-            default: return super.getPropDefault(aPropName);
         }
     }
 

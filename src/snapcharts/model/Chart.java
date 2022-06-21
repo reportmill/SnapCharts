@@ -67,9 +67,13 @@ public class Chart extends ParentPart {
     public static final String Colors_Prop = "Colors";
 
     // Constants for relations
-    public static final String AxisX_Rel = "AxisX";
-    public static final String AxisY_Rel = "AxisY";
-    public static final String Legend_Rel = "Legend";
+    public static final String AxisX_Prop = "AxisX";
+    public static final String AxisY_Prop = "AxisY";
+    public static final String AxisY2_Prop = "AxisY2";
+    public static final String AxisY3_Prop = "AxisY3";
+    public static final String AxisY4_Prop = "AxisY4";
+    public static final String AxisZ_Prop = "AxisZ";
+    public static final String Legend_Prop = "Legend";
     public static final String Markers_Rel = "Markers";
 
     // Constants for property defaults
@@ -351,9 +355,24 @@ public class Chart extends ParentPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props and relations
-        aPropSet.addProps(Type_Prop);
-        aPropSet.addRelations(AxisX_Rel, AxisY_Rel, Legend_Rel, Markers_Rel);
+        // Override super defaults: Fill, Padding
+        aPropSet.getPropForName(Fill_Prop).setDefaultValue(DEFAULT_CHART_FILL);
+        aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_CHART_PADDING);
+
+        // Type
+        aPropSet.addPropNamed(Type_Prop, ChartType.class, DEFAULT_TYPE);
+
+        // AxisX, AxisY, AxisY2, AxisY3, AxisY4, AxisZ
+        aPropSet.addPropNamed(AxisX_Prop, AxisX.class, null);
+        aPropSet.addPropNamed(AxisY_Prop, AxisY.class, null);
+        aPropSet.addPropNamed(AxisY2_Prop, AxisY.class, null);
+        aPropSet.addPropNamed(AxisY3_Prop, AxisY.class, null);
+        aPropSet.addPropNamed(AxisY4_Prop, AxisY.class, null);
+        aPropSet.addPropNamed(AxisZ_Prop, AxisZ.class, null);
+
+        // Legend, Markers
+        aPropSet.addPropNamed(Legend_Prop, Legend.class, null);
+        aPropSet.addPropNamed(Markers_Rel, Marker[].class, null);
     }
 
     /**
@@ -367,10 +386,16 @@ public class Chart extends ParentPart {
             // Type
             case Type_Prop: return getType();
 
-            // AxisX, AxisY, Legend, Markers
-            case AxisX_Rel: return getAxisX();
-            case AxisY_Rel: return getAxisY();
-            case Legend_Rel: return getLegend();
+            // AxisX, AxisY, AxisY2, AxisY3, AxisY4, AxisZ
+            case AxisX_Prop: return getAxisX();
+            case AxisY_Prop: return getAxisY();
+            case AxisY2_Prop: return getAxisY2();
+            case AxisY3_Prop: return getAxisY3();
+            case AxisY4_Prop: return getAxisY4();
+            case AxisZ_Prop: return getAxisZ();
+
+            // Legend, Markers
+            case Legend_Prop: return getLegend();
             case Markers_Rel: return getMarkers();
 
             // Do normal version
@@ -391,24 +416,6 @@ public class Chart extends ParentPart {
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue); break;
-        }
-    }
-
-    /**
-     * Returns the value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // Fill, Padding
-            case Fill_Prop: return DEFAULT_CHART_FILL;
-            case Padding_Prop: return DEFAULT_CHART_PADDING;
-
-            // Do normal version
-            default: return super.getPropDefault(aPropName);
         }
     }
 

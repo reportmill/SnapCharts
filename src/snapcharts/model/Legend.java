@@ -2,10 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
-import snap.geom.Insets;
-import snap.geom.Point;
-import snap.geom.Pos;
-import snap.geom.Size;
+import snap.geom.*;
 import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.data.DataUtils;
@@ -152,8 +149,18 @@ public class Legend extends ParentPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(ShowLegend_Prop, Position_Prop, Inside_Prop);
+        // Override super defaults: Align, Margin
+        aPropSet.getPropForName(Align_Prop).setDefaultValue(DEFAULT_LEGEND_ALIGN);
+        aPropSet.getPropForName(Margin_Prop).setDefaultValue(DEFAULT_LEGEND_MARGIN);
+
+        // ShowLegend, Position, Inside
+        aPropSet.addPropNamed(ShowLegend_Prop, boolean.class, false);
+        aPropSet.addPropNamed(Position_Prop, Pos.class, DEFAULT_POSITION);
+        aPropSet.addPropNamed(Inside_Prop, boolean.class, false);
+
+        // UserXY, UserSize
+        aPropSet.addPropNamed(UserXY_Prop, Point.class, null);
+        aPropSet.addPropNamed(UserSize_Prop, Side.class, null);
     }
 
     /**
@@ -199,30 +206,6 @@ public class Legend extends ParentPart {
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue); break;
-        }
-    }
-
-    /**
-     * Override to provide custom defaults for Legend (Position).
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        switch (aPropName) {
-
-            // Align, Margin
-            case Align_Prop: return DEFAULT_LEGEND_ALIGN;
-            case Margin_Prop: return DEFAULT_LEGEND_MARGIN;
-
-            // Handle Position
-            case Position_Prop: return DEFAULT_POSITION;
-
-            // UserXY, UserSize
-            case UserXY_Prop: return null;
-            case UserSize_Prop: return null;
-
-            // Handle superclass properties
-            default: return super.getPropDefault(aPropName);
         }
     }
 

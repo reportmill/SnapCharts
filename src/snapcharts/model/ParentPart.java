@@ -14,13 +14,21 @@ public class ParentPart extends ChartPart {
     // The children
     private ChartPart[]  _children = new ChartPart[0];
 
-    // Constants for property relations
-    private static final String Children_Rel = "Children";
+    // Constants for properties
+    private static final String Children_Prop = "Children";
 
     /**
      * Returns the children.
      */
     public ChartPart[] getChildren()  { return _children; }
+
+    /**
+     * Sets the children.
+     */
+    public void setChildren(ChartPart[] aChildArray)
+    {
+        firePropChange(Children_Prop, _children, _children = aChildArray);
+    }
 
     /**
      * Returns the number of children.
@@ -73,8 +81,8 @@ public class ParentPart extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addRelations(Children_Rel);
+        // Children
+        aPropSet.addPropNamed(Children_Prop, ChartPart[].class, new ChartPart[0]);
     }
 
     /**
@@ -86,10 +94,26 @@ public class ParentPart extends ChartPart {
         switch (aPropName) {
 
             // Children
-            case Children_Rel: return getChildren();
+            case Children_Prop: return getChildren();
 
             // Do normal version
             default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Override for Chart properties.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        switch (aPropName) {
+
+            // Children
+            case Children_Prop: setChildren((ChartPart[]) aValue); break;
+
+            // Do normal version
+            default: super.setPropValue(aPropName, aValue);
         }
     }
 }

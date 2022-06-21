@@ -155,8 +155,21 @@ public class ContourAxis extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(MinBound_Prop, MaxBound_Prop, MinValue_Prop, MaxValue_Prop, LevelCount_Prop);
+        // Override super defaults: Margin, Padding
+        aPropSet.getPropForName(Margin_Prop).setDefaultValue(DEFAULT_CONTOUR_AXIS_MARGIN);
+        aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_CONTOUR_AXIS_PADDING);
+
+        // Title
+        aPropSet.addPropNamed(Title_Prop, String.class, null);
+
+        // MinBound, MaxBound, MinValue, MaxValue
+        aPropSet.addPropNamed(MinBound_Prop, AxisBound.class, AxisBound.AUTO);
+        aPropSet.addPropNamed(MaxBound_Prop, AxisBound.class, AxisBound.AUTO);
+        aPropSet.addPropNamed(MinValue_Prop, double.class, 0d);
+        aPropSet.addPropNamed(MaxValue_Prop, double.class, 5d);
+
+        // LevelCount
+        aPropSet.addPropNamed(LevelCount_Prop, String.class, DEFAULT_LEVEL_COUNT);
     }
 
     /**
@@ -167,6 +180,9 @@ public class ContourAxis extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
+
+            // Title
+            case Title_Prop: return getTitle();
 
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: return getMinBound();
@@ -191,6 +207,9 @@ public class ContourAxis extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
+            // Title
+            case Title_Prop: setTitle(SnapUtils.stringValue(aValue)); break;
+
             // MinBound, MaxBound, MinValue, MaxValue
             case MinBound_Prop: setMinBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
             case MaxBound_Prop: setMaxBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
@@ -202,33 +221,6 @@ public class ContourAxis extends ChartPart {
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
-        }
-    }
-
-    /**
-     * Returns the prop default value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // MinBound, MaxBound, MinValue, MaxValue
-            case MinBound_Prop: return AxisBound.AUTO;
-            case MaxBound_Prop: return AxisBound.AUTO;
-            case MinValue_Prop: return 0;
-            case MaxValue_Prop: return 5;
-
-            // LevelCount
-            case LevelCount_Prop: return DEFAULT_LEVEL_COUNT;
-
-            // Margin, Padding override
-            case Margin_Prop: return DEFAULT_CONTOUR_AXIS_MARGIN;
-            case Padding_Prop: return DEFAULT_CONTOUR_AXIS_PADDING;
-
-            // Superclass properties
-            default: return super.getPropDefault(aPropName);
         }
     }
 

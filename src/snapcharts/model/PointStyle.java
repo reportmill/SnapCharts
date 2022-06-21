@@ -177,8 +177,14 @@ public class PointStyle extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(SymbolSize_Prop, SymbolId_Prop, PointSpacing_Prop, MaxPointCount_Prop, SkipPointCount_Prop);
+        // SymbolSize, SymbolId
+        aPropSet.addPropNamed(SymbolSize_Prop, int.class, DEFAULT_SYMBOL_SIZE);
+        aPropSet.addPropNamed(SymbolId_Prop, int.class, 0);
+
+        // PointSpacing, MaxPointCount, SkipPointCount
+        aPropSet.addPropNamed(PointSpacing_Prop, int.class, DEFAULT_POINT_SPACING);
+        aPropSet.addPropNamed(MaxPointCount_Prop, int.class, DEFAULT_MAX_POINT_COUNT);
+        aPropSet.addPropNamed(SkipPointCount_Prop, int.class, DEFAULT_SKIP_POINT_COUNT);
     }
 
     /**
@@ -238,15 +244,6 @@ public class PointStyle extends ChartPart {
             // Override LineColor, Fill
             case LineColor_Prop: return getDefaultLineColor();
             case Fill_Prop: return getDefaultFillColor();
-
-            // SymbolSize, SymbolId
-            case SymbolSize_Prop: return DEFAULT_SYMBOL_SIZE;
-            case SymbolId_Prop: return 0;
-
-            // PointSpacing properties
-            case PointSpacing_Prop: return DEFAULT_POINT_SPACING;
-            case MaxPointCount_Prop: return DEFAULT_MAX_POINT_COUNT;
-            case SkipPointCount_Prop: return DEFAULT_SKIP_POINT_COUNT;
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

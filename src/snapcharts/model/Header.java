@@ -103,8 +103,14 @@ public class Header extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Add Props
-        aPropSet.addProps(Title_Prop, Subtitle_Prop);
+        // Override Font, Margin, Spacing
+        aPropSet.getPropForName(Font_Prop).setDefaultValue(DEFAULT_TITLE_FONT);
+        aPropSet.getPropForName(Margin_Prop).setDefaultValue(DEFAULT_HEADER_MARGIN);
+        aPropSet.getPropForName(Spacing_Prop).setDefaultValue(DEFAULT_HEADER_SPACING);
+
+        // Title, Subtitle
+        aPropSet.addPropNamed(Title_Prop, String.class, null);
+        aPropSet.addPropNamed(Subtitle_Prop, String.class, null);
     }
 
     /**
@@ -140,27 +146,6 @@ public class Header extends ChartPart {
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
-        }
-    }
-
-    /**
-     * Returns the prop default value for given key.
-     */
-    @Override
-    public Object getPropDefault(String aPropName)
-    {
-        // Handle properties
-        switch (aPropName) {
-
-            // Handle Margin, Spacing
-            case Margin_Prop: return DEFAULT_HEADER_MARGIN;
-            case Spacing_Prop: return DEFAULT_HEADER_SPACING;
-
-            // Handle Font
-            case Font_Prop: return DEFAULT_TITLE_FONT;
-
-            // Do normal version
-            default: return super.getPropDefault(aPropName);
         }
     }
 
