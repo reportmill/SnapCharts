@@ -155,7 +155,7 @@ public class Legend extends ChartPart {
 
         // ShowLegend, Title
         aPropSet.addPropNamed(ShowLegend_Prop, boolean.class, false);
-        aPropSet.addPropNamed(Title_Prop, ChartText.class, null);
+        aPropSet.addPropNamed(Title_Prop, ChartText.class, EMPTY_OBJECT);
 
         // Position, Inside
         aPropSet.addPropNamed(Position_Prop, Pos.class, DEFAULT_POSITION);

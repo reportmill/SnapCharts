@@ -342,19 +342,19 @@ public class Chart extends ChartPart {
         aPropSet.addPropNamed(Type_Prop, ChartType.class, null);
 
         // Header
-        aPropSet.addPropNamed(Header_Prop, Header.class, null);
+        aPropSet.addPropNamed(Header_Prop, Header.class, EMPTY_OBJECT);
 
         // AxisX, AxisY, AxisY2, AxisY3, AxisY4, AxisZ
-        aPropSet.addPropNamed(AxisX_Prop, AxisX.class, null);
-        aPropSet.addPropNamed(AxisY_Prop, AxisY.class, null);
-        aPropSet.addPropNamed(AxisY2_Prop, AxisY.class, null);
-        aPropSet.addPropNamed(AxisY3_Prop, AxisY.class, null);
-        aPropSet.addPropNamed(AxisY4_Prop, AxisY.class, null);
-        aPropSet.addPropNamed(AxisZ_Prop, AxisZ.class, null);
+        aPropSet.addPropNamed(AxisX_Prop, AxisX.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(AxisY_Prop, AxisY.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(AxisY2_Prop, AxisY.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(AxisY3_Prop, AxisY.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(AxisY4_Prop, AxisY.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(AxisZ_Prop, AxisZ.class, EMPTY_OBJECT);
 
         // Legend, Markers
-        aPropSet.addPropNamed(Legend_Prop, Legend.class, null);
-        aPropSet.addPropNamed(Markers_Rel, Marker[].class, null);
+        aPropSet.addPropNamed(Legend_Prop, Legend.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(Markers_Rel, Marker[].class, EMPTY_OBJECT);
     }
 
     /**

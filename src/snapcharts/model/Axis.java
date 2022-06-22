@@ -623,7 +623,7 @@ public abstract class Axis extends ChartPart {
         aPropSet.addPropNamed(MinBound_Prop, AxisBound.class, AxisBound.AUTO);
         aPropSet.addPropNamed(MaxBound_Prop, AxisBound.class, AxisBound.AUTO);
         aPropSet.addPropNamed(MinValue_Prop, double.class, 0d);
-        aPropSet.addPropNamed(MaxValue_Prop, double.class, 5d);
+        aPropSet.addPropNamed(MaxValue_Prop, double.class, 0d);
 
         // WrapAxis, WrapMinMax
         aPropSet.addPropNamed(WrapAxis_Prop, boolean.class, false);
@@ -647,7 +647,7 @@ public abstract class Axis extends ChartPart {
         // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
         aPropSet.addPropNamed(ShowTickLabels_Prop, boolean.class, DEFAULT_SHOW_TICK_LABELS);
         aPropSet.addPropNamed(TickLabelAutoRotate_Prop, boolean.class, DEFAULT_TICK_LABEL_AUTO_ROTATE);
-        aPropSet.addPropNamed(TickLabelRotation_Prop, double.class, DEFAULT_TICK_LABEL_AUTO_ROTATE);
+        aPropSet.addPropNamed(TickLabelRotation_Prop, double.class, 0d);
     }
 
     /**
