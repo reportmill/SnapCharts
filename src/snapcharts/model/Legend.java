@@ -12,19 +12,19 @@ import java.util.Objects;
 /**
  * A class to represent the Legend of chart.
  */
-public class Legend extends ParentPart {
+public class Legend extends ChartPart {
 
     // Whether legend is showing
     private boolean  _showLegend;
+
+    // The ChartText to hold title text
+    private ChartText  _title;
 
     // The legend position
     private Pos  _position;
 
     // Whether legend is positioned inside
     private boolean  _inside;
-
-    // The ChartText to hold title text
-    private ChartText  _title;
 
     // Hacky support for customer case of floating legend with fractional XY
     private Point  _userXY;
@@ -33,6 +33,7 @@ public class Legend extends ParentPart {
     private Size  _userSize;
 
     // Property constants
+    public static final String Title_Prop = "Title";
     public static final String ShowLegend_Prop = "ShowLegend";
     public static final String Position_Prop = "Position";
     public static final String Inside_Prop = "Inside";
@@ -54,7 +55,6 @@ public class Legend extends ParentPart {
 
         // Create/configure text
         _title = new ChartText();
-        addChild(_title);
     }
 
     /**
@@ -70,6 +70,11 @@ public class Legend extends ParentPart {
         if (aValue == isShowLegend()) return;
         firePropChange(ShowLegend_Prop, _showLegend, _showLegend = aValue);
     }
+
+    /**
+     * Returns the Legend title ChartText.
+     */
+    public ChartText getTitle()  { return _title; }
 
     /**
      * Returns the position.
@@ -98,11 +103,6 @@ public class Legend extends ParentPart {
         if (aValue == isInside()) return;
         firePropChange(Inside_Prop, _inside, _inside = aValue);
     }
-
-    /**
-     * Returns the Legend title ChartText.
-     */
-    public ChartText getTitle()  { return _title; }
 
     /**
      * Returns whether legend is floating (bounds are defined by Legend.Marker).
@@ -153,8 +153,11 @@ public class Legend extends ParentPart {
         aPropSet.getPropForName(Align_Prop).setDefaultValue(DEFAULT_LEGEND_ALIGN);
         aPropSet.getPropForName(Margin_Prop).setDefaultValue(DEFAULT_LEGEND_MARGIN);
 
-        // ShowLegend, Position, Inside
+        // ShowLegend, Title
         aPropSet.addPropNamed(ShowLegend_Prop, boolean.class, false);
+        aPropSet.addPropNamed(Title_Prop, ChartText.class, null);
+
+        // Position, Inside
         aPropSet.addPropNamed(Position_Prop, Pos.class, DEFAULT_POSITION);
         aPropSet.addPropNamed(Inside_Prop, boolean.class, false);
 
@@ -172,8 +175,11 @@ public class Legend extends ParentPart {
         // Handle properties
         switch (aPropName) {
 
-            // ShowLegend, Position, Inside
+            // ShowLegend, Title
             case ShowLegend_Prop: return isShowLegend();
+            case Title_Prop: return getTitle();
+
+            // Position, Inside
             case Position_Prop: return getPosition();
             case Inside_Prop: return isInside();
 
@@ -195,8 +201,10 @@ public class Legend extends ParentPart {
         // Handle properties
         switch (aPropName) {
 
-            // ShowLegend, Position, Inside
+            // ShowLegend
             case ShowLegend_Prop: setShowLegend(SnapUtils.boolValue(aValue)); break;
+
+            // Position, Inside
             case Position_Prop: setPosition((Pos) aValue); break;
             case Inside_Prop: setInside(SnapUtils.boolValue(aValue)); break;
 

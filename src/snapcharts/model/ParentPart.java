@@ -15,7 +15,7 @@ public class ParentPart extends ChartPart {
     private ChartPart[]  _children = new ChartPart[0];
 
     // Constants for properties
-    private static final String Children_Prop = "Children";
+    public static final String Children_Prop = "Children";
 
     /**
      * Returns the children.

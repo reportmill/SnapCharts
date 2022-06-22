@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * This class holds attributes for Chart3D.
  */
-public class Scene extends ParentPart {
+public class Scene extends ChartPart {
 
     // Aspect modes
     private AspectMode  _aspectMode;
@@ -119,7 +119,7 @@ public class Scene extends ParentPart {
     {
         // If already set, just return
         Side3D[] sides = theSides != null ? theSides : new Side3D[0];
-        Arrays.sort(sides, (s1, s2) -> Integer.valueOf(s1.ordinal()).compareTo(s2.ordinal()));
+        Arrays.sort(sides, (s1, s2) -> Integer.compare(s1.ordinal(), s2.ordinal()));
         if (Arrays.equals(sides, _projectedSides != null ? _projectedSides : new Side3D[0])) return;
 
         // Set and firePropChange

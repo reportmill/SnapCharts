@@ -67,6 +67,7 @@ public class Chart extends ParentPart {
     public static final String Colors_Prop = "Colors";
 
     // Constants for relations
+    public static final String Header_Prop = "Header";
     public static final String AxisX_Prop = "AxisX";
     public static final String AxisY_Prop = "AxisY";
     public static final String AxisY2_Prop = "AxisY2";
@@ -355,12 +356,16 @@ public class Chart extends ParentPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Override super defaults: Fill, Padding
+        // Override super defaults: Fill, Padding, Children
         aPropSet.getPropForName(Fill_Prop).setDefaultValue(DEFAULT_CHART_FILL);
         aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_CHART_PADDING);
+        aPropSet.getPropForName(Children_Prop).setSkipArchival(true);
 
         // Type
-        aPropSet.addPropNamed(Type_Prop, ChartType.class, DEFAULT_TYPE);
+        aPropSet.addPropNamed(Type_Prop, ChartType.class, null);
+
+        // Header
+        aPropSet.addPropNamed(Header_Prop, Header.class, null);
 
         // AxisX, AxisY, AxisY2, AxisY3, AxisY4, AxisZ
         aPropSet.addPropNamed(AxisX_Prop, AxisX.class, null);
@@ -385,6 +390,9 @@ public class Chart extends ParentPart {
 
             // Type
             case Type_Prop: return getType();
+
+            // Header
+            case Header_Prop: return getHeader();
 
             // AxisX, AxisY, AxisY2, AxisY3, AxisY4, AxisZ
             case AxisX_Prop: return getAxisX();
