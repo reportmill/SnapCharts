@@ -8,9 +8,6 @@ import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.GFXEnv;
 import snap.gfx.Image;
-import snap.props.PropArchiver;
-import snap.props.PropArchiverXML;
-import snap.props.PropNode;
 import snap.util.*;
 import snap.view.*;
 import snap.viewx.*;
@@ -23,7 +20,6 @@ import snapcharts.model.*;
 import snapcharts.notebook.DocItemPaneNotebook;
 import snapcharts.notebook.Notebook;
 import snapcharts.notebook.DocItemNotebook;
-
 import java.io.File;
 import java.util.*;
 
@@ -851,8 +847,8 @@ public class DocPane extends ViewOwner {
     {
         // Archive Doc to PropNode
         Doc doc = getDoc();
-        PropArchiverXML propArchiver = new PropArchiverXML();
-        byte[] xmlBytes = propArchiver.convertPropObjectToXMLBytes(doc);
+        ChartArchiver2 chartArchiver = new ChartArchiver2();
+        byte[] xmlBytes = chartArchiver.convertPropObjectToXMLBytes(doc);
 
         // Write to file
         File file = new File("/tmp/PropArchTest.charts");
