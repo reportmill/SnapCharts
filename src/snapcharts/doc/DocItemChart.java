@@ -1,4 +1,5 @@
 package snapcharts.doc;
+import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropSet;
 import snapcharts.model.Chart;
@@ -98,6 +99,7 @@ public class DocItemChart extends DocItem<Chart> {
         super.initProps(aPropSet);
 
         // Remove Items so DocItemDataSets don't get archived (they are archived with chart)
-        aPropSet.removeRelationNamed(Items_Prop);
+        Prop itemsProp = aPropSet.getPropForName(Items_Prop);
+        aPropSet.removeProp(itemsProp);
     }
 }

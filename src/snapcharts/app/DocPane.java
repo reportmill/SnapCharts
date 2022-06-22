@@ -9,6 +9,7 @@ import snap.gfx.Font;
 import snap.gfx.GFXEnv;
 import snap.gfx.Image;
 import snap.props.PropArchiver;
+import snap.props.PropArchiverXML;
 import snap.props.PropNode;
 import snap.util.*;
 import snap.view.*;
@@ -850,22 +851,19 @@ public class DocPane extends ViewOwner {
     {
         // Archive Doc to PropNode
         Doc doc = getDoc();
-        PropArchiver propArchiver = new PropArchiver();
-        PropNode propNode = propArchiver.propObjectToPropNode(doc);
+        PropArchiverXML propArchiver = new PropArchiverXML();
+        byte[] xmlBytes = propArchiver.convertPropObjectToXMLBytes(doc);
 
-        // Get XML and XML bytes
-        XMLElement xml = propNode.getXML("Doc");
-        byte[] xmlBytes = xml.getBytes();
-
-        // Write to file and open
+        // Write to file
         File file = new File("/tmp/PropArchTest.charts");
-        try {
-            FileUtils.writeBytes(file, xmlBytes);
-            GFXEnv.getEnv().openTextFile(file);
+        try { FileUtils.writeBytes(file, xmlBytes); }
+        catch (Exception e) {
+            e.printStackTrace(); beep();
+            return;
         }
 
-        // Catch exceptions
-        catch (Exception e) { e.printStackTrace(); }
+        // Open file
+        GFXEnv.getEnv().openTextFile(file);
 
         // Consume event
         anEvent.consume();
