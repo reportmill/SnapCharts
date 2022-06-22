@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * A view to render a chart.
  */
-public class Chart extends ParentPart {
+public class Chart extends ChartPart {
 
     // The ChartDoc that owns this chart
     private Doc  _doc;
@@ -93,47 +93,26 @@ public class Chart extends ParentPart {
 
         // Create/set Header
         _header = new Header();
-        addChild(_header);
 
-        // Create/set X Axis
+        // Create/set Axes
         _axisX = new AxisX();
-        addChild(_axisX);
-
-        // Create/set Y Axis
         _axisY = new AxisY(AxisType.Y);
-        addChild(_axisY);
-
-        // Create/set Y2 Axis
         _axisY2 = new AxisY(AxisType.Y2);
-        addChild(_axisY2);
-
-        // Create/set Y3 Axis
         _axisY3 = new AxisY(AxisType.Y3);
-        addChild(_axisY3);
-
-        // Create/set Y Axis
         _axisY4 = new AxisY(AxisType.Y4);
-        addChild(_axisY4);
-
-        // Create/set Z Axis
         _axisZ = new AxisZ();
-        addChild(_axisZ);
 
         // Create/set ContourAxis
         _contourAxis = new ContourAxis();
-        addChild(_contourAxis);
 
         // Create/set Legend
         _legend = new Legend();
-        addChild(_legend);
 
         // Create/set Scene
         _scene = new Scene();
-        addChild(_scene);
 
         // Start listening to Trace changes
         _traceList = new TraceList();
-        addChild(_traceList);
     }
 
     /**
@@ -265,7 +244,6 @@ public class Chart extends ParentPart {
     public void addMarker(Marker aMarker, int anIndex)
     {
         _markers = ArrayUtils.add(_markers, aMarker, anIndex);
-        addChild(aMarker);
         firePropChange(Markers_Rel, null, aMarker, anIndex);
     }
 
@@ -359,7 +337,6 @@ public class Chart extends ParentPart {
         // Override super defaults: Fill, Padding, Children
         aPropSet.getPropForName(Fill_Prop).setDefaultValue(DEFAULT_CHART_FILL);
         aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_CHART_PADDING);
-        aPropSet.getPropForName(Children_Prop).setSkipArchival(true);
 
         // Type
         aPropSet.addPropNamed(Type_Prop, ChartType.class, null);
