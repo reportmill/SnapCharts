@@ -102,6 +102,7 @@ public class Trace extends ChartPart {
     public static final String ShowLegendEntry_Prop = "ShowLegendEntry";
     public static final String Disabled_Prop = "Disabled";
     public static final String Point_Prop = "Points";
+    public static final String DataSet_Prop = "DataSet";
 
     // Constants for relations
     public static final String PointStyle_Prop = "PointStyle";
@@ -558,8 +559,9 @@ public class Trace extends ChartPart {
      */
     public void setDataSet(DataSet aDataSet)
     {
-        _dataSet = aDataSet;
+        if (aDataSet == _dataSet) return;
         clearCachedData();
+        firePropChange(DataSet_Prop, _dataSet, _dataSet = aDataSet);
     }
 
     /**
@@ -717,10 +719,13 @@ public class Trace extends ChartPart {
         aPropSet.addPropNamed(PointJoin_Prop, PointJoin.class, DEFAULT_POINT_JOIN);
         aPropSet.addPropNamed(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE);
 
-        // Handle PointStyleRel, TagStyle_Rel, TraceStyle_Rel
+        // PointStyleRel, TagStyle_Rel, TraceStyle_Rel
         aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
         aPropSet.addPropNamed(TagStyle_Prop, TagStyle.class, EMPTY_OBJECT);
         aPropSet.addPropNamed(TraceStyle_Prop, TraceStyle.class, EMPTY_OBJECT);
+
+        // DataSet
+        aPropSet.addPropNamed(DataSet_Prop, DataSet.class, EMPTY_OBJECT);
     }
 
     /**
@@ -732,22 +737,25 @@ public class Trace extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
-            // Handle ShowLine, ShowArea, ShowPoints, ShowTags
+            // ShowLine, ShowArea, ShowPoints, ShowTags
             case ShowLine_Prop: return isShowLine();
             case ShowArea_Prop: return isShowArea();
             case ShowPoints_Prop: return isShowPoints();
             case ShowTags_Prop: return isShowTags();
 
-            // Handle PointJoin, FillMode
+            // PointJoin, FillMode
             case PointJoin_Prop: return getPointJoin();
             case FillMode_Prop: return getFillMode();
 
-            // Handle PointStyleRel, TagStyle_Rel, TraceStyle_Rel
+            // PointStyleRel, TagStyle_Rel, TraceStyle_Rel
             case PointStyle_Prop: return getPointStyle();
             case TagStyle_Prop: return getTagStyle();
             case TraceStyle_Prop: return getTraceStyle();
 
-            // Handle super class properties (or unknown)
+            // DataSet
+            case DataSet_Prop: return getDataSet();
+
+            // Do normal version
             default: return super.getPropValue(aPropName);
         }
     }
@@ -761,17 +769,20 @@ public class Trace extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
-            // Handle ShowLine, ShowArea, ShowPoints, ShowTags
+            // ShowLine, ShowArea, ShowPoints, ShowTags
             case ShowLine_Prop: setShowLine(SnapUtils.boolValue(aValue)); break;
             case ShowArea_Prop: setShowArea(SnapUtils.boolValue(aValue)); break;
             case ShowPoints_Prop: setShowPoints(SnapUtils.boolValue(aValue)); break;
             case ShowTags_Prop: setShowTags(SnapUtils.boolValue(aValue)); break;
 
-            // Handle PointJoint, FillMode
+            // PointJoint, FillMode
             case PointJoin_Prop: setPointJoin((PointJoin) aValue); break;
             case FillMode_Prop: setFillMode((FillMode) aValue); break;
 
-            // Handle super class properties (or unknown)
+            // DataSet
+            case DataSet_Prop: setDataSet((DataSet) aValue); break;
+
+            // Do normal version
             default: super.setPropValue(aPropName, aValue);
         }
     }

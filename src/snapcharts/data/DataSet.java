@@ -2,7 +2,10 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.props.PropObject;
+import snap.props.PropSet;
 import snap.util.ArrayUtils;
+import snap.util.SnapUtils;
 import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snapcharts.util.MinMax;
@@ -16,7 +19,7 @@ import java.util.Objects;
  * It provides a simple API for defining the DataType (which defines the data format/schema), the number of data
  * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
-public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
+public abstract class DataSet extends PropObject implements Cloneable, XMLArchiver.Archivable {
 
     // The name
     private String  _name;
@@ -28,15 +31,14 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     protected DataArray[]  _dataArrays;
 
     // Cached DataArrays for common channels X/Y/Z
-    protected NumberArray _dataX, _dataY, _dataZ;
+    protected NumberArray  _dataX, _dataY, _dataZ;
 
     // Cached DataArrays for common channel C
-    protected StringArray _dataC;
+    protected StringArray  _dataC;
 
     // Properties
     public static final String Name_Prop = "Name";
     public static final String DataType_Prop = "DataType";
-    public static final String ThetaUnit_Prop = "ThetaUnit";
 
     // Constants for defaults
     public final DataType DEFAULT_DATA_TYPE = DataType.XY;
@@ -60,7 +62,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public void setName(String aName)
     {
         if (Objects.equals(aName, _name)) return;
-        _name = aName;
+        firePropChange(Name_Prop, _name, _name = aName);
     }
 
     /**
@@ -74,7 +76,7 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     public void setDataType(DataType aDataType)
     {
         if (Objects.equals(aDataType, _dataType)) return;
-        _dataType = aDataType;
+        firePropChange(DataType_Prop, _dataType, _dataType = aDataType);
     }
 
     /**
@@ -372,6 +374,54 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
     }
 
     /**
+     * Override to configure props for this class.
+     */
+    @Override
+    protected void initProps(PropSet aPropSet)
+    {
+        // Do normal version
+        super.initProps(aPropSet);
+
+        // Name, DataType
+        aPropSet.addPropNamed(Name_Prop, String.class, null);
+        aPropSet.addPropNamed(DataType_Prop, DataType.class, null);
+    }
+
+    /**
+     * Override to support props for this class.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        switch (aPropName) {
+
+            // Name, DataType
+            case Name_Prop: return getName();
+            case DataType_Prop: return getDataType();
+
+            // Do normal version
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Override to support props for this class.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        switch (aPropName) {
+
+            // Name, DataType
+            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+            case DataType_Prop: setDataType((DataType) aValue); break;
+
+            // Do normal version
+            default: super.setPropValue(aPropName, aValue); break;
+        }
+    }
+
+    /**
      * Archival.
      */
     public XMLElement toXML(XMLArchiver anArchiver, XMLElement e)
@@ -380,9 +430,9 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         DataType dataType = getDataType();
         e.add(DataType_Prop, dataType);
 
-        // Archive ThetaUnit
+        // Legacy: Archive ThetaUnit
         if (dataType.isPolar() && getThetaUnit() != DataUnit.DEFAULT_THETA_UNIT)
-            e.add(ThetaUnit_Prop, getThetaUnit());
+            e.add("ThetaUnit", getThetaUnit());
 
         // If DataType has X, add DataX values
         DataType dataTypeXY = dataType.getDataTypeXY();
@@ -431,9 +481,9 @@ public abstract class DataSet implements Cloneable, XMLArchiver.Archivable {
         if (dataType == DataType.XYZZ)
             return new DataSetXYZZ().fromXML(anArchiver, anElement);
 
-        // Unarchive ThetaUnit
-        if (anElement.hasAttribute(ThetaUnit_Prop)) {
-            String unitName = anElement.getAttributeValue(ThetaUnit_Prop);
+        // Legacy: Unarchive ThetaUnit
+        if (anElement.hasAttribute("ThetaUnit")) {
+            String unitName = anElement.getAttributeValue("ThetaUnit");
             DataUnit dataUnit = DataUnit.getUnitForName(unitName, DataUnit.DEFAULT_THETA_UNIT);
             setThetaUnit(dataUnit);
         }
