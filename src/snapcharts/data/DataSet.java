@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.props.Prop;
 import snap.props.PropObject;
 import snap.props.PropSet;
 import snap.util.ArrayUtils;
@@ -374,6 +375,30 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
     }
 
     /**
+     * Returns the props for archival.
+     */
+    @Override
+    public Prop[] getPropsForArchival()
+    {
+        // Do normal version
+        Prop[] props = super.getPropsForArchival();
+
+        // Get DataType and channel count
+        DataType dataType = getDataType();
+        int chanCount = dataType.getChannelCount();
+
+        // Extend props array and add channels
+        Prop[] propsForDataType = Arrays.copyOf(props, props.length + chanCount);
+        for (int i = 0; i < chanCount; i++) {
+            DataChan dataChan = dataType.getChannel(i);
+            propsForDataType[props.length + i] = new Prop(dataChan.toString(), DataArray.class, null);
+        }
+
+        // Return
+        return propsForDataType;
+    }
+
+    /**
      * Override to configure props for this class.
      */
     @Override
@@ -388,11 +413,32 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
     }
 
     /**
+     * Override to support data type props.
+     */
+    @Override
+    public Object getPropDefault(String aPropName)
+    {
+        // Handle DataType props
+        Object dataTypePropValue = getDataTypePropValue(aPropName);
+        if (dataTypePropValue != null)
+            return null;
+
+        // Do normal version
+        return super.getPropDefault(aPropName);
+    }
+
+    /**
      * Override to support props for this class.
      */
     @Override
     public Object getPropValue(String aPropName)
     {
+        // Handle DataType props
+        Object dataTypePropValue = getDataTypePropValue(aPropName);
+        if (dataTypePropValue != null)
+            return dataTypePropValue;
+
+        // Handle standard props
         switch (aPropName) {
 
             // Name, DataType
@@ -402,6 +448,32 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
             // Do normal version
             default: return super.getPropValue(aPropName);
         }
+    }
+
+    /**
+     * Returns a DataArray primitive array for PropName if it matches DataType channel.
+     */
+    private Object getDataTypePropValue(String aPropName)
+    {
+        // Handle DataType props
+        DataType dataType = getDataType();
+        int chanCount = dataType.getChannelCount();
+
+        // Iterate over DataChannels and return primitive array if it matches
+        for (int i = 0; i < chanCount; i++) {
+            DataChan dataChan = dataType.getChannel(i);
+            if (aPropName.equals(dataChan.toString())) {
+                DataArray dataArray = getDataArrayForChannel(dataChan);
+                if (dataArray instanceof NumberArray)
+                    return ((NumberArray) dataArray).getDoubleArray();
+                if (dataArray instanceof StringArray)
+                    return ((StringArray) dataArray).getStringArray();
+                System.err.println("DataSet.getDataTypePropValue: Unknown DataChan: " + dataChan);
+            }
+        }
+
+        // Return null since not found
+        return null;
     }
 
     /**

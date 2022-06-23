@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.props.PropUtils;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,9 +12,6 @@ import java.util.Map;
  * Utilities for Data.
  */
 public class DataUtils {
-
-    // A formatter to format double without exponent
-    private static DecimalFormat _doubleFmt = new DecimalFormat("0.#########");
 
     // Map of known formats
     private static Map<Integer,DecimalFormat>  _knownFormats = new HashMap<>();
@@ -42,19 +40,7 @@ public class DataUtils {
      */
     public static String getStringForDoubleArray(double[] theValues)
     {
-        // If empty, return empty array string
-        if (theValues.length == 0) return "[ ]";
-
-        // Create string with open bracket and first val
-        StringBuilder sb = new StringBuilder("[ ");
-        sb.append(_doubleFmt.format(theValues[0]));
-
-        // Iterate over remaining vals and add separator plus val for each
-        for (int i = 1; i < theValues.length; i++)
-            sb.append(", ").append(_doubleFmt.format(theValues[i]));
-
-        // Return string with close bracket
-        return sb.append(" ]").toString();
+        return PropUtils.getStringForDoubleArray(theValues);
     }
 
     /** Returns a String for an array of data values. */
@@ -81,14 +67,14 @@ public class DataUtils {
         int len = valStrs.length;
 
         // Create array for return vals
-        double vals[] = new double[len];
+        double[] vals = new double[len];
         int count = 0;
 
         // Iterate over strings and add valid numbers
         for (String valStr : valStrs) {
             if (valStr.length() > 0) {
                 try {
-                    double val = Double.valueOf(valStr);
+                    double val = Double.parseDouble(valStr);
                     vals[count++] = val;
                 }
                 catch (Exception e)  { }
@@ -137,8 +123,7 @@ public class DataUtils {
 
         int numCount = 0;
         int strCount = 0;
-        for (int i = 0; i < theCells.length; i++) {
-            String[] line = theCells[i];
+        for (String[] line : theCells) {
             if (line.length == 0)
                 continue;
             String str = line[0];
@@ -146,8 +131,7 @@ public class DataUtils {
             try {
                 Double.parseDouble(str);
                 numCount++;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 strCount++;
             }
         }
@@ -168,8 +152,7 @@ public class DataUtils {
         int oneCount = 0;
         int twoCount = 0;
 
-        for (int i = 0; i < theCells.length; i++) {
-            String[] line = theCells[i];
+        for (String[] line : theCells) {
             if (line.length > 1)
                 twoCount++;
             else if (line.length > 0)
