@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * A view to render a chart.
  */
-public class Chart extends ChartPart {
+public class Chart extends ParentPart {
 
     // The ChartDoc that owns this chart
     private Doc  _doc;
@@ -112,8 +112,13 @@ public class Chart extends ChartPart {
         // Create/set Scene
         _scene = new Scene();
 
-        // Start listening to Trace changes
+        // Create/set TraceList
         _traceList = new TraceList();
+
+        // Add children
+        ChartPart[] children = { _header, _axisX, _axisY, _axisY2, _axisY3, _axisY4, _axisZ, _contourAxis, _legend, _scene, _traceList };
+        for (ChartPart child : children)
+            addChild(child);
     }
 
     /**
@@ -245,6 +250,7 @@ public class Chart extends ChartPart {
     public void addMarker(Marker aMarker, int anIndex)
     {
         _markers = ArrayUtils.add(_markers, aMarker, anIndex);
+        addChild(aMarker);
         firePropChange(Markers_Prop, null, aMarker, anIndex);
     }
 
@@ -255,6 +261,7 @@ public class Chart extends ChartPart {
     {
         Marker marker = getMarker(anIndex);
         _markers = ArrayUtils.remove(_markers, anIndex);
+        removeChild(marker);
         firePropChange(Markers_Prop, marker, null, anIndex);
         return marker;
     }
@@ -335,9 +342,12 @@ public class Chart extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Override super defaults: Fill, Padding, Children
+        // Override super defaults: Fill, Padding
         aPropSet.getPropForName(Fill_Prop).setDefaultValue(DEFAULT_CHART_FILL);
         aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_CHART_PADDING);
+
+        // Suppress Children archival
+        aPropSet.getPropForName(Children_Prop).setSkipArchival(true);
 
         // Type
         aPropSet.addPropNamed(Type_Prop, ChartType.class, null);
