@@ -15,7 +15,7 @@ public class ParentPart extends ChartPart {
     // The children
     private ChartPart[]  _children = new ChartPart[0];
 
-    // The propChangeListener
+    // A PropChangeListener to notify this ParentPart of child changes
     private PropChangeListener  _childPropChangeLsnr = pc -> childDidPropChange(pc);
 
     // Constants for properties

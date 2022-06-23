@@ -8,6 +8,7 @@ import snap.geom.Insets;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.props.PropChange;
+import snap.props.PropChangeListener;
 import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.data.DataSet;
@@ -32,6 +33,9 @@ public class TraceList extends ChartPart {
 
     // A map of MinMax values for axis types
     private Map<AxisType,MinMax>  _minMaxs = new HashMap<>();
+
+    // A PropChangeListener to notify this ParentPart of child changes
+    private PropChangeListener _tracePropChangeLsnr = pc -> traceDidPropChange(pc);
 
     // Constants for properties
     public static final String Trace_Prop = "Trace";
@@ -121,7 +125,7 @@ public class TraceList extends ChartPart {
         // Add trace at index
         _traceList.add(anIndex, aTrace);
         aTrace._parent = this;
-        aTrace.addPropChangeListener(pc -> traceDidPropChange(pc));
+        aTrace.addPropChangeListener(_tracePropChangeLsnr);
 
         // Reset indexes
         for (int i = 0; i < _traceList.size(); i++)
@@ -138,9 +142,10 @@ public class TraceList extends ChartPart {
     public Trace removeTrace(int anIndex)
     {
         Trace trace = _traceList.remove(anIndex);
+        trace._parent = null;
+        trace.removePropChangeListener(_tracePropChangeLsnr);
         clearCachedValues();
-        if (trace != null)
-            firePropChange(Trace_Prop, trace, null, anIndex);
+        firePropChange(Trace_Prop, trace, null, anIndex);
         return trace;
     }
 
