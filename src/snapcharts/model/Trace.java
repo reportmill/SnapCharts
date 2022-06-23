@@ -20,7 +20,7 @@ public class Trace extends ChartPart {
     protected int  _index;
 
     // Whether to show line
-    private boolean  _showLine = true;
+    private boolean  _showLine;
 
     // Whether to show area
     private boolean  _showArea;
@@ -65,7 +65,7 @@ public class Trace extends ChartPart {
     private boolean  _disabled;
 
     // Whether to show legend entry
-    private boolean  _showLegendEntry = true;
+    private boolean  _showLegendEntry;
 
     // The original DataSet
     private DataSet  _dataSet = DataSet.newDataSet();
@@ -77,42 +77,52 @@ public class Trace extends ChartPart {
     private DataSet[]  _logData;
 
     // Processed data in polar form
-    private DataSet _polarData;
+    private DataSet  _polarData;
 
     // Processed data in polar XY form
-    private DataSet _polarXYData;
+    private DataSet  _polarXYData;
 
     // Constant for how Trace area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext }
 
-    // Constants for properties
+    // Basic properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String ShowArea_Prop = "ShowArea";
     public static final String ShowPoints_Prop = "ShowPoints";
     public static final String ShowTags_Prop = "ShowTags";
+
+    // Properties for Line/Fill style
     public static final String PointJoin_Prop = "PointJoin";
     public static final String FillMode_Prop = "FillMode";
-    public static final String DataType_Prop = DataSet.DataType_Prop;
-    public static final String ThetaUhit_Prop = "ThetaUnit";
+
+    // More properties
     public static final String AxisTypeY_Prop = "AxisTypeY";
-    public static final String ExprX_Prop = "ExpressionX";
-    public static final String ExprY_Prop = "ExpressionY";
-    public static final String ExprZ_Prop = "ExpressionZ";
+    public static final String ExprX_Prop = "ExprX";
+    public static final String ExprY_Prop = "ExprY";
+    public static final String ExprZ_Prop = "ExprZ";
     public static final String Stacked_Prop = "Stacked";
     public static final String ShowLegendEntry_Prop = "ShowLegendEntry";
     public static final String Disabled_Prop = "Disabled";
-    public static final String Point_Prop = "Points";
-    public static final String DataSet_Prop = "DataSet";
 
-    // Constants for relations
+    // DataSet properties
+    public static final String DataSet_Prop = "DataSet";
+    public static final String DataType_Prop = DataSet.DataType_Prop;
+
+    // Properties for nested Point/Tag/Trace style objects
     public static final String PointStyle_Prop = "PointStyle";
     public static final String TagStyle_Prop = "TagStyle";
     public static final String TraceStyle_Prop = "TraceStyle";
 
-    // Properties for defaults
+    // Questionable properties
+    public static final String Point_Prop = "Points";
+    public static final String ThetaUnit_Prop = "ThetaUnit";
+
+    // Constants for defaults
+    public static final boolean DEFAULT_SHOW_LINE = true;
     public static final int DEFAULT_LINE_WIDTH = 1;
     public static final PointJoin DEFAULT_POINT_JOIN = PointJoin.Line;
     public static final FillMode DEFAULT_FILL_MODE = FillMode.None;
+    public static final boolean DEFAULT_SHOW_LEGEND_ENTRY = true;
 
     /**
      * Constructor.
@@ -122,9 +132,11 @@ public class Trace extends ChartPart {
         super();
 
         // Set defaults
+        _showLine = DEFAULT_SHOW_LINE;
         _lineWidth = DEFAULT_LINE_WIDTH;
         _pointJoin = DEFAULT_POINT_JOIN;
         _fillMode = DEFAULT_FILL_MODE;
+        _showLegendEntry = DEFAULT_SHOW_LEGEND_ENTRY;
 
         // Register listener for TagStyle, PointStyle prop changes
         _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
@@ -341,7 +353,7 @@ public class Trace extends ChartPart {
 
         // Clear cached data and firePropChange
         clearCachedData();
-        firePropChange(ThetaUhit_Prop, old, aValue);
+        firePropChange(ThetaUnit_Prop, old, aValue);
     }
 
     /**
@@ -710,7 +722,7 @@ public class Trace extends ChartPart {
         aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_LINE_WIDTH);
 
         // Handle ShowLine, ShowArea, ShowPoints, ShowTags
-        aPropSet.addPropNamed(ShowLine_Prop, boolean.class, false);
+        aPropSet.addPropNamed(ShowLine_Prop, boolean.class, DEFAULT_SHOW_LINE);
         aPropSet.addPropNamed(ShowArea_Prop, boolean.class, false);
         aPropSet.addPropNamed(ShowPoints_Prop, boolean.class, false);
         aPropSet.addPropNamed(ShowTags_Prop, boolean.class, false);
@@ -718,6 +730,17 @@ public class Trace extends ChartPart {
         // PointJoin, FillMode
         aPropSet.addPropNamed(PointJoin_Prop, PointJoin.class, DEFAULT_POINT_JOIN);
         aPropSet.addPropNamed(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE);
+
+        // AxisTypeY, ExprX, ExprY, ExprZ
+        aPropSet.addPropNamed(AxisTypeY_Prop, AxisType.class, null);
+        aPropSet.addPropNamed(ExprX_Prop, String.class, null);
+        aPropSet.addPropNamed(ExprY_Prop, String.class, null);
+        aPropSet.addPropNamed(ExprZ_Prop, String.class, null);
+
+        // Stacked, ShowLegendEntry, Disabled
+        aPropSet.addPropNamed(Stacked_Prop, boolean.class, false);
+        aPropSet.addPropNamed(ShowLegendEntry_Prop, String.class, DEFAULT_SHOW_LEGEND_ENTRY);
+        aPropSet.addPropNamed(Disabled_Prop, boolean.class, false);
 
         // PointStyleRel, TagStyle_Rel, TraceStyle_Rel
         aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
@@ -752,6 +775,17 @@ public class Trace extends ChartPart {
             case TagStyle_Prop: return getTagStyle();
             case TraceStyle_Prop: return getTraceStyle();
 
+            // AxisTypeY, ExprX, ExprY, ExprZ
+            case AxisTypeY_Prop: return getAxisTypeY();
+            case ExprX_Prop: return getExprX();
+            case ExprY_Prop: return getExprY();
+            case ExprZ_Prop: return getExprZ();
+
+            // Stacked, ShowLegendEntry, Disabled
+            case Stacked_Prop: return isStacked();
+            case ShowLegendEntry_Prop: return isShowLegendEntry();
+            case Disabled_Prop: return isDisabled();
+
             // DataSet
             case DataSet_Prop: return getDataSet();
 
@@ -778,6 +812,17 @@ public class Trace extends ChartPart {
             // PointJoint, FillMode
             case PointJoin_Prop: setPointJoin((PointJoin) aValue); break;
             case FillMode_Prop: setFillMode((FillMode) aValue); break;
+
+            // AxisTypeY, ExprX, ExprY, ExprZ
+            case AxisTypeY_Prop: setAxisTypeY((AxisType) aValue); break;
+            case ExprX_Prop: setExprX(SnapUtils.stringValue(aValue)); break;
+            case ExprY_Prop: setExprY(SnapUtils.stringValue(aValue)); break;
+            case ExprZ_Prop: setExprZ(SnapUtils.stringValue(aValue)); break;
+
+            // Stacked, ShowLegendEntry, Disabled
+            case Stacked_Prop: setStacked(SnapUtils.boolValue(aValue)); break;
+            case ShowLegendEntry_Prop: setShowLegendEntry(SnapUtils.boolValue(aValue)); break;
+            case Disabled_Prop: setDisabled(SnapUtils.boolValue(aValue)); break;
 
             // DataSet
             case DataSet_Prop: setDataSet((DataSet) aValue); break;
