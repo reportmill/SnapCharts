@@ -29,7 +29,7 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     public static final String Name_Prop = "Name";
 
     // Constants for relation properties
-    public static final String Content_Rel = "Content";
+    public static final String Content_Prop = "Content";
     public static final String Items_Prop = "Items";
 
     /**
@@ -190,7 +190,7 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
         aPropSet.addPropNamed(Name_Prop, String.class, null);
 
         // Content, Items
-        aPropSet.addPropNamed(Content_Rel, PropObject.class, null);
+        aPropSet.addPropNamed(Content_Prop, PropObject.class, null);
         aPropSet.addPropNamed(Items_Prop, DocItem[].class, null);
     }
 
@@ -206,7 +206,7 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
             case Name_Prop: return getName();
 
             // Content, Items
-            case Content_Rel: return getContent();
+            case Content_Prop: return getContent();
             case Items_Prop: return getItems();
 
             // Do normal version

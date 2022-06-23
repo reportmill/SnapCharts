@@ -515,7 +515,7 @@ public class ChartView extends ChartPartView<Chart> {
     protected void chartDidPropChange(PropChange aPC)
     {
         String propName = aPC.getPropName();
-        if (propName == Chart.Markers_Rel) {
+        if (propName == Chart.Markers_Prop) {
             _markerViews = null;
             relayout();
         }

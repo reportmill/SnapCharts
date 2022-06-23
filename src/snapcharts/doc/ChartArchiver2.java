@@ -3,13 +3,9 @@
  */
 package snapcharts.doc;
 import snap.gfx.*;
-import snap.props.Prop;
 import snap.props.PropArchiverXML;
 import snap.props.PropNode;
-import snap.props.PropObject;
 import snap.text.NumberFormat;
-import snap.util.XMLArchiver;
-import snap.web.WebURL;
 import snapcharts.model.*;
 
 import java.util.HashMap;
@@ -42,7 +38,7 @@ public class ChartArchiver2 extends PropArchiverXML {
             PropNode[] docItemsNodes = (PropNode[]) superVal;
             for (int i = 0; i < docItemsNodes.length; i++) {
                 PropNode docItemNode = docItemsNodes[i];
-                PropNode contentPropNode = (PropNode) docItemNode.getPropValue(DocItem.Content_Rel);
+                PropNode contentPropNode = (PropNode) docItemNode.getPropValue(DocItem.Content_Prop);
                 docItemsNodes[i] = contentPropNode;
             }
         }

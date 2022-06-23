@@ -637,7 +637,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         }
 
         // Handle Marker changes
-        if (src instanceof Marker || propName == Chart.Markers_Rel)
+        if (src instanceof Marker || propName == Chart.Markers_Prop)
             clearMarkers();
     }
 

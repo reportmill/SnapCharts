@@ -338,7 +338,7 @@ public class TraceList extends ChartPart {
         aPropSet.getPropForName(Border_Prop).setDefaultValue(DEFAULT_BORDER);
 
         // Traces
-        aPropSet.addPropNamed(Traces_Prop, Trace[].class, new Trace[0]);
+        aPropSet.addPropNamed(Traces_Prop, Trace[].class, EMPTY_OBJECT);
     }
 
     /**

@@ -104,9 +104,9 @@ public class Trace extends ChartPart {
     public static final String Point_Prop = "Points";
 
     // Constants for relations
-    public static final String PointStyle_Rel = "PointStyle";
-    public static final String TagStyle_Rel = "TagStyle";
-    public static final String TraceStyle_Rel = "TraceStyle";
+    public static final String PointStyle_Prop = "PointStyle";
+    public static final String TagStyle_Prop = "TagStyle";
+    public static final String TraceStyle_Prop = "TraceStyle";
 
     // Properties for defaults
     public static final int DEFAULT_LINE_WIDTH = 1;
@@ -718,9 +718,9 @@ public class Trace extends ChartPart {
         aPropSet.addPropNamed(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE);
 
         // Handle PointStyleRel, TagStyle_Rel, TraceStyle_Rel
-        aPropSet.addPropNamed(PointStyle_Rel, PointStyle.class, null);
-        aPropSet.addPropNamed(TagStyle_Rel, TagStyle.class, null);
-        aPropSet.addPropNamed(TraceStyle_Rel, TraceStyle.class, null);
+        aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(TagStyle_Prop, TagStyle.class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(TraceStyle_Prop, TraceStyle.class, EMPTY_OBJECT);
     }
 
     /**
@@ -743,9 +743,9 @@ public class Trace extends ChartPart {
             case FillMode_Prop: return getFillMode();
 
             // Handle PointStyleRel, TagStyle_Rel, TraceStyle_Rel
-            case PointStyle_Rel: return getPointStyle();
-            case TagStyle_Rel: return getTagStyle();
-            case TraceStyle_Rel: return getTraceStyle();
+            case PointStyle_Prop: return getPointStyle();
+            case TagStyle_Prop: return getTagStyle();
+            case TraceStyle_Prop: return getTraceStyle();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -897,12 +897,12 @@ public class Trace extends ChartPart {
             setFillMode(anElement.getAttributeEnumValue(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE));
 
         // Unarchive PointStyle
-        XMLElement pointStyleXML = anElement.getElement(PointStyle_Rel);
+        XMLElement pointStyleXML = anElement.getElement(PointStyle_Prop);
         if (pointStyleXML != null)
             getPointStyle().fromXML(anArchiver, pointStyleXML);
 
         // Unarchive TagStyle
-        XMLElement tagStyleXML = anElement.getElement(TagStyle_Rel);
+        XMLElement tagStyleXML = anElement.getElement(TagStyle_Prop);
         if (tagStyleXML != null)
             getTagStyle().fromXML(anArchiver, tagStyleXML);
 
@@ -928,7 +928,7 @@ public class Trace extends ChartPart {
             setShowLegendEntry(anElement.getAttributeBoolValue(ShowLegendEntry_Prop));
 
         // Unarchive TraceStyle
-        XMLElement traceStyleXML = anElement.getElement(TraceStyle_Rel);
+        XMLElement traceStyleXML = anElement.getElement(TraceStyle_Prop);
         if (traceStyleXML != null)
             getTraceStyle().fromXML(anArchiver, traceStyleXML);
 

@@ -75,7 +75,8 @@ public class Chart extends ChartPart {
     public static final String AxisY4_Prop = "AxisY4";
     public static final String AxisZ_Prop = "AxisZ";
     public static final String Legend_Prop = "Legend";
-    public static final String Markers_Rel = "Markers";
+    public static final String Markers_Prop = "Markers";
+    public static final String TraceList_Prop = "TraceList";
 
     // Constants for property defaults
     public static final ChartType  DEFAULT_TYPE = ChartType.SCATTER;
@@ -244,7 +245,7 @@ public class Chart extends ChartPart {
     public void addMarker(Marker aMarker, int anIndex)
     {
         _markers = ArrayUtils.add(_markers, aMarker, anIndex);
-        firePropChange(Markers_Rel, null, aMarker, anIndex);
+        firePropChange(Markers_Prop, null, aMarker, anIndex);
     }
 
     /**
@@ -254,7 +255,7 @@ public class Chart extends ChartPart {
     {
         Marker marker = getMarker(anIndex);
         _markers = ArrayUtils.remove(_markers, anIndex);
-        firePropChange(Markers_Rel, marker, null, anIndex);
+        firePropChange(Markers_Prop, marker, null, anIndex);
         return marker;
     }
 
@@ -354,7 +355,10 @@ public class Chart extends ChartPart {
 
         // Legend, Markers
         aPropSet.addPropNamed(Legend_Prop, Legend.class, EMPTY_OBJECT);
-        aPropSet.addPropNamed(Markers_Rel, Marker[].class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(Markers_Prop, Marker[].class, EMPTY_OBJECT);
+
+        // TraceList
+        aPropSet.addPropNamed(TraceList_Prop, TraceList.class, EMPTY_OBJECT);
     }
 
     /**
@@ -381,7 +385,10 @@ public class Chart extends ChartPart {
 
             // Legend, Markers
             case Legend_Prop: return getLegend();
-            case Markers_Rel: return getMarkers();
+            case Markers_Prop: return getMarkers();
+
+            // TraceList
+            case TraceList_Prop: return getTraceList();
 
             // Do normal version
             default: return super.getPropValue(aPropName);
