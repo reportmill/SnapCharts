@@ -578,6 +578,7 @@ public class DocPane extends ViewOwner {
         addKeyActionHandler("DeleteAction", "BACK_SPACE");
         addKeyActionHandler("EscapeAction", "ESCAPE");
         addKeyActionHandler("PropArchiverAction", "H");
+        addKeyActionHandler("PropArchiverOpenAction", "J");
     }
 
     /**
@@ -679,6 +680,8 @@ public class DocPane extends ViewOwner {
 
         if (anEvent.equals("PropArchiverAction") && anEvent.isAltDown())
             performPropArchiverTest(anEvent);
+        if (anEvent.equals("PropArchiverOpenAction") && anEvent.isAltDown())
+            performPropArchiverOpenTest(anEvent);
     }
 
     /**
@@ -863,6 +866,21 @@ public class DocPane extends ViewOwner {
 
         // Consume event
         anEvent.consume();
+    }
+
+    /**
+     * Writes the doc to a file and opens in editor.
+     */
+    private void performPropArchiverOpenTest(ViewEvent anEvent)
+    {
+        File file = new File("/tmp/PropArchTest.charts");
+
+        ChartArchiver2 chartArchiver = new ChartArchiver2();
+        Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(file);
+
+        DocPane docPane = new DocPane();
+        docPane.openDoc(doc);
+        docPane.setWindowVisible(true);
     }
 
     // Constants for images
