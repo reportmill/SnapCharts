@@ -29,10 +29,10 @@ public class ChartArchiver2 extends PropArchiverXML {
      * Converts given object to PropNode or primitive.
      */
     @Override
-    protected Object convertNativeRelationToNode(PropNode aPropNode, Prop aProp, Object nativeValue)
+    protected Object convertNativeToNodeForPropRelationImpl(PropNode aPropNode, Prop aProp, Object nativeValue)
     {
         // Do normal version
-        Object superVal = super.convertNativeRelationToNode(aPropNode, aProp, nativeValue);
+        Object superVal = super.convertNativeToNodeForPropRelationImpl(aPropNode, aProp, nativeValue);
 
         // If DocItemGroup.Items (and Doc), replace Items with Items[].Content
         PropObject propObject = aPropNode.getPropObject();
