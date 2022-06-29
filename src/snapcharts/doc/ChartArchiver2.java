@@ -7,7 +7,6 @@ import snap.props.PropArchiverXML;
 import snap.props.PropNode;
 import snap.text.NumberFormat;
 import snapcharts.model.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,17 +27,17 @@ public class ChartArchiver2 extends PropArchiverXML {
      * Converts given object to PropNode or primitive.
      */
     @Override
-    protected Object convertObjectToPropNodeOrPrimitive(Object anObj)
+    protected Object convertNativeRelationToNode(Object anObj)
     {
         // Do normal version
-        Object superVal = super.convertObjectToPropNodeOrPrimitive(anObj);
+        Object superVal = super.convertNativeRelationToNode(anObj);
 
         // If DocItemGroup.Items (and Doc), replace Items with Items[].Content
-        if (_propObject instanceof DocItemGroup && _propName == DocItemGroup.Items_Prop) {
+        if (_propObject instanceof DocItemGroup && _prop.getName() == DocItemGroup.Items_Prop) {
             PropNode[] docItemsNodes = (PropNode[]) superVal;
             for (int i = 0; i < docItemsNodes.length; i++) {
                 PropNode docItemNode = docItemsNodes[i];
-                PropNode contentPropNode = (PropNode) docItemNode.getPropValue(DocItem.Content_Prop);
+                PropNode contentPropNode = (PropNode) docItemNode.getNodeValueForPropName(DocItem.Content_Prop);
                 docItemsNodes[i] = contentPropNode;
             }
         }

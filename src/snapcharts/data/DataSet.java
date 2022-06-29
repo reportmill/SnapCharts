@@ -375,23 +375,22 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
     }
 
     /**
-     * Returns the props for archival.
+     * Override to return props for DataType channels.
      */
     @Override
-    public Prop[] getPropsForArchival()
+    public Prop[] getPropsForArchivalExtra()
     {
-        // Do normal version
-        Prop[] props = super.getPropsForArchival();
-
         // Get DataType and channel count
         DataType dataType = getDataType();
         int chanCount = dataType.getChannelCount();
 
         // Extend props array and add channels
-        Prop[] propsForDataType = Arrays.copyOf(props, props.length + chanCount);
+        Prop[] propsForDataType = new Prop[chanCount];
         for (int i = 0; i < chanCount; i++) {
             DataChan dataChan = dataType.getChannel(i);
-            propsForDataType[props.length + i] = new Prop(dataChan.toString(), DataArray.class, null);
+            DataArray dataArray = getDataArrayForChannel(dataChan);
+            Class<?> propClass = dataArray instanceof NumberArray ? double[].class : String[].class;
+            propsForDataType[i] = new Prop(dataChan.toString(), propClass, null);
         }
 
         // Return
