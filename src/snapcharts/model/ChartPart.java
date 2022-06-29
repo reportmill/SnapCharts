@@ -866,7 +866,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     {
         String className = getClass().getSimpleName();
         String propStrings = toStringProps();
-        return className + "{ " + propStrings + " }";
+        return className + " { " + propStrings + " }";
     }
 
     /**

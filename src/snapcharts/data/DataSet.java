@@ -614,7 +614,7 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
     {
         String className = getClass().getSimpleName();
         String propString = toStringProps();
-        return className + "{ " + propString + " }";
+        return className + " { " + propString + " }";
     }
 
     /**

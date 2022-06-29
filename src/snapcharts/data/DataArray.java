@@ -78,7 +78,7 @@ public abstract class DataArray implements Cloneable {
     {
         String className = getClass().getSimpleName();
         String propStrings = toStringProps();
-        return className + "{ " + propStrings + " }";
+        return className + " { " + propStrings + " }";
     }
 
     /**
