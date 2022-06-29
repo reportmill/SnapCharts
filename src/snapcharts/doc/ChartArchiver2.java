@@ -3,8 +3,10 @@
  */
 package snapcharts.doc;
 import snap.gfx.*;
+import snap.props.Prop;
 import snap.props.PropArchiverXML;
 import snap.props.PropNode;
+import snap.props.PropObject;
 import snap.text.NumberFormat;
 import snapcharts.model.*;
 import java.util.HashMap;
@@ -27,13 +29,14 @@ public class ChartArchiver2 extends PropArchiverXML {
      * Converts given object to PropNode or primitive.
      */
     @Override
-    protected Object convertNativeRelationToNode(Object anObj)
+    protected Object convertNativeRelationToNode(PropNode aPropNode, Prop aProp, Object nativeValue)
     {
         // Do normal version
-        Object superVal = super.convertNativeRelationToNode(anObj);
+        Object superVal = super.convertNativeRelationToNode(aPropNode, aProp, nativeValue);
 
         // If DocItemGroup.Items (and Doc), replace Items with Items[].Content
-        if (_propObject instanceof DocItemGroup && _prop.getName() == DocItemGroup.Items_Prop) {
+        PropObject propObject = aPropNode.getPropObject();
+        if (propObject instanceof DocItemGroup && aProp.getName() == DocItemGroup.Items_Prop) {
             PropNode[] docItemsNodes = (PropNode[]) superVal;
             for (int i = 0; i < docItemsNodes.length; i++) {
                 PropNode docItemNode = docItemsNodes[i];
@@ -49,10 +52,11 @@ public class ChartArchiver2 extends PropArchiverXML {
     /**
      * Creates the class map.
      */
-    protected Map<String, Class> createClassMap()
+    @Override
+    protected Map<String, Class<?>> createClassMap()
     {
         // Create class map and add classes
-        Map<String,Class> cmap = new HashMap();
+        Map<String,Class<?>> cmap = new HashMap();
 
         // Add classes
         cmap.put(TraceStyle.class.getSimpleName(), TraceStyle.class);
