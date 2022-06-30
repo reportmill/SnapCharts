@@ -3,11 +3,10 @@
  */
 package snapcharts.doc;
 import snap.gfx.*;
-import snap.props.Prop;
-import snap.props.PropArchiverXML;
-import snap.props.PropNode;
-import snap.props.PropObject;
+import snap.props.*;
 import snap.text.NumberFormat;
+import snap.util.XMLElement;
+import snapcharts.data.*;
 import snapcharts.model.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +46,20 @@ public class ChartArchiver2 extends PropArchiverXML {
 
         // Return
         return superVal;
+    }
+
+    /**
+     * Override to handle DataSet.
+     */
+    @Override
+    protected PropObject createPropObjectForXML(PropNode aParent, Prop aProp, XMLElement anElement)
+    {
+        // Handle DataSet
+        if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
+            return new DataSetProxy();
+
+        // Do normal version
+        return super.createPropObjectForXML(aParent, aProp, anElement);
     }
 
     /**
@@ -95,5 +108,110 @@ public class ChartArchiver2 extends PropArchiverXML {
 
         // Return map
         return cmap;
+    }
+
+    /**
+     * A PropObjectProxy subclass for DataSet.
+     */
+    private static class DataSetProxy extends PropObjectProxy {
+
+        // A basic DataSet
+        private DataSet  _dataSet;
+
+        // The DataArray
+        private DataArray[] _dataArrays;
+
+        /**
+         * Constructor.
+         */
+        public DataSetProxy()
+        {
+            super(null);
+            _dataSet = DataSet.newDataSet();
+        }
+
+        /**
+         * Override to do final DataSet config.
+         */
+        @Override
+        public Object getReal()
+        {
+            _dataSet.setDataArrays(_dataArrays);
+            return _dataSet;
+        }
+
+        /**
+         * Override to configure props for this class.
+         */
+        @Override
+        protected void initProps(PropSet aPropSet)
+        {
+            // Do normal version
+            super.initProps(aPropSet);
+
+            // Get props for DataSet
+            Prop[] dataSetProps = _dataSet.getPropSet().getProps();
+
+            // Add DataSet props - should probably add copies
+            for (Prop prop : dataSetProps)
+                aPropSet.addProp(prop);
+        }
+
+        /**
+         * Override to forward to DataSet.
+         */
+        @Override
+        public Prop[] getPropsForArchivalExtra()
+        {
+            return _dataSet.getPropsForArchivalExtra();
+        }
+
+        /**
+         * Override to forward to DataSet.
+         */
+        @Override
+        public Object getPropValue(String aPropName)
+        {
+            return _dataSet.getPropValue(aPropName);
+        }
+
+        /**
+         * Override to Handle DataType props.
+         */
+        @Override
+        public void setPropValue(String aPropName, Object aValue)
+        {
+            // Set DataArrays
+            int dataIndex = getDataChannelIndexForPropName(aPropName);
+            if (dataIndex >= 0) {
+                if (aValue instanceof double[])
+                    _dataArrays[dataIndex] = new NumberArray((double[]) aValue);
+                else if (aValue instanceof String[])
+                    _dataArrays[dataIndex] = new StringArray((String[]) aValue);
+                else System.err.println("DataSetProxy.setPropValue: Error setting data: " + aPropName);
+                return;
+            }
+
+            // Forward to DataSet
+            _dataSet.setPropValue(aPropName, aValue);
+
+            // Handle DataType
+            if (aPropName == DataSet.DataType_Prop) {
+                DataType dataType = _dataSet.getDataType();
+                _dataArrays = new DataArray[dataType.getChannelCount()];
+            }
+        }
+
+        /**
+         * Returns the channel/DataArrays index for given channel prop name (X, Y, Z, etc.)
+         */
+        private int getDataChannelIndexForPropName(String aPropName)
+        {
+            DataType dataType = _dataSet.getDataType();
+            for (int i = 0, iMax = dataType.getChannelCount(); i < iMax; i++)
+                if (dataType.getChannel(i).toString().equals(aPropName))
+                    return i;
+            return -1;
+        }
     }
 }

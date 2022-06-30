@@ -37,6 +37,9 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
     // Cached DataArrays for common channel C
     protected StringArray  _dataC;
 
+    // The number of points
+    protected int  _pointCount;
+
     // Properties
     public static final String Name_Prop = "Name";
     public static final String DataType_Prop = "DataType";
@@ -84,6 +87,59 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
      * Returns the DataArrays.
      */
     public DataArray[] getDataArrays()  { return _dataArrays; }
+
+    /**
+     * Sets the DataArrays.
+     */
+    public void setDataArrays(DataArray[] aDataArray)
+    {
+        // Set DataArrays
+        _dataArrays = aDataArray;
+
+        // Get DataType info
+        DataType dataType = getDataType();
+        DataChan[] channels = dataType.getChannelsXY();
+        int channelCount = channels.length;
+
+        // Iterate over channels and set XYZ DataArrays
+        for (int i = 0; i < channelCount; i++) {
+            DataChan chan = channels[i];
+            DataArray dataArray = _dataArrays[i];
+            switch (chan) {
+                case X: _dataX = (NumberArray) dataArray; break;
+                case Y: _dataY = (NumberArray) dataArray; break;
+                case Z: _dataZ = (NumberArray) dataArray; break;
+                case C: _dataC = (StringArray) dataArray; break;
+                default: break;
+            }
+        }
+
+        // Set PointCount
+        _pointCount = _dataZ != null ? _dataZ.getLength() :
+                _dataY != null ? _dataY.getLength() :
+                _dataX != null ? _dataX.getLength() : 0;
+    }
+
+    /**
+     * Sets DataArrays from data.
+     */
+    public void setDataArraysFromArrays(Object ... theArrays)
+    {
+        // Get DataArrays
+        DataArray[] dataArrays = DataArray.newDataArraysForArrays(theArrays);
+
+        // Set known arrays
+        DataType dataType = getDataType();
+        DataChan[] channels = dataType.getChannelsXY();
+        int channelCount = channels.length;
+        if (channelCount > dataArrays.length) {
+            dataArrays = DataArray.newDataArraysForDataType(dataType);
+            System.out.println("DataSetImpl.setDataArraysFromArrays: Missing data");
+        }
+
+        // Set DataArrays
+        setDataArrays(dataArrays);
+    }
 
     /**
      * Returns an array of dataset X values.
@@ -596,14 +652,6 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
 
         // Return this part
         return this;
-    }
-
-    /**
-     * Sets DataArrays from data.
-     */
-    public void setDataArraysFromArrays(Object ... theArrays)
-    {
-        //DataSetUtils.addDataPoints(this, dataX, dataY, dataZ, dataC);
     }
 
     /**
