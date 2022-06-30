@@ -7,9 +7,11 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.VPos;
 import snap.gfx.*;
+import snap.props.Prop;
 import snap.props.PropChangeSupport;
 import snap.props.PropSet;
 import snap.props.PropObject;
+import snap.text.NumberFormat;
 import snap.text.TextFormat;
 import snap.util.*;
 import snapcharts.doc.ChartArchiver;
@@ -571,7 +573,8 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
 
         // Border, Fill, Effect, Opacity
         aPropSet.addPropNamed(Border_Prop, Border.class, DEFAULT_BORDER);
-        aPropSet.addPropNamed(Fill_Prop, Paint.class, DEFAULT_FILL);
+        Prop fillProp = aPropSet.addPropNamed(Fill_Prop, Paint.class, DEFAULT_FILL);
+        fillProp.setDefaultPropClass(Color.class);
         aPropSet.addPropNamed(Effect_Prop, Effect.class, DEFAULT_EFFECT);
         aPropSet.addPropNamed(Opacity_Prop, double.class, DEFAULT_OPACTIY);
 
@@ -582,8 +585,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
 
         // Font, TextFill, TextFormat
         aPropSet.addPropNamed(Font_Prop, Font.class, DEFAULT_FONT);
-        aPropSet.addPropNamed(TextFill_Prop, Paint.class, DEFAULT_TEXT_FILL);
-        aPropSet.addPropNamed(TextFormat_Prop, TextFormat.class, DEFAULT_TEXT_FORMAT);
+        Prop textFillProp = aPropSet.addPropNamed(TextFill_Prop, Paint.class, DEFAULT_TEXT_FILL);
+        textFillProp.setDefaultPropClass(Color.class);
+        Prop textFormatProp = aPropSet.addPropNamed(TextFormat_Prop, TextFormat.class, DEFAULT_TEXT_FORMAT);
+        textFormatProp.setDefaultPropClass(NumberFormat.class);
 
         // Align, Margin, Padding, Spacing
         aPropSet.addPropNamed(Align_Prop, Pos.class, DEFAULT_ALIGN);
