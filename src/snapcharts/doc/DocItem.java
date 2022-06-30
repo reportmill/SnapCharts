@@ -114,6 +114,18 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     public List<DocItem<?>> getItems()  { return _items; }
 
     /**
+     * Sets the items.
+     */
+    public void setItems(DocItem[] theItems)
+    {
+        while(getItemCount() > 0)
+            removeItem(0);
+
+        for (DocItem item : theItems)
+            addItem(item);
+    }
+
+    /**
      * Returns the number of items.
      */
     public int getItemCount() { return _items.size(); }
@@ -226,8 +238,10 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
             case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
 
             // Content, Items
-            //case Content_Rel: return getContent();
-            //case Items_Prop: return getItems();
+            case Content_Prop: setContent((T) aValue); break;
+
+            // Items
+            case Items_Prop: setItems((DocItem[]) aValue); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);

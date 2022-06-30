@@ -371,7 +371,7 @@ public class TraceList extends ChartPart {
         switch (aPropName) {
 
             // Traces
-            case Trace_Prop: setTraces((Trace[]) aValue); break;
+            case Traces_Prop: setTraces((Trace[]) aValue); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue); break;

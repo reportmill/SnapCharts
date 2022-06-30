@@ -37,4 +37,15 @@ public enum DataChan {
         return toString().charAt(0);
     }
 
+    /**
+     * Returns the data class.
+     */
+    public Class getDataArrayClass()
+    {
+        switch (this) {
+            case I: return int[].class;
+            case C: return String[].class;
+            default: return double[].class;
+        }
+    }
 }

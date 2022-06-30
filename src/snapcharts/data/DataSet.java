@@ -444,8 +444,7 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
         Prop[] propsForDataType = new Prop[chanCount];
         for (int i = 0; i < chanCount; i++) {
             DataChan dataChan = dataType.getChannel(i);
-            DataArray dataArray = getDataArrayForChannel(dataChan);
-            Class<?> propClass = dataArray instanceof NumberArray ? double[].class : String[].class;
+            Class<?> propClass = dataChan.getDataArrayClass();
             propsForDataType[i] = new Prop(dataChan.toString(), propClass, null);
         }
 
