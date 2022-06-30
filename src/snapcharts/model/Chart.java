@@ -4,6 +4,7 @@
 package snapcharts.model;
 import snap.geom.Insets;
 import snap.gfx.Color;
+import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropSet;
 import snap.util.*;
@@ -369,6 +370,12 @@ public class Chart extends ParentPart {
 
         // TraceList
         aPropSet.addPropNamed(TraceList_Prop, TraceList.class, EMPTY_OBJECT);
+
+        // Set all above ChartPart props preexisting, so they will be used in place during unarchival
+        Prop[] props = aPropSet.getProps();
+        for (Prop prop : props)
+            if (ChartPart.class.isAssignableFrom(prop.getPropClass()))
+                prop.setPreexisting(true);
     }
 
     /**
