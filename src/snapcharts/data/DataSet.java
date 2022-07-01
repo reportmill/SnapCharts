@@ -463,7 +463,8 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
 
         // Name, DataType
         aPropSet.addPropNamed(Name_Prop, String.class, null);
-        aPropSet.addPropNamed(DataType_Prop, DataType.class, null);
+        Prop dataTypeProp = aPropSet.addPropNamed(DataType_Prop, DataType.class, null);
+        dataTypeProp.setPropChanger(true);
     }
 
     /**

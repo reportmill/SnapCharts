@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.doc;
 import snap.props.PropSet;
 import snap.props.PropObject;
@@ -12,7 +15,7 @@ import java.util.List;
 /**
  * A DocItem subclass that has child items.
  */
-public class DocItemGroup<T extends PropObject> extends DocItem<T> {
+public class DocItemGroup<T extends PropObject> extends DocItemParent<T> {
 
     // Whether group pages should be portrait
     private boolean  _portrait = true;
@@ -50,7 +53,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
      */
     public DocItemGroup()
     {
-        super(null);
+        super();
     }
 
     /**
@@ -144,7 +147,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
     public List<Chart> getCharts()
     {
         List<Chart> charts = new ArrayList<>();
-        for (DocItem<?> item : getItems())
+        for (DocItem<?> item : getDocItems())
             if (item instanceof DocItemChart)
                 charts.add(((DocItemChart)item).getChart());
         return charts;
@@ -184,7 +187,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
 
         // Handle Trace
         if (aChartPart instanceof Trace) {
-            for (DocItem item : getItems())
+            for (DocItem item : getDocItems())
                 if (item instanceof DocItemChart)
                     item.addChartPart(aChartPart, null);
         }
@@ -192,11 +195,6 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
         // Do normal version (nothing)
         return super.addChartPart(aChartPart, aChildItem);
     }
-
-    /**
-     * Override to return true.
-     */
-    public boolean isParent()  { return true; }
 
     /**
      * Override to provide prop/relation names.
@@ -272,7 +270,7 @@ public class DocItemGroup<T extends PropObject> extends DocItem<T> {
         // Archive charts
         XMLElement chartsXML = new XMLElement("Charts");
         e.add(chartsXML);
-        for (DocItem docItem : getItems()) {
+        for (DocItem docItem : getDocItems()) {
             DocItemChart chartDocItem = docItem instanceof DocItemChart ? (DocItemChart)docItem : null;
             if (chartDocItem!=null)
                 chartsXML.add(anArchiver.toXML(chartDocItem.getChart()));

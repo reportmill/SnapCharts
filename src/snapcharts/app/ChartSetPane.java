@@ -8,6 +8,7 @@ import snap.view.*;
 import snapcharts.doc.DocItem;
 import snapcharts.doc.DocItemChart;
 import snapcharts.doc.DocItemGroup;
+import snapcharts.doc.DocItemParent;
 import snapcharts.model.*;
 import snapcharts.view.PageView;
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class ChartSetPane extends DocItemPane<DocItemGroup> {
         String propName = aPC.getPropName();
 
         // Handle Items
-        if (propName == DocItem.Items_Prop)
+        if (propName == DocItemParent.DocItems_Prop)
             resetCharts();
         if (propName == DocItemGroup.Portrait_Prop || propName == DocItemGroup.PageDisplay_Prop ||
             propName == DocItemGroup.ItemsPerPage_Prop || propName == DocItemGroup.ChartScale_Prop)
@@ -134,7 +135,7 @@ public class ChartSetPane extends DocItemPane<DocItemGroup> {
     {
         // Get doc items and create ChartItems array
         DocItemGroup docItemGroup = getDocItem();
-        List<DocItem<?>> docItems = docItemGroup.getItems();
+        List<DocItem<?>> docItems = docItemGroup.getDocItems();
         List<DocItemChart> chartItems = new ArrayList<>();
 
         // Iterate over doc items
@@ -142,7 +143,8 @@ public class ChartSetPane extends DocItemPane<DocItemGroup> {
 
             // Handle DocItemGroup: Get charts inside
             if (docItem instanceof DocItemGroup) {
-                List<DocItem<?>> groupItems = docItem.getItems();
+                DocItemGroup childDocItemGroup = (DocItemGroup) docItem;
+                List<DocItem<?>> groupItems = childDocItemGroup.getDocItems();
                 for (DocItem<?> ditem : groupItems)
                     if (ditem instanceof DocItemChart)
                         chartItems.add((DocItemChart) ditem);

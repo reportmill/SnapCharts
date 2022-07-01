@@ -3,6 +3,7 @@ import snap.gfx.Image;
 import snap.util.XMLElement;
 import snap.view.*;
 import snapcharts.doc.ChartArchiver;
+import snapcharts.doc.DocItemParent;
 import snapcharts.doc.DocItemTrace;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
@@ -110,7 +111,7 @@ public class DocPaneCopyPaster {
     {
         // Get selected item and parent (just return if either are null
         DocItem selItem = _docPane.getSelItem(); if (selItem == null) return;
-        DocItem parItem = selItem.getParent(); if (parItem == null) return;
+        DocItemParent parItem = selItem.getParent(); if (parItem == null) return;
 
         // Select best peer and remove item
         _docPane.selectBestDocItemPeer(selItem);

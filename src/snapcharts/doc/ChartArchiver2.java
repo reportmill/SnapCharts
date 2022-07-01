@@ -8,9 +8,6 @@ import snap.text.NumberFormat;
 import snap.util.XMLElement;
 import snapcharts.data.*;
 import snapcharts.model.*;
-import snapcharts.notebook.DocItemNotebook;
-import snapcharts.notebook.Notebook;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,67 +21,7 @@ public class ChartArchiver2 extends PropArchiverXML {
      */
     public ChartArchiver2()
     {
-        //setIgnoreCase(true);
-    }
-
-    /**
-     * Converts given object to PropNode or primitive.
-     */
-    @Override
-    protected Object convertNativeToNodeForPropRelationImpl(PropNode aParentNode, Prop aProp, Object nativeValue)
-    {
-        // Do normal version
-        Object superVal = super.convertNativeToNodeForPropRelationImpl(aParentNode, aProp, nativeValue);
-
-        // If DocItemGroup.Items (and Doc), replace Items with Items[].Content
-        PropObject propObject = aParentNode.getPropObject();
-        if (propObject instanceof DocItemGroup && aProp.getName() == DocItemGroup.Items_Prop) {
-            PropNode[] docItemsNodes = (PropNode[]) superVal;
-            for (int i = 0; i < docItemsNodes.length; i++) {
-                PropNode docItemNode = docItemsNodes[i];
-                PropNode contentPropNode = (PropNode) docItemNode.getNodeValueForPropName(DocItem.Content_Prop);
-                docItemsNodes[i] = contentPropNode;
-            }
-        }
-
-        // Return
-        return superVal;
-    }
-
-    /**
-     * Override to convert XML Doc.Items from array of DocItem.Content to array of DocItems.
-     */
-    @Override
-    protected PropNode[] convertXMLToNodeForXMLRelationArray(PropNode aParentNode, Prop aProp, XMLElement anElement)
-    {
-        // Do normal version
-        PropNode[] superVal = super.convertXMLToNodeForXMLRelationArray(aParentNode, aProp, anElement);
-
-        //
-        PropObject propObject = aParentNode.getPropObject();
-        if (propObject instanceof DocItemGroup && aProp.getName() == DocItemGroup.Items_Prop) {
-            PropNode[] docItemsNodes = superVal;
-            for (int i = 0; i < docItemsNodes.length; i++) {
-                PropNode docItemNode = docItemsNodes[i];
-                Object docItemContent = docItemNode.getNative();
-                DocItem docItem = null;
-                if (docItemContent instanceof Chart)
-                    docItem = new DocItemChart((Chart) docItemContent);
-                else if (docItemContent instanceof Notebook)
-                    docItem = new DocItemNotebook((Notebook) docItemContent);
-                else {
-                    System.err.println("ChartArchiver.getDocItemForContent: Unsupported: " + docItemContent.getClass());
-                    docItem = new DocItemChart(new Chart());
-                }
-
-                //
-                PropNode docItemNode2 = new PropNode(docItem, this);
-                docItemsNodes[i] = docItemNode2;
-            }
-        }
-
-        // Return
-        return superVal;
+        super();
     }
 
     /**

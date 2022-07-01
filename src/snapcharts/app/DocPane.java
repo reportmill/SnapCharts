@@ -162,7 +162,7 @@ public class DocPane extends ViewOwner {
     public void selectBestDocItemPeer(DocItem aDocItem)
     {
         // Get parent item and index of given item
-        DocItem parItem = aDocItem.getParent();
+        DocItemParent parItem = aDocItem.getParent();
         int index = aDocItem.getIndex();
 
         // Best peer is first available of: 1) Next index, 2) previous index or 3) parent
@@ -904,14 +904,18 @@ public class DocPane extends ViewOwner {
         @Override
         public boolean isParent(DocItem anItem)
         {
-            return anItem.isParent();
+            return anItem instanceof DocItemParent;
         }
 
         @Override
         public DocItem[] getChildren(DocItem aParent)
         {
-            List<DocItem> docItems = aParent.getItems();
-            return docItems.toArray(new DocItem[0]);
+            if (aParent instanceof DocItemParent) {
+                DocItemParent docItemParent = (DocItemParent) aParent;
+                List<DocItem> docItems = docItemParent.getDocItems();
+                return docItems.toArray(new DocItem[0]);
+            }
+            return new DocItem[0];
         }
 
         @Override

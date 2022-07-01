@@ -1,10 +1,11 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.doc;
-import snap.props.PropChangeSupport;
 import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.util.*;
 import snapcharts.model.ChartPart;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
 public abstract class DocItem<T extends PropObject> extends PropObject implements XMLArchiver.Archivable {
 
     // The DocItem that holds this item
-    private DocItem  _parent;
+    private DocItemParent  _parent;
 
     // The name
     private String  _name;
@@ -22,15 +23,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     // The content
     protected T  _content;
 
-    // The child items
-    private List<DocItem<?>>  _items = new ArrayList<>();
-
     // Constants for properties
     public static final String Name_Prop = "Name";
-
-    // Constants for relation properties
     public static final String Content_Prop = "Content";
-    public static final String Items_Prop = "Items";
 
     /**
      * Constructor.
@@ -41,9 +36,6 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
 
         if (aContent != null)
             setContent(aContent);
-
-        // Hack until accessors are done with PropSheet, so firePropChange() always gets called
-        _pcs = new PropChangeSupport(this);
     }
 
     /**
@@ -82,19 +74,14 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     }
 
     /**
-     * Returns whether this item is a parent.
-     */
-    public boolean isParent()  { return false; }
-
-    /**
      * Returns the parent item.
      */
-    public DocItem getParent()  { return _parent; }
+    public DocItemParent getParent()  { return _parent; }
 
     /**
      * Sets the parent item.
      */
-    public void setParent(DocItem aPar)
+    public void setParent(DocItemParent aPar)
     {
         _parent = aPar;
     }
@@ -104,73 +91,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
      */
     public int getIndex()
     {
-        List<DocItem> items = getParent() != null ? getParent().getItems() : null;
+        DocItemParent parent = getParent();
+        List<DocItem> items = parent != null ? parent.getDocItems() : null;
         return items != null ? items.indexOf(this) : -1;
-    }
-
-    /**
-     * Returns the items.
-     */
-    public List<DocItem<?>> getItems()  { return _items; }
-
-    /**
-     * Sets the items.
-     */
-    public void setItems(DocItem[] theItems)
-    {
-        while(getItemCount() > 0)
-            removeItem(0);
-
-        for (DocItem item : theItems)
-            addItem(item);
-    }
-
-    /**
-     * Returns the number of items.
-     */
-    public int getItemCount() { return _items.size(); }
-
-    /**
-     * Returns the individual item at given index.
-     */
-    public DocItem getItem(int anIndex)  { return _items.get(anIndex); }
-
-    /**
-     * Adds an item.
-     */
-    public void addItem(DocItem anItem)
-    {
-        addItem(anItem, _items.size());
-    }
-
-    /**
-     * Adds an item at given index.
-     */
-    public void addItem(DocItem anItem, int anIndex)
-    {
-        _items.add(anIndex, anItem);
-        firePropChange(Items_Prop, null, anItem, anIndex);
-        anItem.setParent(this);
-    }
-
-    /**
-     * Removes an item at given index.
-     */
-    public DocItem removeItem(int anIndex)
-    {
-        DocItem item = _items.remove(anIndex);
-        firePropChange(Items_Prop, item, null, anIndex);
-        return item;
-    }
-
-    /**
-     * Removes given item.
-     */
-    public void removeItem(DocItem anItem)
-    {
-        int index = anItem.getIndex();
-        if (index >= 0)
-            removeItem(index);
     }
 
     /**
@@ -183,9 +106,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
      */
     public DocItem addChartPart(ChartPart aChartPart, DocItem anItem)
     {
-        DocItem par = getParent();
-        if (par != null)
-            return par.addChartPart(aChartPart, this);
+        DocItemParent parent = getParent();
+        if (parent != null)
+            return parent.addChartPart(aChartPart, this);
         return null;
     }
 
@@ -198,12 +121,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
         // Do normal version
         super.initProps(aPropSet);
 
-        // Name
+        // Name, Content
         aPropSet.addPropNamed(Name_Prop, String.class, null);
-
-        // Content, Items
         aPropSet.addPropNamed(Content_Prop, PropObject.class, null);
-        aPropSet.addPropNamed(Items_Prop, DocItem[].class, null);
     }
 
     /**
@@ -214,12 +134,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     {
         switch (aPropName) {
 
-            // Name
+            // Name, Content
             case Name_Prop: return getName();
-
-            // Content, Items
             case Content_Prop: return getContent();
-            case Items_Prop: return getItems();
 
             // Do normal version
             default: return super.getPropValue(aPropName);
@@ -234,14 +151,9 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     {
         switch (aPropName) {
 
-            // Name
+            // Name, Content
             case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
-
-            // Content, Items
             case Content_Prop: setContent((T) aValue); break;
-
-            // Items
-            case Items_Prop: setItems((DocItem[]) aValue); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);

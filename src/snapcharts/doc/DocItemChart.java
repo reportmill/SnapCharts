@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.doc;
 import snap.props.Prop;
 import snap.props.PropChange;
@@ -10,14 +13,17 @@ import snapcharts.model.TraceList;
 /**
  * A DocItem subclass to hold a chart.
  */
-public class DocItemChart extends DocItem<Chart> {
+public class DocItemChart extends DocItemParent<Chart> {
 
     /**
      * Constructor.
      */
     public DocItemChart(Chart aChart)
     {
-        super(aChart);
+        super();
+
+        // Set chart as content
+        setContent(aChart);
 
         // Add Items for Traces
         TraceList traceList = _content.getTraceList();
@@ -33,11 +39,6 @@ public class DocItemChart extends DocItem<Chart> {
      * Returns the chart.
      */
     public Chart getChart()  { return _content; }
-
-    /**
-     * Override to return true.
-     */
-    public boolean isParent()  { return true; }
 
     /**
      * Override to return Chart name.
@@ -99,7 +100,7 @@ public class DocItemChart extends DocItem<Chart> {
         super.initProps(aPropSet);
 
         // Remove Items so DocItemDataSets don't get archived (they are archived with chart)
-        Prop itemsProp = aPropSet.getPropForName(Items_Prop);
+        Prop itemsProp = aPropSet.getPropForName(DocItems_Prop);
         aPropSet.removeProp(itemsProp);
     }
 }
