@@ -72,7 +72,7 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
     public byte[] getChartsFileXMLBytes()
     {
         ChartArchiver archiver = new ChartArchiver();
-        byte bytes[] = archiver.writeToXMLBytes(this);
+        byte[] bytes = archiver.writeToXMLBytes(this);
         return bytes;
     }
 
@@ -121,7 +121,7 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
             //ChartArchiver archiver = new ChartArchiver();
             //Doc doc = archiver.getDocFromXMLSource(url);
 
-            ChartArchiver2 chartArchiver = new ChartArchiver2();
+            ChartArchiver chartArchiver = new ChartArchiver();
             Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(url);
             return doc;
         }

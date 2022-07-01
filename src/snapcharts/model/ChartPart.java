@@ -13,7 +13,6 @@ import snap.props.PropObject;
 import snap.text.NumberFormat;
 import snap.text.TextFormat;
 import snap.util.*;
-import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
 import java.util.*;
 
@@ -776,10 +775,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
         // Go ahead and set chart
-        if (anArchiver instanceof ChartArchiver) {
-            Chart chart = ((ChartArchiver) anArchiver).getChart();
-            setChart(chart);
-        }
+        //if (anArchiver instanceof ChartArchiver) {
+        //    Chart chart = ((ChartArchiver) anArchiver).getChart();
+        //    setChart(chart);
+        //}
 
         // Unarchive Name
         if (anElement.hasAttribute(Name_Prop))

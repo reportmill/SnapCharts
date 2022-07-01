@@ -8,7 +8,6 @@ import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropSet;
 import snap.util.*;
-import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.Doc;
 import snapcharts.util.ChartUtils;
 import java.util.Objects;
@@ -516,8 +515,8 @@ public class Chart extends ParentPart {
     public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
     {
         // Set Chart
-        if (anArchiver instanceof ChartArchiver)
-            ((ChartArchiver) anArchiver).setChart(this);
+        //if (anArchiver instanceof ChartArchiver)
+        //    ((ChartArchiver) anArchiver).setChart(this);
 
         // Unarchive basic attributes
         super.fromXML(anArchiver, anElement);

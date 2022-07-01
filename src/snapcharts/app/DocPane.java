@@ -850,7 +850,7 @@ public class DocPane extends ViewOwner {
     {
         // Archive Doc to PropNode
         Doc doc = getDoc();
-        ChartArchiver2 chartArchiver = new ChartArchiver2();
+        ChartArchiver chartArchiver = new ChartArchiver();
         byte[] xmlBytes = chartArchiver.convertPropObjectToXMLBytes(doc);
 
         // Write to file
@@ -875,7 +875,7 @@ public class DocPane extends ViewOwner {
     {
         File file = new File("/tmp/PropArchTest.charts");
 
-        ChartArchiver2 chartArchiver = new ChartArchiver2();
+        ChartArchiver chartArchiver = new ChartArchiver();
         Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(file);
 
         DocPane docPane = new DocPane();
