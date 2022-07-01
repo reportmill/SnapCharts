@@ -120,6 +120,11 @@ public class ChartArchiverLegacy {
             case "value": anAttr.setName("Color"); break;
             case "ClassName": anAttr.setName("Class"); break;
             case "ShowSymbols": anAttr.setName("ShowPoints"); break;
+            case "Type":
+                String attrValue = anAttr.getValue();
+                if (attrValue.equals("LINE") || attrValue.equals("AREA"))
+                    anAttr.setValue("SCATTER");
+                break;
             default:break;
         }
     }
