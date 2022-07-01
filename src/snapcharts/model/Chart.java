@@ -75,6 +75,7 @@ public class Chart extends ParentPart {
     public static final String AxisY3_Prop = "AxisY3";
     public static final String AxisY4_Prop = "AxisY4";
     public static final String AxisZ_Prop = "AxisZ";
+    public static final String ContourAxis_Prop = "ContourAxis";
     public static final String Legend_Prop = "Legend";
     public static final String Markers_Prop = "Markers";
     public static final String TraceList_Prop = "TraceList";
@@ -364,6 +365,9 @@ public class Chart extends ParentPart {
         aPropSet.addPropNamed(AxisY4_Prop, AxisY.class, EMPTY_OBJECT);
         aPropSet.addPropNamed(AxisZ_Prop, AxisZ.class, EMPTY_OBJECT);
 
+        // ContourAxis
+        aPropSet.addPropNamed(ContourAxis_Prop, ContourAxis.class, EMPTY_OBJECT);
+
         // Legend, Markers
         aPropSet.addPropNamed(Legend_Prop, Legend.class, EMPTY_OBJECT);
         aPropSet.addPropNamed(Markers_Prop, Marker[].class, EMPTY_OBJECT);
@@ -399,6 +403,9 @@ public class Chart extends ParentPart {
             case AxisY3_Prop: return getAxisY3();
             case AxisY4_Prop: return getAxisY4();
             case AxisZ_Prop: return getAxisZ();
+
+            // ContourAxis
+            case ContourAxis_Prop: return getContourAxis();
 
             // Legend, Markers
             case Legend_Prop: return getLegend();

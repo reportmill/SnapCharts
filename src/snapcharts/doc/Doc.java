@@ -117,8 +117,12 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
         String path = url.getPath();
         String ext = FilePathUtils.getExtension(path).toLowerCase();
         if (ext.equals(CHARTS_FILE_EXTENSION)) {
-            ChartArchiver archiver = new ChartArchiver();
-            Doc doc = archiver.getDocFromXMLSource(url);
+
+            //ChartArchiver archiver = new ChartArchiver();
+            //Doc doc = archiver.getDocFromXMLSource(url);
+
+            ChartArchiver2 chartArchiver = new ChartArchiver2();
+            Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(url);
             return doc;
         }
 

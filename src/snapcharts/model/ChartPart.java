@@ -8,7 +8,6 @@ import snap.geom.Pos;
 import snap.geom.VPos;
 import snap.gfx.*;
 import snap.props.Prop;
-import snap.props.PropChangeSupport;
 import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.text.NumberFormat;
@@ -129,9 +128,6 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         _margin = (Insets) getPropDefault(Margin_Prop);
         _padding = (Insets) getPropDefault(Padding_Prop);
         _spacing = getPropDefaultDouble(Spacing_Prop);
-
-        // Hack until accessors are done with PropSheet, so firePropChange() always gets called
-        _pcs = new PropChangeSupport(this);
     }
 
     /**

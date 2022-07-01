@@ -3,6 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropSet;
 import snap.util.*;
@@ -139,7 +140,9 @@ public class Trace extends ChartPart {
         _showLegendEntry = DEFAULT_SHOW_LEGEND_ENTRY;
 
         // Register listener for TagStyle, PointStyle prop changes
+        _tagStyle._parent = this;
         _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
+        _pointStyle._parent = this;
         _pointStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
 
         // Configure TraceStyle via TraceStyleHpr
@@ -682,7 +685,7 @@ public class Trace extends ChartPart {
      */
     private void childChartPartDidPropChange(PropChange aPC)
     {
-        Chart chart = getChart();
+        Chart chart = getChart(); if (chart == null) return;
         chart.chartPartDidPropChange(aPC);
     }
 
@@ -743,9 +746,12 @@ public class Trace extends ChartPart {
         aPropSet.addPropNamed(Disabled_Prop, boolean.class, false);
 
         // PointStyleRel, TagStyle_Rel, TraceStyle_Rel
-        aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
-        aPropSet.addPropNamed(TagStyle_Prop, TagStyle.class, EMPTY_OBJECT);
-        aPropSet.addPropNamed(TraceStyle_Prop, TraceStyle.class, EMPTY_OBJECT);
+        Prop pointStyleProp = aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
+        pointStyleProp.setPreexisting(true);
+        Prop tagStyleProp = aPropSet.addPropNamed(TagStyle_Prop, TagStyle.class, EMPTY_OBJECT);
+        tagStyleProp.setPreexisting(true);
+        Prop traceStyleProp = aPropSet.addPropNamed(TraceStyle_Prop, TraceStyle.class, EMPTY_OBJECT);
+        traceStyleProp.setPreexisting(true);
 
         // DataSet
         aPropSet.addPropNamed(DataSet_Prop, DataSet.class, EMPTY_OBJECT);

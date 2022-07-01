@@ -92,32 +92,47 @@ public abstract class Axis extends ChartPart {
     // The angle of the TickLabels
     private double _tickLabelRotation;
 
-    // Constants for properties
+    // Title, TitleRotation
     public static final String Title_Prop = "Title";
     public static final String TitleRotation_Prop = "TitleRotation";
+
+    // MinBound, MaxBound, MinValue, MaxValue
     public static final String MinBound_Prop = "MinBound";
     public static final String MaxBound_Prop = "MaxBound";
     public static final String MinValue_Prop = "MinValue";
     public static final String MaxValue_Prop = "MaxValue";
+
+    // WrapAxis, WrapMinMax
+    public static final String WrapAxis_Prop = "WrapAxis";
+    public static final String WrapMinMax_Prop = "WrapMinMax";
+
+    // Side
+    public static final String Side_Prop = "Side";
+
+    // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
     public static final String ZeroRequired_Prop = "ZeroRequired";
     public static final String ShowZeroLine_Prop = "ShowZeroLine";
     public static final String Log_Prop = "Logarithmic";
     public static final String ShowLogMinorLabels_Prop = "ShowLogMinorLabels";
-    public static final String Side_Prop = "Side";
-    public static final String WrapAxis_Prop = "WrapAxis";
-    public static final String WrapMinMax_Prop = "WrapMinMax";
+
+    // ShowGrid, GridColor, GridWidth, GridDash, GridSpacing, GridBase
     public static final String ShowGrid_Prop = "ShowGrid";
     public static final String GridColor_Prop = "GridColor";
     public static final String GridWidth_Prop = "GridWidth";
     public static final String GridDash_Prop = "GridDash";
     public static final String GridSpacing_Prop = "GridSpacing";
     public static final String GridBase_Prop = "GridBase";
+
+    // TickLength, TickPos, MinorTickCount
     public static final String TickLength_Prop = "TickLength";
     public static final String TickPos_Prop = "TickPos";
     public static final String MinorTickCount_Prop = "MinorTickCount";
+
+    // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
     public static final String ShowTickLabels_Prop = "ShowTickLabels";
     public static final String TickLabelAutoRotate_Prop = "TickLabelAutoRotate";
     public static final String TickLabelRotation_Prop = "TickLabelRotation";
+
 
     // Constants for default values
     public static final String DEFAULT_TITLE = null;
@@ -629,13 +644,20 @@ public abstract class Axis extends ChartPart {
         aPropSet.addPropNamed(WrapAxis_Prop, boolean.class, false);
         aPropSet.addPropNamed(WrapMinMax_Prop, MinMax.class, DEFAULT_WRAP_MINMAX);
 
+        // Side
+        aPropSet.addPropNamed(Side_Prop, Side.class, null);
+
         // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
         aPropSet.addPropNamed(ZeroRequired_Prop, boolean.class, DEFAULT_ZERO_REQUIRED);
         aPropSet.addPropNamed(ShowZeroLine_Prop, boolean.class, DEFAULT_SHOW_ZERO_LINE);
         aPropSet.addPropNamed(Log_Prop, boolean.class, DEFAULT_LOG);
         aPropSet.addPropNamed(ShowLogMinorLabels_Prop, boolean.class, DEFAULT_SHOW_LOG_MINOR_LABELS);
 
-        // GridSpacing, GridBase
+        // ShowGrid, GridColor, GridWidth, GridDash, GridSpacing, GridBase
+        aPropSet.addPropNamed(ShowGrid_Prop, boolean.class, DEFAULT_SHOW_GRID);
+        aPropSet.addPropNamed(GridColor_Prop, Color.class, DEFAULT_GRID_COLOR);
+        aPropSet.addPropNamed(GridWidth_Prop, int.class, DEFAULT_GRID_WIDTH);
+        aPropSet.addPropNamed(GridDash_Prop, double[].class, DEFAULT_GRID_DASH);
         aPropSet.addPropNamed(GridSpacing_Prop, double.class, 0d);
         aPropSet.addPropNamed(GridBase_Prop, double.class, 0d);
 
@@ -673,13 +695,20 @@ public abstract class Axis extends ChartPart {
             case WrapAxis_Prop: return isWrapAxis();
             case WrapMinMax_Prop: return getWrapMinMax();
 
+            // Side
+            case Side_Prop: return getSide();
+
             // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
             case ZeroRequired_Prop: return isZeroRequired();
             case ShowZeroLine_Prop: return isShowZeroLine();
             case Log_Prop: return isLog();
             case ShowLogMinorLabels_Prop: return isShowLogMinorLabels();
 
-            // GridSpacing, GridBase
+            // ShowGrid, GridColor, GridWidth, GridDash, GridSpacing, GridBase
+            case ShowGrid_Prop: return isShowGrid();
+            case GridColor_Prop: return getGridColor();
+            case GridWidth_Prop: return getGridWidth();
+            case GridDash_Prop: return getGridDash();
             case GridSpacing_Prop: return getGridSpacing();
             case GridBase_Prop: return getGridBase();
 
@@ -725,13 +754,20 @@ public abstract class Axis extends ChartPart {
                 break;
             }
 
+            // Side
+            case Side_Prop: setSide((Side) aValue); break;
+
             // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
             case ZeroRequired_Prop: setZeroRequired(SnapUtils.boolValue(aValue));
             case ShowZeroLine_Prop: setShowZeroLine(SnapUtils.boolValue(aValue));
             case Log_Prop: setLog(SnapUtils.boolValue(aValue)); break;
             case ShowLogMinorLabels_Prop: setShowLogMinorLabels(SnapUtils.boolValue(aValue)); break;
 
-            // GridSpacing, GridBase
+            // ShowGrid, GridColor, GridWidth, GridDash, GridSpacing, GridBase
+            case ShowGrid_Prop: setShowGrid(SnapUtils.boolValue(aValue)); break;
+            case GridColor_Prop: setGridColor((Color) aValue); break;
+            case GridWidth_Prop: setGridWidth(SnapUtils.intValue(aValue)); break;
+            case GridDash_Prop: setGridDash((double[]) aValue); break;
             case GridSpacing_Prop: setGridSpacing(SnapUtils.doubleValue(aValue)); break;
             case GridBase_Prop: setGridBase(SnapUtils.doubleValue(aValue)); break;
 
@@ -775,6 +811,12 @@ public abstract class Axis extends ChartPart {
         if (getMaxBound() == AxisBound.VALUE)
             e.add(MaxValue_Prop, getMaxValue());
 
+        // Archive WrapAxis, WrapMinMax
+        if (isWrapAxis()) {
+            e.add(WrapAxis_Prop, true);
+            e.add(WrapMinMax_Prop, getWrapMinMax().getStringRep());
+        }
+
         // Archive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
         if (!isPropDefault(ZeroRequired_Prop))
             e.add(ZeroRequired_Prop, true);
@@ -784,12 +826,6 @@ public abstract class Axis extends ChartPart {
             e.add(Log_Prop, isLog());
         if (!isPropDefault(ShowLogMinorLabels_Prop))
             e.add(ShowLogMinorLabels_Prop, isShowLogMinorLabels());
-
-        // Archive WrapAxis, WrapMinMax
-        if (isWrapAxis()) {
-            e.add(WrapAxis_Prop, true);
-            e.add(WrapMinMax_Prop, getWrapMinMax().getStringRep());
-        }
 
         // Archive ShowGrid, GridColor
         if (isShowGrid() != DEFAULT_SHOW_GRID)
@@ -857,6 +893,14 @@ public abstract class Axis extends ChartPart {
         if (anElement.hasAttribute(MaxValue_Prop))
             setMaxValue(anElement.getAttributeDoubleValue(MaxValue_Prop));
 
+        // Unarchive WrapAxis, WrapMinMax
+        boolean isWrapAxis = anElement.getAttributeBoolValue(WrapAxis_Prop, false);
+        if (isWrapAxis) {
+            MinMax minMax = MinMax.getMinMax(anElement.getAttributeValue(WrapMinMax_Prop));
+            if (minMax != null)
+                setWrapMinMax(minMax);
+        }
+
         // Unachive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
         if (anElement.hasAttribute(ZeroRequired_Prop))
             setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop));
@@ -866,14 +910,6 @@ public abstract class Axis extends ChartPart {
             setLog(anElement.getAttributeBoolValue(Log_Prop));
         if (anElement.hasAttribute(ShowLogMinorLabels_Prop))
             setShowLogMinorLabels(anElement.getAttributeBoolValue(ShowLogMinorLabels_Prop));
-
-        // Unarchive WrapAxis, WrapMinMax
-        boolean isWrapAxis = anElement.getAttributeBoolValue(WrapAxis_Prop, false);
-        if (isWrapAxis) {
-            MinMax minMax = MinMax.getMinMax(anElement.getAttributeValue(WrapMinMax_Prop));
-            if (minMax != null)
-                setWrapMinMax(minMax);
-        }
 
         // Unarchive ShowGrid, GridColor
         if (anElement.hasAttribute(ShowGrid_Prop))
