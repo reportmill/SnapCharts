@@ -43,7 +43,7 @@ public class Legend extends ChartPart {
     // Constants for property defaults
     private static Pos DEFAULT_LEGEND_ALIGN = Pos.TOP_LEFT;
     private static Insets DEFAULT_LEGEND_MARGIN = new Insets(5, 5, 5, 5);
-    private static Pos DEFAULT_POSITION = Pos.CENTER_RIGHT;
+    private static Pos DEFAULT_LEGEND_POSITION = Pos.CENTER_RIGHT;
 
     /**
      * Constructor.
@@ -51,7 +51,11 @@ public class Legend extends ChartPart {
     public Legend()
     {
         super();
-        _position = (Pos) getPropDefault(Position_Prop);
+
+        // Override standard defaults
+        _align = DEFAULT_LEGEND_ALIGN;
+        _margin = DEFAULT_LEGEND_MARGIN;
+        _position = DEFAULT_LEGEND_POSITION;
 
         // Create/configure text
         _title = new ChartText();
@@ -158,7 +162,7 @@ public class Legend extends ChartPart {
         aPropSet.addPropNamed(Title_Prop, ChartText.class, EMPTY_OBJECT);
 
         // Position, Inside
-        aPropSet.addPropNamed(Position_Prop, Pos.class, DEFAULT_POSITION);
+        aPropSet.addPropNamed(Position_Prop, Pos.class, DEFAULT_LEGEND_POSITION);
         aPropSet.addPropNamed(Inside_Prop, boolean.class, false);
 
         // UserXY, UserSize

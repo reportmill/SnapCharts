@@ -108,21 +108,27 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
     public static Doc createDocFromSource(Object aSource)
     {
         WebURL url = WebURL.getURL(aSource);
-        if (url==null) {
+        if (url == null) {
             System.err.println("ChartDoc.createDocFromSource: Can't find URL for source: " + aSource);
             return null;
         }
 
-        // Handle SnapCharts .charts file
+        // Get path, extension
         String path = url.getPath();
         String ext = FilePathUtils.getExtension(path).toLowerCase();
+
+        // Handle SnapCharts .charts file
         if (ext.equals(CHARTS_FILE_EXTENSION)) {
 
-            //ChartArchiver archiver = new ChartArchiver();
-            //Doc doc = archiver.getDocFromXMLSource(url);
-
+            // Create ChartArchiver and read
             ChartArchiver chartArchiver = new ChartArchiver();
             Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(url);
+
+            // Set URL
+            if (doc != null && !url.getString().contains("localhost"))
+                doc.setSourceURL(url);
+
+            // Return
             return doc;
         }
 

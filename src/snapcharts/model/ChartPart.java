@@ -96,7 +96,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     public static final double[] DEFAULT_LINE_DASH = null;
     public static final Paint DEFAULT_FILL = null;
     public static final Effect DEFAULT_EFFECT = null;
-    public static final double DEFAULT_OPACTIY = 1;
+    public static final double DEFAULT_OPACTIY = 1d;
     public static final Font DEFAULT_FONT = Font.Arial12;
     public static final Color DEFAULT_TEXT_FILL = Color.BLACK;
     public static final TextFormat DEFAULT_TEXT_FORMAT = null;
@@ -123,10 +123,10 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         _effect = DEFAULT_EFFECT;
         _opacity = DEFAULT_OPACTIY;
         _textFill = DEFAULT_TEXT_FILL;
-        _align = (Pos) getPropDefault(Align_Prop);
-        _margin = (Insets) getPropDefault(Margin_Prop);
-        _padding = (Insets) getPropDefault(Padding_Prop);
-        _spacing = getPropDefaultDouble(Spacing_Prop);
+        _align = DEFAULT_ALIGN;
+        _margin = DEFAULT_MARGIN;
+        _padding = DEFAULT_PADDING;
+        _spacing = DEFAULT_SPACING;
     }
 
     /**
@@ -570,7 +570,8 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
         aPropSet.addPropNamed(Border_Prop, Border.class, DEFAULT_BORDER);
         Prop fillProp = aPropSet.addPropNamed(Fill_Prop, Paint.class, DEFAULT_FILL);
         fillProp.setDefaultPropClass(Color.class);
-        aPropSet.addPropNamed(Effect_Prop, Effect.class, DEFAULT_EFFECT);
+        Prop effectProp = aPropSet.addPropNamed(Effect_Prop, Effect.class, DEFAULT_EFFECT);
+        effectProp.setDefaultPropClass(ShadowEffect.class);
         aPropSet.addPropNamed(Opacity_Prop, double.class, DEFAULT_OPACTIY);
 
         // LineColor, LineWidth, LineDash
