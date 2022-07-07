@@ -23,6 +23,9 @@ public class AxisX extends Axis {
     public AxisX()
     {
         super();
+
+        // Override defaults: Padding
+        _padding = DEFAULT_AXIS_X_PADDING;
     }
 
     /**

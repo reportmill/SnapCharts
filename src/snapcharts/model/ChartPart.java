@@ -103,7 +103,7 @@ public class ChartPart extends PropObject {
     public static final Pos DEFAULT_ALIGN = Pos.TOP_CENTER;
     public static final Insets DEFAULT_MARGIN = Insets.EMPTY;
     public static final Insets DEFAULT_PADDING = Insets.EMPTY;
-    public static final double DEFAULT_SPACING = 0;
+    public static final double DEFAULT_SPACING = 0d;
 
     // Constant for unset border
     private static Border UNSET_BORDER = new Borders.NullBorder();

@@ -32,7 +32,8 @@ public class AxisY extends Axis {
         super();
         _axisType = anAxisType;
 
-        // Override default property values
+        // Override defaults: Padding, Side
+        _padding = DEFAULT_AXIS_Y_PADDING;
         _side = getSideDefault();
     }
 
@@ -67,8 +68,7 @@ public class AxisY extends Axis {
         // Override super defaults: Padding
         aPropSet.getPropForName(Padding_Prop).setDefaultValue(DEFAULT_AXIS_Y_PADDING);
 
-        // Add Props
-        aPropSet.addPropNamed(ShowLegendGraphic_Prop, boolean.class, DEFAULT_SHOW_LEGEND_GRAPHIC);
+        // ShowLegendGraphic
         aPropSet.addPropNamed(ShowLegendGraphic_Prop, boolean.class, DEFAULT_SHOW_LEGEND_GRAPHIC);
     }
 

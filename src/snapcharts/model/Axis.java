@@ -162,7 +162,7 @@ public abstract class Axis extends ChartPart {
 
     // Constants for layout
     protected static final int DEFAULT_AXIS_PAD = 5;
-    protected static final double DEFAULT_AXIS_SPACING = 8;
+    protected static final double DEFAULT_AXIS_SPACING = 8d;
 
     // Constant for GridBase special values
     public static final double GRID_BASE_DATA_MIN = -Float.MAX_VALUE;
@@ -178,6 +178,13 @@ public abstract class Axis extends ChartPart {
     {
         super();
 
+        // Override default property values
+        _lineColor = DEFAULT_AXIS_LINE_COLOR;
+        _lineWidth = DEFAULT_AXIS_LINE_WIDTH;
+        _textFill = DEFAULT_AXIS_TEXT_FILL;
+        _align = DEFAULT_AXIS_ALIGN;
+        _spacing = DEFAULT_AXIS_SPACING;
+
         // Set default property values
         _wrapMinMax = DEFAULT_WRAP_MINMAX;
         _side = DEFAULT_SIDE;
@@ -190,12 +197,6 @@ public abstract class Axis extends ChartPart {
         _showTickLabels = DEFAULT_SHOW_TICK_LABELS;
         _textFormat = DEFAULT_AXIS_TEXT_FORMAT;
         _tickLabelAutoRotate = DEFAULT_TICK_LABEL_AUTO_ROTATE;
-
-        // Override default property values
-        _lineColor = DEFAULT_AXIS_LINE_COLOR;
-        _lineWidth = DEFAULT_AXIS_LINE_WIDTH;
-        _textFill = DEFAULT_AXIS_TEXT_FILL;
-        _align = DEFAULT_AXIS_ALIGN;
     }
 
     /**
