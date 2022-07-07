@@ -5,8 +5,6 @@ package snapcharts.model;
 import snap.gfx.Color;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 
 /**
  * This ChartPart subclass holds style properties for Trace points.
@@ -248,59 +246,5 @@ public class PointStyle extends ChartPart {
             // Do normal version
             default: return super.getPropDefault(aPropName);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive SymbolSize, SymbolId
-        if (!isPropDefault(SymbolSize_Prop))
-            e.add(SymbolSize_Prop, getSymbolSize());
-        if (!isPropDefault(SymbolSize_Prop))
-            e.add(SymbolId_Prop, getSymbolId());
-
-        // Archive PointSpacing, MaxPointCount, SkipPointCount
-        if (!isPropDefault(PointSpacing_Prop))
-            e.add(PointSpacing_Prop, getPointSpacing());
-        if (!isPropDefault(MaxPointCount_Prop))
-            e.add(MaxPointCount_Prop, getMaxPointCount());
-        if (!isPropDefault(SkipPointCount_Prop))
-            e.add(SkipPointCount_Prop, getSkipPointCount());
-
-        // Return xml
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive SymbolSize, SymbolId
-        if (anElement.hasAttribute(SymbolSize_Prop))
-            setSymbolSize(anElement.getAttributeIntValue(SymbolSize_Prop));
-        if (anElement.hasAttribute(SymbolId_Prop))
-            setSymbolId(anElement.getAttributeIntValue(SymbolId_Prop, 0));
-
-        // Unarchive PointSpacing, MaxPointCount, SkipPointCount
-        if (anElement.hasAttribute(PointSpacing_Prop))
-            setPointSpacing(anElement.getAttributeIntValue(PointSpacing_Prop));
-        if (anElement.hasAttribute(MaxPointCount_Prop))
-            setMaxPointCount(anElement.getAttributeIntValue(MaxPointCount_Prop));
-        if (anElement.hasAttribute(SkipPointCount_Prop))
-            setSkipPointCount(anElement.getAttributeIntValue(SkipPointCount_Prop));
-
-        // Return
-        return this;
     }
 }

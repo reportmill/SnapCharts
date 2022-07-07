@@ -4,8 +4,6 @@
 package snapcharts.model;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 import java.util.Objects;
 
 /**
@@ -76,39 +74,5 @@ public class ChartText extends ChartPart {
             // Handle superclass
             default: super.setPropValue(aPropName, aValue); break;
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Do normal version
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive Text
-        if (getText() != null && getText().length() > 0)
-            e.add(Text_Prop, getText());
-
-        // Return xml
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Do normal version
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Text
-        if (anElement.hasAttribute(Text_Prop))
-            setText(anElement.getAttributeValue(Text_Prop));
-
-        // Return this object
-        return this;
     }
 }

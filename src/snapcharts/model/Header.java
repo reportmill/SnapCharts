@@ -6,8 +6,6 @@ import snap.geom.Insets;
 import snap.gfx.*;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 
 /**
  * A ChartPart to represent Header.
@@ -147,41 +145,5 @@ public class Header extends ChartPart {
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive Title, Subtitle
-        if (getTitle()!=null && getTitle().length()>0)
-            e.add(Title_Prop, getTitle());
-        if (getSubtitle()!=null && getSubtitle().length()>0)
-            e.add(Subtitle_Prop, getSubtitle());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Title, Subtitle
-        setTitle(anElement.getAttributeValue(Title_Prop));
-        setSubtitle(anElement.getAttributeValue(Subtitle_Prop));
-
-        // Return this part
-        return this;
     }
 }

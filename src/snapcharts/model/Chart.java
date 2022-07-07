@@ -9,7 +9,6 @@ import snap.props.PropChange;
 import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.doc.Doc;
-import snapcharts.util.ChartUtils;
 import java.util.Objects;
 
 /**
@@ -233,6 +232,19 @@ public class Chart extends ParentPart {
     public Marker[] getMarkers()  { return _markers; }
 
     /**
+     * Sets array of marker objects used to highlight or annotate an area on the chart.
+     */
+    public void setMarkers(Marker[] theMarkers)
+    {
+        // Remove any existing markers
+        while (getMarkers().length > 0) removeMarker(0);
+
+        // Add new markers
+        for (Marker marker : theMarkers)
+            addMarker(marker);
+    }
+
+    /**
      * Returns the marker at given index.
      */
     public Marker getMarker(int anIndex)  { return _markers[anIndex]; }
@@ -429,170 +441,11 @@ public class Chart extends ParentPart {
             // Type
             case Type_Prop: setType((ChartType) aValue); break;
 
+            // Markers
+            case Markers_Prop: setMarkers((Marker[]) aValue); break;
+
             // Do normal version
             default: super.setPropValue(aPropName, aValue); break;
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive Type
-        ChartType chartType = getType();
-        e.add(Type_Prop, chartType);
-
-        // Archive Header
-        XMLElement header_XML = anArchiver.toXML(_header);
-        e.add(header_XML);
-
-        // Archive AxisX
-        XMLElement axisX_XML = anArchiver.toXML(_axisX);
-        if (axisX_XML.getAttributeCount() > 0 || axisX_XML.getElementCount() > 0)
-            e.add(axisX_XML);
-
-        // Archive AxisY
-        XMLElement axisY_XML = anArchiver.toXML(_axisY);
-        if (axisY_XML.getAttributeCount() > 0 || axisY_XML.getElementCount() > 0)
-            e.add(axisY_XML);
-
-        // Archive AxisZ
-        if (chartType == ChartType.CONTOUR_3D) {
-            XMLElement axisZ_XML = anArchiver.toXML(_axisZ);
-            if (axisZ_XML.getAttributeCount() > 0 || axisZ_XML.getElementCount() > 0)
-                e.add(axisZ_XML);
-        }
-
-        // Archive ContourAxis
-        if (chartType.isContourType()) {
-            XMLElement contourAxisXML = anArchiver.toXML(_contourAxis);
-            if (contourAxisXML.getAttributeCount() > 0 || contourAxisXML.getElementCount() > 0)
-                e.add(contourAxisXML);
-        }
-
-        // Archive Legend
-        if (getLegend().isShowLegend()) {
-            XMLElement legendXML = anArchiver.toXML(_legend);
-            if (legendXML.getAttributeCount() > 0 || legendXML.getElementCount() > 0)
-                e.add(legendXML);
-        }
-
-        // Archive Scene
-        if (chartType.is3D()) {
-            XMLElement sceneXML = anArchiver.toXML(_scene);
-            if (sceneXML.getAttributeCount() > 0 || sceneXML.getElementCount() > 0)
-                e.add(sceneXML);
-        }
-
-        // Archive Markers
-        Marker[] markers = getMarkers();
-        if (markers.length > 0) {
-            XMLElement markersXML = new XMLElement("Markers");
-            for (Marker marker : markers) {
-                XMLElement markerXML = anArchiver.toXML(marker);
-                markersXML.add(markerXML);
-            }
-            e.add(markersXML);
-        }
-
-        // Archive TraceList
-        XMLElement traceListXML = anArchiver.toXML(_traceList);
-        e.add(traceListXML);
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Set Chart
-        //if (anArchiver instanceof ChartArchiver)
-        //    ((ChartArchiver) anArchiver).setChart(this);
-
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Type
-        String typeStr = anElement.getAttributeValue(Type_Prop);
-        ChartType chartType = ChartType.get(typeStr);
-        setType(chartType);
-
-        // Unarchive Header
-        XMLElement header_XML = anElement.get("Header");
-        if (header_XML != null)
-            anArchiver.fromXML(header_XML, _header, this);
-
-        // Unarchive ContourAxis
-        XMLElement contourAxisXML = anElement.get(ContourAxis.class.getSimpleName());
-        if (contourAxisXML != null)
-            anArchiver.fromXML(contourAxisXML, _contourAxis, this);
-
-        // Unarchive AxisX
-        XMLElement axisX_XML = anElement.get("AxisX");
-        if (axisX_XML != null)
-            anArchiver.fromXML(axisX_XML, _axisX, this);
-
-        // Unarchive AxisY
-        XMLElement axisY_XML = anElement.get("AxisY");
-        if (axisY_XML != null)
-            anArchiver.fromXML(axisY_XML, _axisY, this);
-
-        // Unarchive AxisZ
-        XMLElement axisZ_XML = anElement.get("AxisZ");
-        if (axisZ_XML != null)
-            anArchiver.fromXML(axisZ_XML, _axisZ, this);
-
-        // Unarchive Legend
-        XMLElement legend_XML = anElement.get("Legend");
-        if (legend_XML != null)
-            anArchiver.fromXML(legend_XML, _legend, this);
-
-        // Unarchive Scene
-        XMLElement scene_XML = anElement.get("Scene");
-        if (scene_XML != null)
-            anArchiver.fromXML(scene_XML, _scene, this);
-
-        // Unarchive Markers
-        XMLElement markersXML = anElement.getElement("Markers");
-        if (markersXML != null) {
-            XMLElement[] markersXMLs = markersXML.getElements("Marker").toArray(new XMLElement[0]);
-            for (XMLElement markerXML : markersXMLs) {
-                Marker marker = anArchiver.fromXML(markerXML, Marker.class, this);
-                addMarker(marker);
-            }
-        }
-
-        // Unarchive TraceList
-        XMLElement traceListXML = anElement.get("TraceList");
-        if (traceListXML == null)
-            traceListXML = anElement.get("DataSetList");
-        if (traceListXML != null)
-            anArchiver.fromXML(traceListXML, _traceList, this);
-
-        // Legacy: Unarchive Title, Subtitle, ShowLegend
-        if (anElement.hasAttribute(Header.Title_Prop))
-            getHeader().setTitle(anElement.getAttributeValue(Header.Title_Prop));
-        if (anElement.hasAttribute(Header.Subtitle_Prop))
-            getHeader().setSubtitle(anElement.getAttributeValue(Header.Subtitle_Prop));
-        if (anElement.hasAttribute(Legend.ShowLegend_Prop))
-            getLegend().setShowLegend(anElement.getAttributeBoolValue(Legend.ShowLegend_Prop));
-
-        // Legacy
-        if (typeStr.equalsIgnoreCase("LINE"))
-            ChartUtils.setScatterType(this, ChartUtils.ScatterType.LINE);
-        if (typeStr.equalsIgnoreCase("AREA"))
-            ChartUtils.setScatterType(this, ChartUtils.ScatterType.AREA);
-
-        // Return this part
-        return this;
     }
 }
