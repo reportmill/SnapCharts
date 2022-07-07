@@ -5,8 +5,6 @@ package snapcharts.model;
 import snap.geom.Insets;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 
 /**
  * A class to represent a Chart Axis.
@@ -106,39 +104,5 @@ public class AxisY extends Axis {
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive ShowLegendGraphic
-        if (!isPropDefault(ShowLegendGraphic_Prop))
-            e.add(ShowLegendGraphic_Prop, true);
-
-        // Return xml
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive ShowLegendGraphic
-        if (anElement.hasAttribute(ShowLegendGraphic_Prop))
-            setShowLegendGraphic(anElement.getAttributeBoolValue(ShowLegendGraphic_Prop));
-
-        // Return
-        return this;
     }
 }

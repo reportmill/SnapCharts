@@ -3,10 +3,9 @@
  */
 package snapcharts.model;
 import snap.geom.*;
+import snap.props.Prop;
 import snap.props.PropSet;
 import snap.util.*;
-import snapcharts.data.DataUtils;
-
 import java.util.Objects;
 
 /**
@@ -59,6 +58,7 @@ public class Legend extends ChartPart {
 
         // Create/configure text
         _title = new ChartText();
+        _title._parent = this;
     }
 
     /**
@@ -159,7 +159,8 @@ public class Legend extends ChartPart {
 
         // ShowLegend, Title
         aPropSet.addPropNamed(ShowLegend_Prop, boolean.class, false);
-        aPropSet.addPropNamed(Title_Prop, ChartText.class, EMPTY_OBJECT);
+        Prop titleProp = aPropSet.addPropNamed(Title_Prop, ChartText.class, EMPTY_OBJECT);
+        titleProp.setPreexisting(true);
 
         // Position, Inside
         aPropSet.addPropNamed(Position_Prop, Pos.class, DEFAULT_LEGEND_POSITION);
@@ -219,85 +220,5 @@ public class Legend extends ChartPart {
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue); break;
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive ShowLegend, Position, Inside
-        if (isShowLegend())
-            e.add(ShowLegend_Prop, isShowLegend());
-        if (!isPropDefault(Position_Prop))
-            e.add(Position_Prop, getPosition());
-        if (isInside())
-            e.add(Inside_Prop, true);
-
-        // Archive Title
-        XMLElement titleXML = anArchiver.toXML(_title);
-        if (titleXML.getAttributeCount() > 0 || titleXML.getElementCount() > 0) {
-            titleXML.setName("Title");
-            e.addElement(titleXML);
-        }
-
-        // Archive UserXY, UserSize
-        if (!isPropDefault(UserXY_Prop)) {
-            Point userXY = getUserXY();
-            String pointStr = userXY.x + ", " + userXY.y;
-            e.add(UserXY_Prop, pointStr);
-        }
-        if (!isPropDefault(UserSize_Prop)) {
-            Size userSize = getUserSize();
-            String sizeStr = userSize.width + ", " + userSize.height;
-            e.add(UserXY_Prop, sizeStr);
-        }
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive ShowLegend, Position, Inside
-        if (anElement.hasAttribute(ShowLegend_Prop))
-            setShowLegend(anElement.getAttributeBoolValue(ShowLegend_Prop));
-        if (anElement.hasAttribute(Position_Prop))
-            setPosition(Pos.get(anElement.getAttributeValue(Position_Prop)));
-        if (anElement.hasAttribute(Inside_Prop))
-            setInside(anElement.getAttributeBoolValue(Inside_Prop));
-
-        // Unarchive Title
-        XMLElement titleXML = anElement.getElement("Title");
-        if (titleXML != null)
-            getTitle().fromXML(anArchiver, titleXML);
-
-        // Unarchive UserXY, UserSize
-        if (anElement.hasAttribute(UserXY_Prop)) {
-            String pointStr = anElement.getAttributeValue(UserXY_Prop);
-            double[] pointVals = DataUtils.getDoubleArrayForString(pointStr);
-            if (pointVals.length > 1)
-                setUserXY(new Point(pointVals[0], pointVals[1]));
-        }
-        if (anElement.hasAttribute(UserSize_Prop)) {
-            String sizeStr = anElement.getAttributeValue(UserSize_Prop);
-            double[] sizeVals = DataUtils.getDoubleArrayForString(sizeStr);
-            if (sizeVals.length > 1)
-                setUserXY(new Point(sizeVals[0], sizeVals[1]));
-        }
-
-        // Return this part
-        return this;
     }
 }

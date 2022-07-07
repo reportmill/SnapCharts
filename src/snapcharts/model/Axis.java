@@ -142,6 +142,7 @@ public abstract class Axis extends ChartPart {
     public static final boolean  DEFAULT_LOG = false;
     public static final boolean  DEFAULT_SHOW_LOG_MINOR_LABELS = false;
     public static MinMax  DEFAULT_WRAP_MINMAX = new MinMax(0, 360);
+    public static Side  DEFAULT_SIDE = Side.BOTTOM;
     public static final boolean  DEFAULT_SHOW_GRID = true;
     public static final Color  DEFAULT_GRID_COLOR = Color.get("#E6");
     public static final int  DEFAULT_GRID_WIDTH = 1;
@@ -179,6 +180,7 @@ public abstract class Axis extends ChartPart {
 
         // Set default property values
         _wrapMinMax = DEFAULT_WRAP_MINMAX;
+        _side = DEFAULT_SIDE;
         _showGrid = DEFAULT_SHOW_GRID;
         _gridColor = DEFAULT_GRID_COLOR;
         _gridWidth = DEFAULT_GRID_WIDTH;
@@ -409,11 +411,12 @@ public abstract class Axis extends ChartPart {
     public Side getSideDefault()
     {
         switch (getType()) {
-            case X: return Side.TOP;
+            case X: return Side.BOTTOM;
             case Y: return Side.LEFT;
             case Y2: return Side.RIGHT;
             case Y3: return Side.LEFT;
             case Y4: return Side.RIGHT;
+            case Z: return Side.BOTTOM;
             default: throw new RuntimeException("Axis.getSide: Unknown AxisType: " + getType());
         }
     }
@@ -786,171 +789,16 @@ public abstract class Axis extends ChartPart {
         }
     }
 
-    /**
-     * Archival.
-     */
     @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
+    public Object getPropDefault(String aPropName)
     {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
+        switch (aPropName) {
 
-        // Archive Title, TitleRotation
-        if (getTitle() != null && getTitle().length() > 0)
-            e.add(Title_Prop, getTitle());
-        if (getTitleRotation() != 0)
-            e.add(TitleRotation_Prop, getTitleRotation());
+            // Side
+            case Side_Prop: return getSideDefault();
 
-        // Archive MinBound, MaxBounds, MinValue, MaxValue
-        if (!isPropDefault(MinBound_Prop))
-            e.add(MinBound_Prop, getMinBound());
-        if (!isPropDefault(MaxBound_Prop))
-            e.add(MaxBound_Prop, getMaxBound());
-        if (getMinBound() == AxisBound.VALUE)
-            e.add(MinValue_Prop, getMinValue());
-        if (getMaxBound() == AxisBound.VALUE)
-            e.add(MaxValue_Prop, getMaxValue());
-
-        // Archive WrapAxis, WrapMinMax
-        if (isWrapAxis()) {
-            e.add(WrapAxis_Prop, true);
-            e.add(WrapMinMax_Prop, getWrapMinMax().getStringRep());
+            // Handle super class properties (or unknown)
+            default: return super.getPropDefault(aPropName);
         }
-
-        // Archive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
-        if (!isPropDefault(ZeroRequired_Prop))
-            e.add(ZeroRequired_Prop, true);
-        if (!isPropDefault(ShowZeroLine_Prop))
-            e.add(ShowZeroLine_Prop, isShowZeroLine());
-        if (!isPropDefault(Log_Prop))
-            e.add(Log_Prop, isLog());
-        if (!isPropDefault(ShowLogMinorLabels_Prop))
-            e.add(ShowLogMinorLabels_Prop, isShowLogMinorLabels());
-
-        // Archive ShowGrid, GridColor
-        if (isShowGrid() != DEFAULT_SHOW_GRID)
-            e.add(ShowGrid_Prop, false);
-        if (!getGridColor().equals(DEFAULT_GRID_COLOR))
-            e.add(GridColor_Prop, getGridColor().toHexString());
-
-        // Archive GridWidth, GridDash
-        if (getGridWidth() != DEFAULT_GRID_WIDTH)
-            e.add(GridWidth_Prop, getGridWidth());
-        double[] gridDash = getGridDash();
-        if (!ArrayUtils.equals(gridDash, DEFAULT_GRID_DASH)) {
-            String dashStr = Stroke.getDashArrayNameOrString(gridDash);
-            e.add(GridDash_Prop, dashStr);
-        }
-
-        // Archive GridSpacing, GridBase
-        if (!isPropDefault(GridSpacing_Prop))
-            e.add(GridSpacing_Prop, getGridSpacing());
-        if (!isPropDefault(GridBase_Prop))
-            e.add(GridBase_Prop, getGridBase());
-
-        // Archive TickLength, TickPos, MinorTickCount
-        if (!isPropDefault(TickLength_Prop))
-            e.add(TickLength_Prop, getTickLength());
-        if (!isPropDefault(TickPos_Prop))
-            e.add(TickPos_Prop, getTickPos());
-        if (!isPropDefault(MinorTickCount_Prop))
-            e.add(MinorTickCount_Prop, getMinorTickCount());
-
-        // Archive ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
-        if (!isPropDefault(ShowTickLabels_Prop))
-            e.add(ShowTickLabels_Prop, isShowTickLabels());
-        if (!isPropDefault(TickLabelAutoRotate_Prop))
-            e.add(TickLabelAutoRotate_Prop, isTickLabelAutoRotate());
-        if (!isPropDefault(TickLabelRotation_Prop))
-            e.add(TickLabelRotation_Prop, getTickLabelRotation());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Title, TitleRotate
-        if (anElement.hasAttribute(Title_Prop))
-            setTitle(anElement.getAttributeValue(Title_Prop));
-        if (anElement.hasAttribute(TitleRotation_Prop))
-            setTitleRotation(anElement.getAttributeDoubleValue(TitleRotation_Prop));
-
-        // Unarchive MinBound, MaxBounds, MinValue, MaxValue
-        if (anElement.hasAttribute(MinBound_Prop))
-            setMinBound(anElement.getAttributeEnumValue(MinBound_Prop, AxisBound.class, null));
-        if (anElement.hasAttribute(MaxBound_Prop))
-            setMaxBound(anElement.getAttributeEnumValue(MaxBound_Prop, AxisBound.class, null));
-        if (anElement.hasAttribute(MinValue_Prop))
-            setMinValue(anElement.getAttributeDoubleValue(MinValue_Prop));
-        if (anElement.hasAttribute(MaxValue_Prop))
-            setMaxValue(anElement.getAttributeDoubleValue(MaxValue_Prop));
-
-        // Unarchive WrapAxis, WrapMinMax
-        boolean isWrapAxis = anElement.getAttributeBoolValue(WrapAxis_Prop, false);
-        if (isWrapAxis) {
-            MinMax minMax = MinMax.getMinMax(anElement.getAttributeValue(WrapMinMax_Prop));
-            if (minMax != null)
-                setWrapMinMax(minMax);
-        }
-
-        // Unachive ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
-        if (anElement.hasAttribute(ZeroRequired_Prop))
-            setZeroRequired(anElement.getAttributeBoolValue(ZeroRequired_Prop));
-        if (anElement.hasAttribute(ShowZeroLine_Prop))
-            setShowZeroLine(anElement.getAttributeBoolValue(ShowZeroLine_Prop));
-        if (anElement.hasAttribute(Log_Prop))
-            setLog(anElement.getAttributeBoolValue(Log_Prop));
-        if (anElement.hasAttribute(ShowLogMinorLabels_Prop))
-            setShowLogMinorLabels(anElement.getAttributeBoolValue(ShowLogMinorLabels_Prop));
-
-        // Unarchive ShowGrid, GridColor
-        if (anElement.hasAttribute(ShowGrid_Prop))
-            setShowGrid(anElement.getAttributeBoolValue(ShowGrid_Prop));
-        if (anElement.hasAttribute(GridColor_Prop)) {
-            Color color = Color.get('#' + anElement.getAttributeValue(GridColor_Prop));
-            setGridColor(color);
-        }
-
-        // Unarchive GridWidth, GridDash
-        if (anElement.hasAttribute(GridWidth_Prop))
-            setGridWidth(anElement.getAttributeIntValue(GridWidth_Prop));
-        if (anElement.hasAttribute(GridDash_Prop)) {
-            String dashStr = anElement.getAttributeValue(GridDash_Prop);
-            double[] dashArray = Stroke.getDashArray(dashStr);
-            setGridDash(dashArray);
-        }
-
-        // Unarchive GridSpacing, GridBase
-        if (anElement.hasAttribute(GridSpacing_Prop))
-            setGridSpacing(anElement.getAttributeDoubleValue(GridSpacing_Prop));
-        if (anElement.hasAttribute(GridBase_Prop))
-            setGridBase(anElement.getAttributeDoubleValue(GridBase_Prop));
-
-        // Unarchive TickLength, TickPos, MinorTickCount
-        if (anElement.hasAttribute(TickLength_Prop))
-            setTickLength(anElement.getAttributeDoubleValue(TickLength_Prop));
-        if (anElement.hasAttribute(TickPos_Prop))
-            setTickPos(anElement.getAttributeEnumValue(TickPos_Prop, TickPos.class, DEFAULT_TICK_POS));
-        if (anElement.hasAttribute(MinorTickCount_Prop))
-            setMinorTickCount(anElement.getAttributeIntValue(MinorTickCount_Prop));
-
-        // Unarchive ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
-        if (anElement.hasAttribute(ShowTickLabels_Prop))
-            setShowTickLabels(anElement.getAttributeBoolValue(ShowTickLabels_Prop));
-        if (anElement.hasAttribute(TickLabelAutoRotate_Prop))
-            setTickLabelAutoRotate(anElement.getAttributeBoolValue(TickLabelAutoRotate_Prop));
-        if (anElement.hasAttribute(TickLabelRotation_Prop))
-            setTickLabelRotation(anElement.getAttributeDoubleValue(TickLabelRotation_Prop));
-
-        // Return this part
-        return this;
     }
 }

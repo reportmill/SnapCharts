@@ -10,7 +10,6 @@ import snap.gfx.Color;
 import snap.props.PropChange;
 import snap.props.PropChangeListener;
 import snap.props.PropSet;
-import snap.util.*;
 import snapcharts.data.DataSet;
 import snapcharts.util.MinMax;
 
@@ -376,46 +375,5 @@ public class TraceList extends ChartPart {
             // Do normal version
             default: super.setPropValue(aPropName, aValue); break;
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive Traces
-        Trace[] traces = getTraces();
-        for (Trace trace : traces)
-            e.add(anArchiver.toXML(trace));
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Traces
-        List<XMLElement> traceXMLs = anElement.getElements(Trace.class.getSimpleName());
-        if (traceXMLs == null || traceXMLs.isEmpty())
-            traceXMLs = anElement.getElements("DataSet");
-        for (XMLElement traceXML : traceXMLs) {
-            Trace trace = (Trace) anArchiver.fromXML(traceXML, this);
-            if (trace != null)
-                addTrace(trace);
-        }
-
-        // Return this part
-        return this;
     }
 }

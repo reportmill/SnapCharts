@@ -3,9 +3,7 @@
  */
 package snapcharts.model;
 import snap.geom.Insets;
-import snap.geom.Side;
 import snap.props.PropSet;
-
 import java.util.List;
 
 /**
@@ -25,9 +23,6 @@ public class AxisX extends Axis {
     public AxisX()
     {
         super();
-
-        // Override default property values
-        _side = Side.BOTTOM;
     }
 
     /**
