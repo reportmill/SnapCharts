@@ -5,8 +5,6 @@ package snapcharts.model;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.props.PropSet;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 
 /**
  * This StyledChartPart subclass holds style attributes for data tags.
@@ -56,7 +54,7 @@ public class TagStyle extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Override Font, Margin, Spacing
+        // Override Font
         aPropSet.getPropForName(Font_Prop).setDefaultValue(DEFAULT_TAG_FONT);
     }
 
@@ -75,31 +73,5 @@ public class TagStyle extends ChartPart {
             // Do normal version
             default: return super.getPropDefault(aPropName);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Return xml
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Return
-        return this;
     }
 }

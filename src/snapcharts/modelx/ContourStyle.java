@@ -4,8 +4,6 @@
 package snapcharts.modelx;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 import snapcharts.model.TraceStyle;
 
 /**
@@ -99,43 +97,5 @@ public class ContourStyle extends TraceStyle {
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive ShowLines, ShowMesh
-        if (!isPropDefault(ShowLines_Prop))
-            e.add(ShowLines_Prop, isShowLines());
-        if (!isPropDefault(ShowMesh_Prop))
-            e.add(ShowMesh_Prop, isShowMesh());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive ShowLines, ShowMesh
-        if (anElement.hasAttribute(ShowLines_Prop))
-            setShowLines(anElement.getAttributeBoolValue(ShowLines_Prop));
-        if (anElement.hasAttribute(ShowMesh_Prop))
-            setShowMesh(anElement.getAttributeBoolValue(ShowMesh_Prop));
-
-        // Return this part
-        return this;
     }
 }

@@ -50,6 +50,10 @@ public class ContourAxis extends ChartPart {
     public ContourAxis()
     {
         super();
+
+        // Override some defaults
+        _margin = DEFAULT_CONTOUR_AXIS_MARGIN;
+        _padding = DEFAULT_CONTOUR_AXIS_PADDING;
     }
 
     /**
@@ -166,10 +170,10 @@ public class ContourAxis extends ChartPart {
         aPropSet.addPropNamed(MinBound_Prop, AxisBound.class, AxisBound.AUTO);
         aPropSet.addPropNamed(MaxBound_Prop, AxisBound.class, AxisBound.AUTO);
         aPropSet.addPropNamed(MinValue_Prop, double.class, 0d);
-        aPropSet.addPropNamed(MaxValue_Prop, double.class, 5d);
+        aPropSet.addPropNamed(MaxValue_Prop, double.class, 0d);
 
         // LevelCount
-        aPropSet.addPropNamed(LevelCount_Prop, String.class, DEFAULT_LEVEL_COUNT);
+        aPropSet.addPropNamed(LevelCount_Prop, int.class, DEFAULT_LEVEL_COUNT);
     }
 
     /**
@@ -222,67 +226,5 @@ public class ContourAxis extends ChartPart {
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive Title
-        if (getTitle() != null && getTitle().length() > 0)
-            e.add(Title_Prop, getTitle());
-
-        // Archive MinBound, MaxBounds, MinValue, MaxValue
-        if (!isPropDefault(MinBound_Prop))
-            e.add(MinBound_Prop, getMinBound());
-        if (!isPropDefault(MaxBound_Prop))
-            e.add(MaxBound_Prop, getMaxBound());
-        if (!isPropDefault(MinValue_Prop))
-            e.add(MinValue_Prop, getMinValue());
-        if (!isPropDefault(MaxValue_Prop))
-            e.add(MaxValue_Prop, getMaxValue());
-
-        // Archive LevelCount
-        if (!isPropDefault(LevelCount_Prop))
-            e.add(LevelCount_Prop, getLevelCount());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Title
-        if (anElement.hasAttribute(Title_Prop))
-            setTitle(anElement.getAttributeValue(Title_Prop));
-
-        // Unarchive MinBound, MaxBounds, MinValue, MaxValue
-        if (anElement.hasAttribute(MinBound_Prop))
-            setMinBound(anElement.getAttributeEnumValue(MinBound_Prop, AxisBound.class, null));
-        if (anElement.hasAttribute(MaxBound_Prop))
-            setMaxBound(anElement.getAttributeEnumValue(MaxBound_Prop, AxisBound.class, null));
-        if (anElement.hasAttribute(MinValue_Prop))
-            setMinValue(anElement.getAttributeDoubleValue(MinValue_Prop));
-        if (anElement.hasAttribute(MaxValue_Prop))
-            setMaxValue(anElement.getAttributeDoubleValue(MaxValue_Prop));
-
-        // Unarchive LevelCount
-        if (anElement.hasAttribute(LevelCount_Prop))
-            setLevelCount(anElement.getAttributeIntValue(LevelCount_Prop));
-
-        // Return this part
-        return this;
     }
 }

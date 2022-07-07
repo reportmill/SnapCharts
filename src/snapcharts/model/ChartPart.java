@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * Base class for parts of a chart: Axis, Area, Legend, etc.
  */
-public class ChartPart extends PropObject implements XMLArchiver.Archivable {
+public class ChartPart extends PropObject {
 
     // The Chart
     protected Chart  _chart;
@@ -672,7 +672,7 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
     }
 
     /**
-     * Returns whether give prop is set to default.
+     * Returns whether given prop is set to default.
      */
     @Override
     public boolean isPropDefault(String aPropName)
@@ -683,191 +683,6 @@ public class ChartPart extends PropObject implements XMLArchiver.Archivable {
 
         // Do normal version
         return super.isPropDefault(aPropName);
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Get new element with class name
-        String cname = getClass().getSimpleName();
-        XMLElement e = new XMLElement(cname);
-
-        // Archive Name
-        if (getName() != null && getName().length() > 0)
-            e.add(Name_Prop, getName());
-
-        // Archive Border
-        if (!isPropDefault(Border_Prop)) {
-            Border border = getBorder(); if (border == null) border = new Borders.NullBorder();
-            XMLElement borderXML = border.toXML(anArchiver);
-            e.add(Border_Prop, borderXML);
-        }
-
-        // Archive LineColor, LineWidth, LineDash
-        if (!isPropDefault(LineColor_Prop))
-            e.add(LineColor_Prop, getLineColor().toHexString());
-        if (!isPropDefault(LineWidth_Prop))
-            e.add(LineWidth_Prop, getLineWidth());
-        if (!ArrayUtils.equals(_lineDash, DEFAULT_LINE_DASH)) {
-            String dashStr = Stroke.getDashArrayNameOrString(_lineDash);
-            e.add(LineDash_Prop, dashStr);
-        }
-
-        // Archive Fill
-        if (isFillSet()) {
-            Paint fill = getFill();
-            XMLElement fillXML = fill.toXML(anArchiver);
-            e.add(Fill_Prop, fillXML);
-        }
-
-        // Archive Effect
-        if (!isPropDefault(Effect_Prop)) {
-            Effect effect = getEffect();
-            XMLElement effectXML = effect.toXML(anArchiver);
-            e.add(Effect_Prop, effectXML);
-        }
-
-        // Archive Opacity
-        if (getOpacity() != DEFAULT_OPACTIY)
-            e.add(Opacity_Prop, getOpacity());
-
-        // Archive Font
-        if (isFontSet()) {
-            Font font = getFont();
-            XMLElement fontXML = font.toXML(anArchiver);
-            e.add(Font_Prop, fontXML);
-        }
-
-        // Archive TextFill
-        if (!isPropDefault(TextFill_Prop)) {
-            Paint textFill = getTextFill();
-            XMLElement textFillXML = textFill.toXML(anArchiver);
-            e.add(TextFill_Prop, textFillXML);
-        }
-
-        // Archive TextFormat
-        if (!isPropDefault(TextFormat_Prop)) {
-            TextFormat textFormat = getTextFormat();
-            XMLElement textFormatXML = textFormat.toXML(anArchiver);
-            e.add(TextFormat_Prop, textFormatXML);
-        }
-
-        // Archive Align, Margin, Padding, Spacing
-        if (!isPropDefault(Align_Prop))
-            e.add(Align_Prop, getAlign());
-        if (!isPropDefault(Margin_Prop))
-            e.add(Margin_Prop, getMargin().getString());
-        if (!isPropDefault(Padding_Prop))
-            e.add(Padding_Prop, getPadding().getString());
-        if (!isPropDefault(Spacing_Prop))
-            e.add(Spacing_Prop, getSpacing());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Go ahead and set chart
-        //if (anArchiver instanceof ChartArchiver) {
-        //    Chart chart = ((ChartArchiver) anArchiver).getChart();
-        //    setChart(chart);
-        //}
-
-        // Unarchive Name
-        if (anElement.hasAttribute(Name_Prop))
-            setName(anElement.getAttributeValue(Name_Prop));
-
-        // Unarchive Border
-        XMLElement borderXML = anElement.get(Border_Prop);
-        if (borderXML != null) {
-            Border border = (Border) anArchiver.fromXML(borderXML, null);
-            if (border instanceof Borders.NullBorder) border = null;
-            setBorder(border);
-        }
-
-        // Unarchive LineColor, LineWidth, LineDash
-        if (anElement.hasAttribute(LineColor_Prop)) {
-            Color color = Color.get('#' + anElement.getAttributeValue(LineColor_Prop));
-            setLineColor(color);
-        }
-        if (anElement.hasAttribute(LineWidth_Prop))
-            setLineWidth(anElement.getAttributeIntValue(LineWidth_Prop));
-        if (anElement.hasAttribute(LineDash_Prop)) {
-            String dashStr = anElement.getAttributeValue(LineDash_Prop);
-            double[] dashArray = Stroke.getDashArray(dashStr);
-            setLineDash(dashArray);
-        }
-
-        // Unarchive Fill
-        XMLElement fillXML = anElement.get(Fill_Prop);
-        if (fillXML != null) {
-            Paint fill = (Paint) anArchiver.fromXML(fillXML, null);
-            setFill(fill);
-        }
-
-        // Unarchive Effect
-        XMLElement effectXML = anElement.get(Effect_Prop);
-        if (effectXML != null) {
-            Effect effect = (Effect) anArchiver.fromXML(effectXML, null);
-            setEffect(effect);
-        }
-
-        // Unarchive Opacity
-        if (anElement.hasAttribute(Opacity_Prop))
-            setOpacity(anElement.getAttributeDoubleValue(Opacity_Prop));
-
-        // Unarchive Font
-        XMLElement fontXML = anElement.get(Font_Prop);
-        if (fontXML != null) {
-            Font font = (Font) anArchiver.fromXML(fontXML, null);
-            setFont(font);
-        }
-
-        // Unarchive TextFill
-        XMLElement textFillXML = anElement.get(TextFill_Prop);
-        if (textFillXML != null) {
-            Paint textFill = (Paint) anArchiver.fromXML(textFillXML, null);
-            setTextFill(textFill);
-        }
-
-        // Unarchive TextFormat
-        XMLElement textFormatXML = anElement.get(TextFormat_Prop);
-        if (textFormatXML != null) {
-            TextFormat textFormat = (TextFormat) anArchiver.fromXML(textFormatXML, null);
-            setTextFormat(textFormat);
-        }
-
-        // Unarchive Align, Margin, Padding, Spacing
-        if (anElement.hasAttribute(Align_Prop))
-            setAlign(anElement.getAttributeEnumValue(Align_Prop, Pos.class, DEFAULT_ALIGN));
-        if (anElement.hasAttribute(Margin_Prop))
-            setMargin(Insets.get(anElement.getAttributeValue(Margin_Prop)));
-        if (anElement.hasAttribute(Padding_Prop))
-            setPadding(Insets.get(anElement.getAttributeValue(Padding_Prop)));
-        if (anElement.hasAttribute(Spacing_Prop))
-            setSpacing(anElement.getAttributeDoubleValue(Spacing_Prop));
-
-        // Return this part
-        return this;
-    }
-
-    /**
-     * Standard toString implementation.
-     */
-    @Override
-    public String toString()
-    {
-        String className = getClass().getSimpleName();
-        String propStrings = toStringProps();
-        return className + " { " + propStrings + " }";
     }
 
     /**

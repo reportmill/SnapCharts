@@ -3,8 +3,6 @@
  */
 package snapcharts.modelx;
 import snap.props.PropSet;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 import snapcharts.model.TraceStyle;
 
 /**
@@ -81,50 +79,5 @@ public class PolarStyle extends TraceStyle {
             // Handle super class properties (or unknown)
             default: return super.getPropDefault(aPropName);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive ThetaUnit_Prop
-        //if (!isPropDefault(ThetaUnit_Prop))
-        //    e.add(ThetaUnit_Prop, getPointJoin());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive ThetaUnit
-        //if (anElement.hasAttribute(ThetaUnit_Prop))
-        //    setThetaUnit(anElement.getAttributeEnumValue(ShowLine_Prop, ThetaUnit.class, null));
-
-        // Return this part
-        return this;
-    }
-
-    /**
-     * Standard toString implementation.
-     */
-    @Override
-    public String toString()
-    {
-        return "PolarStyle {" +
-                //" ThetaUnit=" + _thetaUnit +
-                " }";
     }
 }

@@ -287,7 +287,7 @@ public class Scene extends ChartPart {
             case AspectScaleZ_Prop: setAspectScaleZ(SnapUtils.doubleValue(aValue)); break;
 
             // ProjectedSides
-            case ProjectedSides_Prop: setProjectedSides((Side3D[])aValue); break;
+            case ProjectedSides_Prop: setProjectedSides((Side3D[]) aValue); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);
@@ -336,69 +336,5 @@ public class Scene extends ChartPart {
         if ((chartType == ChartType.BAR_3D || chartType == ChartType.PIE_3D) && anAxisType == AxisType.Z)
             return .2;
         return 1;
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive AspectMode
-        if (!isPropDefault(AspectMode_Prop))
-            e.add(AspectMode_Prop, getAspectMode());
-
-        // Archive AspectScaleX, AspectScaleY, AspectScaleZ
-        if (!isPropDefault(AspectScaleX_Prop))
-            e.add(AspectScaleX_Prop, getAspectScaleX());
-        if (!isPropDefault(AspectScaleY_Prop))
-            e.add(AspectScaleY_Prop, getAspectScaleY());
-        if (!isPropDefault(AspectScaleZ_Prop))
-            e.add(AspectScaleZ_Prop, getAspectScaleZ());
-
-        // Archive ProjectedSides
-        if (!isPropDefault(ProjectedSides_Prop)) {
-            Side3D[] sides = getProjectedSides();
-            String sidesString = EnumUtils.getNamesStringFromEnumArray(sides);
-            e.add(ProjectedSides_Prop, sidesString);
-        }
-
-        // Return xml
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive AspectMode
-        if (anElement.hasAttribute(AspectMode_Prop))
-            setAspectMode(anElement.getAttributeEnumValue(AspectMode_Prop, AspectMode.class, null));
-
-        // Unarchive AspectScaleX
-        if (anElement.hasAttribute(AspectScaleX_Prop))
-            setAspectScaleX(anElement.getAttributeDoubleValue(AspectScaleX_Prop));
-        if (anElement.hasAttribute(AspectScaleY_Prop))
-            setAspectScaleY(anElement.getAttributeDoubleValue(AspectScaleY_Prop));
-        if (anElement.hasAttribute(AspectScaleZ_Prop))
-            setAspectScaleZ(anElement.getAttributeDoubleValue(AspectScaleZ_Prop));
-
-        // Archive ProjectedSides
-        if (anElement.hasAttribute(ProjectedSides_Prop)) {
-            String sidesStr = anElement.getAttributeValue(ProjectedSides_Prop);
-            Side3D[] sides = EnumUtils.getEnumArrayFromNamesString(Side3D.class, sidesStr);
-            setProjectedSides(sides);
-        }
-
-        // Return
-        return this;
     }
 }
