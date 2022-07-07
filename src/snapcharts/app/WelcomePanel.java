@@ -311,7 +311,7 @@ public class WelcomePanel extends ViewOwner {
     public void showOpenPanel()
     {
         // Have editor run open panel (if no document opened, just return)
-        DocPane dpane = newDocPane().showOpenPanel(getUI()); if (dpane==null) return;
+        DocPane dpane = newDocPane().showOpenPanel(getUI()); if (dpane == null) return;
 
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);

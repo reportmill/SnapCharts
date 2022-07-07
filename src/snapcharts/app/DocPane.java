@@ -224,6 +224,9 @@ public class DocPane extends ViewOwner {
         // Get path from open panel for supported file extensions
         String[] extensions = { DocPane.CHARTS_FILE_EXT, DocPane.CHARTS_SIMPLE_FILE_EXT };
         String path = FilePanel.showOpenPanel(aView, "Snap Charts File", extensions);
+        if (path == null) return null;
+
+        // Create/return DocPane for path
         return openDocFromSource(path);
     }
 
