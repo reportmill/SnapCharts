@@ -757,7 +757,7 @@ public class Trace extends ChartPart {
         aPropSet.addPropNamed(FillMode_Prop, FillMode.class, DEFAULT_FILL_MODE);
 
         // AxisTypeY, ExprX, ExprY, ExprZ
-        aPropSet.addPropNamed(AxisTypeY_Prop, AxisType.class, null);
+        aPropSet.addPropNamed(AxisTypeY_Prop, AxisType.class, AxisType.Y);
         aPropSet.addPropNamed(ExprX_Prop, String.class, null);
         aPropSet.addPropNamed(ExprY_Prop, String.class, null);
         aPropSet.addPropNamed(ExprZ_Prop, String.class, null);

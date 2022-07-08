@@ -7,10 +7,7 @@ import snap.props.PropObject;
 import snap.props.PropSet;
 import snap.util.ArrayUtils;
 import snap.util.SnapUtils;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 import snapcharts.util.MinMax;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -20,7 +17,7 @@ import java.util.Objects;
  * It provides a simple API for defining the DataType (which defines the data format/schema), the number of data
  * points/rows, and methods for getting/setting individual channel values (X, Y, ...) of the data for each point/row.
  */
-public abstract class DataSet extends PropObject implements Cloneable, XMLArchiver.Archivable {
+public abstract class DataSet extends PropObject implements Cloneable {
 
     // The name
     private String  _name;
@@ -420,17 +417,6 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
     }
 
     /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        XMLElement e = new XMLElement("DataSet");
-        toXML(anArchiver, e);
-        return e;
-    }
-
-    /**
      * Override to return props for DataType channels.
      */
     @Override
@@ -463,7 +449,7 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
 
         // Name, DataType
         aPropSet.addPropNamed(Name_Prop, String.class, null);
-        Prop dataTypeProp = aPropSet.addPropNamed(DataType_Prop, DataType.class, null);
+        Prop dataTypeProp = aPropSet.addPropNamed(DataType_Prop, DataType.class, DataType.XY);
         dataTypeProp.setPropChanger(true);
     }
 
@@ -546,123 +532,6 @@ public abstract class DataSet extends PropObject implements Cloneable, XMLArchiv
             // Do normal version
             default: super.setPropValue(aPropName, aValue); break;
         }
-    }
-
-    /**
-     * Archival.
-     */
-    public XMLElement toXML(XMLArchiver anArchiver, XMLElement e)
-    {
-        // Archive DataType
-        DataType dataType = getDataType();
-        e.add(DataType_Prop, dataType);
-
-        // Legacy: Archive ThetaUnit
-        if (dataType.isPolar() && getThetaUnit() != DataUnit.DEFAULT_THETA_UNIT)
-            e.add("ThetaUnit", getThetaUnit());
-
-        // If DataType has X, add DataX values
-        DataType dataTypeXY = dataType.getDataTypeXY();
-        if (dataTypeXY.hasChannel(DataChan.X)) {
-            double[] dataX = getDataX();
-            String dataStr = DataUtils.getStringForDoubleArray(dataX);
-            e.add(new XMLElement("DataX", dataStr));
-        }
-
-        // If DataType has Y, add DataY values
-        if (dataTypeXY.hasChannel(DataChan.Y)) {
-            double[] dataY = getDataY();
-            String dataStr = DataUtils.getStringForDoubleArray(dataY);
-            e.add(new XMLElement("DataY", dataStr));
-        }
-
-        // If DataType has Z, add DataZ values
-        if (dataTypeXY.hasChannel(DataChan.Z)) {
-            double[] dataZ = getDataZ();
-            String dataStr = DataUtils.getStringForDoubleArray(dataZ);
-            e.add(new XMLElement("DataZ", dataStr));
-        }
-
-        // If DataType has C, add DataC values
-        if (dataType.hasChannel(DataChan.C)) {
-            String dataStr = Arrays.toString(getDataC());
-            e.add(new XMLElement("DataC", dataStr));
-        }
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive DataType
-        String dataTypeStr = anElement.getAttributeValue(DataType_Prop);
-        DataType dataType = DataType.valueOf(dataTypeStr);
-        setDataType(dataType);
-
-        // Handle XYZZ special
-        if (dataType == DataType.XYZZ)
-            return new DataSetXYZZ().fromXML(anArchiver, anElement);
-
-        // Legacy: Unarchive ThetaUnit
-        if (anElement.hasAttribute("ThetaUnit")) {
-            String unitName = anElement.getAttributeValue("ThetaUnit");
-            DataUnit dataUnit = DataUnit.getUnitForName(unitName, DataUnit.DEFAULT_THETA_UNIT);
-            setThetaUnit(dataUnit);
-        }
-
-        // Get DataX
-        double[] dataX = null;
-        XMLElement dataX_XML = anElement.get("DataX");
-        if (dataX_XML != null) {
-            String dataXStr = dataX_XML.getValue();
-            dataX = DataUtils.getDoubleArrayForString(dataXStr);
-        }
-
-        // Get DataY
-        double[] dataY = null;
-        XMLElement dataY_XML = anElement.get("DataY");
-        if (dataY_XML != null) {
-            String dataYStr = dataY_XML.getValue();
-            dataY = DataUtils.getDoubleArrayForString(dataYStr);
-        }
-
-        // Get DataZ
-        double[] dataZ = null;
-        XMLElement dataZ_XML = anElement.get("DataZ");
-        if (dataZ_XML != null) {
-            String dataZStr = dataZ_XML.getValue();
-            dataZ = DataUtils.getDoubleArrayForString(dataZStr);
-        }
-
-        // Get DataC
-        String[] dataC = null;
-        XMLElement dataC_XML = anElement.get("DataC");
-        if (dataC_XML != null) {
-            String dataCStr = dataC_XML.getValue();
-            dataC = DataUtils.getStringArrayForString(dataCStr);
-        }
-
-        // Add Data points
-        setDataArraysFromArrays(dataC, dataX, dataY, dataZ);
-
-        // Return this part
-        return this;
-    }
-
-    /**
-     * Standard toString implementation.
-     */
-    @Override
-    public String toString()
-    {
-        String className = getClass().getSimpleName();
-        String propString = toStringProps();
-        return className + " { " + propString + " }";
     }
 
     /**

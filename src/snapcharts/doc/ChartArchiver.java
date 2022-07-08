@@ -160,6 +160,10 @@ public class ChartArchiver extends PropArchiverXML {
         public DataSetProxy()
         {
             _dataSet = DataSet.newDataSet();
+
+            // Init DataArrays
+            DataType dataType = _dataSet.getDataType();
+            _dataArrays = new DataArray[dataType.getChannelCount()];
         }
 
         /**

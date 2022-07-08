@@ -1,6 +1,7 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.data;
-import snap.util.XMLArchiver;
-import snap.util.XMLElement;
 
 /**
  * This DataSet subclass holds tabular XYZ data. X values are represented as columns, Y as rows.
@@ -121,46 +122,6 @@ public class DataSetXYZZ extends DataSet {
 
     @Override
     public boolean isClear()  { return false; }
-
-    /**
-     * Override to handle XYZZ.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Get DataX
-        double[] dataX = null;
-        XMLElement dataX_XML = anElement.get("DataX");
-        if (dataX_XML != null) {
-            String dataXStr = dataX_XML.getValue();
-            dataX = DataUtils.getDoubleArrayForString(dataXStr);
-        }
-
-        // Get DataY
-        double[] dataY = null;
-        XMLElement dataY_XML = anElement.get("DataY");
-        if (dataY_XML != null) {
-            String dataYStr = dataY_XML.getValue();
-            dataY = DataUtils.getDoubleArrayForString(dataYStr);
-        }
-
-        // Get DataZ
-        double[] dataZ = null;
-        XMLElement dataZ_XML = anElement.get("DataZ");
-        if (dataZ_XML != null) {
-            String dataZStr = dataZ_XML.getValue();
-            dataZ = DataUtils.getDoubleArrayForString(dataZStr);
-        }
-
-        // Set DataArrays
-        _dataArrays = DataArray.newDataArraysForArrays(dataX, dataY, dataZ);
-        _dataX = (NumberArray) _dataArrays[0];
-        _dataY = (NumberArray) _dataArrays[1];
-        _dataZ = (NumberArray) _dataArrays[2];
-
-        // Return
-        return this;
-    }
 
     /**
      * Returns the column index.
