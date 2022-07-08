@@ -120,8 +120,8 @@ public class TickPainter {
         axisSide = axis.getSide();
 
         // Get axis line paint info
-        axisLineColor = axis.getLineColor();
-        axisLineStroke = axis.getLineStroke();
+        axisLineColor = Axis.DEFAULT_AXIS_LINE_COLOR;
+        axisLineStroke = Axis.DEFAULT_AXIS_LINE_STROKE;
 
         // Get Tick paint info
         tickColor = DEFAULT_TICK_COLOR;

@@ -96,7 +96,7 @@ public class TracePointStyleInsp extends ChartPartInsp {
         // Reset SymbolColorButton, SymbolColorResetButton
         Color symbolColor = pointStyle.getFillColor();
         setViewValue("SymbolColorButton", symbolColor);
-        setViewVisible("SymbolColorResetButton", pointStyle.isFillSet());
+        setViewVisible("SymbolColorResetButton", !pointStyle.isPropDefault(PointStyle.Fill_Prop));
 
         // Reset SymbolSizeText, SymbolSizeResetButton
         setViewValue("SymbolSizeText", pointStyle.getSymbolSize());
@@ -113,12 +113,12 @@ public class TracePointStyleInsp extends ChartPartInsp {
         // Reset SymbolBorderColorButton, SymbolBorderColorResetButton
         Color symbolBorderColor = pointStyle.getLineColor();
         setViewValue("SymbolBorderColorButton", symbolBorderColor);
-        setViewVisible("SymbolBorderColorResetButton", pointStyle.isLineColorSet());
+        setViewVisible("SymbolBorderColorResetButton", !pointStyle.isPropDefault(PointStyle.LineColor_Prop));
 
         // Reset SymbolBorderWidthText, SymbolBorderWidthResetButton
         double symbolBorderWidth = pointStyle.getLineWidth();
         setViewValue("SymbolBorderWidthText", symbolBorderWidth);
-        setViewVisible("SymbolBorderWidthResetButton", symbolBorderWidth != PointStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+        setViewVisible("SymbolBorderWidthResetButton", symbolBorderWidth != PointStyle.DEFAULT_SYMBOL_LINE_WIDTH);
     }
 
     /**
@@ -170,7 +170,7 @@ public class TracePointStyleInsp extends ChartPartInsp {
             pointStyle.setLineColor(color);
         }
         if (anEvent.equals("SymbolBorderColorResetButton"))
-            pointStyle.setLineColor(PointStyle.DEFAULT_SYMBOL_BORDER_COLOR);
+            pointStyle.setLineColor(PointStyle.DEFAULT_SYMBOL_LINE_COLOR);
 
         // Handle SymbolBorderWidthText, SymbolBorderWidthAdd1Button, SymbolBorderWidthSub1Button, SymbolBorderWidthResetButton
         if (anEvent.equals("SymbolBorderWidthText"))
@@ -180,7 +180,7 @@ public class TracePointStyleInsp extends ChartPartInsp {
         if (anEvent.equals("SymbolBorderWidthSub1Button"))
             pointStyle.setLineWidth(Math.max(pointStyle.getLineWidth() - 1, 0));
         if (anEvent.equals("SymbolBorderWidthResetButton"))
-            pointStyle.setLineWidth(PointStyle.DEFAULT_SYMBOL_BORDER_WIDTH);
+            pointStyle.setLineWidth(PointStyle.DEFAULT_SYMBOL_LINE_WIDTH);
     }
 
     /**

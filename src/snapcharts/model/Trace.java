@@ -3,6 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.gfx.Paint;
 import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropSet;
@@ -124,6 +125,9 @@ public class Trace extends ChartPart {
     public static final FillMode DEFAULT_FILL_MODE = FillMode.None;
     public static final boolean DEFAULT_SHOW_LEGEND_ENTRY = true;
 
+    // A special color constant to indicate dynamic default
+    public static final Color DEFAULT_DYNAMIC_COLOR = new Color();
+
     /**
      * Constructor.
      */
@@ -137,6 +141,10 @@ public class Trace extends ChartPart {
         _pointJoin = DEFAULT_POINT_JOIN;
         _fillMode = DEFAULT_FILL_MODE;
         _showLegendEntry = DEFAULT_SHOW_LEGEND_ENTRY;
+
+        // Set defaults special: These are computed dynamic if not explicitly set
+        _lineColor = DEFAULT_DYNAMIC_COLOR;
+        _fill = DEFAULT_DYNAMIC_COLOR;
 
         // Register listener for TagStyle, PointStyle prop changes
         _tagStyle._parent = this;
@@ -285,15 +293,6 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the default line color.
-     */
-    public Color getDefaultLineColor()
-    {
-        int index = getIndex();
-        return getColorMapColor(index);
-    }
-
-    /**
      * Returns the color map color at index.
      */
     public Color getColorMapColor(int anIndex)
@@ -303,11 +302,41 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the default color to fill the data area.
+     * Override to dynamically get line color if not explicitly set.
      */
-    public Color getFillColorDefault()
+    @Override
+    public Color getLineColor()
     {
-        // Get from LineColor, half transparent
+        if (_lineColor == DEFAULT_DYNAMIC_COLOR)
+            return getDefaultLineColor();
+        return super.getLineColor();
+    }
+
+    /**
+     * Override to dynamically get fill if not explicitly set.
+     */
+    @Override
+    public Paint getFill()
+    {
+        if (_fill == DEFAULT_DYNAMIC_COLOR)
+            return getDefaultFill();
+        return super.getFill();
+    }
+
+    /**
+     * Returns the default color to draw trace line (Get from ColorMap lookup for Trace.Index).
+     */
+    public Color getDefaultLineColor()
+    {
+        int index = getIndex();
+        return getColorMapColor(index);
+    }
+
+    /**
+     * Returns the default color to fill trace area (Get from LineColor, half transparent).
+     */
+    public Color getDefaultFill()
+    {
         return getDefaultLineColor().copyForAlpha(.5);
     }
 
@@ -674,12 +703,6 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Override to prevent client code from using border instead of line props.
-     */
-    @Override
-    public boolean isBorderSupported()  { return false; }
-
-    /**
      * Called when a child chart part has prop change.
      */
     private void childChartPartDidPropChange(PropChange aPC)
@@ -845,9 +868,9 @@ public class Trace extends ChartPart {
     {
         switch (aPropName) {
 
-            // Override Fill, LineColor
-            case Fill_Prop: return getFillColorDefault();
+            // Override LineColor, Fill
             case LineColor_Prop: return getDefaultLineColor();
+            case Fill_Prop: return getDefaultFill();
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

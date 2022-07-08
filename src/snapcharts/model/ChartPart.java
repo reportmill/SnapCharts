@@ -74,7 +74,6 @@ public class ChartPart extends PropObject {
 
     // Constants for properties
     public static final String Name_Prop = "Name";
-    public static final String Border_Prop = "Border";
     public static final String LineColor_Prop = "LineColor";
     public static final String LineWidth_Prop = "LineWidth";
     public static final String LineDash_Prop = "LineDash";
@@ -90,7 +89,6 @@ public class ChartPart extends PropObject {
     public static final String Spacing_Prop = "Spacing";
 
     // Constants for defaults
-    public static final Border DEFAULT_BORDER = null;
     public static final Color DEFAULT_LINE_COLOR = null;
     public static final int DEFAULT_LINE_WIDTH = 0;
     public static final double[] DEFAULT_LINE_DASH = null;
@@ -106,7 +104,7 @@ public class ChartPart extends PropObject {
     public static final double DEFAULT_SPACING = 0d;
 
     // Constant for unset border
-    private static Border UNSET_BORDER = new Borders.NullBorder();
+    private static Border NULL_BORDER = new Borders.NullBorder();
 
     /**
      * Constructor.
@@ -116,7 +114,6 @@ public class ChartPart extends PropObject {
         super();
 
         // Set default property values
-        _border = UNSET_BORDER;
         _lineColor = DEFAULT_LINE_COLOR;
         _lineWidth = DEFAULT_LINE_WIDTH;
         _lineDash = DEFAULT_LINE_DASH;
@@ -207,69 +204,9 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns the ChartPart border.
-     */
-    public Border getBorder()
-    {
-        // If border not supported, use Line Prop version
-        if (!isBorderSupported())
-            return getBorderUsingLineProps();
-
-        // If explicitly set, just return
-        if (_border != UNSET_BORDER)
-            return _border;
-
-        // Return default border
-        return (Border) getPropDefault(Border_Prop);
-    }
-
-    /**
-     * Sets the ChartPart border.
-     */
-    public void setBorder(Border aBorder)
-    {
-        // If border not supported, use Line Prop version
-        if (!isBorderSupported())  {
-            setBorderUsingLineProps(aBorder);
-            return;
-        }
-
-        // If already set, just return
-        if (Objects.equals(aBorder, getBorder())) return;
-
-        // If given border is default, replace with UNSET_BORDER
-        if (Objects.equals(aBorder, getPropDefault(Border_Prop)))
-            aBorder = UNSET_BORDER;
-
-        // Set and firePropChange
-        firePropChange(Border_Prop, _border, _border = aBorder);
-    }
-
-    /**
-     * Sets the ChartPart border.
-     */
-    public void setBorder(Color aColor, double aBorderWidth)
-    {
-        Border border = Border.createLineBorder(aColor, aBorderWidth);
-        setBorder(border);
-    }
-
-    /**
-     * Returns whether line color is explicitly set.
-     */
-    public boolean isLineColorSet()  { return _lineColor != null; }
-
-    /**
      * Returns the line color.
      */
-    public Color getLineColor()
-    {
-        // If set, just return
-        if (_lineColor != null) return _lineColor;
-
-        // Return default
-        return (Color) getPropDefault(LineColor_Prop);
-    }
+    public Color getLineColor()  { return _lineColor; }
 
     /**
      * Sets the line color.
@@ -277,16 +214,14 @@ public class ChartPart extends PropObject {
     public void setLineColor(Color aColor)
     {
         if (Objects.equals(aColor, _lineColor)) return;
+        _border = null;
         firePropChange(LineColor_Prop, _lineColor, _lineColor = aColor);
     }
 
     /**
      * Returns line width.
      */
-    public int getLineWidth()
-    {
-        return _lineWidth;
-    }
+    public int getLineWidth()  { return _lineWidth; }
 
     /**
      * Sets line width.
@@ -294,6 +229,7 @@ public class ChartPart extends PropObject {
     public void setLineWidth(int aValue)
     {
         if (aValue == getLineWidth()) return;
+        _border = null;
         firePropChange(LineWidth_Prop, _lineWidth, _lineWidth = aValue);
     }
 
@@ -308,6 +244,7 @@ public class ChartPart extends PropObject {
     public void setLineDash(double[] aDashArray)
     {
         if (ArrayUtils.equals(aDashArray, _lineDash)) return;
+        _border = null;
         firePropChange(LineDash_Prop, _lineDash, _lineDash = aDashArray);
     }
 
@@ -321,21 +258,61 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns whether fill is set.
+     * Returns the ChartPart border.
      */
-    public boolean isFillSet()  { return _fill != null; }
+    public Border getBorder()
+    {
+        // If border not supported, use Line Prop version
+        if (_border != null)
+            return _border != NULL_BORDER ? _border : null;
+
+        // Get, set, return
+        Border border = createBorderFromLineProps();
+        return _border = border;
+    }
+
+    /**
+     * Sets the ChartPart border.
+     */
+    public void setBorder(Border aBorder)
+    {
+        // If already set, just return
+        if (Objects.equals(aBorder, getBorder())) return;
+
+        // Get/set LineColor
+        Color lineColor = aBorder != null ? aBorder.getColor() : null;
+        setLineColor(lineColor);
+
+        // Get/set LineWidth
+        int lineWidth = aBorder != null ? (int) Math.round(aBorder.getWidth()) : 0;
+        setLineWidth(lineWidth);
+    }
+
+    /**
+     * Override to create border from line props.
+     */
+    private Border createBorderFromLineProps()
+    {
+        // If LineWidth zero or color null, return empty border
+        if (getLineWidth() <= 0 || getLineColor() == null)
+            return NULL_BORDER;
+
+        // Return border for LineColor and LineStroke
+        Color color = getLineColor();
+        Stroke stroke = getLineStroke();
+        Border border = new Borders.LineBorder(color, stroke);
+
+        if (this instanceof TraceList)
+            border = border.copyForInsets(Insets.EMPTY);
+
+        // Return
+        return border;
+    }
 
     /**
      * Returns the fill of ChartPart.
      */
-    public Paint getFill()
-    {
-        // If explicitly set, just return
-        if (_fill != null) return _fill;
-
-        // Return default fill
-        return (Paint) getPropDefault(Fill_Prop);
-    }
+    public Paint getFill()  { return _fill; }
 
     /**
      * Sets the fill of ChartPart.
@@ -384,22 +361,9 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns whether the font is set.
-     */
-    public boolean isFontSet()  { return _font != null; }
-
-    /**
      * Returns the font of ChartPart.
      */
-    public Font getFont()
-    {
-        // If explicitly set, just return
-        if (_font != null) return _font;
-
-        // Get font from prop-default and return
-        Font font = (Font) getPropDefault(Font_Prop);
-        return font;
-    }
+    public Font getFont()  { return _font; }
 
     /**
      * Sets the ChartPart font.
@@ -528,33 +492,6 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns whether border is supported.
-     */
-    public boolean isBorderSupported()  { return true; }
-
-    /**
-     * Override to create border from line props.
-     */
-    private Border getBorderUsingLineProps()
-    {
-        double lineWidth = getLineWidth(); if (lineWidth <= 0) return null;
-        Color lineColor = getLineColor();
-        SnapUtils.printlnOnce(System.err, getClass().getSimpleName() + ".getBorder: Should probably call line prop methods instead");
-        return new Borders.LineBorder(lineColor, getLineStroke());
-    }
-
-    /**
-     * Override to set line props from border.
-     */
-    private void setBorderUsingLineProps(Border aBorder)
-    {
-        Color lineColor = aBorder != null ? aBorder.getColor() : null;
-        int lineWidth = aBorder != null ? (int) Math.round(aBorder.getWidth()) : 0;
-        setLineColor(lineColor); setLineWidth(lineWidth);
-        SnapUtils.printlnOnce(System.err, getClass().getSimpleName() + ".setBorder: Should probably call line prop methods instead");
-    }
-
-    /**
      * Override to register props.
      */
     @Override
@@ -566,18 +503,17 @@ public class ChartPart extends PropObject {
         // Name
         aPropSet.addPropNamed(Name_Prop, String.class, null);
 
-        // Border, Fill, Effect, Opacity
-        aPropSet.addPropNamed(Border_Prop, Border.class, DEFAULT_BORDER);
+        // LineColor, LineWidth, LineDash
+        aPropSet.addPropNamed(LineColor_Prop, Color.class, DEFAULT_LINE_COLOR);
+        aPropSet.addPropNamed(LineWidth_Prop, int.class, DEFAULT_LINE_WIDTH);
+        aPropSet.addPropNamed(LineDash_Prop, double[].class, DEFAULT_LINE_DASH);
+
+        // Fill, Effect, Opacity
         Prop fillProp = aPropSet.addPropNamed(Fill_Prop, Paint.class, DEFAULT_FILL);
         fillProp.setDefaultPropClass(Color.class);
         Prop effectProp = aPropSet.addPropNamed(Effect_Prop, Effect.class, DEFAULT_EFFECT);
         effectProp.setDefaultPropClass(ShadowEffect.class);
         aPropSet.addPropNamed(Opacity_Prop, double.class, DEFAULT_OPACTIY);
-
-        // LineColor, LineWidth, LineDash
-        aPropSet.addPropNamed(LineColor_Prop, Color.class, DEFAULT_LINE_COLOR);
-        aPropSet.addPropNamed(LineWidth_Prop, int.class, DEFAULT_LINE_WIDTH);
-        aPropSet.addPropNamed(LineDash_Prop, double[].class, DEFAULT_LINE_DASH);
 
         // Font, TextFill, TextFormat
         aPropSet.addPropNamed(Font_Prop, Font.class, DEFAULT_FONT);
@@ -605,16 +541,15 @@ public class ChartPart extends PropObject {
             // Name
             case Name_Prop: return getName();
 
-            // Border, Fill, Effect, Opacity
-            case Border_Prop: return getBorder();
-            case Fill_Prop: return getFill();
-            case Effect_Prop: return getEffect();
-            case Opacity_Prop: return getOpacity();
-
             // LineColor, LineWidth, LineDash
             case LineColor_Prop: return getLineColor();
             case LineWidth_Prop: return getLineWidth();
             case LineDash_Prop: return getLineDash();
+
+            // Fill, Effect, Opacity
+            case Fill_Prop: return getFill();
+            case Effect_Prop: return getEffect();
+            case Opacity_Prop: return getOpacity();
 
             // Font, TextFill, TextFormat
             case Font_Prop: return getFont();
@@ -644,16 +579,15 @@ public class ChartPart extends PropObject {
             // Name
             case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
 
-            // Border, Fill, Effect, Opacity
-            case Border_Prop: setBorder((Border) aValue); break;
-            case Fill_Prop: setFill((Paint) aValue); break;
-            case Effect_Prop: setEffect((Effect) aValue); break;
-            case Opacity_Prop: setOpacity(SnapUtils.doubleValue(aValue)); break;
-
             // LineColor, LineWidth, LineDash
             case LineColor_Prop: setLineColor((Color) aValue); break;
             case LineWidth_Prop: setLineWidth(SnapUtils.intValue(aValue)); break;
             case LineDash_Prop: setLineDash((double[]) aValue); break;
+
+            // Fill, Effect, Opacity
+            case Fill_Prop: setFill((Paint) aValue); break;
+            case Effect_Prop: setEffect((Effect) aValue); break;
+            case Opacity_Prop: setOpacity(SnapUtils.doubleValue(aValue)); break;
 
             // Font, TextFill, TextFormat
             case Font_Prop: setFont((Font) aValue); break;
@@ -669,20 +603,6 @@ public class ChartPart extends PropObject {
             // Handle super class properties (or unknown)
             default: System.err.println("ChartPart.setPropValue: Unknown prop: " + aPropName);
         }
-    }
-
-    /**
-     * Returns whether given prop is set to default.
-     */
-    @Override
-    public boolean isPropDefault(String aPropName)
-    {
-        // Border
-        if (aPropName == Border_Prop)
-            return _border == UNSET_BORDER;
-
-        // Do normal version
-        return super.isPropDefault(aPropName);
     }
 
     /**

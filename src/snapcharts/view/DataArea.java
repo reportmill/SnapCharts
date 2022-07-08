@@ -38,7 +38,9 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public DataArea(ChartHelper aChartHelper, Trace aTrace)
     {
         super();
-        //setCursor(Cursor.MOVE);
+
+        // Suppress border reset
+        _borderOverride = true;
 
         // Set ivars
         _chartHelper = aChartHelper;

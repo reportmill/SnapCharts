@@ -4,6 +4,7 @@
 package snapcharts.model;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.gfx.Paint;
 import snap.props.PropSet;
 
 /**
@@ -15,10 +16,10 @@ public class TagStyle extends ChartPart {
     private Trace  _trace;
 
     // Constants for property defaults
+    public static final Color DEFAULT_TAG_LINE_COLOR = Trace.DEFAULT_DYNAMIC_COLOR;
+    public static final int DEFAULT_TAG_LINE_WIDTH = 0;
+    public static final Color DEFAULT_TAG_FILL = Trace.DEFAULT_DYNAMIC_COLOR;
     public static final Font DEFAULT_TAG_FONT = Font.Arial10;
-    public static final Color DEFAULT_TAG_COLOR = null;
-    public static final Color DEFAULT_TAG_BORDER_COLOR = null;
-    public static final int DEFAULT_TAG_BORDER_WIDTH = 0;
 
     /**
      * Constructor.
@@ -27,6 +28,36 @@ public class TagStyle extends ChartPart {
     {
         super();
         _trace = aTrace;
+
+        // Set super default values
+        _lineWidth = DEFAULT_TAG_LINE_WIDTH;
+        _font = DEFAULT_TAG_FONT;
+
+        // Set defaults special: These are computed dynamic if not explicitly set
+        _lineColor = Trace.DEFAULT_DYNAMIC_COLOR;
+        _fill = Trace.DEFAULT_DYNAMIC_COLOR;
+    }
+
+    /**
+     * Override to dynamically get line color if not explicitly set.
+     */
+    @Override
+    public Color getLineColor()
+    {
+        if (_lineColor == Trace.DEFAULT_DYNAMIC_COLOR)
+            return _trace.getDefaultLineColor();
+        return super.getLineColor();
+    }
+
+    /**
+     * Override to dynamically get fill color if not explicitly set.
+     */
+    @Override
+    public Paint getFill()
+    {
+        if (_fill == Trace.DEFAULT_DYNAMIC_COLOR)
+            return getDefaultFill();
+        return super.getFill();
     }
 
     /**
@@ -40,12 +71,6 @@ public class TagStyle extends ChartPart {
     }
 
     /**
-     * Override to prevent client code from using border instead of line props.
-     */
-    @Override
-    public boolean isBorderSupported()  { return false; }
-
-    /**
      * Override to register props.
      */
     @Override
@@ -55,6 +80,7 @@ public class TagStyle extends ChartPart {
         super.initProps(aPropSet);
 
         // Override Font
+        aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_TAG_LINE_WIDTH);
         aPropSet.getPropForName(Font_Prop).setDefaultValue(DEFAULT_TAG_FONT);
     }
 
@@ -66,9 +92,9 @@ public class TagStyle extends ChartPart {
     {
         switch (aPropName) {
 
-            // Handle Fill, LineColor
-            case Fill_Prop: return getDefaultFill();
+            // Handle LineColor, Fill
             case LineColor_Prop: return _trace.getLineColor();
+            case Fill_Prop: return getDefaultFill();
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

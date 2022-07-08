@@ -320,15 +320,6 @@ public class Marker extends ChartPart {
     }
 
     /**
-     * Override so ChartPart will get/set Marker border from line properties.
-     */
-    @Override
-    public boolean isBorderSupported()
-    {
-        return false;
-    }
-
-    /**
      * Override to register props.
      */
     @Override

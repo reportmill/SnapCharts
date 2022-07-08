@@ -85,7 +85,7 @@ public class TraceLineStyleInsp extends ChartPartInsp {
 
         // Reset LineColorButton, LineColorResetButton
         setViewValue("LineColorButton", trace.getLineColor());
-        setViewVisible("LineColorResetButton", trace.isLineColorSet());
+        setViewVisible("LineColorResetButton", !trace.isPropDefault(Trace.LineColor_Prop));
 
         // Reset LineWidthText, LineWidthResetButton
         setViewValue("LineWidthText", trace.getLineWidth());

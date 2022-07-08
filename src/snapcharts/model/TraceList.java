@@ -4,8 +4,6 @@
 package snapcharts.model;
 import java.util.*;
 import java.util.stream.Stream;
-import snap.geom.Insets;
-import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.props.PropChange;
 import snap.props.PropChangeListener;
@@ -41,7 +39,8 @@ public class TraceList extends ChartPart {
     public static final String Traces_Prop = "Traces";
 
     // Constants for property defaults
-    public static final Border DEFAULT_BORDER = Border.createLineBorder(Color.GRAY, 1).copyForInsets(Insets.EMPTY);
+    public static final Color DEFAULT_CONTENT_LINE_COLOR = Color.GRAY;
+    public static final int DEFAULT_CONTENT_LINE_WIDTH = 1;
 
     /**
      * Constructor.
@@ -49,6 +48,10 @@ public class TraceList extends ChartPart {
     public TraceList()
     {
         super();
+
+        // Override default values
+        _lineColor = DEFAULT_CONTENT_LINE_COLOR;
+        _lineWidth = DEFAULT_CONTENT_LINE_WIDTH;
     }
 
     /**
@@ -338,8 +341,9 @@ public class TraceList extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Override super defaults: Border
-        aPropSet.getPropForName(Border_Prop).setDefaultValue(DEFAULT_BORDER);
+        // Override super defaults: LineColor, LineWidth
+        aPropSet.getPropForName(LineColor_Prop).setDefaultValue(DEFAULT_CONTENT_LINE_COLOR);
+        aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_CONTENT_LINE_WIDTH);
 
         // Traces
         aPropSet.addPropNamed(Traces_Prop, Trace[].class, EMPTY_OBJECT);

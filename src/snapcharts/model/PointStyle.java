@@ -3,6 +3,7 @@
  */
 package snapcharts.model;
 import snap.gfx.Color;
+import snap.gfx.Paint;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
 
@@ -41,9 +42,9 @@ public class PointStyle extends ChartPart {
 
     // Constants for property defaults
     public static final int DEFAULT_SYMBOL_SIZE = 8;
-    public static final Color DEFAULT_SYMBOL_FILL = null;
-    public static final Color DEFAULT_SYMBOL_BORDER_COLOR = null; //Color.BLACK;
-    public static final int DEFAULT_SYMBOL_BORDER_WIDTH = 0;
+    public static final Color DEFAULT_SYMBOL_LINE_COLOR = Trace.DEFAULT_DYNAMIC_COLOR;
+    public static final int DEFAULT_SYMBOL_LINE_WIDTH = 0;
+    public static final Color DEFAULT_SYMBOL_FILL = Trace.DEFAULT_DYNAMIC_COLOR;
     public static final int DEFAULT_POINT_SPACING = 0;
     public static final int DEFAULT_MAX_POINT_COUNT = 0;
     public static final int DEFAULT_SKIP_POINT_COUNT = 0;
@@ -55,6 +56,10 @@ public class PointStyle extends ChartPart {
     {
         super();
         _trace = aTrace;
+
+        // Set defaults special: These are computed dynamic if not explicitly set
+        _lineColor = Trace.DEFAULT_DYNAMIC_COLOR;
+        _fill = Trace.DEFAULT_DYNAMIC_COLOR;
     }
 
     /**
@@ -143,6 +148,28 @@ public class PointStyle extends ChartPart {
     }
 
     /**
+     * Override to dynamically get line color if not explicitly set.
+     */
+    @Override
+    public Color getLineColor()
+    {
+        if (_lineColor == Trace.DEFAULT_DYNAMIC_COLOR)
+            return getDefaultLineColor();
+        return super.getLineColor();
+    }
+
+    /**
+     * Override to dynamically get fill color if not explicitly set.
+     */
+    @Override
+    public Paint getFill()
+    {
+        if (_fill == Trace.DEFAULT_DYNAMIC_COLOR)
+            return getDefaultFill();
+        return super.getFill();
+    }
+
+    /**
      * Returns the default fill color.
      */
     private Color getDefaultLineColor()
@@ -153,18 +180,12 @@ public class PointStyle extends ChartPart {
     /**
      * Returns the default fill color.
      */
-    private Color getDefaultFillColor()
+    private Color getDefaultFill()
     {
-        if (getLineWidth() > 0 && !isLineColorSet())
+        if (getLineWidth() > 0 && _lineColor == Trace.DEFAULT_DYNAMIC_COLOR)
             return Color.WHITE;
         return _trace.getDefaultLineColor();
     }
-
-    /**
-     * Override to prevent client code from using border instead of line props.
-     */
-    @Override
-    public boolean isBorderSupported()  { return false; }
 
     /**
      * Override to register props.
@@ -241,7 +262,7 @@ public class PointStyle extends ChartPart {
 
             // Override LineColor, Fill
             case LineColor_Prop: return getDefaultLineColor();
-            case Fill_Prop: return getDefaultFillColor();
+            case Fill_Prop: return getDefaultFill();
 
             // Do normal version
             default: return super.getPropDefault(aPropName);

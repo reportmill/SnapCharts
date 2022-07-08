@@ -91,8 +91,8 @@ public class GridPainter {
         axisView = anAxisView;
         axis = axisView.getAxis();
         axisIsLog = axis.isLog();
-        axisLineColor = axis.getLineColor();
-        axisLineStroke = axis.getLineStroke();
+        axisLineColor = Axis.DEFAULT_AXIS_LINE_COLOR;
+        axisLineStroke = Axis.DEFAULT_AXIS_LINE_STROKE;
         isShowGrid = axis.isShowGrid();
         gridColor = axis.getGridColor();
         gridStroke = axis.getGridStroke();

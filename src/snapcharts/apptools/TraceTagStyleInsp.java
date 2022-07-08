@@ -85,17 +85,17 @@ public class TraceTagStyleInsp extends ChartPartInsp {
         // Reset TagColorButton, TagColorResetButton
         Color tagColor = tagStyle.getFillColor();
         setViewValue("TagColorButton", tagColor);
-        setViewVisible("TagColorResetButton", tagStyle.isFillSet());
+        setViewVisible("TagColorResetButton", !tagStyle.isPropDefault(TagStyle.Fill_Prop));
 
         // Reset TagBorderColorButton, TagBorderColorResetButton
         Color tagLineColor = tagStyle.getLineColor();
         setViewValue("TagBorderColorButton", tagLineColor);
-        setViewVisible("TagBorderColorResetButton", tagStyle.isLineColorSet());
+        setViewVisible("TagBorderColorResetButton", !tagStyle.isPropDefault(TagStyle.LineColor_Prop));
 
         // Reset TagBorderWidthText, TagBorderWidthResetButton
         double tagLineWidth = tagStyle.getLineWidth();
         setViewValue("TagBorderWidthText", tagLineWidth);
-        setViewVisible("TagBorderWidthResetButton", tagLineWidth != TagStyle.DEFAULT_TAG_BORDER_WIDTH);
+        setViewVisible("TagBorderWidthResetButton", tagLineWidth != TagStyle.DEFAULT_TAG_LINE_WIDTH);
 
         // Reset TickFormatText
         NumberFormat numFormat = NumberFormat.getFormatOrDefault(tagStyle.getTextFormat());
@@ -150,7 +150,7 @@ public class TraceTagStyleInsp extends ChartPartInsp {
             tagStyle.setFill(color);
         }
         if (anEvent.equals("TagColorResetButton"))
-            tagStyle.setFill(TagStyle.DEFAULT_TAG_COLOR);
+            tagStyle.setFill(TagStyle.DEFAULT_TAG_FILL);
 
         // Handle TagBorderColorButton, TagBorderColorResetButton
         if (anEvent.equals("TagBorderColorButton")) {
@@ -158,7 +158,7 @@ public class TraceTagStyleInsp extends ChartPartInsp {
             tagStyle.setLineColor(color);
         }
         if (anEvent.equals("TagBorderColorResetButton"))
-            tagStyle.setLineColor(TagStyle.DEFAULT_TAG_BORDER_COLOR);
+            tagStyle.setLineColor(TagStyle.DEFAULT_TAG_LINE_COLOR);
 
         // Handle TagBorderWidthText, TagBorderWidthAdd1Button, TagBorderWidthSub1Button, TagBorderWidthResetButton
         if (anEvent.equals("TagBorderWidthText"))
@@ -168,7 +168,7 @@ public class TraceTagStyleInsp extends ChartPartInsp {
         if (anEvent.equals("TagBorderWidthSub1Button"))
             tagStyle.setLineWidth(Math.max(tagStyle.getLineWidth() - 1, 0));
         if (anEvent.equals("TagBorderWidthResetButton"))
-            tagStyle.setLineWidth(TagStyle.DEFAULT_TAG_BORDER_WIDTH);
+            tagStyle.setLineWidth(TagStyle.DEFAULT_TAG_LINE_WIDTH);
 
         // Handle TickFormatText
         if (anEvent.equals("TickFormatText")) {

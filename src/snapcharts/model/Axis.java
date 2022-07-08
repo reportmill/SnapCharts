@@ -154,11 +154,13 @@ public abstract class Axis extends ChartPart {
     public static final boolean  DEFAULT_TICK_LABEL_AUTO_ROTATE = true;
 
     // Constants for default overrides
-    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
-    public static final int  DEFAULT_AXIS_LINE_WIDTH = 1;
     public static final Pos  DEFAULT_AXIS_ALIGN = Pos.CENTER;
     protected static Color  DEFAULT_AXIS_TEXT_FILL = Color.DARKGRAY;
     public static final NumberFormat  DEFAULT_AXIS_TEXT_FORMAT = new NumberFormat(null, ExpStyle.Financial);
+
+    // Constants for AxisLine
+    public static final Color  DEFAULT_AXIS_LINE_COLOR = Color.DARKGRAY;
+    public static final Stroke  DEFAULT_AXIS_LINE_STROKE = Stroke.Stroke1;
 
     // Constants for layout
     protected static final int DEFAULT_AXIS_PAD = 5;
@@ -179,8 +181,6 @@ public abstract class Axis extends ChartPart {
         super();
 
         // Override default property values
-        _lineColor = DEFAULT_AXIS_LINE_COLOR;
-        _lineWidth = DEFAULT_AXIS_LINE_WIDTH;
         _textFill = DEFAULT_AXIS_TEXT_FILL;
         _align = DEFAULT_AXIS_ALIGN;
         _spacing = DEFAULT_AXIS_SPACING;
@@ -626,9 +626,7 @@ public abstract class Axis extends ChartPart {
         // Do normal version
         super.initProps(aPropSet);
 
-        // Override super defaults: LineWidth, LineColor, TextFill, TextFormat, Align, Spacing
-        aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_AXIS_LINE_WIDTH);
-        aPropSet.getPropForName(LineColor_Prop).setDefaultValue(DEFAULT_AXIS_LINE_COLOR);
+        // Override super defaults: TextFill, TextFormat, Align, Spacing
         aPropSet.getPropForName(TextFill_Prop).setDefaultValue(DEFAULT_AXIS_TEXT_FILL);
         aPropSet.getPropForName(TextFormat_Prop).setDefaultValue(DEFAULT_AXIS_TEXT_FORMAT);
         aPropSet.getPropForName(Align_Prop).setDefaultValue(DEFAULT_AXIS_ALIGN);

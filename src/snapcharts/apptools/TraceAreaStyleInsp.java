@@ -71,7 +71,7 @@ public class TraceAreaStyleInsp extends ChartPartInsp {
 
         // Reset FillColorButton, FillColorResetButton
         setViewValue("FillColorButton", trace.getFillColor());
-        setViewVisible("FillColorResetButton", trace.isFillSet());
+        setViewVisible("FillColorResetButton", !trace.isPropDefault(Trace.Fill_Prop));
 
         // Reset FillModeComboBox
         setViewSelItem("FillModeComboBox", trace.getFillMode());

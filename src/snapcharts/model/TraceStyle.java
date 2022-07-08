@@ -15,10 +15,4 @@ public class TraceStyle extends ChartPart {
     {
         super();
     }
-
-    /**
-     * Override to prevent client code from using border instead of line props.
-     */
-    @Override
-    public boolean isBorderSupported()  { return false; }
 }

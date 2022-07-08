@@ -22,7 +22,7 @@ public class MarkerToolPencil extends MarkerTool {
     private Path2D  _path;
 
     // Constants for defaults
-    private static final Color DEFAULT_COLOR = Color.RED;
+    private static final Color DEFAULT_LINE_COLOR = Color.RED;
     private static final Stroke DEFAULT_STROKE = Stroke.getStroke(5);
 
     /**
@@ -86,7 +86,8 @@ public class MarkerToolPencil extends MarkerTool {
         Marker marker = new Marker();
         marker.setName(getDefaultMarkerName(chart));
         marker.setSVG(svgText);
-        marker.setBorder(DEFAULT_COLOR, DEFAULT_STROKE.getWidth());
+        marker.setLineColor(DEFAULT_LINE_COLOR);
+        marker.setLineWidth((int) DEFAULT_STROKE.getWidth());
 
         // Set Marker bounds in ChartView coords
         marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
@@ -109,7 +110,7 @@ public class MarkerToolPencil extends MarkerTool {
         if (_path == null)
             return;
 
-        aPntr.setColor(DEFAULT_COLOR);
+        aPntr.setColor(DEFAULT_LINE_COLOR);
         aPntr.setStroke(DEFAULT_STROKE);
         aPntr.draw(_path);
     }

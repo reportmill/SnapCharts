@@ -1,6 +1,8 @@
 package snapcharts.view;
 import snap.geom.Point;
 import snap.geom.Pos;
+import snap.gfx.Border;
+import snap.gfx.Effect;
 import snap.view.ParentView;
 import snap.view.View;
 import snap.view.ViewEvent;
@@ -13,6 +15,9 @@ public class ChartPartView<T extends ChartPart> extends ParentView {
 
     // The ChartPart
     protected T  _chartPart;
+
+    // Whether various properties have been overridden
+    protected boolean  _borderOverride, _effectOverride;
 
     /**
      * Constructor.
@@ -151,34 +156,45 @@ public class ChartPartView<T extends ChartPart> extends ParentView {
         // Get ChartPart
         ChartPart chartPart = getChartPart();
 
-        // Update Border, Fill, Effect, Font
-        if (isResetProp(ChartPart.Border_Prop))
-            setBorder(chartPart.getBorder());
-        if (isResetProp(ChartPart.Fill_Prop))
-            setFill(chartPart.getFill());
-        if (isResetProp(ChartPart.Effect_Prop))
-            setEffect(chartPart.getEffect());
-        if (isResetProp(ChartPart.Opacity_Prop))
-            setOpacity(chartPart.getOpacity());
-        if (isResetProp(ChartPart.Font_Prop))
-            setFont(chartPart.getFont());
+        // Update Border (if no override)
+        if (!_borderOverride)
+            super.setBorder(chartPart.getBorder());
+
+        // Update Fill
+        setFill(chartPart.getFill());
+
+        // Update Effect (if no override)
+        if (!_effectOverride)
+            super.setEffect(chartPart.getEffect());
+
+        // Update Opacity, Font
+        setOpacity(chartPart.getOpacity());
+        setFont(chartPart.getFont());
 
         // Update Align, Margin, Padding, Spacing
-        if (isResetProp(ChartPart.Align_Prop))
-            setAlign(chartPart.getAlign());
-        if (isResetProp(ChartPart.Margin_Prop))
-            setMargin(chartPart.getMargin());
-        if (isResetProp(ChartPart.Padding_Prop))
-            setPadding(chartPart.getPadding());
-        if (isResetProp(ChartPart.Spacing_Prop))
-            setSpacing(chartPart.getSpacing());
+        setAlign(chartPart.getAlign());
+        setMargin(chartPart.getMargin());
+        setPadding(chartPart.getPadding());
+        setSpacing(chartPart.getSpacing());
     }
 
     /**
-     * Returns whether a given property should be updated.
+     * Override to detect override.
      */
-    protected boolean isResetProp(String aPropName)
+    @Override
+    public void setBorder(Border aBorder)
     {
-        return true;
+        super.setBorder(aBorder);
+        _borderOverride = aBorder != null;
+    }
+
+    /**
+     * Override to detect override.
+     */
+    @Override
+    public void setEffect(Effect anEff)
+    {
+        super.setEffect(anEff);
+        _effectOverride = anEff != null;
     }
 }

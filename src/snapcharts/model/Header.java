@@ -26,9 +26,9 @@ public class Header extends ChartPart {
     public static final String Subtitle_Prop = "Subtitle";
 
     // Constants for defaults
+    public static final Font DEFAULT_HEADER_FONT = Font.Arial14.getBold();
     public static final Insets  DEFAULT_HEADER_MARGIN = new Insets(0, 0, 8, 0);
     public static final double  DEFAULT_HEADER_SPACING = 2;
-    public static final Font  DEFAULT_TITLE_FONT = Font.Arial14.getBold();
 
     /**
      * Constructor.
@@ -38,6 +38,7 @@ public class Header extends ChartPart {
         super();
 
         // Override defaults
+        _font = DEFAULT_HEADER_FONT;
         _margin = DEFAULT_HEADER_MARGIN;
         _spacing = DEFAULT_HEADER_SPACING;
     }
@@ -102,7 +103,7 @@ public class Header extends ChartPart {
         super.initProps(aPropSet);
 
         // Override Font, Margin, Spacing
-        aPropSet.getPropForName(Font_Prop).setDefaultValue(DEFAULT_TITLE_FONT);
+        aPropSet.getPropForName(Font_Prop).setDefaultValue(DEFAULT_HEADER_FONT);
         aPropSet.getPropForName(Margin_Prop).setDefaultValue(DEFAULT_HEADER_MARGIN);
         aPropSet.getPropForName(Spacing_Prop).setDefaultValue(DEFAULT_HEADER_SPACING);
 

@@ -75,12 +75,12 @@ public class ContentStyleInsp extends ChartPartInsp {
         // Reset BorderColorButton, BorderColorResetButton
         Color borderColor = border != null ? border.getColor() : null;
         setViewValue("BorderColorButton", borderColor);
-        setViewVisible("BorderColorResetButton", !Objects.equals(borderColor, TraceList.DEFAULT_BORDER.getColor()));
+        setViewVisible("BorderColorResetButton", !traceList.isPropDefault(ChartPart.LineColor_Prop));
 
         // Reset BorderWidthText, BorderWidthResetButton
         double borderWidth = border != null ? border.getWidth() : 0;
         setViewValue("BorderWidthText", borderWidth);
-        setViewVisible("BorderWidthResetButton", borderWidth != TraceList.DEFAULT_BORDER.getWidth());
+        setViewVisible("BorderWidthResetButton", !traceList.isPropDefault(ChartPart.LineWidth_Prop));
 
         // Reset ShowFillCheckBox
         Paint fill = traceList.getFill();
@@ -90,7 +90,7 @@ public class ContentStyleInsp extends ChartPartInsp {
         // Reset FillColorButton, FillColorResetButton
         Color fillColor = fill != null ? fill.getColor() : null;
         setViewValue("FillColorButton", fillColor);
-        setViewVisible("FillColorResetButton", !Objects.equals(fill, ChartPart.DEFAULT_FILL));
+        setViewVisible("FillColorResetButton", !traceList.isPropDefault(ChartPart.Fill_Prop));
     }
 
     /**
@@ -110,7 +110,8 @@ public class ContentStyleInsp extends ChartPartInsp {
 
         // Get Border (and non-null/default version if needed)
         Border border = traceList.getBorder();
-        Border borderNonNull = border != null ? border : TraceList.DEFAULT_BORDER;
+        Border borderNonNull = border != null ? border :
+                Border.createLineBorder(TraceList.DEFAULT_CONTENT_LINE_COLOR, TraceList.DEFAULT_CONTENT_LINE_WIDTH);
 
         // Handle ShowBorderCheckBox
         if (anEvent.equals("ShowBorderCheckBox")) {
@@ -144,7 +145,7 @@ public class ContentStyleInsp extends ChartPartInsp {
             traceList.setBorder(border2);
         }
         if (anEvent.equals("BorderColorResetButton")) {
-            Border border2 = borderNonNull.copyForColor(TraceList.DEFAULT_BORDER.getColor());
+            Border border2 = borderNonNull.copyForColor(TraceList.DEFAULT_LINE_COLOR);
             traceList.setBorder(border2);
         }
 
