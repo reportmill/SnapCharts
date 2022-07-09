@@ -218,7 +218,7 @@ public abstract class DataArea3D extends DataArea {
         // If already set, just return
         if (_axisBoxPrefWidth > 0) return _axisBoxPrefWidth;
 
-        // Get Scene (3D chart info) and DataView size
+        // Get Scene (3D chart info) and ContentView size
         Chart chart = getChart();
         Scene scene = chart.getScene();
         double viewW = getWidth();
@@ -242,7 +242,7 @@ public abstract class DataArea3D extends DataArea {
         // If already set, just return
         if (_axisBoxPrefHeight > 0) return _axisBoxPrefHeight;
 
-        // Get Scene (3D chart info) and DataView size
+        // Get Scene (3D chart info) and ContentView size
         Chart chart = getChart();
         Scene scene = chart.getScene();
         double viewW = getWidth();
@@ -262,7 +262,7 @@ public abstract class DataArea3D extends DataArea {
         // If already set, just return
         if (_axisBoxPrefDepth > 0) return _axisBoxPrefDepth;
 
-        // Get Scene (3D chart info) and DataView size
+        // Get Scene (3D chart info) and ContentView size
         Chart chart = getChart();
         Scene scene = chart.getScene();
         double viewW = getWidth();
@@ -760,7 +760,7 @@ public abstract class DataArea3D extends DataArea {
 
         // Handle Trace changes: Rebuild scene
         Object source = aPC.getSource();
-        if (source instanceof Trace || source instanceof TraceList)
+        if (source instanceof Trace || source instanceof Content)
             rebuildChart();
 
         // If Chart.Scene change, rebuild scene

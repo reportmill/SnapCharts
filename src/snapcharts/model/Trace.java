@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class Trace extends ChartPart {
     
-    // The index in parent TraceList
+    // The index in parent Content
     protected int  _index;
 
     // Whether to show line
@@ -157,7 +157,7 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the index in TraceList.
+     * Returns the index in Content.
      */
     public int getIndex()  { return _index; }
 

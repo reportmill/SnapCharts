@@ -157,7 +157,7 @@ public class ChartPaneSel {
         ChartPartView targView = getTargView();
         if (targView != null && targView.isMovable())
             return Cursor.MOVE;
-        if (targView instanceof DataView)
+        if (targView instanceof ContentView)
             return Cursor.MOVE;
         return null;
     }
@@ -325,8 +325,8 @@ public class ChartPaneSel {
         // Get the ChartPartView at XY
         ChartPartView hitView = getChartPartViewForXY(aX, aY);
 
-        // Handle DataView special: If TargDataPoint, return TracePoint.Trace
-        if (hitView instanceof DataView) {
+        // Handle ContentView special: If TargDataPoint, return TracePoint.Trace
+        if (hitView instanceof ContentView) {
             TracePoint dataPoint = _chartView.getTargDataPoint();
             if (dataPoint != null)
                 return dataPoint.getTrace();
@@ -397,7 +397,7 @@ public class ChartPaneSel {
     private boolean isSelectableView(View aView)
     {
         return aView instanceof HeaderView || aView instanceof AxisView || aView instanceof ContourAxisView ||
-                aView instanceof DataView || aView instanceof LegendView || aView instanceof MarkerView;
+                aView instanceof ContentView || aView instanceof LegendView || aView instanceof MarkerView;
     }
 
     /**
@@ -443,7 +443,7 @@ public class ChartPaneSel {
             selViewBounds = selViewBounds.getInsetRect(-20, 0);
         if (selView instanceof AxisViewY)
             selViewBounds = selViewBounds.getInsetRect(0, -20);
-        int inset = selView.getBorder() != null || selView.getFill() != null || selView instanceof DataView ? -3 : -1;
+        int inset = selView.getBorder() != null || selView.getFill() != null || selView instanceof ContentView ? -3 : -1;
         selViewBounds = selViewBounds.getInsetRect(inset);
 
         // Get SelView bounds as RoundRect shape in HostView coords
@@ -516,7 +516,7 @@ public class ChartPaneSel {
             targViewBounds = targViewBounds.getInsetRect(-20, 0);
         if (targView instanceof AxisViewY)
             targViewBounds = targViewBounds.getInsetRect(0, -20);
-        int inset = targView.getBorder() != null || targView.getFill() != null || targView instanceof DataView ? -3 : -1;
+        int inset = targView.getBorder() != null || targView.getFill() != null || targView instanceof ContentView ? -3 : -1;
         targViewBounds = targViewBounds.getInsetRect(inset);
 
         // Get TargView bounds as RoundRect shape in HostView coords

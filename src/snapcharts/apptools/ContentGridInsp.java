@@ -10,14 +10,14 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.Axis;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
-import snapcharts.model.TraceList;
+import snapcharts.model.Content;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import java.util.Objects;
 
 /**
- * This class manages UI to edit DataView. Though many of the properties are really for Axis.
+ * This class manages UI to edit Chart.Content. Though many of the properties are really for Axis.
  */
 public class ContentGridInsp extends ChartPartInsp {
 
@@ -42,8 +42,8 @@ public class ContentGridInsp extends ChartPartInsp {
     public ChartPart getChartPart()
     {
         Chart chart = getChart();
-        TraceList traceList = chart.getTraceList();
-        return traceList;
+        Content content = chart.getContent();
+        return content;
     }
 
     /**

@@ -46,8 +46,8 @@ public class Chart extends ParentPart {
     // The ContourAxis
     private ContourAxis  _contourAxis;
 
-    // The TraceList
-    private TraceList  _traceList;
+    // The Content
+    private Content  _content;
 
     // The Legend
     private Legend  _legend;
@@ -77,7 +77,7 @@ public class Chart extends ParentPart {
     public static final String Legend_Prop = "Legend";
     public static final String Scene_Prop = "Scene";
     public static final String Markers_Prop = "Markers";
-    public static final String TraceList_Prop = "TraceList";
+    public static final String Content_Prop = "Content";
 
     // Constants for property defaults
     public static final ChartType  DEFAULT_TYPE = ChartType.SCATTER;
@@ -113,11 +113,11 @@ public class Chart extends ParentPart {
         // Create/set Scene
         _scene = new Scene();
 
-        // Create/set TraceList
-        _traceList = new TraceList();
+        // Create/set Content
+        _content = new Content();
 
         // Add children
-        ChartPart[] children = { _header, _axisX, _axisY, _axisY2, _axisY3, _axisY4, _axisZ, _contourAxis, _legend, _scene, _traceList };
+        ChartPart[] children = { _header, _axisX, _axisY, _axisY2, _axisY3, _axisY4, _axisZ, _contourAxis, _legend, _scene, _content};
         for (ChartPart child : children)
             addChild(child);
     }
@@ -304,16 +304,16 @@ public class Chart extends ParentPart {
     }
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    public TraceList getTraceList()  { return _traceList; }
+    public Content getContent()  { return _content; }
 
     /**
      * Adds a new Trace.
      */
     public void addTrace(Trace aTrace)
     {
-        _traceList.addTrace(aTrace);
+        _content.addTrace(aTrace);
     }
 
     /**
@@ -385,8 +385,8 @@ public class Chart extends ParentPart {
         aPropSet.addPropNamed(Scene_Prop, Scene.class, EMPTY_OBJECT);
         aPropSet.addPropNamed(Markers_Prop, Marker[].class, EMPTY_OBJECT);
 
-        // TraceList
-        aPropSet.addPropNamed(TraceList_Prop, TraceList.class, EMPTY_OBJECT);
+        // Content
+        aPropSet.addPropNamed(Content_Prop, Content.class, EMPTY_OBJECT);
 
         // Set all above ChartPart props preexisting, so they will be used in place during unarchival
         Prop[] props = aPropSet.getProps();
@@ -425,8 +425,8 @@ public class Chart extends ParentPart {
             case Scene_Prop: return getScene();
             case Markers_Prop: return getMarkers();
 
-            // TraceList
-            case TraceList_Prop: return getTraceList();
+            // Content
+            case Content_Prop: return getContent();
 
             // Do normal version
             default: return super.getPropValue(aPropName);

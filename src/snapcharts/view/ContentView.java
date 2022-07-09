@@ -10,9 +10,9 @@ import snapcharts.model.*;
 import java.util.Objects;
 
 /**
- * A class to display data (via DataArea).
+ * A class to display Chart.Content (via DataArea).
  */
-public class DataView extends ChartPartView<TraceList> {
+public class ContentView extends ChartPartView<Content> {
 
     // The ChartView
     private ChartView  _chartView;
@@ -29,7 +29,7 @@ public class DataView extends ChartPartView<TraceList> {
     /**
      * Constructor.
      */
-    public DataView(ChartView aChartView)
+    public ContentView(ChartView aChartView)
     {
         _chartView = aChartView;
 
@@ -44,9 +44,9 @@ public class DataView extends ChartPartView<TraceList> {
     /**
      * Returns the ChartPart.
      */
-    public TraceList getChartPart()
+    public Content getChartPart()
     {
-        return getTraceList();
+        return getContent();
     }
 
     /**
@@ -79,7 +79,7 @@ public class DataView extends ChartPartView<TraceList> {
         // Add DataAreas as children
         for (DataArea dataArea : _dataAreas) {
             addChild(dataArea);
-            dataArea.setDataView(this);
+            dataArea.setContentView(this);
         }
     }
 
@@ -176,7 +176,7 @@ public class DataView extends ChartPartView<TraceList> {
             AxisType axisTypeX = marker.getCoordSpaceX().getAxisType();
             AxisType axisTypeY = marker.getCoordSpaceY().getAxisType();
 
-            // If either set of marker coords in Axis space, clip to DataView bounds
+            // If either set of marker coords in Axis space, clip to ContentView bounds
             if (axisTypeX != null || axisTypeY != null) {
                 double clipX = axisTypeX != null ? 0 : -getX();
                 double clipY = axisTypeY != null ? 0 : -getY();
@@ -185,7 +185,7 @@ public class DataView extends ChartPartView<TraceList> {
                 aPntr.clipRect(clipX, clipY, clipW, clipH);
             }
 
-            // Translate paint space to marker origin in DataView coords
+            // Translate paint space to marker origin in ContentView coords
             double markerX = markerView.getX() - getX();
             double markerY = markerView.getY() - getY();
             aPntr.translate(markerX, markerY);
@@ -253,7 +253,7 @@ public class DataView extends ChartPartView<TraceList> {
     {
         if (aValue==getWidth()) return;
         super.setWidth(aValue);
-        _chartHelper.dataViewSizeDidChange();
+        _chartHelper.contentViewSizeDidChange();
     }
 
     /**
@@ -264,7 +264,7 @@ public class DataView extends ChartPartView<TraceList> {
     {
         if (aValue==getHeight()) return;
         super.setHeight(aValue);
-        _chartHelper.dataViewSizeDidChange();
+        _chartHelper.contentViewSizeDidChange();
     }
 
     /**

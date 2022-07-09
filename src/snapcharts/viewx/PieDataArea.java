@@ -12,7 +12,7 @@ import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataArea;
-import snapcharts.view.DataView;
+import snapcharts.view.ContentView;
 
 /**
  * A DataArea subclass to display the contents of pie chart.
@@ -61,11 +61,11 @@ public class PieDataArea extends DataArea {
     }
 
     /**
-     * Sets the DataView.
+     * Sets the ContentView.
      */
-    protected void setDataView(DataView aDataView)
+    protected void setContentView(ContentView aContentView)
     {
-        super.setDataView(aDataView);
+        super.setContentView(aContentView);
         getChartView().addPropChangeListener(pc -> selDataPointChanged(pc), ChartView.SelDataPoint_Prop);
     }
 
@@ -256,7 +256,7 @@ public class PieDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList) {
+        if (src instanceof Trace || src instanceof Content) {
             clearWedges();
         }
     }

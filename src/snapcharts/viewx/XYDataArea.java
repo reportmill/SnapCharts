@@ -8,7 +8,7 @@ import snap.props.PropChange;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
-import snapcharts.view.DataView;
+import snapcharts.view.ContentView;
 
 /**
  * A DataArea subclass to display common XY ChartTypes: LINE, AREA, SCATTER.
@@ -268,14 +268,14 @@ public class XYDataArea extends DataArea {
         Trace trace = getTrace();
         boolean showPointsOrArea = trace.isShowPoints() || trace.isShowArea();
         if (showPointsOrArea || getTrace().isDisabled())
-            return DataView.DEFAULT_REVEAL_TIME;
+            return ContentView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time
         double maxLen = getDataLineShapeArcLength();
         double factor = Math.max(1, Math.min(maxLen / 500, 2));
 
         // Return default time times factor
-        return (int) Math.round(factor * DataView.DEFAULT_REVEAL_TIME);
+        return (int) Math.round(factor * ContentView.DEFAULT_REVEAL_TIME);
     }
 
     /**
@@ -303,13 +303,13 @@ public class XYDataArea extends DataArea {
     }
 
     /**
-     * Called when DataView changes size.
+     * Called when ContentView changes size.
      */
     @Override
-    protected void dataViewDidChangeSize()
+    protected void contentViewDidChangeSize()
     {
         // Do normal version
-        super.dataViewDidChangeSize();
+        super.contentViewDidChangeSize();
 
         // Clear DataPath
         clearDataPath();

@@ -50,8 +50,8 @@ public class PolarChartHelper extends ChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         DataArea[] dataAreas = new DataArea[traceCount];
@@ -72,9 +72,9 @@ public class PolarChartHelper extends ChartHelper {
         if (_polarBounds!=null) return _polarBounds;
 
         // Calc polar rect
-        DataView dataView = getDataView();
-        double viewW = dataView.getWidth();
-        double viewH = dataView.getHeight();
+        ContentView contentView = getContentView();
+        double viewW = contentView.getWidth();
+        double viewH = contentView.getHeight();
         double areaX = 0;
         double areaY = 0;
         double areaW = viewW;
@@ -245,15 +245,15 @@ public class PolarChartHelper extends ChartHelper {
         // If already set, just return
         if (_radiusMinMax != null) return _radiusMinMax;
 
-        // Get TraceList (if empty, just return silly range)
-        TraceList traceList = getTraceList();
-        if (traceList.getTraceCount()==0 || traceList.getPointCount()==0)
+        // Get Content (if empty, just return silly range)
+        Content content = getContent();
+        if (content.getTraceCount()==0 || content.getPointCount()==0)
             return new MinMax(0, 5);
 
         // Get Radius MinMax for all traces
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        Trace[] traces = traceList.getEnabledTraces();
+        Trace[] traces = content.getEnabledTraces();
         for (Trace trace : traces) {
             DataSet dataSet = trace.getProcessedData();
             NumberArray dataArrayR = dataSet.getNumberArrayForChannel(DataChan.R);
@@ -285,9 +285,9 @@ public class PolarChartHelper extends ChartHelper {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle Trace/TraceList change
+        // Handle Trace/Content change
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof Axis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof Axis) {
             _radiusMinMax = null;
         }
     }
@@ -296,10 +296,10 @@ public class PolarChartHelper extends ChartHelper {
      * Override to clear PolarBounds.
      */
     @Override
-    protected void dataViewSizeDidChange()
+    protected void contentViewSizeDidChange()
     {
         // Do normal version
-        super.dataViewSizeDidChange();
+        super.contentViewSizeDidChange();
 
         // Clear PolarBounds
         _polarBounds = null;

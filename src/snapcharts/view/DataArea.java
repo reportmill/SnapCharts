@@ -17,8 +17,8 @@ public abstract class DataArea extends ChartPartView<Trace> {
     // The ChartHelper
     protected ChartHelper  _chartHelper;
 
-    // The DataView that holds this DataArea
-    protected DataView  _dataView;
+    // The ContentView that holds this DataArea
+    protected ContentView  _contentView;
 
     // The Trace
     private Trace  _trace;
@@ -79,11 +79,11 @@ public abstract class DataArea extends ChartPartView<Trace> {
     public AxisType getAxisTypeY()  { return _axisTypeY; }
 
     /**
-     * Sets the DataView.
+     * Sets the ContentView.
      */
-    protected void setDataView(DataView aDataView)
+    protected void setContentView(ContentView aContentView)
     {
-        _dataView = aDataView;
+        _contentView = aContentView;
     }
 
     /**
@@ -112,11 +112,11 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
-     * Returns the TraceList of active data sets.
+     * Returns the Content of active data sets.
      */
-    public TraceList getTraceList()
+    public Content getContent()
     {
-        return _chartHelper.getTraceList();
+        return _chartHelper.getContent();
     }
 
     /**
@@ -374,7 +374,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     /**
      * Return the ratio of the portion of chart to paint.
      */
-    public double getReveal()  { return _dataView!=null ? _dataView.getReveal() : 1; }
+    public double getReveal()  { return _contentView !=null ? _contentView.getReveal() : 1; }
 
     /**
      * Sets the ratio of the portion of chart to paint.
@@ -384,7 +384,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     /**
      * Returns the time in milliseconds recommended for animation.
      */
-    protected int getRevealTime()  { return DataView.DEFAULT_REVEAL_TIME; }
+    protected int getRevealTime()  { return ContentView.DEFAULT_REVEAL_TIME; }
 
     /**
      * Converts a point from data coords to view coords.
@@ -441,7 +441,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     protected void paintDataArea(Painter aPntr)  { }
 
     /**
-     * Paints the DataArea above all DataView.DataAreas.paintDataArea() painting.
+     * Paints the DataArea above all ContentView.DataAreas.paintDataArea() painting.
      */
     protected void paintDataAreaAbove(Painter aPntr)
     {
@@ -543,9 +543,9 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
-     * Called when DataView changes size.
+     * Called when ContentView changes size.
      */
-    protected void dataViewDidChangeSize()
+    protected void contentViewDidChangeSize()
     {
         clearDisplayData();
     }

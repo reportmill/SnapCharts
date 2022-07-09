@@ -20,7 +20,7 @@ public class PolarContourChartHelper extends PolarChartHelper {
         super(aChartView);
 
         // This is bogus
-        Trace[] traces = aChartView.getTraceList().getTraces();
+        Trace[] traces = aChartView.getContent().getTraces();
         for (Trace trace : traces) {
             TraceStyle traceStyle = trace.getTraceStyle();
             if (traceStyle instanceof ContourStyle) {
@@ -49,8 +49,8 @@ public class PolarContourChartHelper extends PolarChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         DataArea[] dataAreas = new DataArea[traceCount];
@@ -71,9 +71,9 @@ public class PolarContourChartHelper extends PolarChartHelper {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle Trace/TraceList change
+        // Handle Trace/Content change
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof TraceStyle || src instanceof ContourAxis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof TraceStyle || src instanceof ContourAxis) {
             _contourHelper.resetCachedValues();
         }
     }

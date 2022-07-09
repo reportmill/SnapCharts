@@ -2,7 +2,6 @@ package snapcharts.util;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartType;
 import snapcharts.model.Trace;
-import snapcharts.model.TraceStyle;
 
 /**
  * Utility methods for Chart.
@@ -18,7 +17,7 @@ public class ChartUtils {
     public static ScatterType getScatterType(Chart aChart)
     {
         // Get Traces (if none, just return LINE)
-        Trace[] traces = aChart.getTraceList().getTraces();
+        Trace[] traces = aChart.getContent().getTraces();
         if (traces.length == 0)
             return ScatterType.LINE;
 
@@ -64,7 +63,7 @@ public class ChartUtils {
         aChart.setType(ChartType.SCATTER);
 
         // Configure Traces
-        Trace[] traces = aChart.getTraceList().getTraces();
+        Trace[] traces = aChart.getContent().getTraces();
         for (Trace trace : traces) {
             trace.setShowLine(isLine || isArea || isStackedArea);
             trace.setShowArea(isArea || isStackedArea);

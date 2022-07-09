@@ -158,12 +158,12 @@ public class LegendView extends ChartPartView<Legend> {
         Legend legend = getLegend();
         Point userXY = legend.getUserXY();
 
-        // If defined, convert from DataView fractional to ChartView coords for current ChartView size
+        // If defined, convert from ContentView fractional to ChartView coords for current ChartView size
         if (userXY != null) {
             ChartView chartView = getChartView();
-            DataView dataView = chartView.getDataView();
-            double dispX = Math.round(userXY.x * dataView.getWidth() + dataView.getX());
-            double dispY = Math.round(userXY.y * dataView.getHeight() + dataView.getY());
+            ContentView contentView = chartView.getContentView();
+            double dispX = Math.round(userXY.x * contentView.getWidth() + contentView.getX());
+            double dispY = Math.round(userXY.y * contentView.getHeight() + contentView.getY());
             return new Point(dispX, dispY);
         }
 
@@ -184,12 +184,12 @@ public class LegendView extends ChartPartView<Legend> {
      */
     public void setUserXY(Point aPoint)
     {
-        // Convert from ChartView to DataView fractional
+        // Convert from ChartView to ContentView fractional
         if (aPoint != null) {
             ChartView chartView = getChartView();
-            View dataView = chartView.getDataView();
-            double fractX = (aPoint.x - dataView.getX()) / dataView.getWidth();
-            double fractY = (aPoint.y - dataView.getY()) / dataView.getHeight();
+            View contentView = chartView.getContentView();
+            double fractX = (aPoint.x - contentView.getX()) / contentView.getWidth();
+            double fractY = (aPoint.y - contentView.getY()) / contentView.getHeight();
             aPoint = new Point(fractX, fractY);
         }
         Legend legend = getLegend();
@@ -272,8 +272,8 @@ public class LegendView extends ChartPartView<Legend> {
         _entryBox.setSpacing(_entryBox.getSpacing() + legend.getSpacing());
 
         // Iterate over Traces and add entries
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         for (Trace trace : traces) {
 
             // If not Trace.ShowLegendEntry, just continue
@@ -343,8 +343,8 @@ public class LegendView extends ChartPartView<Legend> {
     private void legendWasClicked(ViewEvent anEvent)
     {
         // Enable all Traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         for (Trace trace : traces)
             trace.setDisabled(false);
     }
@@ -365,8 +365,8 @@ public class LegendView extends ChartPartView<Legend> {
         int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView) - 1;
 
         // Get trace and disable
-        TraceList traceList = getTraceList();
-        Trace trace = traceList.getTrace(index);
+        Content content = getContent();
+        Trace trace = content.getTrace(index);
         trace.setDisabled(!trace.isDisabled());
         anEvent.consume();
     }

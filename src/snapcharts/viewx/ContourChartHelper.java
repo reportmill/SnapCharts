@@ -24,7 +24,7 @@ public class ContourChartHelper extends ChartHelper {
         super(aChartView);
 
         // This is bogus
-        Trace[] traces = aChartView.getTraceList().getTraces();
+        Trace[] traces = aChartView.getContent().getTraces();
         for (Trace trace : traces) {
             TraceStyle traceStyle = trace.getTraceStyle();
             if (traceStyle instanceof ContourStyle) {
@@ -63,8 +63,8 @@ public class ContourChartHelper extends ChartHelper {
     protected DataArea[] createDataAreas()
     {
         // Get Traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Iterate over traces and create DataAreas
@@ -107,9 +107,9 @@ public class ContourChartHelper extends ChartHelper {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle Trace/TraceList change
+        // Handle Trace/Content change
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof TraceStyle || src instanceof ContourAxis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof TraceStyle || src instanceof ContourAxis) {
             _contourHelper.resetCachedValues();
         }
     }

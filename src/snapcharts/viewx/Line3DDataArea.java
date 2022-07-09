@@ -36,8 +36,8 @@ public class Line3DDataArea extends DataArea3D {
         double prefDepth = getAxisBoxPrefDepth();
 
         // Get Trace info
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getEnabledTraces();
+        Content content = getContent();
+        Trace[] traces = content.getEnabledTraces();
         int traceCount = traces.length;
 
         // Iterate over traces and add Line3D shape for each

@@ -38,10 +38,10 @@ public class PieChartHelper extends ChartHelper {
      */
     protected DataArea[] createDataAreas()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getEnabledTraces();
+        Content content = getContent();
+        Trace[] traces = content.getEnabledTraces();
         if (traces.length == 0)
-            traces = traceList.getTraces();
+            traces = content.getTraces();
         if (traces.length == 0)
             return new DataArea[0];
         Trace trace = traces[0];
@@ -54,8 +54,8 @@ public class PieChartHelper extends ChartHelper {
     public void activate()
     {
         // Get info
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Update parts
@@ -84,8 +84,8 @@ public class PieChartHelper extends ChartHelper {
     public void resetView()
     {
         // Make sure all Trace.AxisTypeY are just Y
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        Content content = getContent();
+        Trace[] traces = content.getTraces(); if (traces.length == 0) return;
         for (Trace trace : traces)
             trace.setAxisTypeY(AxisType.Y);
 
@@ -93,7 +93,7 @@ public class PieChartHelper extends ChartHelper {
         super.resetView();
 
         // Update SelDataPoint
-        Trace trace = traceList.getTrace(0);
+        Trace trace = content.getTrace(0);
         if (trace.getPointCount()==0) return;
         TracePoint tracePoint = trace.getPoint(0);
         _dataArea._disableMorph = true;

@@ -103,8 +103,8 @@ public class OpenInPlotly {
         _sb.append("<script>\n");
 
         // Get Trace info
-        TraceList traceList = aChart.getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = aChart.getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Iterate over Traces and write trace declaration for each: var trace0 = [ ... ]; var trace1 = [ ... ]; ...
@@ -157,7 +157,7 @@ public class OpenInPlotly {
         titleJS.addKeyValue("text", title);
 
         // Write the axis layout
-        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getContent().getAxisTypes();
         for (AxisType axisType : axisTypes)
             writeChartAxisLayout(aChart, axisType, layoutJS);
 
@@ -474,7 +474,7 @@ public class OpenInPlotly {
         JSONNode sceneJS = new JSONNode();
 
         // Get AxisTypes
-        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getContent().getAxisTypes();
         if (!ArrayUtils.contains(axisTypes, AxisType.Z))
             axisTypes = ArrayUtils.add(axisTypes, AxisType.Z);
 
@@ -533,7 +533,7 @@ public class OpenInPlotly {
      */
     private JSONNode getXAxisDomain(Chart aChart)
     {
-        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getContent().getAxisTypes();
         if (axisTypes.length <= 2)
             return null;
         int left = 0, right = 0;
@@ -556,7 +556,7 @@ public class OpenInPlotly {
      */
     private double getYAxisPosition(Chart aChart, AxisType anAxisType)
     {
-        AxisType[] axisTypes = aChart.getTraceList().getAxisTypes();
+        AxisType[] axisTypes = aChart.getContent().getAxisTypes();
         Side side = aChart.getAxisForType(anAxisType).getSide();
         int count = 0;
         for (AxisType axisType : axisTypes) {

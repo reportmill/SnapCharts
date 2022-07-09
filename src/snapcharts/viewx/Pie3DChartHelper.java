@@ -59,10 +59,10 @@ public class Pie3DChartHelper extends ChartHelper3D {
      */
     public Trace getTrace()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getEnabledTraces();
+        Content content = getContent();
+        Trace[] traces = content.getEnabledTraces();
         if (traces.length == 0)
-            traces = traceList.getTraces();
+            traces = content.getTraces();
         return traces.length > 0 ? traces[0] : null;
     }
 

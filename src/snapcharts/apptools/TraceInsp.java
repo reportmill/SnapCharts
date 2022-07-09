@@ -150,7 +150,7 @@ public class TraceInsp extends ChartPartInsp {
             setViewValue("Y4AxisButton", axisTypeY == AxisType.Y4);
 
             // If only one dataset, hide the Y3/Y4 buttons
-            boolean showAllAxes = getTrace().getTraceList().getTraceCount() > 1;
+            boolean showAllAxes = getTrace().getContent().getTraceCount() > 1;
             setViewVisible("Y3AxisButton", showAllAxes);
             setViewVisible("Y4AxisButton", showAllAxes);
         }
@@ -242,7 +242,7 @@ public class TraceInsp extends ChartPartInsp {
 
         // Handle StackedCheckBox: Set them all
         if (anEvent.equals("StackedCheckBox")) {
-            Trace[] traces = trace.getTraceList().getTraces();
+            Trace[] traces = trace.getContent().getTraces();
             for (Trace trc : traces)
                 trc.setStacked(anEvent.getBoolValue());
         }

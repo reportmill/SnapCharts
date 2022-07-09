@@ -24,8 +24,8 @@ public class ChartView extends ChartPartView<Chart> {
     // The view to display chart parts at top of chart
     private HeaderView  _headerView;
 
-    // The view to manage essential chart parts: DataView and AxisViews
-    private DataView  _dataView;
+    // The view to manage essential chart parts: ContentView and AxisViews
+    private ContentView  _contentView;
 
     // The Legend
     private LegendView  _legendView;
@@ -112,16 +112,16 @@ public class ChartView extends ChartPartView<Chart> {
         _contourAxisView = new ContourAxisView();
         addChild(_contourAxisView);
 
-        // Create/add DataView
-        _dataView = new DataView(this);
-        addChild(_dataView);
+        // Create/add ContentView
+        _contentView = new ContentView(this);
+        addChild(_contentView);
 
         // Create ToolTipView
         _toolTipView = new ToolTipView(this);
 
         // Set sample values
         //setTitle("Sample Growth by Sector, 2012-2018");
-        //getTraceList().addTraceForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
+        //getContent().addTraceForNameAndValues("Sample", 1d, 2d, 2d, 3d, 4d, 5d);
         resetLater();
 
         //
@@ -199,7 +199,7 @@ public class ChartView extends ChartPartView<Chart> {
         _layout = _chartHelper.createLayout();
 
         // Add DataAreas
-        _dataView.setDataAreas(_chartHelper.getDataAreas());
+        _contentView.setDataAreas(_chartHelper.getDataAreas());
 
         // Activate
         _chartHelper.activate();
@@ -214,11 +214,11 @@ public class ChartView extends ChartPartView<Chart> {
     }
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    public TraceList getTraceList()
+    public Content getContent()
     {
-        return _chartHelper.getTraceList();
+        return _chartHelper.getContent();
     }
 
     /**
@@ -227,9 +227,9 @@ public class ChartView extends ChartPartView<Chart> {
     public HeaderView getHeaderView()  { return _headerView; }
 
     /**
-     * Returns the DataView.
+     * Returns the ContentView.
      */
-    public DataView getDataView()  { return _dataView; }
+    public ContentView getContentView()  { return _contentView; }
 
     /**
      * Returns the LegendView.
@@ -283,8 +283,8 @@ public class ChartView extends ChartPartView<Chart> {
         // Reset ChartTop
         _headerView.resetView();
 
-        // Reset DataView
-        _dataView.resetView();
+        // Reset ContentView
+        _contentView.resetView();
 
         // Reset Legend
         _legendView.resetView();
@@ -404,14 +404,14 @@ public class ChartView extends ChartPartView<Chart> {
     }
 
     /**
-     * Returns the preferred bounds for the DataView.
+     * Returns the preferred bounds for the ContentView.
      */
-    public Rect getPrefDataViewBounds()  { return _prefDataBounds; }
+    public Rect getPrefContentViewBounds()  { return _prefDataBounds; }
 
     /**
-     * Sets the preferred bounds for the DataView.
+     * Sets the preferred bounds for the ContentView.
      */
-    public void setPrefDataViewBounds(Rect aRect)
+    public void setPrefContentViewBounds(Rect aRect)
     {
         if (Objects.equals(aRect, _prefDataBounds)) return;
         _prefDataBounds = aRect;
@@ -429,10 +429,10 @@ public class ChartView extends ChartPartView<Chart> {
     public void setReveal(double aValue)
     {
         _reveal = aValue;
-        _dataView.setReveal(aValue);
+        _contentView.setReveal(aValue);
 
-        // Repaint DataView (expanded so adjacent AxisViews will repaint axis line and ticks)
-        _dataView.repaint(-20, -20, _dataView.getWidth() + 40, _dataView.getHeight() + 40);
+        // Repaint ContentView (expanded so adjacent AxisViews will repaint axis line and ticks)
+        _contentView.repaint(-20, -20, _contentView.getWidth() + 40, _contentView.getHeight() + 40);
     }
 
     /**
@@ -440,7 +440,7 @@ public class ChartView extends ChartPartView<Chart> {
      */
     protected int getRevealTime()
     {
-        return _dataView.getRevealTime();
+        return _contentView.getRevealTime();
     }
 
     /**
@@ -564,8 +564,8 @@ public class ChartView extends ChartPartView<Chart> {
     protected void layoutImpl()
     {
         // Get whether this is first pass
-        DataView dataView = getDataView();
-        boolean firstPass = dataView.getWidth() == 0 && dataView.getHeight() == 0;
+        ContentView contentView = getContentView();
+        boolean firstPass = contentView.getWidth() == 0 && contentView.getHeight() == 0;
 
         _layout.layoutChart();
 

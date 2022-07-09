@@ -23,7 +23,7 @@ public class Contour3DChartHelper extends ChartHelper3D {
         super(aChartView);
 
         // This is bogus
-        Trace[] traces = aChartView.getTraceList().getTraces();
+        Trace[] traces = aChartView.getContent().getTraces();
         for (Trace trace : traces) {
             TraceStyle traceStyle = trace.getTraceStyle();
             if (traceStyle instanceof ContourStyle) {
@@ -81,8 +81,8 @@ public class Contour3DChartHelper extends ChartHelper3D {
     protected DataArea[] createDataAreas()
     {
         // Get Traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Iterate over traces and create DataAreas
@@ -101,8 +101,8 @@ public class Contour3DChartHelper extends ChartHelper3D {
      */
     protected DataArea3D createProjectionDataArea()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         Trace trace = traces.length > 0 ? traces[0] : null;
         return trace != null ? new Contour3DDataArea(this, trace, true) : null;
     }
@@ -116,9 +116,9 @@ public class Contour3DChartHelper extends ChartHelper3D {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle Trace/TraceList change
+        // Handle Trace/Content change
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof TraceStyle || src instanceof ContourAxis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof TraceStyle || src instanceof ContourAxis) {
             _contourHelper.resetCachedValues();
         }
     }

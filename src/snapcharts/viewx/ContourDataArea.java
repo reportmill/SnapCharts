@@ -64,10 +64,10 @@ public class ContourDataArea extends DataArea {
      * Override to clear cached contour shape values.
      */
     @Override
-    protected void dataViewDidChangeSize()
+    protected void contentViewDidChangeSize()
     {
         // Do normal version
-        super.dataViewDidChangeSize();
+        super.contentViewDidChangeSize();
 
         // Clear Contours
         _contourPainter.clearContours();

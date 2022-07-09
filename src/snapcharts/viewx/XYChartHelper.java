@@ -6,7 +6,7 @@ import snap.gfx.Border;
 import snap.gfx.Painter;
 import snapcharts.model.ChartType;
 import snapcharts.model.Trace;
-import snapcharts.model.TraceList;
+import snapcharts.model.Content;
 import snapcharts.view.*;
 
 /**
@@ -38,8 +38,8 @@ public class XYChartHelper extends ChartHelper {
     @Override
     protected DataArea[] createDataAreas()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         DataArea[] dataAreas = new DataArea[traceCount];
@@ -85,17 +85,17 @@ public class XYChartHelper extends ChartHelper {
     public static void paintBorderXY(ChartHelper aChartHelper, Painter aPntr)
     {
         // Get border
-        TraceList traceList = aChartHelper.getTraceList();
-        Border border = traceList.getBorder();
+        Content content = aChartHelper.getContent();
+        Border border = content.getBorder();
         if (border == null)
             return;
 
         // Get view area
-        DataView dataView = aChartHelper.getDataView();
+        ContentView contentView = aChartHelper.getContentView();
         double areaX = 0;
         double areaY = 0;
-        double areaW = dataView.getWidth();
-        double areaH = dataView.getHeight();
+        double areaW = contentView.getWidth();
+        double areaH = contentView.getHeight();
 
         // Disable antialiasing to get crisp lines
         aPntr.setAntialiasing(false);

@@ -101,7 +101,7 @@ public class ContourHelper {
         if (_contourRanges != null) return _contourRanges;
 
         // Get contour data min/max
-        Trace trace = _chartHelper.getTraceList().getTrace(0);
+        Trace trace = _chartHelper.getContent().getTrace(0);
         DataSet dataSet = trace.getProcessedData();
         double zmin = dataSet.getMinZ();
         double zmax = dataSet.getMaxZ();
@@ -248,7 +248,7 @@ public class ContourHelper {
         int rangeCount = colorCount - 1;
 
         // Get contour data min/max
-        Trace trace = _chartHelper.getTraceList().getTrace(0);
+        Trace trace = _chartHelper.getContent().getTrace(0);
         DataSet dataSet = trace.getProcessedData();
         double zmin = dataSet.getMinZ();
         double zmax = dataSet.getMaxZ();

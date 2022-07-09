@@ -142,7 +142,7 @@ public class AxisViewY extends AxisView<AxisY> {
 
         // Polar stuff
         boolean isPolar = getChartType().isPolarType();
-        double shiftY = isPolar ? getY() - getDataView().getY() : 0;
+        double shiftY = isPolar ? getY() - getContentView().getY() : 0;
 
         // Get tick rotation
         double tickAngle = axis.getTickLabelRotation();
@@ -199,7 +199,7 @@ public class AxisViewY extends AxisView<AxisY> {
             // Remove/add LegendEntryViews to LegendGraphicRowView
             _legendGraphicRowView.removeChildren();
             Legend legend = axisY.getChart().getLegend();
-            Trace[] traces = getTraceList().getTraces();
+            Trace[] traces = getContent().getTraces();
             for (Trace trace : traces) {
                 if (trace.getAxisTypeY() == getAxisType()) {
                     LegendEntryView legendEntryView = new LegendEntryView(legend, trace);

@@ -46,8 +46,8 @@ public class ChartPaneInsp extends ViewOwner {
     // The MarkerInsp
     private MarkerInsp  _markerInsp;
 
-    // The DataViewInsp
-    private DataViewInsp  _dataViewInsp;
+    // The ContentInsp
+    private ContentInsp  _contentInsp;
 
     // The DataSet Inspector
     private TraceInsp  _traceInsp;
@@ -127,9 +127,9 @@ public class ChartPaneInsp extends ViewOwner {
             _markerInsp = new MarkerInsp(_chartPane);
             addInspector(_markerInsp);
 
-            // Create/add DataViewInsp
-            _dataViewInsp = new DataViewInsp(_chartPane);
-            addInspector(_dataViewInsp);
+            // Create/add ContentInsp
+            _contentInsp = new ContentInsp(_chartPane);
+            addInspector(_contentInsp);
         }
 
         // Add TraceInsp
@@ -138,7 +138,7 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Set all inspectors
         _allInspectors = new ChartPartInsp[] { _chartInsp, _headerInsp, _axisInsp, _contourAxisInsp,
-                _dataViewInsp, _legendInsp, _markerInsp, _traceInsp };
+                _contentInsp, _legendInsp, _markerInsp, _traceInsp };
         if (!chartMode)
             _allInspectors = new ChartPartInsp[] { _traceInsp };
 
@@ -232,8 +232,8 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void showSceneInspector()
     {
-        chartPartInspLabelMousePress(_dataViewInsp);
-        _dataViewInsp.showContent3D();
+        chartPartInspLabelMousePress(_contentInsp);
+        _contentInsp.showContent3D();
     }
 
     /**
@@ -251,8 +251,8 @@ public class ChartPaneInsp extends ViewOwner {
             return _legendInsp;
         if (aChartPart instanceof Marker)
             return _markerInsp;
-        if (aChartPart instanceof TraceList)
-            return _dataViewInsp;
+        if (aChartPart instanceof Content)
+            return _contentInsp;
         if (aChartPart instanceof Trace)
             return _traceInsp;
         return _chartInsp;
@@ -266,11 +266,11 @@ public class ChartPaneInsp extends ViewOwner {
         // Get ChartPart for inspector
         ChartPart chartPart = anInsp.getChartPart();
 
-        // TraceInsp/Trace is going to pretend to represent TraceList
+        // TraceInsp/Trace is going to pretend to represent Content
         if (chartPart instanceof TraceStyle) {
             Chart chart = _chartPane.getChart();
-            TraceList traceList = chart.getTraceList();
-            chartPart = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : chart;
+            Content content = chart.getContent();
+            chartPart = content.getTraceCount() > 0 ? content.getTrace(0) : chart;
         }
 
         // Set new ChartPane.SelChartPart

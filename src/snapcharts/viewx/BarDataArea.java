@@ -69,10 +69,10 @@ public class BarDataArea extends DataArea {
     protected Section[] getSections()
     {
         // If recalc not needed, just return
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getEnabledTraces();
+        Content content = getContent();
+        Trace[] traces = content.getEnabledTraces();
         int traceCount = traces.length;
-        int pointCount = traceList.getPointCount();
+        int pointCount = content.getPointCount();
         if (_sections != null && _sections.length == pointCount && _traceCount == traceCount)
             return _sections;
 
@@ -243,7 +243,7 @@ public class BarDataArea extends DataArea {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof Axis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof Axis) {
             clearSections();
         }
     }

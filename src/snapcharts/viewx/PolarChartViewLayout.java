@@ -31,16 +31,16 @@ public class PolarChartViewLayout extends ChartViewLayout {
         // Do normal version
         super.layoutChart();
 
-        // Make sure DataViews are up to date
-        DataView dataView = _chartView.getDataView();
-        double dataW = dataView.getWidth();
-        double dataH = dataView.getHeight();
+        // Make sure ContentViews are up to date
+        ContentView contentView = _chartView.getContentView();
+        double dataW = contentView.getWidth();
+        double dataH = contentView.getHeight();
         for (DataArea dataArea : _polarHelper.getDataAreas())
             dataArea.setBounds(0, 0, dataW, dataH);
 
         // Get polar bounds
         Rect polarInside = _polarHelper.getPolarBounds();
-        Rect polarBounds = new Rect(dataView.getX() + polarInside.x, dataView.getY() + polarInside.y, polarInside.width, polarInside.height);
+        Rect polarBounds = new Rect(contentView.getX() + polarInside.x, contentView.getY() + polarInside.y, polarInside.width, polarInside.height);
 
         // Layout X axis
         AxisViewX axisViewX = _polarHelper.getAxisViewX();

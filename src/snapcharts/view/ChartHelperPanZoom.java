@@ -8,12 +8,11 @@ import snap.view.View;
 import snap.view.ViewEvent;
 import snapcharts.model.AxisType;
 import snapcharts.util.MinMax;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A helper class to help DataView do Pan/Zoom.
+ * A helper class to help ContentView do Pan/Zoom.
  */
 public class ChartHelperPanZoom {
 
@@ -69,9 +68,9 @@ public class ChartHelperPanZoom {
      * Some conveniences.
      */
     private ChartView getChartView()  { return _chartHelper.getChartView(); }
-    private DataView getDataView()  { return _chartHelper.getDataView(); }
-    private double getWidth()  { return getDataView().getWidth(); }
-    private double getHeight()  { return getDataView().getHeight(); }
+    private ContentView getContentView()  { return _chartHelper.getContentView(); }
+    private double getWidth()  { return getContentView().getWidth(); }
+    private double getHeight()  { return getContentView().getHeight(); }
 
     /**
      * Paint ZoomSelectRect, if ZoomSelectMode is set.
@@ -87,7 +86,7 @@ public class ChartHelperPanZoom {
     }
 
     /**
-     * Handle ProcessEvent for DataView.
+     * Handle ProcessEvent for ContentView.
      */
     protected void processEventForChartPartView(View aView, ViewEvent anEvent)
     {
@@ -107,9 +106,9 @@ public class ChartHelperPanZoom {
             }
         }
 
-        // Handle DataView events
-        if (aView instanceof DataView)
-            processEventForDataView((DataView) aView, anEvent);
+        // Handle ContentView events
+        if (aView instanceof ContentView)
+            processEventForContentView((ContentView) aView, anEvent);
 
         // Handle AxisView events
         else if (aView instanceof AxisView)
@@ -118,16 +117,16 @@ public class ChartHelperPanZoom {
     }
 
     /**
-     * Handle ProcessEvent for DataView.
+     * Handle ProcessEvent for ContentView.
      */
-    protected void processEventForDataView(DataView dataView, ViewEvent anEvent)
+    protected void processEventForContentView(ContentView contentView, ViewEvent anEvent)
     {
         // Handle MousePress: Store Axis min/max values at MousePress
         if (anEvent.isMousePress()) {
 
             // If double-click, zoom in (or out, if modifier is down)
             if (anEvent.getClickCount() == 2)
-                scaleAxesMinMaxForViewAndEvent(dataView, anEvent);
+                scaleAxesMinMaxForViewAndEvent(contentView, anEvent);
 
             // If triple-click, reset axes
             else if (anEvent.getClickCount() == 3)
@@ -144,7 +143,7 @@ public class ChartHelperPanZoom {
             // Handle ZoomSelectMode
             if (isZoomSelectMode()) {
                 _zoomSelectRect = Rect.get(_pressPoint, anEvent.getPoint());
-                dataView.repaint();
+                contentView.repaint();
             }
 
             // Handle Shift axes
@@ -171,15 +170,15 @@ public class ChartHelperPanZoom {
             // Handle click
             else if (anEvent.isMouseClick()) {
                 ChartView chartView = getChartView();
-                Point pnt = dataView.localToParent(anEvent.getX(), anEvent.getY(), chartView);
+                Point pnt = contentView.localToParent(anEvent.getX(), anEvent.getY(), chartView);
                 chartView.setTargPoint(pnt);
             }
         }
 
         // Handle Scroll
         else if (anEvent.isScroll()) {
-            if (dataView.isMouseDown()) return;
-            scaleAxesMinMaxForViewAndScroll(dataView, anEvent);
+            if (contentView.isMouseDown()) return;
+            scaleAxesMinMaxForViewAndScroll(contentView, anEvent);
         }
 
         // Consume event
@@ -229,7 +228,7 @@ public class ChartHelperPanZoom {
                     _zoomSelectRect.setX(0);
                     _zoomSelectRect.setWidth(getWidth());
                 }
-                getDataView().repaint();
+                getContentView().repaint();
             }
 
             // Handle Shift axes

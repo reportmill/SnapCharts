@@ -4,9 +4,9 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
 /**
- * This class manages UI to edit DataView. Though many of the properties are really for Axis.
+ * This class manages UI to edit Chart.Content. Though many of the properties are really for Axis.
  */
-public class DataViewInsp extends ChartPartInsp {
+public class ContentInsp extends ChartPartInsp {
 
     // The Current ExtraInsp
     private ChartPartInsp  _extraInsp;
@@ -21,12 +21,12 @@ public class DataViewInsp extends ChartPartInsp {
     private ContentGridInsp  _gridInsp;
 
     // The Content3DInsp
-    private Content3DInsp _3dInsp;
+    private Content3DInsp  _3dInsp;
 
     /**
      * Constructor.
      */
-    public DataViewInsp(ChartPane aChartPane)
+    public ContentInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }
@@ -44,8 +44,8 @@ public class DataViewInsp extends ChartPartInsp {
     public ChartPart getChartPart()
     {
         Chart chart = getChart();
-        TraceList traceList = chart.getTraceList();
-        return traceList;
+        Content content = chart.getContent();
+        return content;
     }
 
     /**

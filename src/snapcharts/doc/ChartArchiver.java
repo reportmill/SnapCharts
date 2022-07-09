@@ -117,7 +117,7 @@ public class ChartArchiver extends PropArchiverXML {
         cmap.put(Marker.class.getSimpleName(), Marker.class);
 
         // Trace classes
-        cmap.put(TraceList.class.getSimpleName(), TraceList.class);
+        cmap.put(Content.class.getSimpleName(), Content.class);
         cmap.put(Trace.class.getSimpleName(), Trace.class);
         cmap.put(PointStyle.class.getSimpleName(), PointStyle.class);
         cmap.put(TagStyle.class.getSimpleName(), TagStyle.class);

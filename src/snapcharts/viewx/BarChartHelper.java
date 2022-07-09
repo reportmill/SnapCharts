@@ -40,8 +40,8 @@ public class BarChartHelper extends ChartHelper {
     protected DataArea[] createDataAreas()
     {
         // Get traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Create DataArea for each Trace
@@ -79,8 +79,8 @@ public class BarChartHelper extends ChartHelper {
     public void resetView()
     {
         // Make sure all Trace.AxisTypeY are just Y
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        Content content = getContent();
+        Trace[] traces = content.getTraces(); if (traces.length == 0) return;
         for (Trace trace : traces)
             trace.setAxisTypeY(AxisType.Y);
 

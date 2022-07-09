@@ -4,6 +4,7 @@
 package snapcharts.doc;
 import snap.util.XMLAttribute;
 import snap.util.XMLElement;
+import snapcharts.model.Chart;
 
 /**
  * This class processes Legacy XML to make it conform to new stuff.
@@ -49,8 +50,8 @@ public class ChartArchiverLegacy {
         switch (name) {
 
             // Handle TraceList/DataSetList: Move children to new <Traces> element
-            case "DataSetList": anElement.setName("TraceList");
-            case "TraceList":
+            case "DataSetList":
+            case "TraceList": anElement.setName(Chart.Content_Prop);
 
                 // Move children to <Traces>
                 XMLElement[] traceXMLs = anElement.getElements().toArray(new XMLElement[0]);
@@ -62,7 +63,7 @@ public class ChartArchiverLegacy {
                 break;
 
             // Handle Charts: Rename to Items
-            case "Charts": anElement.setName("Items"); break;
+            case "Charts": anElement.setName(Doc.Items_Prop); break;
 
             // Handle Trace/DataSet: Rename to Trace
             case "DataSet": anElement.setName("Trace");

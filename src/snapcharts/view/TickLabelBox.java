@@ -6,7 +6,7 @@ import snap.gfx.Paint;
 import snap.view.ChildView;
 import snapcharts.model.Axis;
 import snapcharts.model.Trace;
-import snapcharts.model.TraceList;
+import snapcharts.model.Content;
 import snapcharts.model.Intervals;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,9 +110,9 @@ public class TickLabelBox extends ChildView {
 
         // Handle category axis
         boolean isCategoryAxis = axisView.isCategoryAxis();
-        TraceList traceList = axisView.getTraceList();
-        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
-        int pointCount = traceList.getPointCount();
+        Content content = axisView.getContent();
+        Trace trace = content.getTraceCount() > 0 ? content.getTrace(0) : null;
+        int pointCount = content.getPointCount();
 
         // Get TickLabel attributes
         Axis axis = axisView.getAxis();

@@ -56,9 +56,9 @@ public class ChartPartView<T extends ChartPart> extends ParentView {
     public ChartType getChartType()  { return getChart().getType(); }
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    public TraceList getTraceList()  { return getChart().getTraceList(); }
+    public Content getContent()  { return getChart().getContent(); }
 
     /**
      * Returns the ChartView.
@@ -78,12 +78,12 @@ public class ChartPartView<T extends ChartPart> extends ParentView {
     }
 
     /**
-     * Returns the DataView.
+     * Returns the ContentView.
      */
-    public DataView getDataView()
+    public ContentView getContentView()
     {
         ChartView chartView = getChartView();
-        return chartView.getDataView();
+        return chartView.getContentView();
     }
 
     /**

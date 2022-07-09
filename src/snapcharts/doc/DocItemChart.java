@@ -8,7 +8,7 @@ import snap.props.PropSet;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Trace;
-import snapcharts.model.TraceList;
+import snapcharts.model.Content;
 
 /**
  * A DocItem subclass to hold a chart.
@@ -26,8 +26,8 @@ public class DocItemChart extends DocItemParent<Chart> {
         setContent(aChart);
 
         // Add Items for Traces
-        TraceList traceList = _content.getTraceList();
-        for (Trace trace : traceList.getTraces())
+        Content content = _content.getContent();
+        for (Trace trace : content.getTraces())
             addItem(new DocItemTrace(trace));
 
         // Start listening to prop changes
@@ -64,7 +64,7 @@ public class DocItemChart extends DocItemParent<Chart> {
         if (aChartPart instanceof Trace) {
             Trace trace = (Trace) aChartPart;
             int ind = aChildItem != null ? aChildItem.getIndex() + 1 : getItemCount();
-            getChart().getTraceList().addTrace(trace, ind);
+            getChart().getContent().addTrace(trace, ind);
             return getItem(ind);
         }
 
@@ -81,7 +81,7 @@ public class DocItemChart extends DocItemParent<Chart> {
         String propName = aPC.getPropName();
 
         // Handle Trace add/remove
-        if (propName == TraceList.Trace_Prop) {
+        if (propName == Content.Trace_Prop) {
             int ind = aPC.getIndex(); if (ind < 0) return;
             Trace newVal = (Trace) aPC.getNewValue();
             if (newVal != null)

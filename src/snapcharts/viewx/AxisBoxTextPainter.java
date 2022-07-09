@@ -55,9 +55,9 @@ public class AxisBoxTextPainter {
         // Handle category axis
         AxisViewX axisViewX = _dataArea.getAxisViewX();
         boolean isCategoryAxis = axisViewX.isCategoryAxis();
-        TraceList traceList = axisViewX.getTraceList();
-        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
-        int pointCount = traceList.getPointCount();
+        Content content = axisViewX.getContent();
+        Trace trace = content.getTraceCount() > 0 ? content.getTrace(0) : null;
+        int pointCount = content.getPointCount();
 
         // Get axis grid line end points
         Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.X, 0);

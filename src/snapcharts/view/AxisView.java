@@ -26,8 +26,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     // The ChartView
     protected ChartView  _chartView;
 
-    // The DataView
-    protected DataView  _dataView;
+    // The ContentView
+    protected ContentView  _contentView;
 
     // The Title view
     protected StringView  _titleView;
@@ -109,11 +109,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public T getChartPart()  { return (T) getAxis(); }
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    public TraceList getTraceList()
+    public Content getContent()
     {
-        return _chartHelper.getTraceList();
+        return _chartHelper.getContent();
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (minBound == AxisBound.AUTO)
             min = getAxisMin();
         else if (minBound == AxisBound.DATA)
-            min = getTraceList().getMinForAxis(axis.getType());
+            min = getContent().getMinForAxis(axis.getType());
 
         // Get max val for Axis MaxBound
         AxisBound maxBound = axis.getMaxBound();
@@ -146,7 +146,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (maxBound == AxisBound.AUTO)
             max = getAxisMax();
         else if (maxBound == AxisBound.DATA)
-            max = getTraceList().getMaxForAxis(axis.getType());
+            max = getContent().getMaxForAxis(axis.getType());
 
         // Return min/max
         return new MinMax(min, max);
@@ -254,8 +254,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             return true;
 
         // If Trace is IY or CY, return true
-        TraceList traceList = getTraceList();
-        Trace trace = traceList.getTraceCount() > 0 ? traceList.getTrace(0) : null;
+        Content content = getContent();
+        Trace trace = content.getTraceCount() > 0 ? content.getTrace(0) : null;
         DataType dataType = trace != null ? trace.getDataType() : null;
         if (dataType == DataType.IY || dataType == DataType.CY)
             return true;
@@ -632,7 +632,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     {
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
-        if (src instanceof Trace || src instanceof TraceList || src instanceof Axis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof Axis) {
             clearIntervals();
         }
 

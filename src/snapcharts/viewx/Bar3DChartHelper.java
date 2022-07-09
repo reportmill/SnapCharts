@@ -48,8 +48,8 @@ public class Bar3DChartHelper extends ChartHelper3D {
     protected DataArea[] createDataAreas()
     {
         // Get traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Create DataArea for each Trace
@@ -68,8 +68,8 @@ public class Bar3DChartHelper extends ChartHelper3D {
      */
     protected DataArea3D createProjectionDataArea()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         Trace trace = traces.length > 0 ? traces[0] : null;
         return trace != null ? new Bar3DDataArea(this, trace, true) : null;
     }
@@ -95,8 +95,8 @@ public class Bar3DChartHelper extends ChartHelper3D {
     public void resetView()
     {
         // Make sure all Trace.AxisTypeY are just Y
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        Content content = getContent();
+        Trace[] traces = content.getTraces(); if (traces.length == 0) return;
         for (Trace trace : traces)
             trace.setAxisTypeY(AxisType.Y);
 

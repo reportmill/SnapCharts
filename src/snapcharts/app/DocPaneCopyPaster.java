@@ -121,7 +121,7 @@ public class DocPaneCopyPaster {
             DocItemTrace docItemTrace = (DocItemTrace) selItem;
             Trace trace = docItemTrace.getTrace();
             Chart chart = trace.getChart();
-            chart.getTraceList().removeTrace(trace);
+            chart.getContent().removeTrace(trace);
         }
 
         // Handle anything else

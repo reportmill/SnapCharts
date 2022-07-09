@@ -10,18 +10,18 @@ import snapcharts.model.Axis;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.DataArea;
-import snapcharts.view.DataView;
+import snapcharts.view.ContentView;
 
 /**
- * This class handles grid painting for DataView.
+ * This class handles grid painting for ContentView.
  */
 public class GridPainter {
 
     // The ChartHelper
     protected ChartHelper _chartHelper;
 
-    // The DataView
-    protected DataView _dataView;
+    // The ContentView
+    protected ContentView  _contentView;
 
     // Area bounds
     protected double  areaX, areaY;
@@ -72,13 +72,13 @@ public class GridPainter {
      */
     public GridPainter(ChartHelper aChartHelper)
     {
-        // Set DataView, ChartHelper, DataArea
+        // Set ContentView, ChartHelper, DataArea
         _chartHelper = aChartHelper;
-        _dataView = aChartHelper.getDataView();
+        _contentView = aChartHelper.getContentView();
 
         // Get Area bounds
-        areaW = _dataView.getWidth();
-        areaH = _dataView.getHeight();
+        areaW = _contentView.getWidth();
+        areaH = _contentView.getHeight();
         areaMaxX = areaX + areaW;
         areaMaxY = areaY + areaH;
     }
@@ -102,12 +102,12 @@ public class GridPainter {
         // Update AxisLineX
         if (axis.getType().isAnyY()) {
             if (axis.getSide() == Side.LEFT) {
-                axisLineX = axisView.getMaxX() - _dataView.getX();
+                axisLineX = axisView.getMaxX() - _contentView.getX();
                 tickX = axisLineX;
                 tickMaxX = axisLineX + tickLength;
             }
             else {
-                axisLineX = axisView.getX() - _dataView.getX();
+                axisLineX = axisView.getX() - _contentView.getX();
                 tickX = axisLineX - tickLength;
                 tickMaxX = axisLineX;
             }

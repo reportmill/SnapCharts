@@ -25,11 +25,11 @@ public abstract class ChartHelper {
     // The ChartView
     protected ChartView  _chartView;
 
-    // The DataView
-    protected DataView  _dataView;
+    // The ContentView
+    protected ContentView  _contentView;
 
-    // The TraceList
-    private TraceList _traceList;
+    // The Content
+    private Content  _content;
 
     // The AxisTypes
     private AxisType[]  _axisTypes;
@@ -75,12 +75,12 @@ public abstract class ChartHelper {
     public ChartView getChartView()  { return _chartView; }
 
     /**
-     * Returns the DataView.
+     * Returns the ContentView.
      */
-    public DataView getDataView()
+    public ContentView getContentView()
     {
-        if (_dataView != null) return _dataView;
-        return _dataView = _chartView.getDataView();
+        if (_contentView != null) return _contentView;
+        return _contentView = _chartView.getContentView();
     }
 
     /**
@@ -94,15 +94,15 @@ public abstract class ChartHelper {
     public abstract ChartType getChartType();
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    public TraceList getTraceList()
+    public Content getContent()
     {
         // If already set, just return
-        if (_traceList !=null) return _traceList;
+        if (_content !=null) return _content;
 
-        // Get TraceList for Traces that are enabled
-        return _traceList = getChart().getTraceList();
+        // Get Content for Traces that are enabled
+        return _content = getChart().getContent();
     }
 
     /**
@@ -127,7 +127,7 @@ public abstract class ChartHelper {
      */
     protected AxisType[] getAxisTypesImpl()
     {
-        return getTraceList().getAxisTypes();
+        return getContent().getAxisTypes();
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class ChartHelper {
         axisView = createAxisView(anAxisType);
         axisView._chartHelper = this;
         axisView._chartView = _chartView;
-        axisView._dataView = _chartView.getDataView();
+        axisView._contentView = _chartView.getContentView();
         axisView.addPropChangeListener(pc -> axisViewDidChange(pc));
         _axisViews.put(anAxisType, axisView);
         _axisViewsArray = null;
@@ -363,8 +363,8 @@ public abstract class ChartHelper {
         }
 
         // Handle Trace
-        if (aChartPart instanceof TraceList || aChartPart instanceof Trace)
-            return _chartView.getDataView();
+        if (aChartPart instanceof Content || aChartPart instanceof Trace)
+            return _chartView.getContentView();
 
         // Handle unknown
         return null;
@@ -426,8 +426,8 @@ public abstract class ChartHelper {
      */
     protected Intervals createIntervalsForCategoryAxis()
     {
-        TraceList traceList = getTraceList();
-        int pointCount = traceList.getPointCount();
+        Content content = getContent();
+        int pointCount = content.getPointCount();
         return Intervals.getCategoryIntervals(pointCount);
     }
 
@@ -590,14 +590,14 @@ public abstract class ChartHelper {
         TracePoint dataPoint = null;
         double dist = Float.MAX_VALUE;
 
-        // Get View XY in DataView coords
-        DataView dataView = getDataView();
-        Point dispXY = dataView.isAncestor(aView) ? dataView.parentToLocal(aX, aY, aView) : new Point(aX, aY);
+        // Get View XY in ContentView coords
+        ContentView contentView = getContentView();
+        Point dispXY = contentView.isAncestor(aView) ? contentView.parentToLocal(aX, aY, aView) : new Point(aX, aY);
         double dispX = dispXY.x;
         double dispY = dispXY.y;
 
         // If point out of bounds, return null
-        if (!dataView.contains(dispX, dispY))
+        if (!contentView.contains(dispX, dispY))
             return null;
 
         // Iterate over data areas to find closest DataPoint
@@ -630,9 +630,9 @@ public abstract class ChartHelper {
 
         // Get DataArea X/Y for DataPoint and return point converted to given view coords
         Point dispXY = dataArea.getLocalXYForDataPoint(aDP);
-        DataView dataView = getDataView();
-        if (dataView.isAncestor(aView))
-            dispXY = dataView.localToParent(dispXY.x, dispXY.y, aView);
+        ContentView contentView = getContentView();
+        if (contentView.isAncestor(aView))
+            dispXY = contentView.localToParent(dispXY.x, dispXY.y, aView);
         return dispXY;
     }
 
@@ -642,8 +642,8 @@ public abstract class ChartHelper {
     public void activate()
     {
         // Enable all traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         for (Trace trace : traces)
             trace.setDisabled(false);
     }
@@ -659,7 +659,7 @@ public abstract class ChartHelper {
     public void resetView()
     {
         // If AxisTypes have changed, resetAxisViews
-        if (!Objects.equals(getAxisTypes(), getTraceList().getAxisTypes()))
+        if (!Objects.equals(getAxisTypes(), getContent().getAxisTypes()))
             resetAxisViews();
 
         // Reset Axes
@@ -711,8 +711,8 @@ public abstract class ChartHelper {
     {
         _dataAreas = null;
         DataArea[] dataAreas = getDataAreas();
-        DataView dataView = getDataView();
-        dataView.setDataAreas(dataAreas);
+        ContentView contentView = getContentView();
+        contentView.setDataAreas(dataAreas);
     }
 
     /**
@@ -743,7 +743,7 @@ public abstract class ChartHelper {
      */
     protected void paintAboveForChartPartView(ChartPartView aView, Painter aPntr)
     {
-        if (aView instanceof DataView)
+        if (aView instanceof ContentView)
             _panZoomer.paintAbove(aPntr);
     }
 
@@ -761,10 +761,10 @@ public abstract class ChartHelper {
      */
     protected void chartPartDidChange(PropChange aPC)
     {
-        // Handle TraceList add/remove
+        // Handle Content add/remove
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
-        if (src instanceof TraceList && propName == TraceList.Trace_Prop) {
+        if (src instanceof Content && propName == Content.Trace_Prop) {
             resetDataAreas();
             _chartView.resetLater();
         }
@@ -779,13 +779,13 @@ public abstract class ChartHelper {
     }
 
     /**
-     * Called when DataView changes size.
+     * Called when ContentView changes size.
      */
-    protected void dataViewSizeDidChange()
+    protected void contentViewSizeDidChange()
     {
         // Forward to DataAreas
         for (DataArea dataArea : getDataAreas())
-            dataArea.dataViewDidChangeSize();
+            dataArea.contentViewDidChangeSize();
     }
 
     /**

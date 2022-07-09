@@ -133,9 +133,9 @@ public class ToolTipView extends ColView {
         double ttipX = targPoint.x - getWidth() / 2;
         double ttipY = targPoint.y - getHeight() - 8;
 
-        // If outside DataView, just return
-        Point targPointInDataView = _chartView.getDataView().parentToLocal(targPoint.x, targPoint.y, _chartView);
-        if (!_chartView.getDataView().contains(targPointInDataView)) {
+        // If outside ContentView, just return
+        Point targPointInContentView = _chartView.getContentView().parentToLocal(targPoint.x, targPoint.y, _chartView);
+        if (!_chartView.getContentView().contains(targPointInContentView)) {
             hideWindow();
             return;
         }

@@ -65,10 +65,10 @@ public class PolarContourDataArea extends PolarDataArea {
      * Override to clear cached contour shape values.
      */
     @Override
-    protected void dataViewDidChangeSize()
+    protected void contentViewDidChangeSize()
     {
         // Do normal version
-        super.dataViewDidChangeSize();
+        super.contentViewDidChangeSize();
 
         // Handle changes
         _contourPainter.clearContours();

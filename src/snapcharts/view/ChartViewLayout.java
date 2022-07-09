@@ -6,7 +6,7 @@ import snapcharts.viewx.PolarChartHelper;
 import java.util.Arrays;
 
 /**
- * A class to layout ChartView component parts (Header, Legend, Axes, DataView).
+ * A class to layout ChartView component parts (Header, Legend, Axes, Content).
  */
 public class ChartViewLayout {
 
@@ -29,7 +29,7 @@ public class ChartViewLayout {
     private ViewProxy<ContourAxisView>  _contourProxy;
 
     // The DataArea proxy
-    private ViewProxy<DataView>  _dataAreaProxy;
+    private ViewProxy<ContentView>  _dataAreaProxy;
 
     // The current inset for DataArea
     protected Insets _dataAreaInsets = new Insets(0, 0, 0, 0);
@@ -61,10 +61,10 @@ public class ChartViewLayout {
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);
-        _dataAreaProxy = _chartProxy.getChildForClass(DataView.class);
+        _dataAreaProxy = _chartProxy.getChildForClass(ContentView.class);
 
-        // Get PrefDataViewBounds
-        _prefDataBounds = _chartView.getPrefDataViewBounds();
+        // Get PrefContentViewBounds
+        _prefDataBounds = _chartView.getPrefContentViewBounds();
 
         // Layout top, bottom
         layoutTopSide();
@@ -310,7 +310,7 @@ public class ChartViewLayout {
         if (legendMargin.isEmpty())
             legendMargin = new Insets(5, 5, 5, 5);
 
-        // Get Legend width/height (no larger than DataView bounds)
+        // Get Legend width/height (no larger than ContentView bounds)
         Rect dataBnds = _dataAreaProxy.getBounds();
         double legendW = Math.min(_legendProxy.getBestWidth(-1) + legendMargin.getWidth(), dataBnds.width);
         double legendH = Math.min(_legendProxy.getBestHeight(-1) + legendMargin.getHeight(), dataBnds.height);

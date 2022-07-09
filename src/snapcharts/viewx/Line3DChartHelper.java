@@ -1,7 +1,6 @@
 package snapcharts.viewx;
 import snapcharts.model.*;
 import snapcharts.view.AxisView;
-import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.DataArea;
 
@@ -51,8 +50,8 @@ public class Line3DChartHelper extends ChartHelper3D {
     protected DataArea[] createDataAreas()
     {
         // Get traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
         // Create DataArea for each Trace
@@ -71,8 +70,8 @@ public class Line3DChartHelper extends ChartHelper3D {
      */
     protected DataArea3D createProjectionDataArea()
     {
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         Trace trace = traces.length > 0 ? traces[0] : null;
         return trace != null ? new Line3DDataArea(this, trace, true) : null;
     }
@@ -85,8 +84,8 @@ public class Line3DChartHelper extends ChartHelper3D {
         // Handle Z Axis: Just return simple integer intervals { 0, TraceCount } because there really is no Z axis
         AxisType axisType = axisView.getAxisType();
         if (axisType == AxisType.Z) {
-            TraceList traceList = getTraceList();
-            int traceCount = traceList.getTraceCount();
+            Content content = getContent();
+            int traceCount = content.getTraceCount();
             return Intervals.getCategoryIntervals(traceCount);
         }
 
@@ -100,8 +99,8 @@ public class Line3DChartHelper extends ChartHelper3D {
     public void resetView()
     {
         // Make sure all Trace.AxisTypeY are just Y
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces(); if (traces.length == 0) return;
+        Content content = getContent();
+        Trace[] traces = content.getTraces(); if (traces.length == 0) return;
         for (Trace trace : traces)
             trace.setAxisTypeY(AxisType.Y);
 

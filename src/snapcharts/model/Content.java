@@ -14,7 +14,7 @@ import snapcharts.util.MinMax;
 /**
  * A class to manage a list of Traces.
  */
-public class TraceList extends ChartPart {
+public class Content extends ChartPart {
 
     // The list of traces
     private List<Trace>  _traceList = new ArrayList<>();
@@ -45,7 +45,7 @@ public class TraceList extends ChartPart {
     /**
      * Constructor.
      */
-    public TraceList()
+    public Content()
     {
         super();
 
@@ -55,10 +55,10 @@ public class TraceList extends ChartPart {
     }
 
     /**
-     * Override to return this TraceList.
+     * Override to return this Content.
      */
     @Override
-    public TraceList getTraceList()  { return this; }
+    public Content getContent()  { return this; }
 
     /**
      * Returns the array of traces.
@@ -258,7 +258,7 @@ public class TraceList extends ChartPart {
         }
 
         // Complain
-        throw new RuntimeException("TraceList.getMinForAxis: Unknown axis: " + anAxisType);
+        throw new RuntimeException("Content.getMinForAxis: Unknown axis: " + anAxisType);
     }
 
     /**

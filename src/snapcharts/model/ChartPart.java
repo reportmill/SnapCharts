@@ -176,14 +176,14 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    public TraceList getTraceList()
+    public Content getContent()
     {
-        if (_parent instanceof TraceList)
-            return (TraceList) _parent;
+        if (_parent instanceof Content)
+            return (Content) _parent;
         Chart chart = getChart();
-        return chart != null ? chart.getTraceList() : null;
+        return chart != null ? chart.getContent() : null;
     }
 
     /**
@@ -302,7 +302,7 @@ public class ChartPart extends PropObject {
         Stroke stroke = getLineStroke();
         Border border = new Borders.LineBorder(color, stroke);
 
-        if (this instanceof TraceList)
+        if (this instanceof Content)
             border = border.copyForInsets(Insets.EMPTY);
 
         // Return

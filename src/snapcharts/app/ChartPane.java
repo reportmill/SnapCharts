@@ -17,7 +17,7 @@ import snapcharts.doc.*;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataView;
+import snapcharts.view.ContentView;
 import snapcharts.viewx.DataArea3D;
 
 import java.util.List;
@@ -125,13 +125,13 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Copy DataSet chart
         Chart chart = aTrace.getChart();
         Chart chartCopy = new ChartArchiver().copy(chart);
-        TraceList traceList = chartCopy.getTraceList();
-        while (traceList.getTraceCount() > 0)
-            traceList.removeTrace(0);
+        Content content = chartCopy.getContent();
+        while (content.getTraceCount() > 0)
+            content.removeTrace(0);
 
         // Copy DataSet and add to ChartCopy
         Trace traceCopy = new ChartArchiver().copy(aTrace);
-        traceList.addTrace(traceCopy);
+        content.addTrace(traceCopy);
 
         // Set Chart
         setChart(chartCopy);
@@ -148,9 +148,9 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     public BoxView getChartBox()  { return _chartBox; }
 
     /**
-     * Returns the ChartView.DataView
+     * Returns the ChartView.ContentView
      */
-    public DataView getDataView()  { return _chartView.getDataView(); }
+    public ContentView getContentView()  { return _chartView.getContentView(); }
 
     /**
      * Returns the inspector.
@@ -163,12 +163,12 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     public ChartHelper getChartHelper()  { return _chartView.getChartHelper(); }
 
     /**
-     * Returns the TraceList.
+     * Returns the Content.
      */
-    private TraceList getTraceList()
+    private Content getContent()
     {
         Chart chart = getChart();
-        return chart.getTraceList();
+        return chart.getContent();
     }
 
     /**
@@ -176,11 +176,11 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     public Trace getTrace()
     {
-        TraceList traceList = getTraceList();
+        Content content = getContent();
         int selIndex = _traceTabView != null ? _traceTabView.getSelIndex() : -1;
-        if (selIndex < 0 || selIndex >= traceList.getTraceCount())
+        if (selIndex < 0 || selIndex >= content.getTraceCount())
             return null;
-        return traceList.getTrace(selIndex);
+        return content.getTrace(selIndex);
     }
 
     /**
@@ -389,10 +389,10 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     private void registerForCubeViewClick()
     {
-        DataView dataView = _chartView.getDataView();
-        View dataViewChild = dataView.getChildCount() > 0 ? dataView.getChild(0) : null;
-        if (dataViewChild instanceof DataArea3D) {
-            DataArea3D dataArea3D = (DataArea3D) dataViewChild;
+        ContentView contentView = _chartView.getContentView();
+        View contentChild = contentView.getChildCount() > 0 ? contentView.getChild(0) : null;
+        if (contentChild instanceof DataArea3D) {
+            DataArea3D dataArea3D = (DataArea3D) contentChild;
             CameraView cameraView = dataArea3D.getCameraView();
             CubeView cubeView = cameraView.getCubeView();
             cubeView.addEventFilter(e -> cubeViewDidMouseRelease(e), View.MouseRelease);
@@ -423,7 +423,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         if (selTabIndex>=0 && _traceTabView.getTabContent(selTabIndex) instanceof Label) {
 
             // Get Trace and create DataSetPane
-            Trace trace = getTraceList().getTrace(selTabIndex);
+            Trace trace = getContent().getTrace(selTabIndex);
             DocItemTrace docItemTrace = new DocItemTrace(trace);
             TracePane dsetPane = new TracePane(docItemTrace);
 
@@ -466,7 +466,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle TabView
         if (anEvent.equals("TabView")) {
             int selIndex = _traceTabView.getSelIndex();
-            Trace trace = getTraceList().getTrace(selIndex);
+            Trace trace = getContent().getTrace(selIndex);
             getSel().setSelChartPart(trace);
         }
 
@@ -574,8 +574,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
             _traceTabView.removeTab(0);
 
         // Configure TabView with Chart.Traces
-        TraceList traceList = getTraceList();
-        Trace[] traces = traceList.getTraces();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
         for (Trace trace : traces) {
             _traceTabView.addTab(trace.getName(), new Label(trace.getName()));
         }
@@ -602,21 +602,21 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     private void chartPartDidPropChange(PropChange aPC)
     {
-        // Handle TraceList
+        // Handle Content
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
-        if (src instanceof TraceList && propName == TraceList.Trace_Prop) {
+        if (src instanceof Content && propName == Content.Trace_Prop) {
             if (aPC.getNewValue() instanceof Trace)
-                traceListAddedTrace((Trace) aPC.getNewValue());
+                contentAddedTrace((Trace) aPC.getNewValue());
             else if (aPC.getOldValue() instanceof Trace)
-                traceListRemovedTraceAtIndex(aPC.getIndex());
+                contentRemovedTraceAtIndex(aPC.getIndex());
         }
     }
 
     /**
      * Called when Trace is added.
      */
-    private void traceListAddedTrace(Trace aTrace)
+    private void contentAddedTrace(Trace aTrace)
     {
         rebuildTraceTabView();
         getSel().setSelChartPart(aTrace);
@@ -626,18 +626,18 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     /**
      * Called when Trace is removed.
      */
-    private void traceListRemovedTraceAtIndex(int anIndex)
+    private void contentRemovedTraceAtIndex(int anIndex)
     {
         rebuildTraceTabView();
 
         // Get next trace to select
-        TraceList traceList = getTraceList();
-        Trace nextTrace = anIndex < traceList.getTraceCount() ? traceList.getTrace(anIndex) : null;
-        if (nextTrace == null && traceList.getTraceCount() > 0)
-            nextTrace = traceList.getTrace(traceList.getTraceCount() - 1);
+        Content content = getContent();
+        Trace nextTrace = anIndex < content.getTraceCount() ? content.getTrace(anIndex) : null;
+        if (nextTrace == null && content.getTraceCount() > 0)
+            nextTrace = content.getTrace(content.getTraceCount() - 1);
 
         // Get next selected chartPart
-        ChartPart nextSel = nextTrace != null ? nextTrace : traceList;
+        ChartPart nextSel = nextTrace != null ? nextTrace : content;
         getSel().setSelChartPart(nextSel);
     }
 
