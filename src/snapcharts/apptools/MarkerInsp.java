@@ -113,20 +113,20 @@ public class MarkerInsp extends ChartPartInsp {
         if (marker == null)
             return;
 
-        // Reset XSpaceXButton, XSpaceDataButton, XSpaceChartButton
+        // Reset XSpaceChartButton, XSpaceContentButton, XSpaceXButton
         Marker.CoordSpace coordSpaceX = marker.getCoordSpaceX();
+        setViewValue("XSpaceChartButton", coordSpaceX == Marker.CoordSpace.Chart);
+        setViewValue("XSpaceContentButton", coordSpaceX == Marker.CoordSpace.Content);
         setViewValue("XSpaceXButton", coordSpaceX == Marker.CoordSpace.X);
-        setViewValue("XSpaceDataButton", coordSpaceX == Marker.CoordSpace.DataView);
-        setViewValue("XSpaceChartButton", coordSpaceX == Marker.CoordSpace.ChartView);
 
-        // Reset YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
+        // Reset YSpaceChartButton, YSpaceContentButton, YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button
         Marker.CoordSpace coordSpaceY = marker.getCoordSpaceY();
+        setViewValue("YSpaceChartButton", coordSpaceY == Marker.CoordSpace.Chart);
+        setViewValue("YSpaceContentButton", coordSpaceY == Marker.CoordSpace.Content);
         setViewValue("YSpaceYButton", coordSpaceY == Marker.CoordSpace.Y);
         setViewValue("YSpaceY2Button", coordSpaceY == Marker.CoordSpace.Y2);
         setViewValue("YSpaceY3Button", coordSpaceY == Marker.CoordSpace.Y3);
         setViewValue("YSpaceY4Button", coordSpaceY == Marker.CoordSpace.Y4);
-        setViewValue("YSpaceDataButton", coordSpaceY == Marker.CoordSpace.DataView);
-        setViewValue("YSpaceChartButton", coordSpaceY == Marker.CoordSpace.ChartView);
 
         // Only show YSpace buttons for supported Y axes
         ChartHelper chartHelper = getChartPane().getChartHelper();
@@ -182,15 +182,19 @@ public class MarkerInsp extends ChartPartInsp {
             _markersListView.updateItems(marker);
         }
 
-        // Handle XSpaceXButton, XSpaceDataButton, XSpaceChartButton
+        // Handle XSpaceChartButton, XSpaceContentButton, XSpaceXButton
+        if (anEvent.equals("XSpaceChartButton"))
+            markerView.setCoordSpaceX(Marker.CoordSpace.Chart, marker.isFractionalX());
+        if (anEvent.equals("XSpaceContentButton"))
+            markerView.setCoordSpaceX(Marker.CoordSpace.Content, marker.isFractionalX());
         if (anEvent.equals("XSpaceXButton"))
             markerView.setCoordSpaceX(Marker.CoordSpace.X, marker.isFractionalX());
-        if (anEvent.equals("XSpaceDataButton"))
-            markerView.setCoordSpaceX(Marker.CoordSpace.DataView, marker.isFractionalX());
-        if (anEvent.equals("XSpaceChartButton"))
-            markerView.setCoordSpaceX(Marker.CoordSpace.ChartView, marker.isFractionalX());
 
-        // Handle YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button, YSpaceDataButton, YSpaceChartButton
+        // Handle YSpaceChartButton, YSpaceContentButton, YSpaceYButton, YSpaceY2Button, YSpaceY3Button, YSpaceY4Button
+        if (anEvent.equals("YSpaceChartButton"))
+            markerView.setCoordSpaceY(Marker.CoordSpace.Chart, marker.isFractionalY());
+        if (anEvent.equals("YSpaceContentButton"))
+            markerView.setCoordSpaceY(Marker.CoordSpace.Content, marker.isFractionalY());
         if (anEvent.equals("YSpaceYButton"))
             markerView.setCoordSpaceY(Marker.CoordSpace.Y, marker.isFractionalY());
         if (anEvent.equals("YSpaceY2Button"))
@@ -199,10 +203,6 @@ public class MarkerInsp extends ChartPartInsp {
             markerView.setCoordSpaceY(Marker.CoordSpace.Y3, marker.isFractionalY());
         if (anEvent.equals("YSpaceY4Button"))
             markerView.setCoordSpaceY(Marker.CoordSpace.Y4, marker.isFractionalY());
-        if (anEvent.equals("YSpaceDataButton"))
-            markerView.setCoordSpaceY(Marker.CoordSpace.DataView, marker.isFractionalY());
-        if (anEvent.equals("YSpaceChartButton"))
-            markerView.setCoordSpaceY(Marker.CoordSpace.ChartView, marker.isFractionalY());
 
         // Handle XText, WText, FractionalXCheckBox
         if (anEvent.equals("XText"))

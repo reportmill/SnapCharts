@@ -90,8 +90,8 @@ public class MarkerToolPencil extends MarkerTool {
         marker.setLineWidth((int) DEFAULT_STROKE.getWidth());
 
         // Set Marker bounds in ChartView coords
-        marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
-        marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
+        marker.setCoordSpaceX(Marker.CoordSpace.Chart);
+        marker.setCoordSpaceY(Marker.CoordSpace.Chart);
         marker.setFractionalX(false);
         marker.setFractionalY(false);
         marker.setBounds(rect.x, rect.y, rect.width, rect.height);

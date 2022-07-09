@@ -53,13 +53,13 @@ public class Marker extends ChartPart {
     public enum CoordSpace  {
 
         // The constants
-        X, Y, Y2, Y3, Y4, DataView, ChartView;
+        Chart, Content, X, Y, Y2, Y3, Y4;
 
         // Map to AxisType
         public AxisType getAxisType()  { return getAxisTypeForCoordSpace(this); }
 
-        // Returns whether space is 'display' space (DataView or ChartView)
-        public boolean isDisplaySpace()  { return this == DataView || this == ChartView; }
+        // Returns whether space is 'display' space (Chart or Content)
+        public boolean isDisplaySpace()  { return this == Chart || this == Content; }
     }
 
     // Constants for properties
@@ -81,7 +81,7 @@ public class Marker extends ChartPart {
 
     // Constants for defaults
     private static final Pos DEFAULT_MARKER_ALIGN = Pos.CENTER;
-    private static final CoordSpace  DEFAULT_COORD_SPACE = CoordSpace.DataView;
+    private static final CoordSpace  DEFAULT_COORD_SPACE = CoordSpace.Content;
 
     /**
      * Constructor.

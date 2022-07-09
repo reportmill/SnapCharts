@@ -50,7 +50,7 @@ public class MarkerView extends ChartPartView<Marker> {
     public Marker getMarker()  { return _chartPart; }
 
     /**
-     * Override to return true if MarkerView in display space (ChartView or DataView).
+     * Override to return true if MarkerView in display space (Chart or Content).
      */
     @Override
     public boolean isMovable()
@@ -74,11 +74,11 @@ public class MarkerView extends ChartPartView<Marker> {
         // If Marker coords isFractional, convert to fraction
         Marker marker = getMarker();
         if (marker.isFractionalX()) {
-            View view = marker.getCoordSpaceX() == CoordSpace.ChartView ? getChartView() : getContentView();
+            View view = marker.getCoordSpaceX() == CoordSpace.Chart ? getChartView() : getContentView();
             dx /= view.getWidth();
         }
         if (marker.isFractionalY()) {
-            View view = marker.getCoordSpaceY() == CoordSpace.ChartView ? getChartView() : getContentView();
+            View view = marker.getCoordSpaceY() == CoordSpace.Chart ? getChartView() : getContentView();
             dy /= view.getHeight();
         }
 
@@ -88,7 +88,7 @@ public class MarkerView extends ChartPartView<Marker> {
     }
 
     /**
-     * Override to return true if MarkerView in display space (ChartView or DataView).
+     * Override to return true if MarkerView in display space (Chart or Content).
      */
     @Override
     public boolean isResizable()
@@ -109,11 +109,11 @@ public class MarkerView extends ChartPartView<Marker> {
         // If Marker coords isFractional, convert to fraction
         Marker marker = getMarker();
         if (marker.isFractionalX()) {
-            View view = marker.getCoordSpaceX() == CoordSpace.ChartView ? getChartView() : getContentView();
+            View view = marker.getCoordSpaceX() == CoordSpace.Chart ? getChartView() : getContentView();
             dx /= view.getWidth();
         }
         if (marker.isFractionalY()) {
-            View view = marker.getCoordSpaceY() == CoordSpace.ChartView ? getChartView() : getContentView();
+            View view = marker.getCoordSpaceY() == CoordSpace.Chart ? getChartView() : getContentView();
             dy /= view.getHeight();
         }
 
@@ -432,7 +432,7 @@ public class MarkerView extends ChartPartView<Marker> {
      */
     private double mapCoordSpaceToChartViewX(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
     {
-        // Get ChartView, DataView
+        // Get ChartHelper, ContentView
         ChartHelper chartHelper = getChartHelper();
         ContentView contentView = chartHelper.getContentView();
         double contentViewX = contentView.getX();
@@ -452,7 +452,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceX DataBounds
-        if (aCoordSpace == Marker.CoordSpace.DataView) {
+        if (aCoordSpace == Marker.CoordSpace.Content) {
             double dispX = aValue;
             if (isFractional)
                 dispX = MathUtils.mapFractionalToRangeValue(dispX, 0, contentView.getWidth());
@@ -460,7 +460,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceX ChartBounds
-        if (aCoordSpace == Marker.CoordSpace.ChartView) {
+        if (aCoordSpace == Marker.CoordSpace.Chart) {
             double dispX = aValue;
             if (isFractional)
                 dispX = MathUtils.mapFractionalToRangeValue(dispX, 0, getChartView().getWidth());
@@ -476,7 +476,7 @@ public class MarkerView extends ChartPartView<Marker> {
      */
     private double mapCoordSpaceToChartViewY(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
     {
-        // Get ChartView, DataView
+        // Get ChartHelper, ChartView, ContentView
         ChartHelper chartHelper = getChartHelper();
         ChartView chartView = getChartView();
         ContentView contentView = chartHelper.getContentView();
@@ -500,7 +500,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceY DataBounds
-        else if (aCoordSpace == Marker.CoordSpace.DataView) {
+        else if (aCoordSpace == Marker.CoordSpace.Content) {
             double dispY = aValue;
             if (isFractional)
                 dispY = MathUtils.mapFractionalToRangeValue(dispY, 0, contentView.getHeight());
@@ -508,7 +508,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceY ChartBounds
-        else if (aCoordSpace == Marker.CoordSpace.ChartView) {
+        else if (aCoordSpace == Marker.CoordSpace.Chart) {
             double dispY = aValue;
             if (isFractional)
                 dispY = MathUtils.mapFractionalToRangeValue(dispY, 0, chartView.getHeight());
@@ -524,7 +524,7 @@ public class MarkerView extends ChartPartView<Marker> {
      */
     private double mapChartViewToCoordSpaceX(Marker.CoordSpace aCoordSpace, boolean isFractional, double aValue)
     {
-        // Get ChartView, DataView
+        // Get ChartHelper, ContentView
         ChartHelper chartHelper = getChartHelper();
         ContentView contentView = chartHelper.getContentView();
         double contentViewX = contentView.getX();
@@ -544,7 +544,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceX DataBounds
-        if (aCoordSpace == Marker.CoordSpace.DataView) {
+        if (aCoordSpace == Marker.CoordSpace.Content) {
             double dispX = aValue - contentViewX;
             if (isFractional)
                 dispX = MathUtils.mapRangeValueToFractional(dispX, 0, contentView.getWidth());
@@ -581,7 +581,7 @@ public class MarkerView extends ChartPartView<Marker> {
         }
 
         // Handle CoordSpaceX DataBounds
-        if (aCoordSpace == Marker.CoordSpace.DataView) {
+        if (aCoordSpace == Marker.CoordSpace.Content) {
             double dispY = aValue - contentViewY;
             if (isFractional)
                 dispY = MathUtils.mapRangeValueToFractional(dispY, 0, contentView.getHeight());

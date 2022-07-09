@@ -546,8 +546,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Create/configure marker
         Chart chart = getChart();
         Marker marker = new Marker();
-        marker.setCoordSpaceX(Marker.CoordSpace.ChartView);
-        marker.setCoordSpaceY(Marker.CoordSpace.ChartView);
+        marker.setCoordSpaceX(Marker.CoordSpace.Chart);
+        marker.setCoordSpaceY(Marker.CoordSpace.Chart);
         marker.setImage(anImage);
         marker.setName(aName);
 

@@ -23,20 +23,20 @@
   <RowView Padding="4" Spacing="4">
     <Label Spacing="4" text="Space X:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="XSpaceXButton" Padding="2,4,2,4" text="X" Position="CENTER_LEFT" />
-      <ToggleButton Name="XSpaceDataButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
-      <ToggleButton Name="XSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_RIGHT" />
+      <ToggleButton Name="XSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_LEFT" />
+      <ToggleButton Name="XSpaceContentButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
+      <ToggleButton Name="XSpaceXButton" Padding="2,4,2,4" text="X" PrefWidth="30" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label Spacing="4" text="Space Y:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="YSpaceYButton" Padding="2,4,2,4" text="Y" Position="CENTER_LEFT" />
-      <ToggleButton Name="YSpaceY2Button" Padding="2,4,2,4" text="Y2" Position="CENTER" />
-      <ToggleButton Name="YSpaceY3Button" Padding="2,4,2,4" text="Y3" Position="CENTER" />
-      <ToggleButton Name="YSpaceY4Button" Padding="2,4,2,4" text="Y4" Position="CENTER" />
-      <ToggleButton Name="YSpaceDataButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
-      <ToggleButton Name="YSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_RIGHT" />
+      <ToggleButton Name="YSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_LEFT" />
+      <ToggleButton Name="YSpaceContentButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
+      <ToggleButton Name="YSpaceYButton" Padding="2,4,2,4" text="Y" PrefWidth="30" Position="CENTER_RIGHT" />
+      <ToggleButton Name="YSpaceY2Button" Padding="2,4,2,4" text="Y2" PrefWidth="30" Position="CENTER" />
+      <ToggleButton Name="YSpaceY3Button" Padding="2,4,2,4" text="Y3" PrefWidth="30" Position="CENTER" />
+      <ToggleButton Name="YSpaceY4Button" Padding="2,4,2,4" text="Y4" PrefWidth="30" Position="CENTER" />
     </RowView>
   </RowView>
   <RowView Padding="3,4,3,4" Spacing="4">
