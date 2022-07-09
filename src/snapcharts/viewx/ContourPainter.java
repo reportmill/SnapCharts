@@ -7,21 +7,21 @@ import snapcharts.model.Trace;
 import snapcharts.data.DataSet;
 import snapcharts.util.ContourMaker;
 import snapcharts.view.AxisView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
- * This is a class to paint contour for a DataArea and DataSet.
+ * This is a class to paint contour for a TraceView and DataSet.
  */
 public class ContourPainter {
 
     // The ContourHelper
     private ContourHelper  _contourHelper;
 
-    // The DataArea
-    private DataArea  _dataArea;
+    // The TraceView
+    private TraceView  _traceView;
 
     // The ContourMaker
-    private ContourMaker _contourMaker;
+    private ContourMaker  _contourMaker;
 
     // The Contours in display coords
     private Shape[]  _contours;
@@ -41,10 +41,10 @@ public class ContourPainter {
     /**
      * Constructor.
      */
-    public ContourPainter(ContourHelper aContourHelper, DataArea aDataArea)
+    public ContourPainter(ContourHelper aContourHelper, TraceView aTraceView)
     {
         _contourHelper = aContourHelper;
-        _dataArea = aDataArea;
+        _traceView = aTraceView;
     }
 
     /**
@@ -169,7 +169,7 @@ public class ContourPainter {
         if (_contourMaker != null) return _contourMaker;
 
         // Get/set DataSet for contours (if Polar, get PolarXYData)
-        Trace trace = _dataArea.getTrace();
+        Trace trace = _traceView.getTrace();
         DataSet dataSet = trace.getProcessedData();
         if (trace.getChart().getType().isPolarType())
             dataSet = trace.getPolarXYData();
@@ -183,8 +183,8 @@ public class ContourPainter {
      */
     private Shape dataContourToView(Shape aDataContour)
     {
-        AxisView axisX = _dataArea.getAxisViewX();
-        AxisView axisY = _dataArea.getAxisViewY();
+        AxisView axisX = _traceView.getAxisViewX();
+        AxisView axisY = _traceView.getAxisViewY();
         Path2D path = new Path2D();
         double[] pnts = new double[6];
         PathIter piter = aDataContour.getPathIter(null);
@@ -219,7 +219,7 @@ public class ContourPainter {
         _contours = null;
         _hullPath = null;
         _meshPath = null;
-        _dataArea.repaint();
+        _traceView.repaint();
     }
 
     /**

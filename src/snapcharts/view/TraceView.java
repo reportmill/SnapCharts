@@ -12,12 +12,12 @@ import snapcharts.model.*;
 /**
  * A view to display the actual contents of a chart.
  */
-public abstract class DataArea extends ChartPartView<Trace> {
+public abstract class TraceView extends ChartPartView<Trace> {
 
     // The ChartHelper
     protected ChartHelper  _chartHelper;
 
-    // The ContentView that holds this DataArea
+    // The ContentView that holds this TraceView
     protected ContentView  _contentView;
 
     // The Trace
@@ -26,16 +26,16 @@ public abstract class DataArea extends ChartPartView<Trace> {
     // The AxisType for Y axis (might get coerced down to Y if chart type doesn't support it)
     private AxisType  _axisTypeY;
 
-    // The Trace.ProcessedData possibly further processed for DataArea/Axes
+    // The Trace.ProcessedData possibly further processed for TraceView/Axes
     private DataSet  _stagedData;
 
-    // The ProcessedData converted to DataArea display coords
+    // The ProcessedData converted to TraceView display coords
     private DataSet  _dispData;
 
     /**
      * Constructor.
      */
-    public DataArea(ChartHelper aChartHelper, Trace aTrace)
+    public TraceView(ChartHelper aChartHelper, Trace aTrace)
     {
         super();
 
@@ -148,7 +148,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
-     * Returns the Trace.ProcessedData possibly further processed for DataArea/Axes.
+     * Returns the Trace.ProcessedData possibly further processed for TraceView/Axes.
      * Conditions that cause further processing: Stacked, AxisWrap, Axis Log.
      */
     public DataSet getStagedData()
@@ -196,7 +196,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
-     * Returns the Trace points in display coords for this DataArea (cached).
+     * Returns the Trace points in display coords for this TraceView (cached).
      */
     public DataSet getDisplayData()
     {
@@ -209,7 +209,7 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
-     * Returns the Trace points in display coords for this DataArea.
+     * Returns the Trace points in display coords for this TraceView.
      */
     protected DataSet getDisplayDataImpl()
     {
@@ -297,28 +297,28 @@ public abstract class DataArea extends ChartPartView<Trace> {
     }
 
     /**
-     * Returns the previous stacked DataArea.
+     * Returns the previous stacked TraceView.
      */
-    public DataArea getPreviousStackedDataArea()
+    public TraceView getPreviousStackedTraceView()
     {
-        DataArea[] dataAreas = _chartHelper.getDataAreas();
-        int index = ArrayUtils.indexOf(dataAreas, this);
+        TraceView[] traceViews = _chartHelper.getTraceViews();
+        int index = ArrayUtils.indexOf(traceViews, this);
         for (int i = index - 1; i >= 0; i--) {
-            DataArea prevDataArea = dataAreas[i];
-            Trace prevTrace = prevDataArea.getTrace();
+            TraceView prevTraceView = traceViews[i];
+            Trace prevTrace = prevTraceView.getTrace();
             if (prevTrace.isStacked())
-                return prevDataArea;
+                return prevTraceView;
         }
         return null;
     }
 
     /**
-     * Returns the previous stacked DataArea.StagedData.
+     * Returns the previous stacked TraceView.StagedData.
      */
     public DataSet getPreviousStackedData()
     {
-        DataArea prevDataArea = getPreviousStackedDataArea();
-        return prevDataArea != null ? prevDataArea.getStagedData() : null;
+        TraceView prevTraceView = getPreviousStackedTraceView();
+        return prevTraceView != null ? prevTraceView.getStagedData() : null;
     }
 
     /**
@@ -429,21 +429,21 @@ public abstract class DataArea extends ChartPartView<Trace> {
         // Paint chart
         Trace trace = getTrace();
         if (trace.isEnabled() || getParent().getChildCount() == 1)
-            paintDataArea(aPntr);
+            paintTrace(aPntr);
 
         // Restore Graphics state
         aPntr.restore();
     }
 
     /**
-     * Paints the DataArea (ChartType/Trace specific painting).
+     * Paints the Trace (ChartType/Trace specific painting).
      */
-    protected void paintDataArea(Painter aPntr)  { }
+    protected void paintTrace(Painter aPntr)  { }
 
     /**
-     * Paints the DataArea above all ContentView.DataAreas.paintDataArea() painting.
+     * Paints the Trace above all ContentView.TraceViews.paintTrace() painting.
      */
-    protected void paintDataAreaAbove(Painter aPntr)
+    protected void paintTraceAbove(Painter aPntr)
     {
         Trace trace = getTrace();
         if (trace.isShowTags())

@@ -44,22 +44,22 @@ public class PolarContourChartHelper extends PolarChartHelper {
     public ContourHelper getContourHelper()  { return _contourHelper; }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
     @Override
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        DataArea[] dataAreas = new DataArea[traceCount];
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i=0; i<traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new PolarContourDataArea(this, trace);
+            traceViews[i] = new PolarContourTraceView(this, trace);
         }
 
-        return dataAreas;
+        return traceViews;
     }
 
     /**

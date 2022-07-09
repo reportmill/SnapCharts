@@ -3,7 +3,7 @@ import snapcharts.model.AxisType;
 import snapcharts.model.ChartType;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
  * A stub ChartHelper.
@@ -34,8 +34,8 @@ public class EmptyChartHelper extends ChartHelper {
     }
 
     @Override
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
-        return new DataArea[0];
+        return new TraceView[0];
     }
 }

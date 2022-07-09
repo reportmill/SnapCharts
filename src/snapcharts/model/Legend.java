@@ -95,12 +95,12 @@ public class Legend extends ChartPart {
     }
 
     /**
-     * Returns whether is positioned inside data area.
+     * Returns whether is positioned inside chart content.
      */
     public boolean isInside()  { return _inside; }
 
     /**
-     * Sets whether is positioned inside data area.
+     * Sets whether is positioned inside chart content.
      */
     public void setInside(boolean aValue)
     {

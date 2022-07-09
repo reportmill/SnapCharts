@@ -16,8 +16,8 @@ public class AxisBoxHighliner extends FacetShape {
     // The AxisBox
     private AxisBoxShape  _axisBoxShape;
 
-    // The DataArea3D
-    private DataArea3D  _dataArea;
+    // The TraceView3D
+    private TraceView3D  _traceView;
 
     // The target point in scene coords
     private Point3D  scenePoint = new Point3D();
@@ -53,10 +53,10 @@ public class AxisBoxHighliner extends FacetShape {
     /**
      * Constructor.
      */
-    public AxisBoxHighliner(AxisBoxShape axisBoxShape, DataArea3D dataArea)
+    public AxisBoxHighliner(AxisBoxShape axisBoxShape, TraceView3D traceView)
     {
         _axisBoxShape = axisBoxShape;
-        _dataArea = dataArea;
+        _traceView = traceView;
     }
 
     /**
@@ -65,7 +65,7 @@ public class AxisBoxHighliner extends FacetShape {
     public void updateLines()
     {
         // Get ChartView.TargDataPoint. If null, set not visible and return.
-        ChartView chartView = _dataArea.getChartHelper().getChartView();
+        ChartView chartView = _traceView.getChartHelper().getChartView();
         TracePoint tracePoint = chartView.getTargDataPoint();
         if (tracePoint == null) {
             setVisible(false);
@@ -78,12 +78,12 @@ public class AxisBoxHighliner extends FacetShape {
 
         // Get TargDataPoint in scene space
         scenePoint.setPoint(tracePoint.getX(), tracePoint.getY(), tracePoint.getZ());
-        _dataArea.convertDataToScene(scenePoint);
+        _traceView.convertDataToScene(scenePoint);
 
         // Get scene size
-        double width = _dataArea.getAxisBoxPrefWidth();
-        double height = _dataArea.getAxisBoxPrefHeight();
-        double depth = _dataArea.getAxisBoxPrefDepth();
+        double width = _traceView.getAxisBoxPrefWidth();
+        double height = _traceView.getAxisBoxPrefHeight();
+        double depth = _traceView.getAxisBoxPrefDepth();
 
         // Get points for left side lines
         boolean leftVisible = _axisBoxShape.isSideVisible(Side3D.LEFT);

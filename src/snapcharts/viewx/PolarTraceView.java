@@ -14,9 +14,9 @@ import snapcharts.model.*;
 import snapcharts.view.*;
 
 /**
- * A DataArea subclass to display Polar charts.
+ * A TraceView subclass to display Polar charts.
  */
-public class PolarDataArea extends DataArea {
+public class PolarTraceView extends TraceView {
 
     // The Polar ChartHelper
     private PolarChartHelper _polarHelper;
@@ -31,7 +31,7 @@ public class PolarDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public PolarDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public PolarTraceView(ChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace);
         _polarHelper = (PolarChartHelper) aChartHelper;
@@ -85,7 +85,7 @@ public class PolarDataArea extends DataArea {
      * Paints chart.
      */
     @Override
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
         // Get area
         double areaW = getWidth();
@@ -275,7 +275,7 @@ public class PolarDataArea extends DataArea {
     }
 
     /**
-     * A Shape implementation to display this PolarDataArea.DisplayData as data line.
+     * A Shape implementation to display this PolarTraceView.DisplayData as data line.
      */
     private class DataLineShape extends Shape {
 
@@ -285,12 +285,12 @@ public class PolarDataArea extends DataArea {
         @Override
         public PathIter getPathIter(Transform aTransform)
         {
-            return new DataLinePathIter(aTransform, PolarDataArea.this);
+            return new DataLinePathIter(aTransform, PolarTraceView.this);
         }
     }
 
     /**
-     * A PathIter implementation to display DataArea.DisplayData as data line.
+     * A PathIter implementation to display TraceView.DisplayData as data line.
      */
     private static class DataLinePathIter extends PathIter {
 
@@ -306,12 +306,12 @@ public class PolarDataArea extends DataArea {
         /**
          * Constructor.
          */
-        public DataLinePathIter(Transform aTrans, DataArea aDataArea)
+        public DataLinePathIter(Transform aTrans, TraceView aTraceView)
         {
             super(aTrans);
 
             // Get/set display points
-            DataSet displayData = aDataArea.getDisplayData();
+            DataSet displayData = aTraceView.getDisplayData();
             _dispX = displayData.getDataX();
             _dispY = displayData.getDataY();
             _count = displayData.getPointCount();

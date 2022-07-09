@@ -5,36 +5,36 @@ package snapcharts.viewx;
 import snap.geom.*;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
- * This class holds a set of Shape/PathIter classes to paint DataArea line and area.
+ * This class holds a set of Shape/PathIter classes to paint TraceView line and area.
  */
-public class XYDataAreaShapes {
+public class XYTraceViewShapes {
 
     /**
      * Returns the shape to draw data line, with option to include all (otherwise, it represents visible only).
      */
-    public static Shape getLineShape(DataArea aDataArea, boolean doAll)
+    public static Shape getLineShape(TraceView aTraceView, boolean doAll)
     {
-        return new DataLineShape(aDataArea, doAll);
+        return new TraceLineShape(aTraceView, doAll);
     }
 
     /**
      * Returns the shape to fill data area.
      */
-    public static Shape getAreaShape(DataArea aDataArea)
+    public static Shape getAreaShape(TraceView aTraceView)
     {
-        return new DataAreaShape(aDataArea);
+        return new TraceAreaShape(aTraceView);
     }
 
     /**
-     * A Shape implementation to display DataArea.DataSet as data line.
+     * A Shape implementation to display TraceView.DataSet as data line.
      */
-    private static class DataLineShape extends Shape {
+    private static class TraceLineShape extends Shape {
 
-        // The DataArea
-        protected DataArea  _dataArea;
+        // The TraceView
+        protected TraceView  _traceView;
 
         // Whether to include all data points (as opposed to only visible)
         protected boolean  _includeAll;
@@ -45,19 +45,19 @@ public class XYDataAreaShapes {
         /**
          * Constructor.
          */
-        public DataLineShape(DataArea aDataArea)
+        public TraceLineShape(TraceView aTraceView)
         {
-            this(aDataArea, false);
+            this(aTraceView, false);
         }
 
         /**
          * Constructor.
          */
-        public DataLineShape(DataArea aDataArea, boolean isIncludeAll)
+        public TraceLineShape(TraceView aTraceView, boolean isIncludeAll)
         {
-            _dataArea = aDataArea;
+            _traceView = aTraceView;
             _includeAll = isIncludeAll;
-            _pointJoin = _dataArea.getTrace().getPointJoin();
+            _pointJoin = _traceView.getTrace().getPointJoin();
         }
 
         /**
@@ -67,11 +67,11 @@ public class XYDataAreaShapes {
         public PathIter getPathIter(Transform aTransform)
         {
             // Get normal PathIter for data line
-            PathIter pathIter = new DataLinePathIter(aTransform, _dataArea, _includeAll);
+            PathIter pathIter = new TraceLinePathIter(aTransform, _traceView, _includeAll);
 
             // Apply PointJoin PathIter, if needed
             if (_pointJoin != PointJoin.Line)
-                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter, _dataArea);
+                pathIter = XYPointJoins.getPathIterForPointJoin(_pointJoin, pathIter, _traceView);
 
             // Return PathIter
             return pathIter;
@@ -81,42 +81,42 @@ public class XYDataAreaShapes {
     /**
      * This DataLineShape subclass extends the line to form a closed area down to ZeroY.
      */
-    private static class DataAreaShape extends DataLineShape {
+    private static class TraceAreaShape extends TraceLineShape {
 
         /**
          * Constructor.
          */
-        public DataAreaShape(DataArea aDataArea)
+        public TraceAreaShape(TraceView aTraceView)
         {
-            super(aDataArea);
+            super(aTraceView);
         }
 
         /**
-         * Override to return DataAreaPathIter.
+         * Override to return TraceAreaPathIter.
          */
         @Override
         public PathIter getPathIter(Transform aTransform)
         {
-            // If Stacked and there is a PreviousStackedDataArea, return DataAreaToNextPathIter
-            boolean isStacked = _dataArea.getTrace().isStacked();
+            // If Stacked and there is a PreviousStackedTraceView, return TraceAreaToNextPathIter
+            boolean isStacked = _traceView.getTrace().isStacked();
             if (isStacked) {
-                DataArea previousStackedDataArea = _dataArea.getPreviousStackedDataArea();
-                if (previousStackedDataArea != null)
-                    return new DataAreaToNextPathIter(aTransform, _dataArea);
+                TraceView previousStackedTraceView = _traceView.getPreviousStackedTraceView();
+                if (previousStackedTraceView != null)
+                    return new TraceAreaToNextPathIter(aTransform, _traceView);
             }
 
-            // Otherwise, just create DataAreaToZeroPathIter
-            return new DataAreaToZeroPathIter(aTransform, _dataArea);
+            // Otherwise, just create TraceAreaToZeroPathIter
+            return new TraceAreaToZeroPathIter(aTransform, _traceView);
         }
     }
 
     /**
-     * A PathIter implementation to display DataArea.DataSet as data line.
+     * A PathIter implementation to display TraceView.DataSet as data line.
      */
-    private static class DataLinePathIter extends PathIter {
+    private static class TraceLinePathIter extends PathIter {
 
-        // The DataArea
-        protected DataArea _dataArea;
+        // The TraceView
+        protected TraceView  _traceView;
 
         // The X/Y display coords arrays
         protected double[] _dispX, _dispY;
@@ -133,25 +133,25 @@ public class XYDataAreaShapes {
         /**
          * Constructor.
          */
-        public DataLinePathIter(Transform aTrans, DataArea aDataArea, boolean isShowAll)
+        public TraceLinePathIter(Transform aTrans, TraceView aTraceView, boolean isShowAll)
         {
             super(aTrans);
 
-            // Set DataArea
-            _dataArea = aDataArea;
+            // Set TraceView
+            _traceView = aTraceView;
 
             // Get/set display points
-            DataSet dispData = aDataArea.getDisplayData();
+            DataSet dispData = aTraceView.getDisplayData();
             _dispX = dispData.getDataX();
             _dispY = dispData.getDataY();
 
             // Get/set startIndex, endIndex, count
-            _startIndex = !isShowAll ? aDataArea.getDispDataStartOutsideIndex() : 0;
-            _endIndex = !isShowAll ? aDataArea.getDispDataEndOutsideIndex() : (dispData.getPointCount() - 1);
+            _startIndex = !isShowAll ? aTraceView.getDispDataStartOutsideIndex() : 0;
+            _endIndex = !isShowAll ? aTraceView.getDispDataEndOutsideIndex() : (dispData.getPointCount() - 1);
             _count = _endIndex - _startIndex + 1;
 
             // If PointJoin.Spline, we might need extra point to prevent jumping
-            PointJoin pointJoin = aDataArea.getTrace().getPointJoin();
+            PointJoin pointJoin = aTraceView.getTrace().getPointJoin();
             if (pointJoin == PointJoin.Spline) {
                 if (_startIndex > 0)
                     _startIndex--;
@@ -188,16 +188,16 @@ public class XYDataAreaShapes {
     }
 
     /**
-     * A PathIter implementation to display DataArea.DataSet as data line.
+     * A PathIter implementation to display TraceView.DataSet as data line.
      */
-    private static class ReversedDataLinePathIter extends DataLinePathIter {
+    private static class ReversedTraceLinePathIter extends TraceLinePathIter {
 
         /**
          * Constructor.
          */
-        public ReversedDataLinePathIter(Transform aTrans, DataArea aDataArea)
+        public ReversedTraceLinePathIter(Transform aTrans, TraceView aTraceView)
         {
-            super(aTrans, aDataArea, false);
+            super(aTrans, aTraceView, false);
         }
 
         /**
@@ -220,7 +220,7 @@ public class XYDataAreaShapes {
     /**
      * This DataLinePathIter subclass adds additional segments to create a closed path down to zero Y.
      */
-    private static class DataAreaToZeroPathIter extends PathIter {
+    private static class TraceAreaToZeroPathIter extends PathIter {
 
         // The PathIter for the DataLine
         private PathIter  _dataLinePathIter;
@@ -240,25 +240,25 @@ public class XYDataAreaShapes {
         /**
          * Constructor.
          */
-        public DataAreaToZeroPathIter(Transform aTrans, DataArea aDataArea)
+        public TraceAreaToZeroPathIter(Transform aTrans, TraceView aTraceView)
         {
             super(aTrans);
 
-            // Get DataLinePathIter for DataArea
-            DataLinePathIter dataLinePathIter = new DataLinePathIter(aTrans, aDataArea, false);
-            _dataLinePathIter = dataLinePathIter;
+            // Get DataLinePathIter for TraceView
+            TraceLinePathIter traceLinePathIter = new TraceLinePathIter(aTrans, aTraceView, false);
+            _dataLinePathIter = traceLinePathIter;
 
             // Apply PointJoint PathIter, if needed
-            PointJoin pointJoin = aDataArea.getTrace().getPointJoin();
+            PointJoin pointJoin = aTraceView.getTrace().getPointJoin();
             if (pointJoin != PointJoin.Line)
-                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aDataArea);
+                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aTraceView);
 
             // Get StartDispX, EndDispX
-            _startDispX = dataLinePathIter._dispX[dataLinePathIter._startIndex];
-            _endDispX = dataLinePathIter._dispX[dataLinePathIter._endIndex];
+            _startDispX = traceLinePathIter._dispX[traceLinePathIter._startIndex];
+            _endDispX = traceLinePathIter._dispX[traceLinePathIter._endIndex];
 
             // Calculate display Y for data Y == 0
-            _zeroDispY = aDataArea.dataToViewY(0);
+            _zeroDispY = aTraceView.dataToViewY(0);
         }
 
         /**
@@ -305,46 +305,46 @@ public class XYDataAreaShapes {
     }
 
     /**
-     * This DataLinePathIter subclass adds additional segments to create a closed area path to adjacent DataArea.DataLine.
+     * This DataLinePathIter subclass adds additional segments to create a closed area path to adjacent TraceView.DataLine.
      */
-    private static class DataAreaToNextPathIter extends PathIter {
+    private static class TraceAreaToNextPathIter extends PathIter {
 
-        // The primary DataArea
-        private DataArea  _dataArea;
+        // The primary TraceView
+        private TraceView  _traceView;
 
-        // The PathIter to draw data line DataArea (may be wrapped in PointJoin PathIter)
-        private PathIter  _dataLinePathIter;
+        // The PathIter to draw data line (may be wrapped in PointJoin PathIter)
+        private PathIter  _traceLinePathIter;
 
-        // The adjacent DataArea
-        private DataArea  _nextDataArea;
+        // The adjacent TraceView
+        private TraceView  _nextTraceView;
 
-        // The PathIter to draw data line for adjacent DataArea (reversed to create shape)
-        private PathIter  _nextDataAreaPathIter;
+        // The PathIter to draw data line for adjacent TraceView (reversed to create shape)
+        private PathIter  _nextTraceLinePathIter;
 
         // Whether data line iter is done
         private boolean  _dataLineDone;
 
-        // Whether data area iter is done
+        // Whether trace area iter is done
         private boolean  _allDone;
 
         /**
          * Constructor.
          */
-        public DataAreaToNextPathIter(Transform aTrans, DataArea aDataArea)
+        public TraceAreaToNextPathIter(Transform aTrans, TraceView aTraceView)
         {
             super(aTrans);
-            _dataArea = aDataArea;
+            _traceView = aTraceView;
 
-            // Get DataLinePathIter for DataArea
-            _dataLinePathIter = new DataLinePathIter(aTrans, aDataArea, false);
+            // Get DataLinePathIter for TraceView
+            _traceLinePathIter = new TraceLinePathIter(aTrans, aTraceView, false);
 
             // Apply PointJoint PathIter, if needed
-            PointJoin pointJoin = _dataArea.getTrace().getPointJoin();
+            PointJoin pointJoin = _traceView.getTrace().getPointJoin();
             if (pointJoin != PointJoin.Line)
-                _dataLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _dataLinePathIter, aDataArea);
+                _traceLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoin, _traceLinePathIter, aTraceView);
 
-            // Get next data area
-            _nextDataArea = _dataArea.getPreviousStackedDataArea();
+            // Get next TraceView
+            _nextTraceView = _traceView.getPreviousStackedTraceView();
         }
 
         /**
@@ -354,14 +354,14 @@ public class XYDataAreaShapes {
         public boolean hasNext()
         {
             // If still iterating over DataLine, return true
-            if (_dataLinePathIter.hasNext())
+            if (_traceLinePathIter.hasNext())
                 return true;
 
             // Mark DataLineDone
             _dataLineDone = true;
 
-            // If nextDataArea iteration not started or not finished, continue
-            if (_nextDataAreaPathIter == null || _nextDataAreaPathIter.hasNext())
+            // If nextTraceLine iteration not started or not finished, continue
+            if (_nextTraceLinePathIter == null || _nextTraceLinePathIter.hasNext())
                 return true;
 
             // Return whether everything is done
@@ -376,35 +376,35 @@ public class XYDataAreaShapes {
         {
             // If still iterating over DataLine, do normal version
             if (!_dataLineDone)
-                return _dataLinePathIter.getNext(coords);
+                return _traceLinePathIter.getNext(coords);
 
-            // If starting NextDataArea, create its PathIter, and add connecting LineTo to its end point
-            if (_nextDataAreaPathIter == null) {
+            // If starting NextTraceView, create its PathIter, and add connecting LineTo to its end point
+            if (_nextTraceLinePathIter == null) {
 
-                // Create/set NextDataAreaPathIter
-                ReversedDataLinePathIter nextDataAreaPathIter = new ReversedDataLinePathIter(_trans, _nextDataArea);
-                _nextDataAreaPathIter = nextDataAreaPathIter;
+                // Create/set NextTraceLinePathIter
+                ReversedTraceLinePathIter nextTraceLinePathIter = new ReversedTraceLinePathIter(_trans, _nextTraceView);
+                _nextTraceLinePathIter = nextTraceLinePathIter;
 
                 // Apply PointJoin if needed
-                PointJoin pointJoin = _nextDataArea.getTrace().getPointJoin();
+                PointJoin pointJoin = _nextTraceView.getTrace().getPointJoin();
                 PointJoin pointJoinReverse = pointJoin.getReverse(); // Turns HV to VH
                 if (pointJoinReverse != PointJoin.Line)
-                    _nextDataAreaPathIter = XYPointJoins.getPathIterForPointJoin(pointJoinReverse, _nextDataAreaPathIter, _nextDataArea);
+                    _nextTraceLinePathIter = XYPointJoins.getPathIterForPointJoin(pointJoinReverse, _nextTraceLinePathIter, _nextTraceView);
 
                 // Eat first segment (MoveTo)
-                if (_nextDataAreaPathIter.hasNext())
-                    _nextDataAreaPathIter.getNext(coords);
+                if (_nextTraceLinePathIter.hasNext())
+                    _nextTraceLinePathIter.getNext(coords);
 
                 // Handle lineTo connecting line between data sets
-                int endIndex = _nextDataArea.getDispDataEndOutsideIndex();
-                double dispX = nextDataAreaPathIter._dispX[endIndex];
-                double dispY = nextDataAreaPathIter._dispY[endIndex];
+                int endIndex = _nextTraceView.getDispDataEndOutsideIndex();
+                double dispX = nextTraceLinePathIter._dispX[endIndex];
+                double dispY = nextTraceLinePathIter._dispY[endIndex];
                 return lineTo(dispX, dispY, coords);
             }
 
-            // If NextDataArea PathIter still iterating, let it provide segment
-            if (_nextDataAreaPathIter.hasNext())
-                return _nextDataAreaPathIter.getNext(coords);
+            // If NextTrace PathIter still iterating, let it provide segment
+            if (_nextTraceLinePathIter.hasNext())
+                return _nextTraceLinePathIter.getNext(coords);
 
             // Mark all done and return close path
             _allDone = true;

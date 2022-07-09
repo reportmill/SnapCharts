@@ -15,9 +15,9 @@ import snapcharts.view.ChartHelper;
 import java.util.BitSet;
 
 /**
- * A DataArea3D subclass to display the contents of Contour3D chart.
+ * A TraceView3D subclass to display the contents of Contour3D chart.
  */
-public class Contour3DDataArea extends DataArea3D {
+public class Contour3DTraceView extends TraceView3D {
 
     // The Triangle VertexArray
     private VertexArray  _triangleArray;
@@ -25,7 +25,7 @@ public class Contour3DDataArea extends DataArea3D {
     /**
      * Constructor.
      */
-    public Contour3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
+    public Contour3DTraceView(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace, isVisible);
     }
@@ -165,7 +165,7 @@ public class Contour3DDataArea extends DataArea3D {
         Trace trace = getTrace();
         int pointIndex = hitDetector.getHitVertexIndex();
         if (pointIndex >= trace.getPointCount()) {
-            System.err.println("Contour3DDataArea.getDataPointForLocalXY: hit point index outside trace bounds! " + pointIndex);
+            System.err.println("Contour3DTraceView.getDataPointForLocalXY: hit point index outside trace bounds! " + pointIndex);
             return null;
         }
 

@@ -57,7 +57,7 @@ public class PageViewLayout {
         for (View child : _page.getChildren()) {
             if (child instanceof ChartView) {
                 ChartView chartView = (ChartView) child;
-                chartView.setPrefContentViewBounds(null);
+                chartView.setPrefContentBounds(null);
                 chartView.layout();
             }
         }
@@ -119,7 +119,7 @@ public class PageViewLayout {
     }
 
     /**
-     * Calculate the optimal data area size and chart margin sizes and set in all page charts.
+     * Calculate the optimal chart content size and chart margin sizes and set in all page charts.
      */
     public void synchChartContentViewSizes()
     {
@@ -134,11 +134,11 @@ public class PageViewLayout {
             totalMarginColsW += marginColsW[i];
         }
 
-        // Calculate unified data area width
+        // Calculate unified chart content width
         double totalDataW = _areaW - totalMarginColsW;
         int dataW = (int) (totalDataW / colCount);
 
-        // Set all charts to have new data area width and margin column widths
+        // Set all charts to have new content width and margin column widths
         setContentViewWidthForAllCharts(dataW, marginColsW);
 
         // Get margin row heights and total margin row height
@@ -161,11 +161,11 @@ public class PageViewLayout {
             rowCount = realRowCount;
         }
 
-        // Calculate unified data area height
+        // Calculate unified chart content height
         double totalDataH = areaH2 - totalMarginRowsH;
         int dataH = (int) (totalDataH / rowCount);
 
-        // Set all charts to have new data area height and margin column height
+        // Set all charts to have new content height and margin column height
         setContentViewHeightForAllCharts(dataH, marginRowsH);
     }
 
@@ -233,9 +233,9 @@ public class PageViewLayout {
                 if (chartProxy == null) break;
                 chartProxy.setX(chartX);
 
-                // Calculate new ContentView.X and set new Chart.PrefContentViewBounds
+                // Calculate new ContentView.X and set new Chart.PrefContentBounds
                 int dataX = marginColMaxX - chartX;
-                setPrefContentViewBounds(chartProxy, new Rect(dataX, 0, dataW, 0));
+                setPrefContentBounds(chartProxy, new Rect(dataX, 0, dataW, 0));
 
                 // If last column, set chart width to remaining space and break
                 if (j+1 == colCount) {
@@ -296,9 +296,9 @@ public class PageViewLayout {
                 if (chartProxy == null) break;
                 chartProxy.setY(chartY);
 
-                // Calculate new ContentView.Y and set new Chart.PrefContentViewBounds
+                // Calculate new ContentView.Y and set new Chart.PrefContentBounds
                 int dataY = marginRowMaxY - chartY;
-                Rect prefBounds = getPrefContentViewBounds(chartProxy);
+                Rect prefBounds = getPrefContentBounds(chartProxy);
                 prefBounds.setY(dataY);
                 prefBounds.setHeight(dataH);
 
@@ -352,14 +352,14 @@ public class PageViewLayout {
     {
         return aChartProxy.getChildForClass(ContentView.class);
     }
-    private Rect getPrefContentViewBounds(ViewProxy<ChartView> aChartProxy)
+    private Rect getPrefContentBounds(ViewProxy<ChartView> aChartProxy)
     {
         ChartView chartView = aChartProxy.getView();
-        return chartView.getPrefContentViewBounds();
+        return chartView.getPrefContentBounds();
     }
-    private void setPrefContentViewBounds(ViewProxy<ChartView> aChartProxy, Rect aRect)
+    private void setPrefContentBounds(ViewProxy<ChartView> aChartProxy, Rect aRect)
     {
         ChartView chartView = aChartProxy.getView();
-        chartView.setPrefContentViewBounds(aRect);
+        chartView.setPrefContentBounds(aRect);
     }
 }

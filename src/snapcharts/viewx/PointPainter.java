@@ -9,17 +9,17 @@ import snap.text.StringBox;
 import snap.util.FormatUtils;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class to handle painting DataArea.Trace data symbols and tags.
+ * A class to handle painting TraceView.Trace data symbols and tags.
  */
 public class PointPainter {
 
-    // The DataArea
-    private DataArea  _dataArea;
+    // The TraceView
+    private TraceView  _traceView;
 
     // The Cached Symbol points
     private Point[]  _symbolPoints;
@@ -33,9 +33,9 @@ public class PointPainter {
     /**
      * Constructor.
      */
-    public PointPainter(DataArea aDataArea)
+    public PointPainter(TraceView aTraceView)
     {
-        _dataArea = aDataArea;
+        _traceView = aTraceView;
     }
 
     /**
@@ -54,7 +54,7 @@ public class PointPainter {
     public void paintSymbolsAndTagsPrep()
     {
         // Get ShowSymbol info
-        Trace trace = _dataArea.getTrace();
+        Trace trace = _traceView.getTrace();
         boolean showPoints = trace.isShowPoints();
         PointStyle pointStyle = trace.getPointStyle();
         int symbolSize = pointStyle.getSymbolSize();
@@ -64,7 +64,7 @@ public class PointPainter {
         // Get ShowTag info because TagBoxes are created
         boolean showTags = trace.isShowTags();
         TagStyle tagStyle = trace.getTagStyle();
-        DataSet procData = _dataArea.getTrace().getProcessedData();
+        DataSet procData = _traceView.getTrace().getProcessedData();
         boolean hasZ = procData.getDataType().hasZ();
         Color tagBorderColor = tagStyle.getLineColor();
         double tagBorderWidth = tagStyle.getLineWidth();
@@ -73,13 +73,13 @@ public class PointPainter {
         NumberFormat tagFormat = NumberFormat.getFormat(tagStyle.getTextFormat());
         Pos tagPos = Pos.TOP_CENTER;
         double tagOffset = TAG_OFFSET + Math.round(symbolSize / 2);
-        Rect dataBounds = _dataArea.getBoundsLocal();
+        Rect contentBounds = _traceView.getBoundsLocal();
         List<StringBox> tagBoxList = new ArrayList<>();
 
         // Get DispData and start/end index for current visible range
-        DataSet dispData = _dataArea.getDisplayData();
-        int startIndex = _dataArea.getDispDataStartIndex();
-        int endIndex = _dataArea.getDispDataEndIndex();
+        DataSet dispData = _traceView.getDisplayData();
+        int startIndex = _traceView.getDispDataStartIndex();
+        int endIndex = _traceView.getDispDataEndIndex();
 
         // Get VisPointCount and MaxPointCount
         int visPointCount = endIndex - startIndex + 1;
@@ -125,7 +125,7 @@ public class PointPainter {
                 else valStr = FormatUtils.formatNum(val);
 
                 // Create/add TagBox
-                if (dataBounds.contains(dispX, dispY)) {
+                if (contentBounds.contains(dispX, dispY)) {
                     StringBox strBox = getTagStringBox(valStr, tagFont, tagBorder, dispX, dispY, tagPos, tagOffset);
                     if (pointSpacing > 0 && tagBoxList.size() > 0) {
                         StringBox lastBox = tagBoxList.get(tagBoxList.size() - 1);
@@ -177,7 +177,7 @@ public class PointPainter {
     public void paintSymbols(Painter aPntr)
     {
         // Get info
-        Trace trace = _dataArea.getTrace();
+        Trace trace = _traceView.getTrace();
         PointStyle pointStyle = trace.getPointStyle();
         Symbol symbol = pointStyle.getSymbol();
         Color symbolColor = pointStyle.getFillColor();  //color.darker().darker()
@@ -226,7 +226,7 @@ public class PointPainter {
     public void paintTags(Painter aPntr)
     {
         TagBox[] tagBoxes = getTagBoxes();
-        Trace trace = _dataArea.getTrace();
+        Trace trace = _traceView.getTrace();
         TagStyle tagStyle = trace.getTagStyle();
         Color fillColor = tagStyle.getFillColor();
 

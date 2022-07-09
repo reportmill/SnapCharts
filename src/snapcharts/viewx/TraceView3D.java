@@ -12,9 +12,9 @@ import snapcharts.model.*;
 import snapcharts.view.*;
 
 /**
- * This DataArea subclass forms the basis for 3D DataAreas.
+ * This TraceView subclass forms the basis for 3D TraceViews.
  */
-public abstract class DataArea3D extends DataArea {
+public abstract class TraceView3D extends TraceView {
 
     // The Camera
     protected CameraView  _cameraView;
@@ -46,7 +46,7 @@ public abstract class DataArea3D extends DataArea {
     // Runnables to rebuild AxisProxy views when camera changes (deferred/coalesced)
     private Runnable  _cameraChangeRun, _cameraChangeRunImpl = () -> cameraDidChangeImpl();
 
-    // Whether this DataArea is used just for projection
+    // Whether this TraceView is used just for projection
     private boolean  _projection;
 
     // Constants
@@ -56,7 +56,7 @@ public abstract class DataArea3D extends DataArea {
     /**
      * Constructor.
      */
-    public DataArea3D(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
+    public TraceView3D(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace);
 
@@ -183,7 +183,7 @@ public abstract class DataArea3D extends DataArea {
         // Update grids
         axisBoxShape.addSideGrids();
 
-        // Repaint DataArea and reset runnable
+        // Repaint TraceView and reset runnable
         resetAxisProxyBounds();
         repaint();
         _rebuildChartRun = null;
@@ -366,7 +366,7 @@ public abstract class DataArea3D extends DataArea {
 
         // Calculate intervals for current axis length
         double axisLen = getAxisLengthInViewForAxis(axisType);
-        //Size labelSize = _dataArea.getChartHelper().getAxisView(axisType).getMaxTickLabelRotatedSize();
+        //Size labelSize = _traceView.getChartHelper().getAxisView(axisType).getMaxTickLabelRotatedSize();
         double divLen = 40;
         Intervals intervals = Intervals.getIntervalsForMinMaxLen(prefMin, prefMax, axisLen, divLen, true, true);
 
@@ -572,7 +572,7 @@ public abstract class DataArea3D extends DataArea {
             case X: return getIntervalsX();
             case Y: return getIntervalsY();
             case Z: return getIntervalsZ();
-            default: throw new RuntimeException("DataArea3D.getIntervalsForAxis: Invalid axis: " + anAxisType);
+            default: throw new RuntimeException("TraceView3D.getIntervalsForAxis: Invalid axis: " + anAxisType);
         }
     }
 
@@ -585,7 +585,7 @@ public abstract class DataArea3D extends DataArea {
             case X: _intervalsX = theIntervals; break;
             case Y: _intervalsY = theIntervals; break;
             case Z: _intervalsZ = theIntervals; break;
-            default: throw new RuntimeException("DataArea3D.setIntervalsForAxis: Invalid axis: " + anAxisType);
+            default: throw new RuntimeException("TraceView3D.setIntervalsForAxis: Invalid axis: " + anAxisType);
         }
     }
 
@@ -646,12 +646,12 @@ public abstract class DataArea3D extends DataArea {
     }
 
     /**
-     * Returns whether this DataArea is just used to generate projections.
+     * Returns whether this TraceView3D is just used to generate projections.
      */
     public boolean isProjection()  { return _projection; }
 
     /**
-     * Sets whether this DataArea is just used to generate projections.
+     * Sets whether this TraceView3D is just used to generate projections.
      */
     public void setProjection(boolean aValue)
     {
@@ -662,7 +662,7 @@ public abstract class DataArea3D extends DataArea {
      * Override to suppress.
      */
     @Override
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
         // If no content yet, just return
         if (_scene.getChildCount() == 0) return;

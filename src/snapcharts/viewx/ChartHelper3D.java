@@ -16,8 +16,8 @@ import snapcharts.view.*;
  */
 public abstract class ChartHelper3D extends ChartHelper {
 
-    // A DataArea for projections
-    private DataArea3D  _projectionDataData;
+    // A TraceView3D for projections
+    private TraceView3D  _projectionDataData;
 
     /**
      * Constructor.
@@ -28,12 +28,12 @@ public abstract class ChartHelper3D extends ChartHelper {
     }
 
     /**
-     * Returns the DataArea3D.
+     * Returns the TraceView3D.
      */
-    public DataArea3D getDataArea3D()
+    public TraceView3D getTraceView3D()
     {
-        DataArea[] dataAreas = getDataAreas();
-        return dataAreas.length > 0 && dataAreas[0] instanceof DataArea3D ? (DataArea3D) dataAreas[0] : null;
+        TraceView[] traceViews = getTraceViews();
+        return traceViews.length > 0 && traceViews[0] instanceof TraceView3D ? (TraceView3D) traceViews[0] : null;
     }
 
     /**
@@ -45,13 +45,13 @@ public abstract class ChartHelper3D extends ChartHelper {
         if (aChartPart instanceof Axis) {
             Axis axis = (Axis) aChartPart;
             AxisType axisType = axis.getType();
-            DataArea3D dataArea3D = getDataArea3D();
+            TraceView3D traceView3D = getTraceView3D();
             if (axisType.isX())
-                return dataArea3D._axisProxyX;
+                return traceView3D._axisProxyX;
             if (axisType.isAnyY())
-                return dataArea3D._axisProxyY;
+                return traceView3D._axisProxyY;
             if (axisType.isZ())
-                return dataArea3D._axisProxyZ;
+                return traceView3D._axisProxyZ;
         }
 
         // Do normal version
@@ -59,22 +59,22 @@ public abstract class ChartHelper3D extends ChartHelper {
     }
 
     /**
-     * Returns a DataArea3D for projections.
+     * Returns a TraceView3D for projections.
      */
-    public DataArea3D getProjectionDataArea()
+    public TraceView3D getProjectionTraceView()
     {
         if (_projectionDataData != null) return _projectionDataData;
-        DataArea3D dataArea3D = createProjectionDataArea();
+        TraceView3D traceView = createProjectionTraceView();
         ContentView contentView = getContentView();
-        ViewUtils.setParent(dataArea3D, contentView);
-        dataArea3D.setProjection(true);
-        return _projectionDataData = dataArea3D;
+        ViewUtils.setParent(traceView, contentView);
+        traceView.setProjection(true);
+        return _projectionDataData = traceView;
     }
 
     /**
-     * Creates a DataArea3D for projections.
+     * Creates a TraceView3D for projections.
      */
-    protected abstract DataArea3D createProjectionDataArea();
+    protected abstract TraceView3D createProjectionTraceView();
 
     /**
      * Override to reset view transform.
@@ -82,15 +82,15 @@ public abstract class ChartHelper3D extends ChartHelper {
     @Override
     public void resetAxesAnimated()
     {
-        DataArea3D dataArea3D = getDataArea3D();
-        CameraView cameraView = dataArea3D.getCameraView();
+        TraceView3D traceView3D = getTraceView3D();
+        CameraView cameraView = traceView3D.getCameraView();
         Camera camera = cameraView.getCamera();
         camera.setPrefGimbalRadius(camera.getPrefGimbalRadius());
 
         ViewAnim anim = cameraView.getAnimCleared(600);
         anim.startAutoRegisterChanges(Camera.Yaw_Prop, Camera.Pitch_Prop, Camera.Roll_Prop, Camera.PrefGimbalRadius_Prop);
-        camera.setYaw(DataArea3D.DEFAULT_YAW);
-        camera.setPitch(DataArea3D.DEFAULT_PITCH);
+        camera.setYaw(TraceView3D.DEFAULT_YAW);
+        camera.setPitch(TraceView3D.DEFAULT_PITCH);
         camera.setRoll(0);
         camera.setPrefGimbalRadius(camera.calcPrefGimbalRadius());
         anim.stopAutoRegisterChanges();
@@ -105,8 +105,8 @@ public abstract class ChartHelper3D extends ChartHelper {
     public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
     {
         double scale = aScale > 1.6 ? 1.6 : aScale < .625 ? .625 : aScale;
-        DataArea3D dataArea3D = getDataArea3D();
-        CameraView cameraView = dataArea3D.getCameraView();
+        TraceView3D traceView3D = getTraceView3D();
+        CameraView cameraView = traceView3D.getCameraView();
         Camera camera = cameraView.getCamera();
         double gimbalRad = camera.getGimbalRadius();
         double gimbalRad2 = gimbalRad * scale;

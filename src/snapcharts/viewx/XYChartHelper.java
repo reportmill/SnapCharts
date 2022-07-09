@@ -33,22 +33,22 @@ public class XYChartHelper extends ChartHelper {
     public ChartType getChartType()  { return _chartType; }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
     @Override
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        DataArea[] dataAreas = new DataArea[traceCount];
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new XYDataArea(this, trace);
+            traceViews[i] = new XYTraceView(this, trace);
         }
 
-        return dataAreas;
+        return traceViews;
     }
 
     /**
@@ -74,9 +74,9 @@ public class XYChartHelper extends ChartHelper {
      */
     public static void paintGridlinesXY(ChartHelper aChartHelper, Painter aPntr)
     {
-        DataArea dataArea = aChartHelper.getDataAreaForFirstAxisY(); if (dataArea == null) return;
+        TraceView traceView = aChartHelper.getTraceViewForFirstAxisY(); if (traceView == null) return;
         XYGridPainter gridPainter = new XYGridPainter(aChartHelper);
-        gridPainter.paintGridlines(aPntr, dataArea);
+        gridPainter.paintGridlines(aPntr, traceView);
     }
 
     /**

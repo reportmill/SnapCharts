@@ -11,13 +11,13 @@ import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 import snapcharts.view.ContentView;
 
 /**
- * A DataArea subclass to display the contents of pie chart.
+ * A TraceView subclass to display the contents of pie chart.
  */
-public class PieDataArea extends DataArea {
+public class PieTraceView extends TraceView {
     
     // The cached wedges
     private Wedge[]  _wedges;
@@ -53,7 +53,7 @@ public class PieDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public PieDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public PieTraceView(ChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace);
         setPadding(PAD_TOP, 10, PAD_BOTTOM, 10);
@@ -146,7 +146,7 @@ public class PieDataArea extends DataArea {
      * Paints chart.
      */
     @Override
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
         // Get wedges and other paint info
         Wedge[] wedges = getWedges();

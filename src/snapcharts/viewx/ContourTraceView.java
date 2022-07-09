@@ -2,16 +2,15 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.gfx.Painter;
+import snap.gfx.*;
 import snap.props.PropChange;
-import snapcharts.model.Axis;
-import snapcharts.model.TraceStyle;
-import snapcharts.model.Trace;
+import snapcharts.model.*;
+import snapcharts.view.TraceView;
 
 /**
- * A (Polar)DataArea subclass for PolarContour charts.
+ * A TraceView subclass to display ChartType CONTOUR.
  */
-public class PolarContourDataArea extends PolarDataArea {
+public class ContourTraceView extends TraceView {
 
     // The ContourHelper
     private ContourHelper _contourHelper;
@@ -22,7 +21,7 @@ public class PolarContourDataArea extends PolarDataArea {
     /**
      * Constructor.
      */
-    public PolarContourDataArea(PolarContourChartHelper aChartHelper, Trace aTrace)
+    public ContourTraceView(ContourChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace);
 
@@ -34,9 +33,9 @@ public class PolarContourDataArea extends PolarDataArea {
      * Paints chart content.
      */
     @Override
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
-        // Paint contours
+        // Paint contour data
         _contourPainter.paintAll(aPntr);
 
         // Repaint (semi-transparent) gridlines on top of contours
@@ -54,9 +53,9 @@ public class PolarContourDataArea extends PolarDataArea {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle changes
+        // Handle Data changes
         Object src = aPC.getSource();
-        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle) {
+        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle || src instanceof ContourAxis) {
             _contourPainter.clearContoursAll();
         }
     }
@@ -70,7 +69,7 @@ public class PolarContourDataArea extends PolarDataArea {
         // Do normal version
         super.contentViewDidChangeSize();
 
-        // Handle changes
+        // Clear Contours
         _contourPainter.clearContours();
     }
 
@@ -83,7 +82,7 @@ public class PolarContourDataArea extends PolarDataArea {
         // Do normal version
         super.axisViewDidChange(aPC);
 
-        // Handle changes
+        // Clear Contours
         _contourPainter.clearContours();
     }
 }

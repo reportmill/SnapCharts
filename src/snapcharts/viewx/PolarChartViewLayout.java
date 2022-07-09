@@ -35,8 +35,8 @@ public class PolarChartViewLayout extends ChartViewLayout {
         ContentView contentView = _chartView.getContentView();
         double dataW = contentView.getWidth();
         double dataH = contentView.getHeight();
-        for (DataArea dataArea : _polarHelper.getDataAreas())
-            dataArea.setBounds(0, 0, dataW, dataH);
+        for (TraceView traceView : _polarHelper.getTraceViews())
+            traceView.setBounds(0, 0, dataW, dataH);
 
         // Get polar bounds
         Rect polarInside = _polarHelper.getPolarBounds();

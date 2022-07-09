@@ -2,7 +2,7 @@ package snapcharts.viewx;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
  * A ChartHelper for ChartType PIE.
@@ -12,8 +12,8 @@ public class PieChartHelper extends ChartHelper {
     // Whether legend was showing
     private boolean  _showLegend;
 
-    // The DataArea
-    protected PieDataArea _dataArea;
+    // The PieTraceView
+    protected PieTraceView  _traceView;
 
     /**
      * Constructor.
@@ -34,18 +34,18 @@ public class PieChartHelper extends ChartHelper {
     protected AxisType[] getAxisTypesImpl()  { return new AxisType[0]; }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         Content content = getContent();
         Trace[] traces = content.getEnabledTraces();
         if (traces.length == 0)
             traces = content.getTraces();
         if (traces.length == 0)
-            return new DataArea[0];
+            return new TraceView[0];
         Trace trace = traces[0];
-        return new DataArea[] { _dataArea = new PieDataArea(this, trace) };
+        return new TraceView[] { _traceView = new PieTraceView(this, trace) };
     }
 
     /**
@@ -96,11 +96,11 @@ public class PieChartHelper extends ChartHelper {
         Trace trace = content.getTrace(0);
         if (trace.getPointCount()==0) return;
         TracePoint tracePoint = trace.getPoint(0);
-        _dataArea._disableMorph = true;
+        _traceView._disableMorph = true;
         _chartView.setSelDataPoint(tracePoint);
-        _dataArea._disableMorph = false;
+        _traceView._disableMorph = false;
 
         // Fix padding to accommodate bottom label, if needed
-        _dataArea.fixPaddingForBottomLabelIfNeeded();
+        _traceView.fixPaddingForBottomLabelIfNeeded();
     }
 }

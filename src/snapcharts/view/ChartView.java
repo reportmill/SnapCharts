@@ -54,8 +54,8 @@ public class ChartView extends ChartPartView<Chart> {
     // The targeted data point
     private TracePoint _targDataPoint;
 
-    // The preferred DataArea bounds (optional)
-    protected Rect  _prefDataBounds;
+    // The preferred content bounds (optional)
+    protected Rect  _prefContentBounds;
 
     // A helper class for layout
     protected ChartViewLayout  _layout = new ChartViewLayout(this);
@@ -198,8 +198,8 @@ public class ChartView extends ChartPartView<Chart> {
         // Set layout
         _layout = _chartHelper.createLayout();
 
-        // Add DataAreas
-        _contentView.setDataAreas(_chartHelper.getDataAreas());
+        // Add TraceViews
+        _contentView.setTraceViews(_chartHelper.getTraceViews());
 
         // Activate
         _chartHelper.activate();
@@ -406,15 +406,15 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Returns the preferred bounds for the ContentView.
      */
-    public Rect getPrefContentViewBounds()  { return _prefDataBounds; }
+    public Rect getPrefContentBounds()  { return _prefContentBounds; }
 
     /**
      * Sets the preferred bounds for the ContentView.
      */
-    public void setPrefContentViewBounds(Rect aRect)
+    public void setPrefContentBounds(Rect aRect)
     {
-        if (Objects.equals(aRect, _prefDataBounds)) return;
-        _prefDataBounds = aRect;
+        if (Objects.equals(aRect, _prefContentBounds)) return;
+        _prefContentBounds = aRect;
         relayout();
     }
 

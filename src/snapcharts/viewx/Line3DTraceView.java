@@ -13,14 +13,14 @@ import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 
 /**
- * A DataArea3D subclass to display the contents of Line3D chart.
+ * A TraceView3D subclass to display the contents of Line3D chart.
  */
-public class Line3DDataArea extends DataArea3D {
+public class Line3DTraceView extends TraceView3D {
 
     /**
      * Constructor.
      */
-    public Line3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
+    public Line3DTraceView(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace, isVisible);
     }

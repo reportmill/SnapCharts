@@ -75,36 +75,36 @@ public class Contour3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceView3Ds.
      */
     @Override
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         // Get Traces
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        // Iterate over traces and create DataAreas
-        DataArea[] dataAreas = new DataArea[traceCount];
+        // Iterate over traces and create TraceViews
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new Contour3DDataArea(this, trace, i == 0);
+            traceViews[i] = new Contour3DTraceView(this, trace, i == 0);
         }
 
-        // Return DataAreas
-        return dataAreas;
+        // Return
+        return traceViews;
     }
 
     /**
-     * Creates a DataArea3D for projections.
+     * Creates a TraceView3D for projections.
      */
-    protected DataArea3D createProjectionDataArea()
+    protected TraceView3D createProjectionTraceView()
     {
         Content content = getContent();
         Trace[] traces = content.getTraces();
         Trace trace = traces.length > 0 ? traces[0] : null;
-        return trace != null ? new Contour3DDataArea(this, trace, true) : null;
+        return trace != null ? new Contour3DTraceView(this, trace, true) : null;
     }
 
     /**

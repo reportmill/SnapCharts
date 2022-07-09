@@ -60,7 +60,7 @@ public class LegendView extends ChartPartView<Legend> {
     public Pos getPosition()  { return getChartPart().getPosition(); }
 
     /**
-     * Returns whether legend is inside data area.
+     * Returns whether legend is inside chart content.
      */
     public boolean isInside()  { return getChartPart().isInside(); }
 

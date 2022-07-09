@@ -2,7 +2,7 @@ package snapcharts.viewx;
 import snapcharts.model.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
  * A ChartHelper for 3D Line chart (ChartType.LINE_3D).
@@ -45,35 +45,35 @@ public class Line3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         // Get traces
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        // Create DataArea for each Trace
-        DataArea[] dataAreas = new DataArea[traceCount];
+        // Create TraceView for each Trace
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new Line3DDataArea(this, trace, i == 0);
+            traceViews[i] = new Line3DTraceView(this, trace, i == 0);
         }
 
-        // Return DataAreas
-        return dataAreas;
+        // Return
+        return traceViews;
     }
 
     /**
-     * Creates a DataArea3D for projections.
+     * Creates a TraceView3D for projections.
      */
-    protected DataArea3D createProjectionDataArea()
+    protected TraceView3D createProjectionTraceView()
     {
         Content content = getContent();
         Trace[] traces = content.getTraces();
         Trace trace = traces.length > 0 ? traces[0] : null;
-        return trace != null ? new Line3DDataArea(this, trace, true) : null;
+        return trace != null ? new Line3DTraceView(this, trace, true) : null;
     }
 
     /**

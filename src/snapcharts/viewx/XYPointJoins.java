@@ -1,7 +1,7 @@
 package snapcharts.viewx;
 import snap.geom.*;
 import snapcharts.model.PointJoin;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
  * This class holds PathIters for PointJoins
@@ -11,7 +11,7 @@ public class XYPointJoins {
     /**
      * Returns the PathIter for a PointJoin.
      */
-    public static PathIter getPathIterForPointJoin(PointJoin pointJoin, PathIter pathIter, DataArea aDataArea)
+    public static PathIter getPathIterForPointJoin(PointJoin pointJoin, PathIter pathIter, TraceView aTraceView)
     {
         // For Other PointJoints, wrap in special PathIter to turn line segments into specified join
         switch (pointJoin) {
@@ -20,7 +20,7 @@ public class XYPointJoins {
             case StepVH: return new StepVHPathIter(pathIter);
             case StepHVH: return new StepHVHPathIter(pathIter);
             case Spline: return new SplinePathIter(pathIter);
-            case Y0Between: return new Y0BetweenPathIter(pathIter, aDataArea);
+            case Y0Between: return new Y0BetweenPathIter(pathIter, aTraceView);
             default:
                 System.err.println("DataLineShape.getPathIter: Unknown PointJoint: " + pointJoin);
                 return pathIter;
@@ -211,12 +211,12 @@ public class XYPointJoins {
         /**
          * Constructor.
          */
-        public Y0BetweenPathIter(PathIter aPathIter, DataArea aDataArea)
+        public Y0BetweenPathIter(PathIter aPathIter, TraceView aTraceView)
         {
             super(aPathIter);
 
             // Calculate display Y for data Y == 0
-            _zeroDispY = aDataArea.dataToViewY(0);
+            _zeroDispY = aTraceView.dataToViewY(0);
             Transform xfm = aPathIter.getTransform();
             if (xfm != null && !xfm.isIdentity())
                 _zeroDispY = xfm.transformY(0, _zeroDispY);

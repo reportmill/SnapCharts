@@ -2,15 +2,16 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snap.gfx.*;
+import snap.gfx.Painter;
 import snap.props.PropChange;
-import snapcharts.model.*;
-import snapcharts.view.DataArea;
+import snapcharts.model.Axis;
+import snapcharts.model.TraceStyle;
+import snapcharts.model.Trace;
 
 /**
- * A DataArea subclass to display ChartType CONTOUR.
+ * A (Polar)TraceView subclass for PolarContour charts.
  */
-public class ContourDataArea extends DataArea {
+public class PolarContourTraceView extends PolarTraceView {
 
     // The ContourHelper
     private ContourHelper _contourHelper;
@@ -21,7 +22,7 @@ public class ContourDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public ContourDataArea(ContourChartHelper aChartHelper, Trace aTrace)
+    public PolarContourTraceView(PolarContourChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace);
 
@@ -33,9 +34,9 @@ public class ContourDataArea extends DataArea {
      * Paints chart content.
      */
     @Override
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
-        // Paint contour data
+        // Paint contours
         _contourPainter.paintAll(aPntr);
 
         // Repaint (semi-transparent) gridlines on top of contours
@@ -53,9 +54,9 @@ public class ContourDataArea extends DataArea {
         // Do normal version
         super.chartPartDidChange(aPC);
 
-        // Handle Data changes
+        // Handle changes
         Object src = aPC.getSource();
-        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle || src instanceof ContourAxis) {
+        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle) {
             _contourPainter.clearContoursAll();
         }
     }
@@ -69,7 +70,7 @@ public class ContourDataArea extends DataArea {
         // Do normal version
         super.contentViewDidChangeSize();
 
-        // Clear Contours
+        // Handle changes
         _contourPainter.clearContours();
     }
 
@@ -82,7 +83,7 @@ public class ContourDataArea extends DataArea {
         // Do normal version
         super.axisViewDidChange(aPC);
 
-        // Clear Contours
+        // Handle changes
         _contourPainter.clearContours();
     }
 }

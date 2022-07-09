@@ -9,7 +9,7 @@ import snap.gfx.Stroke;
 import snapcharts.model.Axis;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartHelper;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 import snapcharts.view.ContentView;
 
 /**
@@ -72,7 +72,7 @@ public class GridPainter {
      */
     public GridPainter(ChartHelper aChartHelper)
     {
-        // Set ContentView, ChartHelper, DataArea
+        // Set ContentView, ChartHelper
         _chartHelper = aChartHelper;
         _contentView = aChartHelper.getContentView();
 
@@ -117,5 +117,5 @@ public class GridPainter {
     /**
      * Paints chart axis lines.
      */
-    public void paintGridlines(Painter aPntr, DataArea aDataArea)  { }
+    public void paintGridlines(Painter aPntr, TraceView aTraceView)  { }
 }

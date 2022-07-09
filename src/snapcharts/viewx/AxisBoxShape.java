@@ -16,8 +16,8 @@ import snapcharts.model.Scene;
  */
 public class AxisBoxShape extends ParentShape {
 
-    // The DataArea3D
-    private DataArea3D  _dataArea;
+    // The TraceView3D
+    private TraceView3D  _traceView;
 
     // The Front/Back sides
     private Poly3D  _frontSide, _backSide;
@@ -42,10 +42,10 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Constructor.
      */
-    public AxisBoxShape(DataArea3D aDataArea)
+    public AxisBoxShape(TraceView3D aTraceView)
     {
         super();
-        _dataArea = aDataArea;
+        _traceView = aTraceView;
 
         addSides();
     }
@@ -65,7 +65,7 @@ public class AxisBoxShape extends ParentShape {
 
         // If activating, create/add Highliner
         if (aValue) {
-            _highliner = new AxisBoxHighliner(this, _dataArea);
+            _highliner = new AxisBoxHighliner(this, _traceView);
             addChild(_highliner);
         }
     }
@@ -108,9 +108,9 @@ public class AxisBoxShape extends ParentShape {
     public void setSidesVisibleForCamera()
     {
         // Get visible sides and update
-        boolean frontFacing = _dataArea.isSideFacingCamera(Side3D.FRONT);
-        boolean leftFacing = _dataArea.isSideFacingCamera(Side3D.LEFT);
-        boolean topFacing = !_dataArea.isSideFacingCamera(Side3D.BOTTOM);
+        boolean frontFacing = _traceView.isSideFacingCamera(Side3D.FRONT);
+        boolean leftFacing = _traceView.isSideFacingCamera(Side3D.LEFT);
+        boolean topFacing = !_traceView.isSideFacingCamera(Side3D.BOTTOM);
         setSidesVisible(frontFacing, leftFacing, topFacing);
 
         // If Hightliner set, update lines
@@ -139,9 +139,9 @@ public class AxisBoxShape extends ParentShape {
     private void addSides()
     {
         // Get preferred width, height, depth
-        double width = _dataArea.getAxisBoxPrefWidth();
-        double height = _dataArea.getAxisBoxPrefHeight();
-        double depth = _dataArea.getAxisBoxPrefDepth();
+        double width = _traceView.getAxisBoxPrefWidth();
+        double height = _traceView.getAxisBoxPrefHeight();
+        double depth = _traceView.getAxisBoxPrefDepth();
 
         // Add shape for front/back sides
         _frontSide = addSideFrontBack(width, height, depth);
@@ -153,12 +153,12 @@ public class AxisBoxShape extends ParentShape {
 
         // Add shape for top/bottom sides
         _bottomSide = addSideTopBottom(width, 0, depth);
-        if (!_dataArea.isForwardXY())
+        if (!_traceView.isForwardXY())
             _topSide = addSideTopBottom(width, height, depth);
         else _bottomSide.setDoubleSided(true);
 
         // Reset shapes
-        if (_dataArea.isProjection());
+        if (_traceView.isProjection());
         else if (_topSide != null)
             setChildren(_frontSide, _backSide, _leftSide, _rightSide, _topSide, _bottomSide);
         else setChildren(_frontSide, _backSide, _leftSide, _rightSide, _bottomSide);
@@ -272,9 +272,9 @@ public class AxisBoxShape extends ParentShape {
     public void addSideGrids()
     {
         // Get preferred width, height, depth
-        double width = _dataArea.getAxisBoxPrefWidth();
-        double height = _dataArea.getAxisBoxPrefHeight();
-        double depth = _dataArea.getAxisBoxPrefDepth();
+        double width = _traceView.getAxisBoxPrefWidth();
+        double height = _traceView.getAxisBoxPrefHeight();
+        double depth = _traceView.getAxisBoxPrefDepth();
 
         addSideGridFrontBack(width, height);
         addSideGridLeftRight(height, depth);
@@ -295,11 +295,11 @@ public class AxisBoxShape extends ParentShape {
         }
 
         // Get 2D grid
-        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.FRONT);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        Intervals intervalsAcrossPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDownPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[1]);
+        AxisType[] gridAxisTypes = _traceView.getAxesForSide(Side3D.FRONT);
+        Intervals intervalsAcross = _traceView.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _traceView.getIntervalsForAxis(gridAxisTypes[1]);
+        Intervals intervalsAcrossPref = _traceView.getPrefIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDownPref = _traceView.getPrefIntervalsForAxis(gridAxisTypes[1]);
 
         // Maybe paint minor intervals
         boolean doMinorAcross = intervalsAcrossPref.getCount() > intervalsAcross.getCount();
@@ -338,11 +338,11 @@ public class AxisBoxShape extends ParentShape {
         }
 
         // Paint grid
-        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.LEFT);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        Intervals intervalsAcrossPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDownPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[1]);
+        AxisType[] gridAxisTypes = _traceView.getAxesForSide(Side3D.LEFT);
+        Intervals intervalsAcross = _traceView.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _traceView.getIntervalsForAxis(gridAxisTypes[1]);
+        Intervals intervalsAcrossPref = _traceView.getPrefIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDownPref = _traceView.getPrefIntervalsForAxis(gridAxisTypes[1]);
 
         // Maybe paint minor intervals
         boolean doMinorAcross = intervalsAcrossPref.getCount() > intervalsAcross.getCount();
@@ -381,11 +381,11 @@ public class AxisBoxShape extends ParentShape {
         }
 
         // Paint grid
-        AxisType[] gridAxisTypes = _dataArea.getAxesForSide(Side3D.TOP);
-        Intervals intervalsAcross = _dataArea.getIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDown = _dataArea.getIntervalsForAxis(gridAxisTypes[1]);
-        Intervals intervalsAcrossPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[0]);
-        Intervals intervalsDownPref = _dataArea.getPrefIntervalsForAxis(gridAxisTypes[1]);
+        AxisType[] gridAxisTypes = _traceView.getAxesForSide(Side3D.TOP);
+        Intervals intervalsAcross = _traceView.getIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDown = _traceView.getIntervalsForAxis(gridAxisTypes[1]);
+        Intervals intervalsAcrossPref = _traceView.getPrefIntervalsForAxis(gridAxisTypes[0]);
+        Intervals intervalsDownPref = _traceView.getPrefIntervalsForAxis(gridAxisTypes[1]);
 
         // Maybe paint minor intervals
         boolean doMinorAcross = intervalsAcrossPref.getCount() > intervalsAcross.getCount();
@@ -528,30 +528,30 @@ public class AxisBoxShape extends ParentShape {
      */
     public void addSideProjections()
     {
-        // Get ProjectionDataArea
-        ChartHelper3D chartHelper3D = (ChartHelper3D) _dataArea.getChartHelper();
-        DataArea3D projDataArea = chartHelper3D.getProjectionDataArea();
+        // Get ProjectionTraceView
+        ChartHelper3D chartHelper3D = (ChartHelper3D) _traceView.getChartHelper();
+        TraceView3D projTraceView = chartHelper3D.getProjectionTraceView();
 
         // Set optimal size
         double width = getBounds3D().getWidth();
-        projDataArea.setSize(width, width);
-        CameraView cameraView = projDataArea.getCameraView();
+        projTraceView.setSize(width, width);
+        CameraView cameraView = projTraceView.getCameraView();
         cameraView.setSize(width, width);
 
         // Rebuild chart
-        projDataArea.resetAxisProxyBounds();
-        projDataArea.rebuildChartNow();
+        projTraceView.resetAxisProxyBounds();
+        projTraceView.rebuildChartNow();
 
         // Create and set texture for projected sides
-        Scene chartScene = _dataArea.getChartScene();
+        Scene chartScene = _traceView.getChartScene();
         Side3D[] projectedSides = chartScene.getProjectedSides();
         for (Side3D side : projectedSides) {
             Texture texture = createTextureForSide(cameraView, side);
             setTextureForSide(texture, side);
         }
 
-        // Repaint DataArea
-        _dataArea.repaint();
+        // Repaint TraceView
+        _traceView.repaint();
     }
 
     /**

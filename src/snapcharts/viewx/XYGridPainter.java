@@ -22,17 +22,17 @@ public class XYGridPainter extends GridPainter {
     /**
      * Paints chart axis lines.
      */
-    public void paintGridlines(Painter aPntr, DataArea aDataArea)
+    public void paintGridlines(Painter aPntr, TraceView aTraceView)
     {
         // Paint AxisX gridlines
-        AxisView axisViewX = aDataArea.getAxisViewX();
+        AxisView axisViewX = aTraceView.getAxisViewX();
         if (axisViewX != null && axisViewX.getAxis().isShowGrid()) {
             updateForAxisView(axisViewX);
             paintGridlinesX(aPntr);
         }
 
         // Paint AxisY gridlines
-        AxisViewY axisViewY = aDataArea.getAxisViewY();
+        AxisViewY axisViewY = aTraceView.getAxisViewY();
         if (axisViewY != null && axisViewY.isVisible() && axisViewY.getAxis().isShowGrid()) {
             updateForAxisView(axisViewY);
             paintGridlinesY(aPntr);

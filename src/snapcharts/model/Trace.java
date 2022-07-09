@@ -244,12 +244,12 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Returns the FillMode (how/whether to paint the data area).
+     * Returns the FillMode (how/whether to paint the trace).
      */
     public FillMode getFillMode()  { return _fillMode; }
 
     /**
-     * Sets the FillMode (how/whether to paint the data area).
+     * Sets the FillMode (how/whether to paint the trace).
      */
     public void setFillMode(FillMode aFillMode)
     {

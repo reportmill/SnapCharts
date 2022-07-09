@@ -11,23 +11,23 @@ import snapcharts.model.Trace;
 import snapcharts.view.ChartHelper;
 
 /**
- * A DataArea subclass to display the contents of 3D a pie chart.
+ * A TraceView3D subclass to display the contents of 3D a pie chart.
  */
-public class Pie3DDataArea extends DataArea3D {
+public class Pie3DTraceView extends TraceView3D {
 
-    // The PieDataArea (2D) to build the 2D bar shapes
-    private PieDataArea  _pieDataArea;
+    // The PieTraceView (2D) to build the 2D bar shapes
+    private PieTraceView  _pieTraceView;
 
     /**
      * Constructor.
      */
-    public Pie3DDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public Pie3DTraceView(ChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace, true);
 
-        // Create/set PieDataArea (2D)
-        _pieDataArea = new PieDataArea(aChartHelper, aTrace);
-        _pieDataArea._holeRatio = .3;
+        // Create/set PieTraceView (2D)
+        _pieTraceView = new PieTraceView(aChartHelper, aTrace);
+        _pieTraceView._holeRatio = .3;
     }
 
     @Override
@@ -53,15 +53,15 @@ public class Pie3DDataArea extends DataArea3D {
         // Do normal version
         AxisBoxShape axisBoxShape = super.createAxisBoxShape();
 
-        // Get PieDataArea and reset
-        PieDataArea pieDataArea = _pieDataArea;
+        // Get PieTraceView and reset
+        PieTraceView pieTraceView = _pieTraceView;
         double size = getAxisBoxPrefHeight();
-        _pieDataArea.setSize(size, size);
+        _pieTraceView.setSize(size, size);
 
         // Iterate over wedges and add them as 3D
-        PieDataArea.Wedge[] wedges = pieDataArea.getWedges();
+        PieTraceView.Wedge[] wedges = pieTraceView.getWedges();
         for(int i=0; i<wedges.length; i++) {
-            PieDataArea.Wedge wedge = wedges[i];
+            PieTraceView.Wedge wedge = wedges[i];
             Color color = getColorMapColor(i);
             addWedgeToScene(axisBoxShape, wedge, color);
         }
@@ -73,7 +73,7 @@ public class Pie3DDataArea extends DataArea3D {
     /**
      * Adds a 3d wedge to scene.
      */
-    protected void addWedgeToScene(AxisBoxShape axisBoxShape, PieDataArea.Wedge aWedge, Color aColor)
+    protected void addWedgeToScene(AxisBoxShape axisBoxShape, PieTraceView.Wedge aWedge, Color aColor)
     {
         // Get depth, and Z values for back/front
         double depth = getAxisBoxPrefDepth();
@@ -113,5 +113,5 @@ public class Pie3DDataArea extends DataArea3D {
     }
 
     @Override
-    protected void paintDataArea(Painter aPntr)  { }
+    protected void paintTrace(Painter aPntr)  { }
 }

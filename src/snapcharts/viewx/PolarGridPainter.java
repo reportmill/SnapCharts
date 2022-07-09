@@ -17,7 +17,7 @@ public class PolarGridPainter extends GridPainter {
     // The PolarChartHelper
     private PolarChartHelper  _polarHelper;
 
-    // The DataArea mid points
+    // The TraceView mid points
     private double  areaMidX, areaMidY;
 
     /**
@@ -42,28 +42,28 @@ public class PolarGridPainter extends GridPainter {
      * Paints chart axis lines.
      */
     @Override
-    public void paintGridlines(Painter aPntr, DataArea aDataArea)
+    public void paintGridlines(Painter aPntr, TraceView aTraceView)
     {
         // Get AxisViewX and update GridPainter properties
-        AxisViewX axisViewX = aDataArea.getAxisViewX(); if (axisViewX == null) return;
+        AxisViewX axisViewX = aTraceView.getAxisViewX(); if (axisViewX == null) return;
         updateForAxisView(axisViewX);
 
         // Paint Radial gridlines
-        paintRadialLines(aPntr, aDataArea);
+        paintRadialLines(aPntr, aTraceView);
 
         // Paint angular gridlines
-        paintAngleLines(aPntr, aDataArea);
+        paintAngleLines(aPntr, aTraceView);
     }
 
     /**
      * Paints chart radial axis lines.
      */
-    protected void paintRadialLines(Painter aPntr, DataArea aDataArea)
+    protected void paintRadialLines(Painter aPntr, TraceView aTraceView)
     {
         // Get X/Y AxisViews
-        AxisViewX axisViewX = aDataArea.getAxisViewX(); if (axisViewX == null) return;
-        AxisViewY axisViewY = aDataArea.getAxisViewY(); if (axisViewY == null) return;
-        double reveal = aDataArea.getReveal();
+        AxisViewX axisViewX = aTraceView.getAxisViewX(); if (axisViewX == null) return;
+        AxisViewY axisViewY = aTraceView.getAxisViewY(); if (axisViewY == null) return;
+        double reveal = aTraceView.getReveal();
 
         // Set Grid Color/Stroke
         aPntr.setColor(gridColor);
@@ -100,11 +100,11 @@ public class PolarGridPainter extends GridPainter {
     /**
      * Paints chart angle axis lines.
      */
-    protected void paintAngleLines(Painter aPntr, DataArea aDataArea)
+    protected void paintAngleLines(Painter aPntr, TraceView aTraceView)
     {
         // Get info
-        double reveal = aDataArea.getReveal();
-        AxisType axisTypeY = aDataArea.getAxisTypeY();
+        double reveal = aTraceView.getReveal();
+        AxisType axisTypeY = aTraceView.getAxisTypeY();
 
         // Set Grid Color/Stroke
         aPntr.setColor(gridColor);

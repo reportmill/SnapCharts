@@ -11,24 +11,24 @@ import snapcharts.model.*;
 import snapcharts.view.*;
 
 /**
- * A DataArea subclass to display the contents of Bar3D chart.
+ * A TraceView3D subclass to display the contents of Bar3D chart.
  */
-public class Bar3DDataArea extends DataArea3D {
+public class Bar3DTraceView extends TraceView3D {
     
-    // The BarDataArea (2D) to build the 2D bar shapes
-    protected BarDataArea  _barDataArea;
+    // The BarTraceView (2D) to build the 2D bar shapes
+    protected BarTraceView  _barTraceView;
 
     /**
      * Constructor.
      */
-    public Bar3DDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
+    public Bar3DTraceView(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace, isVisible);
         if (!isVisible)
             return;
 
-        // Create/set BarDataArea (2D)
-        _barDataArea = new BarDataArea(aChartHelper, aTrace, isVisible);
+        // Create/set BarTraceView (2D)
+        _barTraceView = new BarTraceView(aChartHelper, aTrace, isVisible);
     }
 
     /**
@@ -45,22 +45,22 @@ public class Bar3DDataArea extends DataArea3D {
         if (MathUtils.equalsZero(reveal))
             return axisBoxShape;
 
-        // Get BarDataArea and reset
-        BarDataArea barDataArea = _barDataArea;
-        _barDataArea.setSize(getWidth(), getHeight());
-        barDataArea.clearSections();
-        barDataArea.getSections();
+        // Get BarTraceView and reset
+        BarTraceView barTraceView = _barTraceView;
+        _barTraceView.setSize(getWidth(), getHeight());
+        barTraceView.clearSections();
+        barTraceView.getSections();
 
         // Iterate over sections
-        int traceCount = barDataArea._traceCount;
-        int pointCount = barDataArea._pointCount;
-        BarDataArea.Section[] sections = barDataArea.getSections();
+        int traceCount = barTraceView._traceCount;
+        int pointCount = barTraceView._pointCount;
+        BarTraceView.Section[] sections = barTraceView.getSections();
         for (int i = 0; i < pointCount; i++) {
-            BarDataArea.Section section = sections[i];
+            BarTraceView.Section section = sections[i];
 
             // Iterate over traces and draw bars
             for (int j = 0; j < traceCount; j++) {
-                BarDataArea.Bar bar = section.bars[j];
+                BarTraceView.Bar bar = section.bars[j];
                 addBar(axisBoxShape, bar.x, 1, bar.width, bar.height, bar.color);
             }
         }
@@ -110,7 +110,7 @@ public class Bar3DDataArea extends DataArea3D {
         camera.setYaw(90 + (DEFAULT_YAW - 90) * aValue);
         camera.setPitch(0 + (DEFAULT_PITCH - 0) * aValue);
 
-        // Forward to BarDataArea (2D)
-        _barDataArea.setReveal(aValue);
+        // Forward to BarTraceView (2D)
+        _barTraceView.setReveal(aValue);
     }
 }

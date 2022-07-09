@@ -13,8 +13,8 @@ public class ChartViewLayout {
     // The Chart that owns this layout
     protected ChartView  _chartView;
 
-    // The preferred DataArea bounds (optional)
-    protected Rect _prefDataBounds;
+    // The preferred content bounds (optional)
+    protected Rect _prefContentBounds;
 
     // The layout proxy
     private ViewProxy<ChartView>  _chartProxy;
@@ -28,11 +28,11 @@ public class ChartViewLayout {
     // The contour proxy
     private ViewProxy<ContourAxisView>  _contourProxy;
 
-    // The DataArea proxy
-    private ViewProxy<ContentView>  _dataAreaProxy;
+    // The content proxy
+    private ViewProxy<ContentView>  _contentProxy;
 
-    // The current inset for DataArea
-    protected Insets _dataAreaInsets = new Insets(0, 0, 0, 0);
+    // The current inset for ContentView
+    protected Insets _contentInsets = new Insets(0, 0, 0, 0);
 
     // The maximum size that a side can be as ratio of chart size ( 30% )
     private final double MAX_SIDE_RATIO = .4;
@@ -61,10 +61,10 @@ public class ChartViewLayout {
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);
-        _dataAreaProxy = _chartProxy.getChildForClass(ContentView.class);
+        _contentProxy = _chartProxy.getChildForClass(ContentView.class);
 
-        // Get PrefContentViewBounds
-        _prefDataBounds = _chartView.getPrefContentViewBounds();
+        // Get PrefContentBounds
+        _prefContentBounds = _chartView.getPrefContentBounds();
 
         // Layout top, bottom
         layoutTopSide();
@@ -74,31 +74,31 @@ public class ChartViewLayout {
         layoutLeftSide();
         layoutRightSide();
 
-        // Set DataAreaBounds (either from PrefDataAreaBounds or from resulting layout insets)
-        Rect dataAreaBounds = _prefDataBounds;
-        if (dataAreaBounds == null) {
-            dataAreaBounds = new Rect(0, 0, _chartView.getWidth(), _chartView.getHeight());
-            dataAreaBounds.inset(_dataAreaInsets);
+        // Set ContentBounds (either from PrefContentBounds or from resulting layout insets)
+        Rect contentBounds = _prefContentBounds;
+        if (contentBounds == null) {
+            contentBounds = new Rect(0, 0, _chartView.getWidth(), _chartView.getHeight());
+            contentBounds.inset(_contentInsets);
         }
 
-        // Set DataArea.Bounds
-        _dataAreaProxy.setBounds(dataAreaBounds);
+        // Set ContentView.Bounds
+        _contentProxy.setBounds(contentBounds);
 
-        // Adjust axes for DataAreaBounds
+        // Adjust axes for ContentBounds
         for (ViewProxy<?> child : _chartProxy.getChildren()) {
             if (child.getView() instanceof AxisViewX) {
-                child.setX(dataAreaBounds.x);
-                child.setWidth(dataAreaBounds.width);
+                child.setX(contentBounds.x);
+                child.setWidth(contentBounds.width);
             }
             if (child.getView() instanceof AxisViewY) {
-                child.setY(dataAreaBounds.y);
-                child.setHeight(dataAreaBounds.height);
+                child.setY(contentBounds.y);
+                child.setHeight(contentBounds.height);
             }
         }
 
         // Handle special legend layout (Inside, Floating)
         if (_legendProxy != null && _legendProxy.isVisible())
-            layoutLegendSpecialCases(dataAreaBounds);
+            layoutLegendSpecialCases(contentBounds);
 
         // Copy back to views
         _chartProxy.setBoundsInClient();
@@ -112,10 +112,10 @@ public class ChartViewLayout {
         // Create view proxy for layout of chart top
         ColViewProxy<?> topProxy = getTopViewProxy();
 
-        // Get top Width/Height for proxy: If no, PrefDataBounds, use proxy PrefHeight
+        // Get top Width/Height for proxy: If no PrefContentBounds, use proxy PrefHeight
         Rect topBounds = getBoundsForSide(Side.TOP);
         double topHeight = topBounds.height;
-        if (_prefDataBounds == null) {
+        if (_prefContentBounds == null) {
             double prefHeight = topProxy.getPrefHeight(topBounds.width);
             topHeight = Math.min(prefHeight, topHeight);
         }
@@ -125,7 +125,7 @@ public class ChartViewLayout {
         topProxy.layoutProxy();
 
         // Update insets
-        _dataAreaInsets.top = topHeight;
+        _contentInsets.top = topHeight;
     }
 
     /**
@@ -152,10 +152,10 @@ public class ChartViewLayout {
         // Create view proxy for layout of chart bottom
         ColViewProxy<?> bottomProxy = getBottomViewProxy();
 
-        // Get/set bottomHeight for proxy: If no, PrefDataBounds, use proxy PrefHeight
+        // Get/set bottomHeight for proxy: If no PrefContentBounds, use proxy PrefHeight
         Rect bottomBounds = getBoundsForSide(Side.BOTTOM);
         double bottomHeight = bottomBounds.height;
-        if (_prefDataBounds == null) {
+        if (_prefContentBounds == null) {
             double prefHeight = bottomProxy.getPrefHeight(bottomBounds.width);
             prefHeight = Math.max(prefHeight, RIGHT_MARGIN_MIN);
             bottomHeight = Math.min(prefHeight, bottomHeight);
@@ -171,7 +171,7 @@ public class ChartViewLayout {
             proxy.setY(proxy.getY() + bottomY);
 
         // Update insets
-        _dataAreaInsets.bottom = bottomHeight;
+        _contentInsets.bottom = bottomHeight;
     }
 
     /**
@@ -198,10 +198,10 @@ public class ChartViewLayout {
         // Create view proxy for layout of chart left side
         RowViewProxy<?> leftProxy = getLeftViewProxy();
 
-        // Get/set leftWidth for proxy: If no, PrefDataBounds, use proxy PrefWidth
+        // Get/set leftWidth for proxy: If no PrefContentBounds, use proxy PrefWidth
         Rect leftBounds = getBoundsForSide(Side.LEFT);
         double leftWidth = leftBounds.width;
-        if (_prefDataBounds == null) {
+        if (_prefContentBounds == null) {
             double prefWidth = leftProxy.getPrefWidth(-1);
             prefWidth = Math.max(prefWidth, RIGHT_MARGIN_MIN);
             leftWidth = Math.min(prefWidth, leftWidth);
@@ -212,7 +212,7 @@ public class ChartViewLayout {
         leftProxy.layoutProxy();
 
         // Update insets
-        _dataAreaInsets.left = leftWidth;
+        _contentInsets.left = leftWidth;
     }
 
     /**
@@ -239,10 +239,10 @@ public class ChartViewLayout {
         // Create view proxy for layout of chart right side
         RowViewProxy<?> rightProxy = getRightViewProxy();
 
-        // Get/set rightWidth for proxy: If no, PrefDataBounds, use proxy PrefWidth
+        // Get/set rightWidth for proxy: If no PrefContentBounds, use proxy PrefWidth
         Rect rightBounds = getBoundsForSide(Side.RIGHT);
         double rightWidth = rightBounds.width;
-        if (_prefDataBounds == null) {
+        if (_prefContentBounds == null) {
             double prefWidth = rightProxy.getPrefWidth(-1);
             prefWidth = Math.max(prefWidth, RIGHT_MARGIN_MIN);
             rightWidth = Math.min(prefWidth, rightWidth);
@@ -258,7 +258,7 @@ public class ChartViewLayout {
             proxy.setX(proxy.getX() + rightX);
 
         // Update insets
-        _dataAreaInsets.right = rightWidth;
+        _contentInsets.right = rightWidth;
     }
 
     /**
@@ -280,17 +280,17 @@ public class ChartViewLayout {
     /**
      * Lays out the legend after normal layout to handle special cases (Inside, Floating).
      */
-    private void layoutLegendSpecialCases(Rect dataAreaBounds)
+    private void layoutLegendSpecialCases(Rect contentBounds)
     {
         // If Inside, layout special
         LegendView legendView = _legendProxy.getView();
         if (legendView.isInside())
             layoutLegendInside();
 
-        // If Position is Top/Bottom, restrict to DataAreaBounds
+        // If Position is Top/Bottom, restrict to ContentBounds
         else if (legendView.getPosition().isTopOrBottom()) {
-            _legendProxy.setX(dataAreaBounds.x);
-            _legendProxy.setWidth(dataAreaBounds.width);
+            _legendProxy.setX(contentBounds.x);
+            _legendProxy.setWidth(contentBounds.width);
         }
 
         // Handle Legend.Floating (Uses Legend.Marker for location with some hacks)
@@ -311,7 +311,7 @@ public class ChartViewLayout {
             legendMargin = new Insets(5, 5, 5, 5);
 
         // Get Legend width/height (no larger than ContentView bounds)
-        Rect dataBnds = _dataAreaProxy.getBounds();
+        Rect dataBnds = _contentProxy.getBounds();
         double legendW = Math.min(_legendProxy.getBestWidth(-1) + legendMargin.getWidth(), dataBnds.width);
         double legendH = Math.min(_legendProxy.getBestHeight(-1) + legendMargin.getHeight(), dataBnds.height);
 
@@ -396,8 +396,8 @@ public class ChartViewLayout {
      */
     protected Rect getBoundsForSide(Side aSide)
     {
-        // If PrefDataAreaBounds set, return bounds for side using that
-        if (_prefDataBounds != null)
+        // If PrefContentBounds set, return bounds for side using that
+        if (_prefContentBounds != null)
             return getBoundsForSideFixed(aSide);
 
         // Return bounds for side (size is MAX_SIDE_RATIO of chart size)
@@ -427,7 +427,7 @@ public class ChartViewLayout {
     }
 
     /**
-     * Returns the available bounds on given side for when PrefDataAreaBounds is set.
+     * Returns the available bounds on given side for when PrefContentBounds is set.
      */
     protected Rect getBoundsForSideFixed(Side aSide)
     {
@@ -435,18 +435,18 @@ public class ChartViewLayout {
         switch (aSide)
         {
             case TOP:
-                bounds.height = _prefDataBounds.y;
+                bounds.height = _prefContentBounds.y;
                 break;
             case BOTTOM:
-                bounds.height = bounds.height - _prefDataBounds.getMaxY();
-                bounds.y = _prefDataBounds.getMaxY();
+                bounds.height = bounds.height - _prefContentBounds.getMaxY();
+                bounds.y = _prefContentBounds.getMaxY();
                 break;
             case LEFT:
-                bounds.width = _prefDataBounds.x;
+                bounds.width = _prefContentBounds.x;
                 break;
             case RIGHT:
-                bounds.width = bounds.width - _prefDataBounds.getMaxX();
-                bounds.x = _prefDataBounds.getMaxX();
+                bounds.width = bounds.width - _prefContentBounds.getMaxX();
+                bounds.x = _prefContentBounds.getMaxX();
                 break;
             default: throw new RuntimeException("ChartViewLayout.getBoundsForSideFixed: Unknown side: " + aSide);
         }
@@ -472,15 +472,15 @@ public class ChartViewLayout {
 
             // Handle LEFT
             case LEFT:
-                padding.top = _dataAreaInsets.top;
-                padding.bottom = _dataAreaInsets.bottom;
+                padding.top = _contentInsets.top;
+                padding.bottom = _contentInsets.bottom;
                 padding.right = 0;
                 break;
 
             // Handle RIGHT
             case RIGHT:
-                padding.top = _dataAreaInsets.top;
-                padding.bottom = _dataAreaInsets.bottom;
+                padding.top = _contentInsets.top;
+                padding.bottom = _contentInsets.bottom;
                 padding.left = 0;
                 break;
         }

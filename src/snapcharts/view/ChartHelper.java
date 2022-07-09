@@ -49,8 +49,8 @@ public abstract class ChartHelper {
     // The AxisView for Z Axis
     private AxisViewZ  _axisZ;
 
-    // The DataAreas
-    private DataArea[]  _dataAreas;
+    // The TraceViews
+    private TraceView[] _traceViews;
 
     // A helper class to handle Pan/Zoom
     private ChartHelperPanZoom _panZoomer;
@@ -248,83 +248,83 @@ public abstract class ChartHelper {
     }
 
     /**
-     * Returns the DataAreas.
+     * Returns the TraceViews.
      */
-    public DataArea[] getDataAreas()
+    public TraceView[] getTraceViews()
     {
-        if (_dataAreas!=null) return _dataAreas;
-        return _dataAreas = createDataAreas();
+        if (_traceViews !=null) return _traceViews;
+        return _traceViews = createTraceViews();
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
-    protected abstract DataArea[] createDataAreas();
+    protected abstract TraceView[] createTraceViews();
 
     /**
-     * Returns the DataArea for trace.
+     * Returns the TraceView for trace.
      */
-    public DataArea getDataAreaForTrace(Trace aTrace)
+    public TraceView getTraceViewForTrace(Trace aTrace)
     {
-        DataArea[] dataAreas = getDataAreas();
-        for (DataArea dataArea : dataAreas)
-            if (dataArea.getTrace() == aTrace)
-                return dataArea;
+        TraceView[] traceViews = getTraceViews();
+        for (TraceView traceView : traceViews)
+            if (traceView.getTrace() == aTrace)
+                return traceView;
 
-        // Some charts have only one shared DataArea (Bar, Pie)
-        if (dataAreas.length > 0)
-            return dataAreas[0];
+        // Some charts have only one shared TraceView (Bar, Pie)
+        if (traceViews.length > 0)
+            return traceViews[0];
         return null;
     }
 
     /**
-     * Returns the first DataArea for axis type.
+     * Returns the first TraceView for axis type.
      */
-    public DataArea getDataAreaForFirstAxisY()
+    public TraceView getTraceViewForFirstAxisY()
     {
         AxisType[] axisTypes = getAxisTypes();
         for (AxisType axisType : axisTypes) {
             if (!axisType.isAnyY()) continue;
-            DataArea dataArea = getDataAreaForAxisTypeY(axisType);
-            if (dataArea != null)
-                return dataArea;
+            TraceView traceView = getTraceViewForAxisTypeY(axisType);
+            if (traceView != null)
+                return traceView;
         }
         return null;
     }
 
     /**
-     * Returns the first DataArea for axis type.
+     * Returns the first TraceView for axis type.
      */
-    public DataArea getDataAreaForAxisTypeY(AxisType anAxisType)
+    public TraceView getTraceViewForAxisTypeY(AxisType anAxisType)
     {
-        for (DataArea dataArea : getDataAreas())
-            if (dataArea.getAxisTypeY() == anAxisType)
-                return dataArea;
+        for (TraceView traceView : getTraceViews())
+            if (traceView.getAxisTypeY() == anAxisType)
+                return traceView;
         return null;
     }
 
     /**
-     * Returns the DataAreas for axis type.
+     * Returns the TraceViews for axis type.
      */
-    public DataArea[] getDataAreasForAxisType(AxisType anAxisType, boolean includeDisabled)
+    public TraceView[] getTraceViewsForAxisType(AxisType anAxisType, boolean includeDisabled)
     {
-        // Get DataAreas
-        DataArea[] dataAreas = getDataAreas();
+        // Get TraceViews
+        TraceView[] traceViews = getTraceViews();
 
         // Handle AxisType X
         if (anAxisType == AxisType.X) {
             if (!includeDisabled)
-                dataAreas = ArrayUtils.filter(dataAreas, da -> !da.isTraceDisabled());
+                traceViews = ArrayUtils.filter(traceViews, da -> !da.isTraceDisabled());
         }
 
         // Handle AxisType Y
         else if (anAxisType.isAnyY()) {
-            Predicate<DataArea> filter = da -> da.getAxisTypeY() == anAxisType && (includeDisabled || !da.isTraceDisabled());
-            dataAreas = ArrayUtils.filter(dataAreas, filter);
+            Predicate<TraceView> filter = da -> da.getAxisTypeY() == anAxisType && (includeDisabled || !da.isTraceDisabled());
+            traceViews = ArrayUtils.filter(traceViews, filter);
         }
 
-        // Return DataAreas
-        return dataAreas;
+        // Return TraceViews
+        return traceViews;
     }
 
     /**
@@ -490,9 +490,9 @@ public abstract class ChartHelper {
      */
     private MinMax getStagedDataMinMaxForAxis(AxisType anAxisType)
     {
-        // Get active DataAreas for given AxisType (if none, just return silly MinMax)
-        DataArea[] dataAreas = getDataAreasForAxisType(anAxisType, false);
-        if (dataAreas.length == 0)
+        // Get active TraceViews for given AxisType (if none, just return silly MinMax)
+        TraceView[] traceViews = getTraceViewsForAxisType(anAxisType, false);
+        if (traceViews.length == 0)
             return new MinMax(0, 5);
 
         // Get Data channel
@@ -505,8 +505,8 @@ public abstract class ChartHelper {
         // Get Min/Max
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        for (DataArea dataArea : dataAreas) {
-            DataSet stagedData = dataArea.getStagedData();
+        for (TraceView traceView : traceViews) {
+            DataSet stagedData = traceView.getStagedData();
             double minVal = isX ? stagedData.getMinX() : isY ? stagedData.getMinY() : stagedData.getMinZ();
             double maxVal = isX ? stagedData.getMaxX() : isY ? stagedData.getMaxY() : stagedData.getMaxZ();
             min = Math.min(min, minVal);
@@ -600,12 +600,12 @@ public abstract class ChartHelper {
         if (!contentView.contains(dispX, dispY))
             return null;
 
-        // Iterate over data areas to find closest DataPoint
-        DataArea[] dataAreas = getDataAreas();
-        for (DataArea dataArea : dataAreas) {
-            TracePoint dpnt = dataArea.getDataPointForLocalXY(dispX, dispY);
+        // Iterate over TraceViews to find closest DataPoint
+        TraceView[] traceViews = getTraceViews();
+        for (TraceView traceView : traceViews) {
+            TracePoint dpnt = traceView.getDataPointForLocalXY(dispX, dispY);
             if (dpnt != null) {
-                Point dspXY = dataArea.getLocalXYForDataPoint(dpnt);
+                Point dspXY = traceView.getLocalXYForDataPoint(dpnt);
                 double dst = Point.getDistance(dispX, dispY, dspXY.x, dspXY.y);
                 if (dst < dist) {
                     dataPoint = dpnt;
@@ -623,13 +623,13 @@ public abstract class ChartHelper {
      */
     public Point getViewXYForDataPoint(View aView, TracePoint aDP)
     {
-        // Get DataArea for DataPoint
+        // Get TraceView for DataPoint
         Trace trace = aDP.getTrace();
-        DataArea dataArea = getDataAreaForTrace(trace);
-        if (dataArea == null) return null;
+        TraceView traceView = getTraceViewForTrace(trace);
+        if (traceView == null) return null;
 
-        // Get DataArea X/Y for DataPoint and return point converted to given view coords
-        Point dispXY = dataArea.getLocalXYForDataPoint(aDP);
+        // Get TraceView X/Y for DataPoint and return point converted to given view coords
+        Point dispXY = traceView.getLocalXYForDataPoint(aDP);
         ContentView contentView = getContentView();
         if (contentView.isAncestor(aView))
             dispXY = contentView.localToParent(dispXY.x, dispXY.y, aView);
@@ -666,10 +666,10 @@ public abstract class ChartHelper {
         for (AxisView axisView : getAxisViews())
             axisView.resetView();
 
-        // Reset DataAreas
-        for (DataArea dataArea : getDataAreas())
-            if (dataArea.isTraceEnabled())
-                dataArea.resetView();
+        // Reset TraceViews
+        for (TraceView traceView : getTraceViews())
+            if (traceView.isTraceEnabled())
+                traceView.resetView();
     }
 
     /**
@@ -705,14 +705,14 @@ public abstract class ChartHelper {
     }
 
     /**
-     * Resets DataAreas.
+     * Resets TraceViews.
      */
-    protected void resetDataAreas()
+    protected void resetTraceViews()
     {
-        _dataAreas = null;
-        DataArea[] dataAreas = getDataAreas();
+        _traceViews = null;
+        TraceView[] traceViews = getTraceViews();
         ContentView contentView = getContentView();
-        contentView.setDataAreas(dataAreas);
+        contentView.setTraceViews(traceViews);
     }
 
     /**
@@ -765,13 +765,13 @@ public abstract class ChartHelper {
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
         if (src instanceof Content && propName == Content.Trace_Prop) {
-            resetDataAreas();
+            resetTraceViews();
             _chartView.resetLater();
         }
 
-        // Forward to DataAreas
-        for (DataArea dataArea : getDataAreas())
-            dataArea.chartPartDidChange(aPC);
+        // Forward to TraceViews
+        for (TraceView traceView : getTraceViews())
+            traceView.chartPartDidChange(aPC);
 
         // Forward to AxisViews
         for (AxisView axisView : getAxisViews())
@@ -783,9 +783,9 @@ public abstract class ChartHelper {
      */
     protected void contentViewSizeDidChange()
     {
-        // Forward to DataAreas
-        for (DataArea dataArea : getDataAreas())
-            dataArea.contentViewDidChangeSize();
+        // Forward to TraceViews
+        for (TraceView traceView : getTraceViews())
+            traceView.contentViewDidChangeSize();
     }
 
     /**
@@ -793,9 +793,9 @@ public abstract class ChartHelper {
      */
     protected void axisViewDidChange(PropChange aPC)
     {
-        // Forward to DataAreas
-        for (DataArea dataArea : getDataAreas())
-            dataArea.axisViewDidChange(aPC);
+        // Forward to TraceViews
+        for (TraceView traceView : getTraceViews())
+            traceView.axisViewDidChange(aPC);
     }
 
     /**

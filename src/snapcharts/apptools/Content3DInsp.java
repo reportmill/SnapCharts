@@ -51,16 +51,16 @@ public class Content3DInsp extends ChartPartInsp {
     }
 
     /**
-     * Returns the DataArea3D.
+     * Returns the TraceView3D.
      */
-    public DataArea3D getDataArea3D()
+    public TraceView3D getTraceView3D()
     {
         ChartView chartView = _chartPane.getChartView();
         ChartHelper chartHelper = chartView.getChartHelper();
         ChartHelper3D chartHelper3D = chartHelper instanceof ChartHelper3D ? (ChartHelper3D) chartHelper : null;
         if (chartHelper3D == null)
             return null;
-        return chartHelper3D.getDataArea3D();
+        return chartHelper3D.getTraceView3D();
     }
 
     /**
@@ -68,8 +68,8 @@ public class Content3DInsp extends ChartPartInsp {
      */
     public CameraView getCameraView()
     {
-        DataArea3D dataArea3D = getDataArea3D();
-        CameraView cameraView = dataArea3D != null ? dataArea3D.getCameraView() : null;
+        TraceView3D traceView3D = getTraceView3D();
+        CameraView cameraView = traceView3D != null ? traceView3D.getCameraView() : null;
         return cameraView;
     }
 
@@ -291,8 +291,8 @@ public class Content3DInsp extends ChartPartInsp {
 
         // Change Camera to view side
         if (aSide == null) {
-            DataArea3D dataArea3D = getDataArea3D();
-            dataArea3D.setDefaultViewTransform();
+            TraceView3D traceView3D = getTraceView3D();
+            traceView3D.setDefaultViewTransform();
         }
         else camera.setYawPitchRollForSideAndPos(aSide, null);
 

@@ -19,15 +19,15 @@ import snapcharts.view.TickLabel;
  */
 public class AxisBoxTextPainter {
 
-    // The DataArea
-    private DataArea3D  _dataArea;
+    // The TraceView3D
+    private TraceView3D  _traceView;
 
     /**
      * Constructor.
      */
-    public AxisBoxTextPainter(DataArea3D aDataArea)
+    public AxisBoxTextPainter(TraceView3D aTraceView)
     {
-        _dataArea = aDataArea;
+        _traceView = aTraceView;
     }
 
     /**
@@ -38,7 +38,7 @@ public class AxisBoxTextPainter {
         // Paint XYZ ticks
         paintTickLabelsX(aPntr);
         paintTickLabelsY(aPntr);
-        if (_dataArea.getChartType() != ChartType.BAR_3D)
+        if (_traceView.getChartType() != ChartType.BAR_3D)
             paintTickLabelsZ(aPntr);
     }
 
@@ -49,23 +49,23 @@ public class AxisBoxTextPainter {
     {
         // Create/configure TickLabel
         TickLabel tickLabel = getTickLabelForAxis(AxisType.X);
-        Axis axis = _dataArea.getChart().getAxisForType(AxisType.X);
+        Axis axis = _traceView.getChart().getAxisForType(AxisType.X);
         TextFormat tickFormat = axis.getTextFormat();
 
         // Handle category axis
-        AxisViewX axisViewX = _dataArea.getAxisViewX();
+        AxisViewX axisViewX = _traceView.getAxisViewX();
         boolean isCategoryAxis = axisViewX.isCategoryAxis();
         Content content = axisViewX.getContent();
         Trace trace = content.getTraceCount() > 0 ? content.getTrace(0) : null;
         int pointCount = content.getPointCount();
 
         // Get axis grid line end points
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.X, 0);
+        Line3D gridLine = _traceView.getAxisGridLineInDataSpace(AxisType.X, 0);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
 
         // Get axis intervals
-        Intervals intervalsX = _dataArea.getIntervalsX();
+        Intervals intervalsX = _traceView.getIntervalsX();
 
         // Iterate over intervals and configure/paint TickLabel for each
         for (int i = 0, iMax = intervalsX.getCount(); i < iMax; i++) {
@@ -75,8 +75,8 @@ public class AxisBoxTextPainter {
 
             // Get 3D point for label
             double dataX = intervalsX.getInterval(i);
-            Point3D axisPoint1 = _dataArea.convertDataToView(dataX, gridLineP1.y, gridLineP1.z);
-            Point3D axisPoint2 = _dataArea.convertDataToView(dataX, gridLineP2.y, gridLineP2.z);
+            Point3D axisPoint1 = _traceView.convertDataToView(dataX, gridLineP1.y, gridLineP1.z);
+            Point3D axisPoint2 = _traceView.convertDataToView(dataX, gridLineP2.y, gridLineP2.z);
 
             // Get label string
             String tickStr = isCategoryAxis && i - 1 < pointCount ?
@@ -102,16 +102,16 @@ public class AxisBoxTextPainter {
     {
         // Create/configure TickLabel
         TickLabel tickLabel = getTickLabelForAxis(AxisType.Y);
-        Axis axis = _dataArea.getChart().getAxisForType(AxisType.Y);
+        Axis axis = _traceView.getChart().getAxisForType(AxisType.Y);
         TextFormat tickFormat = axis.getTextFormat();
 
         // Get axis grid line end points
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.Y, 0);
+        Line3D gridLine = _traceView.getAxisGridLineInDataSpace(AxisType.Y, 0);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
 
         // Get axis intervals
-        Intervals intervalsY = _dataArea.getIntervalsY();
+        Intervals intervalsY = _traceView.getIntervalsY();
 
         // Iterate over intervals and configure/paint TickLabel for each
         for (int i = 0, iMax = intervalsY.getCount(); i < iMax; i++) {
@@ -121,8 +121,8 @@ public class AxisBoxTextPainter {
 
             // Get 3D point for label
             double dataY = intervalsY.getInterval(i);
-            Point3D axisPoint1 = _dataArea.convertDataToView(gridLineP1.x, dataY, gridLineP1.z);
-            Point3D axisPoint2 = _dataArea.convertDataToView(gridLineP2.x, dataY, gridLineP2.z);
+            Point3D axisPoint1 = _traceView.convertDataToView(gridLineP1.x, dataY, gridLineP1.z);
+            Point3D axisPoint2 = _traceView.convertDataToView(gridLineP2.x, dataY, gridLineP2.z);
 
             // Get/set TickLabel.Text
             String tickStr = tickFormat.format(dataY);
@@ -144,16 +144,16 @@ public class AxisBoxTextPainter {
     {
         // Create/configure TickLabel
         TickLabel tickLabel = getTickLabelForAxis(AxisType.Z);
-        Axis axis = _dataArea.getChart().getAxisForType(AxisType.Z);
+        Axis axis = _traceView.getChart().getAxisForType(AxisType.Z);
         TextFormat tickFormat = axis.getTextFormat();
 
         // Get axis grid line end points
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(AxisType.Z, 0);
+        Line3D gridLine = _traceView.getAxisGridLineInDataSpace(AxisType.Z, 0);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
 
         // Get axis intervals
-        Intervals intervalsZ = _dataArea.getIntervalsZ();
+        Intervals intervalsZ = _traceView.getIntervalsZ();
 
         // Iterate over intervals and configure/paint TickLabel for each
         for (int i = 0, iMax = intervalsZ.getCount(); i < iMax; i++) {
@@ -163,8 +163,8 @@ public class AxisBoxTextPainter {
 
             // Get 3D point for label
             double dataZ = intervalsZ.getInterval(i);
-            Point3D axisPoint1 = _dataArea.convertDataToView(gridLineP1.x, gridLineP1.y, dataZ);
-            Point3D axisPoint2 = _dataArea.convertDataToView(gridLineP2.x, gridLineP2.y, dataZ);
+            Point3D axisPoint1 = _traceView.convertDataToView(gridLineP1.x, gridLineP1.y, dataZ);
+            Point3D axisPoint2 = _traceView.convertDataToView(gridLineP2.x, gridLineP2.y, dataZ);
 
             // Get/set TickLabel.Text
             String tickStr = tickFormat.format(dataZ);
@@ -218,23 +218,23 @@ public class AxisBoxTextPainter {
     private void configureAxisLabelForAxis(StringView aStringView, AxisType axisType)
     {
         // Configure axis label text
-        Axis axis = _dataArea.getChart().getAxisForType(axisType);
+        Axis axis = _traceView.getChart().getAxisForType(axisType);
         String axisLabelText = axis.getTitle(); if (axisLabelText == null) axisLabelText = "";
         aStringView.setText(axisLabelText);
         aStringView.setPadding(32, 32, 32, 32);
         aStringView.setSizeToPrefSize();
 
         // Get center grid line in camera space
-        Line3D gridLine = _dataArea.getAxisGridLineInDataSpace(axisType, .5);
+        Line3D gridLine = _traceView.getAxisGridLineInDataSpace(axisType, .5);
         Point3D gridLineP1 = gridLine.getP1();
         Point3D gridLineP2 = gridLine.getP2();
-        _dataArea.convertDataToView(gridLineP1);
-        _dataArea.convertDataToView(gridLineP2);
+        _traceView.convertDataToView(gridLineP1);
+        _traceView.convertDataToView(gridLineP2);
 
         // Get rotation of axis line in View coords
-        Line3D axisLine = _dataArea.getAxisLineInDataSpace(axisType);
-        _dataArea.convertDataToView(axisLine.getP1());
-        _dataArea.convertDataToView(axisLine.getP2());
+        Line3D axisLine = _traceView.getAxisLineInDataSpace(axisType);
+        _traceView.convertDataToView(axisLine.getP1());
+        _traceView.convertDataToView(axisLine.getP2());
         double angleDeg = axisLine.getAngle2DInDeg();
         if (angleDeg > 110) angleDeg -= 180;
         else if (angleDeg < -110) angleDeg += 180;
@@ -268,10 +268,10 @@ public class AxisBoxTextPainter {
         double inset = axisView.getPadding().top - 5;
         axisBounds.inset(inset);
 
-        // Get AxisLine in DataArea coords
-        Line3D axisLine = _dataArea.getAxisLineInDataSpace(axisType);
-        Point3D axisLineP1 = axisLine.getP1(); _dataArea.convertDataToView(axisLineP1);
-        Point3D axisLineP2 = axisLine.getP2(); _dataArea.convertDataToView(axisLineP2);
+        // Get AxisLine in TraceView coords
+        Line3D axisLine = _traceView.getAxisLineInDataSpace(axisType);
+        Point3D axisLineP1 = axisLine.getP1(); _traceView.convertDataToView(axisLineP1);
+        Point3D axisLineP2 = axisLine.getP2(); _traceView.convertDataToView(axisLineP2);
 
         // Get AxisLine points in AxisView coords and add to bounds
         Transform parentToLocal = axisView.getParentToLocal();
@@ -283,7 +283,7 @@ public class AxisBoxTextPainter {
         axisBounds.add(axisLineP2InAxisView.x, axisLineP2InAxisView.y);
         axisBounds.inset(-20, 0);
 
-        // Get new Axis bounds in DataArea
+        // Get new Axis bounds in TraceView
         Point midPoint = axisView.localToParent(axisBounds.getMidX(), axisBounds.getMidY());
         double axisX = Math.round(midPoint.x - axisBounds.width / 2);
         double axisY = Math.round(midPoint.y - axisBounds.height / 2);
@@ -291,7 +291,7 @@ public class AxisBoxTextPainter {
         double axisH = Math.round(axisBounds.height);
         axisView.setBounds(axisX, axisY, axisW, axisH);
 
-        // Apply to DataArea3D.AxisProxy
+        // Apply to TraceView3D.AxisProxy
         axisProxy.setBounds(axisView.getBounds());
         axisProxy.setRotate(axisView.getRotate());
     }
@@ -301,7 +301,7 @@ public class AxisBoxTextPainter {
      */
     private TickLabel getTickLabelForAxis(AxisType axisType)
     {
-        Chart chart = _dataArea.getChart();
+        Chart chart = _traceView.getChart();
         Axis axis = chart.getAxisForType(axisType);
 
         TickLabel tickLabel = new TickLabel(0);
@@ -328,9 +328,9 @@ public class AxisBoxTextPainter {
     }
     private void paintLine(Painter aPntr, AxisType axisType, Color aColor)
     {
-        Line3D axisLine = _dataArea.getAxisLineInDataSpace(axisType);
-        Point3D p1 = axisLine.getP1(); _dataArea.convertDataToView(p1);
-        Point3D p2 = axisLine.getP2(); _dataArea.convertDataToView(p2);
+        Line3D axisLine = _traceView.getAxisLineInDataSpace(axisType);
+        Point3D p1 = axisLine.getP1(); _traceView.convertDataToView(p1);
+        Point3D p2 = axisLine.getP2(); _traceView.convertDataToView(p2);
         aPntr.setColor(aColor); aPntr.setStroke(Stroke.Stroke2);
         aPntr.drawLine(p1.x, p1.y, p2.x, p2.y);
     }

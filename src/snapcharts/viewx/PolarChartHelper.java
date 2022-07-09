@@ -45,22 +45,22 @@ public class PolarChartHelper extends ChartHelper {
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
     @Override
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        DataArea[] dataAreas = new DataArea[traceCount];
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new PolarDataArea(this, trace);
+            traceViews[i] = new PolarTraceView(this, trace);
         }
 
-        return dataAreas;
+        return traceViews;
     }
 
     /**
@@ -98,9 +98,9 @@ public class PolarChartHelper extends ChartHelper {
     @Override
     public void paintGridlines(Painter aPntr)
     {
-        DataArea dataArea = getDataAreaForFirstAxisY();
+        TraceView traceView = getTraceViewForFirstAxisY();
         PolarGridPainter gridPainter = new PolarGridPainter(this);
-        gridPainter.paintGridlines(aPntr, dataArea);
+        gridPainter.paintGridlines(aPntr, traceView);
     }
 
     /**

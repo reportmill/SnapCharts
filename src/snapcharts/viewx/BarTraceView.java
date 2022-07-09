@@ -9,12 +9,12 @@ import snap.props.PropChange;
 import snapcharts.model.*;
 import snapcharts.modelx.BarStyle;
 import snapcharts.view.ChartHelper;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
- * A DataArea subclass to display the contents of bar chart.
+ * A TraceView subclass to display the contents of bar chart.
  */
-public class BarDataArea extends DataArea {
+public class BarTraceView extends TraceView {
 
     // The BarStyle
     private BarStyle  _barStyle;
@@ -31,7 +31,7 @@ public class BarDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public BarDataArea(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
+    public BarTraceView(ChartHelper aChartHelper, Trace aTrace, boolean isVisible)
     {
         super(aChartHelper, aTrace);
 
@@ -59,7 +59,7 @@ public class BarDataArea extends DataArea {
             return _barStyle = (BarStyle) traceStyle;
 
         // Complain and create bogus new
-        System.err.println("BarDataArea.getBarStyle: Trace doesn't have BarStyle");
+        System.err.println("BarTraceView.getBarStyle: Trace doesn't have BarStyle");
         return _barStyle = new TraceStyleHpr(trace).getBarStyle();
     }
 
@@ -76,7 +76,7 @@ public class BarDataArea extends DataArea {
         if (_sections != null && _sections.length == pointCount && _traceCount == traceCount)
             return _sections;
 
-        // Get DataAreaBar info
+        // Get BarTraceView info
         BarStyle barStyle = getBarStyle();
         double groupPad = barStyle.getGroupPadding();
         double barPad = barStyle.getBarPadding();
@@ -141,7 +141,7 @@ public class BarDataArea extends DataArea {
     /**
      * Paints chart.
      */
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
         // Get selected point index (section index)
         TracePoint dataPoint = getChartView().getTargDataPoint();
@@ -228,7 +228,7 @@ public class BarDataArea extends DataArea {
         }
 
         // Return zero point since bar not found for point - should not be possible
-        System.err.println("BarDataArea.getLocalXYForDataPoint: Point not found");
+        System.err.println("BarTraceView.getLocalXYForDataPoint: Point not found");
         return new Point(0, 0);
     }
 

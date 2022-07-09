@@ -57,27 +57,27 @@ public class ContourChartHelper extends ChartHelper {
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
     @Override
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         // Get Traces
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        // Iterate over traces and create DataAreas
-        DataArea[] dataAreas = new DataArea[traceCount];
+        // Iterate over traces and create TraceViews
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
             if (trace.getDataType().hasZ() )
-                dataAreas[i] = new ContourDataArea(this, trace);
-            else dataAreas[i] = new XYDataArea(this, trace);
+                traceViews[i] = new ContourTraceView(this, trace);
+            else traceViews[i] = new XYTraceView(this, trace);
         }
 
-        // Return DataAreas
-        return dataAreas;
+        // Return
+        return traceViews;
     }
 
     /**

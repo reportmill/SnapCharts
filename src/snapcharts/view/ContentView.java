@@ -10,7 +10,7 @@ import snapcharts.model.*;
 import java.util.Objects;
 
 /**
- * A class to display Chart.Content (via DataArea).
+ * A class to display Chart.Content (via child TraceView(s)).
  */
 public class ContentView extends ChartPartView<Content> {
 
@@ -20,8 +20,8 @@ public class ContentView extends ChartPartView<Content> {
     // The ChartHelper
     private ChartHelper  _chartHelper;
 
-    // The DataAreas
-    private DataArea[]  _dataAreas;
+    // The TraceViews
+    private TraceView[]  _traceViews;
 
     // Constants
     public static int DEFAULT_REVEAL_TIME = 2000;
@@ -56,30 +56,30 @@ public class ContentView extends ChartPartView<Content> {
     public ChartView getChartView()  { return _chartView; }
 
     /**
-     * Returns the DataArea.
+     * Returns the TraceView.
      */
-    public DataArea[] getDataAreas()  { return _dataAreas; }
+    public TraceView[] getTraceViews()  { return _traceViews; }
 
     /**
-     * Sets the DataArea.
+     * Sets the TraceViews.
      */
-    protected void setDataAreas(DataArea[] theDataAreas)
+    protected void setTraceViews(TraceView[] theTraceViews)
     {
         _chartHelper = getChartHelper();
 
         // Remove old
-        if (_dataAreas !=null) {
-            for (DataArea dataArea : _dataAreas)
-                removeChild(dataArea);
+        if (_traceViews !=null) {
+            for (TraceView traceView : _traceViews)
+                removeChild(traceView);
         }
 
         // Set new
-        _dataAreas = theDataAreas;
+        _traceViews = theTraceViews;
 
-        // Add DataAreas as children
-        for (DataArea dataArea : _dataAreas) {
-            addChild(dataArea);
-            dataArea.setContentView(this);
+        // Add TraceViews as children
+        for (TraceView traceView : _traceViews) {
+            addChild(traceView);
+            traceView.setContentView(this);
         }
     }
 
@@ -96,9 +96,9 @@ public class ContentView extends ChartPartView<Content> {
      */
     public void setReveal(double aValue)
     {
-        DataArea[] dataAreas = getDataAreas();
-        for (DataArea dataArea : dataAreas)
-            dataArea.setReveal(aValue);
+        TraceView[] traceViews = getTraceViews();
+        for (TraceView traceView : traceViews)
+            traceView.setReveal(aValue);
     }
 
     /**
@@ -106,10 +106,10 @@ public class ContentView extends ChartPartView<Content> {
      */
     protected int getRevealTime()
     {
-        DataArea[] dataAreas = getDataAreas();
+        TraceView[] traceViews = getTraceViews();
         int revealTime = 0;
-        for (DataArea dataArea : dataAreas)
-            revealTime = Math.max(revealTime, dataArea.getRevealTime());
+        for (TraceView traceView : traceViews)
+            revealTime = Math.max(revealTime, traceView.getRevealTime());
         return revealTime;
     }
 
@@ -120,8 +120,8 @@ public class ContentView extends ChartPartView<Content> {
     {
         double viewW = getWidth();
         double viewH = getHeight();
-        for (DataArea dataArea : getDataAreas())
-            dataArea.setSize(viewW, viewH);
+        for (TraceView traceView : getTraceViews())
+            traceView.setSize(viewW, viewH);
     }
 
     /**
@@ -144,9 +144,9 @@ public class ContentView extends ChartPartView<Content> {
     protected void paintAbove(Painter aPntr)
     {
         // Paint Tags
-        DataArea[] dataAreas = getDataAreas();
-        for (DataArea dataArea : dataAreas)
-            dataArea.paintDataAreaAbove(aPntr);
+        TraceView[] traceViews = getTraceViews();
+        for (TraceView traceView : traceViews)
+            traceView.paintTraceAbove(aPntr);
 
         // Paint Chart Markers
         paintMarkers(aPntr);

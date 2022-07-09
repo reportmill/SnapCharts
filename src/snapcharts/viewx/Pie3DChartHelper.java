@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snapcharts.model.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
  * A ChartHelper for ChartType PIE_3D.
@@ -67,18 +67,18 @@ public class Pie3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         Trace trace = getTrace();
-        return new DataArea[] { new Pie3DDataArea(this, trace) };
+        return new TraceView[] { new Pie3DTraceView(this, trace) };
     }
 
     @Override
-    protected DataArea3D createProjectionDataArea()
+    protected TraceView3D createProjectionTraceView()
     {
         Trace trace = getTrace();
-        return new Pie3DDataArea(this, trace);
+        return new Pie3DTraceView(this, trace);
     }
 }

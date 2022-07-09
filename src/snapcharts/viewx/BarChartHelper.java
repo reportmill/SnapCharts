@@ -6,7 +6,7 @@ import snap.gfx.Painter;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 
 /**
  * A ChartHelper for ChartType BAR.
@@ -35,24 +35,24 @@ public class BarChartHelper extends ChartHelper {
     }
 
     /**
-     * Creates the DataAreas.
+     * Creates the TraceViews.
      */
-    protected DataArea[] createDataAreas()
+    protected TraceView[] createTraceViews()
     {
         // Get traces
         Content content = getContent();
         Trace[] traces = content.getTraces();
         int traceCount = traces.length;
 
-        // Create DataArea for each Trace
-        DataArea[] dataAreas = new DataArea[traceCount];
+        // Create TraceView for each Trace
+        TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            dataAreas[i] = new BarDataArea(this, trace, i == 0);
+            traceViews[i] = new BarTraceView(this, trace, i == 0);
         }
 
-        // Return DataAreas
-        return dataAreas;
+        // Return
+        return traceViews;
     }
 
     /**

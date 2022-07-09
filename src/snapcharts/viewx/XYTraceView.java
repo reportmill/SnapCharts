@@ -7,13 +7,13 @@ import snap.gfx.*;
 import snap.props.PropChange;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
-import snapcharts.view.DataArea;
+import snapcharts.view.TraceView;
 import snapcharts.view.ContentView;
 
 /**
- * A DataArea subclass to display common XY ChartTypes: LINE, AREA, SCATTER.
+ * A TraceView subclass to display common XY ChartTypes: LINE, AREA, SCATTER.
  */
-public class XYDataArea extends DataArea {
+public class XYTraceView extends TraceView {
 
     // The TailShape
     private Shape  _tailShape;
@@ -31,49 +31,49 @@ public class XYDataArea extends DataArea {
     /**
      * Constructor.
      */
-    public XYDataArea(ChartHelper aChartHelper, Trace aTrace)
+    public XYTraceView(ChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace);
     }
 
     /**
-     * Returns the Shape used to paint the DataArea data line.
+     * Returns the Shape used to paint the Trace line.
      */
-    public Shape getDataLineShape()
+    public Shape getTraceLineShape()
     {
-        return XYDataAreaShapes.getLineShape(this, false);
+        return XYTraceViewShapes.getLineShape(this, false);
     }
 
     /**
-     * Returns the Shape used to paint the DataArea filled area shape.
+     * Returns the Shape used to paint the Trace filled area shape.
      */
-    public Shape getDataAreaShape()
+    public Shape getTraceAreaShape()
     {
-        return XYDataAreaShapes.getAreaShape(this);
+        return XYTraceViewShapes.getAreaShape(this);
     }
 
     /**
-     * Returns the length of the data line shape.
+     * Returns the length of the trace line shape.
      */
-    public double getDataLineShapeArcLength()
+    public double getTraceLineShapeArcLength()
     {
         if (_dataLineArcLength > 0) return _dataLineArcLength;
-        Shape dataLineShape = XYDataAreaShapes.getLineShape(this, true);
+        Shape dataLineShape = XYTraceViewShapes.getLineShape(this, true);
         double arcLength = dataLineShape.getArcLength();
         return _dataLineArcLength = arcLength;
     }
 
     /**
-     * Paints the DataArea (ChartType/Trace specific painting).
+     * Paints the TraceView (ChartType/Trace specific painting).
      */
     @Override
-    protected void paintDataArea(Painter aPntr)
+    protected void paintTrace(Painter aPntr)
     {
         // Get area bounds
         double areaW = getWidth();
         double areaH = getHeight();
 
-        // Get whether DataArea/Trace is selected or targeted
+        // Get whether TraceView/Trace is selected or targeted
         boolean isSelected = isSelectedOrTargeted();
 
         // Get Trace info
@@ -95,14 +95,14 @@ public class XYDataArea extends DataArea {
 
         // If ShowArea, fill path, too
         if (showArea) {
-            Shape dataAreaShape = getDataAreaShape();
-            Color dataAreaColor = trace.getFillColor();
-            aPntr.setColor(dataAreaColor);
-            aPntr.fill(dataAreaShape);
+            Shape traceAreaShape = getTraceAreaShape();
+            Color traceFillColor = trace.getFillColor();
+            aPntr.setColor(traceFillColor);
+            aPntr.fill(traceAreaShape);
         }
 
         // Get dataShape (path) (if Reveal is active, get shape as SplicerShape so we can draw partial/animated)
-        Shape dataShape = getDataLineShape();
+        Shape dataShape = getTraceLineShape();
         if (reveal < 1 && showLine)
             dataShape = new SplicerShape(dataShape, 0, reveal);
 
@@ -271,7 +271,7 @@ public class XYDataArea extends DataArea {
             return ContentView.DEFAULT_REVEAL_TIME;
 
         // Calc factor to modify default time
-        double maxLen = getDataLineShapeArcLength();
+        double maxLen = getTraceLineShapeArcLength();
         double factor = Math.max(1, Math.min(maxLen / 500, 2));
 
         // Return default time times factor
