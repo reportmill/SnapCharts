@@ -194,7 +194,7 @@ public class ChartPaneInsp extends ViewOwner {
 
         // Reset SelPartInsp
         ChartPart selPart = _chartPane.getSelChartPart();
-        ChartPartInsp selPartInsp = getChartPartInsp(selPart);
+        ChartPartInsp selPartInsp = getInspForChartPart(selPart);
         if (selPartInsp != null && selPartInsp.isShowing())
             selPartInsp.resetLater();
 
@@ -239,7 +239,7 @@ public class ChartPaneInsp extends ViewOwner {
     /**
      * Returns the inspector for given ChartPart.
      */
-    public ChartPartInsp getChartPartInsp(ChartPart aChartPart)
+    public ChartPartInsp getInspForChartPart(ChartPart aChartPart)
     {
         if (aChartPart instanceof Header)
             return _headerInsp;
@@ -284,7 +284,7 @@ public class ChartPaneInsp extends ViewOwner {
     {
         // Get SelPart and SelInsp
         ChartPart selPart = _chartPane.getSelChartPart();
-        ChartPartInsp selPartInsp = getChartPartInsp(selPart);
+        ChartPartInsp selPartInsp = getInspForChartPart(selPart);
 
         // Iterate over all ChartPaneInsp and make SelPartInsp is expanded (and others not)
         for (ChartPartInsp insp : _allInspectors) {
