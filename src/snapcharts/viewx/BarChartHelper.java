@@ -9,7 +9,7 @@ import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;
 
 /**
- * A ChartHelper for ChartType BAR.
+ * A ChartHelper for TraceType Bar.
  */
 public class BarChartHelper extends ChartHelper {
 
@@ -22,9 +22,9 @@ public class BarChartHelper extends ChartHelper {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
-    public ChartType getChartType()  { return ChartType.BAR; }
+    public TraceType getTraceType()  { return TraceType.Bar; }
 
     /**
      * Returns the AxisTypes.

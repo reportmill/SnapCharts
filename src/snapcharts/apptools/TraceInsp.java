@@ -140,7 +140,7 @@ public class TraceInsp extends ChartPartInsp {
             setViewValue("ThetaUnitComboBox", trace.getThetaUnit());
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
-        boolean isMultiYEnabled = trace.getChartType().isMultiYAxisType();
+        boolean isMultiYEnabled = trace.getType().isMultiYAxisType();
         setViewVisible("AxisTypeYBox", isMultiYEnabled);
         if (isMultiYEnabled) {
             AxisType axisTypeY = trace.getAxisTypeY();
@@ -178,10 +178,10 @@ public class TraceInsp extends ChartPartInsp {
         setButtonHighlight("TagsStyleButton", trace.isShowTags());
 
         // Update child inspector
-        ChartPartInsp chartTypeInsp = getCurrentInspector();
-        //setCurrentInspector(chartTypeInsp);
-        if (chartTypeInsp != null)
-            chartTypeInsp.resetLater();
+        ChartPartInsp traceTypeInsp = getCurrentInspector();
+        //setCurrentInspector(traceTypeInsp);
+        if (traceTypeInsp != null)
+            traceTypeInsp.resetLater();
 
         // Update SpacingInsp.Visible
         boolean isPointsOrTags = trace.isShowPoints() || trace.isShowTags();

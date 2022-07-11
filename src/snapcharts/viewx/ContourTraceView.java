@@ -8,7 +8,7 @@ import snapcharts.model.*;
 import snapcharts.view.TraceView;
 
 /**
- * A TraceView subclass to display ChartType CONTOUR.
+ * A TraceView subclass to display TraceType Contour.
  */
 public class ContourTraceView extends TraceView {
 

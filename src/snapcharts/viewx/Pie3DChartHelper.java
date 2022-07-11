@@ -8,7 +8,7 @@ import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;
 
 /**
- * A ChartHelper for ChartType PIE_3D.
+ * A ChartHelper for TraceType Pie3D.
  */
 public class Pie3DChartHelper extends ChartHelper3D {
 
@@ -21,10 +21,10 @@ public class Pie3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
     @Override
-    public ChartType getChartType()  { return ChartType.PIE_3D; }
+    public TraceType getTraceType()  { return TraceType.Pie3D; }
 
     /**
      * Returns the AxisTypes.

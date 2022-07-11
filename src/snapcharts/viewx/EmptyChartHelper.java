@@ -1,6 +1,6 @@
 package snapcharts.viewx;
 import snapcharts.model.AxisType;
-import snapcharts.model.ChartType;
+import snapcharts.model.TraceType;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;
@@ -19,7 +19,7 @@ public class EmptyChartHelper extends ChartHelper {
     }
 
     @Override
-    public ChartType getChartType()
+    public TraceType getTraceType()
     {
         return null;
     }

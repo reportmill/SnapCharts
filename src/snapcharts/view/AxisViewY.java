@@ -141,7 +141,7 @@ public class AxisViewY extends AxisView<AxisY> {
         TickLabel[] tickLabels = getTickLabels();
 
         // Polar stuff
-        boolean isPolar = getChartType().isPolarType();
+        boolean isPolar = getTraceType().isPolarType();
         double shiftY = isPolar ? getY() - getContentView().getY() : 0;
 
         // Get tick rotation

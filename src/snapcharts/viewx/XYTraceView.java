@@ -11,7 +11,7 @@ import snapcharts.view.TraceView;
 import snapcharts.view.ContentView;
 
 /**
- * A TraceView subclass to display common XY ChartTypes: LINE, AREA, SCATTER.
+ * A TraceView subclass to display TraceType Scatter.
  */
 public class XYTraceView extends TraceView {
 
@@ -64,7 +64,7 @@ public class XYTraceView extends TraceView {
     }
 
     /**
-     * Paints the TraceView (ChartType/Trace specific painting).
+     * Paints the TraceView (TraceType specific painting).
      */
     @Override
     protected void paintTrace(Painter aPntr)
@@ -106,7 +106,7 @@ public class XYTraceView extends TraceView {
         if (reveal < 1 && showLine)
             dataShape = new SplicerShape(dataShape, 0, reveal);
 
-        // If ChartType.LINE, draw path
+        // If ShowLine, draw path
         if (isSelected && showLine) {
             aPntr.setStrokePure(true);
 
@@ -133,7 +133,7 @@ public class XYTraceView extends TraceView {
         aPntr.setColor(dataColor);
         aPntr.setStroke(dataStroke);
 
-        // If ChartType.LINE, draw path
+        // If ShowLine, draw path
         if (showLine) {
             aPntr.setStrokePure(true);
             aPntr.draw(dataShape);

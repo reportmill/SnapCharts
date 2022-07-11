@@ -379,8 +379,8 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     private void initChartLoaded()
     {
-        ChartType chartType = getChart().getType();
-        if (chartType.is3D())
+        TraceType traceType = getChart().getTraceType();
+        if (traceType.is3D())
             registerForCubeViewClick();
     }
 

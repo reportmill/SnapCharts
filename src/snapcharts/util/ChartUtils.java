@@ -1,7 +1,7 @@
 package snapcharts.util;
 import snapcharts.model.Chart;
-import snapcharts.model.ChartType;
 import snapcharts.model.Trace;
+import snapcharts.model.TraceType;
 
 /**
  * Utility methods for Chart.
@@ -60,11 +60,10 @@ public class ChartUtils {
         boolean isArea = scatterType == ScatterType.AREA;
         boolean isStackedArea = scatterType == ScatterType.STACKED_AREA;
 
-        aChart.setType(ChartType.SCATTER);
-
         // Configure Traces
         Trace[] traces = aChart.getContent().getTraces();
         for (Trace trace : traces) {
+            trace.setType(TraceType.Scatter);
             trace.setShowLine(isLine || isArea || isStackedArea);
             trace.setShowArea(isArea || isStackedArea);
             trace.setShowPoints(isLine || isScatter);

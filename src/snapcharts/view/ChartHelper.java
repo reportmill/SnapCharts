@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 /**
- * A class to help customize ChartView for specific ChartType.
+ * A class to help customize ChartView for specific TraceType.
  */
 public abstract class ChartHelper {
 
@@ -89,9 +89,9 @@ public abstract class ChartHelper {
     public Chart getChart()  { return _chartView.getChart(); }
 
     /**
-     * Returns the ChartType.
+     * Returns the TraceType.
      */
-    public abstract ChartType getChartType();
+    public abstract TraceType getTraceType();
 
     /**
      * Returns the Content.
@@ -725,7 +725,7 @@ public abstract class ChartHelper {
      */
     public void setZoomSelectMode(boolean aValue)
     {
-        if (!getChartType().isXYType()) return;
+        if (!getTraceType().isXYType()) return;
         _panZoomer.setZoomSelectMode(aValue);
     }
 
@@ -734,7 +734,7 @@ public abstract class ChartHelper {
      */
     protected void processEventForChartPartView(ChartPartView aView, ViewEvent anEvent)
     {
-        if (getChartType().isXYType())
+        if (getTraceType().isXYType())
             _panZoomer.processEventForChartPartView(aView, anEvent);
     }
 
@@ -752,7 +752,7 @@ public abstract class ChartHelper {
      */
     public void scaleAxesMinMaxForFactor(double aScale, boolean isAnimated)
     {
-        if (getChartType().isXYType())
+        if (getTraceType().isXYType())
             _panZoomer.scaleAxesMinMaxForFactor(aScale, isAnimated);
     }
 
@@ -803,19 +803,39 @@ public abstract class ChartHelper {
      */
     public static ChartHelper createChartHelper(ChartView aChartView)
     {
-        ChartType chartType = aChartView.getChartType();
-        switch (chartType) {
-            case BAR: return new BarChartHelper(aChartView);
-            case PIE: return new PieChartHelper(aChartView);
-            case SCATTER: return new XYChartHelper(aChartView, ChartType.SCATTER);
-            case CONTOUR: return new ContourChartHelper(aChartView);
-            case POLAR: return new PolarChartHelper(aChartView);
-            case POLAR_CONTOUR: return new PolarContourChartHelper(aChartView);
-            case BAR_3D: return new Bar3DChartHelper(aChartView);
-            case PIE_3D: return new Pie3DChartHelper(aChartView);
-            case LINE_3D: return new Line3DChartHelper(aChartView);
-            case CONTOUR_3D: return new Contour3DChartHelper(aChartView);
-            default: throw new RuntimeException("ChartHelper.createChartHelper: Unknown type: " + chartType);
-        }
+        TraceType traceType = aChartView.getTraceType();
+
+        if (traceType == TraceType.Bar)
+            return new BarChartHelper(aChartView);
+
+        if (traceType == TraceType.Pie)
+            return new PieChartHelper(aChartView);
+
+        if (traceType == TraceType.Scatter)
+            return new XYChartHelper(aChartView);
+
+        if (traceType == TraceType.Contour)
+            return new ContourChartHelper(aChartView);
+
+        if (traceType == TraceType.Polar)
+            return new PolarChartHelper(aChartView);
+
+        if (traceType == TraceType.PolarContour)
+            return new PolarContourChartHelper(aChartView);
+
+        if (traceType == TraceType.Bar3D)
+            return new Bar3DChartHelper(aChartView);
+
+        if (traceType == TraceType.Pie3D)
+            return new Pie3DChartHelper(aChartView);
+
+        if (traceType == TraceType.Line3D)
+            return new Line3DChartHelper(aChartView);
+
+        if (traceType == TraceType.Contour3D)
+            return new Contour3DChartHelper(aChartView);
+
+        // Complain
+        throw new RuntimeException("ChartHelper.createChartHelper: Unknown type: " + traceType);
     }
 }

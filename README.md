@@ -50,7 +50,7 @@ constants and types.
     
 ### SnapCharts.model Supporting Types and Constants
 
-    - ChartType: LINE, AREA, SCATTER, BAR, PIE, POLAR, CONTOUR, LINE_3D, BAR_3D, PIE_3D
+    - TraceType: LINE, AREA, SCATTER, BAR, PIE, POLAR, CONTOUR, LINE_3D, BAR_3D, PIE_3D
     - AxisType: X, Y, Y2, Y3, Y4, Z
     - AxisBound: Auto, Data, Value
     - DataType: XY, XYZ, IY (indexed Y), CY (labeled Y), CXY, TR, TRZ

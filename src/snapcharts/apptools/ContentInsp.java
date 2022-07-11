@@ -81,7 +81,7 @@ public class ContentInsp extends ChartPartInsp {
         setViewValue("3DButton", selInsp == _3dInsp);
 
         Chart chart = getChart();
-        boolean is3D = chart.getType().is3D();
+        boolean is3D = chart.getTraceType().is3D();
         setViewEnabled("3DButton", is3D);
 
         selInsp.resetLater();

@@ -24,6 +24,9 @@ public class DocTextReader {
     // The current Trace
     private Trace  _trace;
 
+    // The current TraceType
+    private TraceType  _traceType = TraceType.Scatter;
+
     // Staged data arrays X/Y/Z
     private double[]  _dataX, _dataY, _dataZ, _dataZZ;
 
@@ -116,9 +119,8 @@ public class DocTextReader {
                     break;
 
                 case "Chart.Type":
-                    ChartType chartType = ChartType.get(val.toUpperCase());
-                    if (chartType == null) chartType = ChartType.SCATTER;
-                    _chart.setType(chartType);
+                    _traceType = TraceType.getTypeForName(val.toUpperCase());
+                    if (_traceType == null) _traceType = TraceType.Scatter;
                     break;
 
                 case "Chart.Title":
@@ -233,6 +235,7 @@ public class DocTextReader {
             case "Name":
                 _trace = new Trace();
                 _trace.setName(aVal);
+                _trace.setType(_traceType);
                 _chart.addTrace(_trace);
                 break;
 

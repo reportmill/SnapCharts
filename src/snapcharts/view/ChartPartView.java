@@ -51,9 +51,9 @@ public class ChartPartView<T extends ChartPart> extends ParentView {
     }
 
     /**
-     * Returns the ChartType.
+     * Returns the TraceType.
      */
-    public ChartType getChartType()  { return getChart().getType(); }
+    public TraceType getTraceType()  { return getChart().getTraceType(); }
 
     /**
      * Returns the Content.

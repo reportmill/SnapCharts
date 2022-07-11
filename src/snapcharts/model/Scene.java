@@ -16,9 +16,9 @@ public class Scene extends ChartPart {
     private AspectMode  _aspectMode;
 
     // Aspect scales
-    private double  _aspectScaleX = 1;
-    private double  _aspectScaleY = 1;
-    private double  _aspectScaleZ = 1;
+    private double  _aspectScaleX;
+    private double  _aspectScaleY;
+    private double  _aspectScaleZ;
 
     // The sides that show projections
     private Side3D[]  _projectedSides;
@@ -43,12 +43,19 @@ public class Scene extends ChartPart {
     public static final String AspectScaleZ_Prop = "AspectScaleZ";
     public static final String ProjectedSides_Prop = "ProjectedSides";
 
+    // Constants for defaults
+    public static final AspectMode DEFAULT_ASPECT_MODE = AspectMode.View;
+    public static final double DEFAULT_ASPECT_SCALE_X = 1;
+    public static final double DEFAULT_ASPECT_SCALE_Y = 1;
+
     /**
      * Constructor.
      */
     public Scene()
     {
-        _aspectMode = AspectMode.View;
+        _aspectMode = DEFAULT_ASPECT_MODE;
+        _aspectScaleX = DEFAULT_ASPECT_SCALE_X;
+        _aspectScaleY = DEFAULT_ASPECT_SCALE_Y;
     }
 
     /**
@@ -96,7 +103,11 @@ public class Scene extends ChartPart {
     /**
      * Returns the scale factor to be applied to axis aspect ratio for Z axis.
      */
-    public double getAspectScaleZ()  { return _aspectScaleZ; }
+    public double getAspectScaleZ()
+    {
+        if (_aspectScaleZ > 0) return _aspectScaleZ;
+        return getDefaultAspectScaleZ();
+    }
 
     /**
      * Sets the scale factor to be applied to axis aspect ratio for Z axis.
@@ -179,8 +190,8 @@ public class Scene extends ChartPart {
         // Get info
         AspectMode aspectMode = getAspectMode();
         double aspectScale = getAspectScale(anAxisType);
-        ChartType chartType = getChartType();
-        boolean isAxisYUp = chartType == ChartType.BAR_3D || chartType == ChartType.LINE_3D;
+        TraceType traceType = getChart().getTraceType();
+        boolean isAxisYUp = traceType == TraceType.Bar3D || traceType == TraceType.Line3D;
 
         // Handle AspectModes
         switch (aspectMode) {
@@ -213,17 +224,6 @@ public class Scene extends ChartPart {
     }
 
     /**
-     * Called when Chart.Type changes.
-     */
-    protected void chartTypeDidChange()
-    {
-        _aspectMode = getAspectModeDefault();
-        _aspectScaleX = getAspectScaleDefault(AxisType.X);
-        _aspectScaleY = getAspectScaleDefault(AxisType.Y);
-        _aspectScaleZ = getAspectScaleDefault(AxisType.Z);
-    }
-
-    /**
      * Override to register props.
      */
     @Override
@@ -233,11 +233,11 @@ public class Scene extends ChartPart {
         super.initProps(aPropSet);
 
         // AspectMode
-        aPropSet.addPropNamed(AspectMode_Prop, AspectMode.class, AspectMode.View);
+        aPropSet.addPropNamed(AspectMode_Prop, AspectMode.class, DEFAULT_ASPECT_MODE);
 
         // AspectScaleX, AspectScaleY, AspectScaleZ
-        aPropSet.addPropNamed(AspectScaleX_Prop, double.class, 0d);
-        aPropSet.addPropNamed(AspectScaleY_Prop, double.class, 0d);
+        aPropSet.addPropNamed(AspectScaleX_Prop, double.class, DEFAULT_ASPECT_SCALE_X);
+        aPropSet.addPropNamed(AspectScaleY_Prop, double.class, DEFAULT_ASPECT_SCALE_Y);
         aPropSet.addPropNamed(AspectScaleZ_Prop, double.class, 0d);
 
         // ProjectedSides
@@ -303,13 +303,8 @@ public class Scene extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
-            // AspectMode
-            case AspectMode_Prop: return getAspectModeDefault();
-
-            // AspectScaleX, AspectScaleY, AspectScaleZ
-            case AspectScaleX_Prop: return getAspectScaleDefault(AxisType.X);
-            case AspectScaleY_Prop: return getAspectScaleDefault(AxisType.Y);
-            case AspectScaleZ_Prop: return getAspectScaleDefault(AxisType.Z);
+            // AspectScaleZ
+            case AspectScaleZ_Prop: return getDefaultAspectScaleZ();
 
             // Superclass properties
             default: return super.getPropDefault(aPropName);
@@ -317,23 +312,12 @@ public class Scene extends ChartPart {
     }
 
     /**
-     * Returns default AspectMode for ChartType.
+     * Return default AspectScaleZ for TraceType.
      */
-    private AspectMode getAspectModeDefault()
+    public double getDefaultAspectScaleZ()
     {
-        ChartType chartType = getChartType();
-        switch (chartType) {
-            default: return AspectMode.View;
-        }
-    }
-
-    /**
-     * Return default AspectScale for ChartType.
-     */
-    public double getAspectScaleDefault(AxisType anAxisType)
-    {
-        ChartType chartType = getChartType();
-        if ((chartType == ChartType.BAR_3D || chartType == ChartType.PIE_3D) && anAxisType == AxisType.Z)
+        TraceType traceType = getChart().getTraceType();
+        if ((traceType == TraceType.Bar3D || traceType == TraceType.Pie3D))
             return .2;
         return 1;
     }

@@ -95,7 +95,7 @@ public class TickPainter {
         _chartHelper = aChartHelper;
 
         // Handle polar stuff
-        if (isPolar = _chartHelper.getChartType().isPolarType())
+        if (isPolar = _chartHelper.getTraceType().isPolarType())
             polarShift = _chartHelper.getContentView().getWidth() / 2;
     }
 

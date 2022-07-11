@@ -248,8 +248,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (axisType != AxisType.X)
             return false;
 
-        // If ChartType Bar, return true
-        boolean isBar = getChartType().isBarType();
+        // If TraceType Bar, return true
+        boolean isBar = getTraceType().isBarType();
         if (isBar)
             return true;
 

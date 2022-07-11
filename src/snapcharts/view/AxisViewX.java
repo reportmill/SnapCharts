@@ -118,7 +118,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // Get TickLabels and info
         TickLabel[] tickLabels = getTickLabels();
         Axis axis = getAxis();
-        boolean isPolar = getChartType().isPolarType();
+        boolean isPolar = getTraceType().isPolarType();
         double shiftX = isPolar ? getX() - getContentView().getX() : 0;
 
         // Get tick rotation

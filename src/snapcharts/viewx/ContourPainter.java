@@ -171,7 +171,7 @@ public class ContourPainter {
         // Get/set DataSet for contours (if Polar, get PolarXYData)
         Trace trace = _traceView.getTrace();
         DataSet dataSet = trace.getProcessedData();
-        if (trace.getChart().getType().isPolarType())
+        if (trace.getChart().getTraceType().isPolarType())
             dataSet = trace.getPolarXYData();
 
         // Create/set ContourMaker from DataSet

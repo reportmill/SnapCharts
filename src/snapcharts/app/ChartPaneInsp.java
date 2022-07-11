@@ -176,10 +176,10 @@ public class ChartPaneInsp extends ViewOwner {
      */
     public void resetUI()
     {
-        // Make ContourAxisInsp.Visible only if ChartType is contour
+        // Make ContourAxisInsp.Visible only if TraceType is contour
         Chart chart = _chartPane.getChart();
-        ChartType chartType = chart.getType();
-        boolean isContour = chartType.isContourType();
+        TraceType traceType = chart.getTraceType();
+        boolean isContour = traceType.isContourType();
         if (_contourAxisInsp != null) {
             _contourAxisInsp.getUI().setVisible(isContour);
             _contourAxisInsp.getLabel().setVisible(isContour);

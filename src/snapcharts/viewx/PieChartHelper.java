@@ -5,7 +5,7 @@ import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;
 
 /**
- * A ChartHelper for ChartType PIE.
+ * A ChartHelper for TraceType Pie.
  */
 public class PieChartHelper extends ChartHelper {
 
@@ -24,9 +24,9 @@ public class PieChartHelper extends ChartHelper {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
-    public ChartType getChartType()  { return ChartType.PIE; }
+    public TraceType getTraceType()  { return TraceType.Pie; }
 
     /**
      * Returns the AxisTypes.

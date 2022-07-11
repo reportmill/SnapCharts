@@ -310,7 +310,7 @@ public class Content extends ChartPart {
         String propName = aPC.getPropName();
         if (propName == Trace.Disabled_Prop) {
             Trace trace = (Trace) aPC.getSource();
-            boolean isPie = getChart().getType() == ChartType.PIE;
+            boolean isPie = getChart().getTraceType() == TraceType.Pie;
             if (isPie && !trace.isDisabled()) {
                 for (Trace ds : getTraces())
                     ds.setDisabled(ds != trace);

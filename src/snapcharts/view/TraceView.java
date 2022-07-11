@@ -436,7 +436,7 @@ public abstract class TraceView extends ChartPartView<Trace> {
     }
 
     /**
-     * Paints the Trace (ChartType/Trace specific painting).
+     * Paints the Trace (TraceType specific painting).
      */
     protected void paintTrace(Painter aPntr)  { }
 

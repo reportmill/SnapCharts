@@ -19,9 +19,6 @@ public class Chart extends ParentPart {
     // The ChartDoc that owns this chart
     private Doc  _doc;
 
-    // The chart type
-    private ChartType  _type = DEFAULT_TYPE;
-
     // The Header
     private Header  _header;
 
@@ -80,7 +77,6 @@ public class Chart extends ParentPart {
     public static final String Content_Prop = "Content";
 
     // Constants for property defaults
-    public static final ChartType  DEFAULT_TYPE = ChartType.SCATTER;
     public static final Color  DEFAULT_CHART_FILL = Color.WHITE;
     public static Insets  DEFAULT_CHART_PADDING = new Insets(5);
 
@@ -145,20 +141,29 @@ public class Chart extends ParentPart {
     }
 
     /**
-     * Returns the type.
+     * Returns the base trace type of chart.
      */
-    public ChartType getType()  { return _type; }
+    public TraceType getTraceType()
+    {
+        // Return First Content.Traces.Trace.Type
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
+        for (Trace trace : traces)
+            return trace.getType();
+
+        // Return Scatter (default) since no traces
+        return TraceType.Scatter;
+    }
 
     /**
-     * Sets the type.
+     * Returns the base trace type of chart.
      */
-    public void setType(ChartType aType)
+    public void setTraceType(TraceType aTraceType)
     {
-        if (aType==getType()) return;
-        firePropChange(Type_Prop, _type, _type = aType);
-
-        // This is bogus
-        _scene.chartTypeDidChange();
+        Content content = getContent();
+        Trace[] traces = content.getTraces();
+        for (Trace trace : traces)
+            trace.setType(aTraceType);
     }
 
     /**
@@ -363,9 +368,6 @@ public class Chart extends ParentPart {
         // Suppress Children archival
         aPropSet.getPropForName(Children_Prop).setSkipArchival(true);
 
-        // Type
-        aPropSet.addPropNamed(Type_Prop, ChartType.class, null);
-
         // Header
         aPropSet.addPropNamed(Header_Prop, Header.class, EMPTY_OBJECT);
 
@@ -403,9 +405,6 @@ public class Chart extends ParentPart {
     {
         switch (aPropName) {
 
-            // Type
-            case Type_Prop: return getType();
-
             // Header
             case Header_Prop: return getHeader();
 
@@ -440,9 +439,6 @@ public class Chart extends ParentPart {
     public void setPropValue(String aPropName, Object aValue)
     {
         switch (aPropName) {
-
-            // Type
-            case Type_Prop: setType((ChartType) aValue); break;
 
             // Markers
             case Markers_Prop: setMarkers((Marker[]) aValue); break;

@@ -5,8 +5,8 @@ package snapcharts.notebook;
 import snap.util.KeyChain;
 import snapcharts.data.DataSet;
 import snapcharts.model.Chart;
-import snapcharts.model.ChartType;
 import snapcharts.model.Trace;
+import snapcharts.model.TraceType;
 
 /**
  * This class processes plot requests.
@@ -50,18 +50,18 @@ public class SubProcPlot extends SubProc {
         // Get DataSet
         DataSet dataSet = _dataProcessor.dataSetOrSample(anObj, aKeyChain);
 
+        // Get TraceType
+        TraceType traceType = TraceType.Scatter;
+        if (dataSet.getDataType().hasZ())
+            traceType = TraceType.Contour;
+
         // Create Trace for DataSet
         Trace trace = new Trace();
         trace.setDataSet(dataSet);
-
-        // Get ChartType
-        ChartType chartType = ChartType.SCATTER;
-        if (dataSet.getDataType().hasZ())
-            chartType = ChartType.CONTOUR;
+        trace.setType(traceType);
 
         // Create Chart with Trace
         Chart chart = new Chart();
-        chart.setType(chartType);
         chart.getAxisX().setTitle("X");
         chart.getAxisY().setTitle("Y");
         chart.addTrace(trace);
@@ -84,10 +84,10 @@ public class SubProcPlot extends SubProc {
         // Create Trace for DataSet
         Trace trace = new Trace();
         trace.setDataSet(dataSet);
+        trace.setType(TraceType.Contour3D);
 
         // Create Chart with Trace
         Chart chart = new Chart();
-        chart.setType(ChartType.CONTOUR_3D);
         chart.getAxisX().setTitle("X");
         chart.getAxisY().setTitle("Y");
         chart.getAxisZ().setTitle("Z");

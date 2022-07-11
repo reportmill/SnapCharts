@@ -38,7 +38,7 @@ public class AxisBoxTextPainter {
         // Paint XYZ ticks
         paintTickLabelsX(aPntr);
         paintTickLabelsY(aPntr);
-        if (_traceView.getChartType() != ChartType.BAR_3D)
+        if (_traceView.getTraceType() != TraceType.Bar3D)
             paintTickLabelsZ(aPntr);
     }
 

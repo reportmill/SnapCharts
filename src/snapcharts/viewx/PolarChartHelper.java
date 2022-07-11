@@ -31,9 +31,9 @@ public class PolarChartHelper extends ChartHelper {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
-    public ChartType getChartType()  { return ChartType.POLAR; }
+    public TraceType getTraceType()  { return TraceType.Polar; }
 
     /**
      * Override to return ChartViewLayoutPolar.

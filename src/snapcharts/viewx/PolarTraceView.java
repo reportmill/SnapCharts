@@ -118,7 +118,7 @@ public class PolarTraceView extends TraceView {
         aPntr.setColor(dataColor);
         aPntr.setStroke(dataStroke);
 
-        // If ChartType.LINE, draw path
+        // If ShowLine, draw path
         if (showLine) {
             aPntr.setColor(dataColor.blend(Color.CLEAR, .98));
             aPntr.draw(path);

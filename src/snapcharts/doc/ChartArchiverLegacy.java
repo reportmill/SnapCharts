@@ -44,8 +44,9 @@ public class ChartArchiverLegacy {
         for (XMLElement xml : anElement.getElements())
             processLegacyXMLDeep(xml);
 
+        // Special handling for old Chart.Type (ChartType)
         if (anElement.getName().equals("Chart"))
-            setChartType(anElement);
+            processLegacyChartType(anElement);
     }
 
     /**
@@ -134,13 +135,16 @@ public class ChartArchiverLegacy {
     }
 
     /**
-     * Sets ChartType.
+     * Handles legacy Chart.Type (ChartType). Converts it to TraceType and propagates it to Chart.Content.Traces.
      */
-    protected void setChartType(XMLElement chartXML)
+    protected void processLegacyChartType(XMLElement chartXML)
     {
-        // Really old stuff
+        // Get ChartTypeString
         XMLAttribute chartTypeAttr = chartXML.getAttribute("Type");
         String chartTypeStr = chartTypeAttr.getValue();
+        chartXML.removeAttribute(chartTypeAttr);
+
+        // Really old stuff: Turn legacy ChartType LINE/AREA to Scatter
         if (chartTypeStr.equals("LINE")) { _isLine = true; chartTypeAttr.setName(chartTypeStr = "SCATTER"); }
         else if(chartTypeStr.equals("AREA")) { _isArea = true; chartTypeAttr.setName(chartTypeStr = "SCATTER"); }
         chartTypeStr = chartTypeStr.replace("_", "");

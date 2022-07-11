@@ -206,8 +206,8 @@ public abstract class TraceView3D extends TraceView {
      */
     public boolean isForwardXY()
     {
-        ChartType chartType = getChartType();
-        return chartType == ChartType.BAR_3D || chartType == ChartType.LINE_3D;
+        TraceType traceType = getTraceType();
+        return traceType == TraceType.Bar3D || traceType == TraceType.Line3D;
     }
 
     /**
@@ -358,7 +358,7 @@ public abstract class TraceView3D extends TraceView {
         }
 
         // Handle Bar3D Z axis special
-        if (axisType == AxisType.Z && getChartType() == ChartType.BAR_3D) {
+        if (axisType == AxisType.Z && getTraceType() == TraceType.Bar3D) {
             if (getIntervalsZ() == null)
                 setIntervalsForAxis(axisType, prefIntervals);
             return false;

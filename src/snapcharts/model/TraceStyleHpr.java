@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A class to hold the multiple TraceStyles for different ChartTypes.
+ * A class to hold the multiple TraceStyles for different TraceTypes.
  */
 public class TraceStyleHpr {
 
@@ -66,7 +66,7 @@ public class TraceStyleHpr {
     }
 
     /**
-     * Returns the TraceStyle for given ChartType.
+     * Returns the TraceStyle for given TraceType.
      */
     private TraceStyle createTraceStyleForClass(Class<? extends TraceStyle> aClass)
     {

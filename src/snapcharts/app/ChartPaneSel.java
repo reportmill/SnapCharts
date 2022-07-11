@@ -312,7 +312,7 @@ public class ChartPaneSel {
         // Otherwise, clear selection
         else {
             Chart chart = getChart();
-            if (!chart.getType().is3D())
+            if (!chart.getTraceType().is3D())
                 setSelChartPart(chart);
         }
     }

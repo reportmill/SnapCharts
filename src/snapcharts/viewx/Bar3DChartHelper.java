@@ -3,7 +3,7 @@ import snapcharts.model.*;
 import snapcharts.view.*;
 
 /**
- * A ChartHelper for ChartType BAR_3D.
+ * A ChartHelper for TraceType Bar3D.
  */
 public class Bar3DChartHelper extends ChartHelper3D {
 
@@ -20,9 +20,9 @@ public class Bar3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
-    public ChartType getChartType()  { return ChartType.BAR_3D; }
+    public TraceType getTraceType()  { return TraceType.Bar3D; }
 
     /**
      * Returns the AxisTypes.

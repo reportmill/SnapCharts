@@ -38,10 +38,10 @@ public class ContourChartHelper extends ChartHelper {
     }
 
     /**
-     * Returns the ChartType.
+     * Returns the TraceType.
      */
     @Override
-    public ChartType getChartType()  { return ChartType.CONTOUR; }
+    public TraceType getTraceType()  { return TraceType.Contour; }
 
     /**
      * Returns the ContourHelper.

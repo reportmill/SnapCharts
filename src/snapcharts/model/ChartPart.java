@@ -154,15 +154,6 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns the ChartType.
-     */
-    public ChartType getChartType()
-    {
-        Chart chart = getChart();
-        return chart != null ? chart.getType() : ChartType.SCATTER;
-    }
-
-    /**
      * Returns the parent part.
      */
     public ChartPart getParent()  { return _parent; }

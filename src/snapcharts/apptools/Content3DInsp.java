@@ -8,7 +8,6 @@ import snap.gfx3d.*;
 import snap.util.ArrayUtils;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.AxisType;
 import snapcharts.model.Chart;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Scene;
@@ -114,9 +113,9 @@ public class Content3DInsp extends ChartPartInsp {
         setViewValue("AspectModeDirectButton", aspectMode == Scene.AspectMode.Direct);
 
         // Reset AspectScaleXText, AspectScaleYText, AspectScaleZText
-        double scaleX = scene.getAspectScaleX(), defaultScaleX = scene.getAspectScaleDefault(AxisType.X);
-        double scaleY = scene.getAspectScaleY(), defaultScaleY = scene.getAspectScaleDefault(AxisType.Y);
-        double scaleZ = scene.getAspectScaleZ(), defaultScaleZ = scene.getAspectScaleDefault(AxisType.Z);
+        double scaleX = scene.getAspectScaleX(), defaultScaleX = Scene.DEFAULT_ASPECT_SCALE_X;
+        double scaleY = scene.getAspectScaleY(), defaultScaleY = Scene.DEFAULT_ASPECT_SCALE_Y;
+        double scaleZ = scene.getAspectScaleZ(), defaultScaleZ = scene.getDefaultAspectScaleZ();
         setViewValue("AspectScaleXText", scaleX);
         setViewValue("AspectScaleYText", scaleY);
         setViewValue("AspectScaleZText", scaleZ);
@@ -196,11 +195,11 @@ public class Content3DInsp extends ChartPartInsp {
 
         // Reset AspectScaleXResetButton, AspectScaleYResetButton, AspectScaleZResetButton
         if (anEvent.equals("AspectScaleXResetButton"))
-            scene.setAspectScaleX(scene.getAspectScaleDefault(AxisType.X));
+            scene.setAspectScaleX(Scene.DEFAULT_ASPECT_SCALE_X);
         if (anEvent.equals("AspectScaleYResetButton"))
-            scene.setAspectScaleY(scene.getAspectScaleDefault(AxisType.Y));
+            scene.setAspectScaleY(Scene.DEFAULT_ASPECT_SCALE_Y);
         if (anEvent.equals("AspectScaleZResetButton"))
-            scene.setAspectScaleZ(scene.getAspectScaleDefault(AxisType.Z));
+            scene.setAspectScaleZ(scene.getDefaultAspectScaleZ());
 
         // Handle RendererButtonX
         if (anEvent.getName().startsWith("RendererButton")) {

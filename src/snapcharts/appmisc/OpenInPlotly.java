@@ -155,14 +155,15 @@ public class OpenInPlotly {
             writeChartAxisLayout(aChart, axisType, layoutJS);
 
         // I don't like this
-        if (aChart.getType() == ChartType.CONTOUR_3D)
+        TraceType traceType = aChart.getTraceType();
+        if (traceType == TraceType.Contour3D)
             writeChartAxisLayout(aChart, AxisType.Z, layoutJS);
 
         // Write the legend layout
         writeChartLegendLayout(aChart, layoutJS);
 
         // Write the chart Scene (3D) layout
-        if (aChart.getType().is3D())
+        if (traceType.is3D())
             writeChartSceneLayout(aChart, layoutJS);
 
         // Write layout
@@ -334,7 +335,7 @@ public class OpenInPlotly {
         DataType dataType = dataSet.getDataType();
         int chanCount = dataType.getChannelCount();
 
-        // If ChartType.CONTOUR, add: colorscale: 'Jet'
+        // If TraceType.CONTOUR, add: colorscale: 'Jet'
         if (traceType == TraceType.Contour) {
 
             // colorscale
@@ -356,7 +357,7 @@ public class OpenInPlotly {
             traceJS.addKeyValue("contours", contourJS);
         }
 
-        // If ChartType.CONTOUR_3D, configure
+        // If TraceType.CONTOUR_3D, configure
         if (traceType == TraceType.Contour3D) {
 
             // colorscale
@@ -388,7 +389,7 @@ public class OpenInPlotly {
             DataChan dataChan = dataType.getChannel(i);
             String dataChanStr = dataChan.toString().toLowerCase();
 
-            // If ChartType is Polar, remap dataChan string
+            // If TraceType is Polar, remap dataChan string
             if (traceType == TraceType.Polar) {
                 if (dataChan == DataChan.T || dataChan == DataChan.X)
                     dataChanStr = "theta";
@@ -408,7 +409,7 @@ public class OpenInPlotly {
             }
         }
 
-        // If ChartType.LINE_3D, add: fill: 'tozeroy'
+        // If TraceType.LINE_3D, add: fill: 'tozeroy'
         if (traceType == TraceType.Line3D) {
             JSONNode valsJS = new JSONNode();
             traceJS.addKeyValue("z", valsJS);

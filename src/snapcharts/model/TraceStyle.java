@@ -4,7 +4,7 @@
 package snapcharts.model;
 
 /**
- * A class to represent properties to render data for a specific ChartType.
+ * A class to represent properties to render data for a specific TraceType.
  */
 public class TraceStyle extends ChartPart {
 

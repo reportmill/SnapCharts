@@ -4,33 +4,29 @@
 package snapcharts.viewx;
 import snap.gfx.Border;
 import snap.gfx.Painter;
-import snapcharts.model.ChartType;
 import snapcharts.model.Trace;
 import snapcharts.model.Content;
+import snapcharts.model.TraceType;
 import snapcharts.view.*;
 
 /**
- * A ChartHelper for common XY ChartTypes: LINE, AREA, SCATTER.
+ * A ChartHelper for TraceType Scatter.
  */
 public class XYChartHelper extends ChartHelper {
-
-    // The ChartType
-    private ChartType  _chartType;
 
     /**
      * Constructor.
      */
-    public XYChartHelper(ChartView aChartView, ChartType aChartType)
+    public XYChartHelper(ChartView aChartView)
     {
         super(aChartView);
-        _chartType = aChartType;
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
     @Override
-    public ChartType getChartType()  { return _chartType; }
+    public TraceType getTraceType()  { return TraceType.Scatter; }
 
     /**
      * Creates the TraceViews.

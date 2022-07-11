@@ -41,9 +41,9 @@ public class ChartInsp extends ChartPartInsp {
         setViewValue("NameText", chart.getName());
 
         // Reset ChartButtons
-        ChartType type = chart.getType();
-        String typeName = type.getStringPlain() + "ChartButton";
-        if (type == ChartType.SCATTER)
+        TraceType traceType = chart.getTraceType();
+        String typeName = traceType.getName() + "ChartButton";
+        if (traceType == TraceType.Scatter)
             typeName = ChartUtils.getScatterTypeString(chart) + "ChartButton";
         setViewValue(typeName, true);
     }
@@ -72,22 +72,22 @@ public class ChartInsp extends ChartPartInsp {
         if (anEvent.equals("StackedAreaChartButton"))
             ChartUtils.setScatterType(chart, ChartUtils.ScatterType.STACKED_AREA);
         if (anEvent.equals("BarChartButton"))
-            chart.setType(ChartType.BAR);
+            chart.setTraceType(TraceType.Bar);
         if (anEvent.equals("PieChartButton"))
-            chart.setType(ChartType.PIE);
+            chart.setTraceType(TraceType.Pie);
         if (anEvent.equals("PolarChartButton"))
-            chart.setType(ChartType.POLAR);
+            chart.setTraceType(TraceType.Polar);
         if (anEvent.equals("ContourChartButton"))
-            chart.setType(ChartType.CONTOUR);
+            chart.setTraceType(TraceType.Contour);
         if (anEvent.equals("PolarContourChartButton"))
-            chart.setType(ChartType.POLAR_CONTOUR);
+            chart.setTraceType(TraceType.PolarContour);
         if (anEvent.equals("Bar3DChartButton"))
-            chart.setType(ChartType.BAR_3D);
+            chart.setTraceType(TraceType.Bar3D);
         if (anEvent.equals("Pie3DChartButton"))
-            chart.setType(ChartType.PIE_3D);
+            chart.setTraceType(TraceType.Pie3D);
         if (anEvent.equals("Line3DChartButton"))
-            chart.setType(ChartType.LINE_3D);
+            chart.setTraceType(TraceType.Line3D);
         if (anEvent.equals("Contour3DChartButton"))
-            chart.setType(ChartType.CONTOUR_3D);
+            chart.setTraceType(TraceType.Contour3D);
     }
 }

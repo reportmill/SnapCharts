@@ -5,7 +5,7 @@ import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;
 
 /**
- * A ChartHelper for 3D Line chart (ChartType.LINE_3D).
+ * A ChartHelper for 3D Line chart (TraceType Line3D).
  */
 public class Line3DChartHelper extends ChartHelper3D {
 
@@ -22,9 +22,9 @@ public class Line3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
-    public ChartType getChartType()  { return ChartType.LINE_3D; }
+    public TraceType getTraceType()  { return TraceType.Line3D; }
 
     /**
      * Returns the AxisTypes.

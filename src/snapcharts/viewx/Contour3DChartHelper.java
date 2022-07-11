@@ -38,10 +38,10 @@ public class Contour3DChartHelper extends ChartHelper3D {
     }
 
     /**
-     * Returns the ChartType.
+     * Returns the TraceType.
      */
     @Override
-    public ChartType getChartType()  { return ChartType.CONTOUR_3D; }
+    public TraceType getTraceType()  { return TraceType.Contour3D; }
 
     /**
      * Returns the ContourHelper.

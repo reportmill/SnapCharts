@@ -34,9 +34,9 @@ public class PolarContourChartHelper extends PolarChartHelper {
     }
 
     /**
-     * Returns the type.
+     * Returns the trace type.
      */
-    public ChartType getChartType()  { return ChartType.POLAR_CONTOUR; }
+    public TraceType getTraceType()  { return TraceType.PolarContour; }
 
     /**
      * Returns the ContourHelper.

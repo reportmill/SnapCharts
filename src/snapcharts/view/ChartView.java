@@ -204,8 +204,8 @@ public class ChartView extends ChartPartView<Chart> {
         // Activate
         _chartHelper.activate();
 
-        // Animate 3D charts (I can't help myself
-        if (getChartType().is3D())
+        // Animate 3D charts (I can't help myself)
+        if (getTraceType().is3D())
             animateOnShow();
 
         // If AnimateOnShow, reset reveal
@@ -272,7 +272,7 @@ public class ChartView extends ChartPartView<Chart> {
     {
         // Make sure if ChartHelper is right
         ChartHelper chartHelper = getChartHelper();
-        if (chartHelper==null || getChartType() != chartHelper.getChartType()) {
+        if (chartHelper == null || getTraceType() != chartHelper.getTraceType()) {
             chartHelper = ChartHelper.createChartHelper(this);
             setChartHelper(chartHelper);
         }
@@ -605,7 +605,7 @@ public class ChartView extends ChartPartView<Chart> {
     @Override
     public String toString()
     {
-        String str = "ChartView { Type:" + getChartType();
+        String str = "ChartView { Type:" + getTraceType();
         str += ", Bounds:" + getBounds();
         return str + " }";
     }

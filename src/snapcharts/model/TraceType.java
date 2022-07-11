@@ -58,6 +58,60 @@ public class TraceType implements StringCodec.Codeable {
     public Class<? extends TraceStyle> getStyleClass()  { return _styleClass; }
 
     /**
+     * Returns whether type is XY type (not bar or pie).
+     */
+    public boolean isXYType()
+    {
+        return this == Scatter || this == Contour;
+    }
+
+    /**
+     * Returns whether type is Bar type (not BAR or BAR_3D).
+     */
+    public boolean isBarType()  { return this == Bar || this == Bar3D; }
+
+    /**
+     * Returns whether type is Polar type (Polar or PolarContour).
+     */
+    public boolean isPolarType()
+    {
+        return this == Polar || this == PolarContour;
+    }
+
+    /**
+     * Returns whether type is Contour type (Contour or PolarContour).
+     */
+    public boolean isContourType()
+    {
+        return this == Contour || this == PolarContour || this == Contour3D;
+    }
+
+    /**
+     * Returns whether type supports multiple Y Axes.
+     */
+    public boolean isMultiYAxisType()
+    {
+        return this == Scatter;
+    }
+
+    /**
+     * Returns whether type is 3D.
+     */
+    public boolean is3D()
+    {
+        return this == Bar3D || this == Pie3D || this == Line3D || this == Contour3D;
+    }
+
+    /**
+     * Standard toString implementation.
+     */
+    @Override
+    public String toString()
+    {
+        return "TraceType: " + _name;
+    }
+
+    /**
      * Returns all known trace types.
      */
     public static TraceType[] getAllTypes()  { return _allTypes; }
