@@ -2,48 +2,26 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.model;
-import snapcharts.modelx.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A class to hold the multiple TraceStyles for different ChartTypes.
  */
 public class TraceStyleHpr {
 
-    // The parent ChartPart that holds this TraceStyleHpr
-    private ChartPart  _parent;
+    // The parent Trace that holds this TraceStyleHpr
+    private Trace  _trace;
 
-    // Line chart properties
-    private XYStyle  _xyStyle;
-
-    // Bar chart properties
-    private BarStyle  _barStyle;
-
-    // Pie chart properties
-    private PieStyle  _pieStyle;
-
-    // Polar chart properties
-    private PolarStyle  _polarStyle;
-
-    // Contour chart properties
-    private ContourStyle  _contourStyle;
-
-    // Bar3D chart properties
-    private Bar3DStyle  _bar3DStyle;
+    // A map of styles for classes
+    private Map<Class,TraceStyle>  _traceStyles = new HashMap<>();
 
     /**
      * Constructor.
      */
-    public TraceStyleHpr(ChartPart aChartPart)
+    public TraceStyleHpr(Trace aTrace)
     {
-        _parent = aChartPart;
-    }
-
-    /**
-     * Returns the Chart.
-     */
-    public Chart getChart()
-    {
-        return _parent.getChart();
+        _trace = aTrace;
     }
 
     /**
@@ -51,42 +29,37 @@ public class TraceStyleHpr {
      */
     public TraceStyle getTraceStyle()
     {
-        Chart chart = getChart();
-        ChartType chartType = chart.getType();
-        return getTraceStyleForChartType(chartType);
+        TraceType traceType = _trace.getType();
+        return getTraceStyleForTraceType(traceType);
     }
 
     /**
-     * Returns the TraceStyle for given ChartType.
+     * Returns the TraceStyle for given TraceType.
      */
-    public TraceStyle getTraceStyleForChartType(ChartType aType)
+    public TraceStyle getTraceStyleForTraceType(TraceType aType)
     {
-        switch(aType) {
-            case SCATTER: return getXYStyle();
-            case BAR: return getBarStyle();
-            case PIE: return getPieStyle();
-            case POLAR: return getPolarStyle();
-            case CONTOUR: return getContourStyle();
-            case CONTOUR_3D: return getContourStyle();
-            case POLAR_CONTOUR: return getContourStyle();
-            case BAR_3D: return getBar3DStyle();
-            default: return getXYStyle();
-        }
+        TraceStyle traceStyle = _traceStyles.get(aType.getStyleClass());
+        if (traceStyle != null)
+            return traceStyle;
+
+
+        traceStyle = createTraceStyleForTraceType(aType);
+        _traceStyles.put(aType.getStyleClass(), traceStyle);
+        return traceStyle;
     }
 
     /**
-     * Returns the TraceStyle for given ChartType.
+     * Returns the TraceStyle for given TraceType.
      */
-    private TraceStyle createTraceStyleForChartType(ChartType aType)
+    private TraceStyle createTraceStyleForTraceType(TraceType aType)
     {
         // Create TraceStyle and set parent
-        TraceStyle traceStyle = createTraceStyleForChartTypeRaw(aType);
-        traceStyle.setParent(_parent);
-        traceStyle.setChart(getChart());
+        Class<? extends TraceStyle> styleClass = aType.getStyleClass();
+        TraceStyle traceStyle = createTraceStyleForClass(styleClass);
+        traceStyle.setParent(_trace);
 
         // Register to notify Chart of changes
-        Chart chart = getChart();
-        traceStyle.addPropChangeListener(pc -> chart.chartPartDidPropChange(pc));
+        traceStyle.addPropChangeListener(pc -> _trace.childChartPartDidPropChange(pc));
 
         // Return TraceStyle
         return traceStyle;
@@ -95,72 +68,9 @@ public class TraceStyleHpr {
     /**
      * Returns the TraceStyle for given ChartType.
      */
-    private TraceStyle createTraceStyleForChartTypeRaw(ChartType aType)
+    private TraceStyle createTraceStyleForClass(Class<? extends TraceStyle> aClass)
     {
-        // Get instance
-        switch(aType) {
-            case SCATTER: return new XYStyle();
-            case BAR: return new BarStyle();
-            case PIE: return new PieStyle();
-            case POLAR: return new PolarStyle();
-            case CONTOUR: return new ContourStyle();
-            case POLAR_CONTOUR: return new ContourStyle();
-            case BAR_3D: return new Bar3DStyle();
-            default: return new XYStyle();
-        }
-    }
-
-    /**
-     * Returns XY chart properties.
-     */
-    public XYStyle getXYStyle()
-    {
-        if (_xyStyle != null) return _xyStyle;
-        return _xyStyle = (XYStyle) createTraceStyleForChartType(ChartType.SCATTER);
-    }
-
-    /**
-     * Returns bar chart properties.
-     */
-    public BarStyle getBarStyle()
-    {
-        if(_barStyle != null) return _barStyle;
-        return _barStyle = (BarStyle) createTraceStyleForChartType(ChartType.BAR);
-    }
-
-    /**
-     * Returns pie chart properties.
-     */
-    public PieStyle getPieStyle()
-    {
-        if(_pieStyle != null) return _pieStyle;
-        return _pieStyle = (PieStyle) createTraceStyleForChartType(ChartType.PIE);
-    }
-
-    /**
-     * Returns Polar chart properties.
-     */
-    public PolarStyle getPolarStyle()
-    {
-        if(_polarStyle != null) return _polarStyle;
-        return _polarStyle = (PolarStyle) createTraceStyleForChartType(ChartType.POLAR);
-    }
-
-    /**
-     * Returns contour chart properties.
-     */
-    public ContourStyle getContourStyle()
-    {
-        if(_contourStyle != null) return _contourStyle;
-        return _contourStyle = (ContourStyle) createTraceStyleForChartType(ChartType.CONTOUR);
-    }
-
-    /**
-     * Returns Bar3D chart properties.
-     */
-    public Bar3DStyle getBar3DStyle()
-    {
-        if(_bar3DStyle != null) return _bar3DStyle;
-        return _bar3DStyle = (Bar3DStyle) createTraceStyleForChartType(ChartType.BAR_3D);
+        try { return aClass.newInstance(); }
+        catch (Exception e)  { throw new RuntimeException(e); }
     }
 }

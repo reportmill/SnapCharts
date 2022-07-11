@@ -23,7 +23,8 @@ public class Contour3DChartHelper extends ChartHelper3D {
         super(aChartView);
 
         // This is bogus
-        Trace[] traces = aChartView.getContent().getTraces();
+        Content content = aChartView.getContent();
+        Trace[] traces = content.getTraces();
         for (Trace trace : traces) {
             TraceStyle traceStyle = trace.getTraceStyle();
             if (traceStyle instanceof ContourStyle) {

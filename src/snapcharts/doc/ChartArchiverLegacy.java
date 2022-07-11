@@ -5,11 +5,15 @@ package snapcharts.doc;
 import snap.util.XMLAttribute;
 import snap.util.XMLElement;
 import snapcharts.model.Chart;
+import snapcharts.model.TraceType;
 
 /**
  * This class processes Legacy XML to make it conform to new stuff.
  */
 public class ChartArchiverLegacy {
+
+    // Handle legacy ChartTypes
+    private boolean  _isLine, _isArea;
 
     /**
      * Returns whether XML is legacy.
@@ -34,10 +38,14 @@ public class ChartArchiverLegacy {
     {
         processLegacyXMLElement(anElement);
 
-        for (XMLAttribute attr : anElement.getAttributes())
-            processLegacyXMLAttribute(attr);
+        XMLAttribute[] attrs = anElement.getAttributes().toArray(new XMLAttribute[0]);
+        for (XMLAttribute attr : attrs)
+            processLegacyXMLAttribute(anElement, attr);
         for (XMLElement xml : anElement.getElements())
             processLegacyXMLDeep(xml);
+
+        if (anElement.getName().equals("Chart"))
+            setChartType(anElement);
     }
 
     /**
@@ -112,7 +120,7 @@ public class ChartArchiverLegacy {
     /**
      * Process legacy XML.
      */
-    protected void processLegacyXMLAttribute(XMLAttribute anAttr)
+    protected void processLegacyXMLAttribute(XMLElement anElement, XMLAttribute anAttr)
     {
         String name = anAttr.getName();
         switch (name) {
@@ -121,12 +129,33 @@ public class ChartArchiverLegacy {
             case "value": anAttr.setName("Color"); break;
             case "ClassName": anAttr.setName("Class"); break;
             case "ShowSymbols": anAttr.setName("ShowPoints"); break;
-            case "Type":
-                String attrValue = anAttr.getValue();
-                if (attrValue.equals("LINE") || attrValue.equals("AREA"))
-                    anAttr.setValue("SCATTER");
-                break;
             default:break;
         }
     }
+
+    /**
+     * Sets ChartType.
+     */
+    protected void setChartType(XMLElement chartXML)
+    {
+        // Really old stuff
+        XMLAttribute chartTypeAttr = chartXML.getAttribute("Type");
+        String chartTypeStr = chartTypeAttr.getValue();
+        if (chartTypeStr.equals("LINE")) { _isLine = true; chartTypeAttr.setName(chartTypeStr = "SCATTER"); }
+        else if(chartTypeStr.equals("AREA")) { _isArea = true; chartTypeAttr.setName(chartTypeStr = "SCATTER"); }
+        chartTypeStr = chartTypeStr.replace("_", "");
+
+        // Get DefaultTraceType for ChartType
+        TraceType traceType = TraceType.getTypeForName(chartTypeStr);
+
+        // Add DefaultTraceType to all Chart.Content.Traces.[Trace] elements
+        XMLElement contentXML = chartXML.getElement("Content");
+        XMLElement tracesXML = contentXML.getElement("Traces");
+        XMLElement[] traceXMLs = tracesXML.getElements("Trace").toArray(new XMLElement[0]);
+        for (XMLElement traceXML : traceXMLs) {
+            XMLAttribute typeAttr = new XMLAttribute("Type", traceType.getName());
+            traceXML.addAttribute(typeAttr, 1);
+        }
+    }
+
 }

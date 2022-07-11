@@ -60,7 +60,7 @@ public class BarTraceView extends TraceView {
 
         // Complain and create bogus new
         System.err.println("BarTraceView.getBarStyle: Trace doesn't have BarStyle");
-        return _barStyle = new TraceStyleHpr(trace).getBarStyle();
+        return _barStyle = (BarStyle) trace.getTraceStyleForTraceType(TraceType.Bar);
     }
 
     /**

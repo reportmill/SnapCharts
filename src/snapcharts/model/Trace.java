@@ -20,6 +20,9 @@ public class Trace extends ChartPart {
     // The index in parent Content
     protected int  _index;
 
+    // The type of trace
+    public TraceType  _type;
+
     // Whether to show line
     private boolean  _showLine;
 
@@ -86,6 +89,9 @@ public class Trace extends ChartPart {
     // Constant for how Trace area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext }
 
+    // Property for Type
+    public static final String Type_Prop = "Type";
+
     // Basic properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String ShowArea_Prop = "ShowArea";
@@ -119,6 +125,7 @@ public class Trace extends ChartPart {
     public static final String ThetaUnit_Prop = "ThetaUnit";
 
     // Constants for defaults
+    public static final TraceType DEFAULT_TYPE = TraceType.Scatter;
     public static final boolean DEFAULT_SHOW_LINE = true;
     public static final int DEFAULT_LINE_WIDTH = 1;
     public static final PointJoin DEFAULT_POINT_JOIN = PointJoin.Line;
@@ -136,6 +143,7 @@ public class Trace extends ChartPart {
         super();
 
         // Set defaults
+        _type = DEFAULT_TYPE;
         _showLine = DEFAULT_SHOW_LINE;
         _lineWidth = DEFAULT_LINE_WIDTH;
         _pointJoin = DEFAULT_POINT_JOIN;
@@ -160,6 +168,20 @@ public class Trace extends ChartPart {
      * Returns the index in Content.
      */
     public int getIndex()  { return _index; }
+
+    /**
+     * Returns the TraceType.
+     */
+    public TraceType getType()  { return _type; }
+
+    /**
+     * Sets the TraceType.
+     */
+    public void setType(TraceType aType)
+    {
+        if (aType == _type) return;
+        firePropChange(Type_Prop, _type, _type = aType);
+    }
 
     /**
      * Returns whether to show line for Trace.
@@ -268,28 +290,20 @@ public class Trace extends ChartPart {
     public TagStyle getTagStyle()  { return _tagStyle; }
 
     /**
-     * Returns the TraceStyle for this trace (and ChartType).
+     * Returns the TraceStyle for this trace (and TraceType).
      */
     public TraceStyle getTraceStyle()
     {
-        ChartType chartType = getTraceChartType();
-        return _traceStyleHpr.getTraceStyleForChartType(chartType);
+        TraceType traceType = getType();
+        return _traceStyleHpr.getTraceStyleForTraceType(traceType);
     }
 
     /**
-     * Returns the Trace ChartType. This should be the same as Chart.ChartType, but can be overridden.
+     * Returns the TraceStyle for given TraceType.
      */
-    public ChartType getTraceChartType()
+    public TraceStyle getTraceStyleForTraceType(TraceType traceType)
     {
-        // Get Chart.ChartType
-        ChartType chartType = getChartType();
-
-        // If Contour but no Z data, use Scatter instead
-        if (chartType.isContourType() && !getDataType().hasZ())
-            chartType = chartType.isPolarType() ? ChartType.POLAR : ChartType.SCATTER;
-
-        // Return ChartType
-        return chartType;
+        return _traceStyleHpr.getTraceStyleForTraceType(traceType);
     }
 
     /**
@@ -705,7 +719,7 @@ public class Trace extends ChartPart {
     /**
      * Called when a child chart part has prop change.
      */
-    private void childChartPartDidPropChange(PropChange aPC)
+    protected void childChartPartDidPropChange(PropChange aPC)
     {
         Chart chart = getChart(); if (chart == null) return;
         chart.chartPartDidPropChange(aPC);
@@ -745,6 +759,9 @@ public class Trace extends ChartPart {
 
         // Override LineWidth
         aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_LINE_WIDTH);
+
+        // Type
+        aPropSet.addPropNamed(Type_Prop, TraceType.class, DEFAULT_TYPE);
 
         // Handle ShowLine, ShowArea, ShowPoints, ShowTags
         aPropSet.addPropNamed(ShowLine_Prop, boolean.class, DEFAULT_SHOW_LINE);
@@ -788,6 +805,9 @@ public class Trace extends ChartPart {
         // Handle properties
         switch (aPropName) {
 
+            // Type
+            case Type_Prop: return getType();
+
             // ShowLine, ShowArea, ShowPoints, ShowTags
             case ShowLine_Prop: return isShowLine();
             case ShowArea_Prop: return isShowArea();
@@ -830,6 +850,9 @@ public class Trace extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
+
+            // Type
+            case Type_Prop: setType((TraceType) aValue); break;
 
             // ShowLine, ShowArea, ShowPoints, ShowTags
             case ShowLine_Prop: setShowLine(SnapUtils.boolValue(aValue)); break;

@@ -335,17 +335,18 @@ public class TraceInsp extends ChartPartInsp {
      */
     private ChartPartInsp getTraceStyleInspForTrace()
     {
-        // Get Trace ChartType
+        // Get TraceType
         Trace trace = getTrace();
-        ChartType chartType = trace != null ? trace.getTraceChartType() : null;
-        if (chartType == null)
-            chartType = getChart().getType();
+        TraceType traceType = trace != null ? trace.getType() : null;
+        if (traceType == null)
+            traceType = TraceType.Scatter;
 
-        // Return TraceStyleInsp for chartType
-        switch (chartType) {
-            case POLAR: return getPolarStyleInsp();
-            case CONTOUR: return getContourStyleInsp();
-            case POLAR_CONTOUR: return getContourStyleInsp();
+        // Return TraceStyleInsp for TraceType
+        String traceTypeName = traceType.getName();
+        switch (traceTypeName) {
+            case "Polar": return getPolarStyleInsp();
+            case "Contour": return getContourStyleInsp();
+            case "PolarContour": return getContourStyleInsp();
             default: return null;
         }
     }

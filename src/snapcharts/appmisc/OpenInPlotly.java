@@ -12,7 +12,6 @@ import snapcharts.data.DataChan;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
-
 import java.io.File;
 import java.util.List;
 
@@ -23,9 +22,6 @@ public class OpenInPlotly {
 
     // The string buffer
     private StringBuffer  _sb = new StringBuffer();
-
-    // The current chart
-    private Chart  _chart;
 
     /**
      * Opens chart in plotly.
@@ -96,9 +92,6 @@ public class OpenInPlotly {
      */
     private void writeChart(Chart aChart, int anIndex)
     {
-        // Set current chart
-        _chart = aChart;
-
         // Write script open
         _sb.append("<script>\n");
 
@@ -286,23 +279,19 @@ public class OpenInPlotly {
         traceJS.addKeyValue("name", aTrace.getName());
 
         // Add: type : 'scatter'
-        ChartType chartType = _chart.getType();
-        switch (chartType) {
-            case BAR:
-            case BAR_3D:
-                traceJS.addKeyValue("type", "bar"); break;
-            case CONTOUR:
-                traceJS.addKeyValue("type", "contour"); break;
-            //case PIE: traceJS.addKeyValue("type", "pie"); break;
-            case POLAR:
-                traceJS.addKeyValue("type", "scatterpolar"); break;
-            case LINE_3D:
-                traceJS.addKeyValue("type", "scatter3d"); break;
-            case CONTOUR_3D:
-                traceJS.addKeyValue("type", "mesh3d"); break;
-            default:
-                traceJS.addKeyValue("type", "scatter");
-        }
+        TraceType traceType = aTrace.getType();
+        if (traceType == TraceType.Bar || traceType == TraceType.Bar3D)
+            traceJS.addKeyValue("type", "bar");
+        else if (traceType == TraceType.Contour)
+            traceJS.addKeyValue("type", "contour");
+        else if (traceType == TraceType.Polar)
+                traceJS.addKeyValue("type", "scatterpolar");
+        else if (traceType == TraceType.Line3D)
+                traceJS.addKeyValue("type", "scatter3d");
+        else if (traceType == TraceType.Contour3D)
+                traceJS.addKeyValue("type", "mesh3d");
+        else traceJS.addKeyValue("type", "scatter");
+        //case PIE: traceJS.addKeyValue("type", "pie"); break;
 
         // Handle Stacked
         if (aTrace.isStacked())
@@ -312,8 +301,8 @@ public class OpenInPlotly {
         if (aTrace.isShowArea() && !aTrace.isStacked())
             traceJS.addKeyValue("fill", "tozeroy");
 
-        // If ChartType.SCATTER, add: mode: 'markers'
-        if (chartType == ChartType.SCATTER || chartType == ChartType.POLAR) {
+        // If TraceType.Scatter, add: mode: 'markers'
+        if (traceType == TraceType.Scatter || traceType == TraceType.Polar) {
 
             // Set mode: lines | markers | lines+markers
             boolean isShowLine = aTrace.isShowLine();
@@ -346,7 +335,7 @@ public class OpenInPlotly {
         int chanCount = dataType.getChannelCount();
 
         // If ChartType.CONTOUR, add: colorscale: 'Jet'
-        if (chartType == ChartType.CONTOUR) {
+        if (traceType == TraceType.Contour) {
 
             // colorscale
             traceJS.addKeyValue("colorscale", "Jet");
@@ -368,7 +357,7 @@ public class OpenInPlotly {
         }
 
         // If ChartType.CONTOUR_3D, configure
-        if (chartType == ChartType.CONTOUR_3D) {
+        if (traceType == TraceType.Contour3D) {
 
             // colorscale
             traceJS.addKeyValue("colorscale", "Jet");
@@ -400,7 +389,7 @@ public class OpenInPlotly {
             String dataChanStr = dataChan.toString().toLowerCase();
 
             // If ChartType is Polar, remap dataChan string
-            if (chartType == ChartType.POLAR) {
+            if (traceType == TraceType.Polar) {
                 if (dataChan == DataChan.T || dataChan == DataChan.X)
                     dataChanStr = "theta";
                 else if (dataChan == DataChan.R || dataChan == DataChan.Y)
@@ -420,7 +409,7 @@ public class OpenInPlotly {
         }
 
         // If ChartType.LINE_3D, add: fill: 'tozeroy'
-        if (chartType == ChartType.LINE_3D) {
+        if (traceType == TraceType.Line3D) {
             JSONNode valsJS = new JSONNode();
             traceJS.addKeyValue("z", valsJS);
             for (int j = 0; j < pointCount; j++)
