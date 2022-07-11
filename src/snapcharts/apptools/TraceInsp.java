@@ -69,8 +69,16 @@ public class TraceInsp extends ChartPartInsp {
      */
     public Trace getTrace()
     {
+        // If SelChartPart is Trace, return it
         ChartPart selPart = _chartPane.getSelChartPart();
-        return selPart instanceof Trace ? (Trace) selPart : null;
+        if (selPart instanceof Trace)
+            return (Trace) selPart;
+
+        // Otherwise, return first Trace ( Chart.Content.Traces[0] )
+        Chart chart = getChart();
+        Content content = chart.getContent();
+        Trace[] traces = content.getTraces();
+        return traces.length > 0 ? traces[0] : null;
     }
 
     /**
