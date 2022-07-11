@@ -5,15 +5,14 @@ package snapcharts.doc;
 import snap.util.XMLAttribute;
 import snap.util.XMLElement;
 import snapcharts.model.Chart;
+import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
+import snapcharts.util.ChartUtils;
 
 /**
  * This class processes Legacy XML to make it conform to new stuff.
  */
-public class ChartArchiverLegacy {
-
-    // Handle legacy ChartTypes
-    private boolean  _isLine, _isArea;
+public class ChartArchiverLegacy extends ChartArchiver {
 
     /**
      * Returns whether XML is legacy.
@@ -40,7 +39,7 @@ public class ChartArchiverLegacy {
 
         XMLAttribute[] attrs = anElement.getAttributes().toArray(new XMLAttribute[0]);
         for (XMLAttribute attr : attrs)
-            processLegacyXMLAttribute(anElement, attr);
+            processLegacyXMLAttribute(attr);
         for (XMLElement xml : anElement.getElements())
             processLegacyXMLDeep(xml);
 
@@ -121,7 +120,7 @@ public class ChartArchiverLegacy {
     /**
      * Process legacy XML.
      */
-    protected void processLegacyXMLAttribute(XMLElement anElement, XMLAttribute anAttr)
+    protected void processLegacyXMLAttribute(XMLAttribute anAttr)
     {
         String name = anAttr.getName();
         switch (name) {
@@ -145,11 +144,14 @@ public class ChartArchiverLegacy {
         chartXML.removeAttribute(chartTypeAttr);
 
         // Really old stuff: Turn legacy ChartType LINE/AREA to Scatter
-        if (chartTypeStr.equals("LINE")) { _isLine = true; chartTypeAttr.setName(chartTypeStr = "SCATTER"); }
-        else if(chartTypeStr.equals("AREA")) { _isArea = true; chartTypeAttr.setName(chartTypeStr = "SCATTER"); }
-        chartTypeStr = chartTypeStr.replace("_", "");
+        ChartUtils.ScatterType scatterType = null;
+        if (chartTypeStr.equals("LINE") || chartTypeStr.equals("AREA") || chartTypeStr.equals("STACKED_AREA")) {
+            scatterType = ChartUtils.ScatterType.valueOf(chartTypeStr);
+            chartTypeStr = "Scatter";
+        }
 
         // Get DefaultTraceType for ChartType
+        chartTypeStr = chartTypeStr.replace("_", "");
         TraceType traceType = TraceType.getTypeForName(chartTypeStr);
 
         // Add DefaultTraceType to all Chart.Content.Traces.[Trace] elements
@@ -160,6 +162,26 @@ public class ChartArchiverLegacy {
             XMLAttribute typeAttr = new XMLAttribute("Type", traceType.getName());
             traceXML.addAttribute(typeAttr, 1);
         }
+
+        // Handle Legacy ChartType is ScatterType: Configure Trace ShowLine/Area/Points/Stacked for ScatterType
+        if (scatterType != null) {
+            for (XMLElement traceXML : traceXMLs) {
+                setAttribute(traceXML, Trace.ShowLine_Prop, scatterType.isTraceShowLine());
+                setAttribute(traceXML, Trace.ShowArea_Prop, scatterType.isTraceShowArea());
+                setAttribute(traceXML, Trace.ShowPoints_Prop, scatterType.isTraceShowPoints());
+                setAttribute(traceXML, Trace.Stacked_Prop, scatterType.isTraceStacked());
+            }
+        }
     }
 
+    /**
+     * Sets an attribute for given name/value (if missing, it adds it).
+     */
+    private void setAttribute(XMLElement xml, String aName, boolean aValue)
+    {
+        XMLAttribute attr = xml.getAttribute(aName);
+        if (attr == null)
+            xml.add(aName, aValue);
+        else attr.setValue(String.valueOf(aValue));
+    }
 }

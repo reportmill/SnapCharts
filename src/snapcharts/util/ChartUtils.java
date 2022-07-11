@@ -9,7 +9,23 @@ import snapcharts.model.TraceType;
 public class ChartUtils {
 
     // Constants for Scatter type
-    public enum ScatterType { LINE, AREA, SCATTER, STACKED_AREA }
+    public enum ScatterType {
+
+        // Scatter types
+        LINE, AREA, SCATTER, STACKED_AREA;
+
+        // Identify convenience
+        public boolean isLine()  { return this == ChartUtils.ScatterType.LINE; }
+        public boolean isScatter()  { return this == ChartUtils.ScatterType.SCATTER; }
+        public boolean isArea()  { return this == ChartUtils.ScatterType.AREA; }
+        public boolean isStackedArea()  { return this == ChartUtils.ScatterType.STACKED_AREA; }
+
+        // Trace Properties
+        public boolean isTraceShowLine()  { return isLine() || isArea() || isStackedArea(); }
+        public boolean isTraceShowArea()  { return isArea() || isStackedArea(); }
+        public boolean isTraceShowPoints()  { return isLine() || isScatter(); }
+        public boolean isTraceStacked()  { return isStackedArea(); }
+    }
 
     /**
      * Returns the ScatterType for a Chart.
@@ -54,20 +70,14 @@ public class ChartUtils {
      */
     public static void setScatterType(Chart aChart, ScatterType scatterType)
     {
-        // Get booleans
-        boolean isLine = scatterType == ScatterType.LINE;
-        boolean isScatter = scatterType == ScatterType.SCATTER;
-        boolean isArea = scatterType == ScatterType.AREA;
-        boolean isStackedArea = scatterType == ScatterType.STACKED_AREA;
-
         // Configure Traces
         Trace[] traces = aChart.getContent().getTraces();
         for (Trace trace : traces) {
             trace.setType(TraceType.Scatter);
-            trace.setShowLine(isLine || isArea || isStackedArea);
-            trace.setShowArea(isArea || isStackedArea);
-            trace.setShowPoints(isLine || isScatter);
-            trace.setStacked(isStackedArea);
+            trace.setShowLine(scatterType.isTraceShowLine());
+            trace.setShowArea(scatterType.isTraceShowArea());
+            trace.setShowPoints(scatterType.isTraceShowPoints());
+            trace.setStacked(scatterType.isTraceStacked());
         }
     }
 
