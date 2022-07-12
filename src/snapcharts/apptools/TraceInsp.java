@@ -145,7 +145,7 @@ public class TraceInsp extends ChartPartInsp {
         boolean isPolar = dataType.isPolar();
         setViewVisible("ThetaUnitBox", isPolar);
         if (isPolar)
-            setViewValue("ThetaUnitComboBox", trace.getThetaUnit());
+            setViewSelItem("ThetaUnitComboBox", trace.getThetaUnit());
 
         // Reset YAxisButton, Y2AxisButton, Y3AxisButton, Y4AxisButton
         boolean isMultiYEnabled = trace.getType().isMultiYAxisType();

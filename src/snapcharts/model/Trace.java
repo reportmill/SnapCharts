@@ -760,8 +760,9 @@ public class Trace extends ChartPart {
         // Override LineWidth
         aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_LINE_WIDTH);
 
-        // Type
-        aPropSet.addPropNamed(Type_Prop, TraceType.class, DEFAULT_TYPE);
+        // Type (set PropChanger=true since type changes TraceStyle
+        Prop typeProp = aPropSet.addPropNamed(Type_Prop, TraceType.class, DEFAULT_TYPE);
+        typeProp.setPropChanger(true);
 
         // Handle ShowLine, ShowArea, ShowPoints, ShowTags
         aPropSet.addPropNamed(ShowLine_Prop, boolean.class, DEFAULT_SHOW_LINE);
