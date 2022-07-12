@@ -38,6 +38,11 @@ public enum DataChan {
     }
 
     /**
+     * Returns the name.
+     */
+    public String getName()  { return toString(); }
+
+    /**
      * Returns the data class.
      */
     public Class getDataArrayClass()

@@ -2,13 +2,14 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.props.StringCodec;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This class represents data units.
  */
-public class DataUnit {
+public class DataUnit implements StringCodec.Codeable {
 
     // The name
     private String  _name;
@@ -26,6 +27,14 @@ public class DataUnit {
     /**
      * Constructor.
      */
+    public DataUnit()
+    {
+        _name = "Unknown";
+    }
+
+    /**
+     * Constructor.
+     */
     public DataUnit(String aName)
     {
         _name = aName;
@@ -35,6 +44,24 @@ public class DataUnit {
      * Returns the name.
      */
     public String getName()  { return _name; }
+
+    /**
+     * Returns a String representation of this object.
+     */
+    @Override
+    public String codeString()
+    {
+        return _name;
+    }
+
+    /**
+     * Configures this object from a String representation.
+     */
+    @Override
+    public StringCodec.Codeable decodeString(String aString)
+    {
+        return getUnitForName(aString, null);
+    }
 
     /**
      * Standard toString.

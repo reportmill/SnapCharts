@@ -191,12 +191,20 @@ public abstract class DataSet extends PropObject implements Cloneable {
     }
 
     /**
+     * Returns the DataUnit for channel.
+     */
+    public DataUnit getDataUnitForChannel(DataChan aChan)
+    {
+        NumberArray dataArray = getNumberArrayForChannel(aChan);
+        return dataArray != null ? dataArray.getUnit() : null;
+    }
+
+    /**
      * Returns the units for Theta data.
      */
     public DataUnit getThetaUnit()
     {
-        NumberArray thetaArray = getNumberArrayForChannel(DataChan.T);
-        DataUnit thetaUnit = thetaArray != null ? thetaArray.getUnit() : null;
+        DataUnit thetaUnit = getDataUnitForChannel(DataChan.T);
         return thetaUnit != null ? thetaUnit : DataUnit.DEFAULT_THETA_UNIT;
     }
 
@@ -427,11 +435,16 @@ public abstract class DataSet extends PropObject implements Cloneable {
         int chanCount = dataType.getChannelCount();
 
         // Extend props array and add channels
-        Prop[] propsForDataType = new Prop[chanCount];
+        Prop[] propsForDataType = new Prop[chanCount * 2];
         for (int i = 0; i < chanCount; i++) {
+
+            // Create/add prop for channel data, e.g.: X, Y, Z, ...
             DataChan dataChan = dataType.getChannel(i);
             Class<?> propClass = dataChan.getDataArrayClass();
             propsForDataType[i] = new Prop(dataChan.toString(), propClass, null);
+
+            // Create/add prop for channel unit, e.g.: XUnit, YUnit, ...
+            propsForDataType[chanCount + i] = new Prop(dataChan + "Unit", DataUnit.class, null);
         }
 
         // Return
@@ -479,6 +492,10 @@ public abstract class DataSet extends PropObject implements Cloneable {
         if (dataTypePropValue != null)
             return dataTypePropValue;
 
+        // Handle DataType Unit props
+        if (aPropName.endsWith("Unit"))
+            return getDataTypeUnitPropValue(aPropName);
+
         // Handle standard props
         switch (aPropName) {
 
@@ -492,37 +509,14 @@ public abstract class DataSet extends PropObject implements Cloneable {
     }
 
     /**
-     * Returns a DataArray primitive array for PropName if it matches DataType channel.
-     */
-    private Object getDataTypePropValue(String aPropName)
-    {
-        // Handle DataType props
-        DataType dataType = getDataType();
-        int chanCount = dataType.getChannelCount();
-
-        // Iterate over DataChannels and return primitive array if it matches
-        for (int i = 0; i < chanCount; i++) {
-            DataChan dataChan = dataType.getChannel(i);
-            if (aPropName.equals(dataChan.toString())) {
-                DataArray dataArray = getDataArrayForChannel(dataChan);
-                if (dataArray instanceof NumberArray)
-                    return ((NumberArray) dataArray).getDoubleArray();
-                if (dataArray instanceof StringArray)
-                    return ((StringArray) dataArray).getStringArray();
-                System.err.println("DataSet.getDataTypePropValue: Unknown DataChan: " + dataChan);
-            }
-        }
-
-        // Return null since not found
-        return null;
-    }
-
-    /**
      * Override to support props for this class.
      */
     @Override
     public void setPropValue(String aPropName, Object aValue)
     {
+        // DataType props are handled in ChartArchiver.DataSetProxy
+
+        // Do normal props
         switch (aPropName) {
 
             // Name, DataType
@@ -532,6 +526,45 @@ public abstract class DataSet extends PropObject implements Cloneable {
             // Do normal version
             default: super.setPropValue(aPropName, aValue); break;
         }
+    }
+
+    /**
+     * Returns a DataArray primitive array for PropName if it matches DataType channel.
+     */
+    private Object getDataTypePropValue(String aPropName)
+    {
+        // Get DataChan for PropName (just return null if not found)
+        DataType dataType = getDataType();
+        DataChan dataChan = dataType.getChannelForName(aPropName);
+        if (dataChan == null)
+            return null;
+
+        // Get DataArray for DataChan and return real array
+        DataArray dataArray = getDataArrayForChannel(dataChan);
+        if (dataArray instanceof NumberArray)
+            return ((NumberArray) dataArray).getDoubleArray();
+        if (dataArray instanceof StringArray)
+            return ((StringArray) dataArray).getStringArray();
+
+        // Complain and return for unknown type
+        System.err.println("DataSet.getDataTypePropValue: Unknown DataType: " + dataChan);
+        return null;
+    }
+
+    /**
+     * Returns a DataArray unit for PropName if it matches DataType channel + "Unit" (e.g., "XUnit").
+     */
+    private Object getDataTypeUnitPropValue(String aPropName)
+    {
+        // Get DataChan for PropName (just return null if not found)
+        DataType dataType = getDataType();
+        DataChan dataChan = dataType.getChannelForName(aPropName.replace("Unit", ""));
+        if (dataChan == null)
+            return null;
+
+        // Get NumberArray for DataChan and return real array
+        NumberArray dataArray = getNumberArrayForChannel(dataChan);
+        return dataArray != null ? dataArray.getUnit() : null;
     }
 
     /**

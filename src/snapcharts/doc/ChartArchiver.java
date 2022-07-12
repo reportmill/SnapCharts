@@ -151,8 +151,11 @@ public class ChartArchiver extends PropArchiverXML {
         // A basic DataSet
         private DataSet  _dataSet;
 
-        // The DataArray
-        private DataArray[] _dataArrays;
+        // The DataArrays
+        private DataArray[]  _dataArrays;
+
+        // The DataUnits
+        private DataUnit[]  _dataUnits;
 
         /**
          * Constructor.
@@ -164,6 +167,7 @@ public class ChartArchiver extends PropArchiverXML {
             // Init DataArrays
             DataType dataType = _dataSet.getDataType();
             _dataArrays = new DataArray[dataType.getChannelCount()];
+            _dataUnits = new DataUnit[dataType.getChannelCount()];
         }
 
         /**
@@ -172,7 +176,18 @@ public class ChartArchiver extends PropArchiverXML {
         @Override
         public Object getReal()
         {
+            // Set DataUnits in DataArrays
+            for (int i = 0; i < _dataUnits.length; i++) {
+                DataUnit dataUnit = _dataUnits[i]; if (dataUnit == null) continue;;
+                DataArray dataArray = _dataArrays[i];
+                if (dataArray instanceof NumberArray)
+                    ((NumberArray) dataArray).setUnit(dataUnit);
+            }
+
+            // Set DataArrays
             _dataSet.setDataArrays(_dataArrays);
+
+            // Return
             return _dataSet;
         }
 
@@ -228,6 +243,15 @@ public class ChartArchiver extends PropArchiverXML {
                 return;
             }
 
+            // Set DataUnits
+            if (aValue instanceof DataUnit && aPropName.endsWith("Unit")) {
+                dataIndex = getDataChannelIndexForPropName(aPropName.replace("Unit", ""));
+                if (dataIndex >= 0)
+                    _dataUnits[dataIndex] = (DataUnit) aValue;
+                else System.err.println("DataSetProxy.setPropValue: Error setting data unit: " + aPropName);
+                return;
+            }
+
             // Forward to DataSet
             _dataSet.setPropValue(aPropName, aValue);
 
@@ -235,6 +259,7 @@ public class ChartArchiver extends PropArchiverXML {
             if (aPropName == DataSet.DataType_Prop) {
                 DataType dataType = _dataSet.getDataType();
                 _dataArrays = new DataArray[dataType.getChannelCount()];
+                _dataUnits = new DataUnit[dataType.getChannelCount()];
             }
         }
 

@@ -95,6 +95,30 @@ public enum DataType {
     }
 
     /**
+     * Returns the channel index for name.
+     */
+    public DataChan getChannelForName(String aName)
+    {
+        DataChan[] chans = getChannels();
+        for (DataChan chan : chans)
+            if (chan.getName().equals(aName))
+                return chan;
+        return null;
+    }
+
+    /**
+     * Returns the channel index for name.
+     */
+    public int getChannelIndexForName(String aName)
+    {
+        DataChan[] chans = getChannels();
+        for (int i = 0; i < chans.length; i++)
+            if (chans[i].getName().equals(aName))
+                return i;
+        return -1;
+    }
+
+    /**
      * Returns the XY channels (if polar)
      */
     public DataChan[] getChannelsXY()
