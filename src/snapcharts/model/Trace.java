@@ -785,7 +785,7 @@ public class Trace extends ChartPart {
         aPropSet.addPropNamed(ShowLegendEntry_Prop, String.class, DEFAULT_SHOW_LEGEND_ENTRY);
         aPropSet.addPropNamed(Disabled_Prop, boolean.class, false);
 
-        // PointStyleRel, TagStyle_Rel, TraceStyle_Rel
+        // PointStyle_Prop, TagStyle_Prop, TraceStyle_Prop (Make Preexisting so unarchival uses default instance)
         Prop pointStyleProp = aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
         pointStyleProp.setPreexisting(true);
         Prop tagStyleProp = aPropSet.addPropNamed(TagStyle_Prop, TagStyle.class, EMPTY_OBJECT);
@@ -819,11 +819,6 @@ public class Trace extends ChartPart {
             case PointJoin_Prop: return getPointJoin();
             case FillMode_Prop: return getFillMode();
 
-            // PointStyleRel, TagStyle_Rel, TraceStyle_Rel
-            case PointStyle_Prop: return getPointStyle();
-            case TagStyle_Prop: return getTagStyle();
-            case TraceStyle_Prop: return getTraceStyle();
-
             // AxisTypeY, ExprX, ExprY, ExprZ
             case AxisTypeY_Prop: return getAxisTypeY();
             case ExprX_Prop: return getExprX();
@@ -834,6 +829,11 @@ public class Trace extends ChartPart {
             case Stacked_Prop: return isStacked();
             case ShowLegendEntry_Prop: return isShowLegendEntry();
             case Disabled_Prop: return isDisabled();
+
+            // PointStyle_Prop, TagStyle_Prop, TraceStyle_Prop
+            case PointStyle_Prop: return getPointStyle();
+            case TagStyle_Prop: return getTagStyle();
+            case TraceStyle_Prop: return getTraceStyle();
 
             // DataSet
             case DataSet_Prop: return getDataSet();
