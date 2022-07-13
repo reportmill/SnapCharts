@@ -44,22 +44,10 @@ public class ChartArchiver extends PropArchiverXML {
 
     /**
      * Returns an xml element for a given object.
-     * This top level method encodes resources, in addition to doing the basic toXML stuff.
      */
     public XMLElement writeToXML(PropObject anObj)
     {
-        // Write object
         XMLElement xml = convertPropObjectToXML(anObj);
-
-        // Archive resources
-        //for (XMLArchiver.Resource resource : getResources()) {
-        //    XMLElement resourceXML = new XMLElement("resource");
-        //    resourceXML.add("name", resource.getName());
-        //    resourceXML.setValueBytes(resource.getBytes());
-        //    xml.add(resourceXML);
-        //}
-
-        // Return xml
         return xml;
     }
 
@@ -78,7 +66,6 @@ public class ChartArchiver extends PropArchiverXML {
     public <T extends PropObject> T copy(T anObj)
     {
         XMLElement xml = convertPropObjectToXML(anObj);
-        //if (isIgnoreCase()) xml.setIgnoreCase(true);
         return (T) readPropObjectFromXML(xml);
     }
 
@@ -146,7 +133,7 @@ public class ChartArchiver extends PropArchiverXML {
     /**
      * A PropObjectProxy subclass for DataSet.
      */
-    private static class DataSetProxy extends PropObjectProxy {
+    protected static class DataSetProxy extends PropObjectProxy {
 
         // A basic DataSet
         private DataSet  _dataSet;

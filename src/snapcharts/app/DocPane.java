@@ -581,6 +581,7 @@ public class DocPane extends ViewOwner {
         addKeyActionHandler("DeleteAction", "BACK_SPACE");
         addKeyActionHandler("EscapeAction", "ESCAPE");
         addKeyActionHandler("PropArchiverAction", "H");
+        addKeyActionHandler("PropArchiverActionJSON", "K");
         addKeyActionHandler("PropArchiverOpenAction", "J");
     }
 
@@ -685,6 +686,8 @@ public class DocPane extends ViewOwner {
             performPropArchiverTest(anEvent);
         if (anEvent.equals("PropArchiverOpenAction") && anEvent.isAltDown())
             performPropArchiverOpenTest(anEvent);
+        if (anEvent.equals("PropArchiverActionJSON") && anEvent.isAltDown())
+            performPropArchiverTestJSON(anEvent);
     }
 
     /**
@@ -851,14 +854,52 @@ public class DocPane extends ViewOwner {
      */
     private void performPropArchiverTest(ViewEvent anEvent)
     {
-        // Archive Doc to PropNode
+        // Get doc
         Doc doc = getDoc();
+
+        // Write to XML bytes
         ChartArchiver chartArchiver = new ChartArchiver();
         byte[] xmlBytes = chartArchiver.convertPropObjectToXMLBytes(doc);
 
         // Write to file
         File file = new File("/tmp/PropArchTest.charts");
         try { FileUtils.writeBytes(file, xmlBytes); }
+        catch (Exception e) {
+            e.printStackTrace(); beep();
+            return;
+        }
+
+        // Open file
+        GFXEnv.getEnv().openTextFile(file);
+
+        // Consume event
+        anEvent.consume();
+    }
+
+    /**
+     * Writes the doc to a file and opens in editor.
+     */
+    private void performPropArchiverTestJSON(ViewEvent anEvent)
+    {
+        // Get doc
+        Doc doc = getDoc();
+
+        // Get Doc as JSON
+        ChartArchiverJS chartArchiverJS = new ChartArchiverJS();
+        JSObject docJS = chartArchiverJS.convertPropObjectToJSON(doc);
+
+        // Get JSON String
+        JSWriter writer = new JSWriter();
+        writer.setIndent("  ");
+        writer.setQuoteKeys(false);
+        String jsonStr = writer.getString(docJS);
+
+        // Get JSON Bytes
+        byte[] jsonBytes = jsonStr.getBytes();
+
+        // Write to file
+        File file = new File("/tmp/PropArchTest.jcharts");
+        try { FileUtils.writeBytes(file, jsonBytes); }
         catch (Exception e) {
             e.printStackTrace(); beep();
             return;
