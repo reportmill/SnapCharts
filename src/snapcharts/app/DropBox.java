@@ -1,5 +1,7 @@
 package snapcharts.app;
-import snap.util.JSONNode;
+import snap.util.JSArray;
+import snap.util.JSValue;
+import snap.util.JSObject;
 import snap.web.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,8 +102,8 @@ public class DropBox extends WebSite {
             return;
 
         // Get JSON response
-        JSONNode json = resp.getJSON();
-        if (json==null)
+        JSObject json = (JSObject) resp.getJSON();
+        if (json == null)
             return;
 
         // Get JSON response
@@ -130,16 +132,16 @@ public class DropBox extends WebSite {
             return;
 
         // Get JSON response
-        JSONNode json = resp.getJSON();
-        if (json==null)
+        JSObject json = (JSObject) resp.getJSON();
+        if (json == null)
             return;
 
         // Get json for entries
-        JSONNode entriesNode = json.getNode("entries");
-        List<JSONNode> entryNodes = entriesNode.getNodes();
+        JSArray entriesNode = (JSArray) json.getValue("entries");
+        List<JSValue> entryNodes = entriesNode.getValues();
 
         // Get FileHeader List for json entries
-        List<FileHeader> fhdrs = getMappedList(entryNodes, e -> createFileHeaderForJSON(e));
+        List<FileHeader> fhdrs = getMappedList(entryNodes, e -> createFileHeaderForJSON((JSObject) e));
 
         // Strip SitePath from FileHeaders
         for (FileHeader fhdr : fhdrs)
@@ -203,9 +205,9 @@ public class DropBox extends WebSite {
         }
 
         // Get JSON response
-        JSONNode json = resp.getJSON();
-        if (json!=null) {
-            String mod = json.getNodeString("server_modified");
+        JSObject json = (JSObject) resp.getJSON();
+        if (json != null) {
+            String mod = json.getStringValue("server_modified");
             if (mod!=null && mod.endsWith("Z")) {
                 try {
                     Date date = _fmt.parse(mod);
@@ -240,7 +242,7 @@ public class DropBox extends WebSite {
         }
 
         // Get JSON response
-        JSONNode json = resp.getJSON();
+        JSValue json = resp.getJSON();
         if (json!=null)
             System.out.println(json);
     }
@@ -278,9 +280,9 @@ public class DropBox extends WebSite {
     private static void addParamsToRequestAsJSON(HTTPRequest aReq, boolean asHeader, String ... thePairs)
     {
         // Create JSON Request and add pairs
-        JSONNode jsonReq = new JSONNode();
+        JSObject jsonReq = new JSObject();
         for (int i=0; i<thePairs.length; i+=2)
-            jsonReq.addKeyValue(thePairs[i], thePairs[i+1]);
+            jsonReq.setNativeValue(thePairs[i], thePairs[i+1]);
 
         // Add as header
         if (asHeader) {
@@ -319,11 +321,11 @@ public class DropBox extends WebSite {
     /**
      * Returns a FileHeader for DropBox File Entry JSONNode.
      */
-    private static FileHeader createFileHeaderForJSON(JSONNode aFileEntryNode)
+    private static FileHeader createFileHeaderForJSON(JSObject aFileEntryNode)
     {
         // Get attributes
-        String path = aFileEntryNode.getNodeString("path_display");
-        String tag = aFileEntryNode.getNodeString(".tag");
+        String path = aFileEntryNode.getStringValue("path_display");
+        String tag = aFileEntryNode.getStringValue(".tag");
         boolean isFile = tag.equals("file");
 
         // Create FileHeader
@@ -333,12 +335,12 @@ public class DropBox extends WebSite {
         if (isFile) {
 
             // Get/set size
-            String sizeStr = aFileEntryNode.getNodeString("size");
+            String sizeStr = aFileEntryNode.getStringValue("size");
             long size = Long.parseLong(sizeStr);
             fhdr.setSize(size);
 
             // Get/set ModTime
-            String mod = aFileEntryNode.getNodeString("server_modified");
+            String mod = aFileEntryNode.getStringValue("server_modified");
             if (mod.endsWith("Z")) {
                 try {
                     Date date = _fmt.parse(mod);

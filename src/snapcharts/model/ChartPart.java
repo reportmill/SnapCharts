@@ -119,6 +119,7 @@ public class ChartPart extends PropObject {
         _lineDash = DEFAULT_LINE_DASH;
         _effect = DEFAULT_EFFECT;
         _opacity = DEFAULT_OPACTIY;
+        _font = DEFAULT_FONT;
         _textFill = DEFAULT_TEXT_FILL;
         _align = DEFAULT_ALIGN;
         _margin = DEFAULT_MARGIN;
