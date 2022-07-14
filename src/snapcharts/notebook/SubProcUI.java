@@ -38,6 +38,8 @@ public class SubProcUI extends SubProc {
     public SliderBlock sliderBlock(Object anObj, KeyChain argListKey)
     {
         int argCount = argListKey.getChildCount();
+        if (argCount < 3)
+            throw new RuntimeException("Slider needs 3 args: VarName, MinVal, MaxVal");
 
         // Get the variable name
         String varName = "x";

@@ -109,6 +109,19 @@ public class Processor implements KeyChain.FunctionHandler {
     @Override
     public Object getValueFunctionCall(Object aRoot, Object anObj, KeyChain aKeyChain)
     {
+        try {
+            return getValueFunctionCallImpl(aRoot, anObj, aKeyChain);
+        }
+        catch (Exception e) {
+            return e.toString().replace(e.getClass().getName(), "Error");
+        }
+    }
+
+    /**
+     * Handles FunctionCall KeyChains.
+     */
+    protected Object getValueFunctionCallImpl(Object aRoot, Object anObj, KeyChain aKeyChain)
+    {
         // Get function name (lowercase) and arg list
         String functionName = aKeyChain.getChildString(0).toLowerCase();
         KeyChain argList = aKeyChain.getChildKeyChain(1);
