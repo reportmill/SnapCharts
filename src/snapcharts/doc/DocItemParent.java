@@ -152,7 +152,8 @@ public class DocItemParent<T extends PropObject> extends DocItem<T> {
 
         // This property is to allow for archival of content so <Items> has array of <Chart> instead of
         // <DocItemChart><Content><Chart>
-        aPropSet.addPropNamed(Items_Prop, PropObject[].class, null);
+        Prop itemsProp = aPropSet.addPropNamed(Items_Prop, PropObject[].class, null);
+        itemsProp.setDefaultPropClass(String.class);
     }
 
     /**
