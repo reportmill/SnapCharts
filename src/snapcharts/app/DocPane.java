@@ -17,6 +17,7 @@ import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.appmisc.SamplesPane;
 import snapcharts.doc.*;
 import snapcharts.model.*;
+import snapcharts.modelx.ScatterTrace;
 import snapcharts.notebook.DocItemPaneNotebook;
 import snapcharts.notebook.Notebook;
 import snapcharts.notebook.DocItemNotebook;
@@ -773,7 +774,7 @@ public class DocPane extends ViewOwner {
         else if (aClass == Trace.class) {
 
             // Create new dataset
-            Trace trace = new Trace();
+            Trace trace = new ScatterTrace();
             trace.setName("New Dataset");
 
             // Add to SelItem

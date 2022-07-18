@@ -5,10 +5,12 @@ package snapcharts.model;
 import java.util.*;
 import java.util.stream.Stream;
 import snap.gfx.Color;
+import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropChangeListener;
 import snap.props.PropSet;
 import snapcharts.data.DataSet;
+import snapcharts.modelx.ScatterTrace;
 import snapcharts.util.MinMax;
 
 /**
@@ -112,6 +114,29 @@ public class Content extends ChartPart {
     }
 
     /**
+     * Sets a new given trace at given index to replace existing one.
+     */
+    public void setTrace(Trace aTrace, int anIndex)
+    {
+        // Remove old trace
+        Trace oldTrace = _traceList.remove(anIndex); if (oldTrace == aTrace) return;
+        oldTrace._parent = null;
+        oldTrace.removePropChangeListener(_tracePropChangeLsnr);
+
+        // Add trace at index
+        _traceList.add(anIndex, aTrace);
+        aTrace._parent = this;
+        aTrace._index = anIndex;
+        aTrace.addPropChangeListener(_tracePropChangeLsnr);
+
+        // Clear caches
+        clearCachedValues();
+
+        // FirePropChange
+        firePropChange(Trace_Prop, oldTrace, aTrace, anIndex);
+    }
+
+    /**
      * Adds a new trace.
      */
     public void addTrace(Trace aTrace)
@@ -170,6 +195,23 @@ public class Content extends ChartPart {
         while (getTraceCount() != 0)
             removeTrace(getTraceCount()-1);
         clearCachedValues();
+    }
+
+    /**
+     * Sets a trace type for given trace.
+     */
+    public Trace setTraceType(Trace aTrace, TraceType aTraceType)
+    {
+        // If already set, just return
+        if (aTrace.getType() == aTraceType) return aTrace;
+
+        // Create new, replace old
+        Trace newTrace = aTrace.copyForTraceClass(aTraceType.getTraceClass());
+        int index = aTrace.getIndex();
+        setTrace(newTrace, index);
+
+        // Return
+        return newTrace;
     }
 
     /**
@@ -346,7 +388,8 @@ public class Content extends ChartPart {
         aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_CONTENT_LINE_WIDTH);
 
         // Traces
-        aPropSet.addPropNamed(Traces_Prop, Trace[].class, EMPTY_OBJECT);
+        Prop tracesProp = aPropSet.addPropNamed(Traces_Prop, Trace[].class, EMPTY_OBJECT);
+        tracesProp.setDefaultPropClass(ScatterTrace.class);
     }
 
     /**

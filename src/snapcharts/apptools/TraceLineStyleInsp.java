@@ -13,7 +13,7 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
 /**
- * A class to manage UI to edit a TraceStyle.
+ * A class to manage UI to edit Trace line properties.
  */
 public class TraceLineStyleInsp extends ChartPartInsp {
 
@@ -89,7 +89,7 @@ public class TraceLineStyleInsp extends ChartPartInsp {
 
         // Reset LineWidthText, LineWidthResetButton
         setViewValue("LineWidthText", trace.getLineWidth());
-        setViewVisible("LineWidthResetButton", trace.getLineWidth() != TraceStyle.DEFAULT_LINE_WIDTH);
+        setViewVisible("LineWidthResetButton", trace.getLineWidth() != Trace.DEFAULT_LINE_WIDTH);
 
         // Reset LineDashButton
         ToggleButton lineDashButton = getView("LineDashButton", ToggleButton.class);

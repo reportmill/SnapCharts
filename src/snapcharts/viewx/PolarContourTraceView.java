@@ -5,7 +5,6 @@ package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.props.PropChange;
 import snapcharts.model.Axis;
-import snapcharts.model.TraceStyle;
 import snapcharts.model.Trace;
 
 /**
@@ -56,7 +55,7 @@ public class PolarContourTraceView extends PolarTraceView {
 
         // Handle changes
         Object src = aPC.getSource();
-        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle) {
+        if (src== getTrace() || src instanceof Axis) {
             _contourPainter.clearContoursAll();
         }
     }

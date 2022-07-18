@@ -41,7 +41,7 @@ public class XYChartHelper extends ChartHelper {
         TraceView[] traceViews = new TraceView[traceCount];
         for (int i = 0; i < traceCount; i++) {
             Trace trace = traces[i];
-            traceViews[i] = new XYTraceView(this, trace);
+            traceViews[i] = new ScatterTraceView(this, trace);
         }
 
         return traceViews;

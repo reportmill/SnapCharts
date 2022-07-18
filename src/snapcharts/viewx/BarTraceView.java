@@ -7,7 +7,7 @@ import snap.geom.Rect;
 import snap.gfx.*;
 import snap.props.PropChange;
 import snapcharts.model.*;
-import snapcharts.modelx.BarStyle;
+import snapcharts.modelx.BarTrace;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.TraceView;
 
@@ -16,8 +16,8 @@ import snapcharts.view.TraceView;
  */
 public class BarTraceView extends TraceView {
 
-    // The BarStyle
-    private BarStyle  _barStyle;
+    // The BarTrace
+    private BarTrace _barTrace;
 
     // The number of traces to display
     protected int  _traceCount;
@@ -45,22 +45,21 @@ public class BarTraceView extends TraceView {
     }
 
     /**
-     * Returns the BarStyle.
+     * Returns the BarTrace.
      */
-    public BarStyle getBarStyle()
+    public BarTrace getBarTrace()
     {
         // If already set, just return
-        if (_barStyle != null) return _barStyle;
+        if (_barTrace != null) return _barTrace;
 
-        // Get/set BarStyle
+        // Get/set BarTrace
         Trace trace = getTrace();
-        TraceStyle traceStyle = trace.getTraceStyle();
-        if (traceStyle instanceof BarStyle)
-            return _barStyle = (BarStyle) traceStyle;
+        if (trace instanceof BarTrace)
+            return _barTrace = (BarTrace) trace;
 
         // Complain and create bogus new
-        System.err.println("BarTraceView.getBarStyle: Trace doesn't have BarStyle");
-        return _barStyle = (BarStyle) trace.getTraceStyleForTraceType(TraceType.Bar);
+        System.err.println("BarTraceView.getBarTrace: Trace isn't BarTrace");
+        return _barTrace = (BarTrace) trace.copyForTraceClass(BarTrace.class);
     }
 
     /**
@@ -77,11 +76,11 @@ public class BarTraceView extends TraceView {
             return _sections;
 
         // Get BarTraceView info
-        BarStyle barStyle = getBarStyle();
-        double groupPad = barStyle.getGroupPadding();
-        double barPad = barStyle.getBarPadding();
+        BarTrace barTrace = getBarTrace();
+        double groupPad = barTrace.getGroupPadding();
+        double barPad = barTrace.getBarPadding();
         double viewHeight = getHeight();
-        boolean colorTraces = !barStyle.isColorValues();
+        boolean colorTraces = !barTrace.isColorValues();
 
         // Get number of traces, points and section width
         _traceCount = traceCount;

@@ -7,7 +7,7 @@ import snap.gfx.Painter;
 import snapcharts.data.DataSet;
 import snapcharts.model.Chart;
 import snapcharts.model.ContourAxis;
-import snapcharts.modelx.ContourStyle;
+import snapcharts.modelx.ContourTrace;
 import snapcharts.model.Trace;
 import snapcharts.util.MinMax;
 import snapcharts.view.ChartHelper;
@@ -22,8 +22,8 @@ public class ContourHelper {
     // The ChartHelper
     private ChartHelper  _chartHelper;
 
-    // The ContourStyle
-    private ContourStyle  _contourStyle;
+    // The ContourTrace
+    private ContourTrace  _contourTrace;
 
     // The number of contour levels
     private int  _levelsCount;
@@ -43,24 +43,24 @@ public class ContourHelper {
     /**
      * Constructor.
      */
-    public ContourHelper(ChartHelper aChartHelper, ContourStyle aContourStyle)
+    public ContourHelper(ChartHelper aChartHelper, ContourTrace aContourTrace)
     {
         _chartHelper = aChartHelper;
-        _contourStyle = aContourStyle;
+        _contourTrace = aContourTrace;
     }
 
     /**
      * Returns the ContourProps.
      */
-    public ContourStyle getContourProps()  { return _contourStyle; }
+    public ContourTrace getContourProps()  { return _contourTrace; }
 
     /**
      * Returns whether to show contour lines.
      */
     public boolean isShowLines()
     {
-        ContourStyle contourStyle = getContourProps();
-        return contourStyle.isShowLines();
+        ContourTrace contourTrace = getContourProps();
+        return contourTrace.isShowLines();
     }
 
     /**
@@ -68,8 +68,8 @@ public class ContourHelper {
      */
     public boolean isShowMesh()
     {
-        ContourStyle contourStyle = getContourProps();
-        return contourStyle.isShowMesh();
+        ContourTrace contourTrace = getContourProps();
+        return contourTrace.isShowMesh();
     }
 
     /**

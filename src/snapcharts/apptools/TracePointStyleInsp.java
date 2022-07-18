@@ -10,7 +10,7 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
 /**
- * A class to manage UI to edit a TraceStyle.
+ * A class to manage UI to edit Trace.PointStyle.
  */
 public class TracePointStyleInsp extends ChartPartInsp {
 

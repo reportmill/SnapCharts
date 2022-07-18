@@ -12,7 +12,7 @@ import snapcharts.model.*;
 import java.util.Objects;
 
 /**
- * A class to manage UI to edit a TraceStyle.
+ * A class to manage UI to edit Trace TagStyle.
  */
 public class TraceTagStyleInsp extends ChartPartInsp {
 
@@ -53,7 +53,7 @@ public class TraceTagStyleInsp extends ChartPartInsp {
     }
 
     /**
-     * Returns the TraceStyle.
+     * Returns the TagStyle.
      */
     public TagStyle getTagStyle()
     {

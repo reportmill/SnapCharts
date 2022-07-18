@@ -605,10 +605,12 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Handle Content
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
+
+        // Handle Trace added/removed
         if (src instanceof Content && propName == Content.Trace_Prop) {
-            if (aPC.getNewValue() instanceof Trace)
+            if (aPC.getNewValue() instanceof Trace && aPC.getOldValue() == null)
                 contentAddedTrace((Trace) aPC.getNewValue());
-            else if (aPC.getOldValue() instanceof Trace)
+            else if (aPC.getOldValue() instanceof Trace && aPC.getNewValue() == null)
                 contentRemovedTraceAtIndex(aPC.getIndex());
         }
     }

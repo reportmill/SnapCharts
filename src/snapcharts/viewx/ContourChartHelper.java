@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.props.PropChange;
 import snapcharts.model.*;
-import snapcharts.modelx.ContourStyle;
+import snapcharts.modelx.ContourTrace;
 import snapcharts.view.*;
 
 /**
@@ -26,9 +26,8 @@ public class ContourChartHelper extends ChartHelper {
         // This is bogus
         Trace[] traces = aChartView.getContent().getTraces();
         for (Trace trace : traces) {
-            TraceStyle traceStyle = trace.getTraceStyle();
-            if (traceStyle instanceof ContourStyle) {
-                _contourHelper = new ContourHelper(this, (ContourStyle) traceStyle);
+            if (trace instanceof ContourTrace) {
+                _contourHelper = new ContourHelper(this, (ContourTrace) trace);
                 break;
             }
         }
@@ -73,7 +72,7 @@ public class ContourChartHelper extends ChartHelper {
             Trace trace = traces[i];
             if (trace.getDataType().hasZ() )
                 traceViews[i] = new ContourTraceView(this, trace);
-            else traceViews[i] = new XYTraceView(this, trace);
+            else traceViews[i] = new ScatterTraceView(this, trace);
         }
 
         // Return
@@ -109,7 +108,7 @@ public class ContourChartHelper extends ChartHelper {
 
         // Handle Trace/Content change
         Object src = aPC.getSource();
-        if (src instanceof Trace || src instanceof Content || src instanceof TraceStyle || src instanceof ContourAxis) {
+        if (src instanceof Trace || src instanceof Content || src instanceof ContourAxis) {
             _contourHelper.resetCachedValues();
         }
     }

@@ -1,5 +1,6 @@
 package snapcharts.util;
 import snapcharts.model.Chart;
+import snapcharts.model.Content;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
 
@@ -71,9 +72,10 @@ public class ChartUtils {
     public static void setScatterType(Chart aChart, ScatterType scatterType)
     {
         // Configure Traces
-        Trace[] traces = aChart.getContent().getTraces();
+        Content content = aChart.getContent();
+        Trace[] traces = content.getTraces();
         for (Trace trace : traces) {
-            trace.setType(TraceType.Scatter);
+            trace = content.setTraceType(trace, TraceType.Scatter);
             trace.setShowLine(scatterType.isTraceShowLine());
             trace.setShowArea(scatterType.isTraceShowArea());
             trace.setShowPoints(scatterType.isTraceShowPoints());

@@ -4,12 +4,13 @@
 package snapcharts.modelx;
 import snap.props.PropSet;
 import snap.util.SnapUtils;
-import snapcharts.model.TraceStyle;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceType;
 
 /**
- * A TraceStyle subclass for Contour chart properties.
+ * A Trace subclass for Contour chart properties.
  */
-public class ContourStyle extends TraceStyle {
+public class ContourTrace extends Trace {
 
     // Whether to show contour lines
     private boolean  _showLines;
@@ -20,6 +21,20 @@ public class ContourStyle extends TraceStyle {
     // Constants for properties
     public final String ShowLines_Prop = "ShowLines";
     public final String ShowMesh_Prop = "ShowMesh";
+
+    /**
+     * Constructor.
+     */
+    public ContourTrace()
+    {
+        super();
+    }
+
+    /**
+     * Returns Type.
+     */
+    @Override
+    public TraceType getType()  { return TraceType.Contour; }
 
     /**
      * Returns whether to show contour lines.

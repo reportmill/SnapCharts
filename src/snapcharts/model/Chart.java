@@ -163,7 +163,7 @@ public class Chart extends ParentPart {
         Content content = getContent();
         Trace[] traces = content.getTraces();
         for (Trace trace : traces)
-            trace.setType(aTraceType);
+            content.setTraceType(trace, aTraceType);
     }
 
     /**

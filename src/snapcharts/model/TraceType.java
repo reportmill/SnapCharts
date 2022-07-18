@@ -11,23 +11,23 @@ public class TraceType implements StringCodec.Codeable {
     // The name
     private String  _name;
 
-    // The Style class
-    private Class<? extends TraceStyle>  _styleClass;
+    // The Trace class
+    private Class<? extends Trace> _traceClass;
 
     // A list of all known types
     private static TraceType[]  _allTypes = new TraceType[0];
 
     // Constants for known TraceTypes
-    public static final TraceType Scatter = new TraceType("Scatter", XYStyle.class);
-    public static final TraceType Bar = new TraceType("Bar", BarStyle.class);
-    public static final TraceType Pie = new TraceType("Pie", PieStyle.class);
-    public static final TraceType Polar = new TraceType("Polar", PolarStyle.class);
-    public static final TraceType Contour = new TraceType("Contour", ContourStyle.class);
-    public static final TraceType PolarContour = new TraceType("PolarContour", PolarContourStyle.class);
-    public static final TraceType Bar3D = new TraceType("Bar3D", Bar3DStyle.class);
-    public static final TraceType Pie3D = new TraceType("Pie3D", Pie3DStyle.class);
-    public static final TraceType Line3D = new TraceType("Line3D", Line3DStyle.class);
-    public static final TraceType Contour3D = new TraceType("Contour3D", Contour3DStyle.class);
+    public static final TraceType Scatter = new TraceType("Scatter", ScatterTrace.class);
+    public static final TraceType Bar = new TraceType("Bar", BarTrace.class);
+    public static final TraceType Pie = new TraceType("Pie", PieTrace.class);
+    public static final TraceType Polar = new TraceType("Polar", PolarTrace.class);
+    public static final TraceType Contour = new TraceType("Contour", ContourTrace.class);
+    public static final TraceType PolarContour = new TraceType("PolarContour", PolarContourTrace.class);
+    public static final TraceType Bar3D = new TraceType("Bar3D", Bar3DTrace.class);
+    public static final TraceType Pie3D = new TraceType("Pie3D", Pie3DTrace.class);
+    public static final TraceType Line3D = new TraceType("Line3D", Line3DTrace.class);
+    public static final TraceType Contour3D = new TraceType("Contour3D", Contour3DTrace.class);
 
     /**
      * Constructor.
@@ -37,10 +37,10 @@ public class TraceType implements StringCodec.Codeable {
     /**
      * Constructor.
      */
-    public TraceType(String aName, Class<? extends TraceStyle> aClass)
+    public TraceType(String aName, Class<? extends Trace> aClass)
     {
         _name = aName;
-        _styleClass = aClass;
+        _traceClass = aClass;
 
 
         // Add to AllTypes
@@ -53,9 +53,9 @@ public class TraceType implements StringCodec.Codeable {
     public String getName()  { return _name; }
 
     /**
-     * Returns the TraceStyle subclass for this type.
+     * Returns the Trace subclass for this type.
      */
-    public Class<? extends TraceStyle> getStyleClass()  { return _styleClass; }
+    public Class<? extends Trace> getTraceClass()  { return _traceClass; }
 
     /**
      * Returns whether type is XY type (not bar or pie).
@@ -103,6 +103,24 @@ public class TraceType implements StringCodec.Codeable {
     }
 
     /**
+     * Returns a String representation of this object.
+     */
+    @Override
+    public String codeString()
+    {
+        return _name;
+    }
+
+    /**
+     * Configures this object from a String representation.
+     */
+    @Override
+    public StringCodec.Codeable decodeString(String aString)
+    {
+        return getTypeForName(aString);
+    }
+
+    /**
      * Standard toString implementation.
      */
     @Override
@@ -128,23 +146,5 @@ public class TraceType implements StringCodec.Codeable {
             if (traceType.getName().equalsIgnoreCase(aName))
                 return traceType;
         return null;
-    }
-
-    /**
-     * Returns a String representation of this object.
-     */
-    @Override
-    public String codeString()
-    {
-        return _name;
-    }
-
-    /**
-     * Configures this object from a String representation.
-     */
-    @Override
-    public StringCodec.Codeable decodeString(String aString)
-    {
-        return getTypeForName(aString);
     }
 }

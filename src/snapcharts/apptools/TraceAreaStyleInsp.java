@@ -9,7 +9,7 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
 /**
- * A class to manage UI to edit a TraceStyle.
+ * A class to manage UI to edit a Trace area.
  */
 public class TraceAreaStyleInsp extends ChartPartInsp {
 

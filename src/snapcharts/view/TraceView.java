@@ -536,8 +536,7 @@ public abstract class TraceView extends ChartPartView<Trace> {
         Object src = aPC.getSource();
         String propName = aPC.getPropName();
         Trace trace = getTrace();
-        TraceStyle traceStyle = trace.getTraceStyle();
-        if (src == trace || src == traceStyle || src instanceof Axis || propName == Trace.Stacked_Prop) {
+        if (src == trace || src instanceof Axis || propName == Trace.Stacked_Prop) {
             clearStagedData();
         }
     }

@@ -7,7 +7,7 @@ import snapcharts.app.ChartPane;
 import snapcharts.model.*;
 
 /**
- * A class to manage UI to edit a TraceStyle.
+ * A class to manage UI to edit Trace.PointStyle spacing properties.
  */
 public class TraceSpacingInsp extends ChartPartInsp {
 
@@ -44,7 +44,7 @@ public class TraceSpacingInsp extends ChartPartInsp {
     }
 
     /**
-     * Returns the TraceStyle.
+     * Returns the PointStyle.
      */
     public PointStyle getPointStyle()
     {

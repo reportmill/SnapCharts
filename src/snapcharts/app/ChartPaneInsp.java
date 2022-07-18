@@ -267,11 +267,11 @@ public class ChartPaneInsp extends ViewOwner {
         ChartPart chartPart = anInsp.getChartPart();
 
         // TraceInsp/Trace is going to pretend to represent Content
-        if (chartPart instanceof TraceStyle) {
-            Chart chart = _chartPane.getChart();
-            Content content = chart.getContent();
-            chartPart = content.getTraceCount() > 0 ? content.getTrace(0) : chart;
-        }
+//        if (chartPart instanceof Trace) {
+//            Chart chart = _chartPane.getChart();
+//            Content content = chart.getContent();
+//            chartPart = content.getTraceCount() > 0 ? content.getTrace(0) : chart;
+//        }
 
         // Set new ChartPane.SelChartPart
         _chartPane.getSel().setSelChartPart(chartPart);

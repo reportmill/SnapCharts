@@ -8,6 +8,7 @@ import snap.text.NumberFormat;
 import snap.util.XMLElement;
 import snapcharts.data.*;
 import snapcharts.model.*;
+import snapcharts.modelx.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,13 +103,21 @@ public class ChartArchiver extends PropArchiverXML {
         cmap.put(Legend.class.getSimpleName(), Legend.class);
         cmap.put(ContourAxis.class.getSimpleName(), ContourAxis.class);
         cmap.put(Marker.class.getSimpleName(), Marker.class);
+        cmap.put(Content.class.getSimpleName(), Content.class);
 
         // Trace classes
-        cmap.put(Content.class.getSimpleName(), Content.class);
-        cmap.put(Trace.class.getSimpleName(), Trace.class);
+        cmap.put(Trace.class.getSimpleName(), ScatterTrace.class);
+        cmap.put(ScatterTrace.class.getSimpleName(), ScatterTrace.class);
+        cmap.put(BarTrace.class.getSimpleName(), BarTrace.class);
+        cmap.put(Bar3DTrace.class.getSimpleName(), Bar3DTrace.class);
+        cmap.put(PieTrace.class.getSimpleName(), PieTrace.class);
+        cmap.put(Pie3DTrace.class.getSimpleName(), Pie3DTrace.class);
+        cmap.put(ContourTrace.class.getSimpleName(), ContourTrace.class);
+        cmap.put(Contour3DTrace.class.getSimpleName(), Contour3DTrace.class);
+        cmap.put(PolarTrace.class.getSimpleName(), PolarTrace.class);
+        cmap.put(PolarContourTrace.class.getSimpleName(), PolarContourTrace.class);
         cmap.put(PointStyle.class.getSimpleName(), PointStyle.class);
         cmap.put(TagStyle.class.getSimpleName(), TagStyle.class);
-        cmap.put(TraceStyle.class.getSimpleName(), TraceStyle.class);
 
         // Add Graphics classes (Border, Paint, Font, NumberFormat, Effect)
         cmap.put(Color.class.getSimpleName(), Color.class);

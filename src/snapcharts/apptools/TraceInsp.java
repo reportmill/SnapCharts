@@ -5,6 +5,7 @@ import snapcharts.app.ChartPane;
 import snapcharts.data.DataUnit;
 import snapcharts.model.*;
 import snapcharts.data.DataType;
+import snapcharts.modelx.PolarTrace;
 
 /**
  * A class to manage UI to edit basic Trace props.
@@ -38,11 +39,11 @@ public class TraceInsp extends ChartPartInsp {
     // The View that holds the TraceStyle insp
     private ColView  _traceStyleInspBox;
 
-    // The PolarStyleInsp
-    private PolarStyleInsp  _polarStyleInsp;
+    // The PolarTraceInsp
+    private PolarTraceInsp _polarTraceInsp;
 
-    // The ContourStyleInsp
-    private ContourStyleInsp  _contourStyleInsp;
+    // The ContourTraceInsp
+    private ContourTraceInsp  _contourTraceInsp;
 
     /**
      * Constructor.
@@ -349,34 +350,34 @@ public class TraceInsp extends ChartPartInsp {
         if (traceType == null)
             traceType = TraceType.Scatter;
 
-        // Return TraceStyleInsp for TraceType
+        // Return TraceInsp for TraceType
         String traceTypeName = traceType.getName();
         switch (traceTypeName) {
-            case "Polar": return getPolarStyleInsp();
-            case "Contour": return getContourStyleInsp();
-            case "PolarContour": return getContourStyleInsp();
+            case "Polar": return getPolarTraceInsp();
+            case "Contour": return getContourTraceInsp();
+            case "PolarContour": return getContourTraceInsp();
             default: return null;
         }
     }
 
     /**
-     * Returns the PolarStyleInsp.
+     * Returns the PolarTraceInsp.
      */
-    private PolarStyleInsp getPolarStyleInsp()
+    private PolarTraceInsp getPolarTraceInsp()
     {
-        if (_polarStyleInsp != null) return _polarStyleInsp;
-        PolarStyleInsp insp = new PolarStyleInsp(getChartPane());
-        return _polarStyleInsp = insp;
+        if (_polarTraceInsp != null) return _polarTraceInsp;
+        PolarTraceInsp insp = new PolarTraceInsp(getChartPane());
+        return _polarTraceInsp = insp;
     }
 
     /**
-     * Returns the ContourStyleInsp.
+     * Returns the ContourTraceInsp.
      */
-    private ContourStyleInsp getContourStyleInsp()
+    private ContourTraceInsp getContourTraceInsp()
     {
-        if (_contourStyleInsp != null) return _contourStyleInsp;
-        ContourStyleInsp insp = new ContourStyleInsp(getChartPane());
-        return _contourStyleInsp = insp;
+        if (_contourTraceInsp != null) return _contourTraceInsp;
+        ContourTraceInsp insp = new ContourTraceInsp(getChartPane());
+        return _contourTraceInsp = insp;
     }
 
     /**

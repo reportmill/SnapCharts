@@ -55,7 +55,7 @@ public class ContourTraceView extends TraceView {
 
         // Handle Data changes
         Object src = aPC.getSource();
-        if (src== getTrace() || src instanceof Axis || src instanceof TraceStyle || src instanceof ContourAxis) {
+        if (src== getTrace() || src instanceof Axis || src instanceof ContourAxis) {
             _contourPainter.clearContoursAll();
         }
     }

@@ -10,7 +10,7 @@ import snapcharts.view.TraceView;
 /**
  * This class holds a set of Shape/PathIter classes to paint TraceView line and area.
  */
-public class XYTraceViewShapes {
+public class ScatterTraceViewShapes {
 
     /**
      * Returns the shape to draw data line, with option to include all (otherwise, it represents visible only).

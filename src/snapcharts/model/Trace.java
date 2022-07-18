@@ -9,19 +9,18 @@ import snap.props.PropChange;
 import snap.props.PropSet;
 import snap.util.*;
 import snapcharts.data.*;
+import snapcharts.doc.ChartArchiver;
+
 import java.util.*;
 
 /**
  * This class represents a 'rendered' or 'painted' dataset. It contains the original data (DataSet) and paint properties
  * as well as expressions, filters and more to provide processed data.
  */
-public class Trace extends ChartPart {
+public abstract class Trace extends ChartPart {
     
     // The index in parent Content
     protected int  _index;
-
-    // The type of trace
-    public TraceType  _type;
 
     // Whether to show line
     private boolean  _showLine;
@@ -46,9 +45,6 @@ public class Trace extends ChartPart {
 
     // The TagStyle
     private TagStyle  _tagStyle = new TagStyle(this);
-
-    // The TraceStyleHpr
-    private TraceStyleHpr  _traceStyleHpr;
 
     // The Y Axis type
     private AxisType  _axisTypeY = AxisType.Y;
@@ -89,9 +85,6 @@ public class Trace extends ChartPart {
     // Constant for how Trace area should be filled
     public enum FillMode { None, ToZeroY, ToNextY, ToZeroX, ToNextX, ToSelf, ToNext }
 
-    // Property for Type
-    public static final String Type_Prop = "Type";
-
     // Basic properties
     public static final String ShowLine_Prop = "ShowLine";
     public static final String ShowArea_Prop = "ShowArea";
@@ -115,17 +108,15 @@ public class Trace extends ChartPart {
     public static final String DataSet_Prop = "DataSet";
     public static final String DataType_Prop = DataSet.DataType_Prop;
 
-    // Properties for nested Point/Tag/Trace style objects
+    // Properties for nested PointStyle/TagStyle objects
     public static final String PointStyle_Prop = "PointStyle";
     public static final String TagStyle_Prop = "TagStyle";
-    public static final String TraceStyle_Prop = "TraceStyle";
 
     // Questionable properties
     public static final String Point_Prop = "Points";
     public static final String ThetaUnit_Prop = "ThetaUnit";
 
     // Constants for defaults
-    public static final TraceType DEFAULT_TYPE = TraceType.Scatter;
     public static final boolean DEFAULT_SHOW_LINE = true;
     public static final int DEFAULT_LINE_WIDTH = 1;
     public static final PointJoin DEFAULT_POINT_JOIN = PointJoin.Line;
@@ -143,7 +134,6 @@ public class Trace extends ChartPart {
         super();
 
         // Set defaults
-        _type = DEFAULT_TYPE;
         _showLine = DEFAULT_SHOW_LINE;
         _lineWidth = DEFAULT_LINE_WIDTH;
         _pointJoin = DEFAULT_POINT_JOIN;
@@ -159,9 +149,6 @@ public class Trace extends ChartPart {
         _tagStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
         _pointStyle._parent = this;
         _pointStyle.addPropChangeListener(pc -> childChartPartDidPropChange(pc));
-
-        // Configure TraceStyle via TraceStyleHpr
-        _traceStyleHpr = new TraceStyleHpr(this);
     }
 
     /**
@@ -172,16 +159,7 @@ public class Trace extends ChartPart {
     /**
      * Returns the TraceType.
      */
-    public TraceType getType()  { return _type; }
-
-    /**
-     * Sets the TraceType.
-     */
-    public void setType(TraceType aType)
-    {
-        if (aType == _type) return;
-        firePropChange(Type_Prop, _type, _type = aType);
-    }
+    public abstract TraceType getType();
 
     /**
      * Returns whether to show line for Trace.
@@ -288,23 +266,6 @@ public class Trace extends ChartPart {
      * Returns the TagStyle for this Trace.
      */
     public TagStyle getTagStyle()  { return _tagStyle; }
-
-    /**
-     * Returns the TraceStyle for this trace (and TraceType).
-     */
-    public TraceStyle getTraceStyle()
-    {
-        TraceType traceType = getType();
-        return _traceStyleHpr.getTraceStyleForTraceType(traceType);
-    }
-
-    /**
-     * Returns the TraceStyle for given TraceType.
-     */
-    public TraceStyle getTraceStyleForTraceType(TraceType traceType)
-    {
-        return _traceStyleHpr.getTraceStyleForTraceType(traceType);
-    }
 
     /**
      * Returns the color map color at index.
@@ -726,6 +687,17 @@ public class Trace extends ChartPart {
     }
 
     /**
+     * Returns a copy for given class.
+     */
+    public <T> T copyForTraceClass(Class<? extends Trace> aClass)
+    {
+        ChartArchiver chartArchiver = new ChartArchiver();
+        chartArchiver.getClassMap().put(getClass().getSimpleName(), aClass);
+        Trace copy = chartArchiver.copy(this);
+        return (T) copy;
+    }
+
+    /**
      * Standard toStringProps implementation.
      */
     @Override
@@ -760,10 +732,6 @@ public class Trace extends ChartPart {
         // Override LineWidth
         aPropSet.getPropForName(LineWidth_Prop).setDefaultValue(DEFAULT_LINE_WIDTH);
 
-        // Type (set PropChanger=true since type changes TraceStyle
-        Prop typeProp = aPropSet.addPropNamed(Type_Prop, TraceType.class, DEFAULT_TYPE);
-        typeProp.setPropChanger(true);
-
         // Handle ShowLine, ShowArea, ShowPoints, ShowTags
         aPropSet.addPropNamed(ShowLine_Prop, boolean.class, DEFAULT_SHOW_LINE);
         aPropSet.addPropNamed(ShowArea_Prop, boolean.class, false);
@@ -785,13 +753,11 @@ public class Trace extends ChartPart {
         aPropSet.addPropNamed(ShowLegendEntry_Prop, String.class, DEFAULT_SHOW_LEGEND_ENTRY);
         aPropSet.addPropNamed(Disabled_Prop, boolean.class, false);
 
-        // PointStyle_Prop, TagStyle_Prop, TraceStyle_Prop (Make Preexisting so unarchival uses default instance)
+        // PointStyle_Prop, TagStyle_Prop (Make Preexisting so unarchival uses default instance)
         Prop pointStyleProp = aPropSet.addPropNamed(PointStyle_Prop, PointStyle.class, EMPTY_OBJECT);
         pointStyleProp.setPreexisting(true);
         Prop tagStyleProp = aPropSet.addPropNamed(TagStyle_Prop, TagStyle.class, EMPTY_OBJECT);
         tagStyleProp.setPreexisting(true);
-        Prop traceStyleProp = aPropSet.addPropNamed(TraceStyle_Prop, TraceStyle.class, EMPTY_OBJECT);
-        traceStyleProp.setPreexisting(true);
 
         // DataSet
         aPropSet.addPropNamed(DataSet_Prop, DataSet.class, EMPTY_OBJECT);
@@ -805,9 +771,6 @@ public class Trace extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
-
-            // Type
-            case Type_Prop: return getType();
 
             // ShowLine, ShowArea, ShowPoints, ShowTags
             case ShowLine_Prop: return isShowLine();
@@ -830,10 +793,9 @@ public class Trace extends ChartPart {
             case ShowLegendEntry_Prop: return isShowLegendEntry();
             case Disabled_Prop: return isDisabled();
 
-            // PointStyle_Prop, TagStyle_Prop, TraceStyle_Prop
+            // PointStyle_Prop, TagStyle_Prop
             case PointStyle_Prop: return getPointStyle();
             case TagStyle_Prop: return getTagStyle();
-            case TraceStyle_Prop: return getTraceStyle();
 
             // DataSet
             case DataSet_Prop: return getDataSet();
@@ -851,9 +813,6 @@ public class Trace extends ChartPart {
     {
         // Handle properties
         switch (aPropName) {
-
-            // Type
-            case Type_Prop: setType((TraceType) aValue); break;
 
             // ShowLine, ShowArea, ShowPoints, ShowTags
             case ShowLine_Prop: setShowLine(SnapUtils.boolValue(aValue)); break;
@@ -885,7 +844,7 @@ public class Trace extends ChartPart {
     }
 
     /**
-     * Override to define TraceStyle defaults
+     * Override to provide dynamic defaults for LineColor, Fill
      */
     @Override
     public Object getPropDefault(String aPropName)
@@ -899,5 +858,14 @@ public class Trace extends ChartPart {
             // Do normal version
             default: return super.getPropDefault(aPropName);
         }
+    }
+
+    /**
+     * Creates a new Trace for given type.
+     */
+    public static <T extends Trace> T newTraceForClass(Class<T> aClass)
+    {
+        try { return aClass.newInstance(); }
+        catch (Exception e) { throw new RuntimeException(e); }
     }
 }

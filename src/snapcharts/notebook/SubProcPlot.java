@@ -7,6 +7,7 @@ import snapcharts.data.DataSet;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
+import snapcharts.modelx.Contour3DTrace;
 
 /**
  * This class processes plot requests.
@@ -56,9 +57,8 @@ public class SubProcPlot extends SubProc {
             traceType = TraceType.Contour;
 
         // Create Trace for DataSet
-        Trace trace = new Trace();
+        Trace trace = Trace.newTraceForClass(traceType.getTraceClass());
         trace.setDataSet(dataSet);
-        trace.setType(traceType);
 
         // Create Chart with Trace
         Chart chart = new Chart();
@@ -82,9 +82,8 @@ public class SubProcPlot extends SubProc {
         DataSet dataSet = _dataProcessor.dataSetOrSample3D(anObj, aKeyChain);
 
         // Create Trace for DataSet
-        Trace trace = new Trace();
+        Trace trace = new Contour3DTrace();
         trace.setDataSet(dataSet);
-        trace.setType(TraceType.Contour3D);
 
         // Create Chart with Trace
         Chart chart = new Chart();

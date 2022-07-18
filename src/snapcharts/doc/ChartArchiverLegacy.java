@@ -7,6 +7,7 @@ import snap.util.XMLElement;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
+import snapcharts.modelx.ScatterTrace;
 import snapcharts.util.ChartUtils;
 
 /**
@@ -150,17 +151,22 @@ public class ChartArchiverLegacy extends ChartArchiver {
             chartTypeStr = "Scatter";
         }
 
-        // Get DefaultTraceType for ChartType
+        // Get TraceType for ChartType
         chartTypeStr = chartTypeStr.replace("_", "");
         TraceType traceType = TraceType.getTypeForName(chartTypeStr);
+        Class<? extends Trace> traceClass = traceType != null ? traceType.getTraceClass() : ScatterTrace.class;
+        if (traceType == null)
+            System.err.println("ChartArchiverLegacy.processLegacyChartType: illegal name: " + chartTypeStr);
 
         // Add DefaultTraceType to all Chart.Content.Traces.[Trace] elements
         XMLElement contentXML = chartXML.getElement("Content");
         XMLElement tracesXML = contentXML.getElement("Traces");
         XMLElement[] traceXMLs = tracesXML.getElements("Trace").toArray(new XMLElement[0]);
         for (XMLElement traceXML : traceXMLs) {
-            XMLAttribute typeAttr = new XMLAttribute("Type", traceType.getName());
-            traceXML.addAttribute(typeAttr, 1);
+            if (traceClass != ScatterTrace.class) {
+                XMLAttribute classAttr = new XMLAttribute("Class", traceClass.getSimpleName());
+                traceXML.addAttribute(classAttr, 0);
+            }
         }
 
         // Handle Legacy ChartType is ScatterType: Configure Trace ShowLine/Area/Points/Stacked for ScatterType

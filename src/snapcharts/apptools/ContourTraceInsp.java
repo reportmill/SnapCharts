@@ -3,18 +3,17 @@ import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Trace;
-import snapcharts.model.TraceStyle;
-import snapcharts.modelx.ContourStyle;
+import snapcharts.modelx.ContourTrace;
 
 /**
- * A class to manage UI to edit a ContourStyle.
+ * A class to manage UI to edit a ContourTrace.
  */
-public class ContourStyleInsp extends ChartPartInsp {
+public class ContourTraceInsp extends ChartPartInsp {
 
     /**
      * Constructor.
      */
-    public ContourStyleInsp(ChartPane aChartPane)
+    public ContourTraceInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }
@@ -29,7 +28,7 @@ public class ContourStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getContourStyle(); }
+    public ChartPart getChartPart()  { return getContourTrace(); }
 
     /**
      * Returns the Trace.
@@ -41,13 +40,12 @@ public class ContourStyleInsp extends ChartPartInsp {
     }
 
     /**
-     * Returns the TraceStyle.
+     * Returns the ContourTrace.
      */
-    public ContourStyle getContourStyle()
+    public ContourTrace getContourTrace()
     {
         Trace trace = getTrace();
-        TraceStyle traceStyle = trace != null ? trace.getTraceStyle() : null;
-        return traceStyle instanceof ContourStyle ? (ContourStyle) traceStyle : null;
+        return trace instanceof ContourTrace ? (ContourTrace) trace : null;
     }
 
     /**
@@ -55,12 +53,12 @@ public class ContourStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get ContourStyle
-        ContourStyle contourStyle = getContourStyle(); if (contourStyle == null) return;
+        // Get ContourTrace
+        ContourTrace contourTrace = getContourTrace(); if (contourTrace == null) return;
 
         // Reset ShowLinesCheckBox, ShowMeshCheckBox
-        setViewValue("ShowLinesCheckBox", contourStyle.isShowLines());
-        setViewValue("ShowMeshCheckBox", contourStyle.isShowMesh());
+        setViewValue("ShowLinesCheckBox", contourTrace.isShowLines());
+        setViewValue("ShowMeshCheckBox", contourTrace.isShowMesh());
         setViewEnabled("ReverseScaleCheckBox", false);
     }
 
@@ -69,13 +67,13 @@ public class ContourStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get ContourStyle
-        ContourStyle contourStyle = getContourStyle(); if (contourStyle == null) return;
+        // Get ContourTrace
+        ContourTrace contourTrace = getContourTrace(); if (contourTrace == null) return;
 
         // Handle ShowLinesCheckBox, ShowMeshCheckBox
         if (anEvent.equals("ShowLinesCheckBox"))
-            contourStyle.setShowLines(anEvent.getBoolValue());
+            contourTrace.setShowLines(anEvent.getBoolValue());
         if (anEvent.equals("ShowMeshCheckBox"))
-            contourStyle.setShowMesh(anEvent.getBoolValue());
+            contourTrace.setShowMesh(anEvent.getBoolValue());
     }
 }

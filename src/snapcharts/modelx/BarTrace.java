@@ -2,12 +2,13 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.modelx;
-import snapcharts.model.TraceStyle;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceType;
 
 /**
- * A TraceStyle subclass for Bar chart properties.
+ * A Trace subclass for Bar chart properties.
  */
-public class BarStyle extends TraceStyle {
+public class BarTrace extends Trace {
 
     // The ratio of a section used to pad a group of bars
     double             _groupPad = .2;
@@ -20,6 +21,20 @@ public class BarStyle extends TraceStyle {
 
     // The number of series and values to chart
     int                _seriesCount, _pointCount;
+
+    /**
+     * Constructor.
+     */
+    public BarTrace()
+    {
+        super();
+    }
+
+    /**
+     * Returns Type.
+     */
+    @Override
+    public TraceType getType()  { return TraceType.Bar; }
 
     /**
      * Returns the group padding.

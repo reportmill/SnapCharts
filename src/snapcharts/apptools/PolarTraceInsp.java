@@ -6,18 +6,17 @@ import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
 import snapcharts.model.ChartPart;
 import snapcharts.model.Trace;
-import snapcharts.model.TraceStyle;
-import snapcharts.modelx.PolarStyle;
+import snapcharts.modelx.PolarTrace;
 
 /**
- * A class to manage UI to edit a ContourStyle.
+ * A class to manage UI to edit a PolarTrace.
  */
-public class PolarStyleInsp extends ChartPartInsp {
+public class PolarTraceInsp extends ChartPartInsp {
 
     /**
      * Constructor.
      */
-    public PolarStyleInsp(ChartPane aChartPane)
+    public PolarTraceInsp(ChartPane aChartPane)
     {
         super(aChartPane);
     }
@@ -32,7 +31,7 @@ public class PolarStyleInsp extends ChartPartInsp {
      * Returns the ChartPart.
      */
     @Override
-    public ChartPart getChartPart()  { return getPolarStyle(); }
+    public ChartPart getChartPart()  { return getPolarTrace(); }
 
     /**
      * Returns the Trace.
@@ -44,13 +43,12 @@ public class PolarStyleInsp extends ChartPartInsp {
     }
 
     /**
-     * Returns the PolarStyle.
+     * Returns the PolarTrace.
      */
-    public PolarStyle getPolarStyle()
+    public PolarTrace getPolarTrace()
     {
         Trace trace = getTrace();
-        TraceStyle traceStyle = trace != null ? trace.getTraceStyle() : null;
-        return traceStyle instanceof PolarStyle ? (PolarStyle) traceStyle : null;
+        return trace instanceof PolarTrace ? (PolarTrace) trace : null;
     }
 
     /**
@@ -58,11 +56,11 @@ public class PolarStyleInsp extends ChartPartInsp {
      */
     protected void resetUI()
     {
-        // Get PolarStyle
-        PolarStyle polarStyle = getPolarStyle(); if (polarStyle == null) return;
+        // Get PolarTrace
+        PolarTrace polarTrace = getPolarTrace(); if (polarTrace == null) return;
 
         // Reset ThetaUnitComboBox
-        //setViewValue("ThetaUnitComboBox", polarStyle.getThetaUnit());
+        //setViewValue("ThetaUnitComboBox", polarTrace.getThetaUnit());
     }
 
     /**
@@ -70,11 +68,11 @@ public class PolarStyleInsp extends ChartPartInsp {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Get PolarStyle
-        PolarStyle polarStyle = getPolarStyle(); if (polarStyle == null) return;
+        // Get PolarTrace
+        PolarTrace polarTrace = getPolarTrace(); if (polarTrace == null) return;
 
         // Handle ThetaUnitComboBox
         //if (anEvent.equals("ThetaUnitComboBox"))
-        //    polarStyle.setThetaUnit((PolarStyle.ThetaUnit) anEvent.getSelItem());
+        //    polarTrace.setThetaUnit((PolarTrace.ThetaUnit) anEvent.getSelItem());
     }
 }

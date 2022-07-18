@@ -13,7 +13,7 @@ import snapcharts.view.ContentView;
 /**
  * A TraceView subclass to display TraceType Scatter.
  */
-public class XYTraceView extends TraceView {
+public class ScatterTraceView extends TraceView {
 
     // The TailShape
     private Shape  _tailShape;
@@ -31,7 +31,7 @@ public class XYTraceView extends TraceView {
     /**
      * Constructor.
      */
-    public XYTraceView(ChartHelper aChartHelper, Trace aTrace)
+    public ScatterTraceView(ChartHelper aChartHelper, Trace aTrace)
     {
         super(aChartHelper, aTrace);
     }
@@ -41,7 +41,7 @@ public class XYTraceView extends TraceView {
      */
     public Shape getTraceLineShape()
     {
-        return XYTraceViewShapes.getLineShape(this, false);
+        return ScatterTraceViewShapes.getLineShape(this, false);
     }
 
     /**
@@ -49,7 +49,7 @@ public class XYTraceView extends TraceView {
      */
     public Shape getTraceAreaShape()
     {
-        return XYTraceViewShapes.getAreaShape(this);
+        return ScatterTraceViewShapes.getAreaShape(this);
     }
 
     /**
@@ -58,7 +58,7 @@ public class XYTraceView extends TraceView {
     public double getTraceLineShapeArcLength()
     {
         if (_dataLineArcLength > 0) return _dataLineArcLength;
-        Shape dataLineShape = XYTraceViewShapes.getLineShape(this, true);
+        Shape dataLineShape = ScatterTraceViewShapes.getLineShape(this, true);
         double arcLength = dataLineShape.getArcLength();
         return _dataLineArcLength = arcLength;
     }

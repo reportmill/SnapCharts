@@ -233,9 +233,8 @@ public class DocTextReader {
         // Handle keys
         switch (key) {
             case "Name":
-                _trace = new Trace();
+                _trace = Trace.newTraceForClass(_traceType.getTraceClass());
                 _trace.setName(aVal);
-                _trace.setType(_traceType);
                 _chart.addTrace(_trace);
                 break;
 

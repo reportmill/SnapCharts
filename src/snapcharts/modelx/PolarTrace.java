@@ -3,20 +3,27 @@
  */
 package snapcharts.modelx;
 import snap.props.PropSet;
-import snapcharts.model.TraceStyle;
+import snapcharts.model.Trace;
+import snapcharts.model.TraceType;
 
 /**
- * A TraceStyle subclass for Polar chart properties.
+ * A Trace subclass for Polar chart properties.
  */
-public class PolarStyle extends TraceStyle {
+public class PolarTrace extends Trace {
 
     /**
      * Constructor.
      */
-    public PolarStyle()
+    public PolarTrace()
     {
         super();
     }
+
+    /**
+     * Returns Type.
+     */
+    @Override
+    public TraceType getType()  { return TraceType.Polar; }
 
     /**
      * Override to register props.
