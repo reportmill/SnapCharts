@@ -232,7 +232,7 @@ public class ChartArchiver extends PropArchiverXML {
             int dataIndex = getDataChannelIndexForPropName(aPropName);
             if (dataIndex >= 0) {
                 if (aValue instanceof double[])
-                    _dataArrays[dataIndex] = new NumberArray((double[]) aValue);
+                    _dataArrays[dataIndex] = new DoubleArray((double[]) aValue);
                 else if (aValue instanceof String[])
                     _dataArrays[dataIndex] = new StringArray((String[]) aValue);
                 else System.err.println("DataSetProxy.setPropValue: Error setting data: " + aPropName);

@@ -106,7 +106,7 @@ public abstract class DataArray implements Cloneable {
     {
         // Handle double
         if (anArray instanceof double[])
-            return new NumberArray((double[]) anArray);
+            return new DoubleArray((double[]) anArray);
 
         // Handle String
         if (anArray instanceof String[])
@@ -155,7 +155,7 @@ public abstract class DataArray implements Cloneable {
             switch (chan) {
                 case X:
                 case Y:
-                case Z: dataArrays[i] = new NumberArray(new double[0]); break;
+                case Z: dataArrays[i] = new DoubleArray(new double[0]); break;
                 case C: dataArrays[i] = new StringArray(new String[0]); break;
                 default: break;
             }

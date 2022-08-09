@@ -46,9 +46,9 @@ public class DataSetXYZZ extends DataSet {
         setDataType(DataType.XYZZ);
 
         // Create/set DataArrays
-        _dataX = new NumberArray(dataX);
-        _dataY = new NumberArray(dataY);
-        _dataZ = new NumberArray(dataZ);
+        _dataX = new DoubleArray(dataX);
+        _dataY = new DoubleArray(dataY);
+        _dataZ = new DoubleArray(dataZ);
         _dataArrays = new DataArray[] { _dataX, _dataY, _dataZ };
     }
 

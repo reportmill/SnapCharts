@@ -2,14 +2,13 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.util.ArrayUtils;
 import snapcharts.util.MinMax;
-
-import java.util.Arrays;
 
 /**
  * This DataArray subclass uses doubles.
  */
-public class NumberArray extends DataArray {
+public abstract class NumberArray extends DataArray {
 
     // The units
     private DataUnit  _unit;
@@ -28,16 +27,7 @@ public class NumberArray extends DataArray {
      */
     public NumberArray()
     {
-        _doubleArray = new double[10];
-    }
-
-    /**
-     * Constructor.
-     */
-    public NumberArray(double[] doubleArray)
-    {
-        _doubleArray = doubleArray.clone();
-        _length = _doubleArray.length;
+        super();
     }
 
     /**
@@ -68,10 +58,6 @@ public class NumberArray extends DataArray {
     @Override
     public void setLength(int aValue)
     {
-        // Expand components array if needed
-        if (aValue >= _length)
-            _doubleArray = Arrays.copyOf(_doubleArray, aValue);
-
         // Set length
         _length = aValue;
 
@@ -82,21 +68,17 @@ public class NumberArray extends DataArray {
     /**
      * Returns the double value at index.
      */
-    public final double getDouble(int anIndex)
+    public double getDouble(int anIndex)
     {
-        return _doubleArray[anIndex];
+        return getFloat(anIndex);
     }
 
     /**
      * Sets the double value at index.
      */
-    public final void setDouble(double aValue, int anIndex)
+    public void setDouble(double aValue, int anIndex)
     {
-        // Set value
-        _doubleArray[anIndex] = aValue;
-
-        // Clear caches
-        clearCaches();
+        setFloat(anIndex, anIndex);
     }
 
     /**
@@ -110,23 +92,7 @@ public class NumberArray extends DataArray {
     /**
      * Adds the double value at index.
      */
-    public void addDouble(double aValue, int anIndex)
-    {
-        // Expand components array if needed
-        if (_length == _doubleArray.length)
-            _doubleArray = Arrays.copyOf(_doubleArray, Math.max(_doubleArray.length * 2, 20));
-
-        // If index is inside current length, shift existing elements over
-        if (anIndex < _length)
-            System.arraycopy(_doubleArray, anIndex, _doubleArray, anIndex + 1, _length - anIndex);
-
-        // Set value and increment length
-        _doubleArray[anIndex] = aValue;
-        _length++;
-
-        // Clear caches
-        clearCaches();
-    }
+    public abstract void addDouble(double aValue, int anIndex);
 
     /**
      * Returns the float value at index.
@@ -145,60 +111,35 @@ public class NumberArray extends DataArray {
     }
 
     /**
-     * Adds the float value at end.
-     */
-    public void addFloat(float aValue)
-    {
-        addFloat(aValue, getLength());
-    }
-
-    /**
-     * Adds the float value at index.
-     */
-    public void addFloat(float aValue, int anIndex)
-    {
-        addDouble(aValue, anIndex);
-    }
-
-    /**
      * Removes the value at index.
      */
-    public void removeIndex(int anIndex)
-    {
-        // Shift remaining elements in
-        System.arraycopy(_doubleArray, anIndex + 1, _doubleArray, anIndex, _length - anIndex - 1);
-        _length--;
-
-        // Clear caches
-        clearCaches();
-    }
+    public abstract void removeIndex(int anIndex);
 
     /**
      * Returns the simple double array (trimmed to length).
      */
-    public double[] getDoubleArray()
+    public double[] doubleArray()
     {
-        if (_length != _doubleArray.length)
-            _doubleArray = Arrays.copyOf(_doubleArray, _length);
-        return _doubleArray;
+        // If already set, just return
+        if (_doubleArray != null) return _doubleArray;
+
+        // Create, set, return
+        float[] floatArray = floatArray();
+        double[] doubleArray = ArrayUtils.doubleArray(floatArray);
+        return _doubleArray = doubleArray;
     }
 
     /**
      * Returns the float array.
      */
-    public float[] getFloatArray()
+    public float[] floatArray()
     {
         // If already set, just return
         if (_floatArray != null) return _floatArray;
 
-        // Create/load array
-        double[] doubleArray = getDoubleArray();
-        int length = doubleArray.length;
-        float[] floatArray = new float[length];
-        for (int i = 0; i < length; i++)
-            floatArray[i] = (float) doubleArray[i];
-
-        // Set and return
+        // Create, set, return
+        double[] doubleArray = doubleArray();
+        float[] floatArray = ArrayUtils.floatArray(doubleArray);
         return _floatArray = floatArray;
     }
 
@@ -229,6 +170,15 @@ public class NumberArray extends DataArray {
     }
 
     /**
+     * Called to clear caches.
+     */
+    public void clearCaches()
+    {
+        super.clearCaches();
+        _minMax = null;
+    }
+
+    /**
      * Override to return as this subclass.
      */
     @Override
@@ -237,22 +187,8 @@ public class NumberArray extends DataArray {
         // Do normal version
         NumberArray clone = (NumberArray) super.clone();
 
-        // Clone arrays
-        if (_doubleArray != null)
-            clone._doubleArray = _doubleArray.clone();
-
         // Return
         return clone;
-    }
-
-    /**
-     * Called to clear caches.
-     */
-    public void clearCaches()
-    {
-        super.clearCaches();
-        _floatArray = null;
-        _minMax = null;
     }
 
     /**

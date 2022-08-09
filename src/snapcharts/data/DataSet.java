@@ -325,7 +325,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
     public double[] getDataX()
     {
         NumberArray dataArray = getDataArrayX();
-        return dataArray != null ? dataArray.getDoubleArray() : null;
+        return dataArray != null ? dataArray.doubleArray() : null;
     }
 
     /**
@@ -334,7 +334,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
     public double[] getDataY()
     {
         NumberArray dataArray = getDataArrayY();
-        return dataArray != null ? dataArray.getDoubleArray() : null;
+        return dataArray != null ? dataArray.doubleArray() : null;
     }
 
     /**
@@ -343,7 +343,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
     public double[] getDataZ()
     {
         NumberArray dataArray = getDataArrayZ();
-        return dataArray != null ? dataArray.getDoubleArray() : null;
+        return dataArray != null ? dataArray.doubleArray() : null;
     }
 
     /**
@@ -542,7 +542,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
         // Get DataArray for DataChan and return real array
         DataArray dataArray = getDataArrayForChannel(dataChan);
         if (dataArray instanceof NumberArray)
-            return ((NumberArray) dataArray).getDoubleArray();
+            return ((NumberArray) dataArray).doubleArray();
         if (dataArray instanceof StringArray)
             return ((StringArray) dataArray).getStringArray();
 
