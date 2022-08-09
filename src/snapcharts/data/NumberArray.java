@@ -3,7 +3,6 @@
  */
 package snapcharts.data;
 import snap.util.ArrayUtils;
-import snapcharts.util.MinMax;
 
 /**
  * This DataArray subclass uses doubles.
@@ -53,19 +52,6 @@ public abstract class NumberArray extends DataArray {
     }
 
     /**
-     * Sets the length.
-     */
-    @Override
-    public void setLength(int aValue)
-    {
-        // Set length
-        _length = aValue;
-
-        // Clear caches
-        clearCaches();
-    }
-
-    /**
      * Returns the double value at index.
      */
     public double getDouble(int anIndex)
@@ -86,7 +72,7 @@ public abstract class NumberArray extends DataArray {
      */
     public void addDouble(double aValue)
     {
-        addDouble(aValue, getLength());
+        addDouble(aValue, length());
     }
 
     /**
@@ -152,7 +138,7 @@ public abstract class NumberArray extends DataArray {
         if (_minMax != null) return _minMax;
 
         // If no points, just return 0,0
-        int length = getLength();
+        int length = length();
         if (length == 0)
             return _minMax = new MinMax(0, 0);
 

@@ -7,7 +7,6 @@ import snap.props.PropObject;
 import snap.props.PropSet;
 import snap.util.ArrayUtils;
 import snap.util.SnapUtils;
-import snapcharts.util.MinMax;
 import java.util.Objects;
 
 /**
@@ -112,9 +111,9 @@ public abstract class DataSet extends PropObject implements Cloneable {
         }
 
         // Set PointCount
-        _pointCount = _dataZ != null ? _dataZ.getLength() :
-                _dataY != null ? _dataY.getLength() :
-                _dataX != null ? _dataX.getLength() : 0;
+        _pointCount = _dataZ != null ? _dataZ.length() :
+                _dataY != null ? _dataY.length() :
+                _dataX != null ? _dataX.length() : 0;
     }
 
     /**
@@ -352,7 +351,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
     public String[] getDataC()
     {
         StringArray dataArray = getDataArrayC();
-        return dataArray != null ? dataArray.getStringArray() : null;
+        return dataArray != null ? dataArray.stringArray() : null;
     }
 
     /**
@@ -544,7 +543,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
         if (dataArray instanceof NumberArray)
             return ((NumberArray) dataArray).doubleArray();
         if (dataArray instanceof StringArray)
-            return ((StringArray) dataArray).getStringArray();
+            return ((StringArray) dataArray).stringArray();
 
         // Complain and return for unknown type
         System.err.println("DataSet.getDataTypePropValue: Unknown DataType: " + dataChan);

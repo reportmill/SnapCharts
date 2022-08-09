@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.data;
 import java.util.Arrays;
 import java.util.function.DoublePredicate;

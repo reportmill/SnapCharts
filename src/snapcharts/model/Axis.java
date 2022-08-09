@@ -9,7 +9,7 @@ import snap.props.PropSet;
 import snap.text.NumberFormat;
 import snap.text.NumberFormat.ExpStyle;
 import snap.util.*;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import java.util.Objects;
 
 /**

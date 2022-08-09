@@ -55,18 +55,18 @@ public class DataSetXYZZ extends DataSet {
     /**
      * Returns the number of rows.
      */
-    public int getRowCount()  { return _dataY.getLength(); }
+    public int getRowCount()  { return _dataY.length(); }
 
     /**
      * Returns the number of columns.
      */
-    public int getColCount()  { return _dataX.getLength(); }
+    public int getColCount()  { return _dataX.length(); }
 
     /**
      * Returns the number of points.
      */
     @Override
-    public int getPointCount()  { return _dataZ.getLength(); }
+    public int getPointCount()  { return _dataZ.length(); }
 
     @Override
     public void setPointCount(int aValue)

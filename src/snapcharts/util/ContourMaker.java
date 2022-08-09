@@ -3,6 +3,7 @@ import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snapcharts.data.DataSet;
+import snapcharts.data.IntArray;
 import snapcharts.util.Mesh.Edge;
 import snapcharts.util.Mesh.Triangle;
 import java.util.*;
@@ -132,7 +133,7 @@ public class ContourMaker {
                 edgeN = _mesh.getNextPerimeterEdge(edgeN, aboveInd);
 
                 // There has to be a next perimeter edge, right?
-                if (edgeN==null) {
+                if (edgeN == null) {
                     edgeN = _mesh.getNextPerimeterEdge(edgeTemp, aboveInd);
                     System.err.println("Mesh.getPointsForOneSubpathForIsolines: Can't find next perimeter edge");
                     return points;
@@ -150,7 +151,7 @@ public class ContourMaker {
                 }
 
                 // Otherwise update nextIndex
-                aboveInd = edgeN.v1==aboveInd ? edgeN.v2 : edgeN.v1;
+                aboveInd = edgeN.v1 == aboveInd ? edgeN.v2 : edgeN.v1;
 
                 // Sanity check: There can't possibly be more path points than there are dataset points
                 if (points.size() > getPointCount()*2) {
@@ -175,7 +176,7 @@ public class ContourMaker {
      */
     private Isoline getIsolineForEdge(List<Isoline> theIsolines, Edge anEdge)
     {
-        for (int i=0, iMax=theIsolines.size(); i<iMax; i++) {
+        for (int i = 0, iMax = theIsolines.size(); i < iMax; i++) {
             Isoline iso = theIsolines.get(i);
             if (iso.edge1 == anEdge || iso.edge2 == anEdge)
                 return theIsolines.remove(i);
@@ -208,16 +209,18 @@ public class ContourMaker {
             }
 
             // All above or all below means no contour line here
-            if (below.size == 0 || above.size == 0)
+            int belowLen = below.length();
+            int aboveLen = above.length();
+            if (belowLen == 0 || aboveLen == 0)
                 continue;
 
             // Recategorize above/below arrays as minority/majority
-            IntArray minority = above.size < below.size ? above : below;
-            IntArray majority = above.size > below.size ? above : below;
+            IntArray minority = aboveLen < belowLen ? above : below;
+            IntArray majority = aboveLen > belowLen ? above : below;
 
             // Get edges hit by valZ
-            Edge edge1 = getEdge(minority.items[0], majority.items[0]);
-            Edge edge2 = getEdge(minority.items[0], majority.items[1]);
+            Edge edge1 = getEdge(minority.getInt(0), majority.getInt(0));
+            Edge edge2 = getEdge(minority.getInt(0), majority.getInt(1));
 
             // Get points at either end of contour lines
             Point point1 = edge1.getPointAlongEdgeForZ(valZ);

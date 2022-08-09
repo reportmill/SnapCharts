@@ -12,7 +12,7 @@ import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import snapcharts.viewx.*;
 import java.util.*;
 import java.util.function.Predicate;

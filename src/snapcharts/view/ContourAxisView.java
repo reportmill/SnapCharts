@@ -4,7 +4,7 @@ import snap.gfx.*;
 import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.model.*;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import snapcharts.viewx.Contour3DChartHelper;
 import snapcharts.viewx.ContourChartHelper;
 import snapcharts.viewx.ContourHelper;

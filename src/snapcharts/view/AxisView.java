@@ -10,7 +10,7 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

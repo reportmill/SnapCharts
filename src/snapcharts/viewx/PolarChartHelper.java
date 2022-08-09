@@ -8,7 +8,7 @@ import snap.util.MathUtils;
 import snap.props.PropChange;
 import snapcharts.data.*;
 import snapcharts.model.*;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import snapcharts.view.*;
 
 /**

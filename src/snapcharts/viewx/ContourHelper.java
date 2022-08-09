@@ -9,7 +9,7 @@ import snapcharts.model.Chart;
 import snapcharts.model.ContourAxis;
 import snapcharts.modelx.ContourTrace;
 import snapcharts.model.Trace;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import snapcharts.view.ChartHelper;
 
 /**

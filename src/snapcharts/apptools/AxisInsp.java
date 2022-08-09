@@ -7,7 +7,7 @@ import snap.view.View;
 import snap.view.ViewEvent;
 import snapcharts.model.*;
 import snapcharts.app.ChartPane;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartHelper;
 

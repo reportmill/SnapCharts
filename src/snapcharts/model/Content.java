@@ -11,7 +11,7 @@ import snap.props.PropChangeListener;
 import snap.props.PropSet;
 import snapcharts.data.DataSet;
 import snapcharts.modelx.ScatterTrace;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 
 /**
  * A class to manage a list of Traces.

@@ -10,32 +10,23 @@ import java.util.Arrays;
 public class StringArray extends DataArray {
 
     // The String array
-    protected java.lang.String[]  _stringArray;
+    protected String[]  _stringArray;
 
     /**
      * Constructor.
      */
     public StringArray()
     {
-        _stringArray = new java.lang.String[10];
+        _stringArray = new String[10];
     }
 
     /**
      * Constructor.
      */
-    public StringArray(java.lang.String[] stringArray)
+    public StringArray(String[] stringArray)
     {
         _stringArray = stringArray.clone();
         _length = _stringArray.length;
-    }
-
-    /**
-     * Returns the Object value at index.
-     */
-    @Override
-    public java.lang.String getValue(int anIndex)
-    {
-        return _stringArray[anIndex];
     }
 
     /**
@@ -48,17 +39,23 @@ public class StringArray extends DataArray {
         if (aValue >= _length)
             _stringArray = Arrays.copyOf(_stringArray, aValue);
 
-        // Set length
-        _length = aValue;
+        // Do normal version
+        super.setLength(aValue);
+    }
 
-        // Clear caches
-        clearCaches();
+    /**
+     * Returns the Object value at index.
+     */
+    @Override
+    public String getValue(int anIndex)
+    {
+        return _stringArray[anIndex];
     }
 
     /**
      * Returns the String value at index.
      */
-    public java.lang.String getString(int anIndex)
+    public String getString(int anIndex)
     {
         return _stringArray[anIndex];
     }
@@ -66,7 +63,7 @@ public class StringArray extends DataArray {
     /**
      * Sets the String value at index.
      */
-    public void setString(java.lang.String aValue, int anIndex)
+    public void setString(String aValue, int anIndex)
     {
         // Set value
         _stringArray[anIndex] = aValue;
@@ -78,15 +75,15 @@ public class StringArray extends DataArray {
     /**
      * Adds the String value at index.
      */
-    public void addString(java.lang.String aValue)
+    public void addString(String aValue)
     {
-        addString(aValue, getLength());
+        addString(aValue, length());
     }
 
     /**
      * Adds the String value at index.
      */
-    public void addString(java.lang.String aValue, int anIndex)
+    public void addString(String aValue, int anIndex)
     {
         // Expand components array if needed
         if (_length == _stringArray.length)
@@ -120,7 +117,7 @@ public class StringArray extends DataArray {
     /**
      * Returns the simple String array (trimmed to length).
      */
-    public java.lang.String[] getStringArray()
+    public String[] stringArray()
     {
         if (_length != _stringArray.length)
             _stringArray = Arrays.copyOf(_stringArray, _length);

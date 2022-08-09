@@ -7,7 +7,7 @@ import snap.gfx.Stroke;
 import snap.view.View;
 import snap.view.ViewEvent;
 import snapcharts.model.AxisType;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -12,7 +12,7 @@ import snapcharts.model.Trace;
 import snapcharts.data.DataSet;
 import snapcharts.model.Marker;
 import snapcharts.model.Marker.CoordSpace;
-import snapcharts.util.MinMax;
+import snapcharts.data.MinMax;
 
 /**
  * This ChartPartView subclass renders a Chart Marker.

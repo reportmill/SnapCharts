@@ -31,19 +31,26 @@ public abstract class DataArray implements Cloneable {
     }
 
     /**
-     * Returns the Object value at index.
-     */
-    public abstract Object getValue(int anIndex);
-
-    /**
      * Returns the length.
      */
-    public final int getLength()  { return _length; }
+    public final int length()  { return _length; }
 
     /**
      * Sets the length.
      */
-    public abstract void setLength(int aValue);
+    public void setLength(int aValue)
+    {
+        // Set length
+        _length = aValue;
+
+        // Clear caches
+        clearCaches();
+    }
+
+    /**
+     * Returns the Object value at index.
+     */
+    public abstract Object getValue(int anIndex);
 
     /**
      * Removes the float value at index.
@@ -93,7 +100,7 @@ public abstract class DataArray implements Cloneable {
             sb.append("Name=").append(getName()).append(", ");
 
         // Add Length
-        sb.append("Length=").append(getLength());
+        sb.append("Length=").append(length());
 
         // Return
         return sb.toString();
