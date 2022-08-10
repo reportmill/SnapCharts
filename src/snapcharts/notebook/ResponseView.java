@@ -43,6 +43,10 @@ public class ResponseView extends EntryView<Response> {
         Response response = (Response) anEntry;
         Object value = response.getValue();
 
+        // Handle View
+        if (value instanceof View)
+            return createContentViewBoxForView((View) value);
+
         // Handle ViewOwner
         if (value instanceof ViewOwner)
             return createContentViewForViewOwner((ViewOwner) value);

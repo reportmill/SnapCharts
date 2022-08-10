@@ -6,6 +6,7 @@ import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.Chart;
+import java.util.Arrays;
 
 /**
  * This class provides some utility methods to help processor.
@@ -17,9 +18,16 @@ public class ProcessorUtils {
      */
     public static String getStringForValue(Object aValue)
     {
+        // Handle null
+        if (aValue == null)
+            return "null";
+
         // Handle String
         if (aValue instanceof String)
             return (String) aValue;
+
+        if (aValue instanceof double[])
+            return Arrays.toString((double[]) aValue);
 
         // Handle Chart
         if (aValue instanceof Chart) {
@@ -37,9 +45,13 @@ public class ProcessorUtils {
             return chartStr;
         }
 
-        // Handle null
-        if (aValue == null)
-            return "null";
+        // Handle exception
+        if (aValue instanceof Exception) {
+            Exception exception = (Exception) aValue;
+            Throwable rootCause = exception;
+            while (rootCause.getCause() != null) rootCause = rootCause.getCause();
+            return rootCause.toString();
+        }
 
         // Handle anything
         return aValue.toString();

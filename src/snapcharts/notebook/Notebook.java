@@ -134,7 +134,7 @@ public class Notebook extends PropObject {
     public Processor getProcessor()
     {
         if (_processor != null) return _processor;
-        Processor processor = new Processor(this);
+        Processor processor = new JavaProcessor(this);
         return _processor = processor;
     }
 

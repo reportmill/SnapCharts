@@ -50,6 +50,11 @@ public class Processor implements KeyChain.FunctionHandler {
     public Notebook getNotebook()  { return _notebook; }
 
     /**
+     * Called when notebook change requires a full reset.
+     */
+    public void resetAll()  { }
+
+    /**
      * Returns the snippet out for a snippet.
      */
     public Response createResponseForRequest(Request aRequest)

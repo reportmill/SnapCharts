@@ -107,6 +107,17 @@ public class NotebookView extends ParentView {
         // Get list of requests
         List<Request> requests = _notebook.getRequests();
 
+        // Update request lineStart
+        int lineStart = 0;
+        for (Request request : requests) {
+            request.setLineStart(lineStart);
+            lineStart += request.getLineCount();
+        }
+
+        // Reset all
+        Processor processor = _notebook.getProcessor();
+        processor.resetAll();
+
         // Iterate over requests and add request/response views
         for (Request request : requests) {
 
