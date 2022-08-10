@@ -7,6 +7,7 @@ import snapcharts.data.*;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +21,32 @@ public class ChartsREPL {
      */
     public static DoubleArray doubleArray(Object ... theDoubles)
     {
+        // Handle DoubleArray
+        Object obj0 = theDoubles.length > 0 ? theDoubles[0] : null;
+        if (obj0 instanceof DoubleArray)
+            return ((DoubleArray) obj0);
+
+        // Handle Array (could be double[], int[], etc.)
+        if (obj0 != null && obj0.getClass().isArray()) {
+
+            // Get double[] using Array get()
+            int length = Array.getLength(obj0);
+            double[] doubleArray = new double[length];
+            for (int i = 0; i < length; i++) {
+                Object val = Array.get(obj0, i);
+                doubleArray[i] = SnapUtils.doubleValue(val);
+            }
+
+            // Return
+            return new DoubleArray(doubleArray);
+        }
+
+        // Iterate over values and convert to double
         double[] doubleArray = new double[theDoubles.length];
         for (int i = 0; i < theDoubles.length; i++)
             doubleArray[i] = SnapUtils.doubleValue(theDoubles[i]);
+
+        // Return
         return new DoubleArray(doubleArray);
     }
 
@@ -31,10 +55,18 @@ public class ChartsREPL {
      */
     public static DataArray dataArray(Object anObj)
     {
+        // Handle null
+        if (anObj == null) return null;
+
+        // Handle DataArray
         if (anObj instanceof DataArray)
             return (DataArray) anObj;
-        if (anObj instanceof double[])
-            return new DoubleArray((double[]) anObj);
+
+        // Handle array of anything
+        if (anObj.getClass().isArray())
+            return doubleArray(anObj);
+
+        // Return not handled
         return null;
     }
 
@@ -103,7 +135,27 @@ public class ChartsREPL {
     }
 
     /**
-     * Creates and returns a Chart.
+     * Creates a double array of min/max.
+     */
+    public static DoubleArray minMaxArray(double aMin, double aMax)
+    {
+        return DoubleArray.fromMinMax(aMin, aMax);
+    }
+
+    /**
+     * Creates a double array of min/max/count.
+     */
+    public static DoubleArray minMaxArray(double aMin, double aMax, int aCount)
+    {
+        return DoubleArray.fromMinMaxCount(aMin, aMax, aCount);
+    }
+
+    /**
+     * Conveniences.
      */
     public static Chart plot(Object ... theObjects)  { return chart(theObjects); }
+    public static DoubleArray doublearray(Object ... theDoubles)  { return doubleArray(theDoubles); }
+    public static DataArray dataarray(Object anObj)  { return dataArray(anObj); }
+    public static DataSet dataset(Object ... theObjects)  { return dataSet(theObjects); }
+    public static DoubleArray minmax(double aMin, double aMax)  { return minMaxArray(aMin, aMax); }
 }

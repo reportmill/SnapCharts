@@ -23,6 +23,8 @@ public class ResponseView extends EntryView<Response> {
 
     // Constants
     public static final ShadowEffect DEFAULT_SHADOW = new ShadowEffect(8, Color.GRAY3, 0, 0);
+    private static final Color DEFAULT_TEXTAREA_FILL = new Color(.95);
+    private static final Color DEFAULT_TEXTAREA_TEXTFILL = Color.GRAY4;
 
     /**
      * Constructor.
@@ -60,7 +62,8 @@ public class ResponseView extends EntryView<Response> {
             return createContentViewForDataSet((DataSet) value);
 
         // Do normal version
-        return super.createContentViewForEntry(anEntry);
+        View contentView = super.createContentViewForEntry(anEntry);
+        return createContentViewBoxForView(contentView);
     }
 
     /**
@@ -70,7 +73,9 @@ public class ResponseView extends EntryView<Response> {
     protected TextArea createTextArea()
     {
         TextArea textArea = super.createTextArea();
-        textArea.setFill(Color.GRAY9);
+        textArea.setFill(DEFAULT_TEXTAREA_FILL);
+        textArea.setTextFill(DEFAULT_TEXTAREA_TEXTFILL);
+        textArea.setPadding(6, 6, 6, 6);
         return textArea;
     }
 
