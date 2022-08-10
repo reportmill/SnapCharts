@@ -9,7 +9,7 @@
       <effect type="blur" radius="12" />
       <RichText>
         <font name="Arial Black" size="58" />
-        <pgraph align="center" line-space="0.65" />
+        <pgraph align="CENTER" line-space="0.65" />
         <char-spacing value="-1.9" />
         <string>SnapCharts</string>
       </RichText>
@@ -19,7 +19,7 @@
       <RichText>
         <font name="Arial Black" size="58" />
         <color value="#ff5a5a" />
-        <pgraph align="center" line-space="0.65" />
+        <pgraph align="CENTER" line-space="0.65" />
         <char-spacing value="-1.9" />
         <string>Snap</string>
         <color value="#bed0ff" />
@@ -94,7 +94,7 @@
       <effect type="blur" radius="5" />
       <RichText>
         <font name="Arial Bold" size="14" />
-        <pgraph align="center" />
+        <pgraph align="CENTER" />
         <string>An app for building charts</string>
       </RichText>
     </TextArea>
@@ -102,7 +102,7 @@
       <RichText>
         <font name="Arial Bold" size="14" />
         <color value="#ffffff" />
-        <pgraph align="center" />
+        <pgraph align="CENTER" />
         <string>An app for building charts</string>
       </RichText>
     </TextArea>
@@ -110,7 +110,7 @@
       <RichText>
         <font name="Arial Bold" size="10" />
         <color value="#ffffff" />
-        <pgraph align="center" />
+        <pgraph align="CENTER" />
         <string>JVM: XXX</string>
       </RichText>
     </TextArea>
@@ -118,7 +118,7 @@
       <RichText>
         <font name="Arial Bold" size="10" />
         <color value="#ffffff" />
-        <pgraph align="center" />
+        <pgraph align="CENTER" />
         <string>Build: XXX</string>
       </RichText>
     </TextArea>
