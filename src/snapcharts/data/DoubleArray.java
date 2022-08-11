@@ -2,6 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.util.SnapUtils;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.function.DoublePredicate;
 import java.util.function.DoubleUnaryOperator;
@@ -189,9 +191,43 @@ public class DoubleArray extends NumberArray {
     /**
      * Returns DoubleArray from raw double values or array.
      */
-    public static DoubleArray of(double ... theValues)
+    public static DoubleArray of(Object ... theDoubles)
     {
-        return new DoubleArray(theValues);
+        // Handle empty array
+        if (theDoubles.length == 0)
+            return new DoubleArray(new double[0]);
+
+        // Handle DoubleArray
+        Object obj0 = theDoubles[0];
+        if (obj0 instanceof DoubleArray)
+            return ((DoubleArray) obj0);
+
+        // Handle double[]
+        if (obj0 instanceof double[])
+            return new DoubleArray((double[]) obj0);
+
+        // Handle Array (could be int[], float[], etc.)
+        if (obj0.getClass().isArray()) {
+
+            // Get double[] using Array get()
+            int length = Array.getLength(obj0);
+            double[] doubleArray = new double[length];
+            for (int i = 0; i < length; i++) {
+                Object val = Array.get(obj0, i);
+                doubleArray[i] = SnapUtils.doubleValue(val);
+            }
+
+            // Return
+            return new DoubleArray(doubleArray);
+        }
+
+        // Iterate over values and convert to double
+        double[] doubleArray = new double[theDoubles.length];
+        for (int i = 0; i < theDoubles.length; i++)
+            doubleArray[i] = SnapUtils.doubleValue(theDoubles[i]);
+
+        // Return
+        return new DoubleArray(doubleArray);
     }
 
     /**

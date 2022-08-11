@@ -2,12 +2,10 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.util.SnapUtils;
 import snapcharts.data.*;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,33 +19,7 @@ public class ChartsREPL {
      */
     public static DoubleArray doubleArray(Object ... theDoubles)
     {
-        // Handle DoubleArray
-        Object obj0 = theDoubles.length > 0 ? theDoubles[0] : null;
-        if (obj0 instanceof DoubleArray)
-            return ((DoubleArray) obj0);
-
-        // Handle Array (could be double[], int[], etc.)
-        if (obj0 != null && obj0.getClass().isArray()) {
-
-            // Get double[] using Array get()
-            int length = Array.getLength(obj0);
-            double[] doubleArray = new double[length];
-            for (int i = 0; i < length; i++) {
-                Object val = Array.get(obj0, i);
-                doubleArray[i] = SnapUtils.doubleValue(val);
-            }
-
-            // Return
-            return new DoubleArray(doubleArray);
-        }
-
-        // Iterate over values and convert to double
-        double[] doubleArray = new double[theDoubles.length];
-        for (int i = 0; i < theDoubles.length; i++)
-            doubleArray[i] = SnapUtils.doubleValue(theDoubles[i]);
-
-        // Return
-        return new DoubleArray(doubleArray);
+        return DoubleArray.of(theDoubles);
     }
 
     /**

@@ -62,7 +62,7 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 mb.name("fromMinMax").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).save();
                 mb.name("fromMinMaxCount").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
                 mb.name("toArray").returnType(double[].class).save();
-                mb.name("of").paramTypes(double[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
+                mb.name("of").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
                 mb.name("filter").paramTypes(java.util.function.DoublePredicate.class).returnType(snapcharts.data.DoubleArray.class).save();
                 return mb.name("map").paramTypes(java.util.function.DoubleUnaryOperator.class).returnType(snapcharts.data.DoubleArray.class).buildAll();
 
@@ -95,6 +95,8 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 return snapcharts.data.DoubleArray.fromMinMaxCount(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
             case "snapcharts.data.DoubleArray.toArray()":
                 return ((snapcharts.data.DoubleArray) anObj).toArray();
+            case "snapcharts.data.DoubleArray.of(java.lang.Object[])":
+                return snapcharts.data.DoubleArray.of(theArgs);
             case "snapcharts.data.DoubleArray.filter(java.util.function.DoublePredicate)":
                 return ((snapcharts.data.DoubleArray) anObj).filter((java.util.function.DoublePredicate) theArgs[0]);
             case "snapcharts.data.DoubleArray.map(java.util.function.DoubleUnaryOperator)":

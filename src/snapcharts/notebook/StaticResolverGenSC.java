@@ -13,7 +13,8 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
     public static void main(String[] args)
     {
         _package = "snapcharts.notebook";
-        generateStaticResolverForClasses(_javaClasses, _whiteListStrings, _blackListStrings);
+        StaticResolverGenSC codeGen = new StaticResolverGenSC();
+        codeGen.generateStaticResolverForClasses(_javaClasses, _whiteListStrings, _blackListStrings);
 
         WebFile webFile = WebURL.getURL("/tmp/StaticResolver.java").createFile(false);
         webFile.setText(_sb.toString());
@@ -26,14 +27,16 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
             snapcharts.data.DoubleArray.class,
             snapcharts.data.DataArray.class,
             snapcharts.data.DataSet.class,
-            snapcharts.notebook.ChartsREPL.class
+            snapcharts.notebook.ChartsREPL.class,
+
+
     };
 
     // WhiteList
     protected static String[] _whiteListStrings = {
 
             // DoubleArray
-            "map", "filter", "doubleArray", "toArray", "fromMinMax", "fromMinMaxCount",
+            "map", "filter", "doubleArray", "toArray", "of", "fromMinMax", "fromMinMaxCount",
 
             // DataArray
 
