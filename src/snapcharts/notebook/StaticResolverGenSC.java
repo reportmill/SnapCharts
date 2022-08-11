@@ -28,15 +28,16 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
             snapcharts.data.DataArray.class,
             snapcharts.data.DataSet.class,
             snapcharts.notebook.ChartsREPL.class,
-
-
     };
 
     // WhiteList
     protected static String[] _whiteListStrings = {
 
+            // Object
+            "clone",
+
             // DoubleArray
-            "map", "filter", "doubleArray", "toArray", "of", "fromMinMax", "fromMinMaxCount",
+            "length", "map", "filter", "doubleArray", "toArray", "of", "fromMinMax", "fromMinMaxCount",
 
             // DataArray
 

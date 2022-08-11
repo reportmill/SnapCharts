@@ -42,20 +42,35 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 mb.name("doubleArray").returnType(double[].class).save();
                 mb.name("fromMinMax").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).save();
                 mb.name("fromMinMaxCount").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("clone").returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("clone").returnType(snapcharts.data.DataArray.class).save();
+                mb.name("clone").returnType(snapcharts.data.NumberArray.class).save();
+                mb.name("clone").returnType(java.lang.Object.class).save();
                 mb.name("toArray").returnType(double[].class).save();
                 mb.name("of").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
                 mb.name("filter").paramTypes(java.util.function.DoublePredicate.class).returnType(snapcharts.data.DoubleArray.class).save();
                 return mb.name("map").paramTypes(java.util.function.DoubleUnaryOperator.class).returnType(snapcharts.data.DoubleArray.class).buildAll();
 
+            // Handle snapcharts.data.DataArray
+            case "snapcharts.data.DataArray":
+                return mb.name("length").returnType(int.class).buildAll();
+
+            // Handle snapcharts.data.DataSet
+            case "snapcharts.data.DataSet":
+                mb.name("clone").returnType(snap.props.PropObject.class).save();
+                mb.name("clone").returnType(java.lang.Object.class).save();
+                return mb.name("clone").returnType(snapcharts.data.DataSet.class).buildAll();
+
             // Handle snapcharts.notebook.ChartsREPL
             case "snapcharts.notebook.ChartsREPL":
-                mb.name("doubleArray").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
-                mb.name("minMaxArray").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
-                mb.name("minMaxArray").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).save();
-                mb.name("dataArray").paramTypes(java.lang.Object.class).returnType(snapcharts.data.DataArray.class).save();
                 mb.name("dataSet").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DataSet.class).varArgs().save();
                 mb.name("chart").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().save();
-                return mb.name("chart3D").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().buildAll();
+                mb.name("chart3D").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().save();
+                mb.name("mapXY").paramTypes(snapcharts.data.DoubleArray.class,snapcharts.data.DoubleArray.class,java.util.function.DoubleBinaryOperator.class).returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("doubleArray").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
+                mb.name("dataArray").paramTypes(java.lang.Object.class).returnType(snapcharts.data.DataArray.class).save();
+                mb.name("minMaxArray").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
+                return mb.name("minMaxArray").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).buildAll();
 
             // Handle anything else
             default:
@@ -75,6 +90,8 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 return snapcharts.data.DoubleArray.fromMinMax(doubleVal(theArgs[0]),doubleVal(theArgs[1]));
             case "snapcharts.data.DoubleArray.fromMinMaxCount(double,double,int)":
                 return snapcharts.data.DoubleArray.fromMinMaxCount(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
+            case "snapcharts.data.DoubleArray.clone()":
+                return ((snapcharts.data.DoubleArray) anObj).clone();
             case "snapcharts.data.DoubleArray.toArray()":
                 return ((snapcharts.data.DoubleArray) anObj).toArray();
             case "snapcharts.data.DoubleArray.of(java.lang.Object[])":
@@ -85,24 +102,30 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 return ((snapcharts.data.DoubleArray) anObj).map((java.util.function.DoubleUnaryOperator) theArgs[0]);
 
             // Handle snapcharts.data.DataArray
+            case "snapcharts.data.DataArray.length()":
+                return ((snapcharts.data.DataArray) anObj).length();
 
             // Handle snapcharts.data.DataSet
+            case "snapcharts.data.DataSet.clone()":
+                return ((snapcharts.data.DataSet) anObj).clone();
 
             // Handle snapcharts.notebook.ChartsREPL
-            case "snapcharts.notebook.ChartsREPL.doubleArray(java.lang.Object[])":
-                return snapcharts.notebook.ChartsREPL.doubleArray(theArgs);
-            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double,int)":
-                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
-            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double)":
-                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]));
-            case "snapcharts.notebook.ChartsREPL.dataArray(java.lang.Object)":
-                return snapcharts.notebook.ChartsREPL.dataArray(theArgs[0]);
             case "snapcharts.notebook.ChartsREPL.dataSet(java.lang.Object[])":
                 return snapcharts.notebook.ChartsREPL.dataSet(theArgs);
             case "snapcharts.notebook.ChartsREPL.chart(java.lang.Object[])":
                 return snapcharts.notebook.ChartsREPL.chart(theArgs);
             case "snapcharts.notebook.ChartsREPL.chart3D(java.lang.Object[])":
                 return snapcharts.notebook.ChartsREPL.chart3D(theArgs);
+            case "snapcharts.notebook.ChartsREPL.mapXY(snapcharts.data.DoubleArray,snapcharts.data.DoubleArray,java.util.function.DoubleBinaryOperator)":
+                return snapcharts.notebook.ChartsREPL.mapXY((snapcharts.data.DoubleArray) theArgs[0],(snapcharts.data.DoubleArray) theArgs[1],(java.util.function.DoubleBinaryOperator) theArgs[2]);
+            case "snapcharts.notebook.ChartsREPL.doubleArray(java.lang.Object[])":
+                return snapcharts.notebook.ChartsREPL.doubleArray(theArgs);
+            case "snapcharts.notebook.ChartsREPL.dataArray(java.lang.Object)":
+                return snapcharts.notebook.ChartsREPL.dataArray(theArgs[0]);
+            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double,int)":
+                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
+            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double)":
+                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]));
 
             // Handle anything else
             default:

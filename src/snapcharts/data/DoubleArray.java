@@ -175,7 +175,7 @@ public class DoubleArray extends NumberArray {
      * Override to return as this subclass.
      */
     @Override
-    protected DoubleArray clone()
+    public DoubleArray clone()
     {
         // Do normal version
         DoubleArray clone = (DoubleArray) super.clone();

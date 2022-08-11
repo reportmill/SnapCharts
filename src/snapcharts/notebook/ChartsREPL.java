@@ -72,7 +72,7 @@ public class ChartsREPL {
             dataType = DataType.XYZZ;
 
         // Create/config DataSet
-        DataSet dataSet = new DataSetImpl();
+        DataSet dataSet = dataType == DataType.XYZZ ? new DataSetXYZZ() : new DataSetImpl();
         dataSet.setDataType(dataType);
         dataSet.setDataArrays(dataArrays);
 
@@ -159,7 +159,7 @@ public class ChartsREPL {
     /**
      * Maps XY to Z.
      */
-    public static DoubleArray maxXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
+    public static DoubleArray mapXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
     {
         // Get X/Y/Z double arrays
         double[] x = aX.doubleArray();
