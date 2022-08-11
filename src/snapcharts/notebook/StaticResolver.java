@@ -3,13 +3,12 @@ import javakit.reflect.*;
 import javakit.reflect.JavaField.FieldBuilder;
 import javakit.reflect.JavaMethod.MethodBuilder;
 import javakit.reflect.JavaConstructor.ConstructorBuilder;
-import snap.util.SnapUtils;
 import java.io.PrintStream;
 
 /**
  * Provide reflection info for TeaVM.
  */
-public class StaticResolver {
+public class StaticResolver extends javakit.reflect.StaticResolver {
 
     // Shared field, method, constructor builders
     private static FieldBuilder fb = new FieldBuilder();
@@ -161,10 +160,4 @@ public class StaticResolver {
                 throw new NoSuchMethodException("Unknown constructor: " + anId);
         }
     }
-
-    // Conveniences
-    private static boolean boolVal(Object anObj)  { return SnapUtils.boolValue(anObj); }
-    private static int intVal(Object anObj)  { return SnapUtils.intValue(anObj); }
-    private static double doubleVal(Object anObj)  { return SnapUtils.doubleValue(anObj); }
-    private static float floatVal(Object anObj)  { return SnapUtils.floatValue(anObj); }
 }
