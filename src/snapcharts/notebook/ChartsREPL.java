@@ -6,8 +6,10 @@ import snapcharts.data.*;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
+import snapcharts.modelx.Contour3DTrace;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.DoubleBinaryOperator;
 
 /**
  * This is a REPL base class specific for charts.
@@ -66,6 +68,8 @@ public class ChartsREPL {
         // Create DataArrays and get DataType
         DataArray[] dataArrays = dataArraysList.toArray(new DataArray[0]);
         DataType dataType = dataArrays.length < 3 ? DataType.XY : DataType.XYZ;
+        if (dataType == DataType.XYZ && dataArrays[0].length() != dataArrays[2].length())
+            dataType = DataType.XYZZ;
 
         // Create/config DataSet
         DataSet dataSet = new DataSetImpl();
@@ -99,8 +103,38 @@ public class ChartsREPL {
         chart.getAxisY().setTitle("Y");
         chart.addTrace(trace);
 
-        // Set title from LastDataSetTitle
-        chart.getHeader().setTitle("Plot of " + dataSet.getName());
+        // Set title from DataSet.Name (or type)
+        String dataSetName = dataSet.getName();
+        if (dataSetName == null) dataSetName = dataSet.getDataType() + " Data";
+        chart.getHeader().setTitle("Chart of " + dataSetName);
+
+        // Return
+        return chart;
+    }
+
+    /**
+     * Creates and returns a Plot3D.
+     */
+    public static Chart chart3D(Object ... theObjects)
+    {
+        // Get DataSet from theObjects
+        DataSet dataSet = dataSet(theObjects);
+
+        // Create Trace for DataSet
+        Trace trace = new Contour3DTrace();
+        trace.setDataSet(dataSet);
+
+        // Create Chart with Trace
+        Chart chart = new Chart();
+        chart.getAxisX().setTitle("X");
+        chart.getAxisY().setTitle("Y");
+        chart.getAxisZ().setTitle("Z");
+        chart.addTrace(trace);
+
+        // Set title from DataSet.Name (or type)
+        String dataSetName = dataSet.getName();
+        if (dataSetName == null) dataSetName = dataSet.getDataType() + " Data";
+        chart.getHeader().setTitle("Chart of " + dataSetName);
 
         // Return
         return chart;
@@ -123,9 +157,31 @@ public class ChartsREPL {
     }
 
     /**
+     * Maps XY to Z.
+     */
+    public static DoubleArray maxXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
+    {
+        // Get X/Y/Z double arrays
+        double[] x = aX.doubleArray();
+        double[] y = aY.doubleArray();
+        double[] z = new double[x.length * y.length];
+
+        // Iterate over X/Y and generate Z
+        for (int i = 0; i < x.length; i++) {
+            for (int j = 0; j < y.length; j++) {
+                z[i * y.length + j] = mapper.applyAsDouble(x[i], y[j]);
+            }
+        }
+
+        // Return new double Array
+        return new DoubleArray(z);
+    }
+
+    /**
      * Conveniences.
      */
     public static Chart plot(Object ... theObjects)  { return chart(theObjects); }
+    public static Chart plot3D(Object ... theObjects)  { return chart3D(theObjects); }
     public static DoubleArray doublearray(Object ... theDoubles)  { return doubleArray(theDoubles); }
     public static DataArray dataarray(Object anObj)  { return dataArray(anObj); }
     public static DataSet dataset(Object ... theObjects)  { return dataSet(theObjects); }

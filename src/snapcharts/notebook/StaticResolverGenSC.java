@@ -43,7 +43,7 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
             // DataSet
 
             // ChartsREPL
-            "doubleArray", "dataArray", "dataSet", "chart", "minMaxArray",
+            "doubleArray", "dataArray", "dataSet", "chart", "chart3D", "minMaxArray", "mapXY",
     };
     private static String[] _blackListStrings = {
 

@@ -1,30 +1,11 @@
 package snapcharts.notebook;
 import javakit.reflect.*;
-import javakit.reflect.JavaField.FieldBuilder;
-import javakit.reflect.JavaMethod.MethodBuilder;
-import javakit.reflect.JavaConstructor.ConstructorBuilder;
 import java.io.PrintStream;
 
 /**
  * Provide reflection info for TeaVM.
  */
 public class StaticResolver extends javakit.reflect.StaticResolver {
-
-    // Shared field, method, constructor builders
-    private static FieldBuilder fb = new FieldBuilder();
-    private static MethodBuilder mb = new MethodBuilder();
-    private static ConstructorBuilder cb = new ConstructorBuilder();
-
-    // A chained StaticResolver
-    public StaticResolver  _next;
-
-    // The shared StaticResolver
-    private static StaticResolver  _shared = new StaticResolver();
-
-    /**
-     * Returns shared.
-     */
-    public static StaticResolver shared()  { return _shared; }
 
     /**
      * Returns the declared fields for given class.
@@ -68,12 +49,13 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
 
             // Handle snapcharts.notebook.ChartsREPL
             case "snapcharts.notebook.ChartsREPL":
+                mb.name("doubleArray").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
+                mb.name("minMaxArray").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("minMaxArray").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("dataArray").paramTypes(java.lang.Object.class).returnType(snapcharts.data.DataArray.class).save();
                 mb.name("dataSet").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DataSet.class).varArgs().save();
                 mb.name("chart").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().save();
-                mb.name("doubleArray").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
-                mb.name("dataArray").paramTypes(java.lang.Object.class).returnType(snapcharts.data.DataArray.class).save();
-                mb.name("minMaxArray").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
-                return mb.name("minMaxArray").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).buildAll();
+                return mb.name("chart3D").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().buildAll();
 
             // Handle anything else
             default:
@@ -107,18 +89,20 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
             // Handle snapcharts.data.DataSet
 
             // Handle snapcharts.notebook.ChartsREPL
-            case "snapcharts.notebook.ChartsREPL.dataSet(java.lang.Object[])":
-                return snapcharts.notebook.ChartsREPL.dataSet(theArgs);
-            case "snapcharts.notebook.ChartsREPL.chart(java.lang.Object[])":
-                return snapcharts.notebook.ChartsREPL.chart(theArgs);
             case "snapcharts.notebook.ChartsREPL.doubleArray(java.lang.Object[])":
                 return snapcharts.notebook.ChartsREPL.doubleArray(theArgs);
-            case "snapcharts.notebook.ChartsREPL.dataArray(java.lang.Object)":
-                return snapcharts.notebook.ChartsREPL.dataArray(theArgs[0]);
             case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double,int)":
                 return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
             case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double)":
                 return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]));
+            case "snapcharts.notebook.ChartsREPL.dataArray(java.lang.Object)":
+                return snapcharts.notebook.ChartsREPL.dataArray(theArgs[0]);
+            case "snapcharts.notebook.ChartsREPL.dataSet(java.lang.Object[])":
+                return snapcharts.notebook.ChartsREPL.dataSet(theArgs);
+            case "snapcharts.notebook.ChartsREPL.chart(java.lang.Object[])":
+                return snapcharts.notebook.ChartsREPL.chart(theArgs);
+            case "snapcharts.notebook.ChartsREPL.chart3D(java.lang.Object[])":
+                return snapcharts.notebook.ChartsREPL.chart3D(theArgs);
 
             // Handle anything else
             default:
