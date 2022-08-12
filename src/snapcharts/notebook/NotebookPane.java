@@ -99,8 +99,11 @@ public class NotebookPane extends ViewOwner {
     {
         // Get active RequestView (just return if none)
         RequestView requestView = _notebookView.getActiveRequestView();
-        if (requestView == null)
+        if (requestView == null) {
+            EntryView pendingView = _notebookView.getEntryView(_notebookView._pendingRequest);
+            pendingView.requestFocus();
             return;
+        }
 
         // Forward to RequestView - just return if handled
         requestView.handleEscapeAction(anEvent);
