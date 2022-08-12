@@ -159,11 +159,9 @@ public class ChartsREPL {
     /**
      * Maps XY to Z.
      */
-    public static DoubleArray mapXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
+    public static DoubleArray mapXY(double[] x, double[] y, DoubleBinaryOperator mapper)
     {
-        // Get X/Y/Z double arrays
-        double[] x = aX.doubleArray();
-        double[] y = aY.doubleArray();
+        // Get Z double array
         double[] z = new double[x.length * y.length];
 
         // Iterate over X/Y and generate Z
@@ -175,6 +173,14 @@ public class ChartsREPL {
 
         // Return new double Array
         return new DoubleArray(z);
+    }
+
+    /**
+     * Maps XY to Z.
+     */
+    public static DoubleArray mapXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
+    {
+        return mapXY(aX.doubleArray(), aY.doubleArray(), mapper);
     }
 
     /**
