@@ -3,6 +3,7 @@
  */
 package snapcharts.notebook;
 import snap.gfx.Color;
+import snap.props.PropChange;
 import snap.view.*;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,7 @@ public class NotebookView extends ParentView {
     private Notebook  _notebook;
 
     // A pending request used to add new request
-    private Request  _pendingRequest;
+    protected Request  _pendingRequest;
 
     // A map of EntryView for Entries
     private Map<Entry,EntryView>  _entryViews = new HashMap<>();
@@ -53,6 +54,7 @@ public class NotebookView extends ParentView {
     public void setNotebook(Notebook aNotebook)
     {
         _notebook = aNotebook;
+        _notebook.addPropChangeListener(pc -> notebookDidPropChange(pc));
     }
 
     /**
@@ -156,7 +158,6 @@ public class NotebookView extends ParentView {
         // If empty request remove request and response from notebook
         if (aRequest.isEmpty()) {
             _notebook.removeRequest(aRequest);
-            _notebook.removeResponseForRequest(aRequest);
             removeEntryView(aRequest);
         }
 
@@ -169,8 +170,12 @@ public class NotebookView extends ParentView {
 
         // Otherwise remove Response and ResponseView for Request
         else {
-            _notebook.removeResponseForRequest(aRequest);
             removeEntryView(aRequest);
+            Response response = aRequest.getResponse();
+            if (response != null) {
+                removeEntryView(response);
+                aRequest.setResponse(null);
+            }
         }
 
         // Reset Entries
@@ -200,6 +205,50 @@ public class NotebookView extends ParentView {
         TextArea textArea = nextRequestView.getTextArea();
         textArea.selectAll();
         textArea.requestFocus();
+    }
+
+    /**
+     * Returns the selected request view.
+     */
+    public RequestView getActiveRequestView()
+    {
+        WindowView win = getWindow(); if (win == null) return null;
+        View focusedView = win.getFocusedView(); if (focusedView == null) return null;
+        RequestView requestView = focusedView.getParent(RequestView.class);
+        return requestView;
+    }
+
+    /**
+     * Called when Notebook changes.
+     */
+    private void notebookDidPropChange(PropChange aPC)
+    {
+        // Handle Request Add/Remove
+        String propName = aPC.getPropName();
+        if (propName == Notebook.Request_Prop) {
+
+            // Handle Request Removed
+            if (aPC.getNewValue() == null) {
+
+                // Remove RequestView
+                Request request = (Request) aPC.getOldValue();
+                removeEntryView(request);
+
+                // Remove ResponseView
+                Response response = request.getResponse();
+                if (response != null) {
+                    removeEntryView(response);
+                    request.setResponse(null);
+                }
+
+                // If request was last, make it new pending
+                if (aPC.getIndex() >= _notebook.getRequests().size())
+                    _pendingRequest = request;
+            }
+        }
+
+        // Reset entries
+        resetEntriesLater();
     }
 
     @Override

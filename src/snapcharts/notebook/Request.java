@@ -14,6 +14,9 @@ public class Request extends Entry {
     // The start line indexes relative to all notebook requests
     private int  _lineStart;
 
+    // The Response
+    private Response  _response;
+
     /**
      * Returns the number of text lines in this entry.
      */
@@ -35,12 +38,16 @@ public class Request extends Entry {
     protected void setLineStart(int aValue)  { _lineStart = aValue; }
 
     /**
-     * Returns whether request is empty.
+     * Gets the Response.
      */
-    public boolean isEmpty()
+    public Response getResponse()  { return _response; }
+
+    /**
+     * Sets the Response.
+     */
+    public void setResponse(Response aResponse)
     {
-        String text = getText().trim();
-        return text.length() == 0;
+        _response = aResponse;
     }
 
     /**

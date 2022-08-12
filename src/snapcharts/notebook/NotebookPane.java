@@ -4,7 +4,10 @@
 package snapcharts.notebook;
 import snap.view.ScrollView;
 import snap.view.View;
+import snap.view.ViewEvent;
 import snap.view.ViewOwner;
+
+import java.util.List;
 
 /**
  * This class provides UI and editing for a notebook.
@@ -61,12 +64,65 @@ public class NotebookPane extends ViewOwner {
     }
 
     /**
+     * Initialize UI.
+     */
+    @Override
+    protected void initUI()
+    {
+        addKeyActionFilter("EscapeAction", "ESCAPE");
+    }
+
+    /**
      * Called when first showing.
      */
     @Override
     protected void initShowing()
     {
         _notebookView.resetEntriesLater();
+    }
+
+    /**
+     * Respond to UI.
+     */
+    @Override
+    protected void respondUI(ViewEvent anEvent)
+    {
+        // Handle EscapeAction
+        if (anEvent.equals("EscapeAction"))
+            handleEscapeAction(anEvent);
+    }
+
+    /**
+     * Escape out of current request editing.
+     */
+    protected void handleEscapeAction(ViewEvent anEvent)
+    {
+        // Get active RequestView (just return if none)
+        RequestView requestView = _notebookView.getActiveRequestView();
+        if (requestView == null)
+            return;
+
+        // Forward to RequestView - just return if handled
+        requestView.handleEscapeAction(anEvent);
+        if (anEvent.isConsumed())
+            return;
+
+        // If no requests, just return
+        if (_notebook.getRequests().size() == 0) {
+            beep(); return; }
+
+        // Otherwise remove current request and select previous
+        Request request = requestView.getEntry();
+
+        // If removing PendingRequest, remove last request and make it PendingRequest
+        if (request == _notebookView._pendingRequest) {
+            List<Request> requests = _notebook.getRequests();
+            Request lastRequest = requests.get(requests.size() - 1);
+            _notebook.removeRequest(lastRequest);
+        }
+
+        // Otherwise, just remove request
+        else _notebook.removeRequest(request);
     }
 
     /**

@@ -65,7 +65,6 @@ public class RequestView extends EntryView<Request> {
      */
     private void textAreaKeyPressed(ViewEvent anEvent)
     {
-
         // Handle Enter
         if (anEvent.getKeyCode() == KeyCode.ENTER) {
 
@@ -90,6 +89,30 @@ public class RequestView extends EntryView<Request> {
         // Handle tab key
         else if (anEvent.isTabKey()) {
             _notebookView.handleTabKey(anEvent);
+            anEvent.consume();
+        }
+    }
+
+    /**
+     * Handles Escape key in RequestView
+     */
+    public void handleEscapeAction(ViewEvent anEvent)
+    {
+        // If empty text, just return
+        TextArea textArea = getTextArea();
+        if (textArea.length() == 0)
+            return;
+
+        // If all selected, clear all
+        TextSel textSel = textArea.getSel();
+        if (textSel.getEnd() - textSel.getStart() == textArea.length()) {
+            textArea.replaceChars("");
+            anEvent.consume();
+        }
+
+        // Otherwise, Select all
+        else {
+            textArea.selectAll();
             anEvent.consume();
         }
     }

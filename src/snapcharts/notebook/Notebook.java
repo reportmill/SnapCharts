@@ -3,6 +3,8 @@
  */
 package snapcharts.notebook;
 import snap.props.PropObject;
+import snap.props.PropSet;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +21,11 @@ public class Notebook extends PropObject {
     // The list of Request entries
     private List<Request>  _requests = new ArrayList<>();
 
-    // A map of Response entries
-    private Map<Request,Response>  _responses = new HashMap<>();
-
     // The Processor
     private Processor  _processor;
+
+    // Constants for properties
+    public static final String Request_Prop = "Request";
 
     /**
      * Constructor.
@@ -63,6 +65,7 @@ public class Notebook extends PropObject {
     {
         _requests.add(anIndex, aRequest);
         aRequest.setIndex(anIndex + 1);
+        firePropChange(Request_Prop, null, aRequest, anIndex);
     }
 
     /**
@@ -70,7 +73,8 @@ public class Notebook extends PropObject {
      */
     public void removeRequest(int anIndex)
     {
-        _requests.remove(anIndex);
+        Request request = _requests.remove(anIndex);
+        firePropChange(Request_Prop, request, null, anIndex);
     }
 
     /**
@@ -84,37 +88,21 @@ public class Notebook extends PropObject {
     }
 
     /**
-     * Returns whether Response for a given request is set.
-     */
-    public boolean isResponseForRequestSet(Request aRequest)
-    {
-        return _responses.containsKey(aRequest);
-    }
-
-    /**
      * Returns the Response for a given request.
      */
     public Response getResponseForRequest(Request aRequest)
     {
         // Get response from map - just return if found
-        Response response = _responses.get(aRequest);
+        Response response = aRequest.getResponse();
         if (response != null)
             return response;
 
         // Create Response for Request
         response = createResponseForRequest(aRequest);
 
-        // Add to map and return
-        _responses.put(aRequest, response);
+        // Set in request and return
+        aRequest.setResponse(response);
         return response;
-    }
-
-    /**
-     * Removes the response for a given request.
-     */
-    public void removeResponseForRequest(Request aRequest)
-    {
-        _responses.remove(aRequest);
     }
 
     /**
@@ -148,16 +136,20 @@ public class Notebook extends PropObject {
 
         // Iterate over requests (backwards) and return first Response.Value for given class
         for (int i = requests.size() - 1; i >= 0; i--) {
+
+            // Get request/response
             Request request = requests.get(i);
-            if (!isResponseForRequestSet(request))
+            Response response = request.getResponse();
+            if (response == null)
                 continue;
-            Response response = getResponseForRequest(request);
+
+            // If Response.Value is of given class, return it
             Object responseValue = response.getValue();
             if (aClass.isInstance(responseValue))
                 return response;
         }
 
-        // Return null since none found
+        // Return not found
         return null;
     }
 
@@ -169,5 +161,48 @@ public class Notebook extends PropObject {
         Response response = getLastResponseForValueClass(aClass);
         T responseValue = response != null ? (T) response.getValue() : null;
         return responseValue;
+    }
+
+    /**
+     * Override to register props.
+     */
+    @Override
+    protected void initProps(PropSet aPropSet)
+    {
+        aPropSet.addPropNamed(Request_Prop, Request[].class, EMPTY_OBJECT);
+    }
+
+    /**
+     * Returns the prop value for given key.
+     */
+    @Override
+    public Object getPropValue(String aPropName)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // Request
+            case Request_Prop: return getRequests();
+
+            // Handle super class properties (or unknown)
+            default: return super.getPropValue(aPropName);
+        }
+    }
+
+    /**
+     * Sets the prop value for given key.
+     */
+    @Override
+    public void setPropValue(String aPropName, Object aValue)
+    {
+        // Handle properties
+        switch (aPropName) {
+
+            // Request
+            //case Request_Prop: setRequests();
+
+            // Handle super class properties (or unknown)
+            default: super.setPropValue(aPropName, aValue);
+        }
     }
 }
