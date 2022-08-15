@@ -1,5 +1,5 @@
 package snapcharts.app;
-import snap.util.ListUtils;
+
 import snap.util.Prefs;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -8,8 +8,11 @@ import snap.viewx.FilePanel;
 import snap.viewx.RecentFiles;
 import snap.web.WebFile;
 import snap.web.WebURL;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * An implementation of a panel to manage/open user Snap sites (projects).
@@ -17,25 +20,25 @@ import java.util.List;
 public class WelcomePanel extends ViewOwner {
 
     // Whether file system is cloud
-    private boolean  _isCloud;
+    private boolean _isCloud;
 
     // The cloud email account
-    private String  _email;
+    private String _email;
 
     // The selected file
-    private WebFile  _selFile;
-    
+    private WebFile _selFile;
+
     // Whether welcome panel should exit on hide
-    private boolean  _exit;
-    
+    private boolean _exit;
+
     // The Runnable to be called when app quits
-    private Runnable  _onQuit;
+    private Runnable _onQuit;
 
     // The RecentFiles
-    private List<WebFile>  _recentFiles;
+    private List<WebFile> _recentFiles;
 
     // The shared instance
-    private static WelcomePanel  _shared;
+    private static WelcomePanel _shared;
 
     // Constants
     private static final String FILE_SYSTEM = "FileSystem";
@@ -50,7 +53,7 @@ public class WelcomePanel extends ViewOwner {
     {
         // Get FileSystem
         String fileSys = Prefs.get().getString(FILE_SYSTEM);
-        _isCloud = fileSys!=null && fileSys.equals(FILE_SYSTEM_CLOUD);
+        _isCloud = fileSys != null && fileSys.equals(FILE_SYSTEM_CLOUD);
 
         // Get Email
         _email = Prefs.get().getString(USER_EMAIL);
@@ -62,14 +65,17 @@ public class WelcomePanel extends ViewOwner {
     /**
      * Returns wether file system is cloud.
      */
-    public boolean isCloud()  { return _isCloud; }
+    public boolean isCloud()
+    {
+        return _isCloud;
+    }
 
     /**
      * Sets whether file system is cloud.
      */
     public void setCloud(boolean aValue)
     {
-        if (aValue==isCloud()) return;
+        if (aValue == isCloud()) return;
         _isCloud = aValue;
         _recentFiles = null;
 
@@ -81,14 +87,17 @@ public class WelcomePanel extends ViewOwner {
     /**
      * Returns the cloud email.
      */
-    public String getCloudEmail()  { return _email; }
+    public String getCloudEmail()
+    {
+        return _email;
+    }
 
     /**
      * Sets the cloud email.
      */
     public void setCloudEmail(String aString)
     {
-        if (aString==getCloudEmail()) return;
+        if (aString == getCloudEmail()) return;
         _email = aString;
         _recentFiles = null;
 
@@ -101,7 +110,7 @@ public class WelcomePanel extends ViewOwner {
      */
     public static WelcomePanel getShared()
     {
-        if(_shared != null) return _shared;
+        if (_shared != null) return _shared;
         return _shared = new WelcomePanel();
     }
 
@@ -127,33 +136,48 @@ public class WelcomePanel extends ViewOwner {
         // Write current list of sites, flush prefs and mayb exit
         //writeSites();         // Write data file for open/selected sites
         Prefs.get().flush();    // Flush preferences
-        if(_exit) quitApp(); // If exit requested, quit app
+        if (_exit) quitApp(); // If exit requested, quit app
     }
 
     /**
      * Returns the selected file.
      */
-    public WebFile getSelFile()  { return _selFile; }
+    public WebFile getSelFile()
+    {
+        return _selFile;
+    }
 
     /**
      * Sets the selected file.
      */
-    public void setSelFile(WebFile aFile)  { _selFile = aFile; }
+    public void setSelFile(WebFile aFile)
+    {
+        _selFile = aFile;
+    }
 
     /**
      * Returns the Runnable to be called to quit app.
      */
-    public Runnable getOnQuit()  { return _onQuit; }
+    public Runnable getOnQuit()
+    {
+        return _onQuit;
+    }
 
     /**
      * Sets the Runnable to be called to quit app.
      */
-    public void setOnQuit(Runnable aRunnable)  { _onQuit = aRunnable; }
+    public void setOnQuit(Runnable aRunnable)
+    {
+        _onQuit = aRunnable;
+    }
 
     /**
      * Called to quit app.
      */
-    public void quitApp()  { _onQuit.run(); }
+    public void quitApp()
+    {
+        _onQuit.run();
+    }
 
     /**
      * Initialize UI panel.
@@ -162,7 +186,8 @@ public class WelcomePanel extends ViewOwner {
     {
         // Add WelcomePaneAnim view
         DocView anim = getAnimView();
-        getUI(ChildView.class).addChild(anim, 0); anim.playAnimDeep();
+        getUI(ChildView.class).addChild(anim, 0);
+        anim.playAnimDeep();
 
         // Configure SitesTable
         TableView<WebFile> sitesTable = getView("SitesTable", TableView.class);
@@ -170,18 +195,20 @@ public class WelcomePanel extends ViewOwner {
         sitesTable.getCol(0).setItemTextFunction(i -> i.getName());
 
         // Enable SitesTable MouseReleased
-        List <WebFile> rfiles = getRecentFiles();
-        if (rfiles.size()>0) _selFile = rfiles.get(0);
+        List<WebFile> rfiles = getRecentFiles();
+        if (rfiles.size() > 0) _selFile = rfiles.get(0);
         enableEvents(sitesTable, MouseRelease);
 
         // Hide ProgressBar
         getView("ProgressBar").setVisible(false);
 
         // Set preferred size
-        getUI().setPrefSize(400,600);
+        getUI().setPrefSize(400, 600);
 
         // Configure Window: Add WindowListener to indicate app should exit when close button clicked
-        WindowView win = getWindow(); win.setTitle("Welcome"); win.setResizable(false);
+        WindowView win = getWindow();
+        win.setTitle("Welcome");
+        win.setResizable(false);
         enableEvents(win, WinClose);
         getView("OpenButton", Button.class).setDefaultButton(true);
     }
@@ -191,7 +218,7 @@ public class WelcomePanel extends ViewOwner {
      */
     public void resetUI()
     {
-        setViewEnabled("OpenButton", getSelFile()!=null);
+        setViewEnabled("OpenButton", getSelFile() != null);
         setViewItems("SitesTable", getRecentFiles());
         setViewSelItem("SitesTable", getSelFile());
 
@@ -228,7 +255,7 @@ public class WelcomePanel extends ViewOwner {
 
         // Handle SitesTable
         if (anEvent.equals("SitesTable"))
-            setSelFile((WebFile)anEvent.getSelItem());
+            setSelFile((WebFile) anEvent.getSelItem());
 
         // Handle NewButton
         if (anEvent.equals("NewButton")) {
@@ -240,18 +267,22 @@ public class WelcomePanel extends ViewOwner {
             showOpenPanel();
 
         // Handle OpenButton or SitesTable double-click
-        if (anEvent.equals("OpenButton") || anEvent.equals("SitesTable") && anEvent.getClickCount()>1) {
-            WebFile file = (WebFile)getViewSelItem("SitesTable");
+        if (anEvent.equals("OpenButton") || anEvent.equals("SitesTable") && anEvent.getClickCount() > 1) {
+            WebFile file = (WebFile) getViewSelItem("SitesTable");
             openFile(file);
         }
 
         // Handle QuitButton
         if (anEvent.equals("QuitButton")) {
-            _exit = true; hide(); }
+            _exit = true;
+            hide();
+        }
 
         // Handle WinClosing
         if (anEvent.isWinClose()) {
-            _exit = true; hide(); }
+            _exit = true;
+            hide();
+        }
     }
 
     /**
@@ -259,15 +290,17 @@ public class WelcomePanel extends ViewOwner {
      */
     private void handleCloudButton()
     {
-        if (getCloudEmail()==null || getCloudEmail().length()==0) {
+        if (getCloudEmail() == null || getCloudEmail().length() == 0) {
             String msg = "The cloud file system needs an email to provide a unique folder for user files.\n";
             msg += "This information is not used for any other purposes. Though feel free to email\n";
             msg += "me at jeff@reportmill.com";
             String email = DialogBox.showInputDialog(getUI(), "Set Cloud Email", msg, "guest@guest");
-            if (email==null || !email.contains("@")) return;
+            if (email == null || !email.contains("@")) return;
             email = email.trim().toLowerCase();
             if (email.equalsIgnoreCase("jeff@reportmill.com")) {
-                DialogBox.showErrorDialog(getUI(), "Joker Alert", "Nice try."); return; }
+                DialogBox.showErrorDialog(getUI(), "Joker Alert", "Nice try.");
+                return;
+            }
             setCloudEmail(email);
         }
         setCloud(true);
@@ -311,7 +344,8 @@ public class WelcomePanel extends ViewOwner {
     public void showOpenPanel()
     {
         // Have editor run open panel (if no document opened, just return)
-        DocPane dpane = newDocPane().showOpenPanel(getUI()); if (dpane == null) return;
+        DocPane dpane = newDocPane().showOpenPanel(getUI());
+        if (dpane == null) return;
 
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);
@@ -324,7 +358,8 @@ public class WelcomePanel extends ViewOwner {
     public void openFile(Object aSource)
     {
         // Have editor run open panel (if no document opened, just return)
-        DocPane dpane = newDocPane().openDocFromSource(aSource); if (dpane==null) return;
+        DocPane dpane = newDocPane().openDocFromSource(aSource);
+        if (dpane == null) return;
 
         // Make editor window visible and hide welcome panel
         dpane.setWindowVisible(true);
@@ -342,10 +377,10 @@ public class WelcomePanel extends ViewOwner {
     /**
      * Returns the list of the recent documents as a list of strings.
      */
-    public List <WebFile> getRecentFiles()
+    public List<WebFile> getRecentFiles()
     {
         // If already set, just return
-        if (_recentFiles!=null) return _recentFiles;
+        if (_recentFiles != null) return _recentFiles;
 
         // Get DropBox
         DropBox dbox = getDropBox();
@@ -354,7 +389,7 @@ public class WelcomePanel extends ViewOwner {
 
         // Handle Local
         if (!isCloud()) {
-            List <WebFile> rfiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
+            List<WebFile> rfiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
             return _recentFiles = rfiles;
         }
 
@@ -377,11 +412,12 @@ public class WelcomePanel extends ViewOwner {
     {
         // Get chart files
         DropBox dropBox = getDropBox();
-        List<WebFile> files = dropBox.getRootDir().getFiles();
-        files = ListUtils.getFiltered(files, file -> DocPane.CHARTS_FILE_EXT.equals(file.getType()));
+        WebFile[] files = dropBox.getRootDir().getFiles();
+        Stream<WebFile> chartFilesStream = Stream.of(files).filter(f -> DocPane.CHARTS_FILE_EXT.equals(f.getType()));
+        WebFile[] chartFiles = chartFilesStream.toArray(size -> new WebFile[size]);
 
         // Set files and trigger reload
-        _recentFiles = files;
+        _recentFiles = Arrays.asList(chartFiles);
         runLater(() -> recentFilesLoaded());
     }
 
@@ -392,7 +428,7 @@ public class WelcomePanel extends ViewOwner {
     {
         // Get email
         String email = getCloudEmail();
-        if (email==null || email.length()==0) email = "guest@guest";
+        if (email == null || email.length() == 0) email = "guest@guest";
 
         // Get chart files
         return DropBox.getSiteForEmail(email);
@@ -413,14 +449,19 @@ public class WelcomePanel extends ViewOwner {
     /**
      * Clears recent documents from preferences.
      */
-    public void clearRecentFiles()  { Prefs.get().getChild("RecentDocuments").clear(); }
+    public void clearRecentFiles()
+    {
+        Prefs.get().getChild("RecentDocuments").clear();
+    }
 
-    /** Loads the WelcomePaneAnim.snp DocView. */
+    /**
+     * Loads the WelcomePaneAnim.snp DocView.
+     */
     DocView getAnimView()
     {
         // Unarchive WelcomePaneAnim.snp as DocView
         WebURL url = WebURL.getURL(WelcomePanel.class, "WelcomePanelAnim.snp");
-        DocView doc = (DocView)new ViewArchiver().getView(url);
+        DocView doc = (DocView) new ViewArchiver().getView(url);
 
         // Get page and clear border/shadow
         PageView page = doc.getPage();
