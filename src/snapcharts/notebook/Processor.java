@@ -4,6 +4,7 @@
 package snapcharts.notebook;
 import javakit.reflect.Resolver;
 import javakit.shell.JavaShell;
+import javakit.shell.JavaText;
 import java.util.List;
 
 /**
@@ -17,6 +18,9 @@ public class Processor {
     // The JavaShell
     private JavaShell  _javaShell;
 
+    // The JavaText
+    private JavaText  _javaText;
+
     /**
      * Constructor.
      */
@@ -27,8 +31,11 @@ public class Processor {
 
         // Create JavaShell
         _javaShell = new JavaShell();
-        _javaShell.setREPLClassName(ChartsREPL.class.getName());
-        _javaShell.addImport("snapcharts.data.*");
+
+        // Create JavaText
+        _javaText = new JavaText();
+        _javaText.setSuperClassName(ChartsREPL.class.getName());
+        _javaText.addImport("snapcharts.data.*");
 
         // Link up StaticResolver for TeaVM
         if (Resolver.isTeaVM)
@@ -41,17 +48,32 @@ public class Processor {
     public Notebook getNotebook()  { return _notebook; }
 
     /**
+     * Returns the JavaText of the REPL class.
+     */
+    public JavaText getJavaText()
+    {
+        String javaBody = getJavaBodyText();
+        _javaText.setBodyText(javaBody);
+        return _javaText;
+    }
+
+    /**
      * Returns the JavaText.
      */
-    public String getJavaText()
+    protected String getJavaBodyText()
     {
+        // Get requests
         String javaText = "";
         List<Request> requests = getNotebook().getRequests();
+
+        // Iterate over requests and append together
         for (Request request : requests) {
             javaText += request.getText();
             if (!javaText.endsWith("\n"))
                 javaText += '\n';
         }
+
+        // Return
         return javaText;
     }
 
@@ -60,8 +82,7 @@ public class Processor {
      */
     public void resetAll()
     {
-        String javaText = getJavaText();
-
+        JavaText javaText = getJavaText();
         _javaShell.runJavaCode(javaText);
     }
 
