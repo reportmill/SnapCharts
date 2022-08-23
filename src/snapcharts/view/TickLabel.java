@@ -1,7 +1,7 @@
 package snapcharts.view;
 import snap.gfx.Font;
 import snap.gfx.Painter;
-import snap.text.TextRun;
+import snap.text.StyledString;
 import snap.view.StringView;
 
 /**
@@ -13,7 +13,7 @@ public class TickLabel extends StringView {
     private double  _coord;
 
     // A TextRun to handle exponents if needed
-    private TextRun  _expText;
+    private StyledString _expText;
 
     /**
      * Constructor.
@@ -47,7 +47,7 @@ public class TickLabel extends StringView {
 
             // Get exponent string and create exponent TextRun (ExpText)
             String expStr = aValue.substring(index + 4);
-            _expText = new TextRun(expStr);
+            _expText = new StyledString(expStr);
             _expText.setFontSizing(false);
 
             // Add bogus padding
