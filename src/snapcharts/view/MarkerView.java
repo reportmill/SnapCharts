@@ -40,7 +40,6 @@ public class MarkerView extends ChartPartView<Marker> {
 
         // Create/add TextArea
         _textArea = new TextArea();
-        _textArea.setPlainText(true);
         addChild(_textArea);
     }
 

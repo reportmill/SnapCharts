@@ -119,7 +119,6 @@ public class EntryView<T extends Entry> extends ParentView {
     protected TextArea createTextArea()
     {
         TextArea textArea = new EntryTextArea();
-        textArea.setPlainText(true);
         textArea.setFill(Color.WHITE);
         textArea.setBorder(Color.GRAY7, 1);
         textArea.setFont(Font.Arial14);
