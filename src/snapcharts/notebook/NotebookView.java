@@ -106,7 +106,7 @@ public class NotebookView extends ParentView {
         removeChildren();
 
         // Make sure there is an empty entry
-        if (_notebook.isEmptyEntrySet())
+        if (!_notebook.isEmptyEntrySet())
             _notebook.addEmptyEntry();
 
         // Get list of requests
