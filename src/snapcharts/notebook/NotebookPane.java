@@ -7,8 +7,6 @@ import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 
-import java.util.List;
-
 /**
  * This class provides UI and editing for a notebook.
  */
@@ -98,34 +96,26 @@ public class NotebookPane extends ViewOwner {
     protected void handleEscapeAction(ViewEvent anEvent)
     {
         // Get active RequestView (just return if none)
-        RequestView requestView = _notebookView.getActiveRequestView();
-        if (requestView == null) {
-            EntryView pendingView = _notebookView.getEntryView(_notebookView._pendingRequest);
-            pendingView.requestFocus();
+        JavaEntryView javaEntryView = _notebookView.getActiveRequestView();
+        if (javaEntryView == null) {
+            _notebookView.focusLastJavaEntry();
             return;
         }
 
         // Forward to RequestView - just return if handled
-        requestView.handleEscapeAction(anEvent);
+        javaEntryView.handleEscapeAction(anEvent);
         if (anEvent.isConsumed())
             return;
 
         // If no requests, just return
-        if (_notebook.getRequests().size() == 0) {
+        if (_notebook.getEntries().size() == 1) {
             beep(); return; }
 
         // Otherwise remove current request and select previous
-        Request request = requestView.getEntry();
+        JavaEntry javaEntry = javaEntryView.getEntry();
 
-        // If removing PendingRequest, remove last request and make it PendingRequest
-        if (request == _notebookView._pendingRequest) {
-            List<Request> requests = _notebook.getRequests();
-            Request lastRequest = requests.get(requests.size() - 1);
-            _notebook.removeRequest(lastRequest);
-        }
-
-        // Otherwise, just remove request
-        else _notebook.removeRequest(request);
+        // Remove request
+        _notebook.removeEntry(javaEntry);
     }
 
     /**

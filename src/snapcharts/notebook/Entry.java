@@ -30,15 +30,6 @@ public class Entry {
     }
 
     /**
-     * Returns whether request is empty.
-     */
-    public boolean isEmpty()
-    {
-        String text = getText().trim();
-        return text.length() == 0;
-    }
-
-    /**
      * Returns the index in Notebook request/response list.
      */
     public int getIndex()  { return _index; }

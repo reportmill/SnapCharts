@@ -109,7 +109,8 @@ public class EntryView<T extends Entry> extends ParentView {
     {
         String entryText = anEntry.getText();
         TextArea textArea = createTextArea();
-        textArea.setText(entryText);
+        if (entryText != null && entryText.length() > 0)
+            textArea.setText(entryText);
         return textArea;
     }
 

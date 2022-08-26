@@ -2,24 +2,27 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import javakit.shell.JavaTextDocBlock;
+import javakit.shell.JavaText;
+import javakit.shell.JavaTextDoc;
 import snap.props.PropObject;
 import snap.props.PropSet;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class manages collections of snippets.
  */
 public class Notebook extends PropObject {
 
+    // The JavaTextDoc
+    private JavaTextDoc  _javaDoc;
+
     // The name
     private String  _name;
 
     // The list of Request entries
-    private List<Request>  _requests = new ArrayList<>();
+    private List<JavaEntry>  _javaEntries = new ArrayList<>();
 
     // The Processor
     private Processor  _processor;
@@ -30,7 +33,49 @@ public class Notebook extends PropObject {
     /**
      * Constructor.
      */
-    public Notebook()  { }
+    public Notebook()
+    {
+        super();
+
+        // Get template Java text string
+        JavaText javaText = new JavaText();
+        javaText.setSuperClassName(ChartsREPL.class.getName());
+        javaText.addImport("snapcharts.data.*");
+        javaText.addImport("snapcharts.notebook.*");
+        String javaTextStr = javaText.getText();
+
+        // Create JavaDoc for template Java text
+        JavaTextDoc javaDoc = new JavaTextDoc();
+        javaDoc.setString(javaTextStr);
+
+        // Set javaDoc
+        setJavaDoc(javaDoc);
+    }
+
+    /**
+     * Returns the JavaDoc.
+     */
+    public JavaTextDoc getJavaDoc()  { return _javaDoc; }
+
+    /**
+     * Sets the JavaDoc.
+     */
+    public void setJavaDoc(JavaTextDoc aJavaDoc)
+    {
+        // If already set, just return
+        if (aJavaDoc == getJavaDoc()) return;
+
+        // Set JavaDoc
+        _javaDoc = aJavaDoc;
+
+        // Rebuild requests
+        _javaEntries.clear();
+        JavaTextDocBlock[] javaBlocks = _javaDoc.getBlocks();
+        for (JavaTextDocBlock javaBlock : javaBlocks) {
+            JavaEntry javaBlockNB = new JavaEntry(javaBlock);
+            addEntry(javaBlockNB);
+        }
+    }
 
     /**
      * Returns the name.
@@ -46,73 +91,81 @@ public class Notebook extends PropObject {
     }
 
     /**
-     * Returns the Requests.
+     * Returns the JavaEntries.
      */
-    public List<Request> getRequests()  { return _requests; }
+    public List<JavaEntry> getEntries()  { return _javaEntries; }
 
     /**
-     * Adds a Request.
+     * Adds a entry.
      */
-    public void addRequest(Request aRequest)
+    public void addEntry(JavaEntry aJavaEntry)
     {
-        addRequest(aRequest, _requests.size());
+        addEntry(aJavaEntry, _javaEntries.size());
     }
 
     /**
-     * Adds a Request at given index.
+     * Adds a entry at given index.
      */
-    public void addRequest(Request aRequest, int anIndex)
+    public void addEntry(JavaEntry aJavaEntry, int anIndex)
     {
-        _requests.add(anIndex, aRequest);
-        aRequest.setIndex(anIndex + 1);
-        firePropChange(Request_Prop, null, aRequest, anIndex);
+        _javaEntries.add(anIndex, aJavaEntry);
+        aJavaEntry.setIndex(anIndex + 1);
+        firePropChange(Request_Prop, null, aJavaEntry, anIndex);
     }
 
     /**
-     * Removes a Request at given index.
+     * Removes a entry at given index.
      */
-    public void removeRequest(int anIndex)
+    public void removeEntry(int anIndex)
     {
-        Request request = _requests.remove(anIndex);
-        firePropChange(Request_Prop, request, null, anIndex);
+        // Remove entry
+        JavaEntry javaEntry = _javaEntries.remove(anIndex);
+
+        // Remove block
+        JavaTextDoc javaDoc = getJavaDoc();
+        JavaTextDocBlock javaBlock = javaEntry.getJavaBlock();
+        javaDoc.removeBlock(javaBlock);
+
+        // Fire PropChange
+        firePropChange(Request_Prop, javaEntry, null, anIndex);
     }
 
     /**
-     * Removes given request.
+     * Removes given entry.
      */
-    public void removeRequest(Request aRequest)
+    public void removeEntry(JavaEntry aJavaEntry)
     {
-        int index = _requests.indexOf(aRequest);
+        int index = _javaEntries.indexOf(aJavaEntry);
         if (index >= 0)
-            removeRequest(index);
+            removeEntry(index);
     }
 
     /**
-     * Returns the Response for a given request.
+     * Returns the Response for a given entry.
      */
-    public Response getResponseForRequest(Request aRequest)
+    public Response getResponseForEntry(JavaEntry aJavaEntry)
     {
         // Get response from map - just return if found
-        Response response = aRequest.getResponse();
+        Response response = aJavaEntry.getResponse();
         if (response != null)
             return response;
 
         // Create Response for Request
-        response = createResponseForRequest(aRequest);
+        response = createResponseForEntry(aJavaEntry);
 
         // Set in request and return
-        aRequest.setResponse(response);
+        aJavaEntry.setResponse(response);
         return response;
     }
 
     /**
-     * Returns the snippet out for a snippet.
+     * Returns the response for a given entry.
      */
-    protected Response createResponseForRequest(Request aRequest)
+    protected Response createResponseForEntry(JavaEntry aJavaEntry)
     {
         Processor processor = getProcessor();
-        Response response = processor.createResponseForRequest(aRequest);
-        response.setIndex(aRequest.getIndex());
+        Response response = processor.createResponseForRequest(aJavaEntry);
+        response.setIndex(aJavaEntry.getIndex());
         return response;
     }
 
@@ -127,19 +180,39 @@ public class Notebook extends PropObject {
     }
 
     /**
+     * Returns whether empty entry is at end of notebook.
+     */
+    public boolean isEmptyEntrySet()
+    {
+        List<JavaEntry> entries = getEntries();
+        JavaEntry lastEntry = entries.size() > 0 ? entries.get(0) : null;
+        return lastEntry != null && lastEntry.isEmpty();
+    }
+
+    /**
+     * Adds an empty entry to notebook.
+     */
+    public void addEmptyEntry()
+    {
+        JavaTextDocBlock javaBlock = _javaDoc.addEmptyBlock();
+        JavaEntry javaEntry = new JavaEntry(javaBlock);
+        addEntry(javaEntry);
+    }
+
+    /**
      * Returns the last response of given class.
      */
     public Response getLastResponseForValueClass(Class aClass)
     {
         // Get list of Requests
-        List<Request> requests = getRequests();
+        List<JavaEntry> javaEntries = getEntries();
 
         // Iterate over requests (backwards) and return first Response.Value for given class
-        for (int i = requests.size() - 1; i >= 0; i--) {
+        for (int i = javaEntries.size() - 1; i >= 0; i--) {
 
             // Get request/response
-            Request request = requests.get(i);
-            Response response = request.getResponse();
+            JavaEntry javaEntry = javaEntries.get(i);
+            Response response = javaEntry.getResponse();
             if (response == null)
                 continue;
 
@@ -169,7 +242,7 @@ public class Notebook extends PropObject {
     @Override
     protected void initProps(PropSet aPropSet)
     {
-        aPropSet.addPropNamed(Request_Prop, Request[].class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(Request_Prop, JavaEntry[].class, EMPTY_OBJECT);
     }
 
     /**
@@ -182,7 +255,7 @@ public class Notebook extends PropObject {
         switch (aPropName) {
 
             // Request
-            case Request_Prop: return getRequests();
+            case Request_Prop: return getEntries();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);

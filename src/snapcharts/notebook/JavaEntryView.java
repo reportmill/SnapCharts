@@ -2,21 +2,21 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.gfx.Font;
+import javakit.shell.JavaTextDocBlock;
 import snap.text.TextSel;
 import snap.view.*;
 
 /**
  * This View subclass shows snippets.
  */
-public class RequestView extends EntryView<Request> {
+public class JavaEntryView extends EntryView<JavaEntry> {
 
     /**
      * Constructor.
      */
-    public RequestView(NotebookView aNotebookView, Request aRequest)
+    public JavaEntryView(NotebookView aNotebookView, JavaEntry aJavaEntry)
     {
-        super(aNotebookView, aRequest);
+        super(aNotebookView, aJavaEntry);
     }
 
     /**
@@ -34,12 +34,18 @@ public class RequestView extends EntryView<Request> {
     @Override
     protected TextArea createTextArea()
     {
-        TextArea textArea = super.createTextArea();
-        textArea.setPadding(5, 5, 2, 5);
-        textArea.setFont(new Font("Courier New", 16));
-        textArea.setEditable(true);
+        JavaEntry javaEntry = getEntry();
+        JavaTextDocBlock javaBlock = javaEntry.getJavaBlock();
+        TextArea textArea = javaBlock.getTextArea();
         textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
         return textArea;
+
+//        TextArea textArea = super.createTextArea();
+//        textArea.setPadding(5, 5, 2, 5);
+//        textArea.setFont(new Font("Courier New", 16));
+//        textArea.setEditable(true);
+//        textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
+//        return textArea;
     }
 
     /**
@@ -48,16 +54,18 @@ public class RequestView extends EntryView<Request> {
     public void submitRequest()
     {
         // Get TextArea.Text and
-        Request request = getEntry();
-        TextArea textArea = getTextArea();
-        String text = textArea.getText().trim();
-        request.setText(text);
-        if (!text.equals(textArea.getText()))
-            textArea.setText(text);
+        JavaEntry javaEntry = getEntry();
+        //String text = textArea.getText().trim();
+        //request.setText(text);
+        //if (!text.equals(textArea.getText()))
+        //    textArea.setText(text);
 
         // Process request
-        _notebookView.processRequest(request);
-        textArea.setSel(text.length());
+        _notebookView.processRequest(javaEntry);
+
+        // Select text end
+        TextArea textArea = getTextArea();
+        textArea.setSel(textArea.length());
     }
 
     /**

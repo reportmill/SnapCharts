@@ -17,11 +17,14 @@ public class NotebookView extends ParentView {
     // The notebook
     private Notebook  _notebook;
 
-    // A pending request used to add new request
-    protected Request  _pendingRequest;
-
     // A map of EntryView for Entries
     private Map<Entry,EntryView>  _entryViews = new HashMap<>();
+
+    // For resetEntriesLater
+    private Runnable  _resetEntriesRun;
+
+    // For resetEntriesLater
+    private Runnable  _resetEntriesRunReal = () -> { resetEntries(); _resetEntriesRun = null; };
 
     // Constants
     public static Color BACK_FILL = new Color(226, 232, 246);
@@ -35,10 +38,6 @@ public class NotebookView extends ParentView {
 
         setFill(BACK_FILL);
         setPadding(25, 5, 5, 40);
-
-        // Create the PendingRequest
-        _pendingRequest = new Request();
-        _pendingRequest.setIndex(1);
 
         resetEntriesLater();
     }
@@ -79,8 +78,8 @@ public class NotebookView extends ParentView {
     protected EntryView createEntryView(Entry anEntry)
     {
         // Handle Request
-        if (anEntry instanceof Request)
-            return new RequestView(this, (Request) anEntry);
+        if (anEntry instanceof JavaEntry)
+            return new JavaEntryView(this, (JavaEntry) anEntry);
 
         // Handle Response
         if (anEntry instanceof Response)
@@ -106,40 +105,32 @@ public class NotebookView extends ParentView {
         // Remove all children
         removeChildren();
 
-        // Get list of requests
-        List<Request> requests = _notebook.getRequests();
+        // Make sure there is an empty entry
+        if (_notebook.isEmptyEntrySet())
+            _notebook.addEmptyEntry();
 
-        // Update request lineStart
-        int lineStart = 0;
-        for (Request request : requests) {
-            request.setLineStart(lineStart);
-            lineStart += request.getLineCount();
-        }
+        // Get list of requests
+        List<JavaEntry> javaEntries = _notebook.getEntries();
 
         // Reset all
         Processor processor = _notebook.getProcessor();
         processor.resetAll();
 
         // Iterate over requests and add request/response views
-        for (Request request : requests) {
+        for (JavaEntry javaEntry : javaEntries) {
 
             // Get EntryView and add
-            EntryView requestView = getEntryView(request);
+            EntryView requestView = getEntryView(javaEntry);
             addChild(requestView);
 
             // Get Response and ResponseView and add
-            Response response = _notebook.getResponseForRequest(request);
+            Response response = _notebook.getResponseForEntry(javaEntry);
             EntryView responseView = getEntryView(response);
             addChild(responseView);
         }
 
-        // Add pending request
-        Request pendingRequest = _pendingRequest;
-        EntryView pendingView = getEntryView(pendingRequest);
-        addChild(pendingView);
-
-        // Focus pending
-        pendingView.requestFocus();
+        // Focus last request view - - should really just move forward
+        focusLastJavaEntry();
     }
 
     /**
@@ -147,36 +138,37 @@ public class NotebookView extends ParentView {
      */
     protected void resetEntriesLater()
     {
-        ViewUtils.runLater(() -> resetEntries());
+        if (_resetEntriesRun == null)
+            ViewUtils.runLater(_resetEntriesRun = _resetEntriesRunReal);
     }
 
     /**
      * Process Request
      */
-    public void processRequest(Request aRequest)
+    public void processRequest(JavaEntry aJavaEntry)
     {
-        // If empty request remove request and response from notebook
-        if (aRequest.isEmpty()) {
-            _notebook.removeRequest(aRequest);
-            removeEntryView(aRequest);
-        }
-
-        // If Request is PendingRequest, add to Notebook and queue up new PendingRequest
-        else if (aRequest == _pendingRequest) {
-            _notebook.addRequest(_pendingRequest);
-            _pendingRequest = new Request();
-            _pendingRequest.setIndex(_notebook.getRequests().size() + 1);
-        }
-
-        // Otherwise remove Response and ResponseView for Request
-        else {
-            removeEntryView(aRequest);
-            Response response = aRequest.getResponse();
-            if (response != null) {
-                removeEntryView(response);
-                aRequest.setResponse(null);
-            }
-        }
+//        // If empty request remove request and response from notebook
+//        if (aRequest.isEmpty()) {
+//            _notebook.removeRequest(aRequest);
+//            removeEntryView(aRequest);
+//        }
+//
+//        // If Request is PendingRequest, add to Notebook and queue up new PendingRequest
+//        else if (aRequest == _pendingRequest) {
+//            _notebook.addRequest(_pendingRequest);
+//            _pendingRequest = new Request();
+//            _pendingRequest.setIndex(_notebook.getRequests().size() + 1);
+//        }
+//
+//        // Otherwise remove Response and ResponseView for Request
+//        else {
+//            removeEntryView(aRequest);
+//            Response response = aRequest.getResponse();
+//            if (response != null) {
+//                removeEntryView(response);
+//                aRequest.setResponse(null);
+//            }
+//        }
 
         // Reset Entries
         resetEntriesLater();
@@ -188,21 +180,21 @@ public class NotebookView extends ParentView {
     protected void handleTabKey(ViewEvent anEvent)
     {
         // Get current request
-        RequestView requestView = anEvent.getView().getParent(RequestView.class); if (requestView == null) return;
-        requestView.getTextArea().setSel(1000);
-        Request request = requestView.getEntry();
+        JavaEntryView javaEntryView = anEvent.getView().getParent(JavaEntryView.class); if (javaEntryView == null) return;
+        javaEntryView.getTextArea().setSel(1000);
+        JavaEntry javaEntry = javaEntryView.getEntry();
 
         // Get next request (depending on tab or shift-tab)
-        int index = request.getIndex();
+        int index = javaEntry.getIndex();
         int offset = anEvent.isShiftDown() ? -1 : 1;
         int index2 = index - 1 + offset;
-        List<Request> requests = _notebook.getRequests();
-        Request nextRequest = index2 < 0 ? null : index2 < requests.size() ? requests.get(index2) : _pendingRequest;
-        if (nextRequest == null) return;
+        List<JavaEntry> javaEntries = _notebook.getEntries();
+        JavaEntry nextJavaEntry = index2 < 0 ? null : index2 < javaEntries.size() ? javaEntries.get(index2) : null;
+        if (nextJavaEntry == null) return;
 
         // Get next request TextArea and select/focus
-        RequestView nextRequestView = (RequestView) getEntryView(nextRequest);
-        TextArea textArea = nextRequestView.getTextArea();
+        JavaEntryView nextJavaEntryView = (JavaEntryView) getEntryView(nextJavaEntry);
+        TextArea textArea = nextJavaEntryView.getTextArea();
         textArea.selectAll();
         textArea.requestFocus();
     }
@@ -210,12 +202,23 @@ public class NotebookView extends ParentView {
     /**
      * Returns the selected request view.
      */
-    public RequestView getActiveRequestView()
+    public JavaEntryView getActiveRequestView()
     {
         WindowView win = getWindow(); if (win == null) return null;
         View focusedView = win.getFocusedView(); if (focusedView == null) return null;
-        RequestView requestView = focusedView.getParent(RequestView.class);
-        return requestView;
+        JavaEntryView javaEntryView = focusedView.getParent(JavaEntryView.class);
+        return javaEntryView;
+    }
+
+    /**
+     * Focuses on last JavaEntry.
+     */
+    protected void focusLastJavaEntry()
+    {
+        List<JavaEntry> javaEntries = _notebook.getEntries();
+        JavaEntry lastJavaEntry = javaEntries.get(javaEntries.size() - 1);
+        EntryView lastJavaEntryView = getEntryView(lastJavaEntry);
+        lastJavaEntryView.requestFocus();
     }
 
     /**
@@ -231,19 +234,15 @@ public class NotebookView extends ParentView {
             if (aPC.getNewValue() == null) {
 
                 // Remove RequestView
-                Request request = (Request) aPC.getOldValue();
-                removeEntryView(request);
+                JavaEntry javaEntry = (JavaEntry) aPC.getOldValue();
+                removeEntryView(javaEntry);
 
                 // Remove ResponseView
-                Response response = request.getResponse();
+                Response response = javaEntry.getResponse();
                 if (response != null) {
                     removeEntryView(response);
-                    request.setResponse(null);
+                    javaEntry.setResponse(null);
                 }
-
-                // If request was last, make it new pending
-                if (aPC.getIndex() >= _notebook.getRequests().size())
-                    _pendingRequest = request;
             }
         }
 

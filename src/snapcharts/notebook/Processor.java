@@ -5,6 +5,7 @@ package snapcharts.notebook;
 import javakit.reflect.Resolver;
 import javakit.shell.JavaShell;
 import javakit.shell.JavaText;
+import javakit.shell.JavaTextDoc;
 import java.util.List;
 
 /**
@@ -64,11 +65,11 @@ public class Processor {
     {
         // Get requests
         String javaText = "";
-        List<Request> requests = getNotebook().getRequests();
+        List<JavaEntry> javaEntries = getNotebook().getEntries();
 
         // Iterate over requests and append together
-        for (Request request : requests) {
-            javaText += request.getText();
+        for (JavaEntry javaEntry : javaEntries) {
+            javaText += javaEntry.getText();
             if (!javaText.endsWith("\n"))
                 javaText += '\n';
         }
@@ -82,21 +83,25 @@ public class Processor {
      */
     public void resetAll()
     {
-        JavaText javaText = getJavaText();
-        _javaShell.runJavaCode(javaText);
+        //JavaText javaText = getJavaText();
+        //_javaShell.runJavaCode(javaText);
+
+        // Run JavaCode
+        JavaTextDoc javaDoc = _notebook.getJavaDoc();
+        _javaShell.runJavaCode(javaDoc);
     }
 
     /**
      * Returns the snippet out for a snippet.
      */
-    public Response createResponseForRequest(Request aRequest)
+    public Response createResponseForRequest(JavaEntry aJavaEntry)
     {
         // Get line values
         Object[] lineValues = _javaShell.getLineValues();
 
         // Get Request.StartLine as String and KeyChain
-        int lineStart = aRequest.getLineStart();
-        int lineEnd = aRequest.getLineEnd();
+        int lineStart = aJavaEntry.getLineStart();
+        int lineEnd = aJavaEntry.getLineEnd();
         Object lineValue = null;
         for (int i = lineEnd - 1; i >= lineStart; i--) {
             if (lineValues[i] != null) {
