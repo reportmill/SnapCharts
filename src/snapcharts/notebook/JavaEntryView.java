@@ -3,6 +3,7 @@
  */
 package snapcharts.notebook;
 import javakit.shell.JavaTextDocBlock;
+import snap.gfx.Color;
 import snap.text.TextSel;
 import snap.view.*;
 
@@ -37,6 +38,10 @@ public class JavaEntryView extends EntryView<JavaEntry> {
         JavaEntry javaEntry = getEntry();
         JavaTextDocBlock javaBlock = javaEntry.getJavaBlock();
         TextArea textArea = javaBlock.getTextArea();
+        textArea.setBorder(Color.GRAY7, 1);
+        textArea.setPadding(5, 5, 2, 5);
+        textArea.setGrowWidth(true);
+        textArea.setMinSize(30, 30);
         textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
         return textArea;
 
