@@ -36,7 +36,7 @@ public class JavaEntry extends Entry {
     /**
      * Returns the end line relative to notebook.
      */
-    public int getLineEnd()  { return _block.getStartLine().getIndex(); }
+    public int getLineEnd()  { return _block.getEndLine().getIndex(); }
 
     /**
      * Returns whether request is empty.
