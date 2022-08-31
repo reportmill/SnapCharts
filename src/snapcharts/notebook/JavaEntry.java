@@ -43,8 +43,7 @@ public class JavaEntry extends Entry {
      */
     public boolean isEmpty()
     {
-        int length = _block.length();
-        return length == 0;
+        return _block.isEmpty();
     }
 
     /**

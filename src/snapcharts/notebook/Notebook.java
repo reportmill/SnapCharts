@@ -185,7 +185,7 @@ public class Notebook extends PropObject {
     public boolean isEmptyEntrySet()
     {
         List<JavaEntry> entries = getEntries();
-        JavaEntry lastEntry = entries.size() > 0 ? entries.get(0) : null;
+        JavaEntry lastEntry = entries.size() > 0 ? entries.get(entries.size() - 1) : null;
         return lastEntry != null && lastEntry.isEmpty();
     }
 

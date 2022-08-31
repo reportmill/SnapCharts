@@ -103,7 +103,7 @@ public class Processor {
         int lineStart = aJavaEntry.getLineStart();
         int lineEnd = aJavaEntry.getLineEnd();
         Object lineValue = null;
-        for (int i = lineEnd - 1; i >= lineStart; i--) {
+        for (int i = lineEnd; i >= lineStart; i--) {
             if (lineValues[i] != null) {
                 lineValue = lineValues[i];
                 if (!(lineValue instanceof String) || ((String) lineValue).length() > 0)
