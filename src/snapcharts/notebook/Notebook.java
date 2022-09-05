@@ -2,6 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import javakit.parse.JavaParser;
+import javakit.reflect.Resolver;
 import javakit.shell.JavaTextDocBlock;
 import javakit.shell.JavaText;
 import javakit.shell.JavaTextDoc;
@@ -30,12 +32,23 @@ public class Notebook extends PropObject {
     // Constants for properties
     public static final String Request_Prop = "Request";
 
+    // Constant for Resolver
+    private static Resolver  _resolver = Resolver.newResolverForClassLoader(Notebook.class.getClassLoader());
+
     /**
      * Constructor.
      */
     public Notebook()
     {
         super();
+
+        // Create JavaDoc to hold Java code
+        JavaTextDoc javaDoc = new JavaTextDoc();
+
+        // Create JavaParser with Resolver for JavaDoc
+        JavaParser javaParser = new JavaParser();
+        javaParser.setResolver(_resolver);
+        javaDoc.setJavaParser(javaParser);
 
         // Get template Java text string
         JavaText javaText = new JavaText();
@@ -45,7 +58,6 @@ public class Notebook extends PropObject {
         String javaTextStr = javaText.getText();
 
         // Create JavaDoc for template Java text
-        JavaTextDoc javaDoc = new JavaTextDoc();
         javaDoc.setString(javaTextStr);
 
         // Set javaDoc
