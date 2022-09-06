@@ -188,8 +188,4 @@ public class ChartsREPL {
      */
     public static Chart plot(Object ... theObjects)  { return chart(theObjects); }
     public static Chart plot3D(Object ... theObjects)  { return chart3D(theObjects); }
-    //public static DoubleArray doublearray(Object ... theDoubles)  { return doubleArray(theDoubles); }
-    //public static DataArray dataarray(Object anObj)  { return dataArray(anObj); }
-    //public static DataSet dataset(Object ... theObjects)  { return dataSet(theObjects); }
-    //public static DoubleArray minmax(double aMin, double aMax)  { return minMaxArray(aMin, aMax); }
 }
