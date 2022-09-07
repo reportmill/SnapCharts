@@ -20,6 +20,9 @@ public class NotebookView extends ParentView {
     // A map of EntryView for Entries
     private Map<Entry,EntryView>  _entryViews = new HashMap<>();
 
+    // A map of ResponseView for Responses
+    private Map<Entry,ResponseView>  _responseViews = new HashMap<>();
+
     // For resetEntriesLater
     private Runnable  _resetEntriesRun;
 
@@ -67,26 +70,9 @@ public class NotebookView extends ParentView {
             return entryView;
 
         // Create EntryView for Entry, add to map and return
-        entryView = createEntryView(anEntry);
+        entryView = new JavaEntryView(this, (JavaEntry) anEntry);
         _entryViews.put(anEntry, entryView);
         return entryView;
-    }
-
-    /**
-     * Creates an EntryView for given Entry.
-     */
-    protected EntryView createEntryView(Entry anEntry)
-    {
-        // Handle Request
-        if (anEntry instanceof JavaEntry)
-            return new JavaEntryView(this, (JavaEntry) anEntry);
-
-        // Handle Response
-        if (anEntry instanceof Response)
-            return new ResponseView(this, (Response) anEntry);
-
-        // Complain
-        return null;
     }
 
     /**
@@ -98,38 +84,58 @@ public class NotebookView extends ParentView {
     }
 
     /**
+     * Returns an ResponseView for given Response.
+     */
+    public ResponseView getResponseView(Response aResponse)
+    {
+        // Get EntryView from EntryViews map and return if found
+        ResponseView entryView = _responseViews.get(aResponse);
+        if (entryView != null)
+            return entryView;
+
+        // Create ResponseView for Response, add to map and return
+        entryView =  new ResponseView(this, aResponse);
+        _responseViews.put(aResponse, entryView);
+        return entryView;
+    }
+
+    /**
      * Resets entry views.
      */
     protected void resetEntries()
     {
-        // Remove all children
+        // Remove all child views
         removeChildren();
 
         // Make sure there is an empty entry
         if (!_notebook.isEmptyEntrySet())
             _notebook.addEmptyEntry();
 
-        // Get list of requests
+        // Update notebook (and clear ResponseView cache)
+        if (_notebook.isNeedsUpdate()) {
+            _notebook.updateNotebook();
+            _responseViews.clear();
+        }
+
+        // Get entries
         List<JavaEntry> javaEntries = _notebook.getEntries();
 
-        // Reset all
-        Processor processor = _notebook.getProcessor();
-        processor.resetAll();
-
-        // Iterate over requests and add request/response views
+        // Iterate over entries and add entry/response views
         for (JavaEntry javaEntry : javaEntries) {
 
             // Get EntryView and add
-            EntryView requestView = getEntryView(javaEntry);
-            addChild(requestView);
+            EntryView entryView = getEntryView(javaEntry);
+            addChild(entryView);
 
             // Get Response and ResponseView and add
-            Response response = _notebook.getResponseForEntry(javaEntry);
-            EntryView responseView = getEntryView(response);
-            addChild(responseView);
+            Response response = javaEntry.getResponse();
+            if (response != null) {
+                ResponseView responseView = getResponseView(response);
+                addChild(responseView);
+            }
         }
 
-        // Focus last request view - - should really just move forward
+        // Focus last entry view - - should really just move forward
         focusLastJavaEntry();
     }
 
@@ -143,41 +149,25 @@ public class NotebookView extends ParentView {
     }
 
     /**
-     * Process Request
-     */
-    public void processRequest(JavaEntry aJavaEntry)
-    {
-        // Remove Response and ResponseView for Request
-        removeEntryView(aJavaEntry);
-        Response response = aJavaEntry.getResponse();
-        if (response != null) {
-            removeEntryView(response);
-            aJavaEntry.setResponse(null);
-        }
-
-        // Reset Entries
-        resetEntriesLater();
-    }
-
-    /**
-     * Called when Request view gets tab key.
+     * Called when EntryView gets tab key.
      */
     protected void handleTabKey(ViewEvent anEvent)
     {
-        // Get current request
+        // Get current entry
         JavaEntryView javaEntryView = anEvent.getView().getParent(JavaEntryView.class); if (javaEntryView == null) return;
         javaEntryView.getTextArea().setSel(1000);
         JavaEntry javaEntry = javaEntryView.getEntry();
 
-        // Get next request (depending on tab or shift-tab)
+        // Get next entry (depending on tab or shift-tab)
         int index = javaEntry.getIndex();
         int offset = anEvent.isShiftDown() ? -1 : 1;
         int index2 = index - 1 + offset;
         List<JavaEntry> javaEntries = _notebook.getEntries();
         JavaEntry nextJavaEntry = index2 < 0 ? null : index2 < javaEntries.size() ? javaEntries.get(index2) : null;
-        if (nextJavaEntry == null) return;
+        if (nextJavaEntry == null)
+            return;
 
-        // Get next request TextArea and select/focus
+        // Get next entryView TextArea and select/focus
         JavaEntryView nextJavaEntryView = (JavaEntryView) getEntryView(nextJavaEntry);
         TextArea textArea = nextJavaEntryView.getTextArea();
         textArea.selectAll();
@@ -185,9 +175,9 @@ public class NotebookView extends ParentView {
     }
 
     /**
-     * Returns the selected request view.
+     * Returns the selected entry view.
      */
-    public JavaEntryView getActiveRequestView()
+    public JavaEntryView getActiveEntryView()
     {
         WindowView win = getWindow(); if (win == null) return null;
         View focusedView = win.getFocusedView(); if (focusedView == null) return null;
@@ -211,28 +201,12 @@ public class NotebookView extends ParentView {
      */
     private void notebookDidPropChange(PropChange aPC)
     {
-        // Handle Request Add/Remove
+        // Get prop name
         String propName = aPC.getPropName();
-        if (propName == Notebook.Request_Prop) {
 
-            // Handle Request Removed
-            if (aPC.getNewValue() == null) {
-
-                // Remove RequestView
-                JavaEntry javaEntry = (JavaEntry) aPC.getOldValue();
-                removeEntryView(javaEntry);
-
-                // Remove ResponseView
-                Response response = javaEntry.getResponse();
-                if (response != null) {
-                    removeEntryView(response);
-                    javaEntry.setResponse(null);
-                }
-            }
-        }
-
-        // Reset entries
-        resetEntriesLater();
+        // Handle NeedsUpdate
+        if (propName == Notebook.NeedsUpdate_Prop)
+            resetEntriesLater();
     }
 
     @Override

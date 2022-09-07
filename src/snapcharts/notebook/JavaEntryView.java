@@ -8,7 +8,7 @@ import snap.text.TextSel;
 import snap.view.*;
 
 /**
- * This View subclass shows snippets.
+ * This EntryView subclass supports display/edit of a JavaEntry.
  */
 public class JavaEntryView extends EntryView<JavaEntry> {
 
@@ -30,7 +30,7 @@ public class JavaEntryView extends EntryView<JavaEntry> {
     }
 
     /**
-     * Override for custom request TextArea.
+     * Override for custom entry TextArea.
      */
     @Override
     protected TextArea createTextArea()
@@ -44,29 +44,17 @@ public class JavaEntryView extends EntryView<JavaEntry> {
         textArea.setMinSize(30, 30);
         textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
         return textArea;
-
-//        TextArea textArea = super.createTextArea();
-//        textArea.setPadding(5, 5, 2, 5);
-//        textArea.setFont(new Font("Courier New", 16));
-//        textArea.setEditable(true);
-//        textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
-//        return textArea;
     }
 
     /**
-     * Called to submit a request.
+     * Called to submit an entry.
      */
-    public void submitRequest()
+    public void submitEntry()
     {
-        // Get TextArea.Text and
+        // Forward to Notebook
         JavaEntry javaEntry = getEntry();
-        //String text = textArea.getText().trim();
-        //request.setText(text);
-        //if (!text.equals(textArea.getText()))
-        //    textArea.setText(text);
-
-        // Process request
-        _notebookView.processRequest(javaEntry);
+        Notebook notebook = javaEntry.getNotebook();
+        notebook.submitEntry(javaEntry);
 
         // Select text end
         TextArea textArea = getTextArea();
@@ -74,30 +62,13 @@ public class JavaEntryView extends EntryView<JavaEntry> {
     }
 
     /**
-     * Called when TextArea gets Shift+Enter.
+     * Called when TextArea gets KeyPressed.
      */
     private void textAreaKeyPressed(ViewEvent anEvent)
     {
         // Handle Enter
-        if (anEvent.getKeyCode() == KeyCode.ENTER) {
-
-            // Shift+Enter always submits
-            if (anEvent.isShiftDown()) {
-                submitRequest();
-                anEvent.consume();
-                return;
-            }
-
-            // If on empty line beyond first, submit
-            TextArea textArea = getTextArea();
-            TextSel textSel = textArea.getSel();
-            int lineLen = textSel.getStartLine().getString().length();
-            if (textSel.getStart() > 0 && lineLen == 0) {
-                submitRequest();
-                anEvent.consume();
-                return;
-            }
-        }
+        if (anEvent.getKeyCode() == KeyCode.ENTER)
+            handleEnterAction(anEvent);
 
         // Handle tab key
         else if (anEvent.isTabKey()) {
@@ -107,7 +78,20 @@ public class JavaEntryView extends EntryView<JavaEntry> {
     }
 
     /**
-     * Handles Escape key in RequestView
+     * Handles Enter key press.
+     */
+    public void handleEnterAction(ViewEvent anEvent)
+    {
+        boolean shouldSubmit = isEnterActionSubmitAction(anEvent);
+        if (shouldSubmit) {
+            submitEntry();
+            anEvent.consume();
+            return;
+        }
+    }
+
+    /**
+     * Handles Escape key press.
      */
     public void handleEscapeAction(ViewEvent anEvent)
     {
@@ -128,5 +112,25 @@ public class JavaEntryView extends EntryView<JavaEntry> {
             textArea.selectAll();
             anEvent.consume();
         }
+    }
+
+    /**
+     * Returns whether enter action should cause submit.
+     */
+    private boolean isEnterActionSubmitAction(ViewEvent anEvent)
+    {
+        // Shift+Enter always submits
+        if (anEvent.isShiftDown())
+            return true;
+
+        // Determine whether should submit: If on empty line beyond first
+        TextArea textArea = getTextArea();
+        TextSel textSel = textArea.getSel();
+        int lineLen = textSel.getStartLine().getString().length();
+        if (textSel.getStart() > 0 && lineLen == 0)
+            return true;
+
+        // Return false
+        return false;
     }
 }

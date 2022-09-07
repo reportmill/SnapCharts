@@ -23,14 +23,18 @@ public class Notebook extends PropObject {
     // The name
     private String  _name;
 
-    // The list of Request entries
+    // The list of entries
     private List<JavaEntry>  _javaEntries = new ArrayList<>();
+
+    // Whether notebook needs update
+    private boolean  _needsUpdate;
 
     // The Processor
     private Processor  _processor;
 
     // Constants for properties
-    public static final String Request_Prop = "Request";
+    public static final String Entries_Prop = "Entries";
+    public static final String NeedsUpdate_Prop = "NeedsUpdate";
 
     // Constant for Resolver
     private static Resolver  _resolver = Resolver.newResolverForClassLoader(Notebook.class.getClassLoader());
@@ -80,11 +84,13 @@ public class Notebook extends PropObject {
         // Set JavaDoc
         _javaDoc = aJavaDoc;
 
-        // Rebuild requests
-        _javaEntries.clear();
+        // Get Java blocks from Java doc and clear entries
         JavaTextDocBlock[] javaBlocks = _javaDoc.getBlocks();
+        _javaEntries.clear();
+
+        // Iterate over Java blocks and create/add Java entries
         for (JavaTextDocBlock javaBlock : javaBlocks) {
-            JavaEntry javaBlockNB = new JavaEntry(javaBlock);
+            JavaEntry javaBlockNB = new JavaEntry(this, javaBlock);
             addEntry(javaBlockNB);
         }
     }
@@ -122,7 +128,7 @@ public class Notebook extends PropObject {
     {
         _javaEntries.add(anIndex, aJavaEntry);
         aJavaEntry.setIndex(anIndex + 1);
-        firePropChange(Request_Prop, null, aJavaEntry, anIndex);
+        firePropChange(Entries_Prop, null, aJavaEntry, anIndex);
     }
 
     /**
@@ -139,7 +145,7 @@ public class Notebook extends PropObject {
         javaDoc.removeBlock(javaBlock);
 
         // Fire PropChange
-        firePropChange(Request_Prop, javaEntry, null, anIndex);
+        firePropChange(Entries_Prop, javaEntry, null, anIndex);
     }
 
     /**
@@ -153,32 +159,57 @@ public class Notebook extends PropObject {
     }
 
     /**
-     * Returns the Response for a given entry.
+     * Returns whether notebook needs update.
      */
-    public Response getResponseForEntry(JavaEntry aJavaEntry)
+    public boolean isNeedsUpdate()  { return _needsUpdate; }
+
+    /**
+     * Sets whether notebook needs update.
+     */
+    protected void setNeedsUpdate(boolean aValue)
     {
-        // Get response from map - just return if found
-        Response response = aJavaEntry.getResponse();
-        if (response != null)
-            return response;
-
-        // Create Response for Request
-        response = createResponseForEntry(aJavaEntry);
-
-        // Set in request and return
-        aJavaEntry.setResponse(response);
-        return response;
+        if (aValue == isNeedsUpdate()) return;
+        firePropChange(NeedsUpdate_Prop, _needsUpdate, _needsUpdate = aValue);
     }
 
     /**
-     * Returns the response for a given entry.
+     * Submit entry.
      */
-    protected Response createResponseForEntry(JavaEntry aJavaEntry)
+    public void submitEntry(JavaEntry aJavaEntry)
     {
+        // Set NeedsUpdate
+        setNeedsUpdate(true);
+    }
+
+    /**
+     * Updates the notebook.
+     */
+    public void updateNotebook()
+    {
+        // Run processor
         Processor processor = getProcessor();
-        Response response = processor.createResponseForRequest(aJavaEntry);
-        response.setIndex(aJavaEntry.getIndex());
-        return response;
+        processor.resetAll();
+
+        // Get entries
+        List<JavaEntry> entries = getEntries();
+
+        // Iterate over entries and get/set response for each
+        for (JavaEntry entry : entries) {
+
+            // Get value for entry
+            Object value = processor.getValueForJavaEntry(entry);
+            if (value == null)
+                continue;
+
+            // Create Response, set value
+            Response response = new Response(this);
+            response.setValue(value);
+            response.setIndex(entry.getIndex());
+            entry.setResponse(response);
+        }
+
+        // Reset NeedsUpdate
+        setNeedsUpdate(false);
     }
 
     /**
@@ -207,45 +238,8 @@ public class Notebook extends PropObject {
     public void addEmptyEntry()
     {
         JavaTextDocBlock javaBlock = _javaDoc.addEmptyBlock();
-        JavaEntry javaEntry = new JavaEntry(javaBlock);
+        JavaEntry javaEntry = new JavaEntry(this, javaBlock);
         addEntry(javaEntry);
-    }
-
-    /**
-     * Returns the last response of given class.
-     */
-    public Response getLastResponseForValueClass(Class aClass)
-    {
-        // Get list of Requests
-        List<JavaEntry> javaEntries = getEntries();
-
-        // Iterate over requests (backwards) and return first Response.Value for given class
-        for (int i = javaEntries.size() - 1; i >= 0; i--) {
-
-            // Get request/response
-            JavaEntry javaEntry = javaEntries.get(i);
-            Response response = javaEntry.getResponse();
-            if (response == null)
-                continue;
-
-            // If Response.Value is of given class, return it
-            Object responseValue = response.getValue();
-            if (aClass.isInstance(responseValue))
-                return response;
-        }
-
-        // Return not found
-        return null;
-    }
-
-    /**
-     * Returns the last response of given class.
-     */
-    public <T> T getLastResponseValueForClass(Class<T> aClass)
-    {
-        Response response = getLastResponseForValueClass(aClass);
-        T responseValue = response != null ? (T) response.getValue() : null;
-        return responseValue;
     }
 
     /**
@@ -254,7 +248,7 @@ public class Notebook extends PropObject {
     @Override
     protected void initProps(PropSet aPropSet)
     {
-        aPropSet.addPropNamed(Request_Prop, JavaEntry[].class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(Entries_Prop, JavaEntry[].class, EMPTY_OBJECT);
     }
 
     /**
@@ -266,8 +260,8 @@ public class Notebook extends PropObject {
         // Handle properties
         switch (aPropName) {
 
-            // Request
-            case Request_Prop: return getEntries();
+            // Entries
+            case Entries_Prop: return getEntries();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -283,8 +277,8 @@ public class Notebook extends PropObject {
         // Handle properties
         switch (aPropName) {
 
-            // Request
-            //case Request_Prop: setRequests();
+            // Entries
+            //case Entries_Prop: setEntries(aValue);
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

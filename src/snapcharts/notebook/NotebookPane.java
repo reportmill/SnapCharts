@@ -96,7 +96,7 @@ public class NotebookPane extends ViewOwner {
     protected void handleEscapeAction(ViewEvent anEvent)
     {
         // Get active RequestView (just return if none)
-        JavaEntryView javaEntryView = _notebookView.getActiveRequestView();
+        JavaEntryView javaEntryView = _notebookView.getActiveEntryView();
         if (javaEntryView == null) {
             _notebookView.focusLastJavaEntry();
             return;

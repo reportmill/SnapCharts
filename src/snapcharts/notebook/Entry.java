@@ -5,6 +5,9 @@ package snapcharts.notebook;
  */
 public class Entry {
 
+    // The notebook that contains this entry
+    private Notebook  _notebook;
+
     // The text
     protected String  _text;
 
@@ -14,7 +17,15 @@ public class Entry {
     /**
      * Constructor.
      */
-    public Entry()  { }
+    public Entry(Notebook aNotebook)
+    {
+        _notebook = aNotebook;
+    }
+
+    /**
+     * Returns the notebook that contains this entry.
+     */
+    public Notebook getNotebook()  { return _notebook; }
 
     /**
      * Returns the text.

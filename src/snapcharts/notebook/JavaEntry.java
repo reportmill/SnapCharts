@@ -18,8 +18,9 @@ public class JavaEntry extends Entry {
     /**
      * Constructor.
      */
-    public JavaEntry(JavaTextDocBlock aBlock)
+    public JavaEntry(Notebook aNotebook, JavaTextDocBlock aBlock)
     {
+        super(aNotebook);
         _block = aBlock;
     }
 
@@ -39,7 +40,7 @@ public class JavaEntry extends Entry {
     public int getLineEnd()  { return _block.getEndLine().getIndex(); }
 
     /**
-     * Returns whether request is empty.
+     * Returns whether entry is empty.
      */
     public boolean isEmpty()
     {
