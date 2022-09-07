@@ -107,10 +107,6 @@ public class NotebookView extends ParentView {
         // Remove all child views
         removeChildren();
 
-        // Make sure there is an empty entry
-        if (!_notebook.isEmptyEntrySet())
-            _notebook.addEmptyEntry();
-
         // Update notebook (and clear ResponseView cache)
         if (_notebook.isNeedsUpdate()) {
             _notebook.updateNotebook();

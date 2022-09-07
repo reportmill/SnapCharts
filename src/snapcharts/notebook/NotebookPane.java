@@ -104,18 +104,17 @@ public class NotebookPane extends ViewOwner {
 
         // Forward to RequestView - just return if handled
         javaEntryView.handleEscapeAction(anEvent);
-        if (anEvent.isConsumed())
-            return;
+        //if (anEvent.isConsumed())
+        //    return;
 
         // If no requests, just return
-        if (_notebook.getEntries().size() == 1) {
-            beep(); return; }
+        //if (_notebook.getEntries().size() == 1) {
+        //    beep(); return;
+        //}
 
         // Otherwise remove current request and select previous
-        JavaEntry javaEntry = javaEntryView.getEntry();
-
-        // Remove request
-        _notebook.removeEntry(javaEntry);
+        //JavaEntry javaEntry = javaEntryView.getEntry();
+        //_notebook.removeEntry(javaEntry);
     }
 
     /**

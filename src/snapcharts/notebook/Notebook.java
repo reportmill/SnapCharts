@@ -9,6 +9,7 @@ import javakit.shell.JavaText;
 import javakit.shell.JavaTextDoc;
 import snap.props.PropObject;
 import snap.props.PropSet;
+import snap.util.SnapUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +64,7 @@ public class Notebook extends PropObject {
 
         // Create JavaDoc for template Java text
         javaDoc.setString(javaTextStr);
+        javaDoc.addEmptyBlock();
 
         // Set javaDoc
         setJavaDoc(javaDoc);
@@ -179,6 +181,20 @@ public class Notebook extends PropObject {
     {
         // Set NeedsUpdate
         setNeedsUpdate(true);
+
+        // Get last entry
+        List<JavaEntry> entries = getEntries();
+        JavaEntry lastEntry = entries.size() > 0 ? entries.get(entries.size() - 1) : null;
+        boolean isLastEntry = aJavaEntry == lastEntry;
+        boolean isEmptyEntry = aJavaEntry.isEmpty();
+
+        // If entry is empty and not last, remove it
+        if (isEmptyEntry && !isLastEntry)
+            removeEntry(aJavaEntry);
+
+        // If entry not empty and is last, add new empty
+        if (!isEmptyEntry && aJavaEntry == lastEntry)
+            addEmptyEntry();
     }
 
     /**
@@ -223,16 +239,6 @@ public class Notebook extends PropObject {
     }
 
     /**
-     * Returns whether empty entry is at end of notebook.
-     */
-    public boolean isEmptyEntrySet()
-    {
-        List<JavaEntry> entries = getEntries();
-        JavaEntry lastEntry = entries.size() > 0 ? entries.get(entries.size() - 1) : null;
-        return lastEntry != null && lastEntry.isEmpty();
-    }
-
-    /**
      * Adds an empty entry to notebook.
      */
     public void addEmptyEntry()
@@ -249,6 +255,7 @@ public class Notebook extends PropObject {
     protected void initProps(PropSet aPropSet)
     {
         aPropSet.addPropNamed(Entries_Prop, JavaEntry[].class, EMPTY_OBJECT);
+        aPropSet.addPropNamed(NeedsUpdate_Prop, boolean.class, false);
     }
 
     /**
@@ -260,8 +267,9 @@ public class Notebook extends PropObject {
         // Handle properties
         switch (aPropName) {
 
-            // Entries
+            // Entries, NeedsUpdate
             case Entries_Prop: return getEntries();
+            case NeedsUpdate_Prop: return isNeedsUpdate();
 
             // Handle super class properties (or unknown)
             default: return super.getPropValue(aPropName);
@@ -277,8 +285,9 @@ public class Notebook extends PropObject {
         // Handle properties
         switch (aPropName) {
 
-            // Entries
+            // Entries, NeedsUpdate
             //case Entries_Prop: setEntries(aValue);
+            case NeedsUpdate_Prop: setNeedsUpdate(SnapUtils.boolValue(aValue));
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

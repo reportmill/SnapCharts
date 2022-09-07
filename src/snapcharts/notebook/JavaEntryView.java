@@ -51,8 +51,11 @@ public class JavaEntryView extends EntryView<JavaEntry> {
      */
     public void submitEntry()
     {
-        // Forward to Notebook
+        // Get JavaEntry and clear response
         JavaEntry javaEntry = getEntry();
+        javaEntry.setResponse(null);
+
+        // Forward to Notebook
         Notebook notebook = javaEntry.getNotebook();
         notebook.submitEntry(javaEntry);
 

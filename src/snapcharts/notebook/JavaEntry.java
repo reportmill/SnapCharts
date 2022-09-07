@@ -3,6 +3,7 @@
  */
 package snapcharts.notebook;
 import javakit.shell.JavaTextDocBlock;
+import snap.text.TextDoc;
 
 /**
  * This entry subclass represents a snippet of Java code with an expression, statement or other code.
@@ -58,5 +59,26 @@ public class JavaEntry extends Entry {
     public void setResponse(Response aResponse)
     {
         _response = aResponse;
+    }
+
+    /**
+     * Returns the text.
+     */
+    @Override
+    public String getText()
+    {
+        TextDoc textDoc = _block.getTextDoc();
+        return textDoc.getString();
+    }
+
+    /**
+     * Sets the text.
+     */
+    @Override
+    public void setText(String aValue)
+    {
+        TextDoc textDoc = _block.getTextDoc();
+        int length = textDoc.length();
+        textDoc.replaceChars(aValue, 0, length);
     }
 }
