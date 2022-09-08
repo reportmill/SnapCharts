@@ -4,6 +4,7 @@
 package snapcharts.notebook;
 import javakit.parse.JavaParser;
 import javakit.reflect.Resolver;
+import javakit.reflect.ResolverUtils;
 import javakit.shell.JavaTextDocBlock;
 import javakit.shell.JavaText;
 import javakit.shell.JavaTextDoc;
@@ -49,6 +50,16 @@ public class Notebook extends PropObject {
 
         // Create JavaDoc to hold Java code
         JavaTextDoc javaDoc = new JavaTextDoc();
+
+        // Get class paths for SnapKit and SnapCharts  and add to resolver
+        if (!SnapUtils.isTeaVM) {
+            String snapKitPath = ResolverUtils.getClassPathForClass(PropObject.class);
+            if (snapKitPath != null)
+                _resolver.addClassPath(snapKitPath);
+            String snapChartsPath = ResolverUtils.getClassPathForClass(Notebook.class);
+            if (snapChartsPath != null)
+                _resolver.addClassPath(snapChartsPath);
+        }
 
         // Create JavaParser with Resolver for JavaDoc
         JavaParser javaParser = new JavaParser();
