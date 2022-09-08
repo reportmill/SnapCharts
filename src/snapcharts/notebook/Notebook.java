@@ -48,6 +48,10 @@ public class Notebook extends PropObject {
     {
         super();
 
+        // Link up StaticResolver for TeaVM
+        if (Resolver.isTeaVM)
+            javakit.reflect.StaticResolver.shared()._next = new snapcharts.notebook.StaticResolver();
+
         // Create JavaDoc to hold Java code
         JavaTextDoc javaDoc = new JavaTextDoc();
 

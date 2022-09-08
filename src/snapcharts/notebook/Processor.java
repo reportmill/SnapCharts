@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import javakit.reflect.Resolver;
 import javakit.shell.JavaShell;
 import javakit.shell.JavaTextDoc;
 
@@ -27,10 +26,6 @@ public class Processor {
 
         // Create JavaShell
         _javaShell = new JavaShell();
-
-        // Link up StaticResolver for TeaVM
-        if (Resolver.isTeaVM)
-            javakit.reflect.StaticResolver.shared()._next = new snapcharts.notebook.StaticResolver();
     }
 
     /**
