@@ -201,7 +201,7 @@ public class NotebookView extends ParentView {
         String propName = aPC.getPropName();
 
         // Handle NeedsUpdate
-        if (propName == Notebook.NeedsUpdate_Prop)
+        if (propName == Notebook.NeedsUpdate_Prop && _notebook.isNeedsUpdate())
             resetEntriesLater();
     }
 
