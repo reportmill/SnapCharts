@@ -18,7 +18,7 @@ public class NotebookView extends ParentView {
     private Notebook  _notebook;
 
     // A map of EntryView for Entries
-    private Map<Entry,EntryView>  _entryViews = new HashMap<>();
+    private Map<Entry,JavaEntryView>  _entryViews = new HashMap<>();
 
     // A map of ResponseView for Responses
     private Map<Entry,ResponseView>  _responseViews = new HashMap<>();
@@ -62,10 +62,10 @@ public class NotebookView extends ParentView {
     /**
      * Returns an EntryView for given Entry.
      */
-    public EntryView getEntryView(Entry anEntry)
+    public JavaEntryView getEntryView(Entry anEntry)
     {
         // Get EntryView from EntryViews map and return if found
-        EntryView entryView = _entryViews.get(anEntry);
+        JavaEntryView entryView = _entryViews.get(anEntry);
         if (entryView != null)
             return entryView;
 
@@ -120,7 +120,7 @@ public class NotebookView extends ParentView {
         for (JavaEntry javaEntry : javaEntries) {
 
             // Get EntryView and add
-            EntryView entryView = getEntryView(javaEntry);
+            JavaEntryView entryView = getEntryView(javaEntry);
             addChild(entryView);
 
             // Get Response and ResponseView and add
@@ -132,7 +132,7 @@ public class NotebookView extends ParentView {
         }
 
         // Focus last entry view - - should really just move forward
-        focusLastJavaEntry();
+        focusLastEntry();
     }
 
     /**
@@ -157,17 +157,14 @@ public class NotebookView extends ParentView {
         // Get next entry (depending on tab or shift-tab)
         int index = javaEntry.getIndex();
         int offset = anEvent.isShiftDown() ? -1 : 1;
-        int index2 = index - 1 + offset;
+        int index2 = index + offset;
         List<JavaEntry> javaEntries = _notebook.getEntries();
         JavaEntry nextJavaEntry = index2 < 0 ? null : index2 < javaEntries.size() ? javaEntries.get(index2) : null;
         if (nextJavaEntry == null)
             return;
 
-        // Get next entryView TextArea and select/focus
-        JavaEntryView nextJavaEntryView = (JavaEntryView) getEntryView(nextJavaEntry);
-        TextArea textArea = nextJavaEntryView.getTextArea();
-        textArea.selectAll();
-        textArea.requestFocus();
+        // Select/focus entry
+        focusEntry(nextJavaEntry, true);
     }
 
     /**
@@ -182,14 +179,25 @@ public class NotebookView extends ParentView {
     }
 
     /**
+     * Focuses on given entry.
+     */
+    protected void focusEntry(JavaEntry anEntry, boolean doSelectAll)
+    {
+        JavaEntryView entryView = (JavaEntryView) getEntryView(anEntry);
+        TextArea textArea = entryView.getTextArea();
+        if (doSelectAll)
+            textArea.selectAll();
+        textArea.requestFocus();
+    }
+
+    /**
      * Focuses on last JavaEntry.
      */
-    protected void focusLastJavaEntry()
+    protected void focusLastEntry()
     {
         List<JavaEntry> javaEntries = _notebook.getEntries();
         JavaEntry lastJavaEntry = javaEntries.get(javaEntries.size() - 1);
-        EntryView lastJavaEntryView = getEntryView(lastJavaEntry);
-        lastJavaEntryView.requestFocus();
+        focusEntry(lastJavaEntry, false);
     }
 
     /**

@@ -98,7 +98,7 @@ public class NotebookPane extends ViewOwner {
         // Get active RequestView (just return if none)
         JavaEntryView javaEntryView = _notebookView.getActiveEntryView();
         if (javaEntryView == null) {
-            _notebookView.focusLastJavaEntry();
+            _notebookView.focusLastEntry();
             return;
         }
 

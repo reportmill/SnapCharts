@@ -78,6 +78,41 @@ public class JavaEntryView extends EntryView<JavaEntry> {
             _notebookView.handleTabKey(anEvent);
             anEvent.consume();
         }
+
+        // Handle BackSpace/Delete key: If empty entry but not last, remove it
+        else if (anEvent.isBackSpaceKey() || anEvent.isDeleteKey()) {
+
+            // If empty
+            if (getTextArea().length() == 0) {
+
+                // If last entry, just focus previous instead
+                JavaEntry javaEntry = getEntry();
+                Notebook notebook = javaEntry.getNotebook();
+                if (javaEntry == notebook.getLastEntry()) {
+                    JavaEntry prevEntry = javaEntry.getPrevEntry();
+                    if (prevEntry != null) {
+                        _notebookView.focusEntry(prevEntry, true);
+                        anEvent.consume();
+                    }
+                }
+
+                // Otherwise, remove entry
+                else {
+                    notebook.removeEntry(javaEntry);
+                    anEvent.consume();
+                }
+            }
+
+            // Otherwise, dim response
+            else {
+                Response response = getEntry().getResponse();
+                if (response != null) {
+                    ResponseView responseView = _notebookView.getResponseView(response);
+                    if (responseView != null)
+                        responseView.setOpacity(.25);
+                }
+            }
+        }
     }
 
     /**

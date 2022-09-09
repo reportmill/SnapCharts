@@ -54,6 +54,19 @@ public class Entry {
     }
 
     /**
+     * Returns the previous entry.
+     */
+    public JavaEntry getPrevEntry()
+    {
+        int index = getIndex();
+        if (index > 0) {
+            Notebook notebook = getNotebook();
+            return notebook.getEntries().get(index - 1);
+        }
+        return null;
+    }
+
+    /**
      * Standard toString method.
      */
     @Override

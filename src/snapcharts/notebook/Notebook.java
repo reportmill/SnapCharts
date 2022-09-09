@@ -143,9 +143,18 @@ public class Notebook extends PropObject {
      */
     public void addEntry(JavaEntry aJavaEntry, int anIndex)
     {
+        // Add entries
         _javaEntries.add(anIndex, aJavaEntry);
-        aJavaEntry.setIndex(anIndex + 1);
+
+        // Reset indexes
+        for (int i = 0; i < _javaEntries.size(); i++)
+            _javaEntries.get(i).setIndex(i);
+
+        // Fire prop change
         firePropChange(Entries_Prop, null, aJavaEntry, anIndex);
+
+        // Mark dirty
+        setNeedsUpdate(true);
     }
 
     /**
@@ -161,8 +170,15 @@ public class Notebook extends PropObject {
         JavaTextDocBlock javaBlock = javaEntry.getJavaBlock();
         javaDoc.removeBlock(javaBlock);
 
+        // Reset indexes
+        for (int i = 0; i < _javaEntries.size(); i++)
+            _javaEntries.get(i).setIndex(i);
+
         // Fire PropChange
         firePropChange(Entries_Prop, javaEntry, null, anIndex);
+
+        // Mark dirty
+        setNeedsUpdate(true);
     }
 
     /**
@@ -198,8 +214,7 @@ public class Notebook extends PropObject {
         setNeedsUpdate(true);
 
         // Get last entry
-        List<JavaEntry> entries = getEntries();
-        JavaEntry lastEntry = entries.size() > 0 ? entries.get(entries.size() - 1) : null;
+        JavaEntry lastEntry = getLastEntry();
         boolean isLastEntry = aJavaEntry == lastEntry;
         boolean isEmptyEntry = aJavaEntry.isEmpty();
 
@@ -251,6 +266,15 @@ public class Notebook extends PropObject {
         if (_processor != null) return _processor;
         Processor processor = new Processor(this);
         return _processor = processor;
+    }
+
+    /**
+     * Returns the last entry.
+     */
+    public JavaEntry getLastEntry()
+    {
+        List<JavaEntry> entries = getEntries();
+        return entries.size() > 0 ? entries.get(entries.size() - 1) : null;
     }
 
     /**
