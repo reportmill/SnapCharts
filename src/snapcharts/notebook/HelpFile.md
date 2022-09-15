@@ -55,22 +55,33 @@
     chart = chart(dataSet)
 ```
 
-# Create 3D chart
+## From 3D data
+
+```
+    x = DoubleArray.fromMinMax(-3, 3)
+    y = DoubleArray.fromMinMax(-4, 4)
+    z = mapXY(x, y, (x,y) -> Math.sin(x) + Math.cos(y))
+    chart = chart(x, y, z)
+```
+
+# Create 3D Chart
 
 ## From data arrays
 
 ```
-    x = new double[] { 1, 2, 3, 4 }
-    y = new double[] { 1, 4, 9, 16 }
-    chart = chart3D(x,y)
+    x = DoubleArray.fromMinMax(-3, 3)
+    y = DoubleArray.fromMinMax(-4, 4)
+    z = mapXY(x, y, (x,y) -> Math.sin(x) + Math.cos(y))
+    chart = chart3D(x, y, z)
 ```
 
 ## From data set
 
 ```
-    x = new double[] { 1, 2, 3, 4 }
-    y = new double[] { 1, 4, 9, 16 }
-    dataSet = dataSet(x, y)
+    x = DoubleArray.fromMinMax(-3, 3)
+    y = DoubleArray.fromMinMax(-4, 4)
+    z = mapXY(x, y, (x,y) -> Math.sin(x) + Math.cos(y))
+    dataSet = dataSet(x, y, z)
     chart = chart3D(dataSet)
 ```
 
