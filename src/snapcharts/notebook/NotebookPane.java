@@ -2,10 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.view.ScrollView;
-import snap.view.View;
-import snap.view.ViewEvent;
-import snap.view.ViewOwner;
+import snap.view.*;
 
 /**
  * This class provides UI and editing for a notebook.
@@ -17,6 +14,9 @@ public class NotebookPane extends ViewOwner {
 
     // The NotebookView
     private NotebookView  _notebookView;
+
+    // The HelpPane
+    private HelpPane  _helpPane;
 
     /**
      * Returns the Notebook.
@@ -42,31 +42,29 @@ public class NotebookPane extends ViewOwner {
     }
 
     /**
-     * Create UI.
-     */
-    @Override
-    protected View createUI()
-    {
-        // Create NotebookView
-        Notebook notebook = getNotebook();
-        _notebookView = new NotebookView();
-        _notebookView.setGrowHeight(true);
-        _notebookView.setNotebook(notebook);
-
-        // Create ScrollView for NotebookView
-        ScrollView scrollView = new ScrollView(_notebookView);
-        scrollView.setFillWidth(true);
-
-        // Return
-        return scrollView;
-    }
-
-    /**
      * Initialize UI.
      */
     @Override
     protected void initUI()
     {
+        // Get UI
+        SplitView mainSplitView = getView("MainSplitView", SplitView.class);
+        ScrollView notebookScrollView = getView("NotebookScrollView", ScrollView.class);
+
+        // Create NotebookView
+        Notebook notebook = getNotebook();
+        _notebookView = new NotebookView();
+        _notebookView.setGrowHeight(true);
+        _notebookView.setNotebook(notebook);
+        notebookScrollView.setContent(_notebookView);
+
+        // Create/add HelpPane
+        _helpPane = new HelpPane();
+        View helpPaneUI = _helpPane.getUI();
+        helpPaneUI.setPrefHeight(260);
+        mainSplitView.addItem(helpPaneUI);
+
+        // Add EscapeAction
         addKeyActionFilter("EscapeAction", "ESCAPE");
     }
 

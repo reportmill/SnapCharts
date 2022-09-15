@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ColView>
+  <RowView Padding="4" GrowWidth="true">
+    <Font name="Arial" size="12" />
+    <TextField Name="SearchTextField" Margin="4,12,4,12" PrefWidth="260" PrefHeight="28" PromptText="Search" Radius="10"/>
+  </RowView>
+  <RowView GrowWidth="true" GrowHeight="true">
+    <ColView GrowHeight="true">
+      <ListView Name="TopicListView" MinWidth="120" MinHeight="60" PrefWidth="300" Margin="4" GrowHeight="true">
+        <LineBorder Color="#c0c0c0" />
+      </ListView>
+    </ColView>
+    <ColView Spacing="4" GrowWidth="true" GrowHeight="true">
+      <TextView Name="SectionTextView" MinWidth="120" MinHeight="60" PrefWidth="400" Margin="4" GrowWidth="true" GrowHeight="true" Rich="true" />
+    </ColView>
+  </RowView>
+</ColView>
