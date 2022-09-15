@@ -4,6 +4,7 @@
 package snapcharts.notebook;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
+import snapcharts.data.DoubleArray;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.Chart;
 import java.util.Arrays;
@@ -26,8 +27,13 @@ public class ProcessorUtils {
         if (aValue instanceof String)
             return (String) aValue;
 
+        // Handle double[], DoubleArray
         if (aValue instanceof double[])
             return Arrays.toString((double[]) aValue);
+        if (aValue instanceof DoubleArray) {
+            double[] doubleArray = ((DoubleArray) aValue).doubleArray();
+            return getStringForValue(doubleArray);
+        }
 
         // Handle Chart
         if (aValue instanceof Chart) {

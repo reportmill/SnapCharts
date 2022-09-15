@@ -8,6 +8,8 @@ import snap.view.*;
 import snap.viewx.TextPane;
 import snap.web.WebURL;
 
+import java.util.concurrent.Callable;
+
 /**
  * This class shows a help file for notebooks.
  */

@@ -31,7 +31,9 @@
 ## From data arrays
 
 ```
-    dataSet = DataSet.of(x, y)
+    x = new double[] { 1, 2, 3, 4 }
+    y = new double[] { 1, 4, 9, 16 }
+    dataSet = dataSet(x, y)
 ```
 
 # Create Chart
@@ -39,12 +41,17 @@
 ## From data arrays
 
 ```
+    x = new double[] { 1, 2, 3, 4 }
+    y = new double[] { 1, 4, 9, 16 }
     chart = chart(x,y)
 ```
 
 ## From data set
 
 ```
+    x = new double[] { 1, 2, 3, 4 }
+    y = new double[] { 1, 4, 9, 16 }
+    dataSet = dataSet(x, y)
     chart = chart(dataSet)
 ```
 
@@ -53,12 +60,17 @@
 ## From data arrays
 
 ```
+    x = new double[] { 1, 2, 3, 4 }
+    y = new double[] { 1, 4, 9, 16 }
     chart = chart3D(x,y)
 ```
 
 ## From data set
 
 ```
+    x = new double[] { 1, 2, 3, 4 }
+    y = new double[] { 1, 4, 9, 16 }
+    dataSet = dataSet(x, y)
     chart = chart3D(dataSet)
 ```
 

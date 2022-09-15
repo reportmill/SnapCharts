@@ -53,7 +53,9 @@ public class Processor {
 
         // Get entry start/end line indexes
         int startLineIndex = aJavaEntry.getLineStart();
-        int endLineIndex = aJavaEntry.getLineEnd();
+        int endLineIndex = aJavaEntry.getLineEnd() + 1;
+        if (endLineIndex >= lineValues.length) // Bogus
+            endLineIndex = lineValues.length - 1;
 
         // Iterate over entry lines (backward) to find a value
         for (int i = endLineIndex; i >= startLineIndex; i--) {
