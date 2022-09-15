@@ -1,7 +1,8 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.notebook;
-import snap.text.RichText;
 import snap.text.TextDoc;
-import snap.text.TextStyle;
 
 /**
  * This class represents a section of help from a HelpFile.
@@ -10,6 +11,9 @@ public class HelpSection {
 
     // The HelpFile that holds section
     private HelpFile  _helpFile;
+
+    // The section text
+    private String  _sectionText;
 
     // The header
     private String  _header;
@@ -29,7 +33,7 @@ public class HelpSection {
 
         // Set ivars
         _helpFile = aHelpFile;
-
+        _sectionText = sectionText;
 
         // Assume first line is header
         int headerEnd = sectionText.indexOf('\n');
@@ -92,21 +96,8 @@ public class HelpSection {
      */
     protected TextDoc createTextDoc()
     {
-        // Get HelpFile and create RichText
-        HelpFile helpFile = getHelpFile();
-        RichText richText = new RichText();
-
-        // Set header
-        String headerStr = getHeader();
-        TextStyle headerStyle = helpFile.getSectionHeaderStyle();
-        richText.addChars(headerStr, headerStyle, richText.length());
-
-        // Set content
-        String contentStr = getContent();
-        TextStyle contentStyle = helpFile.getSectionContentStyle();
-        richText.addChars(contentStr, contentStyle, richText.length());
-
-        // Return
-        return richText;
+        MarkDownDoc markDownDoc = new MarkDownDoc();
+        markDownDoc.setMarkDown("# " + _sectionText);
+        return markDownDoc;
     }
 }

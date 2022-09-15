@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2010, ReportMill Software. All rights reserved.
+ */
 package snapcharts.notebook;
 import snap.gfx.Image;
 import snap.text.TextDoc;
@@ -27,7 +30,7 @@ public class HelpPane extends ViewOwner {
         super();
 
         // Set HelpFile
-        WebURL helpFileURL = WebURL.getURL("/Users/jeff/JavaNB.md");
+        WebURL helpFileURL = WebURL.getURL(getClass(), "HelpFile.md");
         HelpFile helpFile = new HelpFile(helpFileURL);
         setHelpFile(helpFile);
     }
@@ -80,14 +83,17 @@ public class HelpPane extends ViewOwner {
 
         // Get TopicListArea and configure
         ListView<HelpSection> topicListView = getView("TopicListView", ListView.class);
+        topicListView.setFocusWhenPressed(false);
         ListArea<HelpSection> topicListArea = topicListView.getListArea();
         topicListArea.setName("TopicListArea");
+        topicListArea.setFocusWhenPressed(false);
         topicListArea.setItemTextFunction(helpSect -> helpSect.getHeader());
 
         // Get SectionTextArea
         TextView sectionTextView = getView("SectionTextView", TextView.class);
         _sectionTextArea = sectionTextView.getTextArea();
         _sectionTextArea.setName("SectionTextArea");
+        _sectionTextArea.setPadding(8, 8, 8, 8);
 
         // Get HelpSections and set in TopicListArea
         HelpFile helpFile = getHelpFile();

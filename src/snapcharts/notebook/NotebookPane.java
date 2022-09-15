@@ -61,7 +61,7 @@ public class NotebookPane extends ViewOwner {
         // Create/add HelpPane
         _helpPane = new HelpPane();
         View helpPaneUI = _helpPane.getUI();
-        helpPaneUI.setPrefHeight(260);
+        helpPaneUI.setPrefHeight(280);
         mainSplitView.addItem(helpPaneUI);
 
         // Add EscapeAction
