@@ -210,11 +210,10 @@ public class SheetView extends TableView<Object> {
         // Configure columns/headers
         configureColumns();
 
-        // Set last column to grow
-        for (TableCol tableCol : getCols())
-            tableCol.setGrowWidth(false);
+        // Set only last column to grow
         TableCol lastCol = getCol(getColCount() - 1);
-        lastCol.setGrowWidth(true);
+        for (TableCol tableCol : getCols())
+            tableCol.setGrowWidth(tableCol == lastCol);
 
         // Calculate row count
         int rowCount = getMinRowCount() + getExtraRowCount();
