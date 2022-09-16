@@ -113,3 +113,45 @@
     anim.play()
 ```
 
+# Basic Java code
+
+## Variable Definitions
+
+```
+    int x = 1
+    float y = 2.5f
+    double pi = 3.14d
+    String str = "Hello World"
+```
+
+## System logging
+
+```
+    System.out.println("Hello World");
+```
+
+## Conditionals
+
+```
+    if (2 + 2 == 4)
+        System.out.println("All is right with the world");
+```
+
+## For/while loops
+
+```
+    for (int i = 0; i < 10; i++)
+        System.out.println("Looping: " + i);
+```
+
+## Method definition
+
+```
+    public int factorial(int aValue)
+    {
+        int factorial = 1;
+        for (int i = aValue; i > 0; i--)
+            factorial *= i;
+        return factorial;
+    }
+```

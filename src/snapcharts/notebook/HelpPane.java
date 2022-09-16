@@ -8,8 +8,6 @@ import snap.view.*;
 import snap.viewx.TextPane;
 import snap.web.WebURL;
 
-import java.util.concurrent.Callable;
-
 /**
  * This class shows a help file for notebooks.
  */
@@ -101,6 +99,29 @@ public class HelpPane extends ViewOwner {
         HelpFile helpFile = getHelpFile();
         HelpSection[] sections = helpFile.getSections();
         topicListArea.setItems(sections);
+    }
+
+    /**
+     * Override to select first item when showing.
+     */
+    @Override
+    protected void initShowing()
+    {
+        HelpFile helpFile = getHelpFile();
+        HelpSection firstSection = helpFile.getSections()[0];
+        setSelSection(firstSection);
+    }
+
+    /**
+     * Reset UI.
+     */
+    @Override
+    protected void resetUI()
+    {
+        // Update TopicListArea
+        ListArea<HelpSection> topicListArea = getView("TopicListArea", ListArea.class);
+        if (topicListArea.getSelItem() != getSelSection())
+            topicListArea.setSelItem(getSelSection());
     }
 
     /**

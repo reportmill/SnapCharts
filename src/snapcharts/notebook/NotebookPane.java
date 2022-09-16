@@ -116,6 +116,11 @@ public class NotebookPane extends ViewOwner {
         mainSplitView.setDividerSpan(5);
         mainSplitView.setBorder(null);
 
+        // Get/configure ToolBar
+        View toolBar = getView("ToolBar");
+        toolBar.setFill(new Color("#FBFBFBF0"));
+        toolBar.setBorder(new Color("#E0"), 1);
+
         // Create NotebookView
         Notebook notebook = getNotebook();
         _notebookView = new NotebookView();
