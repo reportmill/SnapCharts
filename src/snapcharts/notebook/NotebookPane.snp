@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SplitView Name="MainSplitView" Vertical="true">
-  <ScrollView Name="NotebookScrollView" GrowHeight="true" FillWidth="true" />
-</SplitView>
+<ColView FillWidth="true" FillHeight="true">
+  <RowView Name="ToolBar">
+    <ToggleButton Name="ShowHelpButton" PrefWidth="80" Margin="8,10,8,8" Padding="5" LeanX="RIGHT" Text="Show Help" />
+  </RowView>
+  <SplitView Name="MainSplitView" Vertical="true" GrowHeight="true">
+    <ScrollView Name="NotebookScrollView" GrowHeight="true" FillWidth="true" />
+  </SplitView>
+</ColView>

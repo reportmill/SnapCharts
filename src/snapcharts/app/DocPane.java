@@ -536,7 +536,7 @@ public class DocPane extends ViewOwner {
     {
         // Get/configure SplitView
         _splitView = getView("SplitView", SplitView.class);
-        _splitView.setDividerSpan(6);
+        _splitView.setDividerSpan(5);
         _splitView.removeItem(1);
 
         // Set Toolbar images

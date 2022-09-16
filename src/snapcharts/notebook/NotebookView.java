@@ -29,9 +29,6 @@ public class NotebookView extends ParentView {
     // For resetEntriesLater
     private Runnable  _resetEntriesRunReal = () -> { resetEntries(); _resetEntriesRun = null; };
 
-    // Constants
-    public static Color BACK_FILL = new Color(226, 232, 246);
-
     /**
      * Constructor.
      */
@@ -39,8 +36,7 @@ public class NotebookView extends ParentView {
     {
         super();
 
-        setFill(BACK_FILL);
-        setPadding(25, 5, 5, 40);
+        setPadding(20, 5, 5, 30);
 
         resetEntriesLater();
     }

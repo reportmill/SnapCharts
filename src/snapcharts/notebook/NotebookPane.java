@@ -2,6 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.gfx.Color;
 import snap.view.*;
 
 /**
@@ -17,6 +18,9 @@ public class NotebookPane extends ViewOwner {
 
     // The HelpPane
     private HelpPane  _helpPane;
+
+    // Constants
+    public static Color BACK_FILL = Color.WHITE;
 
     /**
      * Returns the Notebook.
@@ -92,6 +96,15 @@ public class NotebookPane extends ViewOwner {
     @Override
     protected void initUI()
     {
+        // Configure TopView
+        View topView = getUI();
+        topView.setFill(BACK_FILL);
+
+        // Get/configure SplitView
+        SplitView mainSplitView = getView("MainSplitView", SplitView.class);
+        mainSplitView.setDividerSpan(5);
+        mainSplitView.setBorder(null);
+
         // Create NotebookView
         Notebook notebook = getNotebook();
         _notebookView = new NotebookView();
@@ -100,6 +113,7 @@ public class NotebookPane extends ViewOwner {
 
         // Get NotebookScrollView and add NotebookView
         ScrollView notebookScrollView = getView("NotebookScrollView", ScrollView.class);
+        notebookScrollView.setBorder(null);
         notebookScrollView.setContent(_notebookView);
 
         // Add EscapeAction
