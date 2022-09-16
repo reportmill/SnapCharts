@@ -103,6 +103,9 @@ public class DataSetPane extends ViewOwner {
         _sheetView.setCellConfigure(c -> configureCell(c));
         _sheetView.addPropChangeListener(pc -> editingCellChanged(pc), TableView.EditingCell_Prop);
 
+        // Do this redundant reset/init to avoid flash/resize after resetUI
+        resetSheetView();
+
         // Add PasteAction
         addKeyActionHandler(Cut_Action, "Shortcut+X");
         addKeyActionHandler(Paste_Action, "Shortcut+V");
@@ -115,28 +118,35 @@ public class DataSetPane extends ViewOwner {
      */
     protected void resetUI()
     {
-        // Get DataSet info
+        // Update DataNameText
         DataSet dataSet = getDataSet();
         String dataName = dataSet.getName();
-        DataType dataType = dataSet.getDataType();
-
-        // Update DataNameText
         setViewValue("DataNameText", dataName);
 
-        // Set TableView row & col count
-        int pointCount = dataSet.getPointCount();
-        int rowCount = pointCount;
-        int colCount = dataType.getChannelCount();
-        _sheetView.setMinRowCount(rowCount);
-        _sheetView.setMinColCount(colCount);
+        // Reset SheetView
+        resetSheetView();
 
         // Update PointCountLabel
+        int pointCount = dataSet.getPointCount();
         String str = "Points: " + pointCount + "   |   ";
         str += "Min X: " + FormatUtils.formatNum(dataSet.getMinX()) + "   |   ";
         str += "Max X: " + FormatUtils.formatNum(dataSet.getMaxX()) + "   |   ";
         str += "Min Y: " + FormatUtils.formatNum(dataSet.getMinY()) + "   |   ";
         str += "Max Y: " + FormatUtils.formatNum(dataSet.getMaxY());
         setViewValue("PointCountLabel", str);
+    }
+
+    /**
+     * Resets the SheetView.
+     */
+    protected void resetSheetView()
+    {
+        DataSet dataSet = getDataSet();
+        DataType dataType = dataSet.getDataType();
+        int rowCount = dataSet.getPointCount();
+        int colCount = dataType.getChannelCount();
+        _sheetView.setMinRowCount(rowCount);
+        _sheetView.setMinColCount(colCount);
     }
 
     /**

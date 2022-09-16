@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.gfx.Color;
+import snap.geom.Rect;
 import snap.props.PropChange;
 import snap.view.*;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class NotebookView extends ParentView {
     {
         super();
 
-        setPadding(20, 5, 5, 30);
+        setPadding(10, 5, 5, 30);
 
         resetEntriesLater();
     }
@@ -128,7 +128,7 @@ public class NotebookView extends ParentView {
         }
 
         // Focus last entry view - - should really just move forward
-        focusLastEntry();
+        getEnv().runLater(() -> focusLastEntry());
     }
 
     /**
@@ -179,11 +179,19 @@ public class NotebookView extends ParentView {
      */
     protected void focusEntry(JavaEntry anEntry, boolean doSelectAll)
     {
-        JavaEntryView entryView = (JavaEntryView) getEntryView(anEntry);
+        // Focus entry
+        JavaEntryView entryView = getEntryView(anEntry);
         TextArea textArea = entryView.getTextArea();
         if (doSelectAll)
             textArea.selectAll();
         textArea.requestFocus();
+
+        // Scroll to visible, too
+        getEnv().runLater(() -> {
+            Rect bounds = entryView.getBoundsLocal();
+            bounds.inset(-5);
+            entryView.scrollToVisible(bounds);
+        });
     }
 
     /**

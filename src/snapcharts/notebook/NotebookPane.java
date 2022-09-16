@@ -78,13 +78,24 @@ public class NotebookPane extends ViewOwner {
     }
 
     /**
+     * Hides the help pane.
+     */
+    public void hideHelpPane()
+    {
+        View helpPaneUI = _helpPane.getUI();
+        SplitView mainSplitView = getView("MainSplitView", SplitView.class);
+        mainSplitView.removeItemWithAnim(helpPaneUI);
+    }
+
+    /**
      * Shows the HelpPane after loaded.
      */
-    public void loadAndShowHelpPane()
+    public void showHelpPaneWhenLoaded()
     {
         Runnable run = () -> {
             HelpPane helpPane = getHelpPane();
-            helpPane.getUI();
+            View helpPaneUI = helpPane.getUI();
+            helpPaneUI.addPropChangeListener(pc -> resetLater(), View.Showing_Prop);
             ViewUtils.runLater(() -> showHelpPane());
         };
         new Thread(run).start();
@@ -120,7 +131,7 @@ public class NotebookPane extends ViewOwner {
         addKeyActionFilter("EscapeAction", "ESCAPE");
 
         // Load HelpPane in background and show
-        loadAndShowHelpPane();
+        showHelpPaneWhenLoaded();
     }
 
     /**
@@ -133,11 +144,30 @@ public class NotebookPane extends ViewOwner {
     }
 
     /**
+     * Reset UI.
+     */
+    @Override
+    protected void resetUI()
+    {
+        // Update ShowHelpButton.Text
+        boolean isHelpPaneShowing = _helpPane != null && _helpPane.isShowing();
+        String showHelpButtonTitle = isHelpPaneShowing ? "Hide Help" : "Show Help";
+        setViewText("ShowHelpButton", showHelpButtonTitle);
+    }
+
+    /**
      * Respond to UI.
      */
     @Override
     protected void respondUI(ViewEvent anEvent)
     {
+        // Handle ShowHelpButton
+        if (anEvent.equals("ShowHelpButton")) {
+            if (_helpPane != null && _helpPane.isShowing())
+                hideHelpPane();
+            else showHelpPaneWhenLoaded();
+        }
+
         // Handle EscapeAction
         if (anEvent.equals("EscapeAction"))
             handleEscapeAction(anEvent);
