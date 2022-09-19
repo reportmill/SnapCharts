@@ -6,12 +6,12 @@
   </RowView>
   <RowView GrowWidth="true" GrowHeight="true">
     <ColView GrowHeight="true">
-      <ListView Name="TopicListView" MinWidth="120" MinHeight="60" PrefWidth="300" Margin="4" GrowHeight="true">
+      <ListView Name="TopicListView" BorderRadius="4" MinWidth="120" MinHeight="60" PrefWidth="300" Margin="4" GrowHeight="true">
         <LineBorder Color="#c0c0c0" />
       </ListView>
     </ColView>
     <ColView Spacing="4" GrowWidth="true" GrowHeight="true">
-      <TextView Name="SectionTextView" MinWidth="120" MinHeight="60" PrefWidth="400" Margin="4" GrowWidth="true" GrowHeight="true" Rich="true" />
+      <TextView Name="SectionTextView" BorderRadius="4" Margin="4" GrowWidth="true" GrowHeight="true" MinWidth="120" MinHeight="60" PrefWidth="400" Rich="true" />
     </ColView>
   </RowView>
 </ColView>
