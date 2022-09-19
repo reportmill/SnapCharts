@@ -3,8 +3,6 @@
  */
 package snapcharts.notebook;
 import snap.geom.Pos;
-import snap.geom.RoundRect;
-import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx.ShadowEffect;
 import snap.view.BoxView;
@@ -125,13 +123,9 @@ public class ResponseView extends EntryView<Response> {
     private View createContentViewBoxForView(View aView)
     {
         // Create BoxView wrapper
-        BoxView boxView = new BoxView(aView, false, false) {
-            public Shape getBoundsShape()
-            {
-                return new RoundRect(0,0, getWidth(), getHeight(), 4);
-            }
-        };
+        BoxView boxView = new BoxView(aView, false, false);
         boxView.setFill(Color.WHITE);
+        boxView.setBorderRadius(4);
         boxView.setEffect(DEFAULT_SHADOW);
         boxView.setMargin(0, 0, 0, 22);
 

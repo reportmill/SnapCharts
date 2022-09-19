@@ -49,6 +49,7 @@ public class PageView extends ParentView {
         setPrefSize(612, 792);
         setFill(PAGE_FILL);
         setBorder(PAGE_BORDER);
+        setBorderRadius(4);
         setEffect(PAGE_SHADOW);
 
         // If no DocItem, just return
@@ -142,13 +143,5 @@ public class PageView extends ParentView {
         if (aValue)
             setPrefSize(612, 792);
         else setPrefSize(792, 612);
-    }
-
-    /**
-     * Override to handle optional rounding radius.
-     */
-    public Shape getBoundsShape()
-    {
-        return new RoundRect(0,0, getWidth(), getHeight(), 4);
     }
 }

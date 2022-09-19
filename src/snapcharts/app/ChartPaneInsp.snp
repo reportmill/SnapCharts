@@ -6,7 +6,7 @@
   </Label>
   <RowView Padding="0,8,3,8" >
     <font name="Arial" size="12" />
-    <TextField Name="SearchTextField" Margin="4,12,4,12" GrowWidth="true" PrefHeight="28" PromptText="Search" Radius="10"/>
+    <TextField Name="SearchTextField" Margin="4,12,4,12" GrowWidth="true" PrefHeight="28" PromptText="Search" BorderRadius="10"/>
   </RowView>
   <RowView PrefWidth="269" Align="CENTER" Padding="4,8,3,8">
     <ToggleButton Name="GeneralButton" PrefWidth="50" PrefHeight="42" GrowWidth="true" ToolTip="Chart Inspector" image="Insp_General.png" Position="CENTER_LEFT" Selected="true" Group="InspTG" />

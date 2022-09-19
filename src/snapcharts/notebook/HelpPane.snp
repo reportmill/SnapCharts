@@ -2,7 +2,7 @@
 <ColView>
   <Font name="Arial" size="14" />
   <RowView Padding="4" GrowWidth="true">
-    <TextField Name="SearchTextField" Margin="4,12,4,12" PrefWidth="260" PrefHeight="28" PromptText="Search" Radius="10"/>
+    <TextField Name="SearchTextField" Margin="4,12,4,12" PrefWidth="260" PrefHeight="28" PromptText="Search" BorderRadius="10"/>
   </RowView>
   <RowView GrowWidth="true" GrowHeight="true">
     <ColView GrowHeight="true">

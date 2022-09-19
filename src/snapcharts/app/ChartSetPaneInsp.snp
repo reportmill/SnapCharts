@@ -6,7 +6,7 @@
   </Label>
   <RowView Padding="0,8,3,8" >
     <font name="Arial" size="12" />
-    <TextField Name="SearchTextField" Margin="4,12,4,12" GrowWidth="true" PrefHeight="28" PromptText="Search" Radius="10"/>
+    <TextField Name="SearchTextField" Margin="4,12,4,12" GrowWidth="true" PrefHeight="28" PromptText="Search" BorderRadius="10"/>
   </RowView>
   <ScrollView Name="ContentBox" GrowHeight="true">
     <ColView Name="InspColView" FillWidth="true" />

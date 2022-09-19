@@ -3,8 +3,6 @@
  */
 package snapcharts.notebook;
 import snap.geom.Pos;
-import snap.geom.RoundRect;
-import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.view.*;
@@ -119,7 +117,8 @@ public class EntryView<T extends Entry> extends ParentView {
      */
     protected TextArea createTextArea()
     {
-        TextArea textArea = new EntryTextArea();
+        TextArea textArea = new TextArea();
+        textArea.setBorderRadius(4);
         textArea.setFill(Color.WHITE);
         textArea.setBorder(Color.GRAY7, 1);
         textArea.setFont(Font.Arial14);
@@ -152,17 +151,5 @@ public class EntryView<T extends Entry> extends ParentView {
     protected void layoutImpl()
     {
         RowView.layout(this, true);
-    }
-
-    /**
-     * TextArea subclass for round corners.
-     */
-    private static class EntryTextArea extends TextArea {
-
-        @Override
-        public Shape getBoundsShape()
-        {
-            return new RoundRect(0,0, getWidth(), getHeight(), 4);
-        }
     }
 }

@@ -88,6 +88,7 @@ public class ChartView extends ChartPartView<Chart> {
     public ChartView()
     {
         // Basic
+        setBorderRadius(4);
         setFocusable(true);
         setFocusWhenPressed(true);
 
@@ -488,14 +489,6 @@ public class ChartView extends ChartPartView<Chart> {
     {
         if (aPropName.equals(Reveal_Prop)) setReveal(SnapUtils.doubleValue(aValue));
         else super.setPropValue(aPropName, aValue);
-    }
-
-    /**
-     * Override to handle optional rounding radius.
-     */
-    public Shape getBoundsShape()
-    {
-        return new RoundRect(0,0, getWidth(), getHeight(), 4);
     }
 
     /**
