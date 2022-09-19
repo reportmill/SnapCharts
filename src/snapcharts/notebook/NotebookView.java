@@ -21,7 +21,7 @@ public class NotebookView extends ParentView {
     private Map<Entry,JavaEntryView>  _entryViews = new HashMap<>();
 
     // A map of ResponseView for Responses
-    private Map<Entry,ResponseView>  _responseViews = new HashMap<>();
+    private Map<Response,ResponseView>  _responseViews = new HashMap<>();
 
     // For resetEntriesLater
     private Runnable  _resetEntriesRun;

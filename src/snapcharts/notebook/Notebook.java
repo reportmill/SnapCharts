@@ -248,9 +248,8 @@ public class Notebook extends PropObject {
                 continue;
 
             // Create Response, set value
-            Response response = new Response(this);
+            Response response = new Response(entry);
             response.setValue(value);
-            response.setIndex(entry.getIndex());
             entry.setResponse(response);
         }
 
