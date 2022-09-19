@@ -5,6 +5,8 @@ package snapcharts.notebook;
 import snap.gfx.Color;
 import snap.view.*;
 
+import java.util.List;
+
 /**
  * This class provides UI and editing for a notebook.
  */
@@ -54,7 +56,7 @@ public class NotebookPane extends ViewOwner {
         if (_helpPane != null) return _helpPane;
 
         // Create, set, return
-        HelpPane helpPane = new HelpPane();
+        HelpPane helpPane = new HelpPane(this);
         return _helpPane = helpPane;
     }
 
@@ -203,6 +205,22 @@ public class NotebookPane extends ViewOwner {
         // Otherwise remove current request and select previous
         //JavaEntry javaEntry = javaEntryView.getEntry();
         //_notebook.removeEntry(javaEntry);
+    }
+
+    public void addHelpCode(String aString)
+    {
+        // Get last entry/entryView
+        List<JavaEntry> javaEntries = _notebook.getEntries();
+        JavaEntry lastEntry = javaEntries.get(javaEntries.size() - 1);
+        JavaEntryView entryView = _notebookView.getEntryView(lastEntry);
+
+        // Add help code to EntryView.TextArea
+        TextArea textArea = entryView.getTextArea();
+        textArea.setSel(0, textArea.length());
+        textArea.replaceCharsWithContent(aString);
+
+        // Submit entry
+        entryView.submitEntry();
     }
 
     /**

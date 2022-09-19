@@ -13,6 +13,9 @@ import snap.web.WebURL;
  */
 public class HelpPane extends ViewOwner {
 
+    // The NotebookPane
+    private NotebookPane  _notebookPane;
+
     // The HelpFile
     private HelpFile  _helpFile;
 
@@ -25,9 +28,10 @@ public class HelpPane extends ViewOwner {
     /**
      * Constructor.
      */
-    public HelpPane()
+    public HelpPane(NotebookPane aNP)
     {
         super();
+        _notebookPane = aNP;
 
         // Set HelpFile
         WebURL helpFileURL = WebURL.getURL(getClass(), "HelpFile.md");
@@ -92,7 +96,6 @@ public class HelpPane extends ViewOwner {
         // Get SectionTextArea
         TextView sectionTextView = getView("SectionTextView", TextView.class);
         _sectionTextArea = sectionTextView.getTextArea();
-        _sectionTextArea.setName("SectionTextArea");
         _sectionTextArea.setPadding(8, 8, 8, 8);
 
         // Get HelpSections and set in TopicListArea
@@ -135,5 +138,39 @@ public class HelpPane extends ViewOwner {
             HelpSection section = (HelpSection) anEvent.getSelItem();
             setSelSection(section);
         }
+
+        // Handle AddCodeButton
+        if (anEvent.equals("AddCodeButton"))
+            addHelpCodeToNotebook();
+    }
+
+    /**
+     * Finds help code in current help file and sends to Notebook.
+     */
+    private void addHelpCodeToNotebook()
+    {
+        String helpCode = getHelpCode();
+        if (helpCode != null)
+            _notebookPane.addHelpCode(helpCode);
+    }
+
+    /**
+     * Returns help code.
+     */
+    private String getHelpCode()
+    {
+        HelpSection selSection = getSelSection();
+        String content = selSection.getContent();
+        int startIndex = content.indexOf(MarkDownDoc.CODE_MARKER);
+        if (startIndex < 0)
+            return null;
+
+        startIndex += MarkDownDoc.CODE_MARKER.length();
+        int endIndex = content.indexOf(MarkDownDoc.CODE_MARKER, startIndex);
+        if (endIndex < 0)
+            return null;
+
+        String code = content.substring(startIndex, endIndex);
+        return code;
     }
 }

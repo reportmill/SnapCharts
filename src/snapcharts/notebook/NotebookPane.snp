@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView FillWidth="true" FillHeight="true">
   <RowView Name="ToolBar">
-    <Button Name="ShowHelpButton" PrefWidth="80" Margin="6,20,6,6" Padding="5" LeanX="RIGHT" Text="Show Help" />
+    <Button Name="ShowHelpButton" Margin="6,20,6,6" Padding="5,10,5,10" LeanX="RIGHT" Text="Show Help" />
   </RowView>
   <SplitView Name="MainSplitView" Vertical="true" GrowHeight="true">
     <ScrollView Name="NotebookScrollView" GrowHeight="true" FillWidth="true" />

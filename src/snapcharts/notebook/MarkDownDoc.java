@@ -26,7 +26,7 @@ public class MarkDownDoc extends RichText {
     private TextStyle  _codeStyle;
 
     // Constants
-    private static final String CODE_MARKER = "```";
+    public static final String CODE_MARKER = "```";
 
     /**
      * Constructor.
