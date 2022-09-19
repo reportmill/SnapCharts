@@ -55,6 +55,10 @@ public class JavaEntryView extends EntryView<JavaEntry> {
         JavaEntry javaEntry = getEntry();
         javaEntry.setResponse(null);
 
+        // If entry has trailing empty line, remove it
+        JavaTextDocBlock javaBlock = javaEntry.getJavaBlock();
+        javaBlock.removeTrailingNewline();
+
         // Forward to Notebook
         Notebook notebook = javaEntry.getNotebook();
         notebook.submitEntry(javaEntry);
