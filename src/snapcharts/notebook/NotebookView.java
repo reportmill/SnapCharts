@@ -18,7 +18,7 @@ public class NotebookView extends ParentView {
     private Notebook  _notebook;
 
     // A map of EntryView for Entries
-    private Map<Entry,JavaEntryView>  _entryViews = new HashMap<>();
+    private Map<JavaEntry,JavaEntryView>  _entryViews = new HashMap<>();
 
     // A map of ResponseView for Responses
     private Map<Response,ResponseView>  _responseViews = new HashMap<>();
@@ -58,7 +58,7 @@ public class NotebookView extends ParentView {
     /**
      * Returns an EntryView for given Entry.
      */
-    public JavaEntryView getEntryView(Entry anEntry)
+    public JavaEntryView getEntryView(JavaEntry anEntry)
     {
         // Get EntryView from EntryViews map and return if found
         JavaEntryView entryView = _entryViews.get(anEntry);
@@ -66,7 +66,7 @@ public class NotebookView extends ParentView {
             return entryView;
 
         // Create EntryView for Entry, add to map and return
-        entryView = new JavaEntryView(this, (JavaEntry) anEntry);
+        entryView = new JavaEntryView(this, anEntry);
         _entryViews.put(anEntry, entryView);
         return entryView;
     }
@@ -74,7 +74,7 @@ public class NotebookView extends ParentView {
     /**
      * Removes an entry view from cache.
      */
-    public void removeEntryView(Entry anEntry)
+    public void removeEntryView(JavaEntry anEntry)
     {
         _entryViews.remove(anEntry);
     }
@@ -148,7 +148,7 @@ public class NotebookView extends ParentView {
         // Get current entry
         JavaEntryView javaEntryView = anEvent.getView().getParent(JavaEntryView.class); if (javaEntryView == null) return;
         javaEntryView.getTextArea().setSel(1000);
-        JavaEntry javaEntry = javaEntryView.getEntry();
+        JavaEntry javaEntry = javaEntryView.getJavaEntry();
 
         // Get next entry (depending on tab or shift-tab)
         int index = javaEntry.getIndex();

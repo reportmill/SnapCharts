@@ -55,7 +55,7 @@ public class ResponseView extends ParentView {
         addChild(_label);
 
         // Set label text
-        String labelText = getLabelPrefix() + "[" + aResponse.getIndex() + "] = ";
+        String labelText = "Out [" + aResponse.getIndex() + "] = ";
         _label.setText(labelText);
 
         // Create/add entry textArea (content)
@@ -205,11 +205,6 @@ public class ResponseView extends ParentView {
         // Return
         return boxView;
     }
-
-    /**
-     * Override for response.
-     */
-    protected String getLabelPrefix()  { return "Out"; }
 
     @Override
     public void requestFocus()

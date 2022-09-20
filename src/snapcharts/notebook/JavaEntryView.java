@@ -3,47 +3,96 @@
  */
 package snapcharts.notebook;
 import javakit.shell.JavaTextDocBlock;
+import snap.geom.Pos;
 import snap.gfx.Color;
+import snap.gfx.Font;
 import snap.text.TextSel;
 import snap.view.*;
 
 /**
- * This EntryView subclass supports display/edit of a JavaEntry.
+ * This View class supports display/edit of a JavaEntry.
  */
-public class JavaEntryView extends EntryView<JavaEntry> {
+public class JavaEntryView extends ParentView {
+
+    // The NotebookView
+    protected NotebookView  _notebookView;
+
+    // The entry
+    private JavaEntry  _javaEntry;
+
+    // The content view
+    private TextArea  _textArea;
+
+    // The label
+    private Label  _label;
 
     /**
      * Constructor.
      */
     public JavaEntryView(NotebookView aNotebookView, JavaEntry aJavaEntry)
     {
-        super(aNotebookView, aJavaEntry);
+        _notebookView = aNotebookView;
+        _javaEntry = aJavaEntry;
+
+        // Basic style config
+        setSpacing(10);
+        setPadding(5, 5, 5, 5);
+
+        // Create/add entry label
+        _label = createLabel();
+        addChild(_label);
+
+        // Set label text
+        String labelText = "In [" + aJavaEntry.getIndex() + "] = ";
+        _label.setText(labelText);
+
+        // Get/add JavaEntry TextArea (content)
+        _textArea = getJavaBlockTextArea();
+        addChild(_textArea);
     }
+
+    /**
+     * Returns the JavaEntry.
+     */
+    public JavaEntry getJavaEntry()  { return _javaEntry; }
 
     /**
      * Returns the TextArea.
      */
-    public TextArea getTextArea()
-    {
-        View content = getContent();
-        return content instanceof TextArea ? (TextArea) content : null;
-    }
+    public TextArea getTextArea()  { return _textArea; }
 
     /**
      * Override for custom entry TextArea.
      */
-    @Override
-    protected TextArea createTextArea()
+    protected TextArea getJavaBlockTextArea()
     {
-        JavaEntry javaEntry = getEntry();
+        // Get JavaEntry.JavaBlock.TextArea
+        JavaEntry javaEntry = getJavaEntry();
         JavaTextDocBlock javaBlock = javaEntry.getJavaBlock();
         TextArea textArea = javaBlock.getTextArea();
+
+        // Do additional config
         textArea.setBorder(Color.GRAY7, 1);
         textArea.setPadding(5, 5, 2, 5);
         textArea.setGrowWidth(true);
         textArea.setMinSize(30, 30);
         textArea.addEventFilter(e -> textAreaKeyPressed(e), ViewEvent.Type.KeyPress);
+
+        // Return
         return textArea;
+    }
+
+    /**
+     * Creates the label.
+     */
+    protected Label createLabel()
+    {
+        Label label = new Label();
+        label.setFont(Font.Arial12.getItalic());
+        label.setTextFill(Color.GRAY6);
+        label.setAlign(Pos.CENTER_RIGHT);
+        label.setPrefWidth(50);
+        return label;
     }
 
     /**
@@ -52,7 +101,7 @@ public class JavaEntryView extends EntryView<JavaEntry> {
     public void submitEntry()
     {
         // Get JavaEntry and clear response
-        JavaEntry javaEntry = getEntry();
+        JavaEntry javaEntry = getJavaEntry();
         javaEntry.setResponse(null);
 
         // If entry has trailing empty line, remove it
@@ -84,39 +133,8 @@ public class JavaEntryView extends EntryView<JavaEntry> {
         }
 
         // Handle BackSpace/Delete key: If empty entry but not last, remove it
-        else if (anEvent.isBackSpaceKey() || anEvent.isDeleteKey()) {
-
-            // If empty
-            if (getTextArea().length() == 0) {
-
-                // If last entry, just focus previous instead
-                JavaEntry javaEntry = getEntry();
-                Notebook notebook = javaEntry.getNotebook();
-                if (javaEntry == notebook.getLastEntry()) {
-                    JavaEntry prevEntry = javaEntry.getPrevEntry();
-                    if (prevEntry != null) {
-                        _notebookView.focusEntry(prevEntry, true);
-                        anEvent.consume();
-                    }
-                }
-
-                // Otherwise, remove entry
-                else {
-                    notebook.removeEntry(javaEntry);
-                    anEvent.consume();
-                }
-            }
-
-            // Otherwise, dim response
-            else {
-                Response response = getEntry().getResponse();
-                if (response != null) {
-                    ResponseView responseView = _notebookView.getResponseView(response);
-                    if (responseView != null)
-                        responseView.setOpacity(.25);
-                }
-            }
-        }
+        else if (anEvent.isBackSpaceKey() || anEvent.isDeleteKey())
+            handleDeleteAction(anEvent);
     }
 
     /**
@@ -157,6 +175,44 @@ public class JavaEntryView extends EntryView<JavaEntry> {
     }
 
     /**
+     * Handle delete/backspace action.
+     */
+    private void handleDeleteAction(ViewEvent anEvent)
+    {
+        JavaEntry javaEntry = getJavaEntry();
+
+        // If empty
+        if (getTextArea().length() == 0) {
+
+            // If last entry, just focus previous instead
+            Notebook notebook = javaEntry.getNotebook();
+            if (javaEntry == notebook.getLastEntry()) {
+                JavaEntry prevEntry = javaEntry.getPrevEntry();
+                if (prevEntry != null) {
+                    _notebookView.focusEntry(prevEntry, true);
+                    anEvent.consume();
+                }
+            }
+
+            // Otherwise, remove entry
+            else {
+                notebook.removeEntry(javaEntry);
+                anEvent.consume();
+            }
+        }
+
+        // Otherwise, dim response
+        else {
+            Response response = javaEntry.getResponse();
+            if (response != null) {
+                ResponseView responseView = _notebookView.getResponseView(response);
+                if (responseView != null)
+                    responseView.setOpacity(.25);
+            }
+        }
+    }
+
+    /**
      * Returns whether enter action should cause submit.
      */
     private boolean isEnterActionSubmitAction(ViewEvent anEvent)
@@ -174,5 +230,33 @@ public class JavaEntryView extends EntryView<JavaEntry> {
 
         // Return false
         return false;
+    }
+
+    /**
+     * Override to focus content instead.
+     */
+    @Override
+    public void requestFocus()
+    {
+        if (_textArea != null)
+            _textArea.requestFocus();
+    }
+
+    @Override
+    protected double getPrefWidthImpl(double aH)
+    {
+        return RowView.getPrefWidth(this, aH);
+    }
+
+    @Override
+    protected double getPrefHeightImpl(double aW)
+    {
+        return RowView.getPrefHeight(this, aW);
+    }
+
+    @Override
+    protected void layoutImpl()
+    {
+        RowView.layout(this, true);
     }
 }
