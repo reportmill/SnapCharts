@@ -16,9 +16,6 @@ public class Response {
     // The JavaEntry for this response
     private JavaEntry  _javaEntry;
 
-    // The notebook that contains this entry
-    private Notebook  _notebook;
-
     // The response as a value
     private Object  _value;
 
@@ -31,18 +28,12 @@ public class Response {
     public Response(JavaEntry aJavaEntry)
     {
         _javaEntry = aJavaEntry;
-        _notebook = aJavaEntry.getNotebook();
     }
 
     /**
      * Returns the entry.
      */
     public JavaEntry getJavaEntry()  { return _javaEntry; }
-
-    /**
-     * Returns the notebook that contains this entry.
-     */
-    public Notebook getNotebook()  { return _notebook; }
 
     /**
      * Returns the response as a value.
