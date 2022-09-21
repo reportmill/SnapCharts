@@ -123,31 +123,34 @@ public class ResponseView extends ParentView {
             return createContentViewForDataSet((DataSet) value);
 
         // Do normal version
-        String entryText = response.getText();
-        TextArea textArea = createTextArea();
-        if (entryText != null && entryText.length() > 0)
-            textArea.setText(entryText);
-        View contentView = textArea;
-        return createContentViewBoxForView(contentView);
+        String responseText = response.getText();
+        return createContentViewForText(responseText);
     }
 
     /**
-     * Override to make gray.
+     * Creates content view for ViewOwner.
      */
-    protected TextArea createTextArea()
+    private View createContentViewForText(String aString)
     {
+        // Create TextArea and configure Style
         TextArea textArea = new TextArea();
-        textArea.setBorderRadius(4);
-        textArea.setFill(Color.WHITE);
         textArea.setBorder(Color.GRAY7, 1);
-        textArea.setFont(Font.Arial14);
-        textArea.setPadding(4, 4, 4, 4);
-        textArea.setGrowWidth(true);
-        textArea.setMinSize(30, 30);
+        textArea.setBorderRadius(4);
         textArea.setFill(DEFAULT_TEXTAREA_FILL);
         textArea.setTextFill(DEFAULT_TEXTAREA_TEXTFILL);
+        textArea.setFont(Font.Arial14);
+
+        // Configure TextArea Sizing
+        textArea.setGrowWidth(true);
+        textArea.setMinSize(30, 30);
         textArea.setPadding(6, 6, 6, 6);
-        return textArea;
+
+        // Set text
+        if (aString != null && aString.length() > 0)
+            textArea.setText(aString);
+
+        // Wrap in standard box
+        return createContentViewBoxForView(textArea);
     }
 
     /**
@@ -200,7 +203,10 @@ public class ResponseView extends ParentView {
         boxView.setFill(Color.WHITE);
         boxView.setBorderRadius(4);
         boxView.setEffect(DEFAULT_SHADOW);
+
+        // Sizing
         boxView.setMargin(0, 0, 0, 22);
+        boxView.setGrowWidth(true);
 
         // Return
         return boxView;

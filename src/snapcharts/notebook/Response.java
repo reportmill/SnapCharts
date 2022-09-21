@@ -3,10 +3,10 @@
  */
 package snapcharts.notebook;
 import snapcharts.data.DataSet;
+import snapcharts.data.DataUtils;
 import snapcharts.data.DoubleArray;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.model.Chart;
-import java.util.Arrays;
 
 /**
  * This class represents the output of a JavaEntry.
@@ -79,7 +79,7 @@ public class Response {
 
         // Handle double[], DoubleArray
         if (aValue instanceof double[])
-            return Arrays.toString((double[]) aValue);
+            return DataUtils.getStringForDoubleArray((double[]) aValue);
         if (aValue instanceof DoubleArray) {
             double[] doubleArray = ((DoubleArray) aValue).doubleArray();
             return getStringForValue(doubleArray);

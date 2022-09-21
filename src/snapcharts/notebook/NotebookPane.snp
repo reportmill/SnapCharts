@@ -4,6 +4,6 @@
     <Button Name="ShowHelpButton" Margin="6,20,6,6" Padding="5,10,5,10" LeanX="RIGHT" Text="Show Help" />
   </RowView>
   <SplitView Name="MainSplitView" Vertical="true" GrowHeight="true">
-    <ScrollView Name="NotebookScrollView" GrowHeight="true" FillWidth="true" />
+    <ScrollView Name="NotebookScrollView" GrowHeight="true" />
   </SplitView>
 </ColView>

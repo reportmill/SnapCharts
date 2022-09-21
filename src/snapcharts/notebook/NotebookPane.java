@@ -131,6 +131,7 @@ public class NotebookPane extends ViewOwner {
 
         // Get NotebookScrollView and add NotebookView
         ScrollView notebookScrollView = getView("NotebookScrollView", ScrollView.class);
+        notebookScrollView.setFillWidth(true);
         notebookScrollView.setBorder(null);
         notebookScrollView.setContent(_notebookView);
 
