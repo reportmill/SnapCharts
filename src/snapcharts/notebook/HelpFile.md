@@ -36,6 +36,15 @@
     dataSet = dataSet(x, y)
 ```
 
+## From 3D data
+
+```
+    x = DoubleArray.fromMinMax(-3, 3)
+    y = DoubleArray.fromMinMax(-4, 4)
+    z = mapXY(x, y, (x,y) -> Math.sin(x) + Math.cos(y))
+    dataSet = dataSet(x, y, z)
+```
+
 # Create Chart
 
 ## From data arrays
