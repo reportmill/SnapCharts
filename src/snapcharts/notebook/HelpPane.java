@@ -22,8 +22,8 @@ public class HelpPane extends ViewOwner {
     // The selected section
     private HelpSection  _selSection;
 
-    // The section TextArea
-    private TextArea  _sectionTextArea;
+    // The TextArea showing the help text
+    private TextArea  _helpTextArea;
 
     /**
      * Constructor.
@@ -69,8 +69,8 @@ public class HelpPane extends ViewOwner {
         _selSection = aSection;
 
         // Update SectionTextArea
-        TextDoc sectionText = aSection.getTextDoc();
-        _sectionTextArea.setTextDoc(sectionText);
+        TextDoc sectionText = aSection.getMarkDownDoc();
+        _helpTextArea.setTextDoc(sectionText);
     }
 
     /**
@@ -94,9 +94,9 @@ public class HelpPane extends ViewOwner {
         topicListArea.setItemTextFunction(helpSect -> helpSect.getHeader());
 
         // Get SectionTextArea
-        TextView sectionTextView = getView("SectionTextView", TextView.class);
-        _sectionTextArea = sectionTextView.getTextArea();
-        _sectionTextArea.setPadding(8, 8, 8, 8);
+        TextView helpTextView = getView("HelpTextView", TextView.class);
+        _helpTextArea = helpTextView.getTextArea();
+        _helpTextArea.setPadding(8, 8, 8, 8);
 
         // Get HelpSections and set in TopicListArea
         HelpFile helpFile = getHelpFile();
@@ -159,18 +159,22 @@ public class HelpPane extends ViewOwner {
      */
     private String getHelpCode()
     {
+        // Get current section and MarkDown doc
         HelpSection selSection = getSelSection();
-        String content = selSection.getContent();
-        int startIndex = content.indexOf(MarkDownDoc.CODE_MARKER);
-        if (startIndex < 0)
+        MarkDownDoc markDown = selSection.getMarkDownDoc();
+
+        // Get selection char index from SectionTextArea
+        int selStart = _helpTextArea.getSelStart();
+        int selEnd = _helpTextArea.getSelEnd();
+        int selCharIndex = (selStart + selEnd) / 2;
+
+        // Get the code for selection char index
+        MarkDownDoc.MarkDownRun codeRun = markDown.getCodeRunForCharIndex(selCharIndex);
+        if (codeRun == null)
             return null;
 
-        startIndex += MarkDownDoc.CODE_MARKER.length();
-        int endIndex = content.indexOf(MarkDownDoc.CODE_MARKER, startIndex);
-        if (endIndex < 0)
-            return null;
-
-        String code = content.substring(startIndex, endIndex);
-        return code;
+        // Get code string and return
+        String helpStr = markDown.subSequence(codeRun.startCharIndex, codeRun.endCharIndex).toString();
+        return helpStr;
     }
 }

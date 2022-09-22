@@ -23,7 +23,7 @@
 ## From other array via function
 
 ```
-    y = DoubleArray.of(x).map(d -> func)
+    y = DoubleArray.of(x).map(d -> Math.sin(d))
 ```
 
 # Define dataset

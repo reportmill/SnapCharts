@@ -6,7 +6,12 @@ import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.text.RichText;
 import snap.text.TextLine;
+import snap.text.TextRun;
 import snap.text.TextStyle;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This RichText subclass can be created with MarkDown.
@@ -25,8 +30,17 @@ public class MarkDownDoc extends RichText {
     // The code style
     private TextStyle  _codeStyle;
 
+    // The MarkDownRuns
+    private MarkDownRun[]  _markDownRuns;
+
+    // The code MarkDownRuns
+    private MarkDownRun[]  _codeRuns;
+
     // Constants
     public static final String CODE_MARKER = "```";
+
+    // Constants for marked type
+    public enum MarkType { Header1, Header2, Content, Code }
 
     /**
      * Constructor.
@@ -146,7 +160,7 @@ public class MarkDownDoc extends RichText {
 
         // Create, configure
         TextStyle textStyle = TextStyle.DEFAULT;
-        Font headerFont = Font.Arial16.getBold();;
+        Font headerFont = Font.Arial16.getBold();
         Color headerColor = Color.BLACK;
         TextStyle headerStyle = textStyle.copyFor(headerFont, headerColor);
 
@@ -196,5 +210,127 @@ public class MarkDownDoc extends RichText {
 
         // Set, return
         return _codeStyle = codeStyle;
+    }
+
+    /**
+     * Returns the MarkDown runs.
+     */
+    public MarkDownRun[] getMarkDownRuns()
+    {
+        if (_markDownRuns != null) return _markDownRuns;
+        MarkDownRun[] markDownRuns = createMarkDownRuns();
+        return _markDownRuns = markDownRuns;
+    }
+
+    /**
+     * Returns the MarkDown runs.
+     */
+    protected MarkDownRun[] createMarkDownRuns()
+    {
+        // Get LineCount - if none, just return
+        List<TextLine> lines = getLines();
+        if (lines.size() == 0)
+            return new MarkDownRun[0];
+
+        // Create running list and loop run var
+        List<MarkDownRun> markDownRunList = new ArrayList<>();
+        MarkDownRun markDownRun = null;
+
+        // Iterate over lines
+        for (TextLine textLine : lines) {
+
+            // Get TextLine runs
+            TextRun[] runs = textLine.getRuns();
+
+            // Iterate over runs
+            for (TextRun run : runs) {
+
+                // Get Run TextStyle/MarkType
+                TextStyle runStyle = run.getStyle();
+                MarkType runMarkType = getMarkTypeForStyle(runStyle);
+
+                // Handle first MarkDownRun/TextRun special: Create new run and continue
+                if (markDownRun == null) {
+                    markDownRun = new MarkDownRun();
+                    markDownRun.startCharIndex = run.getStart() + textLine.getStart();
+                    markDownRun.endCharIndex = run.getEnd() + textLine.getStart();
+                    markDownRun.markType = runMarkType;
+                    continue;
+                }
+
+                // If MarkType hasn't changed or isn't set, just add range to MarkDownRun and continue
+                if (markDownRun.markType == runMarkType || runMarkType == null || markDownRun.markType == null) {
+                    markDownRun.endCharIndex = run.getEnd() + textLine.getStart();
+                    if (markDownRun.markType == null)
+                        markDownRun.markType = runMarkType;
+                    continue;
+                }
+
+                // Since MarkType has changed, add MarkDownRun to list and start new one
+                markDownRunList.add(markDownRun);
+                markDownRun = new MarkDownRun();
+                markDownRun.startCharIndex = run.getStart() + textLine.getStart();
+                markDownRun.endCharIndex = run.getEnd() + textLine.getStart();
+                markDownRun.markType = runMarkType;
+            }
+        }
+
+        // Add last run to list
+        markDownRunList.add(markDownRun);
+
+        // Return array
+        return markDownRunList.toArray(new MarkDownRun[0]);
+    }
+
+    /**
+     * Returns the code runs.
+     */
+    public MarkDownRun[] getCodeRuns()
+    {
+        if (_codeRuns != null) return _codeRuns;
+
+        MarkDownRun[] markDownRuns = getMarkDownRuns();
+        Stream<MarkDownRun> markDownRunsStream = Stream.of(markDownRuns);
+        Stream<MarkDownRun> codeRunsStream = markDownRunsStream.filter(run -> run.markType == MarkType.Code);
+        return _codeRuns = codeRunsStream.toArray(size -> new MarkDownRun[size]);
+    }
+
+    /**
+     * Returns the code run at given index.
+     */
+    public MarkDownRun getCodeRunForCharIndex(int charIndex)
+    {
+        MarkDownDoc.MarkDownRun[] codeRuns = getCodeRuns();
+        for (MarkDownDoc.MarkDownRun codeRun : codeRuns)
+            if (charIndex <= codeRun.endCharIndex)
+                return codeRun;
+
+        // Return not found
+        return null;
+    }
+
+    /**
+     * Returns a MarkType for TextStyle.
+     */
+    public MarkType getMarkTypeForStyle(TextStyle aTextStyle)
+    {
+        if (aTextStyle == getHeader1Style()) return MarkType.Header1;
+        if (aTextStyle == getHeader2Style()) return MarkType.Header2;
+        if (aTextStyle == getContentStyle()) return MarkType.Content;
+        if (aTextStyle == getCodeStyle()) return MarkType.Code;
+        return null;
+    }
+
+    /**
+     * This class represents a range of chars of a given type.
+     */
+    public static class MarkDownRun {
+
+        // The start/end char indexes
+        public int startCharIndex, endCharIndex;
+
+        // The MarkType
+        public MarkType markType;
+
     }
 }

@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
-import snap.text.TextDoc;
 
 /**
  * This class represents a section of help from a HelpFile.
@@ -21,8 +20,8 @@ public class HelpSection {
     // The content
     private String  _content;
 
-    // The TextDoc
-    private TextDoc  _textDoc;
+    // The MarkDownDoc
+    private MarkDownDoc  _markDownDoc;
 
     /**
      * Constructor.
@@ -79,22 +78,22 @@ public class HelpSection {
     }
 
     /**
-     * Returns the TextDoc.
+     * Returns the MarkDownDoc.
      */
-    public TextDoc getTextDoc()
+    public MarkDownDoc getMarkDownDoc()
     {
         // If already set, just return
-        if (_textDoc != null) return _textDoc;
+        if (_markDownDoc != null) return _markDownDoc;
 
         // Create, set, return
-        TextDoc textDoc = createTextDoc();
-        return _textDoc = textDoc;
+        MarkDownDoc textDoc = createMarkDownDoc();
+        return _markDownDoc = textDoc;
     }
 
     /**
-     * Creates the TextDoc.
+     * Creates the MarkDownDoc.
      */
-    protected TextDoc createTextDoc()
+    protected MarkDownDoc createMarkDownDoc()
     {
         MarkDownDoc markDownDoc = new MarkDownDoc();
         markDownDoc.setMarkDown("# " + _sectionText);

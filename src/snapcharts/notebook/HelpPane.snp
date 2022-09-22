@@ -13,7 +13,7 @@
       </ListView>
     </ColView>
     <ColView Spacing="4" GrowWidth="true" GrowHeight="true">
-      <TextView Name="SectionTextView" BorderRadius="4" Margin="4" GrowWidth="true" GrowHeight="true" MinWidth="120" MinHeight="60" PrefWidth="400" Rich="true" />
+      <TextView Name="HelpTextView" BorderRadius="4" Margin="4" GrowWidth="true" GrowHeight="true" MinWidth="120" MinHeight="60" PrefWidth="400" Rich="true" />
     </ColView>
   </RowView>
 </ColView>
