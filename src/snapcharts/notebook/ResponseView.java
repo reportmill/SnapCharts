@@ -206,7 +206,6 @@ public class ResponseView extends ParentView {
 
         // Sizing
         boxView.setMargin(0, 0, 0, 22);
-        boxView.setGrowWidth(true);
 
         // Return
         return boxView;
