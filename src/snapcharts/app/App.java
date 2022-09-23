@@ -2,6 +2,7 @@ package snapcharts.app;
 import snap.gfx.GFXEnv;
 import snap.util.Prefs;
 import snap.util.SnapUtils;
+import snap.view.ViewTheme;
 import snap.view.ViewUtils;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
@@ -26,7 +27,7 @@ public class App {
     /**
      * Standard main.
      */
-    public static void main(String args[])
+    public static void main(String[] args)
     {
         //DocPane docPane = new DocPane();
         //docPane.setWindowVisible(true);
@@ -54,6 +55,7 @@ public class App {
 
         // Otherwise just present WelcomePanel
         else {
+            ViewTheme.setThemeForName("Light");
             WelcomePanel.getShared().setOnQuit(() -> quitApp());
             WelcomePanel.getShared().showPanel();
         }

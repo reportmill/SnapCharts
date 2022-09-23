@@ -75,6 +75,10 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 mb.name("getTextForSource").paramTypes(java.lang.Object.class).returnType(java.lang.String.class).save();
                 return mb.name("getImageForSource").paramTypes(java.lang.Object.class).returnType(snap.gfx.Image.class).buildAll();
 
+            // Handle snapcharts.notebook.Quick3D
+            case "snapcharts.notebook.Quick3D":
+                return mb.name("createCube").returnType(snap.gfx3d.CameraView.class).buildAll();
+
             // Handle anything else
             default:
                 if (_next != null) return _next.getMethodsForClass(aResolver, aClassName);
@@ -136,6 +140,10 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 return snapcharts.notebook.ChartsREPL.getTextForSource(theArgs[0]);
             case "snapcharts.notebook.ChartsREPL.getImageForSource(java.lang.Object)":
                 return snapcharts.notebook.ChartsREPL.getImageForSource(theArgs[0]);
+
+            // Handle snapcharts.notebook.Quick3D
+            case "snapcharts.notebook.Quick3D.createCube()":
+                return snapcharts.notebook.Quick3D.createCube();
 
             // Handle anything else
             default:

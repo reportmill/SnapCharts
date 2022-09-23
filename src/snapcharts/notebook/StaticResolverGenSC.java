@@ -28,6 +28,7 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
             snapcharts.data.DataArray.class,
             snapcharts.data.DataSet.class,
             snapcharts.notebook.ChartsREPL.class,
+            snapcharts.notebook.Quick3D.class,
     };
 
     // WhiteList
@@ -45,7 +46,10 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
 
             // ChartsREPL
             "doubleArray", "dataArray", "dataSet", "chart", "chart3D", "minMaxArray", "mapXY",
-            "getTextForSource", "getImageForSource"
+            "getTextForSource", "getImageForSource",
+
+            // Quick3D
+            "createCube"
     };
     private static String[] _blackListStrings = {
 

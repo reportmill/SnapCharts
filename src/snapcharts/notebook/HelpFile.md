@@ -93,7 +93,7 @@
     dataSet = dataSet(x, y, z)
     chart = chart3D(dataSet)
 ```
-# Fetch remote data / resources
+# Fetch remote data / images
 
 ## Text
 
@@ -120,6 +120,7 @@
 
 ```
     slider = new Slider()
+    slider.setPrefSize(100, 25)
 ```
 
 # Animate UI
@@ -133,6 +134,14 @@
     anim.getAnim(2000).setRotate(360)
     anim.setLoopCount(4)
     anim.play()
+```
+
+# Create 3D
+
+## Simple 3D cube
+
+```
+    cube = Quick3D.createCube()
 ```
 
 # Basic Java code
