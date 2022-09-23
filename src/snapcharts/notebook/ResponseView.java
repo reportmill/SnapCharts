@@ -5,6 +5,7 @@ package snapcharts.notebook;
 import snap.geom.Pos;
 import snap.gfx.Color;
 import snap.gfx.Font;
+import snap.gfx.Image;
 import snap.gfx.ShadowEffect;
 import snap.view.*;
 import snapcharts.app.DataSetPane;
@@ -122,6 +123,10 @@ public class ResponseView extends ParentView {
         if (value instanceof DataSet)
             return createContentViewForDataSet((DataSet) value);
 
+        // Handle Image
+        if (value instanceof Image)
+            return createContentViewForImage((Image) value);
+
         // Do normal version
         String responseText = response.getText();
         return createContentViewForText(responseText);
@@ -148,6 +153,15 @@ public class ResponseView extends ParentView {
         // Set text
         if (aString != null && aString.length() > 0)
             textArea.setText(aString);
+
+        // If large text, wrap in ScrollView
+        if (textArea.getPrefHeight() > 300) {
+            ScrollView scrollView = new ScrollView(textArea);
+            scrollView.setMaxHeight(300);
+            scrollView.setGrowWidth(true);
+            scrollView.setGrowHeight(true);
+            return createContentViewBoxForView(scrollView);
+        }
 
         // Wrap in standard box
         return createContentViewBoxForView(textArea);
@@ -191,6 +205,19 @@ public class ResponseView extends ParentView {
 
         // Return
         return createContentViewBoxForView(dataSetPaneView);
+    }
+
+    /**
+     * Creates content view for Image.
+     */
+    private View createContentViewForImage(Image anImage)
+    {
+        // Create imageView for image
+        ImageView imageView = new ImageView(anImage);
+        imageView.setMaxHeight(350);
+
+        // Return
+        return createContentViewBoxForView(imageView);
     }
 
     /**

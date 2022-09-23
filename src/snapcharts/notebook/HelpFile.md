@@ -93,6 +93,19 @@
     dataSet = dataSet(x, y, z)
     chart = chart3D(dataSet)
 ```
+# Fetch remote data / resources
+
+## Text
+
+```
+    getTextForSource("https://reportmill.com/examples/AAPL.csv")
+```
+
+## Image
+
+```
+    getImageForSource("https://reportmill.com/examples/Weird.jpg")
+```
 
 # Create UI
 

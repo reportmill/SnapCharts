@@ -2,6 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.notebook;
+import snap.gfx.Image;
+import snap.web.WebURL;
 import snapcharts.data.*;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
@@ -138,6 +140,36 @@ public class ChartsREPL {
 
         // Return
         return chart;
+    }
+
+    /**
+     * Returns text for given source.
+     */
+    public static String getTextForSource(Object aSource)
+    {
+        // Get URL for source
+        WebURL url = WebURL.getURL(aSource);
+        if (url == null)
+            return null;
+
+        // Get text for URL and return
+        String text = url.getText();
+        return text;
+    }
+
+    /**
+     * Returns text for given source.
+     */
+    public static Image getImageForSource(Object aSource)
+    {
+        // Get URL for source
+        WebURL url = WebURL.getURL(aSource);
+        if (url == null)
+            return null;
+
+        // Get image for URL and return
+        Image image = Image.get(url);
+        return image;
     }
 
     /**
