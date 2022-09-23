@@ -98,13 +98,13 @@
 ## Text
 
 ```
-    getTextForSource("https://reportmill.com/examples/AAPL.csv")
+    text = getTextForSource("https://reportmill.com/examples/AAPL.csv")
 ```
 
 ## Image
 
 ```
-    getImageForSource("https://reportmill.com/examples/Weird.jpg")
+    image = getImageForSource("https://reportmill.com/examples/Weird.jpg")
 ```
 
 # Create UI
