@@ -7,6 +7,7 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.gfx3d.*;
+import snap.util.SnapUtils;
 
 /**
  * Utility methods to create basic 3D quickly.
@@ -60,7 +61,11 @@ public class Quick3D {
         camera.setPitch(30);
 
         // Create texture
-        Image image = anImage.getImageScaled(1);
+        Image image = anImage;
+        if (image == null)
+            image = Image.get("https://reportmill.com/examples/Weird.jpg");
+        if (!SnapUtils.isTeaVM)
+            image = image.getImageScaled(1);
         Texture texture = new Texture(image);
 
         // Create simple Poly3D
