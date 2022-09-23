@@ -63,21 +63,22 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
 
             // Handle snapcharts.notebook.ChartsREPL
             case "snapcharts.notebook.ChartsREPL":
+                mb.name("doubleArray").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
+                mb.name("dataArray").paramTypes(java.lang.Object.class).returnType(snapcharts.data.DataArray.class).save();
+                mb.name("minMaxArray").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("minMaxArray").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
+                mb.name("getTextForSource").paramTypes(java.lang.Object.class).returnType(java.lang.String.class).save();
+                mb.name("getImageForSource").paramTypes(java.lang.Object.class).returnType(snap.gfx.Image.class).save();
                 mb.name("dataSet").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DataSet.class).varArgs().save();
                 mb.name("chart").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().save();
                 mb.name("chart3D").paramTypes(java.lang.Object[].class).returnType(snapcharts.model.Chart.class).varArgs().save();
                 mb.name("mapXY").paramTypes(snapcharts.data.DoubleArray.class,snapcharts.data.DoubleArray.class,java.util.function.DoubleBinaryOperator.class).returnType(snapcharts.data.DoubleArray.class).save();
-                mb.name("mapXY").paramTypes(double[].class,double[].class,java.util.function.DoubleBinaryOperator.class).returnType(snapcharts.data.DoubleArray.class).save();
-                mb.name("doubleArray").paramTypes(java.lang.Object[].class).returnType(snapcharts.data.DoubleArray.class).varArgs().save();
-                mb.name("dataArray").paramTypes(java.lang.Object.class).returnType(snapcharts.data.DataArray.class).save();
-                mb.name("minMaxArray").paramTypes(double.class,double.class,int.class).returnType(snapcharts.data.DoubleArray.class).save();
-                mb.name("minMaxArray").paramTypes(double.class,double.class).returnType(snapcharts.data.DoubleArray.class).save();
-                mb.name("getTextForSource").paramTypes(java.lang.Object.class).returnType(java.lang.String.class).save();
-                return mb.name("getImageForSource").paramTypes(java.lang.Object.class).returnType(snap.gfx.Image.class).buildAll();
+                return mb.name("mapXY").paramTypes(double[].class,double[].class,java.util.function.DoubleBinaryOperator.class).returnType(snapcharts.data.DoubleArray.class).buildAll();
 
             // Handle snapcharts.notebook.Quick3D
             case "snapcharts.notebook.Quick3D":
-                return mb.name("createCube").returnType(snap.gfx3d.CameraView.class).buildAll();
+                mb.name("createCube").returnType(snap.gfx3d.CameraView.class).save();
+                return mb.name("createImage3D").paramTypes(snap.gfx.Image.class).returnType(snap.gfx3d.CameraView.class).buildAll();
 
             // Handle anything else
             default:
@@ -118,6 +119,18 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 return ((snapcharts.data.DataSet) anObj).clone();
 
             // Handle snapcharts.notebook.ChartsREPL
+            case "snapcharts.notebook.ChartsREPL.doubleArray(java.lang.Object[])":
+                return snapcharts.notebook.ChartsREPL.doubleArray(theArgs);
+            case "snapcharts.notebook.ChartsREPL.dataArray(java.lang.Object)":
+                return snapcharts.notebook.ChartsREPL.dataArray(theArgs[0]);
+            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double)":
+                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]));
+            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double,int)":
+                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
+            case "snapcharts.notebook.ChartsREPL.getTextForSource(java.lang.Object)":
+                return snapcharts.notebook.ChartsREPL.getTextForSource(theArgs[0]);
+            case "snapcharts.notebook.ChartsREPL.getImageForSource(java.lang.Object)":
+                return snapcharts.notebook.ChartsREPL.getImageForSource(theArgs[0]);
             case "snapcharts.notebook.ChartsREPL.dataSet(java.lang.Object[])":
                 return snapcharts.notebook.ChartsREPL.dataSet(theArgs);
             case "snapcharts.notebook.ChartsREPL.chart(java.lang.Object[])":
@@ -128,22 +141,12 @@ public class StaticResolver extends javakit.reflect.StaticResolver {
                 return snapcharts.notebook.ChartsREPL.mapXY((snapcharts.data.DoubleArray) theArgs[0],(snapcharts.data.DoubleArray) theArgs[1],(java.util.function.DoubleBinaryOperator) theArgs[2]);
             case "snapcharts.notebook.ChartsREPL.mapXY(double[],double[],java.util.function.DoubleBinaryOperator)":
                 return snapcharts.notebook.ChartsREPL.mapXY((double[]) theArgs[0],(double[]) theArgs[1],(java.util.function.DoubleBinaryOperator) theArgs[2]);
-            case "snapcharts.notebook.ChartsREPL.doubleArray(java.lang.Object[])":
-                return snapcharts.notebook.ChartsREPL.doubleArray(theArgs);
-            case "snapcharts.notebook.ChartsREPL.dataArray(java.lang.Object)":
-                return snapcharts.notebook.ChartsREPL.dataArray(theArgs[0]);
-            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double,int)":
-                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]),intVal(theArgs[2]));
-            case "snapcharts.notebook.ChartsREPL.minMaxArray(double,double)":
-                return snapcharts.notebook.ChartsREPL.minMaxArray(doubleVal(theArgs[0]),doubleVal(theArgs[1]));
-            case "snapcharts.notebook.ChartsREPL.getTextForSource(java.lang.Object)":
-                return snapcharts.notebook.ChartsREPL.getTextForSource(theArgs[0]);
-            case "snapcharts.notebook.ChartsREPL.getImageForSource(java.lang.Object)":
-                return snapcharts.notebook.ChartsREPL.getImageForSource(theArgs[0]);
 
             // Handle snapcharts.notebook.Quick3D
             case "snapcharts.notebook.Quick3D.createCube()":
                 return snapcharts.notebook.Quick3D.createCube();
+            case "snapcharts.notebook.Quick3D.createImage3D(snap.gfx.Image)":
+                return snapcharts.notebook.Quick3D.createImage3D((snap.gfx.Image) theArgs[0]);
 
             // Handle anything else
             default:

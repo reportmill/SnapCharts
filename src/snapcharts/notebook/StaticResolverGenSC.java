@@ -49,7 +49,7 @@ public class StaticResolverGenSC extends javakit.reflect.StaticResolverGen {
             "getTextForSource", "getImageForSource",
 
             // Quick3D
-            "createCube"
+            "createCube", "createImage3D"
     };
     private static String[] _blackListStrings = {
 

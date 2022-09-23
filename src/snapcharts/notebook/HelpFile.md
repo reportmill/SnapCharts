@@ -138,10 +138,16 @@
 
 # Create 3D
 
-## Simple 3D cube
+## 3D cube
 
 ```
     cube = Quick3D.createCube()
+```
+
+## 3D image
+
+```
+    image3D = Quick3D.createImage3D(image)
 ```
 
 # Basic Java code
