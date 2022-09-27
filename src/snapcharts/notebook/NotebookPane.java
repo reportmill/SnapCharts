@@ -4,7 +4,6 @@
 package snapcharts.notebook;
 import snap.gfx.Color;
 import snap.view.*;
-
 import java.util.List;
 
 /**
@@ -15,8 +14,14 @@ public class NotebookPane extends ViewOwner {
     // The Notebook
     private Notebook  _notebook;
 
+    // The MainSplitView
+    private SplitView  _mainSplitView;
+
     // The NotebookView
     private NotebookView  _notebookView;
+
+    // The TabView
+    private TabView  _tabView;
 
     // The HelpPane
     private HelpPane  _helpPane;
@@ -61,6 +66,27 @@ public class NotebookPane extends ViewOwner {
     }
 
     /**
+     * Shows the TabView.
+     */
+    public void showTabView()
+    {
+        // Get TabView (just return if already showing)
+        if (_tabView.isShowing())
+            return;
+
+        // Add to MainSplitView
+        _mainSplitView.addItemWithAnim(_tabView, 280);
+    }
+
+    /**
+     * Hides the TabView.
+     */
+    public void hideTabView()
+    {
+        _mainSplitView.removeItemWithAnim(_tabView);
+    }
+
+    /**
      * Shows the HelpPane.
      */
     public void showHelpPane()
@@ -70,23 +96,14 @@ public class NotebookPane extends ViewOwner {
         if (helpPane.isShowing())
             return;
 
-        // Set UI.PrefSize
-        View helpPaneUI = _helpPane.getUI();
-        helpPaneUI.setPrefHeight(280);
+        // Make sure Help is installed
+        View helpPaneUI = helpPane.getUI();
+        if (helpPaneUI.getParent() == null)
+            _tabView.addTab("Help", helpPaneUI, 0);
 
-        // Add to MainSplitView
-        SplitView mainSplitView = getView("MainSplitView", SplitView.class);
-        mainSplitView.addItemWithAnim(helpPaneUI, 280);
-    }
-
-    /**
-     * Hides the help pane.
-     */
-    public void hideHelpPane()
-    {
-        View helpPaneUI = _helpPane.getUI();
-        SplitView mainSplitView = getView("MainSplitView", SplitView.class);
-        mainSplitView.removeItemWithAnim(helpPaneUI);
+        // Show TabView
+        _tabView.setSelIndex(0);
+        showTabView();
     }
 
     /**
@@ -114,9 +131,11 @@ public class NotebookPane extends ViewOwner {
         topView.setFill(BACK_FILL);
 
         // Get/configure SplitView
-        SplitView mainSplitView = getView("MainSplitView", SplitView.class);
-        mainSplitView.setDividerSpan(5);
-        mainSplitView.setBorder(null);
+        _mainSplitView = getView("MainSplitView", SplitView.class);
+        _mainSplitView.setDividerSpan(6);
+        _mainSplitView.getDivider().setFill(Color.WHITE);
+        _mainSplitView.getDivider().setBorder(null);
+        _mainSplitView.setBorder(null);
 
         // Get/configure ToolBar
         View toolBar = getView("ToolBar");
@@ -132,8 +151,20 @@ public class NotebookPane extends ViewOwner {
         // Get NotebookScrollView and add NotebookView
         ScrollView notebookScrollView = getView("NotebookScrollView", ScrollView.class);
         notebookScrollView.setFillWidth(true);
-        notebookScrollView.setBorder(null);
+        notebookScrollView.setBorder(Color.GRAY9, 1);
         notebookScrollView.setContent(_notebookView);
+
+        // Get TabView
+        _tabView = getView("TabView", TabView.class);
+        _tabView.getShelf().setSpacing(6);
+        _tabView.getShelf().setFill(Color.WHITE);
+        _tabView.getShelf().setBorder(new Color(.95), 1);
+        _tabView.getShelf().setPadding(5,5,0,15);
+        _tabView.setTabMinWidth(80);
+        View tabViewContextBox = _tabView.getContent().getParent();
+        tabViewContextBox.setFill(Color.WHITE);
+        //tabViewContextBox.setBorder(null);
+        _mainSplitView.removeItem(_tabView);
 
         // Add EscapeAction
         addKeyActionFilter("EscapeAction", "ESCAPE");
@@ -157,10 +188,10 @@ public class NotebookPane extends ViewOwner {
     @Override
     protected void resetUI()
     {
-        // Update ShowHelpButton.Text
+        // Update ShowTabsButton.Text
         boolean isHelpPaneShowing = _helpPane != null && _helpPane.isShowing();
-        String showHelpButtonTitle = isHelpPaneShowing ? "Hide Help" : "Show Help";
-        setViewText("ShowHelpButton", showHelpButtonTitle);
+        String showHelpButtonTitle = isHelpPaneShowing ? "Hide Tabs" : "Show Tabs";
+        setViewText("ShowTabsButton", showHelpButtonTitle);
     }
 
     /**
@@ -169,11 +200,11 @@ public class NotebookPane extends ViewOwner {
     @Override
     protected void respondUI(ViewEvent anEvent)
     {
-        // Handle ShowHelpButton
-        if (anEvent.equals("ShowHelpButton")) {
+        // Handle ShowTabsButton
+        if (anEvent.equals("ShowTabsButton")) {
             if (_helpPane != null && _helpPane.isShowing())
-                hideHelpPane();
-            else showHelpPaneWhenLoaded();
+                hideTabView();
+            else showTabView();
         }
 
         // Handle EscapeAction
