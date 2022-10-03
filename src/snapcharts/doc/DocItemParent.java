@@ -7,8 +7,6 @@ import snap.props.PropObject;
 import snap.props.PropSet;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
-import snapcharts.notebook.DocItemNotebook;
-import snapcharts.notebook.Notebook;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -129,8 +127,6 @@ public class DocItemParent<T extends PropObject> extends DocItem<T> {
             return new DocItemChart((Chart) anObj);
         if (anObj instanceof Trace)
             return new DocItemTrace((Trace) anObj);
-        if (anObj instanceof Notebook)
-            return new DocItemNotebook((Notebook) anObj);
 
         // Complain
         System.err.println("DocItemParent.createDocItemForObject: Illegal object type: " + anObj.getClass());
