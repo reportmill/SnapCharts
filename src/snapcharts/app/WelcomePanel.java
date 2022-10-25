@@ -469,8 +469,8 @@ public class WelcomePanel extends ViewOwner {
         page.setEffect(null);
 
         // Set BuildText and JavaText
-        View bt = page.getChild("BuildText");
-        View jt = page.getChild("JVMText");
+        View bt = page.getChildForName("BuildText");
+        View jt = page.getChildForName("JVMText");
         bt.setText("Build: " + SnapUtils.getBuildInfo());
         jt.setText("JVM: " + System.getProperty("java.runtime.version"));
 
