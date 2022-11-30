@@ -1,6 +1,4 @@
 package snapcharts.appmisc;
-
-import snap.geom.HPos;
 import snap.geom.Pos;
 import snap.geom.Size;
 import snap.geom.VPos;
@@ -8,10 +6,10 @@ import snap.gfx.*;
 import snap.util.StringUtils;
 import snap.view.*;
 import snap.viewx.DialogBox;
+import snap.viewx.DialogSheet;
 import snap.web.WebResponse;
 import snap.web.WebURL;
 import snapcharts.app.DocPane;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,50 +17,48 @@ import java.util.List;
  * A class to show samples.
  */
 public class SamplesPane extends ViewOwner {
-    
+
     // The DocPane
-    private DocPane _docPane;
-    
+    private DocPane  _docPane;
+
     // The selected index
     private int  _selIndex;
-    
+
     // The dialog box
-    private SheetDialogBox  _dbox;
-    
+    private DialogSheet  _dialogSheet;
+
     // The shared document names
-    private static String     _docNames[];
-    
+    private static String[]  _docNames;
+
     // The shared document images
-    private static Image      _docImages[];
-    
-    // The shared image paths
-    private static String     _imgPaths[];
-    
+    private static Image[]  _docImages;
+
     // Constants
     private static final String SAMPLES_ROOT = "https://reportmill.com/snaptea/SnapChartsSamples/";
     private static final String SAMPLES_EXT = ".charts";
     private static final Effect SHADOW = new ShadowEffect();
     private static final Effect SHADOW_SEL = new ShadowEffect(10, Color.get("#038ec3"), 0, 0);
-    
+
     /**
      * Shows the samples pane.
      */
     public void showSamples(DocPane aDP)
     {
         _docPane = aDP;
-        ChildView aView = (ChildView)aDP.getUI();
+        ChildView aView = (ChildView) aDP.getUI();
 
-        _dbox = new SheetDialogBox();
-        _dbox.setContent(getUI());
-        _dbox.showConfirmDialog(aView);
+        _dialogSheet = new DialogSheet();
+        _dialogSheet.setContent(getUI());
+        _dialogSheet.showConfirmDialog(aView);
+        _dialogSheet.addPropChangeListener(pc -> dialogBoxClosed(), DialogBox.Showing_Prop);
     }
 
     /**
      * Called when dialog box closed.
      */
-    void dialogBoxClosed()
+    private void dialogBoxClosed()
     {
-        if (_dbox._cancelled) return;
+        if (_dialogSheet.isCancelled()) return;
         WebURL url = getDocURL(_selIndex);
         _docPane.openDocFromSource(url);
     }
@@ -73,20 +69,27 @@ public class SamplesPane extends ViewOwner {
     protected View createUI()
     {
         // Create main ColView to hold RowViews for samples
-        ColView colView = new ColView(); colView.setName("ItemColView");
-        colView.setSpacing(25); colView.setPadding(25,15,20,15);
-        colView.setAlign(Pos.TOP_CENTER); colView.setFillWidth(true);
-        colView.setFill(new Color(.97,.97,1d)); colView.setBorder(Color.GRAY,1);
+        ColView colView = new ColView();
+        colView.setName("ItemColView");
+        colView.setSpacing(25);
+        colView.setPadding(25, 15, 20, 15);
+        colView.setAlign(Pos.TOP_CENTER);
+        colView.setFillWidth(true);
+        colView.setFill(new Color(.97, .97, 1d));
+        colView.setBorder(Color.GRAY, 1);
         colView.setPrefWidth(557);
 
         // Add loading label
-        Label loadLabel = new Label("Loading..."); loadLabel.setFont(Font.Arial16.deriveFont(32).getBold());
+        Label loadLabel = new Label("Loading...");
+        loadLabel.setFont(Font.Arial16.deriveFont(32).getBold());
         loadLabel.setTextFill(Color.GRAY);
         colView.addChild(loadLabel);
 
         // Create ScrollView
-        ScrollView scroll = new ScrollView(colView); scroll.setPrefHeight(420);
-        scroll.setShowHBar(false); scroll.setShowVBar(true);
+        ScrollView scroll = new ScrollView(colView);
+        scroll.setPrefHeight(420);
+        scroll.setShowHBar(false);
+        scroll.setShowVBar(true);
 
         // Create "Select template" label
         Label selectLabel = new Label("Select a Chart file:");
@@ -98,7 +101,8 @@ public class SamplesPane extends ViewOwner {
 
         // Create top level col view to hold HeaderRow and ColView
         ColView boxView = new ColView();
-        boxView.setSpacing(8); boxView.setFillWidth(true);
+        boxView.setSpacing(8);
+        boxView.setFillWidth(true);
         boxView.setChildren(headerRow, scroll);
         return boxView;
     }
@@ -108,7 +112,7 @@ public class SamplesPane extends ViewOwner {
      */
     protected void initUI()
     {
-        if (_docNames==null)
+        if (_docNames == null)
             loadIndexFile();
         else buildUI();
     }
@@ -128,22 +132,25 @@ public class SamplesPane extends ViewOwner {
     private void indexFileLoaded(WebResponse aResp)
     {
         // If response is bogus, report it
-        if (aResp.getCode()!=WebResponse.OK) {
-            runLater(() -> indexFileLoadFailed(aResp)); return; }
+        if (aResp.getCode() != WebResponse.OK) {
+            runLater(() -> indexFileLoadFailed(aResp));
+            return;
+        }
 
         // Get text and break into lines
         String text = aResp.getText();
-        String lines[] = text.split("\\s*\n\\s*");
+        String[] lines = text.split("\\s*\n\\s*");
 
         // Get names list from lines
-        List <String> docNamesList = new ArrayList();
-        for (String line : lines) { line = line.trim();
-            if (line.length()>0)
+        List<String> docNamesList = new ArrayList<>();
+        for (String line : lines) {
+            line = line.trim();
+            if (line.length() > 0)
                 docNamesList.add(line);
         }
 
         // Get DocNames from list
-        _docNames = docNamesList.toArray(new String[docNamesList.size()]);
+        _docNames = docNamesList.toArray(new String[0]);
         _docImages = new Image[_docNames.length];
 
         // Rebuild UI
@@ -157,8 +164,9 @@ public class SamplesPane extends ViewOwner {
     {
         // Get error string and TextArea
         String str = "Failed to load index file.\n" + "Response code: " + aResp.getCodeString() + "\n" +
-            "Exception: " + aResp.getException();
-        TextArea textArea = new TextArea(); textArea.setText(str);
+                "Exception: " + aResp.getException();
+        TextArea textArea = new TextArea();
+        textArea.setText(str);
 
         // Add to ColView
         ColView colView = getView("ItemColView", ColView.class);
@@ -177,11 +185,13 @@ public class SamplesPane extends ViewOwner {
 
         // Create RowViews
         RowView rowView = null;
-        for (int i=0; i<_docNames.length; i++) { String name = _docNames[i];
+        for (int i = 0; i < _docNames.length; i++) {
+            String name = _docNames[i];
 
             // Create/add new RowView for every three samples
-            if (i%3==0) {
-                rowView = new RowView(); rowView.setAlign(Pos.CENTER);
+            if (i % 3 == 0) {
+                rowView = new RowView();
+                rowView.setAlign(Pos.CENTER);
                 colView.addChild(rowView);
             }
 
@@ -189,24 +199,25 @@ public class SamplesPane extends ViewOwner {
             ImageView iview = new ImageView();
             iview.setPrefSize(getDocSize(i));
             iview.setFill(Color.WHITE);
-            iview.setName("ImageView" + i); iview.setEffect(i==0 ? SHADOW_SEL : SHADOW);
+            iview.setName("ImageView" + i);
+            iview.setEffect(i == 0 ? SHADOW_SEL : SHADOW);
 
             // Create label for sample
             Label label = new Label(name + SAMPLES_EXT);
             label.setFont(Font.Arial13);
-            label.setPadding(3,4,3,4);
+            label.setPadding(3, 4, 3, 4);
             label.setLeanY(VPos.BOTTOM);
-            if (i==0) {
+            if (i == 0) {
                 label.setFill(Color.BLUE);
                 label.setTextFill(Color.WHITE);
             }
 
             // Create/add ItemBox for Sample and add ImageView + Label
             ColView ibox = new ColView();
-            ibox.setPrefSize(175,175);
+            ibox.setPrefSize(175, 175);
             ibox.setAlign(Pos.CENTER);
-            ibox.setPadding(0,0,8,0);
-            ibox.setName("ItemBox" + String.valueOf(i));
+            ibox.setPadding(0, 0, 8, 0);
+            ibox.setName("ItemBox" + i);
             ibox.addEventHandler(e -> itemBoxWasPressed(ibox, e), MousePress);
             ibox.setChildren(iview, label);
             rowView.addChild(ibox);
@@ -232,19 +243,21 @@ public class SamplesPane extends ViewOwner {
         // Set attributes of current selection back to normal
         ColView oldItemBox = getView("ItemBox" + _selIndex, ColView.class);
         oldItemBox.getChild(0).setEffect(SHADOW);
-        Label oldLabel = (Label)oldItemBox.getChild(1);
-        oldLabel.setFill(null); oldLabel.setTextFill(null);
+        Label oldLabel = (Label) oldItemBox.getChild(1);
+        oldLabel.setFill(null);
+        oldLabel.setTextFill(null);
 
         // Set attributes of new selection to selected effect
         anItemBox.getChild(0).setEffect(SHADOW_SEL);
-        Label newLabel = (Label)anItemBox.getChild(1);
-        newLabel.setFill(Color.BLUE); newLabel.setTextFill(Color.WHITE);
+        Label newLabel = (Label) anItemBox.getChild(1);
+        newLabel.setFill(Color.BLUE);
+        newLabel.setTextFill(Color.WHITE);
 
         // Set new index
         _selIndex = index;
 
         // If double-click, confirm dialog box
-        if (anEvent.getClickCount()>1) _dbox.confirm();
+        if (anEvent.getClickCount() > 1) _dialogSheet.confirm();
     }
 
     /**
@@ -280,7 +293,8 @@ public class SamplesPane extends ViewOwner {
     private Image getDocImage(int anIndex)
     {
         // If image already set, just return
-        Image img = _docImages[anIndex]; if (img!=null) return img;
+        Image img = _docImages[anIndex];
+        if (img != null) return img;
 
         // Get image name, URL string, and URL
         String name = getDocName(anIndex);
@@ -298,13 +312,16 @@ public class SamplesPane extends ViewOwner {
      */
     private static Size getDocSize(int anIndex)
     {
-        return new Size(102,102);
+        return new Size(102, 102);
     }
 
     /**
      * Loads the thumbnail image for each sample in background thread.
      */
-    private void loadImagesInBackground()  { new Thread(() -> loadImages()).start(); }
+    private void loadImagesInBackground()
+    {
+        new Thread(() -> loadImages()).start();
+    }
 
     /**
      * Loads the thumbnail image for each sample in background thread.
@@ -312,163 +329,21 @@ public class SamplesPane extends ViewOwner {
     private void loadImages()
     {
         // Iterate over sample names and load/set images
-        for (int i=0; i<getDocCount(); i++) { int index = i;
+        for (int i = 0; i < getDocCount(); i++) {
+            int index = i;
             Image img = getDocImage(i);
             runLater(() -> setImage(img, index));
         }
     }
 
-    /** Called after an image is loaded to set in ImageView in app thread. */
+    /**
+     * Called after an image is loaded to set in ImageView in app thread.
+     */
     private void setImage(Image anImg, int anIndex)
     {
-        String name = "ImageView" + String.valueOf(anIndex);
+        String name = "ImageView" + anIndex;
         ImageView iview = getView(name, ImageView.class);
         iview.setImage(anImg);
-        iview.setPrefSize(-1,-1);
-    }
-
-    /**
-     * A DialogBox subclass that shows as a sheet.
-     */
-    private class SheetDialogBox extends DialogBox {
-
-        // The parent view hosting the SheetDialogBox
-        ChildView     _hostView;
-
-        // The BoxView to hold/clip the UI
-        BoxView       _clipBox;
-
-        // Whether the dialog box was cancelled
-        boolean       _cancelled;
-
-        /**
-         * Show Dialog in sheet.
-         */
-        protected boolean showPanel(View aView)
-        {
-            // Get given view as HostView
-            _hostView = aView instanceof ChildView ? (ChildView)aView : null;
-            if (_hostView==null) return super.showPanel(aView);
-
-            // Make Other views invisible to mouse clicks
-            for (View v : _hostView.getChildren()) v.setPickable(false);
-
-            // Create/configure UI
-            View ui = getUI();
-            ui.setManaged(false);
-            ui.setFill(ViewUtils.getBackFill());
-            ui.setBorder(Color.DARKGRAY, 1);
-            Size size = ui.getPrefSize();
-            ui.setSize(size);
-
-            // Add Shadow
-            ShadowEffect shadow = new ShadowEffect(10, Color.DARKGRAY, 0, 0).copySimple();
-            ui.setEffect(shadow);
-
-            // Create box to hold/clip UI
-            _clipBox = new BoxView(ui);
-            _clipBox.setSize(size.width + 10, size.height + 10);
-            _clipBox.setPadding(0, 10, 10, 10);
-            _clipBox.setManaged(false);
-            _clipBox.setLeanX(HPos.CENTER);
-            _clipBox.setClipToBounds(true);
-
-            // Add UI box to HostView
-            _hostView.addChild(_clipBox);
-
-            // Configure UI to animate in and start
-            ui.setTransY(-size.height);
-            ui.getAnim(1000).setTransY(-1).play();
-
-            // Make sure stage and Builder.FirstFocus are focused
-            runLater(() -> notifyDidShow());
-
-            return true;
-        }
-
-        /**
-         * Hide dialog.
-         */
-        protected void hide()
-        {
-            // Configure UI to animate out and start
-            View ui = getUI();
-            ViewAnim anim = ui.getAnimCleared(1000);
-            anim.setTransY(-ui.getHeight());
-            anim.setOnFinish(() -> hideAnimDone()).needsFinish().play();
-        }
-
-        /**
-         * Called when hide() animation finishes.
-         */
-        private void hideAnimDone()
-        {
-            // Remove UI, reset everything pickable and notify of close
-            _hostView.removeChild(_clipBox);
-            for (View v : _hostView.getChildren()) v.setPickable(true);
-            dialogBoxClosed();
-        }
-
-        /** Override to set cancelled flag. */
-        public void confirm()  { _cancelled = false; hide(); }
-
-        /** Override to set cancelled flag. */
-        public void cancel()  { _cancelled = true; hide(); }
-    }
-
-    /**
-     * Returns the image paths.
-     */
-    public static String[] getImagePaths()
-    {
-        if (_imgPaths!=null) return _imgPaths;
-
-        WebURL url = WebURL.getURL(SAMPLES_ROOT + "images/index.txt");
-        String pathsStr = url.getText();
-        String pathLines[] = pathsStr.split("\\s*\n\\s*");
-        List <String> pathsList = new ArrayList();
-        for (String line : pathLines) {
-            if (line.length()>0)
-                pathsList.add(line);
-        }
-        String paths[] = pathsList.toArray(new String[pathsList.size()]);
-        return _imgPaths = paths;
-    }
-
-    /**
-     * Returns an image path for given name.
-     */
-    public static String getImagePathForName(String aName)
-    {
-        String name = aName;
-        int ind = name.lastIndexOf('/'); if (ind>=0) name = name.substring(ind+1);
-
-        for (String path : getImagePaths()) {
-            if (path.endsWith(name))
-                return path;
-        }
-        return null;
-    }
-
-    /**
-     * A ViewArchiver that looks for images in samples dir.
-     */
-    private static class SamplesViewArchiver extends ViewArchiver {
-
-        /**
-         * Override to look for images in samples dir.
-         */
-        public Image getImage(String aPath)
-        {
-            String path = getImagePathForName(aPath);
-            if (path!=null) {
-                String urls = SAMPLES_ROOT + "images/" + path;
-                WebURL url = WebURL.getURL(urls);
-                return Image.get(url);
-            }
-
-            // Do normal version
-            return super.getImage(aPath);
-        }
+        iview.setPrefSize(-1, -1);
     }
 }
