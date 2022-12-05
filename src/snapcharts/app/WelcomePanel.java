@@ -1,5 +1,4 @@
 package snapcharts.app;
-
 import snap.util.Prefs;
 import snap.util.SnapUtils;
 import snap.view.*;
@@ -9,9 +8,7 @@ import snap.viewx.RecentFiles;
 import snap.web.WebFile;
 import snap.web.WebURL;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -35,7 +32,7 @@ public class WelcomePanel extends ViewOwner {
     private Runnable _onQuit;
 
     // The RecentFiles
-    private List<WebFile> _recentFiles;
+    private WebFile[]  _recentFiles;
 
     // The shared instance
     private static WelcomePanel _shared;
@@ -97,7 +94,10 @@ public class WelcomePanel extends ViewOwner {
      */
     public void setCloudEmail(String aString)
     {
-        if (aString == getCloudEmail()) return;
+        // If already set, just return
+        if (Objects.equals(aString, getCloudEmail())) return;
+
+        // Set and clear RecentFiles
         _email = aString;
         _recentFiles = null;
 
@@ -195,8 +195,9 @@ public class WelcomePanel extends ViewOwner {
         sitesTable.getCol(0).setItemTextFunction(i -> i.getName());
 
         // Enable SitesTable MouseReleased
-        List<WebFile> rfiles = getRecentFiles();
-        if (rfiles.size() > 0) _selFile = rfiles.get(0);
+        WebFile[] recentFiles = getRecentFiles();
+        if (recentFiles.length > 0)
+            _selFile = recentFiles[0];
         enableEvents(sitesTable, MouseRelease);
 
         // Hide ProgressBar
@@ -377,20 +378,20 @@ public class WelcomePanel extends ViewOwner {
     /**
      * Returns the list of the recent documents as a list of strings.
      */
-    public List<WebFile> getRecentFiles()
+    public WebFile[] getRecentFiles()
     {
         // If already set, just return
         if (_recentFiles != null) return _recentFiles;
 
         // Get DropBox
-        DropBox dbox = getDropBox();
+        DropBox dropBox = getDropBox();
         if (isCloud())
-            FilePanel.setSiteDefault(dbox);
+            FilePanel.setSiteDefault(dropBox);
 
         // Handle Local
         if (!isCloud()) {
-            List<WebFile> rfiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
-            return _recentFiles = rfiles;
+            WebFile[] recentFiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
+            return _recentFiles = recentFiles;
         }
 
         // Turn on progress bar
@@ -402,7 +403,7 @@ public class WelcomePanel extends ViewOwner {
         new Thread(() -> setRecentFilesInBackground()).start();
 
         // Handle Cloud
-        return Collections.EMPTY_LIST;
+        return _recentFiles = new WebFile[0];
     }
 
     /**
@@ -417,7 +418,7 @@ public class WelcomePanel extends ViewOwner {
         WebFile[] chartFiles = chartFilesStream.toArray(size -> new WebFile[size]);
 
         // Set files and trigger reload
-        _recentFiles = Arrays.asList(chartFiles);
+        _recentFiles = chartFiles;
         runLater(() -> recentFilesLoaded());
     }
 
