@@ -7,7 +7,6 @@ import snap.view.ViewUtils;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
 import snapcharts.doc.DocItem;
-import snapcharts.doc.DocItemGroup;
 
 import java.io.File;
 
@@ -118,7 +117,7 @@ public class App {
      */
     public static void quitApp()
     {
-        Prefs.get().flush();
+        Prefs.getDefaultPrefs().flush();
         GFXEnv.getEnv().exit(0);
     }
 }
