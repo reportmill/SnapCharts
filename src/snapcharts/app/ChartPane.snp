@@ -7,7 +7,7 @@
     <Button Name="ResetButton" PrefWidth="24" PrefHeight="24" ToolTip="Reset Axes" image="/snap/viewx/pkg.images/Home.png" ShowArea="false" />
   </RowView>
   <SplitView Name="SplitView" Vertical="true" GrowHeight="true">
-    <EmptyBorder />
+    <NullBorder />
     <BoxView Name="ChartBox" Padding="20" GrowHeight="true" FillWidth="true" Align="TOP_CENTER">
     </BoxView>
     <TabView Name="TabView" PrefHeight="300" />

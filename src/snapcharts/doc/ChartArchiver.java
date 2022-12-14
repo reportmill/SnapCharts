@@ -123,7 +123,6 @@ public class ChartArchiver extends PropArchiverXML {
         cmap.put(Color.class.getSimpleName(), Color.class);
         cmap.put(Font.class.getSimpleName(), Font.class);
         cmap.put(NumberFormat.class.getSimpleName(), NumberFormat.class);
-        cmap.put("EmptyBorder", Borders.EmptyBorder.class);
         cmap.put("BevelBorder", Borders.BevelBorder.class);
         cmap.put("EtchBorder", Borders.EtchBorder.class);
         cmap.put("LineBorder", Borders.LineBorder.class);

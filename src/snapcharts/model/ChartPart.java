@@ -104,7 +104,7 @@ public class ChartPart extends PropObject {
     public static final double DEFAULT_SPACING = 0d;
 
     // Constant for unset border
-    private static Border NULL_BORDER = Border.createEmptyBorder(0);
+    private static Border NULL_BORDER = Border.createLineBorder(Color.BLACK, 0);
 
     /**
      * Constructor.
