@@ -104,7 +104,7 @@ public class ChartPart extends PropObject {
     public static final double DEFAULT_SPACING = 0d;
 
     // Constant for unset border
-    private static Border NULL_BORDER = new Borders.NullBorder();
+    private static Border NULL_BORDER = Border.createEmptyBorder(0);
 
     /**
      * Constructor.
@@ -259,8 +259,8 @@ public class ChartPart extends PropObject {
             return _border != NULL_BORDER ? _border : null;
 
         // Get, set, return
-        Border border = createBorderFromLineProps();
-        return _border = border;
+        _border = createBorderFromLineProps();
+        return _border != NULL_BORDER ? _border : null;
     }
 
     /**
