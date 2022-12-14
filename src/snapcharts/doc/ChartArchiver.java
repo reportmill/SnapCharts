@@ -127,7 +127,6 @@ public class ChartArchiver extends PropArchiverXML {
         cmap.put("BevelBorder", Borders.BevelBorder.class);
         cmap.put("EtchBorder", Borders.EtchBorder.class);
         cmap.put("LineBorder", Borders.LineBorder.class);
-        cmap.put("NullBorder", Borders.NullBorder.class);
         cmap.put("GradientPaint", GradientPaint.class); //RMGradientFill.class
         cmap.put("ImagePaint", ImagePaint.class); //RMImageFill.class
         cmap.put("BlurEffect", BlurEffect.class);
