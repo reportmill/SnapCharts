@@ -15,6 +15,7 @@ import snap.text.TextFormat;
 import snap.util.*;
 import snapcharts.doc.Doc;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Base class for parts of a chart: Axis, Area, Legend, etc.
@@ -31,7 +32,7 @@ public class ChartPart extends PropObject {
     private String  _name;
 
     // The border
-    protected Border  _border;
+    protected Supplier<Border> _border;
 
     // The line color
     protected Color  _lineColor;
@@ -102,9 +103,6 @@ public class ChartPart extends PropObject {
     public static final Insets DEFAULT_MARGIN = Insets.EMPTY;
     public static final Insets DEFAULT_PADDING = Insets.EMPTY;
     public static final double DEFAULT_SPACING = 0d;
-
-    // Constant for unset border
-    private static Border NULL_BORDER = Border.createLineBorder(Color.BLACK, 0);
 
     /**
      * Constructor.
@@ -254,13 +252,13 @@ public class ChartPart extends PropObject {
      */
     public Border getBorder()
     {
-        // If border not supported, use Line Prop version
-        if (_border != null)
-            return _border != NULL_BORDER ? _border : null;
+        // If already set, just return
+        if (_border != null) return _border.get();
 
         // Get, set, return
-        _border = createBorderFromLineProps();
-        return _border != NULL_BORDER ? _border : null;
+        Border border = createBorderFromLineProps();
+        _border = () -> border;
+        return border;
     }
 
     /**
@@ -287,7 +285,7 @@ public class ChartPart extends PropObject {
     {
         // If LineWidth zero or color null, return empty border
         if (getLineWidth() <= 0 || getLineColor() == null)
-            return NULL_BORDER;
+            return null;
 
         // Return border for LineColor and LineStroke
         Color color = getLineColor();
