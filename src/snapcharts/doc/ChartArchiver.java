@@ -91,59 +91,70 @@ public class ChartArchiver extends PropArchiverXML {
     protected Map<String, Class<?>> createClassMap()
     {
         // Create class map and add classes
-        Map<String,Class<?>> cmap = new HashMap();
+        Map<String,Class<?>> classMap = new HashMap<>();
 
         // Chart classes
-        cmap.put(Doc.class.getSimpleName(), Doc.class);
-        cmap.put(Chart.class.getSimpleName(), Chart.class);
-        cmap.put(Header.class.getSimpleName(), Header.class);
-        cmap.put(Axis.class.getSimpleName(), Axis.class);
-        cmap.put(AxisX.class.getSimpleName(), AxisX.class);
-        cmap.put(AxisY.class.getSimpleName(), AxisY.class);
-        cmap.put(Legend.class.getSimpleName(), Legend.class);
-        cmap.put(ContourAxis.class.getSimpleName(), ContourAxis.class);
-        cmap.put(Marker.class.getSimpleName(), Marker.class);
-        cmap.put(Content.class.getSimpleName(), Content.class);
+        classMap.put(Doc.class.getSimpleName(), Doc.class);
+        classMap.put(Chart.class.getSimpleName(), Chart.class);
+        classMap.put(Header.class.getSimpleName(), Header.class);
+        classMap.put(Axis.class.getSimpleName(), Axis.class);
+        classMap.put(AxisX.class.getSimpleName(), AxisX.class);
+        classMap.put(AxisY.class.getSimpleName(), AxisY.class);
+        classMap.put(Legend.class.getSimpleName(), Legend.class);
+        classMap.put(ContourAxis.class.getSimpleName(), ContourAxis.class);
+        classMap.put(Marker.class.getSimpleName(), Marker.class);
+        classMap.put(Content.class.getSimpleName(), Content.class);
 
         // Trace classes
-        cmap.put(Trace.class.getSimpleName(), ScatterTrace.class);
-        cmap.put(ScatterTrace.class.getSimpleName(), ScatterTrace.class);
-        cmap.put(BarTrace.class.getSimpleName(), BarTrace.class);
-        cmap.put(Bar3DTrace.class.getSimpleName(), Bar3DTrace.class);
-        cmap.put(PieTrace.class.getSimpleName(), PieTrace.class);
-        cmap.put(Pie3DTrace.class.getSimpleName(), Pie3DTrace.class);
-        cmap.put(ContourTrace.class.getSimpleName(), ContourTrace.class);
-        cmap.put(Contour3DTrace.class.getSimpleName(), Contour3DTrace.class);
-        cmap.put(PolarTrace.class.getSimpleName(), PolarTrace.class);
-        cmap.put(PolarContourTrace.class.getSimpleName(), PolarContourTrace.class);
-        cmap.put(PointStyle.class.getSimpleName(), PointStyle.class);
-        cmap.put(TagStyle.class.getSimpleName(), TagStyle.class);
+        classMap.put(Trace.class.getSimpleName(), ScatterTrace.class);
+        classMap.put(ScatterTrace.class.getSimpleName(), ScatterTrace.class);
+        classMap.put(BarTrace.class.getSimpleName(), BarTrace.class);
+        classMap.put(Bar3DTrace.class.getSimpleName(), Bar3DTrace.class);
+        classMap.put(PieTrace.class.getSimpleName(), PieTrace.class);
+        classMap.put(Pie3DTrace.class.getSimpleName(), Pie3DTrace.class);
+        classMap.put(ContourTrace.class.getSimpleName(), ContourTrace.class);
+        classMap.put(Contour3DTrace.class.getSimpleName(), Contour3DTrace.class);
+        classMap.put(PolarTrace.class.getSimpleName(), PolarTrace.class);
+        classMap.put(PolarContourTrace.class.getSimpleName(), PolarContourTrace.class);
+        classMap.put(PointStyle.class.getSimpleName(), PointStyle.class);
+        classMap.put(TagStyle.class.getSimpleName(), TagStyle.class);
 
         // Add Graphics classes (Border, Paint, Font, NumberFormat, Effect)
-        cmap.put(Color.class.getSimpleName(), Color.class);
-        cmap.put(Font.class.getSimpleName(), Font.class);
-        cmap.put(NumberFormat.class.getSimpleName(), NumberFormat.class);
-        cmap.put("BevelBorder", Borders.BevelBorder.class);
-        cmap.put("EtchBorder", Borders.EtchBorder.class);
-        cmap.put("LineBorder", Borders.LineBorder.class);
-        cmap.put("GradientPaint", GradientPaint.class); //RMGradientFill.class
-        cmap.put("ImagePaint", ImagePaint.class); //RMImageFill.class
-        cmap.put("BlurEffect", BlurEffect.class);
-        cmap.put("ShadowEffect", ShadowEffect.class);
-        cmap.put("ReflectEffect", ReflectEffect.class);
-        cmap.put("EmbossEffect", EmbossEffect.class);
+        classMap.put(Color.class.getSimpleName(), Color.class);
+        classMap.put(Font.class.getSimpleName(), Font.class);
+        classMap.put(NumberFormat.class.getSimpleName(), NumberFormat.class);
+        classMap.put("BevelBorder", Borders.BevelBorder.class);
+        classMap.put("EtchBorder", Borders.EtchBorder.class);
+        classMap.put("LineBorder", Borders.LineBorder.class);
+        classMap.put("GradientPaint", GradientPaint.class); //RMGradientFill.class
+        classMap.put("ImagePaint", ImagePaint.class); //RMImageFill.class
+        classMap.put("BlurEffect", BlurEffect.class);
+        classMap.put("ShadowEffect", ShadowEffect.class);
+        classMap.put("ReflectEffect", ReflectEffect.class);
+        classMap.put("EmbossEffect", EmbossEffect.class);
 
-        // Return map
-        return cmap;
+        // Return
+        return classMap;
+    }
+
+    /**
+     * Override to preprocess Legacy XML if needed.
+     */
+    @Override
+    public PropObject readPropObjectFromXML(XMLElement anElement)
+    {
+        // Preprocess XML
+        if (ChartArchiverLegacy.isLegacyXML(anElement))
+            ChartArchiverLegacy.processLegacyXML(anElement);
+
+        // Do normal version
+        return super.readPropObjectFromXML(anElement);
     }
 
     /**
      * A PropObjectProxy subclass for DataSet.
      */
-    protected static class DataSetProxy extends PropObjectProxy {
-
-        // A basic DataSet
-        private DataSet  _dataSet;
+    protected static class DataSetProxy extends PropObjectProxy<DataSet> {
 
         // The DataArrays
         private DataArray[]  _dataArrays;
@@ -156,10 +167,10 @@ public class ChartArchiver extends PropArchiverXML {
          */
         public DataSetProxy()
         {
-            _dataSet = DataSet.newDataSet();
+            _real = DataSet.newDataSet();
 
             // Init DataArrays
-            DataType dataType = _dataSet.getDataType();
+            DataType dataType = _real.getDataType();
             _dataArrays = new DataArray[dataType.getChannelCount()];
             _dataUnits = new DataUnit[dataType.getChannelCount()];
         }
@@ -168,56 +179,21 @@ public class ChartArchiver extends PropArchiverXML {
          * Override to do final DataSet config.
          */
         @Override
-        public Object getReal()
+        public DataSet getReal()
         {
             // Set DataUnits in DataArrays
             for (int i = 0; i < _dataUnits.length; i++) {
-                DataUnit dataUnit = _dataUnits[i]; if (dataUnit == null) continue;;
+                DataUnit dataUnit = _dataUnits[i]; if (dataUnit == null) continue;
                 DataArray dataArray = _dataArrays[i];
                 if (dataArray instanceof NumberArray)
                     ((NumberArray) dataArray).setUnit(dataUnit);
             }
 
             // Set DataArrays
-            _dataSet.setDataArrays(_dataArrays);
+            _real.setDataArrays(_dataArrays);
 
             // Return
-            return _dataSet;
-        }
-
-        /**
-         * Override to configure props for this class.
-         */
-        @Override
-        protected void initProps(PropSet aPropSet)
-        {
-            // Do normal version
-            super.initProps(aPropSet);
-
-            // Get props for DataSet
-            Prop[] dataSetProps = _dataSet.getPropSet().getProps();
-
-            // Add DataSet props - should probably add copies
-            for (Prop prop : dataSetProps)
-                aPropSet.addProp(prop);
-        }
-
-        /**
-         * Override to forward to DataSet.
-         */
-        @Override
-        public Prop[] getPropsForArchivalExtra()
-        {
-            return _dataSet.getPropsForArchivalExtra();
-        }
-
-        /**
-         * Override to forward to DataSet.
-         */
-        @Override
-        public Object getPropValue(String aPropName)
-        {
-            return _dataSet.getPropValue(aPropName);
+            return _real;
         }
 
         /**
@@ -247,11 +223,11 @@ public class ChartArchiver extends PropArchiverXML {
             }
 
             // Forward to DataSet
-            _dataSet.setPropValue(aPropName, aValue);
+            _real.setPropValue(aPropName, aValue);
 
             // Handle DataType
             if (aPropName == DataSet.DataType_Prop) {
-                DataType dataType = _dataSet.getDataType();
+                DataType dataType = _real.getDataType();
                 _dataArrays = new DataArray[dataType.getChannelCount()];
                 _dataUnits = new DataUnit[dataType.getChannelCount()];
             }
@@ -262,25 +238,11 @@ public class ChartArchiver extends PropArchiverXML {
          */
         private int getDataChannelIndexForPropName(String aPropName)
         {
-            DataType dataType = _dataSet.getDataType();
+            DataType dataType = _real.getDataType();
             for (int i = 0, iMax = dataType.getChannelCount(); i < iMax; i++)
                 if (dataType.getChannel(i).toString().equals(aPropName))
                     return i;
             return -1;
         }
-    }
-
-    /**
-     * Override to preprocess Legacy XML if needed.
-     */
-    @Override
-    public PropObject readPropObjectFromXML(XMLElement anElement)
-    {
-        // Preprocess XML
-        if (ChartArchiverLegacy.isLegacyXML(anElement))
-            ChartArchiverLegacy.processLegacyXML(anElement);
-
-        // Do normal version
-        return super.readPropObjectFromXML(anElement);
     }
 }
