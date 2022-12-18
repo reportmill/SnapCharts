@@ -19,6 +19,9 @@ public class ChartArchiverJS extends PropArchiverJS {
     public ChartArchiverJS()
     {
         super();
+
+        // Register DataSet to use DataSetProxy for archival/unarchival
+        PropArchiverHpr.setProxyClassForClass(DataSet.class, ChartArchiver.DataSetProxy.class);
     }
 
     /**
@@ -53,20 +56,6 @@ public class ChartArchiverJS extends PropArchiverJS {
         JSObject jsonObj = writeToJSON(anObj);
         String jsonStr = jsonObj.toString();
         return jsonStr.getBytes();
-    }
-
-    /**
-     * Override to handle DataSet.
-     */
-    @Override
-    protected PropObject createPropObjectForFormatNode(PropNode aParent, Prop aProp, Object aFormatNode)
-    {
-        // Handle DataSet
-        if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
-            return new ChartArchiver.DataSetProxy();
-
-        // Do normal version
-        return super.createPropObjectForFormatNode(aParent, aProp, aFormatNode);
     }
 
     /**

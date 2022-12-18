@@ -124,13 +124,13 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
         // Copy DataSet chart
         Chart chart = aTrace.getChart();
-        Chart chartCopy = new ChartArchiver().copy(chart);
+        Chart chartCopy = new ChartArchiver().copyPropObject(chart);
         Content content = chartCopy.getContent();
         while (content.getTraceCount() > 0)
             content.removeTrace(0);
 
         // Copy DataSet and add to ChartCopy
-        Trace traceCopy = new ChartArchiver().copy(aTrace);
+        Trace traceCopy = new ChartArchiver().copyPropObject(aTrace);
         content.addTrace(traceCopy);
 
         // Set Chart

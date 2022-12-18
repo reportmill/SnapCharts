@@ -23,6 +23,9 @@ public class ChartArchiver extends PropArchiverXML {
     public ChartArchiver()
     {
         super();
+
+        // Register DataSet to use DataSetProxy for archival/unarchival
+        PropArchiverHpr.setProxyClassForClass(DataSet.class, DataSetProxy.class);
     }
 
     /**
@@ -61,19 +64,19 @@ public class ChartArchiver extends PropArchiverXML {
         return xml.getBytes();
     }
 
-    /**
-     * Override to handle DataSet.
-     */
-    @Override
-    protected PropObject createPropObjectForFormatNode(PropNode aParent, Prop aProp, Object aFormatNode)
-    {
-        // Handle DataSet
-        if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
-            return new DataSetProxy();
-
-        // Do normal version
-        return super.createPropObjectForFormatNode(aParent, aProp, aFormatNode);
-    }
+//    /**
+//     * Override to handle DataSet.
+//     */
+//    @Override
+//    protected PropObject createPropObjectForFormatNode(PropNode aParent, Prop aProp, Object aFormatNode)
+//    {
+//        // Handle DataSet
+//        if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
+//            return new DataSetProxy();
+//
+//        // Do normal version
+//        return super.createPropObjectForFormatNode(aParent, aProp, aFormatNode);
+//    }
 
     /**
      * Creates the class map.

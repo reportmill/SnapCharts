@@ -693,7 +693,7 @@ public abstract class Trace extends ChartPart {
     {
         ChartArchiver chartArchiver = new ChartArchiver();
         chartArchiver.getClassMap().put(getClass().getSimpleName(), aClass);
-        Trace copy = chartArchiver.copy(this);
+        Trace copy = chartArchiver.copyPropObject(this);
         return (T) copy;
     }
 
