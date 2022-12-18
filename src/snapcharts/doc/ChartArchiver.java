@@ -48,7 +48,7 @@ public class ChartArchiver extends PropArchiverXML {
      */
     public XMLElement writeToXML(PropObject anObj)
     {
-        XMLElement xml = convertPropObjectToXML(anObj);
+        XMLElement xml = writePropObjectToXML(anObj);
         return xml;
     }
 

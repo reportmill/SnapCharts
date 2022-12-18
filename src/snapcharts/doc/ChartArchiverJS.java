@@ -42,7 +42,7 @@ public class ChartArchiverJS extends PropArchiverJS {
      */
     public JSObject writeToJSON(PropObject anObj)
     {
-        return convertPropObjectToJSON(anObj);
+        return writePropObjectToJSON(anObj);
     }
 
     /**

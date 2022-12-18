@@ -830,7 +830,7 @@ public class DocPane extends ViewOwner {
 
         // Write to XML bytes
         ChartArchiver chartArchiver = new ChartArchiver();
-        byte[] xmlBytes = chartArchiver.convertPropObjectToXMLBytes(doc);
+        byte[] xmlBytes = chartArchiver.writePropObjectToXMLBytes(doc);
 
         // Write to file
         File file = new File("/tmp/PropArchTest.charts");
@@ -857,7 +857,7 @@ public class DocPane extends ViewOwner {
 
         // Get Doc as JSON
         ChartArchiverJS chartArchiverJS = new ChartArchiverJS();
-        JSObject docJS = chartArchiverJS.convertPropObjectToJSON(doc);
+        JSObject docJS = chartArchiverJS.writePropObjectToJSON(doc);
 
         // Get JSON String
         JSWriter writer = new JSWriter();
