@@ -62,26 +62,17 @@ public class ChartArchiver extends PropArchiverXML {
     }
 
     /**
-     * Returns a copy of the given object using archival.
-     */
-    public <T extends PropObject> T copy(T anObj)
-    {
-        XMLElement xml = convertPropObjectToXML(anObj);
-        return (T) readPropObjectFromXML(xml);
-    }
-
-    /**
      * Override to handle DataSet.
      */
     @Override
-    protected PropObject createPropObjectForXML(PropNode aParent, Prop aProp, XMLElement anElement)
+    protected PropObject createPropObjectForFormatNode(PropNode aParent, Prop aProp, Object aFormatNode)
     {
         // Handle DataSet
         if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
             return new DataSetProxy();
 
         // Do normal version
-        return super.createPropObjectForXML(aParent, aProp, anElement);
+        return super.createPropObjectForFormatNode(aParent, aProp, aFormatNode);
     }
 
     /**
