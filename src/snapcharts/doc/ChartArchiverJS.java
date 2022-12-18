@@ -26,27 +26,23 @@ public class ChartArchiverJS extends PropArchiverJS {
      */
     public Doc getDocFromJSONBytes(byte[] xmlBytes)
     {
-        Doc doc = (Doc) readPropObjectFromJSONBytes(xmlBytes);
-        return doc;
+        return (Doc) readPropObjectFromJSONBytes(xmlBytes);
     }
 
     /**
-     * Returns a ChartPart for XML source.
+     * Returns a ChartPart for JSON source.
      */
     public ChartPart getChartPartFromJSONSource(Object anObj)
     {
-        ChartPart cpart = (ChartPart) readPropObjectFromJSONSource(anObj);
-        return cpart;
+        return (ChartPart) readPropObjectFromJSONSource(anObj);
     }
 
     /**
-     * Returns an xml element for a given object.
-     * This top level method encodes resources, in addition to doing the basic toXML stuff.
+     * Returns an JSON object for a given PropObject.
      */
     public JSObject writeToJSON(PropObject anObj)
     {
-        JSObject json = convertPropObjectToJSON(anObj);
-        return json;
+        return convertPropObjectToJSON(anObj);
     }
 
     /**
@@ -54,33 +50,23 @@ public class ChartArchiverJS extends PropArchiverJS {
      */
     public byte[] writeToJSONBytes(PropObject anObj)
     {
-        JSObject json = writeToJSON(anObj);
-        String jsonStr = json.toString();
-        byte[] jsonBytes = jsonStr.getBytes();
-        return jsonBytes;
-    }
-
-    /**
-     * Returns a copy of the given object using archival.
-     */
-    public <T extends PropObject> T copy(T anObj)
-    {
-        JSObject json = convertPropObjectToJSON(anObj);
-        return (T) readPropObjectFromJSON(json);
+        JSObject jsonObj = writeToJSON(anObj);
+        String jsonStr = jsonObj.toString();
+        return jsonStr.getBytes();
     }
 
     /**
      * Override to handle DataSet.
      */
     @Override
-    protected PropObject createPropObjectForJSON(PropNode aParent, Prop aProp, JSObject anObjectJS)
+    protected PropObject createPropObjectForFormatNode(PropNode aParent, Prop aProp, Object aFormatNode)
     {
         // Handle DataSet
         if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
             return new ChartArchiver.DataSetProxy();
 
         // Do normal version
-        return super.createPropObjectForJSON(aParent, aProp, anObjectJS);
+        return super.createPropObjectForFormatNode(aParent, aProp, aFormatNode);
     }
 
     /**
