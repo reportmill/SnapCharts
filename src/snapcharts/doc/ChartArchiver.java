@@ -64,20 +64,6 @@ public class ChartArchiver extends PropArchiverXML {
         return xml.getBytes();
     }
 
-//    /**
-//     * Override to handle DataSet.
-//     */
-//    @Override
-//    protected PropObject createPropObjectForFormatNode(PropNode aParent, Prop aProp, Object aFormatNode)
-//    {
-//        // Handle DataSet
-//        if (aProp != null && aProp.getDefaultPropClass() == DataSet.class)
-//            return new DataSetProxy();
-//
-//        // Do normal version
-//        return super.createPropObjectForFormatNode(aParent, aProp, aFormatNode);
-//    }
-
     /**
      * Creates the class map.
      */
@@ -112,6 +98,9 @@ public class ChartArchiver extends PropArchiverXML {
         classMap.put(PolarContourTrace.class.getSimpleName(), PolarContourTrace.class);
         classMap.put(PointStyle.class.getSimpleName(), PointStyle.class);
         classMap.put(TagStyle.class.getSimpleName(), TagStyle.class);
+
+        // Data classes
+        classMap.put(DataSet.class.getSimpleName(), DataSet.class);
 
         // Add Graphics classes (Border, Paint, Font, NumberFormat, Effect)
         classMap.put(Color.class.getSimpleName(), Color.class);
@@ -184,7 +173,8 @@ public class ChartArchiver extends PropArchiverXML {
             }
 
             // Set DataArrays
-            _real.setDataArrays(_dataArrays);
+            if (_dataArrays[0] != null)
+                _real.setDataArrays(_dataArrays);
 
             // Return
             return _real;
