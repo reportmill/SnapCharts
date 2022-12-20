@@ -241,7 +241,7 @@ public class DocItemGroup<T extends PropObject> extends DocItemParent<T> {
 
             // Portrait, PageDisplay_Prop, ItemsPerPage, ChartScale
             case Portrait_Prop: setPortrait(SnapUtils.boolValue(aValue)); break;
-            case PageDisplay_Prop: setPageDisplay(SnapUtils.enumValue(PageDisplay.class, aValue)); break;
+            case PageDisplay_Prop: setPageDisplay((PageDisplay) aValue); break;
             case ItemsPerPage_Prop: setItemsPerPage(SnapUtils.intValue(aValue)); break;
             case ChartScale_Prop: setChartScale(SnapUtils.doubleValue(aValue)); break;
 

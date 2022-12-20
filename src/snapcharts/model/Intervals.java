@@ -3,8 +3,8 @@
  */
 package snapcharts.model;
 import snap.util.ArrayUtils;
+import snap.util.Convert;
 import snap.util.MathUtils;
-import snapcharts.data.DataUtils;
 
 /**
  * This class represent a set of equally spaced interval values for a given min and max value and an axis length.
@@ -143,7 +143,7 @@ public class Intervals {
     @Override
     public String toString()
     {
-        String divStr = DataUtils.getStringForDoubleArray(_divs);
+        String divStr = Convert.doubleArrayToString(_divs);
         return "Intervals { MinVal=" + _minVal + ", MaxVal=" + _maxVal +
                 ", Count=" + _count + ", Delta=" + _delta + ", Divs=" + divStr + " }";
     }
