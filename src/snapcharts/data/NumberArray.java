@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snap.util.ArrayUtils;
+import snap.util.Convert;
 
 /**
  * This DataArray subclass uses doubles.
@@ -111,7 +111,7 @@ public abstract class NumberArray extends DataArray {
 
         // Create, set, return
         float[] floatArray = floatArray();
-        double[] doubleArray = ArrayUtils.doubleArray(floatArray);
+        double[] doubleArray = Convert.doubleArray(floatArray);
         return _doubleArray = doubleArray;
     }
 
@@ -125,7 +125,7 @@ public abstract class NumberArray extends DataArray {
 
         // Create, set, return
         double[] doubleArray = doubleArray();
-        float[] floatArray = ArrayUtils.floatArray(doubleArray);
+        float[] floatArray = Convert.floatArray(doubleArray);
         return _floatArray = floatArray;
     }
 
