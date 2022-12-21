@@ -111,7 +111,7 @@ public abstract class NumberArray extends DataArray {
 
         // Create, set, return
         float[] floatArray = floatArray();
-        double[] doubleArray = Convert.doubleArray(floatArray);
+        double[] doubleArray = Convert.floatArrayToDouble(floatArray);
         return _doubleArray = doubleArray;
     }
 
@@ -125,7 +125,7 @@ public abstract class NumberArray extends DataArray {
 
         // Create, set, return
         double[] doubleArray = doubleArray();
-        float[] floatArray = Convert.floatArray(doubleArray);
+        float[] floatArray = Convert.doubleArrayToFloat(doubleArray);
         return _floatArray = floatArray;
     }
 
