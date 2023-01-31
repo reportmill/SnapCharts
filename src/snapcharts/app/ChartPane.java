@@ -63,9 +63,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     // The DeepChangeListener
     private DeepChangeListener _dcl = (src, pc) -> chartPartDidPropChange(pc);
 
-    // The undoer
-    private Undoer _undoer;
-
     // Constants
     public static Border CHART_BORDER = Border.createLineBorder(Color.GRAY, 1);
     public static Effect CHART_SHADOW = new ShadowEffect(12, Color.DARKGRAY, 0, 0).copySimple();
@@ -143,11 +140,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     public ChartView getChartView()  { return _chartView; }
 
     /**
-     * Returns the ChartBox (holds ChartView).
-     */
-    public BoxView getChartBox()  { return _chartBox; }
-
-    /**
      * Returns the ChartView.ContentView
      */
     public ContentView getContentView()  { return _chartView.getContentView(); }
@@ -191,7 +183,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     /**
      * Returns the undoer.
      */
-    public Undoer getUndoer()  { return _undoer; }
+    public Undoer getUndoer()  { return null; }
 
     /**
      * Returns the ChartPaneSel.
@@ -418,19 +410,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         ChartHelper chartHelper = getChartHelper();
         setViewValue("ZoomSelectButton", chartHelper.isZoomSelectMode());
 
-        // Make sure TabView has DataSetPane UI view (not Label placeholder)
-        int selTabIndex = _traceTabView.getSelIndex();
-        if (selTabIndex>=0 && _traceTabView.getTabContent(selTabIndex) instanceof Label) {
-
-            // Get Trace and create DataSetPane
-            Trace trace = getContent().getTrace(selTabIndex);
-            DocItemTrace docItemTrace = new DocItemTrace(trace);
-            TracePane dsetPane = new TracePane(docItemTrace);
-
-            // Set TabView content
-            _traceTabView.setTabContent(dsetPane.getUI(), selTabIndex);
-        }
-
         // Reset inspector
         _insp.resetLater();
     }
@@ -570,14 +549,16 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     private void rebuildTraceTabView()
     {
         // Remove current tabs
-        while (_traceTabView.getTabCount() > 0)
-            _traceTabView.removeTab(0);
+        _traceTabView.getTabBar().removeTabs();
+        Tab.Builder tabBuilder = new Tab.Builder(_traceTabView.getTabBar());
 
         // Configure TabView with Chart.Traces
         Content content = getContent();
         Trace[] traces = content.getTraces();
         for (Trace trace : traces) {
-            _traceTabView.addTab(trace.getName(), new Label(trace.getName()));
+            DocItemTrace docItemTrace = new DocItemTrace(trace);
+            TracePane tracePane = new TracePane(docItemTrace);
+            tabBuilder.title(trace.getName()).contentOwner(tracePane).add();
         }
     }
 
