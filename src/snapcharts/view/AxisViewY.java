@@ -9,6 +9,7 @@ import snap.util.ArrayUtils;
 import snap.view.Cursor;
 import snap.view.RowView;
 import snap.view.RowViewProxy;
+import snap.view.WrapView;
 import snapcharts.model.*;
 
 /**
