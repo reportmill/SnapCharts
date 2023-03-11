@@ -267,7 +267,7 @@ public class DocPane extends ViewOwner {
         // Run save panel, set Document.Source to path and re-save (or just return if cancelled)
         String[] exts = new String[] { CHARTS_FILE_EXT };
         //String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
-        WebFile file = FilePanel.showSavePanelWeb(getUI(), "Snap Charts file", exts); if (file == null) return;
+        WebFile file = FilePanel.showSaveFilePanel(getUI(), "Snap Charts file", exts); if (file == null) return;
 
         getDoc().setSourceURL(file.getURL());
         save();
