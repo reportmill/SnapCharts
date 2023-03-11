@@ -11,6 +11,7 @@ import snap.gfx.Image;
 import snap.util.*;
 import snap.view.*;
 import snap.viewx.*;
+import snap.web.RecentFiles;
 import snap.web.WebFile;
 import snap.web.WebURL;
 import snapcharts.appmisc.OpenInPlotly;

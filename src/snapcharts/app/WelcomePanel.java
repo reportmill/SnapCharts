@@ -4,7 +4,7 @@ import snap.util.SnapUtils;
 import snap.view.*;
 import snap.viewx.DialogBox;
 import snap.viewx.FilePanel;
-import snap.viewx.RecentFiles;
+import snap.web.RecentFiles;
 import snap.web.WebFile;
 import snap.web.WebURL;
 
