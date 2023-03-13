@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ColView PrefWidth="400" PrefHeight="480" Spacing="5" FillWidth="true">
+<ColView PrefWidth="400" PrefHeight="520" Spacing="5" FillWidth="true">
   <ColView Padding="2,8,8,8" GrowHeight="true" Spacing="5" FillWidth="true">
-    <TitleView MinWidth="120" MinHeight="60" Text="File System">
-      <font name="Arial" size="14" />
-      <ColView Padding="6,6,6,8" GrowHeight="true" Spacing="6">
-        <font name="Arial" size="11" />
-        <RadioButton Name="LocalButton" text="Local" Selected="true" />
-        <RowView GrowWidth="true" Spacing="4">
-          <RadioButton Name="CloudButton" text="Cloud" />
-          <Label PrefHeight="20" Margin="0,0,0,24" text="User Email:" />
-          <TextField Name="EmailText" GrowWidth="true" PromptText="Used only to define unique home dir" />
-        </RowView>
-        <Button Name="SamplesButton" PrefWidth="120" PrefHeight="24" Padding="2" text="Show Samples" />
-      </ColView>
-    </TitleView>
     <RowView GrowWidth="true" Spacing="4">
-      <Label Padding="4,0,0,0" text="Select or Create UI file:">
+      <Label Padding="4,0,0,0" text="Select UI file:">
         <font name="Arial" size="14" />
       </Label>
       <ProgressBar Name="ProgressBar" PrefWidth="110" PrefHeight="20" LeanX="RIGHT" />
+      <Button Name="SamplesButton" PrefWidth="110" PrefHeight="24" Margin="2,5,2,2" Padding="2" Text="Show Samples" LeanX="RIGHT" />
     </RowView>
     <TableView Name="SitesTable" GrowHeight="true">
       <font name="Arial" size="14" />
