@@ -233,11 +233,10 @@ public class DocPane extends ViewOwner {
         // Set new doc
         setDoc(aDoc);
 
-        // If source is string, add to recent files menu
+        // If source URL, add to recent files
         WebURL url = aDoc.getSourceURL();
-        String urls = url != null ? url.getString() : null;
-        if(urls != null)
-            RecentFiles.addPath(urls);
+        if(url != null)
+            RecentFiles.addURL(url);
 
         // Return the editor
         return this;
@@ -278,7 +277,11 @@ public class DocPane extends ViewOwner {
     public void save()
     {
         // If can't save to current source, do SaveAs instead
-        WebURL url = getSourceURL(); if (url == null) { saveAs(); return; }
+        WebURL url = getSourceURL();
+        if (url == null) {
+            saveAs();
+            return;
+        }
 
         // Make sure editor isn't previewing and has focus (to commit any inspector textfield changes)
         //getEditor().requestFocus();
@@ -293,9 +296,8 @@ public class DocPane extends ViewOwner {
             return;
         }
 
-        // Add URL.String to RecentFilesMenu, clear undoer and reset UI
-        String urls = url.getString();
-        RecentFiles.addPath(urls);
+        // Add URL to RecentFiles, clear undoer and reset UI
+        RecentFiles.addURL(url);
         //getDoc().getUndoer().reset();
         resetLater();
     }
