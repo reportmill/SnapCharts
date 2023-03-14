@@ -4,6 +4,7 @@ import snap.util.Prefs;
 import snap.util.SnapUtils;
 import snap.view.ViewTheme;
 import snap.view.ViewUtils;
+import snap.web.RecentFiles;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
 import snapcharts.doc.DocItem;
@@ -31,6 +32,10 @@ public class App {
         //DocPane docPane = new DocPane();
         //docPane.setWindowVisible(true);
         //ViewUtils.runLater(() -> docPane.loadSampleDoc());
+
+        // Set Prefs
+        RecentFiles.setPrefsKey("RecentChartDocs");
+        //Prefs.setDefaultPrefs(Prefs.getPrefsForName("SnapCharts"));
 
         if (args.length > 1)
             processArgs(args);

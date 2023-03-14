@@ -268,7 +268,7 @@ public class WelcomePanel extends ViewOwner {
         // If already set, just return
         if (_recentFiles != null) return _recentFiles;
 
-        WebFile[] recentFiles = RecentFiles.getFiles(DocPane.RECENT_FILES_ID);
+        WebFile[] recentFiles = RecentFiles.getFiles();
         return _recentFiles = recentFiles;
     }
 

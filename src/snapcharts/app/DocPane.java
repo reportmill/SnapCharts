@@ -49,7 +49,6 @@ public class DocPane extends ViewOwner {
     private Map<DocItem,DocItemPane>  _docItemPanes = new HashMap<>();
 
     // Constants
-    public static final String RECENT_FILES_ID = "RecentChartDocs";
     public static final String CHARTS_FILE_EXT = "charts";
     public static final String CHARTS_SIMPLE_FILE_EXT = "simple";
 
@@ -238,7 +237,7 @@ public class DocPane extends ViewOwner {
         WebURL url = aDoc.getSourceURL();
         String urls = url != null ? url.getString() : null;
         if(urls != null)
-            RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
+            RecentFiles.addPath(urls);
 
         // Return the editor
         return this;
@@ -296,7 +295,7 @@ public class DocPane extends ViewOwner {
 
         // Add URL.String to RecentFilesMenu, clear undoer and reset UI
         String urls = url.getString();
-        RecentFiles.addPath(RECENT_FILES_ID, urls, 10);
+        RecentFiles.addPath(urls);
         //getDoc().getUndoer().reset();
         resetLater();
     }
