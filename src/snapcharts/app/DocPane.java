@@ -323,7 +323,7 @@ public class DocPane extends ViewOwner {
         WebURL surl = getSourceURL(); if (surl==null) return;
 
         // Run option panel for revert confirmation (just return if denied)
-        String msg = "Revert to saved version of " + surl.getPathName() + "?";
+        String msg = "Revert to saved version of " + surl.getFilename() + "?";
         DialogBox dbox = new DialogBox("Revert to Saved");
         dbox.setQuestionMessage(msg);
         if (!dbox.showConfirmDialog(getUI())) return;
