@@ -780,7 +780,7 @@ public abstract class TraceView3D extends TraceView {
         Vector3D sideNormal = aSide.getNormalInward();
         Camera camera = _scene.getCamera();
         Matrix3D sceneToCamera = camera.getSceneToCamera();
-        Vector3D sideNormalInCamera = sceneToCamera.transformVector(sideNormal.clone());
+        Vector3D sideNormalInCamera = sceneToCamera.transformVector(sideNormal);
         Vector3D cameraNormal = camera.getNormal();
         boolean isFacing = !sideNormalInCamera.isAligned(cameraNormal, false);
         return isFacing;
