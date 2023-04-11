@@ -6,7 +6,7 @@ import snap.geom.Path2D;
 import snap.geom.Point;
 import snap.geom.Shape;
 import snap.gfx.Color;
-import snap.gfx3d.Poly3D;
+import snap.gfx3d.Polygon3D;
 import snap.gfx3d.Shape3D;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;
@@ -67,7 +67,7 @@ public class Line3DTraceView extends TraceView3D {
         double lineZ = sectionDepth * (anIndex + .5);
 
         // Create/configure line area Poly3D and add to scene
-        Poly3D areaPath = new Poly3D(path, lineZ);
+        Polygon3D areaPath = new Polygon3D(path, lineZ);
         areaPath.setColor(dataFillColor);
         areaPath.setStroke(dataStrokeColor, 1);
         areaPath.setDoubleSided(true);

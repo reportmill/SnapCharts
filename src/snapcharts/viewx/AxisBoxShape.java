@@ -20,13 +20,13 @@ public class AxisBoxShape extends ParentShape {
     private TraceView3D  _traceView;
 
     // The Front/Back sides
-    private Poly3D  _frontSide, _backSide;
+    private Polygon3D _frontSide, _backSide;
 
     // The Left/Right sides
-    private Poly3D  _leftSide, _rightSide;
+    private Polygon3D _leftSide, _rightSide;
 
     // The Top/Bottom sides
-    private Poly3D  _topSide, _bottomSide;
+    private Polygon3D _topSide, _bottomSide;
 
     // The highliner
     private AxisBoxHighliner  _highliner;
@@ -73,7 +73,7 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Returns the side shape.
      */
-    public Poly3D getSideShape(Side3D aSide)
+    public Polygon3D getSideShape(Side3D aSide)
     {
         switch (aSide) {
             case FRONT: return _frontSide;
@@ -171,10 +171,10 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Adds geometry for front/back sides.
      */
-    private Poly3D addSideFrontBack(double width, double height, double sideZ)
+    private Polygon3D addSideFrontBack(double width, double height, double sideZ)
     {
         // Create wall shape
-        Poly3D side = new Poly3D();
+        Polygon3D side = new Polygon3D();
         side.setName(sideZ == 0 ? "AxisBack" : "AxisFront");
         side.setOpacity(.8f);
         side.setColor(SIDE_COLOR); //if (_backFill!=null) back.setColor(_backFill.getColor());
@@ -202,10 +202,10 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Add geometry for left/right sides.
      */
-    private Poly3D addSideLeftRight(double sideX, double height, double depth)
+    private Polygon3D addSideLeftRight(double sideX, double height, double depth)
     {
         // Create side shape
-        Poly3D side = new Poly3D();
+        Polygon3D side = new Polygon3D();
         side.setName(sideX == 0 ? "AxisLeft" : "AxisRight");
         side.setColor(SIDE_COLOR);
         side.setOpacity(.8f);
@@ -233,10 +233,10 @@ public class AxisBoxShape extends ParentShape {
     /**
      * Adds geometry for top/bottom sides.
      */
-    private Poly3D addSideTopBottom(double width, double sideY, double depth)
+    private Polygon3D addSideTopBottom(double width, double sideY, double depth)
     {
         // Create side shape
-        Poly3D side = new Poly3D();
+        Polygon3D side = new Polygon3D();
         side.setName(sideY == 0 ? "AxisBottom" : "AxisTop");
         side.setColor(sideY == 0 ? BOTTOM_COLOR : SIDE_COLOR);
         side.setOpacity(.8f);
@@ -577,7 +577,7 @@ public class AxisBoxShape extends ParentShape {
      */
     private void setTextureForSide(Texture aTexture, Side3D aSide)
     {
-        Poly3D sideShape = getSideShape(aSide);
+        Polygon3D sideShape = getSideShape(aSide);
         sideShape.setTexture(aTexture);
 
         // Set texture coords Front/Back/Left/Right (flip X)
