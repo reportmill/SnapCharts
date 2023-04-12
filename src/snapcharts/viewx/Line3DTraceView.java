@@ -67,7 +67,7 @@ public class Line3DTraceView extends TraceView3D {
         double lineZ = sectionDepth * (anIndex + .5);
 
         // Create/configure line area Poly3D and add to scene
-        Polygon3D areaPath = new Polygon3D(path, lineZ);
+        Polygon3D areaPath = Polygon3D.createFromShape(path, lineZ);
         areaPath.setColor(dataFillColor);
         areaPath.setStroke(dataStrokeColor, 1);
         areaPath.setDoubleSided(true);
