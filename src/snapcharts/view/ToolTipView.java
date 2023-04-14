@@ -117,7 +117,7 @@ public class ToolTipView extends ColView {
         RoundRect shp0 = new RoundRect(1,1,newWidth - 2,newHeight - 8,3);
         double midx = shp0.getMidX();
         Shape shp1 = new Polygon(midx - 6, newHeight - 8, midx + 6, newHeight - 8, midx, newHeight-2);
-        Shape shp2 = Shape.add(shp0, shp1);
+        Shape shp2 = Shape.addShapes(shp0, shp1);
 
         // Create background shape view and add
         ShapeView shpView = new ShapeView(shp2);
