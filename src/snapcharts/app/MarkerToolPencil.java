@@ -2,10 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.app;
-import snap.geom.Path;
 import snap.geom.Path2D;
 import snap.geom.Rect;
-import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
@@ -75,11 +73,9 @@ public class MarkerToolPencil extends MarkerTool {
         if (rect.width * rect.height < 50)
             return;
 
-        // Get path at zero
-        Shape pathLocal = path.copyForBounds(0, 0, rect.width, rect.height);
-        Path pathFit = new Path(path);
-        pathFit.fitToCurve(1);
-        String svgText = pathFit.getString();
+        // Smooth path and get SVG
+        path.fitToCurveFromPointIndex(1);
+        String svgText = path.getSvgString();
 
         // Create Marker with SVG
         Chart chart = _chartView.getChart();
