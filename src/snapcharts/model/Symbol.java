@@ -207,13 +207,25 @@ public class Symbol {
             case 6: return new Polygon(0, 0, 8, 4, 0, 8);
 
             // CROSS
-            case 7: return Path.getPathFromSVG("M 40 0 L 80 0 L 80 40 L 120 40 L 120 80 L 80 80 L 80 120 L 40 120 L 40 80 L 0 80 L 0 40 L 40 40 Z");
+            case 7: {
+                Path2D path = new Path2D();
+                path.appendSvgString("M 40 0 L 80 0 L 80 40 L 120 40 L 120 80 L 80 80 L 80 120 L 40 120 L 40 80 L 0 80 L 0 40 L 40 40 Z");
+                return path;
+            }
 
             // X
-            case 8: return Path.getPathFromSVG("M 0 40 L 40 0 L 80 40 L 120 0 L 160 40 L 120 80 L 160 120 L 120 160 L 80 120 L 40 160 L 0 120 L 40 80 Z");
+            case 8: {
+                Path2D path = new Path2D();
+                path.appendSvgString("M 0 40 L 40 0 L 80 40 L 120 0 L 160 40 L 120 80 L 160 120 L 120 160 L 80 120 L 40 160 L 0 120 L 40 80 Z");
+                return path;
+            }
 
             // Star
-            case 9: return Path.getPathFromSVG("M 0 120 L 100 120 L 140 0 L 180 120 L 280 120 L 200 180 L 220 280 L 140 220 L 60 280 L 80 180 Z");
+            case 9: {
+                Path2D path = new Path2D();
+                path.appendSvgString("M 0 120 L 100 120 L 140 0 L 180 120 L 280 120 L 200 180 L 220 280 L 140 220 L 60 280 L 80 180 Z");
+                return path;
+            }
 
             // Default
             default:

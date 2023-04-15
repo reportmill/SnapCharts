@@ -370,7 +370,8 @@ public class MarkerView extends ChartPartView<Marker> {
         // If no ImageView, create/add ImageView
         if (_shapeView == null) {
             String svgText = marker.getSVG();
-            Path path = Path.getPathFromSVG(svgText);
+            Path2D path = new Path2D();
+            path.appendSvgString(svgText);
             _shapeView = new ShapeView(path);
             _shapeView.setFillWidth(true);
             _shapeView.setFillHeight(true);
