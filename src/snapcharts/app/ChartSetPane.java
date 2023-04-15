@@ -265,13 +265,15 @@ public class ChartSetPane extends DocItemPane<DocItemGroup> {
         getView("PageBackButton", Button.class).setImage(getImage(p2));
 
         // Set left arrow plus stop bar in PageBackAllButton
-        Path p3 = new Path(); p3.append(p2.getPathIter(new Transform(2, 0)));
-        p3.append(new Rect(2, 6, 2, 10));
+        Path2D p3 = new Path2D();
+        p3.appendPathIter(p2.getPathIter(new Transform(2, 0)));
+        p3.appendShape(new Rect(2, 6, 2, 10));
         getView("PageBackAllButton", Button.class).setImage(getImage(p3));
 
         // Set right arrow plus stop bar in PageForwardAllButton
-        Path p4 = new Path(); p4.append(p1.getPathIter(new Transform(-2, 0)));
-        p4.append(new Rect(10, 6, 2, 10));
+        Path2D p4 = new Path2D();
+        p4.appendPathIter(p1.getPathIter(new Transform(-2, 0)));
+        p4.appendShape(new Rect(10, 6, 2, 10));
         getView("PageForwardAllButton", Button.class).setImage(getImage(p4));
     }
 
