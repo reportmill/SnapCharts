@@ -291,7 +291,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Get/set/configure ChartBox
         _chartBox = getView("ChartBox", BoxView.class);
         _chartBox.setFill(ChartSetPane.BACK_FILL);
-        _chartBox.setCropHeight(true);
 
         // Create ChartView
         _chartView = new ChartView();
