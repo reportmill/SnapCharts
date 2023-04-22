@@ -2,7 +2,7 @@ package snapcharts.model;
 import snap.geom.Pos;
 import snap.gfx.Image;
 import snap.props.PropSet;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import java.util.Objects;
 
 /**
@@ -403,30 +403,30 @@ public class Marker extends ChartPart {
         switch (aPropName) {
 
             // Name
-            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+            case Name_Prop: setName(Convert.stringValue(aValue)); break;
 
             // X, Y, Width, Height
-            case X_Prop: setX(SnapUtils.doubleValue(aValue)); break;
-            case Y_Prop: setY(SnapUtils.doubleValue(aValue)); break;
-            case Width_Prop: setWidth(SnapUtils.doubleValue(aValue)); break;
-            case Height_Prop: setHeight(SnapUtils.doubleValue(aValue)); break;
+            case X_Prop: setX(Convert.doubleValue(aValue)); break;
+            case Y_Prop: setY(Convert.doubleValue(aValue)); break;
+            case Width_Prop: setWidth(Convert.doubleValue(aValue)); break;
+            case Height_Prop: setHeight(Convert.doubleValue(aValue)); break;
 
             // CoordSpaceX, CoordSpaceY, FractionalX, FractionalY
             case CoordSpaceX_Prop: setCoordSpaceX((CoordSpace) aValue); break;
             case CoordSpaceY_Prop: setCoordSpaceY((CoordSpace) aValue); break;
-            case FractionalX_Prop: setFractionalX(SnapUtils.boolValue(aValue)); break;
-            case FractionalY_Prop: setFractionalY(SnapUtils.boolValue(aValue)); break;
+            case FractionalX_Prop: setFractionalX(Convert.boolValue(aValue)); break;
+            case FractionalY_Prop: setFractionalY(Convert.boolValue(aValue)); break;
 
             // Text, TextOutsideX, TextOutsideY, FitTextToBounds, ShowTextInAxis
-            case Text_Prop: setText(SnapUtils.stringValue(aValue)); break;
-            case TextOutsideX_Prop: setTextOutsideX(SnapUtils.boolValue(aValue)); break;
-            case TextOutsideY_Prop: setTextOutsideY(SnapUtils.boolValue(aValue)); break;
-            case FitTextToBounds_Prop: setFitTextToBounds(SnapUtils.boolValue(aValue)); break;
-            case ShowTextInAxis_Prop: setShowTextInAxis(SnapUtils.boolValue(aValue)); break;
+            case Text_Prop: setText(Convert.stringValue(aValue)); break;
+            case TextOutsideX_Prop: setTextOutsideX(Convert.boolValue(aValue)); break;
+            case TextOutsideY_Prop: setTextOutsideY(Convert.boolValue(aValue)); break;
+            case FitTextToBounds_Prop: setFitTextToBounds(Convert.boolValue(aValue)); break;
+            case ShowTextInAxis_Prop: setShowTextInAxis(Convert.boolValue(aValue)); break;
 
             // Image, SVG
             case Image_Prop: setImage((Image) aValue); break;
-            case SVG_Prop: setSVG(SnapUtils.stringValue(aValue)); break;
+            case SVG_Prop: setSVG(Convert.stringValue(aValue)); break;
 
             // Do normal version
             default: super.setPropValue(aPropName, aValue);

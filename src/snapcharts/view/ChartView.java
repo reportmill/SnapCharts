@@ -487,7 +487,7 @@ public class ChartView extends ChartPartView<Chart> {
      */
     public void setPropValue(String aPropName, Object aValue)
     {
-        if (aPropName.equals(Reveal_Prop)) setReveal(SnapUtils.doubleValue(aValue));
+        if (aPropName.equals(Reveal_Prop)) setReveal(Convert.doubleValue(aValue));
         else super.setPropValue(aPropName, aValue);
     }
 

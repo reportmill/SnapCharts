@@ -282,9 +282,9 @@ public class Scene extends ChartPart {
             case AspectMode_Prop: setAspectMode((AspectMode) aValue); break;
 
             // AspectScaleX, AspectScaleY, AspectScaleZ
-            case AspectScaleX_Prop: setAspectScaleX(SnapUtils.doubleValue(aValue)); break;
-            case AspectScaleY_Prop: setAspectScaleY(SnapUtils.doubleValue(aValue)); break;
-            case AspectScaleZ_Prop: setAspectScaleZ(SnapUtils.doubleValue(aValue)); break;
+            case AspectScaleX_Prop: setAspectScaleX(Convert.doubleValue(aValue)); break;
+            case AspectScaleY_Prop: setAspectScaleY(Convert.doubleValue(aValue)); break;
+            case AspectScaleZ_Prop: setAspectScaleZ(Convert.doubleValue(aValue)); break;
 
             // ProjectedSides
             case ProjectedSides_Prop: setProjectedSides((Side3D[]) aValue); break;

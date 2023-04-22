@@ -739,17 +739,17 @@ public abstract class Axis extends ChartPart {
         switch (aPropName) {
 
             // Title, TitleRotation
-            case Title_Prop: setTitle(SnapUtils.stringValue(aValue)); break;
-            case TitleRotation_Prop: setTitleRotation(SnapUtils.doubleValue(aValue)); break;
+            case Title_Prop: setTitle(Convert.stringValue(aValue)); break;
+            case TitleRotation_Prop: setTitleRotation(Convert.doubleValue(aValue)); break;
 
             // MinBound, MaxBound, MinValue, MaxValue
-            case MinBound_Prop: setMinBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
-            case MaxBound_Prop: setMaxBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
-            case MinValue_Prop: setMinValue(SnapUtils.doubleValue(aValue)); break;
-            case MaxValue_Prop: setMaxValue(SnapUtils.doubleValue(aValue)); break;
+            case MinBound_Prop: setMinBound(AxisBound.get(Convert.stringValue(aValue))); break;
+            case MaxBound_Prop: setMaxBound(AxisBound.get(Convert.stringValue(aValue))); break;
+            case MinValue_Prop: setMinValue(Convert.doubleValue(aValue)); break;
+            case MaxValue_Prop: setMaxValue(Convert.doubleValue(aValue)); break;
 
             // WrapAxis, WrapMinMax
-            case WrapAxis_Prop: setWrapAxis(SnapUtils.boolValue(aValue)); break;
+            case WrapAxis_Prop: setWrapAxis(Convert.boolValue(aValue)); break;
             case WrapMinMax_Prop: {
                 MinMax minMax = MinMax.getMinMax(aValue);
                 setWrapMinMax(minMax);
@@ -760,28 +760,28 @@ public abstract class Axis extends ChartPart {
             case Side_Prop: setSide((Side) aValue); break;
 
             // ZeroRequired, ShowZeroLine, Log, ShowLogMinorLabels
-            case ZeroRequired_Prop: setZeroRequired(SnapUtils.boolValue(aValue));
-            case ShowZeroLine_Prop: setShowZeroLine(SnapUtils.boolValue(aValue));
-            case Log_Prop: setLog(SnapUtils.boolValue(aValue)); break;
-            case ShowLogMinorLabels_Prop: setShowLogMinorLabels(SnapUtils.boolValue(aValue)); break;
+            case ZeroRequired_Prop: setZeroRequired(Convert.boolValue(aValue));
+            case ShowZeroLine_Prop: setShowZeroLine(Convert.boolValue(aValue));
+            case Log_Prop: setLog(Convert.boolValue(aValue)); break;
+            case ShowLogMinorLabels_Prop: setShowLogMinorLabels(Convert.boolValue(aValue)); break;
 
             // ShowGrid, GridColor, GridWidth, GridDash, GridSpacing, GridBase
-            case ShowGrid_Prop: setShowGrid(SnapUtils.boolValue(aValue)); break;
+            case ShowGrid_Prop: setShowGrid(Convert.boolValue(aValue)); break;
             case GridColor_Prop: setGridColor((Color) aValue); break;
-            case GridWidth_Prop: setGridWidth(SnapUtils.intValue(aValue)); break;
+            case GridWidth_Prop: setGridWidth(Convert.intValue(aValue)); break;
             case GridDash_Prop: setGridDash((double[]) aValue); break;
-            case GridSpacing_Prop: setGridSpacing(SnapUtils.doubleValue(aValue)); break;
-            case GridBase_Prop: setGridBase(SnapUtils.doubleValue(aValue)); break;
+            case GridSpacing_Prop: setGridSpacing(Convert.doubleValue(aValue)); break;
+            case GridBase_Prop: setGridBase(Convert.doubleValue(aValue)); break;
 
             // TickLength, TickPos, MinorTickCount
-            case TickLength_Prop: setTickLength(SnapUtils.intValue(aValue)); break;
+            case TickLength_Prop: setTickLength(Convert.intValue(aValue)); break;
             case TickPos_Prop: setTickPos((TickPos) aValue); break;
-            case MinorTickCount_Prop: setMinorTickCount(SnapUtils.intValue(aValue)); break;
+            case MinorTickCount_Prop: setMinorTickCount(Convert.intValue(aValue)); break;
 
             // ShowTickLabels, TickLabelAutoRotate, TickLabelRotation
-            case ShowTickLabels_Prop: setShowTickLabels(SnapUtils.boolValue(aValue)); break;
-            case TickLabelAutoRotate_Prop: setTickLabelAutoRotate(SnapUtils.boolValue(aValue)); break;
-            case TickLabelRotation_Prop: setTickLabelRotation(SnapUtils.doubleValue(aValue)); break;
+            case ShowTickLabels_Prop: setShowTickLabels(Convert.boolValue(aValue)); break;
+            case TickLabelAutoRotate_Prop: setTickLabelAutoRotate(Convert.boolValue(aValue)); break;
+            case TickLabelRotation_Prop: setTickLabelRotation(Convert.doubleValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

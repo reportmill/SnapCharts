@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.function.DoublePredicate;
@@ -214,7 +214,7 @@ public class DoubleArray extends NumberArray {
             double[] doubleArray = new double[length];
             for (int i = 0; i < length; i++) {
                 Object val = Array.get(obj0, i);
-                doubleArray[i] = SnapUtils.doubleValue(val);
+                doubleArray[i] = Convert.doubleValue(val);
             }
 
             // Return
@@ -224,7 +224,7 @@ public class DoubleArray extends NumberArray {
         // Iterate over values and convert to double
         double[] doubleArray = new double[theDoubles.length];
         for (int i = 0; i < theDoubles.length; i++)
-            doubleArray[i] = SnapUtils.doubleValue(theDoubles[i]);
+            doubleArray[i] = Convert.doubleValue(theDoubles[i]);
 
         // Return
         return new DoubleArray(doubleArray);

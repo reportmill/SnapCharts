@@ -2,9 +2,9 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
+import snap.util.Convert;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
-import snap.util.SnapUtils;
 
 /**
  * A class to hold a min and max value.
@@ -160,8 +160,8 @@ public class MinMax implements Cloneable {
                 System.err.println("MinMax.getMinMax: Invalid string format: " + str);
                 return null;
             }
-            double min = SnapUtils.doubleValue(parts[0]);
-            double max = SnapUtils.doubleValue(parts[1]);
+            double min = Convert.doubleValue(parts[0]);
+            double max = Convert.doubleValue(parts[1]);
             return new MinMax(min, max);
         }
 

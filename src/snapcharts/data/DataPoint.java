@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 
 /**
  * A class to represent a data point.
@@ -123,10 +123,10 @@ public class DataPoint implements Cloneable {
 
         // Change clone channel value
         switch (aChan) {
-            case X: clone._x = SnapUtils.getDouble(aValue); break;
-            case Y: clone._y = SnapUtils.getDouble(aValue); break;
-            case Z: clone._z = SnapUtils.getDouble(aValue); break;
-            case C: clone._c = SnapUtils.stringValue(aValue); break;
+            case X: clone._x = Convert.getDouble(aValue); break;
+            case Y: clone._y = Convert.getDouble(aValue); break;
+            case Z: clone._z = Convert.getDouble(aValue); break;
+            case C: clone._c = Convert.stringValue(aValue); break;
             default: System.err.println("DataPoint.copyForChannelValue: Unsupported channel: " + aChan);
         }
 

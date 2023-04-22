@@ -5,7 +5,8 @@ package snapcharts.model;
 import snap.geom.Insets;
 import snap.gfx.*;
 import snap.props.PropSet;
-import snap.util.SnapUtils;
+import snap.util.Convert;
+import java.util.Objects;
 
 /**
  * A ChartPart to represent Header.
@@ -53,7 +54,7 @@ public class Header extends ChartPart {
      */
     public void setTitle(String aStr)
     {
-        if (SnapUtils.equals(aStr, getTitle())) return;
+        if (Objects.equals(aStr, getTitle())) return;
         firePropChange(Title_Prop, _title, _title = aStr);
     }
 
@@ -67,7 +68,7 @@ public class Header extends ChartPart {
      */
     public void setSubtitle(String aStr)
     {
-        if (SnapUtils.equals(aStr, getSubtitle())) return;
+        if (Objects.equals(aStr, getSubtitle())) return;
         firePropChange(Subtitle_Prop, _subtitle, _subtitle = aStr);
     }
 
@@ -140,8 +141,8 @@ public class Header extends ChartPart {
         switch (aPropName) {
 
             // Handle Title, Subtitle
-            case Title_Prop: setTitle(SnapUtils.stringValue(aValue)); break;
-            case Subtitle_Prop: setSubtitle(SnapUtils.stringValue(aValue)); break;
+            case Title_Prop: setTitle(Convert.stringValue(aValue)); break;
+            case Subtitle_Prop: setSubtitle(Convert.stringValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

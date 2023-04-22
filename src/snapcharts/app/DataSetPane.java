@@ -1,9 +1,9 @@
 package snapcharts.app;
 import snap.geom.HPos;
+import snap.util.Convert;
 import snap.util.FormatUtils;
 import snap.util.ListSel;
 import snap.props.PropChange;
-import snap.util.SnapUtils;
 import snap.view.*;
 import snapcharts.appmisc.SheetView;
 import snapcharts.data.*;
@@ -220,7 +220,7 @@ public class DataSetPane extends ViewOwner {
 
         // Get/set Cell value/text
         Object val = getValueForChannelIndex(col, row);
-        String valStr = SnapUtils.stringValue(val);
+        String valStr = Convert.stringValue(val);
         aCell.setText(valStr);
         aCell.setAlignX(HPos.RIGHT);
     }

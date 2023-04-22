@@ -1,6 +1,6 @@
 package snapcharts.doc;
 import snap.geom.Pos;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
@@ -108,7 +108,7 @@ public class DocTextReader {
                     break;
 
                 case "Group.ItemsPerPage":
-                    int itemsPerPage = SnapUtils.intValue(val);
+                    int itemsPerPage = Convert.intValue(val);
                     _itemGroup.setItemsPerPageAndMore(itemsPerPage);
                     break;
 
@@ -132,7 +132,7 @@ public class DocTextReader {
                     break;
 
                 case "Chart.ShowLegend":
-                    _chart.getLegend().setShowLegend(SnapUtils.boolValue(val));
+                    _chart.getLegend().setShowLegend(Convert.boolValue(val));
                     break;
 
                 case "Chart.AxisX.Title":
@@ -175,7 +175,7 @@ public class DocTextReader {
 
             // Handle Log
             case "Log":
-                axis.setLog(SnapUtils.boolValue(aVal));
+                axis.setLog(Convert.boolValue(aVal));
                 break;
 
             // Handle MinBound
@@ -192,28 +192,28 @@ public class DocTextReader {
 
             // Handle MinValue
             case "MinValue":
-                double minVal = SnapUtils.doubleValue(aVal);
+                double minVal = Convert.doubleValue(aVal);
                 axis.setMinBound(AxisBound.VALUE);
                 axis.setMinValue(minVal);
                 break;
 
             // Handle MaxValue
             case "MaxValue":
-                double maxVal = SnapUtils.doubleValue(aVal);
+                double maxVal = Convert.doubleValue(aVal);
                 axis.setMaxBound(AxisBound.VALUE);
                 axis.setMaxValue(maxVal);
                 break;
 
             // Handle WrapMin
             case "WrapMin":
-                double wrapMin = SnapUtils.doubleValue(aVal);
+                double wrapMin = Convert.doubleValue(aVal);
                 axis.setWrapAxis(true);
                 axis.setWrapMinMax(axis.getWrapMinMax().copyForMin(wrapMin));
                 break;
 
             // Handle WrapMax
             case "WrapMax":
-                double wrapMax = SnapUtils.doubleValue(aVal);
+                double wrapMax = Convert.doubleValue(aVal);
                 axis.setWrapAxis(true);
                 axis.setWrapMinMax(axis.getWrapMinMax().copyForMax(wrapMax));
                 break;
@@ -239,7 +239,7 @@ public class DocTextReader {
                 break;
 
             case "ShowSymbols":
-                _trace.setShowPoints(SnapUtils.boolValue(aVal));
+                _trace.setShowPoints(Convert.boolValue(aVal));
                 break;
 
             case "DataX":

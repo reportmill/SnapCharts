@@ -3,7 +3,7 @@
  */
 package snapcharts.modelx;
 import snap.props.PropSet;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import snapcharts.model.Trace;
 import snapcharts.model.TraceType;
 
@@ -106,8 +106,8 @@ public class ContourTrace extends Trace {
         switch (aPropName) {
 
             // Handle ShowLines, ShowMesh
-            case ShowLines_Prop: setShowLines(SnapUtils.boolValue(aValue)); break;
-            case ShowMesh_Prop: setShowMesh(SnapUtils.boolValue(aValue)); break;
+            case ShowLines_Prop: setShowLines(Convert.boolValue(aValue)); break;
+            case ShowMesh_Prop: setShowMesh(Convert.boolValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

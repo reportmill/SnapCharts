@@ -4,7 +4,7 @@ import snap.geom.Shape;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.model.Axis;
@@ -146,7 +146,7 @@ public class ContentGridInsp extends ChartPartInsp {
         // Handle GridDashButton_X
         String eventName = anEvent.getName();
         if (eventName.startsWith("GridDashButton_")) {
-            int id = SnapUtils.intValue(eventName);
+            int id = Convert.intValue(eventName);
             double[] dashArray = Stroke.DASHES_ALL[id];
             for (Axis axis : axes)
                 axis.setGridDash(dashArray);

@@ -309,7 +309,7 @@ public class ChartSetPane extends DocItemPane<DocItemGroup> {
     {
         // Handle ZoomComboBox, ZoomMenuButton
         //if(anEvent.equals("ZoomText")) setZoomFactor(anEvent.getFloatValue()/100);
-        //if(anEvent.equals("ZoomMenuItem")) setZoomFactor(SnapUtils.floatValue(anEvent.getText())/100);
+        //if(anEvent.equals("ZoomMenuItem")) setZoomFactor(Convert.floatValue(anEvent.getText())/100);
 
         // Handle ZoomToActualSizeMenuItem - use screen resolution to figure out zooming for actual size
         //if(anEvent.equals("ZoomToActualSizeMenuItem"))

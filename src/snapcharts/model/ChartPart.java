@@ -446,7 +446,7 @@ public class ChartPart extends PropObject {
     {
         // If value already set, just return
         if (theIns == null) theIns = DEFAULT_MARGIN;
-        if (SnapUtils.equals(theIns, _margin)) return;
+        if (Objects.equals(theIns, _margin)) return;
 
         // Set value, fire prop change, relayout parent
         firePropChange(Padding_Prop, _margin, _margin = theIns);
@@ -567,17 +567,17 @@ public class ChartPart extends PropObject {
         switch (aPropName) {
 
             // Name
-            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+            case Name_Prop: setName(Convert.stringValue(aValue)); break;
 
             // LineColor, LineWidth, LineDash
             case LineColor_Prop: setLineColor((Color) aValue); break;
-            case LineWidth_Prop: setLineWidth(SnapUtils.intValue(aValue)); break;
+            case LineWidth_Prop: setLineWidth(Convert.intValue(aValue)); break;
             case LineDash_Prop: setLineDash((double[]) aValue); break;
 
             // Fill, Effect, Opacity
             case Fill_Prop: setFill((Paint) aValue); break;
             case Effect_Prop: setEffect((Effect) aValue); break;
-            case Opacity_Prop: setOpacity(SnapUtils.doubleValue(aValue)); break;
+            case Opacity_Prop: setOpacity(Convert.doubleValue(aValue)); break;
 
             // Font, TextFill, TextFormat
             case Font_Prop: setFont((Font) aValue); break;
@@ -588,7 +588,7 @@ public class ChartPart extends PropObject {
             case Align_Prop: setAlign((Pos) aValue); break;
             case Margin_Prop: setMargin((Insets) aValue); break;
             case Padding_Prop: setPadding((Insets) aValue); break;
-            case Spacing_Prop: setSpacing(SnapUtils.doubleValue(aValue)); break;
+            case Spacing_Prop: setSpacing(Convert.doubleValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: System.err.println("ChartPart.setPropValue: Unknown prop: " + aPropName);

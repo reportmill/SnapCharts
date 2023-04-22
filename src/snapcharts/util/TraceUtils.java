@@ -1,6 +1,6 @@
 package snapcharts.util;
+import snap.util.Convert;
 import snap.util.ListSel;
-import snap.util.SnapUtils;
 import snapcharts.data.DataPoint;
 import snapcharts.data.DataUtils;
 import snapcharts.model.Trace;
@@ -61,18 +61,18 @@ public class TraceUtils {
             switch (dataType) {
 
                 case IY: {
-                    valY = yStr != null ? SnapUtils.doubleValue(yStr) : 0;
+                    valY = yStr != null ? Convert.doubleValue(yStr) : 0;
                     break;
                 }
 
                 case XY: {
-                    valX = xStr != null ? SnapUtils.doubleValue(xStr) : 0;
-                    valY = yStr != null ? SnapUtils.doubleValue(yStr) : 0;
+                    valX = xStr != null ? Convert.doubleValue(xStr) : 0;
+                    valY = yStr != null ? Convert.doubleValue(yStr) : 0;
                     break;
                 }
 
                 case CY: {
-                    valY = yStr != null ? SnapUtils.doubleValue(yStr) : 0;
+                    valY = yStr != null ? Convert.doubleValue(yStr) : 0;
                     valC = xStr;
                     break;
                 }

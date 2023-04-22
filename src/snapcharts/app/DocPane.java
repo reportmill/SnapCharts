@@ -592,7 +592,7 @@ public class DocPane extends ViewOwner {
         if(isWindowVisible()) {
             String title = getWindowTitle();
             WindowView win = getWindow();
-            if(!SnapUtils.equals(title, win.getTitle())) {
+            if(!Objects.equals(title, win.getTitle())) {
                 win.setTitle(title);
                 win.setDocURL(getSourceURL());
             }

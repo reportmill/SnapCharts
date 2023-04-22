@@ -4,7 +4,7 @@
 package snapcharts.model;
 import snap.geom.Insets;
 import snap.props.PropSet;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 
 /**
  * A class to represent a Chart Axis.
@@ -99,7 +99,7 @@ public class AxisY extends Axis {
         switch (aPropName) {
 
             // ShowLegendGraphic
-            case ShowLegendGraphic_Prop: setShowLegendGraphic(SnapUtils.boolValue(aValue)); break;
+            case ShowLegendGraphic_Prop: setShowLegendGraphic(Convert.boolValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

@@ -7,7 +7,7 @@ import snap.geom.Shape;
 import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Stroke;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
@@ -140,7 +140,7 @@ public class TraceLineStyleInsp extends ChartPartInsp {
         // Handle LineDashButton_X
         String eventName = anEvent.getName();
         if (eventName.startsWith("LineDashButton_")) {
-            int id = SnapUtils.intValue(eventName);
+            int id = Convert.intValue(eventName);
             double[] dashArray = Stroke.DASHES_ALL[id];
             trace.setLineDash(dashArray);
         }

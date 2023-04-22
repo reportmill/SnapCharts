@@ -152,7 +152,7 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
         switch (aPropName) {
 
             // Name, Content
-            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+            case Name_Prop: setName(Convert.stringValue(aValue)); break;
             case Content_Prop: setContent((T) aValue); break;
 
             // Do normal version

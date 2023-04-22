@@ -397,7 +397,7 @@ public class PieTraceView extends TraceView {
     public void setPropValue(String aPropName, Object aValue)
     {
         if (aPropName.equals(SelDataPointMorph_Prop))
-            setSelDataPointMorph(SnapUtils.doubleValue(aValue));
+            setSelDataPointMorph(Convert.doubleValue(aValue));
         else super.setPropValue(aPropName, aValue);
     }
 

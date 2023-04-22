@@ -212,16 +212,16 @@ public class ContourAxis extends ChartPart {
         switch (aPropName) {
 
             // Title
-            case Title_Prop: setTitle(SnapUtils.stringValue(aValue)); break;
+            case Title_Prop: setTitle(Convert.stringValue(aValue)); break;
 
             // MinBound, MaxBound, MinValue, MaxValue
-            case MinBound_Prop: setMinBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
-            case MaxBound_Prop: setMaxBound(AxisBound.get(SnapUtils.stringValue(aValue))); break;
-            case MinValue_Prop: setMinValue(SnapUtils.doubleValue(aValue)); break;
-            case MaxValue_Prop: setMaxValue(SnapUtils.doubleValue(aValue)); break;
+            case MinBound_Prop: setMinBound(AxisBound.get(Convert.stringValue(aValue))); break;
+            case MaxBound_Prop: setMaxBound(AxisBound.get(Convert.stringValue(aValue))); break;
+            case MinValue_Prop: setMinValue(Convert.doubleValue(aValue)); break;
+            case MaxValue_Prop: setMaxValue(Convert.doubleValue(aValue)); break;
 
             // LevelCount
-            case LevelCount_Prop: setLevelCount(SnapUtils.intValue(aValue)); break;
+            case LevelCount_Prop: setLevelCount(Convert.intValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue);

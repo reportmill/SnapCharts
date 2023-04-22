@@ -5,7 +5,7 @@ package snapcharts.model;
 import snap.gfx.Color;
 import snap.gfx.Paint;
 import snap.props.PropSet;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 
 /**
  * This ChartPart subclass holds style properties for Trace points.
@@ -239,13 +239,13 @@ public class PointStyle extends ChartPart {
         switch (aPropName) {
 
             // SymbolSize, SymbolId
-            case SymbolSize_Prop: setSymbolSize(SnapUtils.intValue(aValue)); break;
-            case SymbolId_Prop: setSymbolId(SnapUtils.intValue(aValue)); break;
+            case SymbolSize_Prop: setSymbolSize(Convert.intValue(aValue)); break;
+            case SymbolId_Prop: setSymbolId(Convert.intValue(aValue)); break;
 
             // Handle PointSpacing, MaxPointCount, SkipPointCount
-            case PointSpacing_Prop: setPointSpacing(SnapUtils.intValue(aValue)); break;
-            case MaxPointCount_Prop: setMaxPointCount(SnapUtils.intValue(aValue)); break;
-            case SkipPointCount_Prop: setSkipPointCount(SnapUtils.intValue(aValue)); break;
+            case PointSpacing_Prop: setPointSpacing(Convert.intValue(aValue)); break;
+            case MaxPointCount_Prop: setMaxPointCount(Convert.intValue(aValue)); break;
+            case SkipPointCount_Prop: setSkipPointCount(Convert.intValue(aValue)); break;
 
             // Handle super class properties (or unknown)
             default: super.setPropValue(aPropName, aValue); break;

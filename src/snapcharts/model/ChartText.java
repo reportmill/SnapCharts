@@ -3,7 +3,7 @@
  */
 package snapcharts.model;
 import snap.props.PropSet;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import java.util.Objects;
 
 /**
@@ -69,7 +69,7 @@ public class ChartText extends ChartPart {
         switch (aPropName) {
 
             // Handle Text
-            case Text_Prop: setText(SnapUtils.stringValue(aValue)); break;
+            case Text_Prop: setText(Convert.stringValue(aValue)); break;
 
             // Handle superclass
             default: super.setPropValue(aPropName, aValue); break;

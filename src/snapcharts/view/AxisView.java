@@ -6,7 +6,7 @@ import snap.geom.Point;
 import snap.geom.Size;
 import snap.gfx.*;
 import snap.props.PropChange;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import snap.view.*;
 import snapcharts.data.DataType;
 import snapcharts.model.*;
@@ -579,8 +579,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     public void setPropValue(String aPropName, Object aValue)
     {
         switch (aPropName) {
-            case AxisMin_Prop: setAxisMin(SnapUtils.doubleValue(aValue)); break;
-            case AxisMax_Prop: setAxisMax(SnapUtils.doubleValue(aValue)); break;
+            case AxisMin_Prop: setAxisMin(Convert.doubleValue(aValue)); break;
+            case AxisMax_Prop: setAxisMax(Convert.doubleValue(aValue)); break;
             default: super.setPropValue(aPropName, aValue);
         }
     }

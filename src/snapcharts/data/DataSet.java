@@ -6,7 +6,7 @@ import snap.props.Prop;
 import snap.props.PropObject;
 import snap.props.PropSet;
 import snap.util.ArrayUtils;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import java.util.Objects;
 
 /**
@@ -519,7 +519,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
         switch (aPropName) {
 
             // Name, DataType
-            case Name_Prop: setName(SnapUtils.stringValue(aValue)); break;
+            case Name_Prop: setName(Convert.stringValue(aValue)); break;
             case DataType_Prop: setDataType((DataType) aValue); break;
 
             // Do normal version

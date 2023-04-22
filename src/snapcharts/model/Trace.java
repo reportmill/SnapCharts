@@ -815,10 +815,10 @@ public abstract class Trace extends ChartPart {
         switch (aPropName) {
 
             // ShowLine, ShowArea, ShowPoints, ShowTags
-            case ShowLine_Prop: setShowLine(SnapUtils.boolValue(aValue)); break;
-            case ShowArea_Prop: setShowArea(SnapUtils.boolValue(aValue)); break;
-            case ShowPoints_Prop: setShowPoints(SnapUtils.boolValue(aValue)); break;
-            case ShowTags_Prop: setShowTags(SnapUtils.boolValue(aValue)); break;
+            case ShowLine_Prop: setShowLine(Convert.boolValue(aValue)); break;
+            case ShowArea_Prop: setShowArea(Convert.boolValue(aValue)); break;
+            case ShowPoints_Prop: setShowPoints(Convert.boolValue(aValue)); break;
+            case ShowTags_Prop: setShowTags(Convert.boolValue(aValue)); break;
 
             // PointJoint, FillMode
             case PointJoin_Prop: setPointJoin((PointJoin) aValue); break;
@@ -826,14 +826,14 @@ public abstract class Trace extends ChartPart {
 
             // AxisTypeY, ExprX, ExprY, ExprZ
             case AxisTypeY_Prop: setAxisTypeY((AxisType) aValue); break;
-            case ExprX_Prop: setExprX(SnapUtils.stringValue(aValue)); break;
-            case ExprY_Prop: setExprY(SnapUtils.stringValue(aValue)); break;
-            case ExprZ_Prop: setExprZ(SnapUtils.stringValue(aValue)); break;
+            case ExprX_Prop: setExprX(Convert.stringValue(aValue)); break;
+            case ExprY_Prop: setExprY(Convert.stringValue(aValue)); break;
+            case ExprZ_Prop: setExprZ(Convert.stringValue(aValue)); break;
 
             // Stacked, ShowLegendEntry, Disabled
-            case Stacked_Prop: setStacked(SnapUtils.boolValue(aValue)); break;
-            case ShowLegendEntry_Prop: setShowLegendEntry(SnapUtils.boolValue(aValue)); break;
-            case Disabled_Prop: setDisabled(SnapUtils.boolValue(aValue)); break;
+            case Stacked_Prop: setStacked(Convert.boolValue(aValue)); break;
+            case ShowLegendEntry_Prop: setShowLegendEntry(Convert.boolValue(aValue)); break;
+            case Disabled_Prop: setDisabled(Convert.boolValue(aValue)); break;
 
             // DataSet
             case DataSet_Prop: setDataSet((DataSet) aValue); break;

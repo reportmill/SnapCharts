@@ -207,11 +207,11 @@ public class Legend extends ChartPart {
         switch (aPropName) {
 
             // ShowLegend
-            case ShowLegend_Prop: setShowLegend(SnapUtils.boolValue(aValue)); break;
+            case ShowLegend_Prop: setShowLegend(Convert.boolValue(aValue)); break;
 
             // Position, Inside
             case Position_Prop: setPosition((Pos) aValue); break;
-            case Inside_Prop: setInside(SnapUtils.boolValue(aValue)); break;
+            case Inside_Prop: setInside(Convert.boolValue(aValue)); break;
 
             // UserXY, UserSize
             case UserXY_Prop: setUserXY((Point) aValue); break;

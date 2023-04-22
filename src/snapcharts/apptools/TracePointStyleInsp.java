@@ -4,7 +4,7 @@
 package snapcharts.apptools;
 import snap.geom.Shape;
 import snap.gfx.Color;
-import snap.util.SnapUtils;
+import snap.util.Convert;
 import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.model.*;
@@ -160,7 +160,7 @@ public class TracePointStyleInsp extends ChartPartInsp {
         // Handle SymbolShapeButton_
         String eventName = anEvent.getName();
         if (eventName.startsWith("SymbolShapeButton_")) {
-            int id = SnapUtils.intValue(eventName);
+            int id = Convert.intValue(eventName);
             pointStyle.setSymbolId(id);
         }
 
