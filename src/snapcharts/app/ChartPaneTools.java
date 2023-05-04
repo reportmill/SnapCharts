@@ -107,7 +107,7 @@ public class ChartPaneTools {
         ToggleButton toolButton = new ToggleButton();
         toolButton.setName(buttonName);
         toolButton.setToolTip(toolTip);
-        Image buttonImage = Image.get(getClass(), imagePath);
+        Image buttonImage = Image.getImageForClassResource(getClass(), imagePath);
         toolButton.setImage(buttonImage);
         toolButton.setShowArea(false);
         toolButton.setPrefSize(24, 24);

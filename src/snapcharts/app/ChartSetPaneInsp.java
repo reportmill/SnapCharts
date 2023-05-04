@@ -55,7 +55,7 @@ public class ChartSetPaneInsp extends ViewOwner {
         // Get/configure SearchText: radius, prompt, image, animation
         TextField searchText = getView("SearchTextField", TextField.class);
         searchText.setPromptText("Search");
-        searchText.getLabel().setImage(Image.get(TextPane.class, "Find.png"));
+        searchText.getLabel().setImage(Image.getImageForClassResource(TextPane.class, "Find.png"));
         TextField.setBackLabelAlignAnimatedOnFocused(searchText, true);
         //searchText.addEventFilter(e -> ViewUtils.runLater(() -> textFieldKeyTyped(e)), KeyPress);
 

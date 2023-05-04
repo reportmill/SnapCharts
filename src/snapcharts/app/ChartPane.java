@@ -508,7 +508,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Get image name, bytes and image
         String name = aFile.getName();
         byte[] imageBytes = aFile.getBytes();
-        Image image = Image.get(imageBytes);
+        Image image = Image.getImageForSource(imageBytes);
 
         // When loaded, call handleDragDropImage(image)
         if (image.isLoaded())

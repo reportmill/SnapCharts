@@ -317,7 +317,7 @@ public class SamplesPane extends ViewOwner {
         WebURL imgURL = WebURL.getURL(urls);
 
         // Create Image. Then make sure image is loaded by requesting Image.Native.
-        img = _docImages[anIndex] = Image.get(imgURL);
+        img = _docImages[anIndex] = Image.getImageForSource(imgURL);
         img.getNative();
         return img;
     }

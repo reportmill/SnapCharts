@@ -532,13 +532,13 @@ public class DocPane extends ViewOwner {
         _splitView.removeItem(1);
 
         // Set Toolbar images
-        getView("SaveButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/File_Save.png"));
-        getView("CutButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Cut.png"));
-        getView("CopyButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Copy.png"));
-        getView("PasteButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Paste.png"));
-        getView("DeleteButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Delete.png"));
-        getView("UndoButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Undo.png"));
-        getView("RedoButton", ButtonBase.class).setImage(Image.get(TextPane.class, "pkg.images/Edit_Redo.png"));
+        getView("SaveButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/File_Save.png"));
+        getView("CutButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/Edit_Cut.png"));
+        getView("CopyButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/Edit_Copy.png"));
+        getView("PasteButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/Edit_Paste.png"));
+        getView("DeleteButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/Edit_Delete.png"));
+        getView("UndoButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/Edit_Undo.png"));
+        getView("RedoButton", ButtonBase.class).setImage(Image.getImageForClassResource(TextPane.class, "pkg.images/Edit_Redo.png"));
 
         // Adjust InspectorButton
         Button inspBtn = getView("InspectorButton", Button.class);
@@ -901,11 +901,11 @@ public class DocPane extends ViewOwner {
     }
 
     // Constants for images
-    private static Image ICON_PLAIN = Image.get(DocPane.class, "PlainFile.png");
-    private static Image ICON_DIR = Image.get(ViewUtils.class, "DirFile.png");
-    private static Image ICON_DATA = Image.get(ViewUtils.class, "TableFile.png");
-    private static Image ICON_CHART = Image.get(DocPane.class, "Chart.png");
-    private static Image ICON_GROUP = Image.get(DocPane.class, "Group2.png");
+    private static Image ICON_PLAIN = Image.getImageForClassResource(DocPane.class, "PlainFile.png");
+    private static Image ICON_DIR = Image.getImageForClassResource(ViewUtils.class, "DirFile.png");
+    private static Image ICON_DATA = Image.getImageForClassResource(ViewUtils.class, "TableFile.png");
+    private static Image ICON_CHART = Image.getImageForClassResource(DocPane.class, "Chart.png");
+    private static Image ICON_GROUP = Image.getImageForClassResource(DocPane.class, "Group2.png");
 
     /**
      * A TreeResolver for Document Shapes.
