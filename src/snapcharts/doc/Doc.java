@@ -43,7 +43,7 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
     public String getFilename()
     {
         WebURL url = getSourceURL();
-        String filename = url != null ? FilePathUtils.getFileName(url.getPath()) : "Untitled.charts";
+        String filename = url != null ? FilePathUtils.getFilename(url.getPath()) : "Untitled.charts";
         if (!filename.toLowerCase().endsWith(".charts"))
             filename = "Untitled.charts";
         return filename;
