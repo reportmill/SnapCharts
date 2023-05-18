@@ -7,6 +7,7 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.VPos;
 import snap.props.PropChange;
+import snap.util.Convert;
 import snap.util.Range;
 import snap.util.StringUtils;
 import snap.view.*;
@@ -139,7 +140,7 @@ public class LayoutInsp extends ChartPartInsp {
         if (anEvent.equals("SpacingAdd1Button")) selPart.setSpacing(selPart.getSpacing() + 1);
         if (anEvent.equals("SpacingSub1Button")) selPart.setSpacing(selPart.getSpacing() - 1);
         if (anEvent.equals("SpacingResetButton")) {
-            double defaultSpacing = selPart.getPropDefaultDouble(ChartPart.Spacing_Prop);
+            double defaultSpacing = Convert.doubleValue(selPart.getPropDefault(ChartPart.Spacing_Prop));
             selPart.setSpacing(defaultSpacing);
         }
     }
