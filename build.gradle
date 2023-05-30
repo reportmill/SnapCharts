@@ -40,18 +40,6 @@ dependencies {
         println 'Using GitHub/Jitpack SnapKit package'
         implementation "com.github.reportmill:SnapKit:$snapkitVersion"
     }
-
-    // If Local SnapKit project, use it
-    if (findProject(':JavaKit') != null) {
-        println 'Using local JavaKit project'
-        implementation project(':JavaKit')
-    }
-
-    // Otherwise use GitHub JavaKit repo build
-    else {
-        println 'Using GitHub/Jitpack JavaKit package'
-        implementation "com.github.reportmill:JavaKit:$javakitVersion"
-    }
 }
 
 mainClassName = 'snapcharts.app.App'
