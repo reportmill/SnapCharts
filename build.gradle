@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat
 
 plugins {
     id 'application'
@@ -6,7 +7,7 @@ plugins {
 }
 
 group 'com.reportmill'
-version '1.0.0'
+version  new SimpleDateFormat("yyyy.MM").format(new Date())
 
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.main.resources.srcDirs = ['src']
@@ -21,11 +22,11 @@ repositories {
     mavenCentral()
 
     // Jitpack.io builds Github packages
-    maven { url 'https://jitpack.io' }
+    //maven { url 'https://reportmill.com/maven' }
 }
 
-// SnapKit version (might want 'master-SNAPSHOT', '2021.06.29', '<tag_hash>', etc.)
-project.ext.javakitVersion = 'master-SNAPSHOT'
+// SnapKit version (might want 'master-SNAPSHOT', '2021.06', '<tag_hash>', etc.)
+project.ext.snapkitVersion = '2023.06'
 
 dependencies {
 
@@ -35,7 +36,7 @@ dependencies {
         implementation project(':SnapKit')
     }
 
-    // Otherwise use GitHub SnapKit repo build
+    // Otherwise use ReportMill maven package
     else {
         println 'Using GitHub/Jitpack SnapKit package'
         implementation "com.github.reportmill:SnapKit:$snapkitVersion"
