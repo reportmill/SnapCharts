@@ -2,6 +2,8 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.repl;
+import snap.view.ViewOwner;
+import snap.view.ViewUtils;
 import java.util.function.Consumer;
 
 /**
@@ -27,6 +29,17 @@ public class ReplObject extends QuickCharts {
      */
     public static void show(Object anObj)
     {
+        // Creates default ShowHandler
+        if (_showHandler == null) {
+            EvalView evalView = new EvalView();
+            _showHandler = obj -> evalView.showObject(obj);
+
+            ViewUtils.runLater(() -> {
+                evalView.setPrefSize(700, 900);
+                new ViewOwner(evalView).setWindowVisible(true);
+            });
+        }
+
         _showHandler.accept(anObj);
     }
 
@@ -36,6 +49,5 @@ public class ReplObject extends QuickCharts {
     public static void setShowHandler(Consumer<Object> showHandler)
     {
         _showHandler = showHandler;
-        //JavaShell.getClient().processOutput(anObj);
     }
 }
