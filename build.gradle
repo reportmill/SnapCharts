@@ -18,29 +18,17 @@ java {
 }
 
 repositories {
-
     mavenCentral()
-
-    // Jitpack.io builds Github packages
-    //maven { url 'https://reportmill.com/maven' }
 }
-
-// SnapKit version (might want 'master-SNAPSHOT', '2021.06', '<tag_hash>', etc.)
-project.ext.snapkitVersion = '2023.06'
 
 dependencies {
 
-    // If Local SnapKit project, use it
-    if (findProject(':SnapKit') != null) {
-        println 'Using local SnapKit project'
-        implementation project(':SnapKit')
-    }
+    // SnapKit project
+    implementation project(':SnapKit')
 
-    // Otherwise use ReportMill maven package
-    else {
-        println 'Using GitHub/Jitpack SnapKit package'
-        implementation "com.github.reportmill:SnapKit:$snapkitVersion"
-    }
+    // SnapKitGL project
+    implementation project(':SnapKitGL')
+
 }
 
 mainClassName = 'snapcharts.app.App'
