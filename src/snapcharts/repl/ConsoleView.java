@@ -11,17 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A TextArea subclass to show code evaluation.
+ * A view to show console items evaluation.
  */
-public class EvalView extends ColView {
+class ConsoleView extends ColView {
 
-    // A cache of views for output values
-    private Map<Object,View>  _replViewsCache = new HashMap<>();
+    // A cache of views for console items
+    private Map<Object,View> _itemViewsCache = new HashMap<>();
 
     /**
      * Constructor.
      */
-    public EvalView()
+    public ConsoleView()
     {
         super();
         setSpacing(6);
@@ -37,7 +37,7 @@ public class EvalView extends ColView {
     public void resetDisplay()
     {
         removeChildren();
-        _replViewsCache.clear();
+        _itemViewsCache.clear();
     }
 
     /**
@@ -90,13 +90,13 @@ public class EvalView extends ColView {
     {
         // Handle simple value: just create/return new view
         if (isSimpleValue(aValue))
-            return EvalViewUtils.createBoxViewForValue(aValue);
+            return ConsoleViewUtils.createBoxViewForValue(aValue);
 
         // Handle other values: Get cached view and create if not yet cached
-        View view = _replViewsCache.get(aValue);
+        View view = _itemViewsCache.get(aValue);
         if (view == null) {
-            view = EvalViewUtils.createBoxViewForValue(aValue);
-            _replViewsCache.put(aValue, view);
+            view = ConsoleViewUtils.createBoxViewForValue(aValue);
+            _itemViewsCache.put(aValue, view);
         }
 
         // Return

@@ -10,9 +10,9 @@ import snap.view.View;
 import snap.view.ViewEvent;
 
 /**
- * This View subclass displays output from code evaluation.
+ * This View subclass displays a console item.
  */
-public class EvalViewBox extends BoxView {
+class ConsoleItemBox extends BoxView {
 
     // Vars for box resize
     private static double  _mx, _my, _boxW, _boxH;
@@ -23,7 +23,7 @@ public class EvalViewBox extends BoxView {
     /**
      * Constructor.
      */
-    public EvalViewBox(View aView)
+    public ConsoleItemBox(View aView)
     {
         // Create BoxView wrapper
         super(aView, false, false);

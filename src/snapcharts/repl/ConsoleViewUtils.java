@@ -21,7 +21,7 @@ import java.lang.reflect.Array;
 /**
  * This View subclass shows snippets.
  */
-public class EvalViewUtils {
+class ConsoleViewUtils {
 
     // Constants
     public static final Color ERROR_COLOR = Color.get("#CC0000");
@@ -31,10 +31,10 @@ public class EvalViewUtils {
     /**
      * Override to support custom content views for response values.
      */
-    public static EvalViewBox createBoxViewForValue(Object value)
+    public static ConsoleItemBox createBoxViewForValue(Object value)
     {
         View contentView = createContentViewForValue(value);
-        return new EvalViewBox(contentView);
+        return new ConsoleItemBox(contentView);
     }
 
     /**
