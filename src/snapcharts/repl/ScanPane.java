@@ -5,7 +5,6 @@ import snap.view.ScrollView;
 import snap.view.View;
 import snap.view.ViewOwner;
 import snap.viewx.ConsoleView;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,9 +60,9 @@ public class ScanPane extends ViewOwner {
     {
         _scanView = new ScanView();
         setFirstFocus(_scanView);
-        ScrollView scroll = new ScrollView(_scanView);
-        scroll.setPrefSize(640,480);
-        return scroll;
+        ScrollView scrollView = new ScrollView(_scanView);
+        scrollView.setPrefSize(640,480);
+        return scrollView;
     }
 
     /**
@@ -102,7 +101,9 @@ public class ScanPane extends ViewOwner {
         public void write(int b)
         {
             super.write(b);
-            _scanView.addChars(String.valueOf(Character.valueOf((char)b)));
+
+            String str = String.valueOf(Character.valueOf((char) b));
+            runLater(() -> _scanView.addChars(str));
         }
 
         /** Override to send to ScanView. */
@@ -110,7 +111,7 @@ public class ScanPane extends ViewOwner {
         {
             super.write(buf, off, len);
             String str = new String(buf, off, len);
-            _scanView.addChars(str);
+            runLater(() -> _scanView.addChars(str));
         }
     }
 
@@ -132,7 +133,7 @@ public class ScanPane extends ViewOwner {
         // Creates a <code>ByteArrayInputStream</code>
         public BytesInputStream(byte[] buf)
         {
-            if (buf!=null)
+            if (buf != null)
                 add(buf);
         }
 
@@ -143,7 +144,7 @@ public class ScanPane extends ViewOwner {
         }
 
         /** Adds bytes to stream. */
-        public void add(byte theBytes[])
+        public void add(byte[] theBytes)
         {
             int len = buf.length;
             buf = Arrays.copyOf(buf, len + theBytes.length);
@@ -158,14 +159,16 @@ public class ScanPane extends ViewOwner {
         }
 
         /** Reads the next byte of data from this input stream. */
+        @Override
         public int read()
         {
             int len = read(buf2, 0, 1);
-            return len>0 ? buf2[0] : -1;
+            return len > 0 ? buf2[0] : -1;
         }
 
         /** Reads up to <code>len</code> bytes of data into an array of bytes from this input stream. */
-        public int read(byte b[], int off, int len)
+        @Override
+        public int read(byte[] theBytes, int off, int len)
         {
             while (pos >= count) {
                 synchronized(this) {
@@ -176,12 +179,15 @@ public class ScanPane extends ViewOwner {
 
             int avail = count - pos;
             if (len > avail) len = avail;
-            if (len <= 0) return 0;
-            System.arraycopy(buf, pos, b, off, len);
-            pos += len; return len;
+            if (len <= 0)
+                return 0;
+            System.arraycopy(buf, pos, theBytes, off, len);
+            pos += len;
+            return len;
         }
 
         /** Skips <code>n</code> bytes of input from this input stream. */
+        @Override
         public synchronized long skip(long n)
         {
             long k = count - pos;
