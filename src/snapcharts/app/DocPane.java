@@ -584,7 +584,7 @@ public class DocPane extends ViewOwner {
     @Override
     protected void resetUI()
     {
-        _treeView.setItems(getDoc());
+        _treeView.setItems(new DocItem[] { getDoc() });
         _treeView.expandItem(getDoc());  //_treeView.expandAll();
         _treeView.setSelItem(getSelItem());
 

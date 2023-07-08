@@ -219,7 +219,7 @@ public class SheetView extends TableView<Object> {
         int rowCount = getMinRowCount() + getExtraRowCount();
 
         // If too few rows, add more
-        List items = getItems();
+        List items = getItemsList();
         if (items.size() < rowCount) {
             items = new ArrayList(items);
             while (items.size() < rowCount)
@@ -231,7 +231,7 @@ public class SheetView extends TableView<Object> {
             addOrRemovePadRows(items);
 
         // Reset items and update all
-        setItems(items);
+        setItemsList(items);
         updateItems();
     }
 
