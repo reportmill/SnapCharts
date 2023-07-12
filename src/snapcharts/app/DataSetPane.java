@@ -231,7 +231,7 @@ public class DataSetPane extends ViewOwner {
     private void editingCellChanged(PropChange aPC)
     {
         // If cell that stopped editing (just return if null)
-        ListCell cell = (ListCell) aPC.getOldValue(); if (cell == null) return;
+        ListCell<?> cell = (ListCell<?>) aPC.getOldValue(); if (cell == null) return;
 
         // Get row/col and make sure there are dataSet/points to cover it
         String text = cell.getText();
@@ -243,7 +243,7 @@ public class DataSetPane extends ViewOwner {
         setValueForChannelIndex(text, col, row);
 
         // Update row and trim DataSet in case dataSet/points were cleared
-        _sheetView.updateItems(cell.getItem());
+        _sheetView.updateItem(cell.getItem());
         trimDataSet();
         resetLater();
     }

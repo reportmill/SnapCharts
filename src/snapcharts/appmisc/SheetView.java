@@ -211,17 +211,17 @@ public class SheetView extends TableView<Object> {
         configureColumns();
 
         // Set only last column to grow
-        TableCol lastCol = getCol(getColCount() - 1);
-        for (TableCol tableCol : getCols())
+        TableCol<?> lastCol = getCol(getColCount() - 1);
+        for (TableCol<?> tableCol : getCols())
             tableCol.setGrowWidth(tableCol == lastCol);
 
         // Calculate row count
         int rowCount = getMinRowCount() + getExtraRowCount();
 
         // If too few rows, add more
-        List items = getItemsList();
+        List<Object> items = getItemsList();
         if (items.size() < rowCount) {
-            items = new ArrayList(items);
+            items = new ArrayList<>(items);
             while (items.size() < rowCount)
                 items.add(items.size());
         }
@@ -242,14 +242,14 @@ public class SheetView extends TableView<Object> {
     {
         // Get width of all columns
         double totalW = 0;
-        for (TableCol col : getCols())
+        for (TableCol<?> col : getCols())
             totalW += col.getWidth() + TableView.DIVIDER_SPAN;
 
         // If extra space, add more columns
         double tableW = getScrollView().getScroller().getWidth();
         if (totalW < tableW) {
             while (totalW < tableW) {
-                TableCol col = getColAddIfAbsent(getColCount());
+                TableCol<?> col = getColAddIfAbsent(getColCount());
                 totalW += col.getWidth() + TableView.DIVIDER_SPAN;
             }
         }
@@ -258,7 +258,7 @@ public class SheetView extends TableView<Object> {
         else {
             int colCount = getMinColCount() + getExtraColCount();
             while (getColCount() > colCount && totalW > tableW) {
-                TableCol lastCol = getCol(getColCount() - 1);
+                TableCol<?> lastCol = getCol(getColCount() - 1);
                 if (totalW - lastCol.getWidth() - TableView.DIVIDER_SPAN > tableW)
                     removeCol(getColCount() - 1);
                 else break;

@@ -179,7 +179,7 @@ public class MarkerInsp extends ChartPartInsp {
         // Handle NameText
         if (anEvent.equals("NameText")) {
             marker.setName(anEvent.getStringValue());
-            _markersListView.updateItems(marker);
+            _markersListView.updateItem(marker);
         }
 
         // Handle XSpaceChartButton, XSpaceContentButton, XSpaceXButton

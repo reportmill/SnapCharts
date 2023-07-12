@@ -481,7 +481,7 @@ public class DocPane extends ViewOwner {
      */
     public void docItemNameChanged()
     {
-        _treeView.updateItems(getSelItem());
+        _treeView.updateItem(getSelItem());
     }
 
     /**
