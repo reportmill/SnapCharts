@@ -182,7 +182,7 @@ public class ToolTipView extends ColView {
         // Register anim to hide this view
         ViewAnim anim = getAnimCleared(300);
         anim.setOpacity(0);
-        anim.setOnFinish(a -> setVisible(false));
+        anim.setOnFinish(() -> setVisible(false));
         anim.play();
     }
 }

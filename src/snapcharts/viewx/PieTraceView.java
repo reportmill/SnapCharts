@@ -7,6 +7,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.props.PropChange;
 import snap.util.*;
+import snap.view.ViewAnim;
 import snapcharts.data.DataSet;
 import snapcharts.model.*;
 import snapcharts.view.ChartHelper;
@@ -360,7 +361,11 @@ public class PieTraceView extends TraceView {
         // Cache last point and configure SelDataPointMorph to change from 0 to 1 over time
         _selPointLast = (TracePoint) aPC.getOldValue();
         setSelDataPointMorph(0);
-        getAnimCleared(400).setValue(SelDataPointMorph_Prop, 1).setLinear().setOnFinish(a -> _selPointLast = null).play();
+        ViewAnim anim = getAnimCleared(400);
+        anim.setValue(SelDataPointMorph_Prop, 1);
+        anim.setLinear();
+        anim.setOnFinish(() -> _selPointLast = null);
+        anim.play();
     }
 
     /**
