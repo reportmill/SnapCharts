@@ -5,6 +5,7 @@ package snapcharts.repl;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Image;
+import snap.text.TextBlock;
 import snap.text.TextDoc;
 import snap.text.TextStyle;
 import snap.util.Convert;
@@ -156,7 +157,7 @@ class ConsoleViewUtils {
 
         // Create TextArea
         TextArea textArea = createTextAreaForText(exceptionStr);
-        TextDoc textDoc = textArea.getTextDoc();
+        TextBlock textDoc = textArea.getTextDoc();
         TextStyle textStyle = textDoc.getStyleForCharIndex(0);
         TextStyle textStyle2 = textStyle.copyFor(ERROR_COLOR).copyFor(Font.Arial12);
         textDoc.setDefaultStyle(textStyle2);
