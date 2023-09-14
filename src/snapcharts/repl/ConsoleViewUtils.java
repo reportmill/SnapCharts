@@ -157,10 +157,10 @@ class ConsoleViewUtils {
 
         // Create TextArea
         TextArea textArea = createTextAreaForText(exceptionStr);
-        TextBlock textDoc = textArea.getTextDoc();
-        TextStyle textStyle = textDoc.getStyleForCharIndex(0);
+        TextBlock textBlock = textArea.getTextBlock();
+        TextStyle textStyle = textBlock.getStyleForCharIndex(0);
         TextStyle textStyle2 = textStyle.copyFor(ERROR_COLOR).copyFor(Font.Arial12);
-        textDoc.setDefaultStyle(textStyle2);
+        textBlock.setDefaultStyle(textStyle2);
 
         // If large text, wrap in ScrollView
         if (textArea.getPrefHeight() > 120) {

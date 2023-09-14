@@ -75,7 +75,7 @@ public class ScanPane extends ViewOwner {
         {
             setPadding(4,4,4,4);
             setFont(new Font("Arial", 16));
-            getTextDoc().setDefaultStyle(new TextStyle(new Font("Arial", 16)));
+            getTextBlock().setDefaultStyle(new TextStyle(new Font("Arial", 16)));
         }
 
         /** Override to send to process. */
