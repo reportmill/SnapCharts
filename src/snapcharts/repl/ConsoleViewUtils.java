@@ -131,7 +131,7 @@ class ConsoleViewUtils {
     {
         // Create TextArea
         TextArea textArea = createTextAreaForText(null);
-        textArea.setTextDoc(textDoc);
+        textArea.setSourceText(textDoc);
 
         // If large text, wrap in ScrollView
         if (textArea.getPrefHeight() > 120) {
