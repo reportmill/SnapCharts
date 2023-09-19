@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 class ConsoleViewUtils {
 
     // Constants
+    public static final Font DEFAULT_FONT = Font.Arial14;
     public static final Color ERROR_COLOR = Color.get("#CC0000");
     private static final Color DEFAULT_TEXTAREA_FILL = new Color(.95);
     private static final Color DEFAULT_TEXTAREA_TEXTFILL = Color.GRAY2;
@@ -78,7 +79,7 @@ class ConsoleViewUtils {
         // Create TextBlock and configure Style
         TextBlock textBlock = new TextBlock();
         textBlock.setDefaultStyle(textBlock.getDefaultStyle().copyFor(DEFAULT_TEXTAREA_TEXTFILL));
-        textBlock.setDefaultStyle(textBlock.getDefaultStyle().copyFor(Font.Arial11));
+        textBlock.setDefaultStyle(textBlock.getDefaultStyle().copyFor(DEFAULT_FONT));
 
         // Set string
         textBlock.setString(aString);
