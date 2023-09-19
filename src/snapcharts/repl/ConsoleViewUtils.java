@@ -66,55 +66,25 @@ class ConsoleViewUtils {
 
         // Do normal version
         String responseText = getStringForValue(value);
-        return createContentViewForText(responseText);
+        TextBlock textBlock = createTextBlockForString(responseText);
+        return createContentViewForTextBlock(textBlock);
     }
 
     /**
-     * Creates content view for ViewOwner.
+     * Creates TextBlock for String.
      */
-    private static View createContentViewForText(String aString)
+    private static TextBlock createTextBlockForString(String aString)
     {
-        // Create TextArea
-        TextArea textArea = createTextAreaForText(aString);
+        // Create TextBlock and configure Style
+        TextBlock textBlock = new TextBlock();
+        textBlock.setDefaultStyle(textBlock.getDefaultStyle().copyFor(DEFAULT_TEXTAREA_TEXTFILL));
+        textBlock.setDefaultStyle(textBlock.getDefaultStyle().copyFor(Font.Arial11));
 
-        // If large text, wrap in ScrollView
-        if (textArea.getPrefHeight() > 300) {
-            ScrollView scrollView = new ScrollView(textArea);
-            scrollView.setBorderRadius(4);
-            scrollView.setMaxHeight(300);
-            scrollView.setGrowWidth(true);
-            scrollView.setGrowHeight(true);
-            return scrollView;
-        }
-
-        // Wrap in standard box
-        return textArea;
-    }
-
-    /**
-     * Creates content view for ViewOwner.
-     */
-    private static TextArea createTextAreaForText(String aString)
-    {
-        // Create TextArea and configure Style
-        TextArea textArea = new TextArea();
-        textArea.setBorderRadius(4);
-        textArea.setFill(DEFAULT_TEXTAREA_FILL);
-        textArea.setDefaultStyle(textArea.getDefaultStyle().copyFor(DEFAULT_TEXTAREA_TEXTFILL));
-        textArea.setDefaultStyle(textArea.getDefaultStyle().copyFor(Font.Arial11));
-        textArea.setEditable(true);
-
-        // Configure TextArea Sizing
-        textArea.setGrowWidth(true);
-        textArea.setMinSize(30, 20);
-        textArea.setPadding(4, 4, 4, 4);
-
-        // Set text
-        if (aString != null && aString.length() > 0)
-            textArea.setText(aString);
+        // Set string
+        textBlock.setString(aString);
 
         // Return
-        return textArea;
+        return textBlock;
     }
 
     /**
@@ -122,8 +92,18 @@ class ConsoleViewUtils {
      */
     private static View createContentViewForTextBlock(TextBlock textBlock)
     {
-        // Create TextArea
-        TextArea textArea = createTextAreaForText(null);
+        // Create and configure TextArea
+        TextArea textArea = new TextArea();
+        textArea.setBorderRadius(4);
+        textArea.setFill(DEFAULT_TEXTAREA_FILL);
+        textArea.setEditable(true);
+
+        // Configure TextArea Sizing
+        textArea.setGrowWidth(true);
+        textArea.setMinSize(30, 20);
+        textArea.setPadding(5, 5, 5, 5);
+
+        // Set TextBlock
         textArea.setSourceText(textBlock);
 
         // If large text, wrap in ScrollView
@@ -136,7 +116,7 @@ class ConsoleViewUtils {
             return scrollView;
         }
 
-        // Wrap in standard box
+        // Return
         return textArea;
     }
 
