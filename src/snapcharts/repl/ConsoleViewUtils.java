@@ -6,10 +6,7 @@ import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.gfx.Image;
 import snap.text.TextBlock;
-import snap.text.TextDoc;
-import snap.text.TextStyle;
 import snap.util.Convert;
-import snap.util.StringUtils;
 import snap.view.*;
 import snapcharts.app.DataSetPane;
 import snapcharts.data.DataSet;
@@ -63,13 +60,9 @@ class ConsoleViewUtils {
         if (value instanceof Image)
             return createContentViewForImage((Image) value);
 
-        // Handle TextDoc
-        if (value instanceof TextDoc)
-            return createContentViewForTextDoc((TextDoc) value);
-
-        // Handle Exception
-        if (value instanceof Exception)
-            return createContentViewForException((Exception) value);
+        // Handle TextBlock
+        if (value instanceof TextBlock)
+            return createContentViewForTextBlock((TextBlock) value);
 
         // Do normal version
         String responseText = getStringForValue(value);
@@ -125,48 +118,19 @@ class ConsoleViewUtils {
     }
 
     /**
-     * Creates content view for TextDoc.
+     * Creates content view for TextBlock.
      */
-    private static View createContentViewForTextDoc(TextDoc textDoc)
+    private static View createContentViewForTextBlock(TextBlock textBlock)
     {
         // Create TextArea
         TextArea textArea = createTextAreaForText(null);
-        textArea.setSourceText(textDoc);
+        textArea.setSourceText(textBlock);
 
         // If large text, wrap in ScrollView
-        if (textArea.getPrefHeight() > 120) {
+        if (textArea.getPrefHeight() > 300) {
             ScrollView scrollView = new ScrollView(textArea);
             scrollView.setBorderRadius(4);
-            scrollView.setMaxHeight(120);
-            scrollView.setGrowWidth(true);
-            scrollView.setGrowHeight(true);
-            return scrollView;
-        }
-
-        // Wrap in standard box
-        return textArea;
-    }
-
-    /**
-     * Creates content view for ViewOwner.
-     */
-    private static View createContentViewForException(Exception anException)
-    {
-        // Get exception string
-        String exceptionStr = StringUtils.getStackTraceString(anException);
-
-        // Create TextArea
-        TextArea textArea = createTextAreaForText(exceptionStr);
-        TextBlock textBlock = textArea.getTextBlock();
-        TextStyle textStyle = textBlock.getStyleForCharIndex(0);
-        TextStyle textStyle2 = textStyle.copyFor(ERROR_COLOR).copyFor(Font.Arial12);
-        textBlock.setDefaultStyle(textStyle2);
-
-        // If large text, wrap in ScrollView
-        if (textArea.getPrefHeight() > 120) {
-            ScrollView scrollView = new ScrollView(textArea);
-            scrollView.setBorderRadius(4);
-            scrollView.setMaxHeight(120);
+            scrollView.setMaxHeight(300);
             scrollView.setGrowWidth(true);
             scrollView.setGrowHeight(true);
             return scrollView;
