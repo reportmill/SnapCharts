@@ -242,7 +242,10 @@ class ConsoleViewUtils {
         }
 
         // Handle anything
+        String valueStr = String.valueOf(aValue);
         String className = aValue.getClass().getSimpleName();
-        return className + ": " + aValue;
+        if (!valueStr.startsWith(className))
+            valueStr = className + ": " + aValue;
+        return valueStr;
     }
 }
