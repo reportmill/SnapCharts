@@ -118,7 +118,7 @@ public class ScanPane extends ViewOwner {
     /**
      * An InputStream that lets you add bytes on the fly.
      */
-    private static class BytesInputStream extends InputStream {
+    public static class BytesInputStream extends InputStream {
 
         // The byte array
         private byte[]  buf = new byte[0];
@@ -191,8 +191,11 @@ public class ScanPane extends ViewOwner {
         public synchronized long skip(long n)
         {
             long k = count - pos;
-            if (n < k) { k = n < 0 ? 0 : n; }
-            pos += k; return k;
+            if (n < k) {
+                k = n < 0 ? 0 : n;
+            }
+            pos += k;
+            return k;
         }
 
         /** Returns the number of remaining bytes that can be read (or skipped over) from this input stream. */
