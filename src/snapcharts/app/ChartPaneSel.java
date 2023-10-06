@@ -676,6 +676,6 @@ public class ChartPaneSel {
         }
 
         // Otherwise kick off another periodic check
-        else ViewUtils.runDelayed(() -> checkScrollStop(), SCROLL_TIMEOUT, true);
+        else ViewUtils.runDelayed(() -> checkScrollStop(), SCROLL_TIMEOUT);
     }
 }

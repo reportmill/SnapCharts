@@ -305,7 +305,7 @@ public class QuickDraw extends View {
 
         // If first pen, start animation
         if (_animPens.length == 1)
-            getEnv().runIntervals(_repaintRun, 10, false, true);
+            getEnv().runIntervals(_repaintRun, 10);
     }
 
     /**

@@ -210,7 +210,7 @@ public class WelcomePanel extends ViewOwner {
             DocPane dpane = newDocPane().newDoc();
             dpane.setWindowVisible(true);
             hide();
-            runLaterDelayed(300, () -> dpane.showSamples());
+            runDelayed(300, () -> dpane.showSamples());
         }
     }
 
