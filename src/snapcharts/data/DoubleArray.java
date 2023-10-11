@@ -5,9 +5,10 @@ package snapcharts.data;
 import snap.util.Convert;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.function.DoublePredicate;
 import java.util.function.DoubleUnaryOperator;
-import java.util.stream.DoubleStream;
+import java.util.stream.*;
 
 /**
  * This NumberArray subclass stores values in a double array.
@@ -191,36 +192,55 @@ public class DoubleArray extends NumberArray {
     /**
      * Returns DoubleArray from raw double values or array.
      */
-    public static DoubleArray of(Object ... theDoubles)
+    public static DoubleArray of(Object anObj)
     {
-        // Handle empty array
-        if (theDoubles.length == 0)
-            return new DoubleArray(new double[0]);
-
         // Handle DoubleArray
-        Object obj0 = theDoubles[0];
-        if (obj0 instanceof DoubleArray)
-            return ((DoubleArray) obj0);
+        if (anObj instanceof DoubleArray)
+            return ((DoubleArray) anObj);
 
         // Handle double[]
-        if (obj0 instanceof double[])
-            return new DoubleArray((double[]) obj0);
+        if (anObj instanceof double[])
+            return new DoubleArray((double[]) anObj);
 
         // Handle Array (could be int[], float[], etc.)
-        if (obj0.getClass().isArray()) {
+        if (anObj.getClass().isArray()) {
 
             // Get double[] using Array get()
-            int length = Array.getLength(obj0);
+            int length = Array.getLength(anObj);
             double[] doubleArray = new double[length];
             for (int i = 0; i < length; i++) {
-                Object val = Array.get(obj0, i);
+                Object val = Array.get(anObj, i);
                 doubleArray[i] = Convert.doubleValue(val);
             }
-
-            // Return
             return new DoubleArray(doubleArray);
         }
 
+        // Handle Stream
+        if (anObj instanceof Stream) {
+            Stream<?> stream = (Stream<?>) anObj;
+            double[] doubleArray = stream.mapToDouble(obj -> Convert.doubleValue(obj)).toArray();
+            return new DoubleArray(doubleArray);
+        }
+
+        // Handle BaseStream
+        if (anObj instanceof BaseStream) {
+            BaseStream<Object,?> baseStream = (BaseStream<Object, ?>) anObj;
+            Iterator<Object> iterator = baseStream.iterator();
+            Iterable<Object> iterable = () -> iterator;
+            Stream<Object> stream = StreamSupport.stream(iterable.spliterator(), false);
+            return of(stream);
+        }
+
+        // Just get double value of object and return as array
+        double doubleValue = Convert.doubleValue(anObj);
+        return new DoubleArray(new double[] { doubleValue });
+    }
+
+    /**
+     * Returns DoubleArray from raw double values or array.
+     */
+    public static DoubleArray of(Object ... theDoubles)
+    {
         // Iterate over values and convert to double
         double[] doubleArray = new double[theDoubles.length];
         for (int i = 0; i < theDoubles.length; i++)

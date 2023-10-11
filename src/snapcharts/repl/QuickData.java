@@ -5,7 +5,6 @@ package snapcharts.repl;
 import snap.gfx.Image;
 import snap.web.WebURL;
 import snapcharts.data.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleBinaryOperator;
@@ -14,6 +13,14 @@ import java.util.function.DoubleBinaryOperator;
  * This is a REPL base class specific for charts.
  */
 public class QuickData {
+
+    /**
+     * Creates and return a DataArray.
+     */
+    public static DoubleArray doubleArray(Object anObj)
+    {
+        return DoubleArray.of(anObj);
+    }
 
     /**
      * Creates and return a DataArray.
@@ -36,11 +43,7 @@ public class QuickData {
             return (DataArray) anObj;
 
         // Handle array of anything
-        if (anObj.getClass().isArray())
-            return doubleArray(anObj);
-
-        // Return not handled
-        return null;
+        return doubleArray(anObj);
     }
 
     /**
