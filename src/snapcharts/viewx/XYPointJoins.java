@@ -266,7 +266,7 @@ public class XYPointJoins {
         protected Point  _segPoint0 = new Point(), _segPoint1 = new Point(), _segPoint2 = new Point();
 
         // Next 2 segment slopes
-        protected Vect  _segVect0 = new Vect(), _segVect1 = new Vect();
+        protected Vector _segVector0 = new Vector(), _segVector1 = new Vector();
 
         // Next segment coords
         protected double[]  _nextCoords = new double[6];
@@ -320,22 +320,22 @@ public class XYPointJoins {
             // Get point on line at lambda, and get distance of that sub-line projected onto slope at point0
             double lambdaX0 = x0 + (x1 - x0) * lambda;
             double lambdaY0 = y0 + (y1 - y0) * lambda;
-            double dist0 = Vect.getProjectedDistance(lambdaX0 - x0, lambdaY0 - y0, _segVect0.x, _segVect0.y);
+            double dist0 = Vector.getProjectedDistance(lambdaX0 - x0, lambdaY0 - y0, _segVector0.x, _segVector0.y);
             dist0 = Math.abs(dist0);
 
             // Set control point 1 to same distance along vector at point 0
-            double cp0x = x0 + _segVect0.x * dist0;
-            double cp0y = y0 + _segVect0.y * dist0;
+            double cp0x = x0 + _segVector0.x * dist0;
+            double cp0y = y0 + _segVector0.y * dist0;
 
             // Get point on line at (inverse) lambda, and get distance of that sub-line projected onto slope at point1
             double lambdaX1 = x0 + (x1 - x0) * (1 - lambda);
             double lambdaY1 = y0 + (y1 - y0) * (1 - lambda);
-            double dist1 = Vect.getProjectedDistance(lambdaX1 - x1, lambdaY1 - y1, _segVect1.x, _segVect1.y);
+            double dist1 = Vector.getProjectedDistance(lambdaX1 - x1, lambdaY1 - y1, _segVector1.x, _segVector1.y);
             dist1 = Math.abs(dist1);
 
             // Set control point 2 to same distance along vector at point 1 (reverse direction)
-            double cp1x = x1 - _segVect1.x * dist1;
-            double cp1y = y1 - _segVect1.y * dist1;
+            double cp1x = x1 - _segVector1.x * dist1;
+            double cp1y = y1 - _segVector1.y * dist1;
 
             // Get cubicTo segment, doCycle for next point, return
             Seg cubicTo = cubicTo(cp0x, cp0y, cp1x, cp1y, x1, y1, coords);
@@ -351,7 +351,7 @@ public class XYPointJoins {
             // Shift Seg1 to Seg0
             _seg0 = _seg1;
             _segPoint0.setPoint(_segPoint1);
-            _segVect0.setXY(_segVect1);
+            _segVector0.setXY(_segVector1);
 
             // Shift Seg2 to Seg1
             _seg1 = _seg2;
@@ -372,13 +372,13 @@ public class XYPointJoins {
             // Set the slope vector at point 1
             Point p2 = _seg2 != null ? _segPoint2 : _seg1 != null ? _segPoint1 : _segPoint0;
             Point p0 = _seg0 != null ? _segPoint0 : _seg1 != null ? _segPoint1 : _segPoint2;
-            _segVect1.x = (p2.x - p0.x);
-            _segVect1.y = (p2.y - p0.y);
-            _segVect1.normalize();
+            _segVector1.x = (p2.x - p0.x);
+            _segVector1.y = (p2.y - p0.y);
+            _segVector1.normalize();
 
             // If Y value flips (not continuously increasing or decreasing), just use slope 0 for smoother splines
             if (_seg0 != null && _seg1 != null && _seg2 != null && (_segPoint1.y - _segPoint0.y) * (_segPoint2.y - _segPoint1.y) < 0)
-                _segVect1.y = 0;
+                _segVector1.y = 0;
         }
     }
 }

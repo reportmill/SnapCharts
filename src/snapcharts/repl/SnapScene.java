@@ -386,7 +386,9 @@ public class SnapScene extends ChildView {
     {
         try {
             act();
-            for (View child : getChildren()) if (child instanceof SnapActor) ((SnapActor) child).doAct();
+            for (View child : getChildren())
+                if (child instanceof SnapActor)
+                    ((SnapActor) child).act();
             _mouseClicked = null;
             _keyClicks.clear();
         }

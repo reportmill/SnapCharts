@@ -189,55 +189,6 @@ public class SnapActor extends ImageView {
     }
 
     /**
-     * Returns whether mouse button is down.
-     */
-    public boolean isMouseDown()
-    {
-        return getScene().isMouseDown();
-    }
-
-    /**
-     * Returns whether mouse was clicked on this frame.
-     */
-    public boolean isMouseClicked()
-    {
-        return getScene().isMouseClicked();
-    }
-
-    /**
-     * Returns whether a key is pressed down.
-     */
-    public boolean isKeyDown(String aKey)
-    {
-        return getScene().isKeyDown(aKey);
-    }
-
-    /**
-     * Returns whether a key was pressed in current frame.
-     */
-    public boolean isKeyClicked(String aKey)
-    {
-        return getScene().isKeyClicked(aKey);
-    }
-
-    /**
-     * Returns a named sound.
-     */
-    public SoundClip getSound(String aName)
-    {
-        return SoundClip.get(getClass(), aName);
-    }
-
-    /**
-     * Plays a named sound.
-     */
-    public void playSound(String aName)
-    {
-        SoundClip sound = getSound(aName);
-        if (sound != null) sound.play();
-    }
-
-    /**
      * Returns the pen.
      */
     public SnapPen getPen()  { return _pen; }
@@ -288,22 +239,10 @@ public class SnapActor extends ImageView {
     /**
      * The main execution loop.
      */
-    protected void main()
-    {
-    }
-
-    /**
-     * Calls the act method and actors act methods.
-     */
-    void doAct()
-    {
-        act();
-    }
+    protected void main()  { }
 
     /**
      * The act method.
      */
-    protected void act()
-    {
-    }
+    protected void act()  { }
 }
