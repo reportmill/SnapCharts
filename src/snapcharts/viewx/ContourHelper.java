@@ -148,7 +148,7 @@ public class ContourHelper {
         colorMapPaintH = colorMapPaintH.copyForRect(new Rect(0, 0, count, 1));
 
         // Create image and fill with gradient
-        Image img = Image.getImageForSizeAndScale(count, 1, false, 1);
+        Image img = Image.getImageForSize(count, 1, false);
         Painter pntr = img.getPainter();
         pntr.setPaint(colorMapPaintH);
         pntr.fillRect(0, 0, count, 1);
@@ -230,7 +230,7 @@ public class ContourHelper {
      */
     private Image createColorMapImage()
     {
-        Image image = Image.getImageForSizeAndScale(1, 200, false, 1);
+        Image image = Image.getImageForSize(1, 200, false);
         Painter pntr = image.getPainter();
         GradientPaint colorMapPaint = getColorMapPaint();
         pntr.setPaint(colorMapPaint);
