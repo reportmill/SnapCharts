@@ -20,6 +20,9 @@ public class DefaultConsole extends ViewOwner implements Console {
     // The shared console
     private static Console _shared = null;
 
+    // The
+    private static Runnable _consoleCreatedHandler = () -> handleConsoleCreated();
+
     /**
      * Constructor.
      */
@@ -89,11 +92,8 @@ public class DefaultConsole extends ViewOwner implements Console {
         DefaultConsole defaultConsole = new DefaultConsole();
 
         // Auto-show console
-        ViewUtils.runLater(() -> {
-            View consoleView = defaultConsole.getConsoleView();
-            consoleView.setPrefSize(700, 900);
-            defaultConsole.setWindowVisible(true);
-        });
+        if (_consoleCreatedHandler != null)
+            ViewUtils.runLater(_consoleCreatedHandler);
 
         // Set and return
         return _shared = defaultConsole;
@@ -103,4 +103,21 @@ public class DefaultConsole extends ViewOwner implements Console {
      * Sets the shared console.
      */
     protected static void setShared(Console aConsole)  { _shared = aConsole; }
+
+    /**
+     * Sets the console created handler.
+     */
+    protected static void setConsoleCreatedHandler(Runnable aRun)  { _consoleCreatedHandler = aRun; }
+
+    /**
+     * Sets the console created handler.
+     */
+    private static void handleConsoleCreated()
+    {
+        Console defaultConsole = getShared();
+        View consoleView = defaultConsole.getConsoleView();
+        consoleView.setPrefSize(700, 900);
+        if (defaultConsole instanceof ViewOwner)
+            ((ViewOwner) defaultConsole).setWindowVisible(true);
+    }
 }
