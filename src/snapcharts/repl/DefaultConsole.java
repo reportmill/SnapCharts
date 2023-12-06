@@ -11,6 +11,12 @@ public class DefaultConsole extends ViewOwner implements Console {
     // The Console view
     private ConsoleView _consoleView;
 
+    // The maximum number of console items
+    private int _maxItemCount = 1000;
+
+    // Whether console has overflowed
+    private boolean _overflowed;
+
     // The shared console
     private static Console _shared = null;
 
@@ -32,6 +38,15 @@ public class DefaultConsole extends ViewOwner implements Console {
      */
     public void show(Object anObj)
     {
+        // Handle overflow
+        if (getItemCount() + 1 > _maxItemCount) {
+            if (!_overflowed) {
+                _overflowed = true;
+                _consoleView.showObject("Output suspended - Too much output!!!");
+            }
+        }
+
+        // Forward to ConsoleView
         _consoleView.showObject(anObj);
     }
 
