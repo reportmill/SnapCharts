@@ -93,7 +93,7 @@ public class DefaultConsole extends ViewOwner implements Console {
 
         // Auto-show console
         if (_consoleCreatedHandler != null)
-            ViewUtils.runLater(_consoleCreatedHandler);
+            _consoleCreatedHandler.run();
 
         // Set and return
         return _shared = defaultConsole;
@@ -117,7 +117,9 @@ public class DefaultConsole extends ViewOwner implements Console {
         Console defaultConsole = getShared();
         View consoleView = defaultConsole.getConsoleView();
         consoleView.setPrefSize(700, 900);
-        if (defaultConsole instanceof ViewOwner)
-            ((ViewOwner) defaultConsole).setWindowVisible(true);
+        if (defaultConsole instanceof ViewOwner) {
+            ViewOwner viewOwner = (ViewOwner) defaultConsole;
+            ViewUtils.runLater(() -> viewOwner.setWindowVisible(true));
+        }
     }
 }
