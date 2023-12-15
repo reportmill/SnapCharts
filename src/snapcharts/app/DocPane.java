@@ -902,8 +902,8 @@ public class DocPane extends ViewOwner {
 
     // Constants for images
     private static Image ICON_PLAIN = Image.getImageForClassResource(DocPane.class, "PlainFile.png");
-    private static Image ICON_DIR = Image.getImageForClassResource(ViewUtils.class, "DirFile.png");
-    private static Image ICON_DATA = Image.getImageForClassResource(ViewUtils.class, "TableFile.png");
+    private static Image ICON_DIR = Image.getImageForClassResource(DocPane.class, "DirFile.png");
+    private static Image ICON_DATA = Image.getImageForClassResource(DocPane.class, "TableFile.png");
     private static Image ICON_CHART = Image.getImageForClassResource(DocPane.class, "Chart.png");
     private static Image ICON_GROUP = Image.getImageForClassResource(DocPane.class, "Group2.png");
 
