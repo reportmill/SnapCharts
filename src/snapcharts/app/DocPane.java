@@ -329,7 +329,7 @@ public class DocPane extends ViewOwner {
         if (!dbox.showConfirmDialog(getUI())) return;
 
         // Re-open filename
-        getSourceURL().getFile().reload();
+        getSourceURL().getFile().resetAndVerify();
         openDocFromSource(getSourceURL());
     }
 
