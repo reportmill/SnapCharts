@@ -4,7 +4,7 @@ import snap.text.TextStyle;
 import snap.view.ScrollView;
 import snap.view.View;
 import snap.view.ViewOwner;
-import snap.viewx.ConsoleView;
+import snap.viewx.DevPaneConsoleTextArea;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -68,7 +68,7 @@ public class ScanPane extends ViewOwner {
     /**
      * A ConsoleView subclass that works with scanner.
      */
-    public static class ScanView extends ConsoleView {
+    public static class ScanView extends DevPaneConsoleTextArea {
 
         /** Creates a new ScanView. */
         public ScanView()

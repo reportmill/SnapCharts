@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.repl;
+package snapcharts.app;
 import snapcharts.data.DataSet;
 import snapcharts.model.Chart;
 import snapcharts.model.Trace;
@@ -72,10 +72,4 @@ public class QuickCharts extends QuickData {
         // Return
         return chart;
     }
-
-    /**
-     * Conveniences.
-     */
-    public static Chart plot(Object ... theObjects)  { return chart(theObjects); }
-    public static Chart plot3D(Object ... theObjects)  { return chart3D(theObjects); }
 }

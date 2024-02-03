@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
-package snapcharts.repl;
+package snapcharts.app;
 import snap.gfx.Image;
 import snap.web.WebURL;
 import snapcharts.data.*;
