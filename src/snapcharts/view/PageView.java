@@ -1,10 +1,8 @@
 package snapcharts.view;
-import snap.geom.RoundRect;
-import snap.geom.Shape;
 import snap.gfx.*;
 import snap.view.ParentView;
 import snapcharts.app.ChartPane;
-import snapcharts.model.Chart;
+import snapcharts.charts.Chart;
 import snapcharts.doc.DocItemGroup;
 
 import java.util.ArrayList;

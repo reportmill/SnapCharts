@@ -8,7 +8,7 @@ import snap.text.NumberFormat;
 import snap.util.FormatUtils;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import java.util.Objects;
 
 /**

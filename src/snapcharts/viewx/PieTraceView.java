@@ -9,7 +9,7 @@ import snap.props.PropChange;
 import snap.util.*;
 import snap.view.ViewAnim;
 import snapcharts.data.DataSet;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;

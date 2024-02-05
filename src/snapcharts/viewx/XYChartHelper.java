@@ -4,9 +4,9 @@
 package snapcharts.viewx;
 import snap.gfx.Border;
 import snap.gfx.Painter;
-import snapcharts.model.Trace;
-import snapcharts.model.Content;
-import snapcharts.model.TraceType;
+import snapcharts.charts.Trace;
+import snapcharts.charts.Content;
+import snapcharts.charts.TraceType;
 import snapcharts.view.*;
 
 /**

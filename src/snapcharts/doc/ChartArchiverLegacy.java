@@ -4,10 +4,10 @@
 package snapcharts.doc;
 import snap.util.XMLAttribute;
 import snap.util.XMLElement;
-import snapcharts.model.Chart;
-import snapcharts.model.Trace;
-import snapcharts.model.TraceType;
-import snapcharts.modelx.ScatterTrace;
+import snapcharts.charts.Chart;
+import snapcharts.charts.Trace;
+import snapcharts.charts.TraceType;
+import snapcharts.charts.traces.ScatterTrace;
 import snapcharts.util.ChartUtils;
 
 /**

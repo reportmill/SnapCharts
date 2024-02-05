@@ -3,7 +3,7 @@ import snap.geom.*;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
-import snapcharts.model.Trace;
+import snapcharts.charts.Trace;
 import snapcharts.data.DataSet;
 import snapcharts.util.ContourMaker;
 import snapcharts.view.AxisView;

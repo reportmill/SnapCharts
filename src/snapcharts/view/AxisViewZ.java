@@ -8,8 +8,8 @@ import snap.util.ArrayUtils;
 import snap.view.ColViewProxy;
 import snap.view.Cursor;
 import snap.view.ViewProxy;
-import snapcharts.model.Axis;
-import snapcharts.model.AxisZ;
+import snapcharts.charts.Axis;
+import snapcharts.charts.AxisZ;
 
 /**
  * A view to paint Chart Z Axis.

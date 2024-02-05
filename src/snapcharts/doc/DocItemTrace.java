@@ -1,6 +1,6 @@
 package snapcharts.doc;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Trace;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.Trace;
 
 /**
  * A DocItem subclass to hold a chart.

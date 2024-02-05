@@ -3,7 +3,7 @@ import snap.util.Convert;
 import snap.util.ListSel;
 import snapcharts.data.DataPoint;
 import snapcharts.data.DataUtils;
-import snapcharts.model.Trace;
+import snapcharts.charts.Trace;
 import snapcharts.data.DataType;
 
 /**

@@ -12,7 +12,7 @@ import snap.util.Range;
 import snap.util.StringUtils;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.ChartPart;
+import snapcharts.charts.ChartPart;
 
 /**
  * This class provides UI editing for miscellaneous ChartPart properties.

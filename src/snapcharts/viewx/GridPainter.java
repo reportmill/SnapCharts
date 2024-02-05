@@ -6,7 +6,7 @@ import snap.geom.Side;
 import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
-import snapcharts.model.Axis;
+import snapcharts.charts.Axis;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.TraceView;

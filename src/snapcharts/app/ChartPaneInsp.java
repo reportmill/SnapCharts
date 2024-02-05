@@ -9,7 +9,7 @@ import snap.view.*;
 import snap.viewx.TextPane;
 import snapcharts.appmisc.Collapser;
 import snapcharts.apptools.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A class to manage inspector.

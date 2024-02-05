@@ -6,8 +6,8 @@ import snap.geom.Insets;
 import snap.view.ChildView;
 import snap.view.RowViewProxy;
 import snap.view.ViewProxy;
-import snapcharts.model.Chart;
-import snapcharts.model.Legend;
+import snapcharts.charts.Chart;
+import snapcharts.charts.Legend;
 import java.util.Arrays;
 
 /**

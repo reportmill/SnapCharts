@@ -1,8 +1,8 @@
 package snapcharts.util;
-import snapcharts.model.Chart;
-import snapcharts.model.Content;
-import snapcharts.model.Trace;
-import snapcharts.model.TraceType;
+import snapcharts.charts.Chart;
+import snapcharts.charts.Content;
+import snapcharts.charts.Trace;
+import snapcharts.charts.TraceType;
 
 /**
  * Utility methods for Chart.

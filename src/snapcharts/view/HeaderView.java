@@ -1,8 +1,8 @@
 package snapcharts.view;
 import snap.view.ColViewProxy;
 import snap.view.StringView;
-import snapcharts.model.Chart;
-import snapcharts.model.Header;
+import snapcharts.charts.Chart;
+import snapcharts.charts.Header;
 
 /**
  * A view to hold header elements at top of ChartView.

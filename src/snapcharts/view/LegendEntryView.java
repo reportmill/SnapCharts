@@ -3,7 +3,7 @@ import snap.geom.Insets;
 import snap.gfx.*;
 import snap.view.Label;
 import snap.view.View;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A placeholder view to paint entry graphic.

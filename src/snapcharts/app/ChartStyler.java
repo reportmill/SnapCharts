@@ -3,7 +3,7 @@ import snap.gfx.*;
 import snap.styler.Styler;
 import snap.props.Undoer;
 import snap.view.View;
-import snapcharts.model.ChartPart;
+import snapcharts.charts.ChartPart;
 
 /**
  * ChartStyler.

@@ -5,7 +5,7 @@ package snapcharts.doc;
 import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.util.*;
-import snapcharts.model.ChartPart;
+import snapcharts.charts.ChartPart;
 import java.util.List;
 import java.util.Objects;
 

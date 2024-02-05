@@ -10,7 +10,7 @@ import snap.view.Cursor;
 import snap.view.RowView;
 import snap.view.RowViewProxy;
 import snap.view.WrapView;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * An AxisView subclass for AxisY.

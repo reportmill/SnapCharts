@@ -1,9 +1,9 @@
 package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.AxisBound;
-import snapcharts.model.ChartPart;
-import snapcharts.model.ContourAxis;
+import snapcharts.charts.AxisBound;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.ContourAxis;
 
 /**
  * A class to manage UI to edit a ChartView ContourAxis.

@@ -6,8 +6,8 @@ import snap.text.NumberFormat;
 import snap.text.TextFormat;
 import snap.util.FormatUtils;
 import snap.util.MathUtils;
-import snapcharts.model.Axis;
-import snapcharts.model.Intervals;
+import snapcharts.charts.Axis;
+import snapcharts.charts.Intervals;
 
 /**
  * This NumberFormat subclass assists tick label formatting.

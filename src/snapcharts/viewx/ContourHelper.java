@@ -5,10 +5,10 @@ import snap.gfx.GradientPaint;
 import snap.gfx.Image;
 import snap.gfx.Painter;
 import snapcharts.data.DataSet;
-import snapcharts.model.Chart;
-import snapcharts.model.ContourAxis;
-import snapcharts.modelx.ContourTrace;
-import snapcharts.model.Trace;
+import snapcharts.charts.Chart;
+import snapcharts.charts.ContourAxis;
+import snapcharts.charts.traces.ContourTrace;
+import snapcharts.charts.Trace;
 import snapcharts.data.MinMax;
 import snapcharts.view.ChartHelper;
 

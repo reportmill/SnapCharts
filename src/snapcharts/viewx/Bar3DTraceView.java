@@ -7,7 +7,7 @@ import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.*;
 
 /**

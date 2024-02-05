@@ -4,7 +4,7 @@
 package snapcharts.apptools;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A class to manage UI to edit Trace.PointStyle spacing properties.

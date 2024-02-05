@@ -17,8 +17,8 @@ import snap.web.WebURL;
 import snapcharts.appmisc.OpenInPlotly;
 import snapcharts.appmisc.SamplesPane;
 import snapcharts.doc.*;
-import snapcharts.model.*;
-import snapcharts.modelx.ScatterTrace;
+import snapcharts.charts.*;
+import snapcharts.charts.traces.ScatterTrace;
 import java.io.File;
 import java.util.*;
 

@@ -1,6 +1,6 @@
 package snapcharts.viewx;
 import snap.geom.*;
-import snapcharts.model.PointJoin;
+import snapcharts.charts.PointJoin;
 import snapcharts.view.TraceView;
 
 /**

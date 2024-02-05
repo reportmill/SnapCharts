@@ -7,7 +7,7 @@ import snapcharts.data.DataPoint;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
 import snapcharts.doc.DocItemTrace;
-import snapcharts.model.Trace;
+import snapcharts.charts.Trace;
 import snapcharts.util.TraceUtils;
 
 /**

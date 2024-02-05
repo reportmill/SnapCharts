@@ -7,7 +7,7 @@ import snap.gfx.Painter;
 import snap.util.MathUtils;
 import snap.props.PropChange;
 import snapcharts.data.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.data.MinMax;
 import snapcharts.view.*;
 

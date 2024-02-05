@@ -3,7 +3,7 @@ import snap.geom.Pos;
 import snap.util.Convert;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.data.DataSetUtils;
 import java.util.Arrays;
 

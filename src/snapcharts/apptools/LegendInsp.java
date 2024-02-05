@@ -8,8 +8,8 @@ import snap.gfx.Color;
 import snap.util.StringUtils;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Legend;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.Legend;
 
 /**
  * A class to manage UI to edit a ChartView Legend.

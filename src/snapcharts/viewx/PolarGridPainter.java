@@ -5,8 +5,8 @@ package snapcharts.viewx;
 import snap.geom.Arc;
 import snap.geom.Rect;
 import snap.gfx.Painter;
-import snapcharts.model.AxisType;
-import snapcharts.model.Intervals;
+import snapcharts.charts.AxisType;
+import snapcharts.charts.Intervals;
 import snapcharts.view.*;
 
 /**

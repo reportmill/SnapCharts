@@ -5,7 +5,7 @@ package snapcharts.view;
 import snap.geom.*;
 import snap.util.ArrayUtils;
 import snap.view.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 import java.util.Objects;
 

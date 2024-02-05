@@ -5,7 +5,7 @@ package snapcharts.viewx;
 import snap.geom.Shape;
 import snap.gfx.Color;
 import snap.gfx3d.*;
-import snapcharts.model.TracePoint;
+import snapcharts.charts.TracePoint;
 import snapcharts.view.ChartView;
 
 /**

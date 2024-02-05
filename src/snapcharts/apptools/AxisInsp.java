@@ -5,7 +5,7 @@ import snap.view.ButtonBase;
 import snap.view.ParentView;
 import snap.view.View;
 import snap.view.ViewEvent;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.app.ChartPane;
 import snapcharts.data.MinMax;
 import snapcharts.view.AxisView;

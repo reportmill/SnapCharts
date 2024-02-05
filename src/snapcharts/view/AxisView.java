@@ -9,7 +9,7 @@ import snap.props.PropChange;
 import snap.util.Convert;
 import snap.view.*;
 import snapcharts.data.DataType;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.data.MinMax;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

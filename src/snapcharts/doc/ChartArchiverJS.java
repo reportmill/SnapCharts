@@ -5,7 +5,7 @@ package snapcharts.doc;
 import snap.props.*;
 import snap.util.JSObject;
 import snapcharts.data.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import java.util.Map;
 
 /**

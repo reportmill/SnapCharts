@@ -24,7 +24,7 @@ SnapCharts is written in Java and is compiled to run on the desktop with the JVM
 
 SnapCharts is basically a Model-View-Controller (MVC) app, with each part in an individual package:
 
-    - Model: snapcharts.model pkg
+    - Model: snapcharts.charts pkg
     - View: snapcharts.view pkg
     - Controller: snapcharts.app pkg
 
@@ -33,7 +33,7 @@ SnapCharts is basically a Model-View-Controller (MVC) app, with each part in an 
 This package holds classes to represent (1) a chart and its component parts, (2) data and datasets and (3) supporting
 constants and types.
 
-### SnapCharts.model Chart classes
+### SnapCharts.charts Chart classes
 
     - Chart: Type
     - Header: Title, Subtitle
@@ -41,14 +41,14 @@ constants and types.
     - Legend: Showing, Position, ...
     - ChartPart: Abstract superclass of all parts of a chart
     
-### SnapCharts.model Data classes
+### SnapCharts.data Data classes
  
     - DataSet: High-level representation of chart data with optional transforms, filters, sorting
     - DataSetList: Holds a list of DataSets
     - Intervals: Calculates and describes equally spaced divisions for a min/max
     - DataStore: Low-level representation of chart data
     
-### SnapCharts.model Supporting Types and Constants
+### SnapCharts.charts Supporting Types and Constants
 
     - TraceType: LINE, AREA, SCATTER, BAR, PIE, POLAR, CONTOUR, LINE_3D, BAR_3D, PIE_3D
     - AxisType: X, Y, Y2, Y3, Y4, Z

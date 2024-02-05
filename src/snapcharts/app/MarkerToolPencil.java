@@ -8,8 +8,8 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.view.ViewEvent;
-import snapcharts.model.Chart;
-import snapcharts.model.Marker;
+import snapcharts.charts.Chart;
+import snapcharts.charts.Marker;
 
 /**
  * A tool to create free hand path marker.

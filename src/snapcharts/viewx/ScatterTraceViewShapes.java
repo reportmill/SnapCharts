@@ -4,7 +4,7 @@
 package snapcharts.viewx;
 import snap.geom.*;
 import snapcharts.data.DataSet;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.TraceView;
 
 /**

@@ -6,8 +6,8 @@ import snap.geom.Point;
 import snap.geom.Rect;
 import snap.gfx.*;
 import snap.props.PropChange;
-import snapcharts.model.*;
-import snapcharts.modelx.BarTrace;
+import snapcharts.charts.*;
+import snapcharts.charts.traces.BarTrace;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.TraceView;
 

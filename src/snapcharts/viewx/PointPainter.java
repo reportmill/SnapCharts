@@ -8,7 +8,7 @@ import snap.text.NumberFormat;
 import snap.text.StringBox;
 import snap.util.FormatUtils;
 import snapcharts.data.DataSet;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.TraceView;
 import java.util.ArrayList;
 import java.util.List;

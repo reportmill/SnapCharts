@@ -4,8 +4,8 @@
 package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.props.PropChange;
-import snapcharts.model.Axis;
-import snapcharts.model.Trace;
+import snapcharts.charts.Axis;
+import snapcharts.charts.Trace;
 
 /**
  * A (Polar)TraceView subclass for PolarContour charts.

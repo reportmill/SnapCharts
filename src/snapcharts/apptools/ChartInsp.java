@@ -1,6 +1,6 @@
 package snapcharts.apptools;
 import snap.view.ViewEvent;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.app.ChartPane;
 import snapcharts.util.ChartUtils;
 

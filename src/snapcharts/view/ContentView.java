@@ -6,7 +6,7 @@ import snap.geom.Point;
 import snap.gfx.Painter;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import java.util.Objects;
 
 /**

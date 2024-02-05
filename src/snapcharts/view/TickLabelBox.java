@@ -4,10 +4,10 @@ import snap.geom.Size;
 import snap.gfx.Font;
 import snap.gfx.Paint;
 import snap.view.ChildView;
-import snapcharts.model.Axis;
-import snapcharts.model.Trace;
-import snapcharts.model.Content;
-import snapcharts.model.Intervals;
+import snapcharts.charts.Axis;
+import snapcharts.charts.Trace;
+import snapcharts.charts.Content;
+import snapcharts.charts.Intervals;
 import java.util.ArrayList;
 import java.util.List;
 

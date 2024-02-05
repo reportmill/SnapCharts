@@ -1,5 +1,5 @@
 package snapcharts.viewx;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;

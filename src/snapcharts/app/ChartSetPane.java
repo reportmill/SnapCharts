@@ -9,7 +9,7 @@ import snapcharts.doc.DocItem;
 import snapcharts.doc.DocItemChart;
 import snapcharts.doc.DocItemGroup;
 import snapcharts.doc.DocItemParent;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.PageView;
 import java.util.ArrayList;
 import java.util.List;

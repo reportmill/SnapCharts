@@ -11,7 +11,7 @@ import snap.view.View;
 import snap.view.ViewEvent;
 import snap.view.ViewUtils;
 import snapcharts.data.DataSet;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.data.MinMax;
 import snapcharts.viewx.*;
 import java.util.*;

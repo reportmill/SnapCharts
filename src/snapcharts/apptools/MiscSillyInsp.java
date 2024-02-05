@@ -4,7 +4,7 @@
 package snapcharts.apptools;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.ChartPart;
+import snapcharts.charts.ChartPart;
 
 /**
  * This class provides UI editing for miscellaneous ChartPart properties.

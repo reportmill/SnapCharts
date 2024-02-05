@@ -6,9 +6,9 @@ import snap.gfx3d.Camera;
 import snap.gfx3d.CameraView;
 import snap.view.ViewAnim;
 import snap.view.ViewUtils;
-import snapcharts.model.Axis;
-import snapcharts.model.AxisType;
-import snapcharts.model.ChartPart;
+import snapcharts.charts.Axis;
+import snapcharts.charts.AxisType;
+import snapcharts.charts.ChartPart;
 import snapcharts.view.*;
 
 /**

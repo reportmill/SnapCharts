@@ -4,9 +4,9 @@
 package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Trace;
-import snapcharts.modelx.PolarTrace;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.Trace;
+import snapcharts.charts.traces.PolarTrace;
 
 /**
  * A class to manage UI to edit a PolarTrace.

@@ -1,7 +1,7 @@
 package snapcharts.apptools;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * This class manages UI to edit Chart.Content. Though many of the properties are really for Axis.

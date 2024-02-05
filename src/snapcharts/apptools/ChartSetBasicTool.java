@@ -6,7 +6,7 @@ import snap.view.ViewEvent;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartSetPane;
 import snapcharts.doc.DocItemGroup;
-import snapcharts.model.PageDisplay;
+import snapcharts.charts.PageDisplay;
 
 /**
  * A class to manage UI to edit a ChartSetPane.

@@ -6,7 +6,7 @@ import snap.geom.*;
 import snap.gfx.*;
 import snap.util.SnapUtils;
 import snap.view.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.*;
 
 /**

@@ -1,9 +1,9 @@
 package snapcharts.apptools;
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Trace;
-import snapcharts.modelx.ContourTrace;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.Trace;
+import snapcharts.charts.traces.ContourTrace;
 
 /**
  * A class to manage UI to edit a ContourTrace.

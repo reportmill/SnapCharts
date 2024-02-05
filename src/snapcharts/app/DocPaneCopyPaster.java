@@ -5,10 +5,10 @@ import snap.view.*;
 import snapcharts.doc.ChartArchiver;
 import snapcharts.doc.DocItemParent;
 import snapcharts.doc.DocItemTrace;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartPart;
+import snapcharts.charts.Chart;
+import snapcharts.charts.ChartPart;
 import snapcharts.doc.DocItem;
-import snapcharts.model.Trace;
+import snapcharts.charts.Trace;
 
 /**
  * A CopyPaster implementation for Editor.

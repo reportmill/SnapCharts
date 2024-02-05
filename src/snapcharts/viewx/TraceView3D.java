@@ -8,7 +8,7 @@ import snap.gfx3d.*;
 import snap.util.MathUtils;
 import snap.props.PropChange;
 import snap.view.ViewUtils;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.*;
 
 /**

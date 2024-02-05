@@ -9,7 +9,7 @@ import snap.gfx.Color;
 import snap.gfx3d.Polygon3D;
 import snap.gfx3d.Shape3D;
 import snapcharts.data.DataSet;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.ChartHelper;
 
 /**

@@ -7,7 +7,7 @@ import snapcharts.data.DataChan;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataSetXYZZ;
 import snapcharts.data.DataType;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import java.text.DecimalFormat;
 
 /**

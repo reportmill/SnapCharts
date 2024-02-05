@@ -6,7 +6,7 @@ import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.view.View;
 import snap.view.ViewEvent;
-import snapcharts.model.AxisType;
+import snapcharts.charts.AxisType;
 import snapcharts.data.MinMax;
 import java.util.HashMap;
 import java.util.Map;

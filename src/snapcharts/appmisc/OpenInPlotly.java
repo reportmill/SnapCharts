@@ -9,7 +9,7 @@ import snap.util.*;
 import snapcharts.data.DataChan;
 import snapcharts.data.DataSet;
 import snapcharts.data.DataType;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import java.io.File;
 import java.util.List;
 

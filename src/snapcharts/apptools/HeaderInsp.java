@@ -2,7 +2,7 @@ package snapcharts.apptools;
 
 import snap.view.ViewEvent;
 import snapcharts.app.ChartPane;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A class to manage UI to edit a ChartView Header.

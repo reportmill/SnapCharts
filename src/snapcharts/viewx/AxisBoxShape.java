@@ -7,9 +7,9 @@ import snap.gfx.Image;
 import snap.gfx3d.*;
 import snap.util.MathUtils;
 import snap.view.ViewUtils;
-import snapcharts.model.AxisType;
-import snapcharts.model.Intervals;
-import snapcharts.model.Scene;
+import snapcharts.charts.AxisType;
+import snapcharts.charts.Intervals;
+import snapcharts.charts.Scene;
 
 /**
  * This ParentShape subclass displays an axis box.

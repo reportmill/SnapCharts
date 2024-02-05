@@ -6,9 +6,9 @@ import snap.gfx.*;
 import snap.props.*;
 import snap.text.NumberFormat;
 import snap.util.XMLElement;
+import snapcharts.charts.traces.*;
 import snapcharts.data.*;
-import snapcharts.model.*;
-import snapcharts.modelx.*;
+import snapcharts.charts.*;
 import java.util.HashMap;
 import java.util.Map;
 

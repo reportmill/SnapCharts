@@ -7,7 +7,7 @@ import snap.gfx.Color;
 import snap.gfx.Painter;
 import snap.gfx3d.PathBox3D;
 import snap.gfx3d.Side3D;
-import snapcharts.model.Trace;
+import snapcharts.charts.Trace;
 import snapcharts.view.ChartHelper;
 
 /**

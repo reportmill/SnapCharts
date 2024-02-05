@@ -6,7 +6,7 @@ import snap.props.PropChangeListener;
 import snap.util.*;
 import snap.view.*;
 import snapcharts.app.AppEnv;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.viewx.EmptyChartHelper;
 import java.util.Objects;
 

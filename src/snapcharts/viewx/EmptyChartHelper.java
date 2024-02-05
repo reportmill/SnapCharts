@@ -1,6 +1,6 @@
 package snapcharts.viewx;
-import snapcharts.model.AxisType;
-import snapcharts.model.TraceType;
+import snapcharts.charts.AxisType;
+import snapcharts.charts.TraceType;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;

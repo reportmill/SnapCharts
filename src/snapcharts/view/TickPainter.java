@@ -8,9 +8,9 @@ import snap.gfx.Font;
 import snap.gfx.Painter;
 import snap.gfx.Stroke;
 import snap.view.StringView;
-import snapcharts.model.Axis;
-import snapcharts.model.AxisType;
-import snapcharts.model.Intervals;
+import snapcharts.charts.Axis;
+import snapcharts.charts.AxisType;
+import snapcharts.charts.Intervals;
 
 /**
  * This class paints axis ticks for an AxisView.

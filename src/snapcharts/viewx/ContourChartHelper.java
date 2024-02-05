@@ -4,8 +4,8 @@
 package snapcharts.viewx;
 import snap.gfx.Painter;
 import snap.props.PropChange;
-import snapcharts.model.*;
-import snapcharts.modelx.ContourTrace;
+import snapcharts.charts.*;
+import snapcharts.charts.traces.ContourTrace;
 import snapcharts.view.*;
 
 /**

@@ -2,7 +2,7 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.viewx;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.AxisView;
 import snapcharts.view.ChartView;
 import snapcharts.view.TraceView;

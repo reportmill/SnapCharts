@@ -7,7 +7,7 @@ import snap.gfx.*;
 import snap.util.ArrayUtils;
 import snap.props.PropChange;
 import snapcharts.data.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A view to display the actual contents of a chart.

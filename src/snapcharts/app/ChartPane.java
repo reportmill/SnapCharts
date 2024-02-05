@@ -14,7 +14,7 @@ import snap.props.Undoer;
 import snap.util.*;
 import snap.view.*;
 import snapcharts.doc.*;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.ContentView;

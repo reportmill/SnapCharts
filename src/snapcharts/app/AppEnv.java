@@ -5,10 +5,9 @@ package snapcharts.app;
 import snap.gfx.GFXEnv;
 import snap.util.FileUtils;
 import snap.util.SnapUtils;
-import snap.view.ViewUtils;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
-import snapcharts.model.Chart;
+import snapcharts.charts.Chart;
 import java.io.File;
 import java.io.IOException;
 

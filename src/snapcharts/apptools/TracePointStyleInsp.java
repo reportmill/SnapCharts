@@ -7,7 +7,7 @@ import snap.gfx.Color;
 import snap.util.Convert;
 import snap.view.*;
 import snapcharts.app.ChartPane;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A class to manage UI to edit Trace.PointStyle.

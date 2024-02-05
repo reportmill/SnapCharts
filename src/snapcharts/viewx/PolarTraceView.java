@@ -10,7 +10,7 @@ import snapcharts.data.DataSet;
 import snapcharts.data.DataSetImpl;
 import snapcharts.data.DataType;
 import snapcharts.data.DataUnit;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.*;
 
 /**

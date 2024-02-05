@@ -3,7 +3,7 @@
  */
 package snapcharts.viewx;
 import snap.gfx.Painter;
-import snapcharts.model.Intervals;
+import snapcharts.charts.Intervals;
 import snapcharts.view.*;
 
 /**

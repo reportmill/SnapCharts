@@ -5,10 +5,10 @@ package snapcharts.doc;
 import snap.props.Prop;
 import snap.props.PropChange;
 import snap.props.PropSet;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Trace;
-import snapcharts.model.Content;
+import snapcharts.charts.Chart;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.Trace;
+import snapcharts.charts.Content;
 
 /**
  * A DocItem subclass to hold a chart.

@@ -6,7 +6,7 @@ import snap.gfx.Effect;
 import snap.view.ParentView;
 import snap.view.View;
 import snap.view.ViewEvent;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 
 /**
  * A superclass for ChartView views.

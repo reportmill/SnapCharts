@@ -5,10 +5,10 @@ package snapcharts.doc;
 import snap.props.PropSet;
 import snap.props.PropObject;
 import snap.util.*;
-import snapcharts.model.Chart;
-import snapcharts.model.ChartPart;
-import snapcharts.model.Trace;
-import snapcharts.model.PageDisplay;
+import snapcharts.charts.Chart;
+import snapcharts.charts.ChartPart;
+import snapcharts.charts.Trace;
+import snapcharts.charts.PageDisplay;
 import java.util.ArrayList;
 import java.util.List;
 

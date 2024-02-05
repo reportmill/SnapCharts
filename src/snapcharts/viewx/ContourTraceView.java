@@ -4,7 +4,7 @@
 package snapcharts.viewx;
 import snap.gfx.*;
 import snap.props.PropChange;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.TraceView;
 
 /**

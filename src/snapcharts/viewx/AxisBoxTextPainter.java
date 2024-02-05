@@ -10,7 +10,7 @@ import snap.gfx3d.*;
 import snap.text.TextFormat;
 import snap.view.StringView;
 import snap.view.View;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.view.AxisViewX;
 import snapcharts.view.TickLabel;
 

@@ -3,9 +3,8 @@ import snap.gfx.Color;
 import snap.view.*;
 import snapcharts.app.ChartPane;
 import snapcharts.data.DataUnit;
-import snapcharts.model.*;
+import snapcharts.charts.*;
 import snapcharts.data.DataType;
-import snapcharts.modelx.PolarTrace;
 
 /**
  * A class to manage UI to edit basic Trace props.

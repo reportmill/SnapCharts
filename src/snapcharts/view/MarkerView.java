@@ -7,11 +7,11 @@ import snap.gfx.Color;
 import snap.gfx.Image;
 import snap.util.MathUtils;
 import snap.view.*;
-import snapcharts.model.AxisType;
-import snapcharts.model.Trace;
+import snapcharts.charts.AxisType;
+import snapcharts.charts.Trace;
 import snapcharts.data.DataSet;
-import snapcharts.model.Marker;
-import snapcharts.model.Marker.CoordSpace;
+import snapcharts.charts.Marker;
+import snapcharts.charts.Marker.CoordSpace;
 import snapcharts.data.MinMax;
 
 /**
