@@ -144,39 +144,9 @@ public class SnapCharts {
     }
 
     /**
-     * Returns text for given source.
-     */
-    public static String getTextForSource(Object aSource)
-    {
-        // Get URL for source
-        WebURL url = WebURL.getURL(aSource);
-        if (url == null)
-            return null;
-
-        // Get text for URL and return
-        String text = url.getText();
-        return text;
-    }
-
-    /**
-     * Returns text for given source.
-     */
-    public static Image getImageForSource(Object aSource)
-    {
-        // Get URL for source
-        WebURL url = WebURL.getURL(aSource);
-        if (url == null)
-            return null;
-
-        // Get image for URL and return
-        Image image = Image.getImageForSource(url);
-        return image;
-    }
-
-    /**
      * Creates a double array of min/max.
      */
-    public static DoubleArray minMaxArray(double aMin, double aMax)
+    public static DoubleArray doubleArrayFromMinMax(double aMin, double aMax)
     {
         return DoubleArray.fromMinMax(aMin, aMax);
     }
@@ -184,7 +154,7 @@ public class SnapCharts {
     /**
      * Creates a double array of min/max/count.
      */
-    public static DoubleArray minMaxArray(double aMin, double aMax, int aCount)
+    public static DoubleArray doubleArrayFromMinMaxCount(double aMin, double aMax, int aCount)
     {
         return DoubleArray.fromMinMaxCount(aMin, aMax, aCount);
     }
@@ -192,7 +162,7 @@ public class SnapCharts {
     /**
      * Maps XY to Z.
      */
-    public static DoubleArray mapXY(double[] x, double[] y, DoubleBinaryOperator mapper)
+    public static DoubleArray doubleArrayFromMapXY(double[] x, double[] y, DoubleBinaryOperator mapper)
     {
         // Get Z double array
         double[] z = new double[x.length * y.length];
@@ -211,8 +181,25 @@ public class SnapCharts {
     /**
      * Maps XY to Z.
      */
+    public static DoubleArray doubleArrayFromMapXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
+    {
+        return doubleArrayFromMapXY(aX.doubleArray(), aY.doubleArray(), mapper);
+    }
+
+    /**
+     * Maps XY to Z.
+     */
     public static DoubleArray mapXY(DoubleArray aX, DoubleArray aY, DoubleBinaryOperator mapper)
     {
-        return mapXY(aX.doubleArray(), aY.doubleArray(), mapper);
+        return doubleArrayFromMapXY(aX.doubleArray(), aY.doubleArray(), mapper);
+    }
+
+    /**
+     * Returns text for given source.
+     */
+    public static Image getImageForSource(Object aSource)
+    {
+        WebURL url = WebURL.getURL(aSource);
+        return url != null ? Image.getImageForSource(url) : null;
     }
 }
