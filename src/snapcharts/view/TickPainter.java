@@ -187,7 +187,7 @@ public class TickPainter {
             stringView = new StringView();
             Font font = axis.getFont();
             int fontSize = (int) Math.round(font.getSize() * .75);
-            Font font2 = font.deriveFont(fontSize);
+            Font font2 = font.copyForSize(fontSize);
             stringView.setFont(font2);
             stringView.setFontSizing(false);
             stringViewX = axis.getSide() == Side.LEFT ? Math.min(tickX, tickMaxX) - 4 : Math.max(tickX, tickMaxX) + 4;

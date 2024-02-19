@@ -82,7 +82,7 @@ public class Header extends ChartPart {
         // If not set, return Header font reduced by 2
         Font headerFont = getFont();
         Font subtitleFont = headerFont.isBold() ? headerFont.getBold() : headerFont;
-        subtitleFont = subtitleFont.deriveFont(subtitleFont.getSize() - 2);
+        subtitleFont = subtitleFont.copyForSize(subtitleFont.getSize() - 2);
         return subtitleFont;
     }
 

@@ -133,12 +133,12 @@ public class TraceTagStyleInsp extends ChartPartInsp {
             tagStyle.setFont(font);
         }
         if (anEvent.equals("TagFontSizeAdd1Button")) {
-            Font font2 = tagFont.deriveFont(tagFont.getSize() + 1);
+            Font font2 = tagFont.copyForSize(tagFont.getSize() + 1);
             tagStyle.setFont(font2);
         }
         if (anEvent.equals("TagFontSizeSub1Button")) {
             double size2 = Math.max(tagFont.getSize() - 1, 6);
-            Font font2 = tagFont.deriveFont(size2);
+            Font font2 = tagFont.copyForSize(size2);
             tagStyle.setFont(font2);
         }
         if (anEvent.equals("TagFontResetButton"))

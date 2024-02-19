@@ -71,7 +71,7 @@ public class TickLabel extends StringView {
 
         // Update ExpText and add ExpText.Width to PrefW
         Font font = getFont();
-        Font expFont = font.deriveFont(Math.round(font.getSize()) * .7);
+        Font expFont = font.copyForSize(Math.round(font.getSize()) * .7);
         _expText.setFont(expFont);
         _expText.setTextFill(getTextFill());
         prefW += _expText.getTextWidth() + 1;
