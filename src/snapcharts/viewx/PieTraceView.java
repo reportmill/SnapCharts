@@ -540,7 +540,7 @@ public class PieTraceView extends TraceView {
             Rect bnds1 = new Rect(aWedge._textPoint.x, aWedge._textPoint.y - font.getAscent(), aWedge._tw, aWedge._th);
             bnds0.inset(-LABEL_PAD);
             bnds1.inset(-LABEL_PAD);
-            return bnds0.intersects(bnds1);
+            return bnds0.intersectsShape(bnds1);
         }
 
         /** Returns the connector line. */

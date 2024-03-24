@@ -360,7 +360,7 @@ public class PointPainter {
      */
     private static double getDistanceBetween(RectBase aRect1, RectBase aRect2)
     {
-        if (aRect1.intersects(aRect2))
+        if (aRect1.intersectsShape(aRect2))
             return 0;
         double dx1 = aRect2.x - aRect1.getMaxX();
         double dx2 = aRect1.x - aRect2.getMaxX();
