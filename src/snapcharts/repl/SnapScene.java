@@ -45,7 +45,7 @@ public class SnapScene extends ChildView {
     private boolean  _autoStart = true;
 
     // The animation timer    
-    private ViewTimer  _timer = new ViewTimer(getFrameDelay(), t -> doAct());
+    private ViewTimer  _timer = new ViewTimer(this::doAct, getFrameDelay());
 
     /**
      * Create new SnapScene.
