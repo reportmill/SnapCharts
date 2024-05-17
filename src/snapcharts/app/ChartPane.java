@@ -489,7 +489,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
             // If file not '.charts' or '.simple', just return
             ClipboardData cbFile = cbFiles.get(0);
             String fileName = cbFile.getName();
-            String ext = FilePathUtils.getType(fileName);
+            String ext = FilePathUtils.getFileType(fileName);
             if (!ext.equals("png") && !ext.equals("jpg") && !ext.equals("jpeg") && !ext.equals("gif"))
                 return;
 
