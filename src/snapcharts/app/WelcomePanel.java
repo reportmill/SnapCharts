@@ -123,12 +123,12 @@ public class WelcomePanel extends ViewOwner {
         TableView<WebFile> sitesTable = getView("SitesTable", TableView.class);
         sitesTable.setRowHeight(24);
         sitesTable.getCol(0).setItemTextFunction(i -> i.getName());
+        sitesTable.addEventHandler(this::handleSitesTableMouseRelease, MouseRelease);
 
-        // Enable SitesTable MouseReleased
+        // Init SelFile
         WebFile[] recentFiles = getRecentFiles();
         if (recentFiles.length > 0)
             _selFile = recentFiles[0];
-        enableEvents(sitesTable, MouseRelease);
 
         // Hide ProgressBar
         getView("ProgressBar").setVisible(false);
@@ -137,7 +137,7 @@ public class WelcomePanel extends ViewOwner {
         WindowView win = getWindow();
         win.setTitle("Welcome");
         win.setResizable(false);
-        enableEvents(win, WinClose);
+        win.addEventHandler(e -> { _exit = true; hide(); }, WinClose);
         getView("OpenButton", Button.class).setDefaultButton(true);
     }
 
@@ -174,7 +174,7 @@ public class WelcomePanel extends ViewOwner {
             showOpenPanel();
 
         // Handle OpenButton or SitesTable double-click
-        if (anEvent.equals("OpenButton") || anEvent.equals("SitesTable") && anEvent.getClickCount() > 1) {
+        if (anEvent.equals("OpenButton")) {
             WebFile file = (WebFile) getViewSelItem("SitesTable");
             openFile(file);
         }
@@ -184,11 +184,14 @@ public class WelcomePanel extends ViewOwner {
             _exit = true;
             hide();
         }
+    }
 
-        // Handle WinClosing
-        if (anEvent.isWinClose()) {
-            _exit = true;
-            hide();
+    private void handleSitesTableMouseRelease(ViewEvent anEvent)
+    {
+        if (anEvent.getClickCount() > 1) {
+            TableView<WebFile> sitesTable = getView("SitesTable", TableView.class);
+            WebFile file = sitesTable.getSelItem();
+            openFile(file);
         }
     }
 

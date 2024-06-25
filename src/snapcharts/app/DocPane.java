@@ -555,7 +555,7 @@ public class DocPane extends ViewOwner {
 
         // Configure window
         WindowView win = getWindow();
-        enableEvents(win, WinClose);
+        win.addEventHandler(e -> { close(); e.consume(); }, WinClose);
 
         // If TeaVM, go full window
         if (SnapUtils.isTeaVM) {
@@ -567,7 +567,7 @@ public class DocPane extends ViewOwner {
         addPlotlyButton();
 
         // Add drag-drop support to open new files
-        enableEvents(getUI(), DragEvents);
+        getUI().addEventHandler(this::handleDragEvent, DragEvents);
 
         // Add key actions
         addKeyActionHandler("DeleteAction", "DELETE");
@@ -653,19 +653,11 @@ public class DocPane extends ViewOwner {
             setSelItem(docItem);
         }
 
-        // Handle WinClosing
-        if (anEvent.isWinClose()) {
-            close(); anEvent.consume(); }
-
         // Handle NewAction
         if (anEvent.equals("NewButton")) {
             respondToNewAction();
             //getSelItemPane().sendEvent(New_Action);
         }
-
-        // Handle DragEvents
-        if (anEvent.isDragEvent())
-            handleDragEvent(anEvent);
 
         // Handle EscapeAction
         if (anEvent.equals("EscapeAction")) {
@@ -791,7 +783,7 @@ public class DocPane extends ViewOwner {
 
         // If no files, just return
         List<ClipboardData> cbFiles = clipboard.getFiles();
-        if (cbFiles.size() == 0)
+        if (cbFiles.isEmpty())
             return;
 
         // If file not '.charts' or '.simple', just return

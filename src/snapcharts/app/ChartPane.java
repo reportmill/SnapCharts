@@ -318,7 +318,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         }
 
         // Register for DragEvents
-        enableEvents(getUI(), DragEvents);
+        getUI().addEventHandler(this::handleDragEvent, DragEvents);
 
         // Register for EscapeAction
         addKeyActionHandler("EscapeAction", "ESCAPE");
@@ -418,10 +418,6 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
      */
     protected void respondUI(ViewEvent anEvent)
     {
-        // Handle DragDrop events
-        if (anEvent.isDragDropEvent())
-            handleDragEvent(anEvent);
-
         // Handle ZoomSelectButton
         if (anEvent.equals("ZoomSelectButton")) {
             ChartHelper chartHelper = getChartHelper();
@@ -483,7 +479,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
 
             // If no files, just return
             List<ClipboardData> cbFiles = clipboard.getFiles();
-            if (cbFiles.size() == 0)
+            if (cbFiles.isEmpty())
                 return;
 
             // If file not '.charts' or '.simple', just return
