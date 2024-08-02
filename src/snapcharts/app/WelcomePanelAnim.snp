@@ -5,7 +5,7 @@
     <ImageView width="400" height="220" resource="1902610833" PreserveRatio="false">
       <effect type="emboss" altitude="90" />
     </ImageView>
-    <TextArea x="11" y="1" width="380" height="140" Align="CENTER">
+    <TextArea x="11" y="1" width="380" height="140" Align="CENTER" Rich="true">
       <effect type="blur" radius="12" />
       <RichText>
         <font name="Arial Black" size="58" />
@@ -14,7 +14,7 @@
         <string>SnapCharts</string>
       </RichText>
     </TextArea>
-    <TextArea x="11" y="-1" width="380" height="140" Align="CENTER">
+    <TextArea x="11" y="-1" width="380" height="140" Align="CENTER" Rich="true">
       <effect type="emboss" radius="5" />
       <RichText>
         <font name="Arial Black" size="58" />
@@ -41,7 +41,7 @@
       </KeyFrame>
       <KeyFrame time="5000" Loops="true" />
     </PathView>
-    <TextArea x="73" y="145" width="264" height="38" WrapText="true">
+    <TextArea x="73" y="145" width="264" height="38" WrapText="true" Rich="true">
       <effect type="blur" radius="5" />
       <RichText>
         <font name="Arial Bold" size="14" />
@@ -49,7 +49,7 @@
         <string>An app for building charts</string>
       </RichText>
     </TextArea>
-    <TextArea x="73" y="141" width="264" height="38" WrapText="true">
+    <TextArea x="73" y="141" width="264" height="38" WrapText="true" Rich="true">
       <RichText>
         <font name="Arial Bold" size="14" />
         <color value="#ffffff" />
