@@ -158,13 +158,16 @@ public class ChartPaneInsp extends ViewOwner {
      */
     private void addInspector(ChartPartInsp aChartPartInsp)
     {
+        // Add label
+        _inspColView.addChild(aChartPartInsp.getLabel());
+
         // Get UI view and add to inspector
         View inspUI = aChartPartInsp.getUI();
         _inspColView.addChild(inspUI);
 
         // Trigger Collapser create
         Collapser collapser = aChartPartInsp.getCollapser();
-         collapser.setCollapsed(true);
+        collapser.setCollapsed(true);
 
         // Add listener to update ChartPartInsp.Sel when label is clicked
         Label label = aChartPartInsp.getLabel();

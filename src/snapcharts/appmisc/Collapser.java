@@ -41,7 +41,7 @@ public class Collapser {
     private static Map<String,CollapseGroup> _groups = new HashMap<>();
 
     /**
-     * Creates a Collapser for given View and Label.
+     * Constructor.
      */
     public Collapser(View aView, Label aLabel)
     {
@@ -263,52 +263,6 @@ public class Collapser {
         ShapeView sview = new ShapeView(poly); sview.setPrefSize(9,9);
         sview.setFill(Color.GRAY); sview.setBorder(Color.GRAY, 1);
         return _clpView = sview;
-    }
-
-    /**
-     * Creates a Collapser for given view, including a label with given name.
-     */
-    public static Collapser createCollapserAndLabel(View aView, String aLabelTitle)
-    {
-        // Create Label
-        Label label = createLabel(aLabelTitle);
-
-        // Handle TitleView
-        if (aView instanceof TitleView) { TitleView titleView = (TitleView)aView;
-            View content = titleView.getContent();
-            BoxView boxView = new BoxView(content, true, true);
-            boxView.setPadding(titleView.getPadding());
-            ColView colView = new ColView();
-            colView.addChild(boxView);
-            ViewUtils.replaceView(titleView, colView);
-            aView = colView;
-        }
-
-        // Add above given view
-        ViewHost host = aView.getHost();
-        int index = aView.indexInHost();
-        host.addGuest(label, index);
-
-        // Create/return collapser
-        return new Collapser(aView, label);
-    }
-
-    /**
-     * Creates a label.
-     */
-    private static Label createLabel(String aTitle)
-    {
-        Label label = new Label(aTitle);
-        label.setName(aTitle + "Label");
-        label.setFill(new Color("#e0e0e4"));
-        label.setFont(Font.Arial14);
-        label.getStringView().setGrowWidth(true);
-        label.setTextFill(Color.GRAY);
-        label.setAlign(Pos.CENTER);
-        label.setPadding(4,4,4,10);
-        label.setMargin(4,8,4,8);
-        label.setBorderRadius(5);
-        return label;
     }
 
     /**

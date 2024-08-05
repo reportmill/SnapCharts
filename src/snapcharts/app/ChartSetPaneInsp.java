@@ -1,5 +1,7 @@
 package snapcharts.app;
+import snap.geom.Pos;
 import snap.gfx.Color;
+import snap.gfx.Font;
 import snap.gfx.Image;
 import snap.view.*;
 import snap.viewx.TextPane;
@@ -70,10 +72,10 @@ public class ChartSetPaneInsp extends ViewOwner {
 
         // Get ChartSetBasicTool
         _csetBasic = new ChartSetBasicTool(_epane);
+        Label collapseLabel = createLabelForString("Page Properties");
+        new Collapser(_csetBasic.getUI(), collapseLabel);
+        _inspColView.addChild(collapseLabel);
         _inspColView.addChild(_csetBasic.getUI());
-        Collapser c = Collapser.createCollapserAndLabel(_csetBasic.getUI(), "Page Properties");
-        c.getLabel().setFill(ChartPartInsp.LABEL_FILL_SEL);
-        c.getLabel().setBorder(ChartPartInsp.LABEL_BORDER_SEL);
     }
 
     /**
@@ -125,5 +127,24 @@ public class ChartSetPaneInsp extends ViewOwner {
         // Set content and whether Inspector ScrollView sizes or scrolls content vertically
         _inspScroll.setContent(content);
         _inspScroll.setFillHeight(contentGrowHeight);
+    }
+
+    /**
+     * Creates a label.
+     */
+    private static Label createLabelForString(String aTitle)
+    {
+        Label label = new Label(aTitle);
+        label.setName(aTitle + "Label");
+        label.setFill(ChartPartInsp.LABEL_FILL_SEL);
+        label.setBorder(ChartPartInsp.LABEL_BORDER_SEL);
+        label.setFont(Font.Arial14);
+        label.getStringView().setGrowWidth(true);
+        label.setTextFill(Color.GRAY);
+        label.setAlign(Pos.CENTER);
+        label.setPadding(4,4,4,10);
+        label.setMargin(4,8,4,8);
+        label.setBorderRadius(5);
+        return label;
     }
 }

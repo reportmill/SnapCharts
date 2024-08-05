@@ -5,8 +5,6 @@ import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.view.Label;
-import snap.view.View;
-import snap.view.ViewHost;
 import snap.view.ViewOwner;
 import snapcharts.app.ChartPane;
 import snapcharts.appmisc.Collapser;
@@ -72,19 +70,8 @@ public abstract class ChartPartInsp extends ViewOwner {
      */
     public Collapser getCollapser()
     {
-        if (_collapser!=null) return _collapser;
-
-        // Get/add label
-        Label label = getLabel();
-        View view = getUI();
-        ViewHost host = view.getHost();
-        int index = view.indexInHost();
-        host.addGuest(label, index);
-
-        // Add collaper and label
-        //_collapser = Collapser.createCollapserAndLabel(getUI(), getName());
-        _collapser = new Collapser(getUI(), label);
-        return _collapser;
+        if (_collapser != null) return _collapser;
+        return _collapser = new Collapser(getUI(), getLabel());
     }
 
     /**
