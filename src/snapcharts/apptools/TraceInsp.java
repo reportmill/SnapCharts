@@ -420,9 +420,9 @@ public class TraceInsp extends ChartPartInsp {
     private void setButtonHighlight(String aName, boolean aValue)
     {
         ButtonBase view = getView(aName, ButtonBase.class);
-        Color color = (Color) view.getLabel().getTextFill();
+        Color color = (Color) view.getLabel().getTextColor();
         Color color2 = aValue ? Color.BLACK : Color.DARKGRAY;
         if (color != color2)
-            view.getLabel().setTextFill(color2);
+            view.getLabel().setTextColor(color2);
     }
 }

@@ -84,7 +84,7 @@ public class SamplesPane extends ViewOwner {
         // Add loading label
         Label loadLabel = new Label("Loading...");
         loadLabel.setFont(Font.Arial16.copyForSize(32).getBold());
-        loadLabel.setTextFill(Color.GRAY);
+        loadLabel.setTextColor(Color.GRAY);
         colView.addChild(loadLabel);
 
         // Create ScrollView
@@ -250,10 +250,10 @@ public class SamplesPane extends ViewOwner {
         ImageView imageView = (ImageView) itemBox.getChild(0);
         imageView.setEffect(isSelected ? SHADOW_SEL : SHADOW);
 
-        // Set Label Fill and TextFill
+        // Set Label Fill and TextColor
         Label oldLabel = (Label) itemBox.getChild(1);
         oldLabel.setFill(isSelected ? Color.BLUE : null);
-        oldLabel.setTextFill(isSelected ? Color.WHITE : null);
+        oldLabel.setTextColor(isSelected ? Color.WHITE : null);
     }
 
     /**

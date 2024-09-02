@@ -181,7 +181,7 @@ public abstract class Axis extends ChartPart {
         super();
 
         // Override default property values
-        _textFill = DEFAULT_AXIS_TEXT_FILL;
+        _textColor = DEFAULT_AXIS_TEXT_FILL;
         _align = DEFAULT_AXIS_ALIGN;
         _spacing = DEFAULT_AXIS_SPACING;
 

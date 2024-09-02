@@ -81,7 +81,7 @@ public class ChartPaneInsp extends ViewOwner {
     {
         // Get/configure TitleLabel
         _titleLabel = getView("TitleLabel", Label.class);
-        _titleLabel.setTextFill(Color.GRAY);
+        _titleLabel.setTextColor(Color.GRAY);
 
         // Get/configure SearchText: radius, prompt, image, animation
         TextField searchText = getView("SearchTextField", TextField.class);

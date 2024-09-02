@@ -1,8 +1,8 @@
 package snapcharts.view;
 import snap.geom.Point;
 import snap.geom.Size;
+import snap.gfx.Color;
 import snap.gfx.Font;
-import snap.gfx.Paint;
 import snap.view.ChildView;
 import snapcharts.charts.Axis;
 import snapcharts.charts.Trace;
@@ -117,7 +117,7 @@ public class TickLabelBox extends ChildView {
         // Get TickLabel attributes
         Axis axis = axisView.getAxis();
         Font tickLabelFont = axis.getFont();
-        Paint tickTextFill = axis.getTextFill();
+        Color tickTextFill = axis.getTextFill();
         TickLabelFormat tickFormat = new TickLabelFormat(axisView, intervals);
 
         // Create list
@@ -143,7 +143,7 @@ public class TickLabelBox extends ChildView {
             TickLabel tickLabel = new TickLabel(dataX);
             tickLabel.setText(tickStr);
             tickLabel.setFont(tickLabelFont);
-            tickLabel.setTextFill(tickTextFill);
+            tickLabel.setTextColor(tickTextFill);
             tickLabels.add(tickLabel);
         }
 

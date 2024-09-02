@@ -95,7 +95,7 @@ public abstract class ChartPartInsp extends ViewOwner {
 
         getLabel().setFont(aValue ? LABEL_FONT_SEL : LABEL_FONT);
         getLabel().setFill(aValue ? LABEL_FILL_SEL : LABEL_FILL);
-        getLabel().setTextFill(aValue ? LABEL_TEXT_FILL_SEL : LABEL_TEXT_FILL);
+        getLabel().setTextColor(aValue ? LABEL_TEXT_FILL_SEL : LABEL_TEXT_FILL);
         getLabel().setBorder(aValue ? LABEL_BORDER_SEL : null);
     }
 
@@ -111,7 +111,7 @@ public abstract class ChartPartInsp extends ViewOwner {
         label.setName(text + "Label");
         label.setFont(LABEL_FONT);
         label.setFill(LABEL_FILL);
-        label.setTextFill(LABEL_TEXT_FILL);
+        label.setTextColor(LABEL_TEXT_FILL);
         label.getStringView().setGrowWidth(true);
         label.setAlign(Pos.CENTER);
         label.setPadding(4,4,4,10);

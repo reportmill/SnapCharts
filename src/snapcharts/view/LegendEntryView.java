@@ -31,9 +31,9 @@ public class LegendEntryView extends Label {
         // Set ShowText
         setShowText(true);
 
-        // Set TextFill
-        Paint textFill = aTrace.isDisabled() ? DISABLED_COLOR : aLegend.getTextFill();
-        setTextFill(textFill);
+        // Set text color
+        Color textColor = aTrace.isDisabled() ? DISABLED_COLOR : aLegend.getTextFill();
+        setTextColor(textColor);
 
         // Create/add LegendGraphic
         View legendGraphic = new LegendGraphic();

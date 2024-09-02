@@ -52,7 +52,7 @@ public class ChartSetPaneInsp extends ViewOwner {
     {
         // Get/configure TitleLabel
         _titleLabel = getView("TitleLabel", Label.class);
-        _titleLabel.setTextFill(Color.GRAY);
+        _titleLabel.setTextColor(Color.GRAY);
 
         // Get/configure SearchText: radius, prompt, image, animation
         TextField searchText = getView("SearchTextField", TextField.class);
@@ -140,7 +140,7 @@ public class ChartSetPaneInsp extends ViewOwner {
         label.setBorder(ChartPartInsp.LABEL_BORDER_SEL);
         label.setFont(Font.Arial14);
         label.getStringView().setGrowWidth(true);
-        label.setTextFill(Color.GRAY);
+        label.setTextColor(Color.GRAY);
         label.setAlign(Pos.CENTER);
         label.setPadding(4,4,4,10);
         label.setMargin(4,8,4,8);

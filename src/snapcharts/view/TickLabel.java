@@ -73,7 +73,7 @@ public class TickLabel extends StringView {
         Font font = getFont();
         Font expFont = font.copyForSize(Math.round(font.getSize()) * .7);
         _expText.setFont(expFont);
-        _expText.setTextFill(getTextFill());
+        _expText.setTextColor(getTextColor());
         prefW += _expText.getTextWidth() + 1;
         return prefW;
     }

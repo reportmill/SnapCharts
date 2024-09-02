@@ -53,14 +53,14 @@ public class HeaderView extends ChartPartView<Header> {
         _titleView.setText(title);
         _titleView.setVisible(title != null && title.length() > 0);
         _titleView.setFont(header.getFont());
-        _titleView.setTextFill(header.getTextFill());
+        _titleView.setTextColor(header.getTextFill());
 
         // Reset Subtitle
         String subtitle = header.getSubtitle();
         _subtitleView.setText(subtitle);
         _subtitleView.setVisible(subtitle != null && subtitle.length() > 0);
         _subtitleView.setFont(header.getSubtitleFont());
-        _subtitleView.setTextFill(header.getTextFill());
+        _subtitleView.setTextColor(header.getTextFill());
     }
 
     /**

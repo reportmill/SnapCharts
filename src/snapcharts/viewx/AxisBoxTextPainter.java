@@ -306,7 +306,7 @@ public class AxisBoxTextPainter {
 
         TickLabel tickLabel = new TickLabel(0);
         tickLabel.setFont(axis.getFont());
-        tickLabel.setTextFill(axis.getTextFill());
+        tickLabel.setTextColor(axis.getTextFill());
         tickLabel.setPadding(8, 8, 8, 8);
         return tickLabel;
     }

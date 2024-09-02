@@ -153,7 +153,7 @@ public class Content3DInsp extends ChartPartInsp {
         setViewValue("GimbalRadiusText", gimbalRadius);
         getView("GimbalRadiusResetButton").setPaintable(gimbalRadiusSet);
         Color gimbalRadiusTextColor = gimbalRadiusSet ? Color.BLACK : Color.GRAY;
-        getView("GimbalRadiusText", TextField.class).setTextFill(gimbalRadiusTextColor);
+        getView("GimbalRadiusText", TextField.class).setTextColor(gimbalRadiusTextColor);
 
         // Reset OrthoViewButton
         setViewValue("OrthoViewButton", camera.isOrtho());

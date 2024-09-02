@@ -458,7 +458,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Get Marker paint properties
         Font markerFont = getFont();
-        Paint markerFill = getAxis().getTextFill();
+        Color markerFill = getAxis().getTextFill();
 
         // Get MarkerLabels
         TickLabel[] markerLabels = new TickLabel[count];
@@ -467,7 +467,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
             TickLabel markerLabel = markerLabels[i] = new TickLabel(marker.getX());
             markerLabel.setText(marker.getText());
             markerLabel.setFont(markerFont);
-            markerLabel.setTextFill(markerFill);
+            markerLabel.setTextColor(markerFill);
         }
 
         // Create/return array of TickLabels
@@ -600,7 +600,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         String title = axis.getTitle();
         _titleView.setText(title);
         _titleView.setFont(axis.getFont());
-        _titleView.setTextFill(axis.getTextFill());
+        _titleView.setTextColor(axis.getTextFill());
 
         // If no title, make TitleView not visible so it takes no space (for AxisViewY, TitleView is in WrapView)
         boolean titleVisible = title != null && title.length() > 0;

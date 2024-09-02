@@ -55,8 +55,8 @@ public class ChartPart extends PropObject {
     // The Font
     protected Font  _font;
 
-    // The Text Fill
-    protected Paint  _textFill;
+    // The Text color
+    protected Color _textColor;
 
     // The Text Format
     protected TextFormat  _textFormat;
@@ -118,7 +118,7 @@ public class ChartPart extends PropObject {
         _effect = DEFAULT_EFFECT;
         _opacity = DEFAULT_OPACTIY;
         _font = DEFAULT_FONT;
-        _textFill = DEFAULT_TEXT_FILL;
+        _textColor = DEFAULT_TEXT_FILL;
         _align = DEFAULT_ALIGN;
         _margin = DEFAULT_MARGIN;
         _padding = DEFAULT_PADDING;
@@ -365,17 +365,17 @@ public class ChartPart extends PropObject {
     }
 
     /**
-     * Returns the fill for ChartPart text.
+     * Returns the color for ChartPart text.
      */
-    public Paint getTextFill()  { return _textFill; }
+    public Color getTextFill()  { return _textColor; }
 
     /**
      * Sets the fill for ChartPart text.
      */
-    public void setTextFill(Paint aFill)
+    public void setTextFill(Color aColor)
     {
-        if (Objects.equals(aFill, _textFill)) return;
-        firePropChange(TextFill_Prop, _textFill, _textFill = aFill);
+        if (Objects.equals(aColor, _textColor)) return;
+        firePropChange(TextFill_Prop, _textColor, _textColor = aColor);
     }
 
     /**
@@ -581,7 +581,7 @@ public class ChartPart extends PropObject {
 
             // Font, TextFill, TextFormat
             case Font_Prop: setFont((Font) aValue); break;
-            case TextFill_Prop: setTextFill((Paint) aValue); break;
+            case TextFill_Prop: setTextFill((Color) aValue); break;
             case TextFormat_Prop: setTextFormat((TextFormat) aValue); break;
 
             // Align, Margin, Padding, Spacing
