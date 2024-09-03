@@ -551,7 +551,7 @@ public class DocPane extends ViewOwner {
         _treeView = getView("TreeView", TreeView.class);
         _treeView.setResolver(new ChartDocTreeResolver());
         _treeView.setRowHeight(25);
-        _treeView.getCol(0).setAltPaint(new Color("#FBFBFC"));
+        _treeView.getCol(0).setAltRowColor(new Color("#FBFBFC"));
 
         // Configure window
         WindowView win = getWindow();
