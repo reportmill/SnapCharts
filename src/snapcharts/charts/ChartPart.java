@@ -290,13 +290,7 @@ public class ChartPart extends PropObject {
         // Return border for LineColor and LineStroke
         Color color = getLineColor();
         Stroke stroke = getLineStroke();
-        Border border = new Borders.LineBorder(color, stroke);
-
-        if (this instanceof Content)
-            border = border.copyForInsets(Insets.EMPTY);
-
-        // Return
-        return border;
+        return new Borders.LineBorder(color, stroke);
     }
 
     /**

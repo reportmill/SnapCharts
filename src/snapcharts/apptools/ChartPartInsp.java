@@ -35,7 +35,7 @@ public abstract class ChartPartInsp extends ViewOwner {
     public static Color LABEL_FILL_SEL = new Color("#ececf0"); //"#e0e6f0"
     public static Color LABEL_TEXT_FILL = Color.GRAY;
     public static Color LABEL_TEXT_FILL_SEL = Color.DARKGRAY;
-    public static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1).copyForInsets(Insets.EMPTY);
+    public static Border LABEL_BORDER_SEL = Border.createLineBorder(LABEL_FILL_SEL.darker(), 1);
 
     /**
      * Constructor.
