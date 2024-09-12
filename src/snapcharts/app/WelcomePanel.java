@@ -1,6 +1,5 @@
 package snapcharts.app;
 import snap.util.Prefs;
-import snap.util.SnapUtils;
 import snap.view.*;
 import snap.web.RecentFiles;
 import snap.web.WebFile;
@@ -23,6 +22,9 @@ public class WelcomePanel extends ViewOwner {
     // The RecentFiles
     private WebFile[]  _recentFiles;
 
+    // The WelcomePanelAnim
+    private WelcomePanelAnim _welcomePanelAnim;
+
     // The shared instance
     private static WelcomePanel  _shared;
 
@@ -31,8 +33,9 @@ public class WelcomePanel extends ViewOwner {
      */
     protected WelcomePanel()
     {
-        // Set as Shared (there should only be one instance)
+        super();
         _shared = this;
+        _welcomePanelAnim = new WelcomePanelAnim();
     }
 
     /**
@@ -115,9 +118,9 @@ public class WelcomePanel extends ViewOwner {
     protected void initUI()
     {
         // Add WelcomePaneAnim view
-        ChildView anim = getAnimView();
-        getUI(ChildView.class).addChild(anim, 0);
-        anim.playAnimDeep();
+        View animView = _welcomePanelAnim.getUI();
+        getUI(ChildView.class).addChild(animView, 0);
+        animView.playAnimDeep();
 
         // Configure SitesTable
         TableView<WebFile> sitesTable = getView("SitesTable", TableView.class);
@@ -273,24 +276,5 @@ public class WelcomePanel extends ViewOwner {
 
         WebFile[] recentFiles = RecentFiles.getFiles();
         return _recentFiles = recentFiles;
-    }
-
-    /**
-     * Loads the WelcomePaneAnim.snp.
-     */
-    ChildView getAnimView()
-    {
-        // Unarchive WelcomePaneAnim.snp as DocView
-        WebURL url = WebURL.getURL(WelcomePanel.class, "WelcomePanelAnim.snp");
-        ChildView animView = (ChildView) new ViewArchiver().getViewForSource(url);
-
-        // Set BuildText and JavaText
-        View bt = animView.getChildForName("BuildText");
-        View jt = animView.getChildForName("JVMText");
-        bt.setText("Build: " + SnapUtils.getBuildInfo());
-        jt.setText("JVM: " + System.getProperty("java.runtime.version"));
-
-        // Return
-        return animView;
     }
 }
