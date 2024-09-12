@@ -6,7 +6,7 @@
     <TextArea Name="MainTitleText" x="11" y="1" width="380" height="140" Align="CENTER">
       <BlurEffect Radius="12" />
     </TextArea>
-    <TextArea Name="MainTitleText2" x="11" y="-1" width="380" height="140" Rich="true" Align="CENTER">
+    <TextArea Name="MainTitleText2" x="11" y="-1" width="380" height="140" Align="CENTER" Rich="true">
       <EmbossEffect Radius="5" />
     </TextArea>
     <TextArea Name="TagLineText" x="73" y="145" width="264" height="38">
