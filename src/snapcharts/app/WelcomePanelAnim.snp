@@ -19,34 +19,10 @@
       <LineBorder />
       <fill color="#e0e0f5" />
       <EmbossEffect Radius="5" />
-      <Anim LoopCount="999">
-        <KeyValue Time="1000" key="Rotate" value="40" />
-        <KeyValue Time="1320" key="Rotate" value="-6" />
-        <KeyValue Time="1640" key="Rotate" value="40" />
-        <KeyValue Time="5000" />
-      </Anim>
     </PathView>
     <PathView Name="ScrewDriver" x="36" y="130" width="19" height="82" Rotate="-35" SvgString="M 0 0 L 0 141 L 0 141 C -5 143 -8 148 -8 153 L -8 155 C -8 162 -2 168 5 168 L 16 168 L 16 294 L 16 294 C 13 295 11 298 11 302 L 11 314 L 11 323 L 33 323 L 33 314 L 33 302 C 33 298 31 295 28 294 L 28 294 L 28 168 L 37 168 C 44 168 50 162 50 155 L 50 153 C 50 148 47 144 43 141 L 43 141 L 43 0 Z">
       <LineBorder />
       <fill color="#e0e0f5" />
       <EmbossEffect Radius="5" />
-      <Anim LoopCount="999">
-        <KeyValue Time="1760" key="Rotate" value="-35" />
-        <KeyValue Time="1760" key="X" value="36" />
-        <KeyValue Time="1760" key="Y" value="130" />
-        <KeyValue Time="2080" key="Rotate" value="0" />
-        <KeyValue Time="2080" key="X" value="27" />
-        <KeyValue Time="2080" key="Y" value="116" />
-        <KeyValue Time="2400" key="X" value="27" />
-        <KeyValue Time="2400" key="Y" value="146" />
-        <KeyValue Time="2640" key="Y" value="146" />
-        <KeyValue Time="2960" key="Rotate" value="0" />
-        <KeyValue Time="2960" key="X" value="27" />
-        <KeyValue Time="2960" key="Y" value="129" />
-        <KeyValue Time="3280" key="Rotate" value="-35" />
-        <KeyValue Time="3280" key="X" value="36" />
-        <KeyValue Time="3280" key="Y" value="130" />
-        <KeyValue Time="5000" />
-      </Anim>
     </PathView>
 </SpringView>

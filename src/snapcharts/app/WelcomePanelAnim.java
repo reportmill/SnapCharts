@@ -56,5 +56,14 @@ public class WelcomePanelAnim extends ViewOwner {
         buildText.setDefaultTextStyleString("Font: Arial Bold 10; Color: #FF");
         buildText.setDefaultLineStyle(buildText.getDefaultLineStyle().copyFor(HPos.CENTER));
         buildText.addChars("Build: " + SnapUtils.getBuildInfo());
+
+        // Configure anim for hammer and screwdriver
+        View hammer = getView("Hammer");
+        hammer.setAnimString("T:1000; R:40; T:1320; R:-6; T:1640; R:40; T:5000");
+        hammer.getAnim(0).setLoops();
+        View screwdriver = getView("ScrewDriver");
+        screwdriver.setAnimString("T:1760; R:-35; TX:0; TY:0; T:2080; R:0; TX:-9; TY:-14; T:2400; TX:-9; TY:16; R:0; " +
+                "T:2640; TY:16; R:0; TX:-9; T:2960; R:0; TX:-9; TY:0; T:3280; R:-35; TX:0; TY:0; T:5000;");
+        screwdriver.getAnim(0).setLoops();
     }
 }
