@@ -30,6 +30,7 @@ public class WelcomePanelAnim extends ViewOwner {
 
         // Configure MainTitleText2
         TextArea mainTitleText2 = getView("MainTitleText2", TextArea.class);
+        mainTitleText2.setRichText(true);
         mainTitleText2.setDefaultTextStyleString("Font: Arial Black 58; CharSpacing: -1.9;");
         mainTitleText2.setDefaultLineStyle(mainTitleText2.getDefaultLineStyle().copyFor(HPos.CENTER));
         mainTitleText2.addCharsWithStyleString("Snap", "Color: #ff5a5a");
