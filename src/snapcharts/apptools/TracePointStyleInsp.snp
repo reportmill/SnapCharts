@@ -1,63 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="0,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ShowPointsCheckBox" Spacing="5" text="Show Points" />
+    <CheckBox Name="ShowPointsCheckBox" Text="Show Points" />
   </RowView>
-    <RowView Padding="2,4,2,4" Spacing="4">
-      <Label Spacing="4" text="Color:" />
-      <ColorButton Name="SymbolColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-      <Button Name="SymbolColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Text="Color:" />
+    <ColorButton Name="SymbolColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+    <Button Name="SymbolColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+  </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Text="Size:" />
+    <TextField Name="SymbolSizeText" PrefWidth="50" Align="CENTER" />
+    <Button Name="SymbolSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
+    <Button Name="SymbolSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
+    <Button Name="SymbolSizeResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+  </RowView>
+  <RowView Padding="2,4,2,4" Spacing="13" GrowWidth="true">
+    <Label Text="Shape:" />
+    <ToggleButton Name="SymbolShapeButton" PrefWidth="48" PrefHeight="24" Padding="2" />
+  </RowView>
+  <ColView Name="SymbolsBox" Align="CENTER" Margin="0,20,0,20" Padding="2,4,2,4" Border="etch" GrowWidth="true">
+    <RowView Align="CENTER" Padding="4" Spacing="4" GrowWidth="true">
+      <Button Name="SymbolShapeButton_0" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_1" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_2" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_3" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_4" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
     </RowView>
-    <RowView Padding="2,4,2,4" Spacing="4">
-      <Label Spacing="4" text="Size:" />
-      <TextField Name="SymbolSizeText" PrefWidth="50" Align="CENTER" />
-      <Button Name="SymbolSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-        <font name="Arial" size="13" />
-      </Button>
-      <Button Name="SymbolSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-      <Button Name="SymbolSizeResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
+    <RowView Align="CENTER" Padding="4" Spacing="4" GrowWidth="true">
+      <Button Name="SymbolShapeButton_5" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_6" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_7" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_8" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="SymbolShapeButton_9" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
     </RowView>
-    <RowView Padding="2,4,2,4" Spacing="13" GrowWidth="true">
-      <Label Spacing="4" text="Shape:" />
-      <ToggleButton Name="SymbolShapeButton" PrefWidth="48" PrefHeight="24" Padding="2" />
-    </RowView>
-    <ColView Name="SymbolsBox" Align="CENTER" Margin="0,20,0,20" Padding="2,4,2,4" GrowWidth="true">
-      <EtchBorder />
-      <RowView Align="CENTER" Padding="4" Spacing="4" GrowWidth="true">
-        <Button Name="SymbolShapeButton_0" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_1" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_2" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_3" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_4" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      </RowView>
-      <RowView Align="CENTER" Padding="4" Spacing="4" GrowWidth="true">
-        <Button Name="SymbolShapeButton_5" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_6" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_7" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_8" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-        <Button Name="SymbolShapeButton_9" PrefWidth="20" PrefHeight="20" Padding="2" ShowArea="false" />
-      </RowView>
-    </ColView>
-    <RowView Padding="2,4,2,4" Spacing="4">
-      <Label Spacing="4" text="Border color:" />
-      <ColorButton Name="SymbolBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-      <Button Name="SymbolBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-    <RowView Padding="2,4,2,4" Spacing="4">
-      <Label Spacing="4" text="Border width:" />
-      <TextField Name="SymbolBorderWidthText" PrefWidth="50" Align="CENTER" />
-      <Button Name="SymbolBorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-        <font name="Arial" size="13" />
-      </Button>
-      <Button Name="SymbolBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-      <Button Name="SymbolBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
+  </ColView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Text="Border color:" />
+    <ColorButton Name="SymbolBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
+    <Button Name="SymbolBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+  </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Text="Border width:" />
+    <TextField Name="SymbolBorderWidthText" PrefWidth="50" Align="CENTER" />
+    <Button Name="SymbolBorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
+    <Button Name="SymbolBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
+    <Button Name="SymbolBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+  </RowView>
 </ColView>

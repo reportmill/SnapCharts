@@ -1,51 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Align="CENTER" Padding="4" Spacing="4">
-    <CheckBox Name="ShowLegendCheckBox" text="Show Legend" />
+    <CheckBox Name="ShowLegendCheckBox" Text="Show Legend" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="Title:" />
+    <Label Text="Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
-  <RowView Padding="4" GrowWidth="true" Spacing="10">
-    <Label text="Position:" />
-    <ColView Margin="5">
-      <font name="Arial" size="10" />
+  <RowView Padding="4" Spacing="10" GrowWidth="true">
+    <Label Text="Position:" />
+    <ColView Margin="5" Font="Arial 10">
       <RowView GrowWidth="true">
-        <ToggleButton Name="Align0" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8598;" Position="TOP_LEFT" Group="tga" />
-        <ToggleButton Name="Align1" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8593;" Position="CENTER" Group="tga" />
-        <ToggleButton Name="Align2" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8599;" Position="TOP_RIGHT" Group="tga" />
+        <ToggleButton Name="Align0" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8598;" Position="TOP_LEFT" GroupName="tga" />
+        <ToggleButton Name="Align1" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8593;" Position="CENTER" GroupName="tga" />
+        <ToggleButton Name="Align2" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8599;" Position="TOP_RIGHT" GroupName="tga" />
       </RowView>
       <RowView GrowWidth="true">
-        <ToggleButton Name="Align3" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8592;" Position="CENTER" Group="tga" />
-        <ToggleButton Name="Align4" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8596;" Position="CENTER" Group="tga" />
-        <ToggleButton Name="Align5" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8594;" Position="CENTER" Group="tga" />
+        <ToggleButton Name="Align3" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8592;" Position="CENTER" GroupName="tga" />
+        <ToggleButton Name="Align4" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8596;" Position="CENTER" GroupName="tga" />
+        <ToggleButton Name="Align5" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8594;" Position="CENTER" GroupName="tga" />
       </RowView>
       <RowView GrowWidth="true">
-        <ToggleButton Name="Align6" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8601;" Position="BOTTOM_LEFT" Group="tga" />
-        <ToggleButton Name="Align7" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8595;" Position="CENTER" Group="tga" />
-        <ToggleButton Name="Align8" PrefWidth="20" PrefHeight="20" Padding="2" text="&#8600;" Position="BOTTOM_RIGHT" Group="tga" />
+        <ToggleButton Name="Align6" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8601;" Position="BOTTOM_LEFT" GroupName="tga" />
+        <ToggleButton Name="Align7" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8595;" Position="CENTER" GroupName="tga" />
+        <ToggleButton Name="Align8" PrefWidth="20" PrefHeight="20" Padding="2" Text="&#8600;" Position="BOTTOM_RIGHT" GroupName="tga" />
       </RowView>
     </ColView>
-    <CheckBox Name="InsideCheckBox" text="Inside" />
+    <CheckBox Name="InsideCheckBox" Text="Inside" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="Fill:" />
+    <Label Text="Fill:" />
     <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="Border:" />
+    <Label Text="Border:" />
     <ColorButton Name="BorderColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-    <TextField Name="BorderWidthText" Align="CENTER" PrefWidth="40" Margin="0,0,0,5" />
-    <Button Name="BorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-      <font name="Arial" size="13" />
-    </Button>
-    <Button Name="BorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-    <Button Name="BorderResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <TextField Name="BorderWidthText" PrefWidth="40" Align="CENTER" Margin="0,0,0,5" />
+    <Button Name="BorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
+    <Button Name="BorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
+    <Button Name="BorderResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
 </ColView>

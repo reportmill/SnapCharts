@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView PrefWidth="400" PrefHeight="520" Spacing="5" FillWidth="true">
-  <ColView Padding="2,8,8,8" GrowHeight="true" Spacing="5" FillWidth="true">
-    <RowView GrowWidth="true" Spacing="4">
-      <Label Padding="4,0,0,0" text="Select UI file:">
-        <font name="Arial" size="14" />
-      </Label>
+  <ColView Padding="2,8,8,8" Spacing="5" GrowHeight="true" FillWidth="true">
+    <RowView Spacing="4" GrowWidth="true">
+      <Label Padding="4,0,0,0" Font="Arial 14" Text="Select UI file:" />
       <ProgressBar Name="ProgressBar" PrefWidth="110" PrefHeight="20" LeanX="RIGHT" />
-      <Button Name="SamplesButton" PrefWidth="110" PrefHeight="24" Margin="2,5,2,2" Padding="2" Text="Show Samples" LeanX="RIGHT" />
+      <Button Name="SamplesButton" PrefWidth="110" PrefHeight="24" Margin="2,5,2,2" Padding="2" LeanX="RIGHT" Text="Show Samples" />
     </RowView>
-    <TableView Name="SitesTable" GrowHeight="true">
-      <font name="Arial" size="14" />
+    <TableView Name="SitesTable" Font="Arial 14" GrowHeight="true">
       <TableCol PrefWidth="120" Header="Name" />
     </TableView>
     <RowView Align="CENTER" Spacing="10">
-      <Button Name="NewButton" PrefWidth="80" PrefHeight="22" text="New" />
-      <Button Name="OpenPanelButton" PrefWidth="80" PrefHeight="22" text="Open..." />
-      <Button Name="OpenButton" PrefWidth="80" PrefHeight="22" text="Open" />
-      <Button Name="QuitButton" PrefWidth="80" PrefHeight="22" text="Quit" />
+      <Button Name="NewButton" PrefWidth="80" PrefHeight="22" Text="New" />
+      <Button Name="OpenPanelButton" PrefWidth="80" PrefHeight="22" Text="Open..." />
+      <Button Name="OpenButton" PrefWidth="80" PrefHeight="22" Text="Open" />
+      <Button Name="QuitButton" PrefWidth="80" PrefHeight="22" Text="Quit" />
     </RowView>
   </ColView>
 </ColView>

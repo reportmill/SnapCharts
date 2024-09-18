@@ -1,42 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView PrefWidth="1200" PrefHeight="900" FillWidth="true">
   <RowView Padding="8,8,8,6" Spacing="4">
-    <Button Name="SidebarButton" PrefWidth="22" PrefHeight="22" ToolTip="Show/Hide Sidebar" image="Sidebar.png" ShowArea="false" />
+    <Button Name="SidebarButton" PrefWidth="22" PrefHeight="22" ToolTip="Show/Hide Sidebar" ImageName="Sidebar.png" ShowArea="false" />
     <Separator PrefHeight="18" Vertical="true" />
-    <Button Name="SaveButton" PrefWidth="22" PrefHeight="22" ToolTip="Save" image="File_Save.png" ShowArea="false" />
+    <Button Name="SaveButton" PrefWidth="22" PrefHeight="22" ToolTip="Save" ImageName="File_Save.png" ShowArea="false" />
     <Separator PrefHeight="18" Vertical="true" />
-    <Button Name="CutButton" PrefWidth="22" PrefHeight="22" ToolTip="Cut" image="Edit_Cut.png" ShowArea="false" />
-    <Button Name="CopyButton" PrefWidth="22" PrefHeight="22" ToolTip="Copy" image="Edit_Copy.png" ShowArea="false" />
-    <Button Name="PasteButton" PrefWidth="22" PrefHeight="22" ToolTip="Paste" image="Edit_Paste.png" ShowArea="false" />
-    <Button Name="DeleteButton" PrefWidth="22" PrefHeight="22" ToolTip="Delete" image="Edit_Delete.png" ShowArea="false" />
+    <Button Name="CutButton" PrefWidth="22" PrefHeight="22" ToolTip="Cut" ImageName="Edit_Cut.png" ShowArea="false" />
+    <Button Name="CopyButton" PrefWidth="22" PrefHeight="22" ToolTip="Copy" ImageName="Edit_Copy.png" ShowArea="false" />
+    <Button Name="PasteButton" PrefWidth="22" PrefHeight="22" ToolTip="Paste" ImageName="Edit_Paste.png" ShowArea="false" />
+    <Button Name="DeleteButton" PrefWidth="22" PrefHeight="22" ToolTip="Delete" ImageName="Edit_Delete.png" ShowArea="false" />
     <Separator PrefHeight="18" Vertical="true" />
-    <Button Name="UndoButton" PrefWidth="22" PrefHeight="22" ToolTip="Undo" image="Edit_Undo.png" ShowArea="false" />
-    <Button Name="RedoButton" PrefWidth="22" PrefHeight="22" ToolTip="Redo" image="Edit_Redo.png" ShowArea="false" />
+    <Button Name="UndoButton" PrefWidth="22" PrefHeight="22" ToolTip="Undo" ImageName="Edit_Undo.png" ShowArea="false" />
+    <Button Name="RedoButton" PrefWidth="22" PrefHeight="22" ToolTip="Redo" ImageName="Edit_Redo.png" ShowArea="false" />
     <Separator PrefHeight="18" Vertical="true" />
-    <Button Name="NewButton" Padding="2" text="New..." />
+    <Button Name="NewButton" Padding="2" Text="New..." />
     <RowView PrefWidth="300" LeanX="RIGHT">
-      <Button Name="WebButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Web" />
-      <Button Name="SamplesButton" PrefWidth="72" PrefHeight="22" Margin="0,40,0,0" Padding="0,4,0,4" LeanX="RIGHT" text="Samples" />
-      <Button Name="InspectorButton" PrefWidth="30" PrefHeight="30" ToolTip="Save" image="Inspector.png" ShowArea="false" />
+      <Button Name="WebButton" PrefWidth="72" PrefHeight="22" Margin="0,8,0,0" Padding="0,4,0,4" LeanX="RIGHT" Text="Web" />
+      <Button Name="SamplesButton" PrefWidth="72" PrefHeight="22" Margin="0,40,0,0" Padding="0,4,0,4" LeanX="RIGHT" Text="Samples" />
+      <Button Name="InspectorButton" PrefWidth="30" PrefHeight="30" ToolTip="Save" ImageName="Inspector.png" ShowArea="false" />
     </RowView>
   </RowView>
   <SplitView Name="SplitView" GrowHeight="true">
     <ColView Name="SidebarView" FillWidth="true">
-      <RowView Margin="2" Padding="4" Spacing="4" GrowWidth="true">
-        <BevelBorder />
-        <Label text="Charts">
-          <font name="Arial" size="14" />
-        </Label>
-        <Button Name="AddButton" PrefWidth="20" PrefHeight="20" Padding="2" LeanX="RIGHT" text="+" />
+      <RowView Margin="2" Padding="4" Spacing="4" Border="bevel" GrowWidth="true">
+        <Label Font="Arial 14" Text="Charts" />
+        <Button Name="AddButton" PrefWidth="20" PrefHeight="20" Padding="2" LeanX="RIGHT" Text="+" />
       </RowView>
-      <TreeView Name="TreeView" MinWidth="170" GrowHeight="true">
-        <LineBorder Color="#cccccc" />
-      </TreeView>
+      <TreeView Name="TreeView" MinWidth="170" GrowHeight="true" />
     </ColView>
-    <Label Name="EditorPane" Align="CENTER" GrowWidth="true" text="Editor Pane Area">
-      <LineBorder Color="#a8a8a8" Width="3" />
-      <color value="#cccccc" />
-      <font name="Arial" size="15" />
-    </Label>
+    <Label Name="EditorPane" Align="CENTER" Fill="#CC" Border="#A8 3" Font="Arial 15" GrowWidth="true" Text="Editor Pane Area" />
   </SplitView>
 </ColView>

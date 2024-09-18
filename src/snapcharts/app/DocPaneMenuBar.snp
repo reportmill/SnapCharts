@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MenuBar Padding="0,10,0,10">
-  <Menu Name="FileMenu" text="File">
-    <MenuItem Name="NewMenuItem" text="New" key="meta N" />
-    <MenuItem Name="OpenMenuItem" text="Open..." key="meta O" />
-    <MenuItem Name="OpenRecentMenuItem" text="Open Recent..." />
+<MenuBar Padding="0,10,0,10" Font="Arial 13">
+  <Menu Name="FileMenu" Text="File">
+    <MenuItem Name="NewMenuItem" Text="New" Shortcut="meta N" />
+    <MenuItem Name="OpenMenuItem" Text="Open..." Shortcut="meta O" />
+    <MenuItem Name="OpenRecentMenuItem" Text="Open Recent..." />
     <MenuItem />
-    <MenuItem Name="CloseMenuItem" text="Close" key="meta W" />
-    <MenuItem Name="SaveMenuItem" text="Save" key="meta S" />
-    <MenuItem Name="SaveAsMenuItem" text="Save As..." key="meta shift S" />
-    <MenuItem Name="RevertMenuItem" text="Revert to Saved" key="meta U" />
+    <MenuItem Name="CloseMenuItem" Text="Close" Shortcut="meta W" />
+    <MenuItem Name="SaveMenuItem" Text="Save" Shortcut="meta S" />
+    <MenuItem Name="SaveAsMenuItem" Text="Save As..." Shortcut="meta shift S" />
+    <MenuItem Name="RevertMenuItem" Text="Revert to Saved" Shortcut="meta U" />
     <MenuItem />
-    <MenuItem Name="QuitMenuItem" text="Quit" key="meta Q" />
+    <MenuItem Name="QuitMenuItem" Text="Quit" Shortcut="meta Q" />
   </Menu>
-  <Menu Name="EditMenu" text="Edit">
-    <MenuItem Name="UndoMenuItem" text="Undo" key="meta Z" />
-    <MenuItem Name="RedoMenuItem" text="Redo" key="meta shift Z" />
+  <Menu Name="EditMenu" Text="Edit">
+    <MenuItem Name="UndoMenuItem" Text="Undo" Shortcut="meta Z" />
+    <MenuItem Name="RedoMenuItem" Text="Redo" Shortcut="meta shift Z" />
     <MenuItem />
-    <MenuItem Name="CutMenuItem" text="Cut" key="meta X" />
-    <MenuItem Name="CopyMenuItem" text="Copy" key="meta C" />
-    <MenuItem Name="PasteMenuItem" text="Paste" key="meta V" />
-    <MenuItem Name="SelectAllMenuItem" text="Select All" key="meta A" />
+    <MenuItem Name="CutMenuItem" Text="Cut" Shortcut="meta X" />
+    <MenuItem Name="CopyMenuItem" Text="Copy" Shortcut="meta C" />
+    <MenuItem Name="PasteMenuItem" Text="Paste" Shortcut="meta V" />
+    <MenuItem Name="SelectAllMenuItem" Text="Select All" Shortcut="meta A" />
   </Menu>
-  <Menu Name="FormatMenu" text="Format">
-    <MenuItem Name="FontPanelMenuItem" text="Font Panel..." key="meta T" />
-    <MenuItem Name="BoldMenuItem" text="Bold" key="meta B" />
-    <MenuItem Name="ItalicMenuItem" text="Italic" key="meta I" />
-    <MenuItem Name="UnderlineMenuItem" text="Underline" />
-    <MenuItem Name="OutlineMenuItem" text="Outline" />
-    <MenuItem Name="AlignLeftMenuItem" text="Align Left" key="meta [" />
-    <MenuItem Name="AlignCenterMenuItem" text="Align Center" key="meta \" />
-    <MenuItem Name="AlignRightMenuItem" text="Align Right" key="meta ]" />
-    <MenuItem Name="AlignFullMenuItem" text="Align Full" />
-    <MenuItem Name="SuperscriptMenuItem" text="Superscript" />
-    <MenuItem Name="SubscriptMenuItem" text="Subscript" />
+  <Menu Name="FormatMenu" Text="Format">
+    <MenuItem Name="FontPanelMenuItem" Text="Font Panel..." Shortcut="meta T" />
+    <MenuItem Name="BoldMenuItem" Text="Bold" Shortcut="meta B" />
+    <MenuItem Name="ItalicMenuItem" Text="Italic" Shortcut="meta I" />
+    <MenuItem Name="UnderlineMenuItem" Text="Underline" />
+    <MenuItem Name="OutlineMenuItem" Text="Outline" />
+    <MenuItem Name="AlignLeftMenuItem" Text="Align Left" Shortcut="meta [" />
+    <MenuItem Name="AlignCenterMenuItem" Text="Align Center" Shortcut="meta \" />
+    <MenuItem Name="AlignRightMenuItem" Text="Align Right" Shortcut="meta ]" />
+    <MenuItem Name="AlignFullMenuItem" Text="Align Full" />
+    <MenuItem Name="SuperscriptMenuItem" Text="Superscript" />
+    <MenuItem Name="SubscriptMenuItem" Text="Subscript" />
   </Menu>
-  <Menu Name="ToolsMenu" text="Tools">
-    <MenuItem Name="PlotlyMenuItem" text="Open in Plotly" />
-    <MenuItem Name="DevPaneMenuItem" text="Show Developer Tools" />
+  <Menu Name="ToolsMenu" Text="Tools">
+    <MenuItem Name="PlotlyMenuItem" Text="Open in Plotly" />
+    <MenuItem Name="DevPaneMenuItem" Text="Show Developer Tools" />
   </Menu>
 </MenuBar>

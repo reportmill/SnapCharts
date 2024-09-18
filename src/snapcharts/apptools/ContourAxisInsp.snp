@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Spacing="4" text="Axis Title:" />
+    <Label Text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisMinText" PrefWidth="50" Spacing="4" text="Axis Min:" />
+    <Label Name="AxisMinText" PrefWidth="50" Text="Axis Min:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="MinBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="MinBoundDataButton" Padding="2" text="Data" Position="CENTER" />
-      <ToggleButton Name="MinBoundValueButton" Padding="2" text="Value" Position="CENTER_RIGHT" />
+      <ToggleButton Name="MinBoundAutoButton" Padding="2" Text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="MinBoundDataButton" Padding="2" Text="Data" Position="CENTER" />
+      <ToggleButton Name="MinBoundValueButton" Padding="2" Text="Value" Position="CENTER_RIGHT" />
     </RowView>
     <TextField Name="MinBoundText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisMinText" PrefWidth="50" Spacing="4" text="Axis Max:" />
+    <Label Name="AxisMinText" PrefWidth="50" Text="Axis Max:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="MaxBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="MaxBoundDataButton" Padding="2" text="Data" Position="CENTER" />
-      <ToggleButton Name="MaxBoundValueButton" Padding="2" text="Value" Position="CENTER_RIGHT" />
+      <ToggleButton Name="MaxBoundAutoButton" Padding="2" Text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="MaxBoundDataButton" Padding="2" Text="Data" Position="CENTER" />
+      <ToggleButton Name="MaxBoundValueButton" Padding="2" Text="Value" Position="CENTER_RIGHT" />
     </RowView>
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="Levels:" />
+    <Label Text="Levels:" />
     <TextField Name="LevelsText" PrefWidth="44" Align="CENTER" />
-    <Button Name="LevelsButton4" PrefWidth="20" Padding="2" text="4" ShowArea="false" />
-    <Button Name="LevelsButton8" PrefWidth="20" Padding="2" text="8" ShowArea="false" />
-    <Button Name="LevelsButton16" PrefWidth="20" Padding="2" text="16" ShowArea="false" />
-    <Button Name="LevelsButton32" PrefWidth="20" Padding="2" text="32" ShowArea="false" />
-    <Button Name="LevelsButton64" PrefWidth="20" Padding="2" text="64" ShowArea="false" />
+    <Button Name="LevelsButton4" PrefWidth="20" Padding="2" Text="4" ShowArea="false" />
+    <Button Name="LevelsButton8" PrefWidth="20" Padding="2" Text="8" ShowArea="false" />
+    <Button Name="LevelsButton16" PrefWidth="20" Padding="2" Text="16" ShowArea="false" />
+    <Button Name="LevelsButton32" PrefWidth="20" Padding="2" Text="32" ShowArea="false" />
+    <Button Name="LevelsButton64" PrefWidth="20" Padding="2" Text="64" ShowArea="false" />
   </RowView>
 </ColView>

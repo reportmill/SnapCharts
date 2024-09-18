@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="0,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ShowAreaCheckBox" Spacing="5" text="Show Area" />
+    <CheckBox Name="ShowAreaCheckBox" Text="Show Area" />
   </RowView>
-    <RowView Padding="2,4,2,4" Spacing="4">
-      <Label Spacing="4" text="Color:" />
-      <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-      <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-    </RowView>
-    <RowView Padding="2,4,2,4" Spacing="4">
-      <Label Spacing="4" text="Fill Mode:" />
-      <ComboBox Name="FillModeComboBox" PrefWidth="90" PrefHeight="24" />
-    </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Text="Color:" />
+    <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
+    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+  </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4">
+    <Label Text="Fill Mode:" />
+    <ComboBox Name="FillModeComboBox" PrefWidth="90" PrefHeight="24" />
+  </RowView>
 </ColView>

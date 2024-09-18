@@ -1,60 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="2,10,2,10" Spacing="4" FillWidth="true">
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Spacing="4" text="DataSet Name:" />
+    <Label Text="DataSet Name:" />
     <TextField Name="NameText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Margin="0,10,0,0" Spacing="4" text="Data Type:" />
+    <Label Margin="0,10,0,0" Text="Data Type:" />
     <ComboBox Name="DataTypeComboBox" MinWidth="80" MinHeight="22" />
   </RowView>
   <RowView Name="ThetaUnitBox" Padding="2,4,2,4" Spacing="4">
-    <Label text="Theta Unit:" />
+    <Label Text="Theta Unit:" />
     <ComboBox Name="ThetaUnitComboBox" MinWidth="80" MinHeight="22" />
   </RowView>
   <RowView Name="AxisTypeYBox" Padding="2,4,2,4" Spacing="4">
-    <Label Spacing="4" text="Axis Type Y:" />
-    <RadioButton Name="YAxisButton" Spacing="5" text="Y" />
-    <RadioButton Name="Y2AxisButton" Spacing="5" text="Y2" />
-    <RadioButton Name="Y3AxisButton" Spacing="5" text="Y3" />
-    <RadioButton Name="Y4AxisButton" Spacing="5" text="Y4" />
+    <Label Text="Axis Type Y:" />
+    <RadioButton Name="YAxisButton" Text="Y" />
+    <RadioButton Name="Y2AxisButton" Text="Y2" />
+    <RadioButton Name="Y3AxisButton" Text="Y3" />
+    <RadioButton Name="Y4AxisButton" Text="Y4" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Spacing="4" text="X Expr:" />
+    <Label Text="X Expr:" />
     <TextField Name="ExprXText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Spacing="4" text="Y Expr:" />
+    <Label Text="Y Expr:" />
     <TextField Name="ExprYText" GrowWidth="true" />
   </RowView>
   <RowView Name="ExprZBox" Padding="2,4,2,4" Spacing="4">
-    <Label Spacing="4" text="Z Expr:" />
+    <Label Text="Z Expr:" />
     <TextField Name="ExprZText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="StackedCheckBox" Spacing="5" text="Show Stacked" />
+    <CheckBox Name="StackedCheckBox" Text="Show Stacked" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ShowLegendEntryCheckBox" Spacing="5" text="Show Legend Entry" />
+    <CheckBox Name="ShowLegendEntryCheckBox" Text="Show Legend Entry" />
   </RowView>
   <RowView Align="CENTER" Padding="3,4,2,4">
-    <ToggleButton Name="LineStyleButton" MinWidth="60" MinHeight="0" Padding="3" GrowWidth="true" text="Line" Position="CENTER_LEFT">
-      <font name="Arial" size="12" />
-    </ToggleButton>
-    <ToggleButton Name="AreaStyleButton" MinWidth="60" Padding="3" text="Area" GrowWidth="true" Position="CENTER">
-      <font name="Arial" size="12" />
-    </ToggleButton>
-    <ToggleButton Name="PointsStyleButton" MinWidth="60" Padding="3" text="Points" GrowWidth="true" Position="CENTER">
-      <font name="Arial" size="12" />
-    </ToggleButton>
-    <ToggleButton Name="TagsStyleButton" MinWidth="60" Padding="3" text="Tags" GrowWidth="true" Position="CENTER_RIGHT">
-      <font name="Arial" size="12" />
-    </ToggleButton>
+    <ToggleButton Name="LineStyleButton" MinWidth="60" MinHeight="0" Padding="3" Font="Arial 12" GrowWidth="true" Text="Line" Position="CENTER_LEFT" />
+    <ToggleButton Name="AreaStyleButton" MinWidth="60" Padding="3" Font="Arial 12" GrowWidth="true" Text="Area" Position="CENTER" />
+    <ToggleButton Name="PointsStyleButton" MinWidth="60" Padding="3" Font="Arial 12" GrowWidth="true" Text="Points" Position="CENTER" />
+    <ToggleButton Name="TagsStyleButton" MinWidth="60" Padding="3" Font="Arial 12" GrowWidth="true" Text="Tags" Position="CENTER_RIGHT" />
   </RowView>
   <ColView Name="InspectorBox" />
   <Separator Name="TraceStyleInspSep" Margin="0,20,8,10" GrowWidth="true" />
   <RowView Name="TraceStyleInspLabelBox" Padding="2,4,2,4" Spacing="4">
-    <Label Name="TraceStyleInspLabel" Spacing="4" />
+    <Label Name="TraceStyleInspLabel" />
   </RowView>
   <ColView Name="TraceStyleInspBox" />
 </ColView>

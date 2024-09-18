@@ -1,52 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView PrefWidth="275">
   <RowView Padding="8,5,2,5" GrowWidth="true" LeanX="CENTER">
-    <Label Margin="0,4,0,0" text="Aspect Mode:" />
-    <ToggleButton Name="AspectModeViewButton" PrefWidth="55" PrefHeight="22" Padding="2" text="View" Position="CENTER_LEFT" />
-    <ToggleButton Name="AspectModeDataButton" PrefWidth="55" PrefHeight="22" Padding="2" text="Data" Position="CENTER" />
-    <ToggleButton Name="AspectModeDirectButton" PrefWidth="55" PrefHeight="22" Padding="2" text="Direct" Position="CENTER_RIGHT" />
+    <Label Margin="0,4,0,0" Text="Aspect Mode:" />
+    <ToggleButton Name="AspectModeViewButton" PrefWidth="55" PrefHeight="22" Padding="2" Text="View" Position="CENTER_LEFT" />
+    <ToggleButton Name="AspectModeDataButton" PrefWidth="55" PrefHeight="22" Padding="2" Text="Data" Position="CENTER" />
+    <ToggleButton Name="AspectModeDirectButton" PrefWidth="55" PrefHeight="22" Padding="2" Text="Direct" Position="CENTER_RIGHT" />
   </RowView>
   <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
-    <Label Margin="0,4,0,0" text="Aspect Scale X:" />
+    <Label Margin="0,4,0,0" Text="Aspect Scale X:" />
     <TextField Name="AspectScaleXText" Align="CENTER" ColCount="6" />
-    <Button Name="AspectScaleXResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Button Name="AspectScaleXResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
   <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
-    <Label Margin="0,4,0,0" text="Aspect Scale Y:" />
+    <Label Margin="0,4,0,0" Text="Aspect Scale Y:" />
     <TextField Name="AspectScaleYText" Align="CENTER" ColCount="6" />
-    <Button Name="AspectScaleYResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Button Name="AspectScaleYResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
   <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
-    <Label Margin="0,4,0,0" text="Aspect Scale Z:" />
+    <Label Margin="0,4,0,0" Text="Aspect Scale Z:" />
     <TextField Name="AspectScaleZText" Align="CENTER" ColCount="6" />
-    <Button Name="AspectScaleZResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Button Name="AspectScaleZResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
   <RowView Padding="4,5,2,5" GrowWidth="true" LeanX="CENTER">
-    <Label Margin="0,7,0,0" text="Rendering:" />
-    <ToggleButton Name="RendererButton0" PrefWidth="66" PrefHeight="22" Padding="2" text="One" />
-    <ToggleButton Name="RendererButton1" PrefWidth="66" PrefHeight="22" Padding="2" text="Two" />
-    <ToggleButton Name="RendererButton2" PrefWidth="66" PrefHeight="22" Padding="2" text="Three" />
+    <Label Margin="0,7,0,0" Text="Rendering:" />
+    <ToggleButton Name="RendererButton0" PrefWidth="66" PrefHeight="22" Padding="2" Text="One" />
+    <ToggleButton Name="RendererButton1" PrefWidth="66" PrefHeight="22" Padding="2" Text="Two" />
+    <ToggleButton Name="RendererButton2" PrefWidth="66" PrefHeight="22" Padding="2" Text="Three" />
   </RowView>
   <RowView Align="CENTER" Padding="5" Spacing="10" GrowWidth="true">
     <View Name="Trackball" MinWidth="80" MinHeight="80" LeanX="CENTER" Class="snap.gfx3d.Trackball" />
     <ColView Spacing="8">
       <RowView>
-        <Label PrefWidth="40" text="Yaw:" />
-        <Spinner Name="YawSpinner" PrefWidth="60" Align="CENTER" Value="0" />
+        <Label PrefWidth="40" Text="Yaw:" />
+        <Spinner Name="YawSpinner" PrefWidth="60" Align="CENTER" />
       </RowView>
       <RowView>
-        <Label PrefWidth="40" text="Pitch:" />
-        <Spinner Name="PitchSpinner" PrefWidth="60" Align="CENTER" Value="0" />
+        <Label PrefWidth="40" Text="Pitch:" />
+        <Spinner Name="PitchSpinner" PrefWidth="60" Align="CENTER" />
       </RowView>
       <RowView>
-        <Label PrefWidth="40" text="Roll:" />
-        <Spinner Name="RollSpinner" PrefWidth="60" Align="CENTER" Value="0" />
+        <Label PrefWidth="40" Text="Roll:" />
+        <Spinner Name="RollSpinner" PrefWidth="60" Align="CENTER" />
       </RowView>
     </ColView>
   </RowView>
@@ -54,43 +48,37 @@
     <RowView Padding="0,4,0,0" Spacing="5">
       <Slider Name="FOVSlider" PrefWidth="180" GrowWidth="true" Min="6" Max="60" />
       <TextField Name="FOVText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
-      <Button Name="FOVResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
+      <Button Name="FOVResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
     </RowView>
   </TitleView>
   <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Gimbal Radius (distance from camera to model)">
     <RowView Padding="0,4,0,0" Spacing="5">
-      <ThumbWheel Name="GimbalRadiusThumbWheel" PrefWidth="180" PrefHeight="16" Margin="2,1,1,1" GrowWidth="true" type="linear" max="500" round="1" />
+      <ThumbWheel Name="GimbalRadiusThumbWheel" PrefWidth="180" PrefHeight="16" Margin="2,1,1,1" GrowWidth="true" Type="linear" Max="500" Round="1" />
       <TextField Name="GimbalRadiusText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
-      <Button Name="GimbalRadiusResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
+      <Button Name="GimbalRadiusResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
     </RowView>
   </TitleView>
   <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Default Camera Views">
     <RowView Padding="0,4,0,0" Spacing="5">
-      <Button Name="FrontViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Front View" text="F" />
-      <Button Name="BackViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Back View" text="B" />
-      <Button Name="LeftViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Left View" text="L" />
-      <Button Name="RightViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" text="R" />
-      <Button Name="TopViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" text="T" />
-      <Button Name="BottomViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" text="B" />
-      <Button Name="CameraViewResetButton" PrefWidth="20" PrefHeight="20" Padding="2" ToolTip="Default View" text="&#10226;" ShowArea="false">
-        <font name="Arial" size="12" />
-      </Button>
-      <CheckBox Name="OrthoViewButton" Align="CENTER" Spacing="5" LeanX="RIGHT" text="Ortho" />
+      <Button Name="FrontViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Front View" Text="F" />
+      <Button Name="BackViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Back View" Text="B" />
+      <Button Name="LeftViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Left View" Text="L" />
+      <Button Name="RightViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" Text="R" />
+      <Button Name="TopViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" Text="T" />
+      <Button Name="BottomViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" Text="B" />
+      <Button Name="CameraViewResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" ToolTip="Default View" Text="&#10226;" ShowArea="false" />
+      <CheckBox Name="OrthoViewButton" Align="CENTER" LeanX="RIGHT" Text="Ortho" />
     </RowView>
   </TitleView>
   <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Projected Sides">
     <RowView Padding="0,4,0,0" Spacing="5">
-      <ToggleButton Name="ProjSideButtonFRONT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Front View" text="F" />
-      <ToggleButton Name="ProjSideButtonBACK" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Back View" text="B" />
-      <ToggleButton Name="ProjSideButtonLEFT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Left View" text="L" />
-      <ToggleButton Name="ProjSideButtonRIGHT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" text="R" />
-      <ToggleButton Name="ProjSideButtonTOP" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" text="T" />
-      <ToggleButton Name="ProjSideButtonBOTTOM" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" text="B" />
-      <Button Name="AllClearButton" PrefWidth="50" PrefHeight="22" Padding="2" LeanX="RIGHT" ToolTip="Set/Clear all projected sides" text="All" />
+      <ToggleButton Name="ProjSideButtonFRONT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Front View" Text="F" />
+      <ToggleButton Name="ProjSideButtonBACK" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Back View" Text="B" />
+      <ToggleButton Name="ProjSideButtonLEFT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Left View" Text="L" />
+      <ToggleButton Name="ProjSideButtonRIGHT" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" Text="R" />
+      <ToggleButton Name="ProjSideButtonTOP" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" Text="T" />
+      <ToggleButton Name="ProjSideButtonBOTTOM" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" Text="B" />
+      <Button Name="AllClearButton" PrefWidth="50" PrefHeight="22" Padding="2" LeanX="RIGHT" ToolTip="Set/Clear all projected sides" Text="All" />
     </RowView>
   </TitleView>
 </ColView>

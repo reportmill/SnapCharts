@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Align="CENTER" Padding="3,6,2,6">
-    <ToggleButton Name="BorderFillButton" MinWidth="60" MinHeight="0" Padding="2" GrowWidth="true" text="Border / Fill" Position="CENTER_LEFT">
-      <font name="Arial" size="11" />
-    </ToggleButton>
-    <ToggleButton Name="GridButton" MinWidth="60" Padding="2" text="Grid" GrowWidth="true" Position="CENTER">
-      <font name="Arial" size="11" />
-    </ToggleButton>
-    <ToggleButton Name="3DButton" MinWidth="60" Padding="2" text="3D" GrowWidth="true" Position="CENTER_RIGHT">
-      <font name="Arial" size="11" />
-    </ToggleButton>
+    <ToggleButton Name="BorderFillButton" MinWidth="60" MinHeight="0" Padding="2" GrowWidth="true" Text="Border / Fill" Position="CENTER_LEFT" />
+    <ToggleButton Name="GridButton" MinWidth="60" Padding="2" GrowWidth="true" Text="Grid" Position="CENTER" />
+    <ToggleButton Name="3DButton" MinWidth="60" Padding="2" GrowWidth="true" Text="3D" Position="CENTER_RIGHT" />
   </RowView>
   <ColView Name="ExtraInspBox" />
 </ColView>

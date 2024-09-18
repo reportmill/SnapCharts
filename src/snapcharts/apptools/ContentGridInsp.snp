@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" FillWidth="true">
   <RowView Padding="4" Spacing="4">
-    <CheckBox Name="ShowGridCheckBox" PrefWidth="100" text="Show Grid" />
+    <CheckBox Name="ShowGridCheckBox" PrefWidth="100" Text="Show Grid" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="    Grid Color:" />
+    <Label Text="    Grid Color:" />
     <ColorButton Name="GridColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-    <Button Name="GridColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Button Name="GridColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label text="    Grid Width:" />
-    <TextField Name="GridWidthText" Align="CENTER" PrefWidth="50" />
-    <Button Name="GridWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-      <font name="Arial" size="13" />
-    </Button>
-    <Button Name="GridWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-    <Button Name="GridWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Label Text="    Grid Width:" />
+    <TextField Name="GridWidthText" PrefWidth="50" Align="CENTER" />
+    <Button Name="GridWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
+    <Button Name="GridWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
+    <Button Name="GridWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
-  <RowView Padding="4" GrowWidth="true" Spacing="13">
-    <Label text="    Grid Line Style:" />
+  <RowView Padding="4" Spacing="13" GrowWidth="true">
+    <Label Text="    Grid Line Style:" />
     <ToggleButton Name="GridDashButton" PrefWidth="100" PrefHeight="24" Padding="2" />
   </RowView>
-  <ColView Name="GridDashBox" Align="CENTER" Margin="0,20,0,20" Padding="4" GrowWidth="true">
-    <EtchBorder />
-    <ColView Align="CENTER" Padding="4" GrowWidth="true" Spacing="2">
+  <ColView Name="GridDashBox" Align="CENTER" Margin="0,20,0,20" Padding="4" Border="etch" GrowWidth="true">
+    <ColView Align="CENTER" Padding="4" Spacing="2" GrowWidth="true">
       <Button Name="GridDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
       <Button Name="GridDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
       <Button Name="GridDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />

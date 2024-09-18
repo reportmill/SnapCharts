@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
-  <RowView Padding="4" GrowWidth="true" Spacing="4">
+  <RowView Padding="4" Spacing="4" GrowWidth="true">
     <TitleView GrowWidth="true" Text="Page Orientation">
-      <ColView Padding="4" GrowHeight="true" Spacing="4">
-        <RadioButton Name="PortraitButton" PrefWidth="80" PrefHeight="22" text="Portrait" />
-        <RadioButton Name="LandscapeButton" PrefWidth="80" PrefHeight="22" text="Landscape" />
+      <ColView Padding="4" Spacing="4" GrowHeight="true">
+        <RadioButton Name="PortraitButton" PrefWidth="80" PrefHeight="22" Text="Portrait" />
+        <RadioButton Name="LandscapeButton" PrefWidth="80" PrefHeight="22" Text="Landscape" />
       </ColView>
     </TitleView>
     <TitleView GrowWidth="true" Text="Page Display">
-      <ColView Padding="4" GrowHeight="true" Spacing="4">
-        <RadioButton Name="SingleLayoutButton" PrefWidth="80" PrefHeight="22" text="Single" />
-        <RadioButton Name="ContinuousLayoutButton" PrefWidth="80" PrefHeight="22" text="Continuous" />
+      <ColView Padding="4" Spacing="4" GrowHeight="true">
+        <RadioButton Name="SingleLayoutButton" PrefWidth="80" PrefHeight="22" Text="Single" />
+        <RadioButton Name="ContinuousLayoutButton" PrefWidth="80" PrefHeight="22" Text="Continuous" />
       </ColView>
     </TitleView>
   </RowView>
   <TitleView MinWidth="120" MinHeight="60" Text="Charts per Page">
     <RowView Padding="4" GrowWidth="true">
-      <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
-        <RadioButton Name="OneUpButton" PrefWidth="60" PrefHeight="22" text="One" Group="bg0" />
-        <RadioButton Name="TwoUpButton" PrefWidth="60" PrefHeight="22" text="Two" Group="bg0" />
+      <ColView Padding="4" Spacing="4" GrowWidth="true" GrowHeight="true">
+        <RadioButton Name="OneUpButton" PrefWidth="60" PrefHeight="22" Text="One" GroupName="bg0" />
+        <RadioButton Name="TwoUpButton" PrefWidth="60" PrefHeight="22" Text="Two" GroupName="bg0" />
       </ColView>
-      <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
-        <RadioButton Name="ThreeUpButton" PrefWidth="60" PrefHeight="22" text="Three" Group="bg0" />
-        <RadioButton Name="FourUpButton" PrefWidth="60" PrefHeight="22" text="Four" Group="bg0" />
+      <ColView Padding="4" Spacing="4" GrowWidth="true" GrowHeight="true">
+        <RadioButton Name="ThreeUpButton" PrefWidth="60" PrefHeight="22" Text="Three" GroupName="bg0" />
+        <RadioButton Name="FourUpButton" PrefWidth="60" PrefHeight="22" Text="Four" GroupName="bg0" />
       </ColView>
-      <ColView Padding="4" GrowWidth="true" GrowHeight="true" Spacing="4">
-        <RadioButton Name="SixUpButton" PrefWidth="60" PrefHeight="22" text="Six" Group="bg0" />
-        <RadioButton Name="NineUpButton" PrefWidth="60" PrefHeight="22" text="Nine" Group="bg0" />
+      <ColView Padding="4" Spacing="4" GrowWidth="true" GrowHeight="true">
+        <RadioButton Name="SixUpButton" PrefWidth="60" PrefHeight="22" Text="Six" GroupName="bg0" />
+        <RadioButton Name="NineUpButton" PrefWidth="60" PrefHeight="22" Text="Nine" GroupName="bg0" />
       </ColView>
     </RowView>
   </TitleView>
   <TitleView Name="ChartScaleTitleView" MinWidth="120" MinHeight="60" Text="Chart Scale">
-    <ColView Padding="4" GrowHeight="true" Spacing="4">
-      <RowView Padding="4" GrowWidth="true" Spacing="4">
-        <RadioButton Name="ChartScaleButton0.5" GrowWidth="true" ToolTip="50 %" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton0.75" GrowWidth="true" ToolTip="75 %" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton1" GrowWidth="true" ToolTip="100 %" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton1.33" GrowWidth="true" ToolTip="133 %" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton1.67" GrowWidth="true" ToolTip="167 %" Group="toggle1" />
-        <RadioButton Name="ChartScaleButton2" ToolTip="200 %" Group="toggle1" />
+    <ColView Padding="4" Spacing="4" GrowHeight="true">
+      <RowView Padding="4" Spacing="4" GrowWidth="true">
+        <RadioButton Name="ChartScaleButton0.5" GrowWidth="true" ToolTip="50 %" GroupName="toggle1" />
+        <RadioButton Name="ChartScaleButton0.75" GrowWidth="true" ToolTip="75 %" GroupName="toggle1" />
+        <RadioButton Name="ChartScaleButton1" GrowWidth="true" ToolTip="100 %" GroupName="toggle1" />
+        <RadioButton Name="ChartScaleButton1.33" GrowWidth="true" ToolTip="133 %" GroupName="toggle1" />
+        <RadioButton Name="ChartScaleButton1.67" GrowWidth="true" ToolTip="167 %" GroupName="toggle1" />
+        <RadioButton Name="ChartScaleButton2" ToolTip="200 %" GroupName="toggle1" />
       </RowView>
-      <RowView Padding="4" GrowWidth="true" Spacing="4">
-        <Label PrefWidth="82" text="+Text" />
-        <Label text="Natural" />
-        <Label LeanX="RIGHT" text="+Data" />
+      <RowView Padding="4" Spacing="4" GrowWidth="true">
+        <Label PrefWidth="82" Text="+Text" />
+        <Label Text="Natural" />
+        <Label LeanX="RIGHT" Text="+Data" />
       </RowView>
     </ColView>
   </TitleView>

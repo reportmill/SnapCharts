@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ShowLinesCheckBox" text="Show Lines" />
+    <CheckBox Name="ShowLinesCheckBox" Text="Show Lines" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ShowMeshCheckBox" text="Show Mesh" />
+    <CheckBox Name="ShowMeshCheckBox" Text="Show Mesh" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <CheckBox Name="ReverseScaleCheckBox" text="Reverse Scale" />
+    <CheckBox Name="ReverseScaleCheckBox" Text="Reverse Scale" />
   </RowView>
 </ColView>

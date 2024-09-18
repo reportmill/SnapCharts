@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RowView FillHeight="true">
-<ColView GrowWidth="true" FillWidth="true">
-  <ScrollView Name="ScrollView" GrowHeight="true">
-    <ScaleBox Align="TOP_CENTER" GrowWidth="true" FillWidth="true">
-      <ColView Name="PageBox" Align="TOP_CENTER" Padding="20" Spacing="20" FillWidth="true" />
-    </ScaleBox>
-  </ScrollView>
-  <RowView PrefHeight="22" Padding="0,0,0,2">
-    <TextField Name="ZoomText" PrefWidth="80" PrefHeight="18" Align="CENTER" text="100%" />
-    <MenuButton Name="ZoomMenuButton" PrefWidth="20" PrefHeight="18" ShowBorder="false">
-      <MenuItem Name="ZoomToActualSizeMenuItem" text="Actual Size" />
-      <MenuItem Name="ZoomToFitMenuItem" text="Zoom to Fit" />
-      <MenuItem Name="ZoomAsNeededMenuItem" text="Zoom as Needed" />
-      <MenuItem Name="ZoomMenuItem" text="25%" />
-      <MenuItem Name="ZoomMenuItem" text="50%" />
-      <MenuItem Name="ZoomMenuItem" text="75%" />
-      <MenuItem Name="ZoomMenuItem" text="100%" />
-      <MenuItem Name="ZoomMenuItem" text="125%" />
-      <MenuItem Name="ZoomMenuItem" text="150%" />
-      <MenuItem Name="ZoomMenuItem" text="200%" />
-      <MenuItem Name="ZoomMenuItem" text="300%" />
-      <MenuItem Name="ZoomMenuItem" text="400%" />
-    </MenuButton>
-    <RowView Name="PageNavBox" Padding="0,100,0,0" LeanX="CENTER" >
-      <Button Name="PageBackAllButton" PrefWidth="16" PrefHeight="18" ShowBorder="false" />
-      <Button Name="PageBackButton" PrefWidth="18" PrefHeight="18" ShowBorder="false" />
-      <TextField Name="PageText" PrefWidth="68" PrefHeight="18" Align="CENTER" text="1 of 1" />
-      <Button Name="PageForwardButton" PrefWidth="18" PrefHeight="18" ShowBorder="false" />
-      <Button Name="PageForwardAllButton" PrefWidth="16" PrefHeight="18" ShowBorder="false" />
+  <ColView GrowWidth="true" FillWidth="true">
+    <ScrollView Name="ScrollView" GrowHeight="true">
+      <ScaleBox Align="TOP_CENTER" GrowWidth="true" FillWidth="true">
+        <ColView Name="PageBox" Align="TOP_CENTER" Padding="20" Spacing="20" FillWidth="true" />
+      </ScaleBox>
+    </ScrollView>
+    <RowView PrefHeight="22" Padding="0,0,0,2">
+      <TextField Name="ZoomText" PrefWidth="80" PrefHeight="18" Align="CENTER" Text="100%" />
+      <MenuButton Name="ZoomMenuButton" PrefWidth="20" PrefHeight="18" ShowArea="false">
+        <MenuItem Name="ZoomToActualSizeMenuItem" Text="Actual Size" />
+        <MenuItem Name="ZoomToFitMenuItem" Text="Zoom to Fit" />
+        <MenuItem Name="ZoomAsNeededMenuItem" Text="Zoom as Needed" />
+        <MenuItem Name="ZoomMenuItem" Text="25%" />
+        <MenuItem Name="ZoomMenuItem" Text="50%" />
+        <MenuItem Name="ZoomMenuItem" Text="75%" />
+        <MenuItem Name="ZoomMenuItem" Text="100%" />
+        <MenuItem Name="ZoomMenuItem" Text="125%" />
+        <MenuItem Name="ZoomMenuItem" Text="150%" />
+        <MenuItem Name="ZoomMenuItem" Text="200%" />
+        <MenuItem Name="ZoomMenuItem" Text="300%" />
+        <MenuItem Name="ZoomMenuItem" Text="400%" />
+      </MenuButton>
+      <RowView Name="PageNavBox" Padding="0,100,0,0" LeanX="CENTER">
+        <Button Name="PageBackAllButton" PrefWidth="16" PrefHeight="18" ShowArea="false" />
+        <Button Name="PageBackButton" PrefWidth="18" PrefHeight="18" ShowArea="false" />
+        <TextField Name="PageText" PrefWidth="68" PrefHeight="18" Align="CENTER" Text="1 of 1" />
+        <Button Name="PageForwardButton" PrefWidth="18" PrefHeight="18" ShowArea="false" />
+        <Button Name="PageForwardAllButton" PrefWidth="16" PrefHeight="18" ShowArea="false" />
+      </RowView>
     </RowView>
-  </RowView>
-</ColView>
+  </ColView>
 </RowView>

@@ -1,118 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ColView MinWidth="0" Padding="2,10,4,10" Spacing="4" FillWidth="true">
   <RowView Align="CENTER" Padding="0,4,2,4">
-    <ToggleButton Name="XAxisButton" MinWidth="40" MinHeight="0" Padding="2" text="X" Position="CENTER_LEFT">
-      <font name="Arial" size="14" />
-    </ToggleButton>
-    <ToggleButton Name="YAxisButton" MinWidth="40" Padding="2" text="Y" Position="CENTER">
-      <font name="Arial" size="14" />
-    </ToggleButton>
-    <ToggleButton Name="Y2AxisButton" MinWidth="40" Padding="2" text="Y2" Position="CENTER">
-      <font name="Arial" size="14" />
-    </ToggleButton>
-    <ToggleButton Name="Y3AxisButton" MinWidth="40" Padding="2" text="Y3" Position="CENTER">
-      <font name="Arial" size="14" />
-    </ToggleButton>
-    <ToggleButton Name="Y4AxisButton" MinWidth="40" Padding="2" text="Y4" Position="CENTER">
-      <font name="Arial" size="14" />
-    </ToggleButton>
-    <ToggleButton Name="ZAxisButton" MinWidth="40" Padding="2" text="Z" Position="CENTER_RIGHT">
-      <font name="Arial" size="14" />
-    </ToggleButton>
+    <ToggleButton Name="XAxisButton" MinWidth="40" MinHeight="0" Padding="2" Font="Arial 14" Text="X" Position="CENTER_LEFT" />
+    <ToggleButton Name="YAxisButton" MinWidth="40" Padding="2" Font="Arial 14" Text="Y" Position="CENTER" />
+    <ToggleButton Name="Y2AxisButton" MinWidth="40" Padding="2" Font="Arial 14" Text="Y2" Position="CENTER" />
+    <ToggleButton Name="Y3AxisButton" MinWidth="40" Padding="2" Font="Arial 14" Text="Y3" Position="CENTER" />
+    <ToggleButton Name="Y4AxisButton" MinWidth="40" Padding="2" Font="Arial 14" Text="Y4" Position="CENTER" />
+    <ToggleButton Name="ZAxisButton" MinWidth="40" Padding="2" Font="Arial 14" Text="Z" Position="CENTER_RIGHT" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label text="Axis Title:" />
+    <Label Text="Axis Title:" />
     <TextField Name="TitleText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisMinText" PrefWidth="50" text="Axis Min:" />
+    <Label Name="AxisMinText" PrefWidth="50" Text="Axis Min:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="MinBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="MinBoundDataButton" Padding="2" text="Data" Position="CENTER" />
-      <ToggleButton Name="MinBoundValueButton" Padding="2" text="Value" Position="CENTER_RIGHT" />
+      <ToggleButton Name="MinBoundAutoButton" Padding="2" Text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="MinBoundDataButton" Padding="2" Text="Data" Position="CENTER" />
+      <ToggleButton Name="MinBoundValueButton" Padding="2" Text="Value" Position="CENTER_RIGHT" />
     </RowView>
     <TextField Name="MinBoundText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisMinText" PrefWidth="50" text="Axis Max:" />
+    <Label Name="AxisMinText" PrefWidth="50" Text="Axis Max:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="MaxBoundAutoButton" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="MaxBoundDataButton" Padding="2" text="Data" Position="CENTER" />
-      <ToggleButton Name="MaxBoundValueButton" Padding="2" text="Value" Position="CENTER_RIGHT" />
+      <ToggleButton Name="MaxBoundAutoButton" Padding="2" Text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="MaxBoundDataButton" Padding="2" Text="Data" Position="CENTER" />
+      <ToggleButton Name="MaxBoundValueButton" Padding="2" Text="Value" Position="CENTER_RIGHT" />
     </RowView>
     <TextField Name="MaxBoundText" GrowWidth="true" />
   </RowView>
-  <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Spacing="5" text="Always Include Zero in Auto Range" />
-  <CheckBox Name="ShowZeroLineCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Zero Line Bold" />
+  <CheckBox Name="ZeroRequiredCheckBox" Padding="2,4,2,4" Text="Always Include Zero in Auto Range" />
+  <CheckBox Name="ShowZeroLineCheckBox" Padding="2,4,2,4" Text="Show Zero Line Bold" />
   <RowView Spacing="6">
-    <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Spacing="5" text="Logarithmic" />
-    <CheckBox Name="ShowLogMinorLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Minor Labels" />
+    <CheckBox Name="LogCheckBox" Padding="2,4,2,4" Text="Logarithmic" />
+    <CheckBox Name="ShowLogMinorLabelsCheckBox" Padding="2,4,2,4" Text="Show Minor Labels" />
   </RowView>
-  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Legend Graphic" />
+  <CheckBox Name="ShowLegendGraphicCheckBox" Padding="2,4,2,4" Text="Show Legend Graphic" />
   <RowView Name="WrapAxisBox" Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-    <CheckBox Name="WrapCheckBox" Padding="0" Spacing="5" text="Wrap Axis" />
+    <CheckBox Name="WrapCheckBox" Padding="0" Text="Wrap Axis" />
     <RowView Name="WrapMinMaxBox" Spacing="4" GrowWidth="true">
-      <Label Padding="2,0,0,0" text="Min:" />
+      <Label Padding="2,0,0,0" Text="Min:" />
       <TextField Name="WrapMinText" Align="CENTER" ColCount="7" />
-      <Label Padding="2,0,0,0" text="Max:" />
+      <Label Padding="2,0,0,0" Text="Max:" />
       <TextField Name="WrapMaxText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
   <RowView Spacing="4" GrowWidth="true">
     <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-      <Label text="Grid Spacing:" />
+      <Label Text="Grid Spacing:" />
       <TextField Name="GridSpacingText" Align="CENTER" ColCount="7" />
-      <Label Margin="0,0,0,9" text="Base:" />
+      <Label Margin="0,0,0,9" Text="Base:" />
       <TextField Name="GridBaseText" Align="CENTER" ColCount="7" />
     </RowView>
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label text="Tick Length:" />
+    <Label Text="Tick Length:" />
     <TextField Name="TickLengthText" PrefWidth="50" Align="CENTER" />
-    <Button Name="TickLengthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="+1" ShowArea="false">
-      <font name="Arial" size="13" />
-    </Button>
-    <Button Name="TickLengthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" text="-1" ShowArea="false" />
-    <Button Name="TickLengthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" text="&#10226;" ShowArea="false">
-      <font name="Arial" size="12" />
-    </Button>
+    <Button Name="TickLengthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
+    <Button Name="TickLengthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
+    <Button Name="TickLengthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisTickPos" text="Tick Position:" />
+    <Label Name="AxisTickPos" Text="Tick Position:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="TickPosInsideButton" MinWidth="46" Padding="2" text="Inside" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="TickPosOutsideButton" MinWidth="46" Padding="2" text="Outside" Position="CENTER" />
-      <ToggleButton Name="TickPosAcrossButton" MinWidth="46" Padding="2" text="Across" Position="CENTER" />
-      <ToggleButton Name="TickPosOffButton" MinWidth="46" Padding="2" text="Off" Position="CENTER_RIGHT" />
+      <ToggleButton Name="TickPosInsideButton" MinWidth="46" Padding="2" Text="Inside" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="TickPosOutsideButton" MinWidth="46" Padding="2" Text="Outside" Position="CENTER" />
+      <ToggleButton Name="TickPosAcrossButton" MinWidth="46" Padding="2" Text="Across" Position="CENTER" />
+      <ToggleButton Name="TickPosOffButton" MinWidth="46" Padding="2" Text="Off" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
-  <CheckBox Name="ShowTickLabelsCheckBox" Padding="2,4,2,4" Spacing="5" text="Show Tick Labels" />
+  <CheckBox Name="ShowTickLabelsCheckBox" Padding="2,4,2,4" Text="Show Tick Labels" />
   <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-    <Label text="Ticks Format:" />
+    <Label Text="Ticks Format:" />
     <TextField Name="TickFormatText" Align="CENTER" GrowWidth="true" ColCount="7" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisTickPos" text="Ticks Exponent:" />
+    <Label Name="AxisTickPos" Text="Ticks Exponent:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="ExpNoneButton" MinWidth="46" Padding="2" text="None" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="ExpSciButton" MinWidth="46" Padding="2" text="Scientific" Position="CENTER" />
-      <ToggleButton Name="ExpFinancialButton" MinWidth="46" Padding="2" text="Financial" Position="CENTER_RIGHT" />
+      <ToggleButton Name="ExpNoneButton" MinWidth="46" Padding="2" Text="None" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="ExpSciButton" MinWidth="46" Padding="2" Text="Scientific" Position="CENTER" />
+      <ToggleButton Name="ExpFinancialButton" MinWidth="46" Padding="2" Text="Financial" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
-    <Label Name="AxisTickPos" text="Ticks Angle:" />
+    <Label Name="AxisTickPos" Text="Ticks Angle:" />
     <RowView>
-      <ToggleButton Name="AutoAngleButton" MinWidth="38" Padding="2" text="Auto" Position="CENTER_LEFT" Selected="true" />
-      <ToggleButton Name="30AngleButton" MinWidth="30" Padding="2" text="30&#176;" Position="CENTER" />
-      <ToggleButton Name="45AngleButton" MinWidth="30" Padding="2" text="45&#176;" Position="CENTER" />
-      <ToggleButton Name="60AngleButton" MinWidth="30" Padding="2" text="60&#176;" Position="CENTER" />
-      <ToggleButton Name="90AngleButton" MinWidth="30" Padding="2" text="90&#176;" Position="CENTER_RIGHT" />
+      <ToggleButton Name="AutoAngleButton" MinWidth="38" Padding="2" Text="Auto" Position="CENTER_LEFT" Selected="true" />
+      <ToggleButton Name="30AngleButton" MinWidth="30" Padding="2" Text="30&#176;" Position="CENTER" />
+      <ToggleButton Name="45AngleButton" MinWidth="30" Padding="2" Text="45&#176;" Position="CENTER" />
+      <ToggleButton Name="60AngleButton" MinWidth="30" Padding="2" Text="60&#176;" Position="CENTER" />
+      <ToggleButton Name="90AngleButton" MinWidth="30" Padding="2" Text="90&#176;" Position="CENTER_RIGHT" />
     </RowView>
     <TextField Name="TickLabelRotationText" Align="CENTER" GrowWidth="true" />
   </RowView>
   <RowView Spacing="4" GrowWidth="true">
     <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-      <Label text="Minor Tick Count:" />
+      <Label Text="Minor Tick Count:" />
       <TextField Name="MinorTickCountText" Align="CENTER" ColCount="5" />
     </RowView>
   </RowView>

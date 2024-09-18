@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SpringView Width="400" Height="220" PrefWidth="400" PrefHeight="220">
-    <ImageView width="400" height="220" ImageName="WelcomePanel_BG.jpg" PreserveRatio="false">
-      <EmbossEffect altitude="90" />
-    </ImageView>
-    <TextArea Name="MainTitleText" x="11" y="1" width="380" height="140" Align="CENTER">
-      <BlurEffect Radius="12" />
-    </TextArea>
-    <TextArea Name="MainTitleText2" x="11" y="-1" width="380" height="140" Align="CENTER">
-      <EmbossEffect Radius="5" />
-    </TextArea>
-    <TextArea Name="TagLineText" x="73" y="145" width="264" height="38">
-      <BlurEffect Radius="5" />
-    </TextArea>
-    <TextArea Name="TagLineText2" x="73" y="141" width="264" height="38" />
-    <TextArea Name="JVMText" x="73" y="180" width="264" height="15" />
-    <TextArea Name="BuildText" x="73" y="191" width="264" height="15" />
-    <PathView Name="Hammer" x="333" y="147" width="45" height="66" Rotate="40" SvgString="M 49 0 L 49 0 C 49 0 49 0 49 0 L 49 0 L 49 0 Z M -12 -11 C -18 -11 -23 -6 -23 0 L -23 44 C -23 50 -18 55 -12 55 L 4 55 C 9 55 13 52 14 48 L 14 48 C 28 47 39 47 49 46 L 49 46 L 49 204 L 49 204 C 46 205 43 208 43 212 L 43 326 C 43 330 46 333 49 334 L 49 334 L 49 335 L 84 335 L 84 334 L 84 334 C 87 333 90 330 90 326 L 90 212 C 90 208 87 205 84 204 L 84 204 L 84 43 L 84 43 C 91 42 98 41 105 41 C 112 41 121 42 132 44 C 147 47 173 83 187 83 C 189 83 190 82 192 81 C 216 60 104 4 103 3 C 103 2 95 2 84 1 L 84 1 L 84 -8 L 49 -8 L 49 0 L 49 0 C 37 0 24 0 15 0 L 15 0 L 15 0 C 15 -6 10 -11 4 -11 Z">
-      <LineBorder />
-      <fill color="#e0e0f5" />
-      <EmbossEffect Radius="5" />
-    </PathView>
-    <PathView Name="ScrewDriver" x="36" y="130" width="19" height="82" Rotate="-35" SvgString="M 0 0 L 0 141 L 0 141 C -5 143 -8 148 -8 153 L -8 155 C -8 162 -2 168 5 168 L 16 168 L 16 294 L 16 294 C 13 295 11 298 11 302 L 11 314 L 11 323 L 33 323 L 33 314 L 33 302 C 33 298 31 295 28 294 L 28 294 L 28 168 L 37 168 C 44 168 50 162 50 155 L 50 153 C 50 148 47 144 43 141 L 43 141 L 43 0 Z">
-      <LineBorder />
-      <fill color="#e0e0f5" />
-      <EmbossEffect Radius="5" />
-    </PathView>
+  <ImageView Width="400" Height="220" Effect="emboss(10 90 120)" ImageName="WelcomePanel_BG.jpg" />
+  <TextArea Name="MainTitleText" X="11" Y="1" Width="380" Height="140" Align="CENTER" Effect="blur(12)" />
+  <TextArea Name="MainTitleText2" X="11" Y="-1" Width="380" Height="140" Align="CENTER" Effect="emboss(5 60 120)" />
+  <TextArea Name="TagLineText" X="73" Y="145" Width="264" Height="38" Effect="blur(5)" />
+  <TextArea Name="TagLineText2" X="73" Y="141" Width="264" Height="38" />
+  <TextArea Name="JVMText" X="73" Y="180" Width="264" Height="15" />
+  <TextArea Name="BuildText" X="73" Y="191" Width="264" Height="15" />
+  <PathView Name="Hammer" X="333" Y="147" Width="45" Height="66" Rotate="40" Fill="#E0E0F5" Border="#00 1" Effect="emboss(5 60 120)" SvgString="M 49 0 L 49 0 C 49 0 49 0 49 0 L 49 0 L 49 0 Z M -12 -11 C -18 -11 -23 -6 -23 0 L -23 44 C -23 50 -18 55 -12 55 L 4 55 C 9 55 13 52 14 48 L 14 48 C 28 47 39 47 49 46 L 49 46 L 49 204 L 49 204 C 46 205 43 208 43 212 L 43 326 C 43 330 46 333 49 334 L 49 334 L 49 335 L 84 335 L 84 334 L 84 334 C 87 333 90 330 90 326 L 90 212 C 90 208 87 205 84 204 L 84 204 L 84 43 L 84 43 C 91 42 98 41 105 41 C 112 41 121 42 132 44 C 147 47 173 83 187 83 C 189 83 190 82 192 81 C 216 60 104 4 103 3 C 103 2 95 2 84 1 L 84 1 L 84 -8 L 49 -8 L 49 0 L 49 0 C 37 0 24 0 15 0 L 15 0 L 15 0 C 15 -6 10 -11 4 -11 Z " />
+  <PathView Name="ScrewDriver" X="36" Y="130" Width="19" Height="82" Rotate="-35" Fill="#E0E0F5" Border="#00 1" Effect="emboss(5 60 120)" SvgString="M 0 0 L 0 141 L 0 141 C -5 143 -8 148 -8 153 L -8 155 C -8 162 -2 168 5 168 L 16 168 L 16 294 L 16 294 C 13 295 11 298 11 302 L 11 314 L 11 323 L 33 323 L 33 314 L 33 302 C 33 298 31 295 28 294 L 28 294 L 28 168 L 37 168 C 44 168 50 162 50 155 L 50 153 C 50 148 47 144 43 141 L 43 141 L 43 0 Z " />
 </SpringView>

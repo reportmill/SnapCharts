@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ColView Padding="3,0,0,0" PrefWidth="300" FillWidth="true">
-  <LineBorder Color="#c0c0c0" />
-  <Label Name="TitleLabel" PrefWidth="275" PrefHeight="24" Align="CENTER" text="Inspector">
-    <font name="Arial" size="14" />
-  </Label>
-  <RowView Padding="0,8,3,8" >
-    <font name="Arial" size="12" />
-    <TextField Name="SearchTextField" Margin="4,12,4,12" GrowWidth="true" PrefHeight="28" PromptText="Search" BorderRadius="10"/>
+<ColView PrefWidth="300" Padding="3,0,0,0" Border="#C0 1" FillWidth="true">
+  <Label Name="TitleLabel" PrefWidth="275" PrefHeight="24" Align="CENTER" Font="Arial 14" Text="Inspector" />
+  <RowView Padding="0,8,3,8" Font="Arial 12">
+    <TextField Name="SearchTextField" PrefHeight="28" Margin="4,12,4,12" BorderRadius="10" GrowWidth="true" PromptText="Search" />
   </RowView>
   <ScrollView Name="ContentBox" GrowHeight="true">
     <ColView Name="InspColView" FillWidth="true" />

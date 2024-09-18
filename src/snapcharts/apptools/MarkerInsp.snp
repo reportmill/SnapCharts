@@ -2,67 +2,65 @@
 <ColView Padding="4,10,4,10" Spacing="4" FillWidth="true">
   <RowView Padding="4,4,2,4" Spacing="4" GrowWidth="true">
     <ColView Spacing="4" GrowWidth="true" GrowHeight="true">
-      <Label Spacing="4" text="Markers:" />
-      <ListView Name="MarkersListView" MinWidth="120" MinHeight="46" GrowWidth="true">
-        <LineBorder Color="#c0c0c0" />
-      </ListView>
+      <Label Text="Markers:" />
+      <ListView Name="MarkersListView" MinWidth="120" MinHeight="46" GrowWidth="true" />
     </ColView>
     <ColView Align="TOP_CENTER" Padding="16,4,4,4" Spacing="4" GrowHeight="true">
-      <Button Name="AddMarkerButton" PrefWidth="70" Padding="2" text="Add" />
-      <Button Name="RemoveMarkerButton" PrefWidth="70" Padding="2" text="Remove" />
+      <Button Name="AddMarkerButton" PrefWidth="70" Padding="2" Text="Add" />
+      <Button Name="RemoveMarkerButton" PrefWidth="70" Padding="2" Text="Remove" />
     </ColView>
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-    <Label PrefWidth="40" Spacing="4" text="Name:" />
+    <Label PrefWidth="40" Text="Name:" />
     <TextField Name="NameText" GrowWidth="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-    <Label PrefWidth="40" Spacing="4" text="Text:" />
+    <Label PrefWidth="40" Text="Text:" />
     <TextField Name="TextText" GrowWidth="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label Spacing="4" text="Space X:" />
+    <Label Text="Space X:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="XSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_LEFT" />
-      <ToggleButton Name="XSpaceContentButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
-      <ToggleButton Name="XSpaceXButton" Padding="2,4,2,4" text="X" PrefWidth="30" Position="CENTER_RIGHT" />
+      <ToggleButton Name="XSpaceChartButton" Padding="2,4,2,4" Text="Chart" Position="CENTER_LEFT" />
+      <ToggleButton Name="XSpaceContentButton" Padding="2,4,2,4" Text="Data" Position="CENTER" />
+      <ToggleButton Name="XSpaceXButton" PrefWidth="30" Padding="2,4,2,4" Text="X" Position="CENTER_RIGHT" />
     </RowView>
   </RowView>
   <RowView Padding="4" Spacing="4">
-    <Label Spacing="4" text="Space Y:" />
+    <Label Text="Space Y:" />
     <RowView GrowWidth="true">
-      <ToggleButton Name="YSpaceChartButton" Padding="2,4,2,4" text="Chart" Position="CENTER_LEFT" />
-      <ToggleButton Name="YSpaceContentButton" Padding="2,4,2,4" text="Data" Position="CENTER" />
-      <ToggleButton Name="YSpaceYButton" Padding="2,4,2,4" text="Y" PrefWidth="30" Position="CENTER_RIGHT" />
-      <ToggleButton Name="YSpaceY2Button" Padding="2,4,2,4" text="Y2" PrefWidth="30" Position="CENTER" />
-      <ToggleButton Name="YSpaceY3Button" Padding="2,4,2,4" text="Y3" PrefWidth="30" Position="CENTER" />
-      <ToggleButton Name="YSpaceY4Button" Padding="2,4,2,4" text="Y4" PrefWidth="30" Position="CENTER" />
+      <ToggleButton Name="YSpaceChartButton" Padding="2,4,2,4" Text="Chart" Position="CENTER_LEFT" />
+      <ToggleButton Name="YSpaceContentButton" Padding="2,4,2,4" Text="Data" Position="CENTER" />
+      <ToggleButton Name="YSpaceYButton" PrefWidth="30" Padding="2,4,2,4" Text="Y" Position="CENTER_RIGHT" />
+      <ToggleButton Name="YSpaceY2Button" PrefWidth="30" Padding="2,4,2,4" Text="Y2" Position="CENTER" />
+      <ToggleButton Name="YSpaceY3Button" PrefWidth="30" Padding="2,4,2,4" Text="Y3" Position="CENTER" />
+      <ToggleButton Name="YSpaceY4Button" PrefWidth="30" Padding="2,4,2,4" Text="Y4" Position="CENTER" />
     </RowView>
   </RowView>
   <RowView Padding="3,4,3,4" Spacing="4">
-    <Label Spacing="4" text="X:" />
+    <Label Text="X:" />
     <TextField Name="XText" ColCount="6" />
-    <Label Margin="0,0,0,10" Spacing="4" text="W:" />
+    <Label Margin="0,0,0,10" Text="W:" />
     <TextField Name="WText" ColCount="6" />
-    <CheckBox Name="FractionalXCheckBox" Margin="0,0,0,8" Spacing="5" text="Fractional" />
+    <CheckBox Name="FractionalXCheckBox" Margin="0,0,0,8" Text="Fractional" />
   </RowView>
   <RowView Padding="3,4,3,4" Spacing="4">
-    <Label Spacing="4" text="Y:" />
+    <Label Text="Y:" />
     <TextField Name="YText" ColCount="6" />
-    <Label Margin="0,0,0,10" Spacing="4" text="H:" />
+    <Label Margin="0,0,0,10" Text="H:" />
     <TextField Name="HText" ColCount="6" />
-    <CheckBox Name="FractionalYCheckBox" Margin="0,0,0,8" Spacing="5" text="Fractional" />
+    <CheckBox Name="FractionalYCheckBox" Margin="0,0,0,8" Text="Fractional" />
   </RowView>
   <RowView Padding="1,4,1,4" Spacing="4" GrowWidth="true">
-    <CheckBox Name="TextOutsideXCheckBox" Spacing="5" text="Text Outside X" />
+    <CheckBox Name="TextOutsideXCheckBox" Text="Text Outside X" />
   </RowView>
   <RowView Padding="1,4,1,4" Spacing="4" GrowWidth="true">
-    <CheckBox Name="TextOutsideYCheckBox" Spacing="5" text="Text Outside Y" />
+    <CheckBox Name="TextOutsideYCheckBox" Text="Text Outside Y" />
   </RowView>
   <RowView Padding="1,4,1,4" Spacing="4" GrowWidth="true">
-    <CheckBox Name="FitTextToBoundsCheckBox" Spacing="5" text="Fit Text to Marker Bounds" />
+    <CheckBox Name="FitTextToBoundsCheckBox" Text="Fit Text to Marker Bounds" />
   </RowView>
   <RowView Padding="1,4,1,4" Spacing="4" GrowWidth="true">
-    <CheckBox Name="ShowTextInAxisCheckBox" Spacing="5" text="Show Text in Axis" />
+    <CheckBox Name="ShowTextInAxisCheckBox" Text="Show Text in Axis" />
   </RowView>
 </ColView>
