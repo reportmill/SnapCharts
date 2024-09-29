@@ -1,5 +1,4 @@
 package snapcharts.apptools;
-import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.gfx.Border;
 import snap.gfx.Color;
@@ -112,7 +111,6 @@ public abstract class ChartPartInsp extends ViewOwner {
         label.setFont(LABEL_FONT);
         label.setFill(LABEL_FILL);
         label.setTextColor(LABEL_TEXT_FILL);
-        label.getStringView().setGrowWidth(true);
         label.setAlign(Pos.CENTER);
         label.setPadding(4,4,4,10);
         label.setMargin(4,8,4,8);

@@ -173,7 +173,7 @@ public class DataSetPane extends ViewOwner {
     /**
      * Configures a table column headers.
      */
-    private void configureColumn(TableCol aCol)
+    private void configureColumn(TableCol<?> aCol)
     {
         // Get DataSet info
         DataSet dataSet = getDataSet();
@@ -198,17 +198,13 @@ public class DataSetPane extends ViewOwner {
     /**
      * Configures a table cell.
      */
-    private void configureCell(ListCell aCell)
+    private void configureCell(ListCell<?> aCell)
     {
         // Get DataSet info
         DataSet dataSet = getDataSet();
         DataType dataType = dataSet.getDataType();
         int chanCount = dataType.getChannelCount();
         int pointCount = dataSet.getPointCount();
-
-        // Set Cell.MinSize
-        int minCellHeight = (int) Math.ceil(aCell.getFont().getLineHeight());
-        aCell.getStringView().setMinSize(40, minCellHeight);
 
         // Get dataSet count, point count, row and column
         int row = aCell.getRow();

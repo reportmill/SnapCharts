@@ -160,8 +160,7 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
         // Calculate ColorBox Y/H and set
         Insets pad = _entryBox.getPadding();
         Label label = (Label) _entryBox.getChild(0);
-        StringView strView = label.getStringView();
-        double strH = strView.getTextHeight();
+        double strH = label.getPrefHeight();
         double halfH = Math.ceil(strH/2);
         double colorBoxY = _entryBox.getY() + pad.top + halfH;
         double colorBoxH = _entryBox.getHeight() - pad.bottom - strH;

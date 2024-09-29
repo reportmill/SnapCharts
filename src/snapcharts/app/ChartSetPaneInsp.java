@@ -139,7 +139,6 @@ public class ChartSetPaneInsp extends ViewOwner {
         label.setFill(ChartPartInsp.LABEL_FILL_SEL);
         label.setBorder(ChartPartInsp.LABEL_BORDER_SEL);
         label.setFont(Font.Arial14);
-        label.getStringView().setGrowWidth(true);
         label.setTextColor(Color.GRAY);
         label.setAlign(Pos.CENTER);
         label.setPadding(4,4,4,10);

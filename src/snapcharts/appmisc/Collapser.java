@@ -1,15 +1,8 @@
 package snapcharts.appmisc;
-
+import snap.geom.HPos;
 import snap.geom.Polygon;
-import snap.geom.Pos;
 import snap.gfx.Color;
-import snap.gfx.Font;
 import snap.view.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A class to collapse any view.
@@ -22,9 +15,6 @@ public class Collapser {
     // The label
     private Label  _label;
 
-    // The first focus view
-    private View  _firstFocus;
-
     // Indicator view for collapse
     private View  _clpView;
 
@@ -33,12 +23,6 @@ public class Collapser {
 
     // Whether view is GrowHeight
     private boolean _growHeight;
-
-    // A Collapse group
-    private CollapseGroup  _group;
-
-    // Known Collapse groups by name
-    private static Map<String,CollapseGroup> _groups = new HashMap<>();
 
     /**
      * Constructor.
@@ -85,22 +69,9 @@ public class Collapser {
 
         // Set CollapseGraphic
         View graphic = getCollapseGraphic();
-        _label.setGraphic(graphic);
         graphic.setRotate(isExpanded() ? 90 : 0);
+        _label.setGraphic(graphic);
     }
-
-    /**
-     * Sets the first focus component.
-     */
-    public void setFirstFocus(View aView)
-    {
-        _firstFocus = aView;
-    }
-
-    /**
-     * Returns whether view is collapsed.
-     */
-    public boolean isCollapsed()  { return !_expanded; }
 
     /**
      * Sets whether view is collapsed.
@@ -138,8 +109,6 @@ public class Collapser {
         if (aValue) {
             _view.setPrefHeight(-1);
             _view.setGrowHeight(_growHeight);
-            if (_group!=null)
-                _group.collapserDidExpand(this);
         }
 
         // If callapsing
@@ -148,8 +117,6 @@ public class Collapser {
             _view.setManaged(false);
             _view.setPrefHeight(0);
             _view.setGrowHeight(false);
-            if (_group!=null)
-                _group.collapserDidCollapse(this);
         }
 
         // Update graphic
@@ -204,8 +171,6 @@ public class Collapser {
         // If Showing, restore full pref size
         if (aValue) {
             _view.setPrefHeight(-1);
-            if (_firstFocus != null)
-                _firstFocus.requestFocus();
         }
 
         // If Hiding, make really hidden
@@ -216,40 +181,11 @@ public class Collapser {
     }
 
     /**
-     * Called when Label receives a MousePress.
-     */
-    protected void toggleExpandedAnimated(ViewEvent anEvent)
-    {
-        //ViewUtils.fireActionEvent(_view, anEvent);
-        setExpandedAnimated(!isExpanded());
-    }
-
-    /**
-     * Sets a collapse group by name.
-     */
-    public void setGroupForName(String aName)
-    {
-        _group = getCollapseGroupForName(aName);
-        _group.addCollapser(this);
-    }
-
-    /**
-     * Sets a collapse group by name.
-     */
-    public CollapseGroup getCollapseGroupForName(String aName)
-    {
-        CollapseGroup cg = _groups.get(aName);
-        if (cg==null)
-            _groups.put(aName, cg = new CollapseGroup());
-        return cg;
-    }
-
-    /**
      * Called when Label is pressed.
      */
     protected void labelWasPressed(ViewEvent anEvent)
     {
-        toggleExpandedAnimated(anEvent);
+        setExpandedAnimated(!isExpanded());
     }
 
     /**
@@ -260,60 +196,11 @@ public class Collapser {
         // If down arrow icon hasn't been created, create it
         if (_clpView!=null) return _clpView;
         Polygon poly = new Polygon(2.5, .5, 2.5, 8.5, 8.5, 4.5);
-        ShapeView sview = new ShapeView(poly); sview.setPrefSize(9,9);
-        sview.setFill(Color.GRAY); sview.setBorder(Color.GRAY, 1);
-        return _clpView = sview;
-    }
-
-    /**
-     * A class that tracks multiple collapsers, making sure only one is visible at a time.
-     */
-    public static class CollapseGroup {
-
-        // The list of collapsers
-        private List<Collapser> _collapsers = new ArrayList<>();
-
-        // Whether doing group work
-        private boolean  _groupWork;
-
-        /**
-         * Adds a collapser.
-         */
-        public void addCollapser(Collapser aCollapser)
-        {
-            _collapsers.add(aCollapser);
-        }
-
-        /**
-         * Called when a collapser collapses.
-         */
-        protected void collapserDidExpand(Collapser aCollapser)
-        {
-            if (_groupWork) return;
-            _groupWork = true;
-
-            for (Collapser c : _collapsers)
-                if (c!=aCollapser && c.isExpanded())
-                    c.setExpandedAnimated(false);
-
-            _groupWork = false;
-        }
-
-        /**
-         * Called when a collapser collapses.
-         */
-        protected void collapserDidCollapse(Collapser aCollapser)
-        {
-            if (_groupWork) return;
-            _groupWork = true;
-
-            for (Collapser c : _collapsers)
-                if (c!=aCollapser && !c.isExpanded()) {
-                    c.setExpandedAnimated(true);
-                    break;
-                }
-
-            _groupWork = false;
-        }
+        ShapeView shapeView = new ShapeView(poly);
+        shapeView.setPrefSize(9,9);
+        shapeView.setFill(Color.GRAY);
+        shapeView.setBorder(Color.GRAY, 1);
+        shapeView.setLeanX(HPos.LEFT);
+        return _clpView = shapeView;
     }
 }
