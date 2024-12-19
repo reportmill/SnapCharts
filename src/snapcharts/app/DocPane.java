@@ -917,14 +917,13 @@ public class DocPane extends ViewOwner {
         }
 
         @Override
-        public DocItem[] getChildren(DocItem aParent)
+        public List<DocItem> getChildren(DocItem aParent)
         {
             if (aParent instanceof DocItemParent) {
                 DocItemParent docItemParent = (DocItemParent) aParent;
-                List<DocItem> docItems = docItemParent.getDocItems();
-                return docItems.toArray(new DocItem[0]);
+                return docItemParent.getDocItems();
             }
-            return new DocItem[0];
+            return Collections.emptyList();
         }
 
         @Override
