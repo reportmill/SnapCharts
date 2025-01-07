@@ -699,7 +699,7 @@ public abstract class ChartHelper {
     protected void removeAxisViews()
     {
         // Remove old axis views
-        AxisView[] oldAxisViews = _chartView.getChildrenForClass(AxisView.class);
+        List<AxisView> oldAxisViews = _chartView.getChildrenForClass(AxisView.class);
         for (AxisView axisView : oldAxisViews)
             ViewUtils.removeChild(_chartView, axisView);
     }
