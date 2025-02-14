@@ -27,8 +27,7 @@ dependencies {
     implementation project(':SnapKit')
 
     // SnapKitGL project
-    implementation project(':SnapKitGL')
-
+    //implementation project(':SnapKitGL')
 }
 
 mainClassName = 'snapcharts.app.App'
