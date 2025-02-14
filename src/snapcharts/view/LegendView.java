@@ -361,8 +361,7 @@ public class LegendView extends ChartPartView<Legend> {
         }
 
         // Get row/trace index
-        ParentView parentView = anEntryView.getParent();
-        int index = ArrayUtils.indexOf(parentView.getChildren(), anEntryView) - 1;
+        int index = anEntryView.indexInParent() - 1;
 
         // Get trace and disable
         Content content = getContent();

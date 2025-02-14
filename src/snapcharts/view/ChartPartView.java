@@ -91,7 +91,7 @@ public class ChartPartView<T extends ChartPart> extends ParentView {
      */
     public ChartPartView getChildChartPartViewForXY(double aX, double aY)
     {
-        View[] children = getChildren();
+        View[] children = getChildrenArray();
         for (int i = children.length - 1; i >= 0; i--) {
             View child = children[i];
             Point pointInChild = child.parentToLocal(aX, aY);
