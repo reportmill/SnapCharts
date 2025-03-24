@@ -4,7 +4,7 @@
 package snapcharts.app;
 import snap.geom.*;
 import snap.gfx.*;
-import snap.util.SnapUtils;
+import snap.util.SnapEnv;
 import snap.view.*;
 import snapcharts.charts.*;
 import snapcharts.view.*;
@@ -649,7 +649,7 @@ public class ChartPaneSel {
     protected void repaintOnScrollStop()
     {
         // The browser is fast enough to paint selection
-        if (SnapUtils.isTeaVM) {
+        if (SnapEnv.isTeaVM) {
             _chartView.repaint(); return; }
 
         // If not scrolling, set time, check for stop and repaint

@@ -4,7 +4,7 @@
 package snapcharts.app;
 import snap.gfx.GFXEnv;
 import snap.util.FileUtils;
-import snap.util.SnapUtils;
+import snap.util.SnapEnv;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
 import snapcharts.charts.Chart;
@@ -50,11 +50,11 @@ public class AppEnv {
     private void openFilenameBytes(String aFilename, byte[] theBytes)
     {
         // Get file
-        File file = SnapUtils.isTeaVM ? new File('/' + aFilename) :
+        File file = SnapEnv.isTeaVM ? new File('/' + aFilename) :
             FileUtils.getTempFile(aFilename);
 
         // TeaVM seems to sometimes use remnants of old file. This has been fixed
-        if (SnapUtils.isTeaVM)
+        if (SnapEnv.isTeaVM)
             try { file.delete(); }
             catch (Exception e) { System.err.println("DevPaneViewOwners.showInSnapBuilder: Error deleting file"); }
 
@@ -67,7 +67,7 @@ public class AppEnv {
         }
 
         // Open temp HTML file
-        if (SnapUtils.isTeaVM)
+        if (SnapEnv.isTeaVM)
             GFXEnv.getEnv().openFile(file);
         else GFXEnv.getEnv().openURL(file);
     }
@@ -128,17 +128,11 @@ public class AppEnv {
         // If already set, just return
         if (_shared != null) return _shared;
 
-        if (_shared == null)
-            return _shared = new AppEnv();
-
         // Use generic for TEAVM, otherwise Swing version
-        String cname = SnapUtils.getPlatform()==SnapUtils.Platform.TEAVM ? "snapcharts.app.AppEnv" : "snapcharts.app.AppEnvSwing";
+        String cname = SnapEnv.isTeaVM ? "snapcharts.app.AppEnv" : "snapcharts.app.AppEnvSwing";
 
         // Try to get/set class name instance
-        try
-        {
-            return _shared = (AppEnv) Class.forName(cname).newInstance();
-        }
+        try { return _shared = (AppEnv) Class.forName(cname).newInstance(); }
         catch(Exception e)
         {
             System.err.println("AppEnv.getEnv: Can't set env: " + cname + ", " + e);

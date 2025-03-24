@@ -1,5 +1,6 @@
 package snapcharts.app;
 import snap.geom.HPos;
+import snap.util.SnapEnv;
 import snap.util.SnapUtils;
 import snap.view.*;
 
@@ -50,7 +51,7 @@ public class WelcomePanelAnim extends ViewOwner {
         TextArea jvmText = getView("JVMText", TextArea.class);
         jvmText.setDefaultTextStyleString("Font: Arial Bold 10; Color: #FF");
         jvmText.setDefaultLineStyle(jvmText.getDefaultLineStyle().copyForAlign(HPos.CENTER));
-        jvmText.addChars("JVM: " + (SnapUtils.isTeaVM ? "TeaVM" : System.getProperty("java.runtime.version")));
+        jvmText.addChars("JVM: " + (SnapEnv.isTeaVM ? "TeaVM" : System.getProperty("java.runtime.version")));
 
         // Configure BuildText
         TextArea buildText = getView("BuildText", TextArea.class);

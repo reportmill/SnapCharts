@@ -255,7 +255,7 @@ public class DoubleArray extends NumberArray {
      */
     public static DoubleArray fromMinMax(double aMin, double aMax)
     {
-        int count = snap.util.SnapUtils.isWebVM ? 16 : 80;
+        int count = snap.util.SnapEnv.isWebVM ? 16 : 80;
         return fromMinMaxCount(aMin, aMax, count);
     }
 

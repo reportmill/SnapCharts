@@ -558,7 +558,7 @@ public class DocPane extends ViewOwner {
         win.addEventHandler(e -> { close(); e.consume(); }, WinClose);
 
         // If TeaVM, go full window
-        if (SnapUtils.isTeaVM) {
+        if (SnapEnv.isTeaVM) {
             getWindow().setMaximized(true);
             getView("WebButton").setVisible(false);
         }

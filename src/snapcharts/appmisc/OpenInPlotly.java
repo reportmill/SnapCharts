@@ -594,7 +594,7 @@ public class OpenInPlotly {
         File file = FileUtils.getFile(filename);
 
         // TeaVM seems to sometimes use remnants of old file?
-        if (SnapUtils.isTeaVM) {
+        if (SnapEnv.isTeaVM) {
             try { file.delete(); }
             catch (Exception e) { System.err.println("OpenInPlotly.writeToFile: Error deleting file"); }
         }
