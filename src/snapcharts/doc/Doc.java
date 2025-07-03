@@ -107,7 +107,7 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
      */
     public static Doc createDocFromSource(Object aSource)
     {
-        WebURL url = WebURL.getURL(aSource);
+        WebURL url = WebURL.getUrl(aSource);
         if (url == null) {
             System.err.println("ChartDoc.createDocFromSource: Can't find URL for source: " + aSource);
             return null;

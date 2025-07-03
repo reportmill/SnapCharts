@@ -105,14 +105,14 @@ public class App {
                     SnapUtils.writeBytes(openOnLaunchBytes, openOnLaunchFile);
 
                     // Set OpenOnLaunchURL
-                    _openOnLaunchURL = WebURL.getURL(openOnLaunchFile);
+                    _openOnLaunchURL = WebURL.getUrl(openOnLaunchFile);
                 }
             }
 
             // Handle
             else if (arg.equals(APP_ARG_FETCH_CHART)) {
                 String urls = "http://localhost:8008/" + args[1];
-                _openOnLaunchURL = WebURL.getURL(urls);
+                _openOnLaunchURL = WebURL.getUrl(urls);
             }
         }
     }

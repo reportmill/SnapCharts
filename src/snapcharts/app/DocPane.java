@@ -248,7 +248,7 @@ public class DocPane extends ViewOwner {
     public DocPane openDocFromSource(Object aSource)
     {
         // Get URL for source
-        WebURL url = WebURL.getURL(aSource);
+        WebURL url = WebURL.getUrl(aSource);
 
         // Get doc for URL
         Doc doc = Doc.createDocFromSource(url);
@@ -267,7 +267,7 @@ public class DocPane extends ViewOwner {
         //String path = FilePanel.showSavePanel(getUI(), "Snap Charts File", exts); if (path==null) return;
         WebFile file = FilePanel.showSaveFilePanel(getUI(), "Snap Charts file", exts); if (file == null) return;
 
-        getDoc().setSourceURL(file.getURL());
+        getDoc().setSourceURL(file.getUrl());
         save();
     }
 

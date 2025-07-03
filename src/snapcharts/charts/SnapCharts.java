@@ -199,7 +199,7 @@ public class SnapCharts {
      */
     public static Image getImageForSource(Object aSource)
     {
-        WebURL url = WebURL.getURL(aSource);
+        WebURL url = WebURL.getUrl(aSource);
         return url != null ? Image.getImageForSource(url) : null;
     }
 }

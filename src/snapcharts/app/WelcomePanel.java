@@ -205,7 +205,7 @@ public class WelcomePanel extends ViewOwner {
     {
         // If alt-down, open favorite sample
         if (ViewUtils.isAltDown()) {
-            WebURL url = WebURL.getURL("https://reportmill.com/snaptea/SnapChartsSamples/SolarData/SolarData.charts");
+            WebURL url = WebURL.getUrl("https://reportmill.com/snaptea/SnapChartsSamples/SolarData/SolarData.charts");
             DocPane dpane = newDocPane().openDocFromSource(url);
             dpane.setWindowVisible(true);
             hide();
