@@ -45,14 +45,14 @@ public class DocPaneMenuBar extends ViewOwner {
         Undoer undoer = null;//getEditor().getUndoer();
 
         // Update UndoMenuItem
-        String uTitle = undoer==null || undoer.getUndoSetLast()==null? "Undo" : undoer.getUndoSetLast().getFullUndoTitle();
+        String uTitle = undoer==null || undoer.getLastUndoSet()==null? "Undo" : undoer.getLastUndoSet().getFullUndoTitle();
         setViewValue("UndoMenuItem", uTitle);
-        setViewEnabled("UndoMenuItem", undoer!=null && undoer.getUndoSetLast()!=null);
+        setViewEnabled("UndoMenuItem", undoer!=null && undoer.getLastUndoSet()!=null);
 
         // Update RedoMenuItem
-        String rTitle = undoer==null || undoer.getRedoSetLast()==null? "Redo" : undoer.getRedoSetLast().getFullRedoTitle();
+        String rTitle = undoer==null || undoer.getLastRedoSet()==null? "Redo" : undoer.getLastRedoSet().getFullRedoTitle();
         setViewValue("RedoMenuItem", rTitle);
-        setViewEnabled("RedoMenuItem", undoer!=null && undoer.getRedoSetLast()!=null);
+        setViewEnabled("RedoMenuItem", undoer!=null && undoer.getLastRedoSet()!=null);
     }
 
     /**

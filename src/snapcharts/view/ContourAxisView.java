@@ -111,7 +111,7 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
         _entryBox.addChild(entryView, 0);
 
         // Make last entry not grow so it will sit flush on bottom
-        View lastEntry = _entryBox.getChildLast();
+        View lastEntry = _entryBox.getLastChild();
         lastEntry.setGrowHeight(false);
     }
 
