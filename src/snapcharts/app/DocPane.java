@@ -247,13 +247,8 @@ public class DocPane extends ViewOwner {
      */
     public DocPane openDocFromSource(Object aSource)
     {
-        // Get URL for source
         WebURL url = WebURL.getUrl(aSource);
-
-        // Get doc for URL
-        Doc doc = Doc.createDocFromSource(url);
-
-        // Return call to openDoc
+        Doc doc = Doc.createDocFromUrl(url);
         return openDoc(doc);
     }
 
@@ -809,7 +804,7 @@ public class DocPane extends ViewOwner {
     {
         byte[] xmlBytes = aFile.getBytes();
         ChartArchiver chartArchiver = new ChartArchiver();
-        Doc doc = chartArchiver.getDocFromXMLBytes(xmlBytes);
+        Doc doc = chartArchiver.getDocFromXmlBytes(xmlBytes);
         if (doc != null)
             setDoc(doc);
     }
@@ -824,7 +819,7 @@ public class DocPane extends ViewOwner {
 
         // Write to XML bytes
         ChartArchiver chartArchiver = new ChartArchiver();
-        byte[] xmlBytes = chartArchiver.writePropObjectToXMLBytes(doc);
+        byte[] xmlBytes = chartArchiver.writePropObjectToXmlBytes(doc);
 
         // Write to file
         File file = new File("/tmp/PropArchTest.charts");
@@ -882,10 +877,10 @@ public class DocPane extends ViewOwner {
      */
     private void performPropArchiverOpenTest(ViewEvent anEvent)
     {
-        File file = new File("/tmp/PropArchTest.charts");
+        WebURL charFileUrl = WebURL.getUrl("/tmp/PropArchTest.charts");
 
         ChartArchiver chartArchiver = new ChartArchiver();
-        Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(file);
+        Doc doc = (Doc) chartArchiver.readPropObjectFromXmlUrl(charFileUrl);
 
         DocPane docPane = new DocPane();
         docPane.openDoc(doc);

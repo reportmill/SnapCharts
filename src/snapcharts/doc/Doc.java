@@ -105,16 +105,10 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
     /**
      * Loads the ChartView from JSON source.
      */
-    public static Doc createDocFromSource(Object aSource)
+    public static Doc createDocFromUrl(WebURL docUrl)
     {
-        WebURL url = WebURL.getUrl(aSource);
-        if (url == null) {
-            System.err.println("ChartDoc.createDocFromSource: Can't find URL for source: " + aSource);
-            return null;
-        }
-
         // Get path, extension
-        String path = url.getPath();
+        String path = docUrl.getPath();
         String ext = FilePathUtils.getExtension(path).toLowerCase();
 
         // Handle SnapCharts .charts file
@@ -122,11 +116,11 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
 
             // Create ChartArchiver and read
             ChartArchiver chartArchiver = new ChartArchiver();
-            Doc doc = (Doc) chartArchiver.readPropObjectFromXMLSource(url);
+            Doc doc = (Doc) chartArchiver.readPropObjectFromXmlUrl(docUrl);
 
             // Set URL
-            if (doc != null && !url.getString().contains("localhost"))
-                doc.setSourceURL(url);
+            if (doc != null && !docUrl.getString().contains("localhost"))
+                doc.setSourceURL(docUrl);
 
             // Return
             return doc;
@@ -134,7 +128,7 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
 
         // Handle simple file
         if (ext.equals("simple")) {
-            String str = url.getText();
+            String str = docUrl.getText();
             Doc doc = new DocTextReader().getDocForString(str);
             return doc;
         }

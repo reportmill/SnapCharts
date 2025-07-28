@@ -91,7 +91,7 @@ public class DocPaneCopyPaster {
         // Handle SNAP_XML: Get bytes, unarchive view and add
         if (clipboard.hasData(SNAPCHART_XML_TYPE)) {
             byte[] bytes = clipboard.getDataBytes(SNAPCHART_XML_TYPE);
-            ChartPart chartPart = new ChartArchiver().getChartPartFromXMLSource(bytes);
+            ChartPart chartPart = new ChartArchiver().getChartPartFromXmlBytes(bytes);
             _docPane.addChartPart(chartPart);
         }
 
