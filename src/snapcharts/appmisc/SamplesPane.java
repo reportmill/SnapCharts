@@ -125,7 +125,7 @@ public class SamplesPane extends ViewOwner {
      */
     private void loadIndexFile()
     {
-        WebURL url = WebURL.getUrl(SAMPLES_ROOT + "index.txt"); assert url != null;
+        WebURL url = WebURL.createUrl(SAMPLES_ROOT + "index.txt");
         CompletableFuture.supplyAsync(url::getResponse).thenAccept(this::indexFileLoaded);
     }
 
@@ -206,8 +206,8 @@ public class SamplesPane extends ViewOwner {
         for (View child : colView.getChildren())
             child.setOwner(this);
 
-        // Load images
-        loadImagesInBackground();
+        // Load images in background
+        CompletableFuture.runAsync(this::loadImages);
     }
 
     /**
@@ -296,11 +296,9 @@ public class SamplesPane extends ViewOwner {
      */
     private static WebURL getDocURL(int anIndex)
     {
-        // Get document name, URL string and URL
         String name = getDocName(anIndex);
         String urls = SAMPLES_ROOT + name + '/' + name + SAMPLES_EXT;
-        WebURL url = WebURL.getUrl(urls);
-        return url;
+        return WebURL.getUrl(urls);
     }
 
     /**
@@ -324,15 +322,7 @@ public class SamplesPane extends ViewOwner {
     }
 
     /**
-     * Loads the thumbnail image for each sample in background thread.
-     */
-    private void loadImagesInBackground()
-    {
-        new Thread(() -> loadImages()).start();
-    }
-
-    /**
-     * Loads the thumbnail image for each sample in background thread.
+     * Loads the thumbnail image for each sample.
      */
     private void loadImages()
     {
