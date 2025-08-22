@@ -12,6 +12,7 @@ import snap.web.WebURL;
 import snapcharts.app.DocPane;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A class to show samples.
@@ -124,8 +125,8 @@ public class SamplesPane extends ViewOwner {
      */
     private void loadIndexFile()
     {
-        WebURL url = WebURL.getUrl(SAMPLES_ROOT + "index.txt");
-        url.getResponseAndCall(resp -> indexFileLoaded(resp));
+        WebURL url = WebURL.getUrl(SAMPLES_ROOT + "index.txt"); assert url != null;
+        CompletableFuture.supplyAsync(url::getResponse).thenAccept(this::indexFileLoaded);
     }
 
     /**
@@ -147,7 +148,7 @@ public class SamplesPane extends ViewOwner {
         List<String> docNamesList = new ArrayList<>();
         for (String line : lines) {
             line = line.trim();
-            if (line.length() > 0)
+            if (!line.isEmpty())
                 docNamesList.add(line);
         }
 
