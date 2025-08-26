@@ -281,7 +281,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         if (_intervals != null) return _intervals;
 
         // Get intervals for Min_Div_Len
-        _maxTickLabelRotatedSize = new Size();
+        _maxTickLabelRotatedSize = Size.ZERO;
         double divLen = getDivLen();
         _intervals = _chartHelper.createIntervals(this);
 

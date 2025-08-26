@@ -3,10 +3,8 @@
  */
 package snapcharts.view;
 import snap.geom.*;
-import snap.util.ArrayUtils;
 import snap.view.*;
 import snapcharts.charts.*;
-
 import java.util.Objects;
 
 /**
@@ -40,7 +38,7 @@ public class LegendView extends ChartPartView<Legend> {
         _titleView.setMargin(0, 0, 5, 0);
 
         // Register for click
-        addEventHandler(e -> legendWasClicked(e), MouseRelease);
+        addEventHandler(e -> handleLegendMouseReleaseEvent(), MouseRelease);
     }
 
     /**
@@ -168,7 +166,7 @@ public class LegendView extends ChartPartView<Legend> {
         }
 
         // If null, but Floating is set, return XY of centered UserSize (PrefSize probably)
-        if (userXY == null && isFloating()) {
+        if (isFloating()) {
             Size userSize = getUserSize();
             double dispX = Math.round((getChartView().getWidth() - userSize.width) / 2);
             double dispY = Math.round((getChartView().getHeight() - userSize.height) / 2);
@@ -216,11 +214,10 @@ public class LegendView extends ChartPartView<Legend> {
             double chartW = chartView.getWidth();
             double chartH = chartView.getHeight();
             if (userXY.x + userSize.width > chartW || userXY.y + userSize.height > chartH) {
-                userSize = userSize.clone();
                 if (userXY.x + userSize.width > chartW)
-                    userSize.width = chartW - userXY.x - 2;
+                    userSize = userSize.withWidth(chartW - userXY.x - 2);
                 if (userXY.y + userSize.height > chartH)
-                    userSize.height = chartH - userXY.y - 2;
+                    userSize = userSize.withHeight(chartH - userXY.y - 2);
             }
         }
 
@@ -258,7 +255,7 @@ public class LegendView extends ChartPartView<Legend> {
         // Handle Title.Text
         String titleText = legend.getTitle().getText();
         _titleView.setText(titleText);
-        _titleView.setVisible(titleText != null && titleText.length() > 0);
+        _titleView.setVisible(titleText != null && !titleText.isEmpty());
         _titleView.setLeanX(legend.getAlignX());
 
         // Handle Inside
@@ -285,7 +282,7 @@ public class LegendView extends ChartPartView<Legend> {
             _entryBox.addChild(entryView);
 
             // Register row to enable/disable
-            entryView.addEventHandler(e -> entryWasClicked(e, entryView), MouseRelease);
+            entryView.addEventHandler(e -> handleEntryViewMouseReleaseEvent(e, entryView), MouseRelease);
         }
     }
 
@@ -340,7 +337,7 @@ public class LegendView extends ChartPartView<Legend> {
     /**
      * Called when legend is clicked.
      */
-    private void legendWasClicked(ViewEvent anEvent)
+    private void handleLegendMouseReleaseEvent()
     {
         // Enable all Traces
         Content content = getContent();
@@ -352,7 +349,7 @@ public class LegendView extends ChartPartView<Legend> {
     /**
      * Called when legend row is clicked.
      */
-    private void entryWasClicked(ViewEvent anEvent, View anEntryView)
+    private void handleEntryViewMouseReleaseEvent(ViewEvent anEvent, View anEntryView)
     {
         // If not double-click, just ignore
         if (anEvent.getClickCount() != 2) {
