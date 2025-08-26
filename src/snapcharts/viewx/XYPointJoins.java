@@ -14,17 +14,14 @@ public class XYPointJoins {
     public static PathIter getPathIterForPointJoin(PointJoin pointJoin, PathIter pathIter, TraceView aTraceView)
     {
         // For Other PointJoints, wrap in special PathIter to turn line segments into specified join
-        switch (pointJoin) {
-            case Line: return pathIter;
-            case StepHV: return new StepHVPathIter(pathIter);
-            case StepVH: return new StepVHPathIter(pathIter);
-            case StepHVH: return new StepHVHPathIter(pathIter);
-            case Spline: return new SplinePathIter(pathIter);
-            case Y0Between: return new Y0BetweenPathIter(pathIter, aTraceView);
-            default:
-                System.err.println("DataLineShape.getPathIter: Unknown PointJoint: " + pointJoin);
-                return pathIter;
-        }
+        return switch (pointJoin) {
+            case Line -> pathIter;
+            case StepHV -> new StepHVPathIter(pathIter);
+            case StepVH -> new StepVHPathIter(pathIter);
+            case StepHVH -> new StepHVHPathIter(pathIter);
+            case Spline -> new SplinePathIter(pathIter);
+            case Y0Between -> new Y0BetweenPathIter(pathIter, aTraceView);
+        };
     }
 
     /**
@@ -266,7 +263,10 @@ public class XYPointJoins {
         protected Point  _segPoint0 = new Point(), _segPoint1 = new Point(), _segPoint2 = new Point();
 
         // Next 2 segment slopes
-        protected Vector _segVector0 = new Vector(), _segVector1 = new Vector();
+        protected Vector _segVector0 = Vector.ZERO;
+
+        // Next 2 segment slopes
+        protected Vector _segVector1 = Vector.ZERO;
 
         // Next segment coords
         protected double[]  _nextCoords = new double[6];
@@ -351,7 +351,7 @@ public class XYPointJoins {
             // Shift Seg1 to Seg0
             _seg0 = _seg1;
             _segPoint0.setPoint(_segPoint1);
-            _segVector0.setXY(_segVector1);
+            _segVector0 = _segVector1;
 
             // Shift Seg2 to Seg1
             _seg1 = _seg2;
@@ -372,13 +372,11 @@ public class XYPointJoins {
             // Set the slope vector at point 1
             Point p2 = _seg2 != null ? _segPoint2 : _seg1 != null ? _segPoint1 : _segPoint0;
             Point p0 = _seg0 != null ? _segPoint0 : _seg1 != null ? _segPoint1 : _segPoint2;
-            _segVector1.x = (p2.x - p0.x);
-            _segVector1.y = (p2.y - p0.y);
-            _segVector1.normalize();
+            _segVector1 = new Vector(p2.x - p0.x, p2.y - p0.y).normalized();
 
             // If Y value flips (not continuously increasing or decreasing), just use slope 0 for smoother splines
             if (_seg0 != null && _seg1 != null && _seg2 != null && (_segPoint1.y - _segPoint0.y) * (_segPoint2.y - _segPoint1.y) < 0)
-                _segVector1.y = 0;
+                _segVector1 = _segVector1.withY(0);
         }
     }
 }
