@@ -250,7 +250,7 @@ public class PolarTraceView extends TraceView {
         int index = aDP.getIndex();
         DataSet displayData = getDisplayData();
         if (index >= displayData.getPointCount())
-            return new Point();
+            return Point.ZERO;
         double dispX = displayData.getX(index);
         double dispY = displayData.getY(index);
         return new Point(dispX, dispY);

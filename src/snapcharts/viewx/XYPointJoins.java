@@ -260,13 +260,10 @@ public class XYPointJoins {
         protected Seg _seg0, _seg1, _seg2;
 
         // Next 3 segment points
-        protected Point  _segPoint0 = new Point(), _segPoint1 = new Point(), _segPoint2 = new Point();
+        protected Point  _segPoint0, _segPoint1, _segPoint2;
 
         // Next 2 segment slopes
-        protected Vector _segVector0 = Vector.ZERO;
-
-        // Next 2 segment slopes
-        protected Vector _segVector1 = Vector.ZERO;
+        protected Vector _segVector0, _segVector1;
 
         // Next segment coords
         protected double[]  _nextCoords = new double[6];
@@ -280,6 +277,8 @@ public class XYPointJoins {
         public SplinePathIter(PathIter aPathIter)
         {
             _pathIter = aPathIter;
+            _segPoint0 = _segPoint1 = _segPoint2 = Point.ZERO;
+            _segVector0 = _segVector1 = Vector.ZERO;
 
             // Fill the Seg pipe
             if (_pathIter.hasNext())

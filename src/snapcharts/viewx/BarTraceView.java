@@ -228,7 +228,7 @@ public class BarTraceView extends TraceView {
 
         // Return zero point since bar not found for point - should not be possible
         System.err.println("BarTraceView.getLocalXYForDataPoint: Point not found");
-        return new Point(0, 0);
+        return Point.ZERO;
     }
 
     /**

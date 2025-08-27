@@ -295,7 +295,7 @@ public class PointPainter {
     private static Point getOffsetForDistance(Pos aPos, double aDist)
     {
         if (aPos == Pos.CENTER)
-            return new Point(0,0);
+            return Point.ZERO;
         double angle = getAngleRad(aPos);
         double dx = Math.cos(angle) * aDist;
         double dy = Math.sin(angle) * aDist;

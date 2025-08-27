@@ -102,13 +102,13 @@ public class Line3DTraceView extends TraceView3D {
             Point dispXY = dataToView(dataX, dataY);
 
             // Clamp to area/axis bounds
-            dispXY.x = Math.max(areaX, Math.min(dispXY.x, areaMaxX));
-            dispXY.y = areaH - Math.max(areaY, Math.min(dispXY.y, areaMaxY));
+            double dispX = Math.max(areaX, Math.min(dispXY.x, areaMaxX));
+            double dispY = areaH - Math.max(areaY, Math.min(dispXY.y, areaMaxY));
 
             // Add to path
             if (j == 0)
-                path.moveTo(dispXY.x, dispXY.y);
-            else path.lineTo(dispXY.x, dispXY.y);
+                path.moveTo(dispX, dispY);
+            else path.lineTo(dispX, dispY);
         }
 
         // Close path
