@@ -350,12 +350,12 @@ public class XYPointJoins {
         {
             // Shift Seg1 to Seg0
             _seg0 = _seg1;
-            _segPoint0.setPoint(_segPoint1);
+            _segPoint0 = _segPoint1;
             _segVector0 = _segVector1;
 
             // Shift Seg2 to Seg1
             _seg1 = _seg2;
-            _segPoint1.setPoint(_segPoint2);
+            _segPoint1 = _segPoint2;
 
             // Clear Seg2
             _seg2 = null;
@@ -364,7 +364,7 @@ public class XYPointJoins {
             boolean hasNext = _pathIter.hasNext();
             if (hasNext) {
                 _seg2 = _pathIter.getNext(_nextCoords);
-                _segPoint2.setXY(_nextCoords[0], _nextCoords[1]);
+                _segPoint2 = new Point(_nextCoords[0], _nextCoords[1]);
                 if (_seg2 != Seg.LineTo && !_needsMoveTo)
                     System.err.println("SplinePathIter.doCycle: Unexpected Seg type: " + _seg2);
             }
