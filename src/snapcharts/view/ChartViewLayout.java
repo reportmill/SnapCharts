@@ -320,14 +320,13 @@ public class ChartViewLayout {
         Point legendXY = Rect.getPointForPositionAndSize(dataBnds, legendPos, legendW, legendH);
 
         // Eliminate the margin and round
-        legendXY.x += legendMargin.left;
-        legendXY.y += legendMargin.top;
+        double legendX = Math.round(legendXY.x + legendMargin.left);
+        double legendY = Math.round(legendXY.y + legendMargin.top);
         legendW -= legendMargin.getWidth();
         legendH -= legendMargin.getHeight();
-        legendXY.snap();
 
         // Set new legend bounds
-        _legendProxy.setBounds(legendXY.x, legendXY.y, legendW, legendH);
+        _legendProxy.setBounds(legendX, legendY, legendW, legendH);
     }
 
     /**
