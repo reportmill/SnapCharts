@@ -89,9 +89,9 @@ public class LegendViewBoxH extends ChildView {
         chartW -= insLeft + insRight;
 
         // If ChartWidth will definitely result in 5+ rows, bump ChartWidth to at least that
-        int entryCount = getChildCount();
-        double entryW = getAverageWidth(viewProxy.getChildren()) + getSpacing();
-        double minRowW = Math.ceil(entryCount / 5d) * entryW;
+        //int entryCount = getChildCount();
+        //double entryW = getAverageWidth(viewProxy.getChildren()) + getSpacing();
+        //double minRowW = Math.ceil(entryCount / 5d) * entryW;
         //if (chartW < minRowW)
         //    chartW = Math.ceil(minRowW);
 
@@ -109,21 +109,20 @@ public class LegendViewBoxH extends ChildView {
             double maxY = _maxY;
 
             //
-            double scaleFactorMax = 1.6;
-            switch (rowCount) {
-                case 2: scaleFactorMax = 1.1; break;
-                case 3: scaleFactorMax = 1.2; break;
-                case 4: scaleFactorMax = 1.3; break;
-                case 5: scaleFactorMax = 1.4; break;
-                case 6: scaleFactorMax = 1.5; break;
-                default: scaleFactorMax = 1.6; break;
-            }
+            double scaleFactorMax = switch (rowCount) {
+                case 2 -> 1.1;
+                case 3 -> 1.2;
+                case 4 -> 1.3;
+                case 5 -> 1.4;
+                case 6 -> 1.5;
+                default -> 1.6;
+            };
 
             // Iterate up to 150% by 5% increments
             for (double scaleFactor = 1 + .05; scaleFactor <= scaleFactorMax; scaleFactor += .05) {
                 double adjustedChartW = Math.round(chartW * scaleFactor);
                 viewProxy.setSize(adjustedChartW, -1);
-                viewProxy.setChildren(null);
+                viewProxy.clearChildren();
                 layoutProxy(viewProxy);
                 if (_rowCount < rowCount && (_maxY < _maxX || scaleFactor + .05 > scaleFactorMax)) {
                     _layoutChildren = viewProxy.getChildren();

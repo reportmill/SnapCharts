@@ -70,7 +70,7 @@ public class LegendViewBoxV extends ChildView {
                 double scaleFactor = 1 + i / 20d;
                 double adjustedChartH = Math.round(chartH * scaleFactor);
                 viewProxy.setSize(-1, adjustedChartH);
-                viewProxy.setChildren(null);
+                viewProxy.clearChildren();
                 layoutProxy(viewProxy);
                 if (_colCount < colCount && (_maxX < _maxY || i + 1 == 10)) {
                     _layoutChildren = viewProxy.getChildren();

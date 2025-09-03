@@ -55,8 +55,7 @@ public class PageViewLayout {
 
         // Force charts to layout their children
         for (View child : _page.getChildren()) {
-            if (child instanceof ChartView) {
-                ChartView chartView = (ChartView) child;
+            if (child instanceof ChartView chartView) {
                 chartView.setPrefContentBounds(null);
                 chartView.layout();
             }
@@ -65,7 +64,7 @@ public class PageViewLayout {
         // Set ContentViews children in ChartView proxies
         for (ViewProxy<ChartView> chartProxy : _chartProxies) {
             ContentView contentView = chartProxy.getView().getChildForClass(ContentView.class);
-            ViewProxy contentViewProxy = ViewProxy.getProxy(contentView);
+            ViewProxy<?> contentViewProxy = ViewProxy.getProxy(contentView);
             contentViewProxy.setBounds(contentView.getX(), contentView.getY(), contentView.getWidth(), contentView.getHeight());
             chartProxy.setChildren(new ViewProxy[] { contentViewProxy });
             chartProxy.getView().relayout();
@@ -75,8 +74,8 @@ public class PageViewLayout {
         synchChartContentViewSizes();
 
         // Update Chart bounds from proxies (clear ChartProxy children so Chart bounds gets set)
-        for (ViewProxy chartProxy : _chartProxies)
-            chartProxy.setChildren(null);
+        for (ViewProxy<ChartView> chartProxy : _chartProxies)
+            chartProxy.clearChildren();
         _pageProxy.setBoundsInClient();
 
         // If ChartScale not 1, adjust Chart scales and X/Y
