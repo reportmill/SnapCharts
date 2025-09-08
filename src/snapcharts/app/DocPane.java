@@ -538,7 +538,7 @@ public class DocPane extends ViewOwner {
         // Adjust InspectorButton
         Button inspBtn = getView("InspectorButton", Button.class);
         inspBtn.setManaged(false);
-        inspBtn.setSize(30, 30);
+        inspBtn.setPrefSize(30, 30);
         inspBtn.setMargin(new Insets(0, 4, 0, 0));
         inspBtn.setLean(Pos.CENTER_RIGHT);
 
