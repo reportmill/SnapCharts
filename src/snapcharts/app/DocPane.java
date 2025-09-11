@@ -589,7 +589,7 @@ public class DocPane extends ViewOwner {
             WindowView win = getWindow();
             if(!Objects.equals(title, win.getTitle())) {
                 win.setTitle(title);
-                win.setDocURL(getSourceURL());
+                win.setDocumentUrl(getSourceURL());
             }
         }
     }
