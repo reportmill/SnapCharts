@@ -1,15 +1,14 @@
 package snapcharts.app;
 import snap.gfx.GFXEnv;
 import snap.util.Prefs;
-import snap.util.SnapUtils;
 import snap.view.ViewTheme;
 import snap.view.ViewUtils;
 import snap.web.RecentFiles;
 import snap.web.WebURL;
 import snapcharts.doc.Doc;
 import snapcharts.doc.DocItem;
-
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * The main class for SnapCharts app.
@@ -102,7 +101,8 @@ public class App {
 
                     // Write to file
                     File openOnLaunchFile = new File('/' + openOnLaunchFilename);
-                    SnapUtils.writeBytes(openOnLaunchBytes, openOnLaunchFile);
+                    try { Files.write(openOnLaunchFile.toPath(), openOnLaunchBytes); }
+                    catch (Exception e) { throw new RuntimeException(e); }
 
                     // Set OpenOnLaunchURL
                     _openOnLaunchURL = WebURL.getUrl(openOnLaunchFile);
