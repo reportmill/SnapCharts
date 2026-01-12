@@ -129,43 +129,31 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
     }
 
     /**
-     * Override to use ColView layout.
+     * Override to return row layout.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    protected ViewLayout<?> getViewLayoutImpl()
     {
-        return RowView.getPrefWidth(this, aH);
-    }
+        return new RowViewLayout<>(this, true) {
 
-    /**
-     * Override to use ColView layout.
-     */
-    @Override
-    protected double getPrefHeightImpl(double aW)
-    {
-        return RowView.getPrefHeight(this, aW);
-    }
+            @Override
+            public void layoutView()
+            {
+                super.layoutView();
+                if (_entryBox.getChildCount() == 0)
+                    return;
 
-    /**
-     * Override to use ColView layout.
-     */
-    @Override
-    protected void layoutImpl()
-    {
-        // Layout entries
-        RowView.layout(this, true);
-        if (_entryBox.getChildCount() == 0)
-            return;
-
-        // Calculate ColorBox Y/H and set
-        Insets pad = _entryBox.getPadding();
-        Label label = (Label) _entryBox.getChild(0);
-        double strH = label.getPrefHeight();
-        double halfH = Math.ceil(strH/2);
-        double colorBoxY = _entryBox.getY() + pad.top + halfH;
-        double colorBoxH = _entryBox.getHeight() - pad.bottom - strH;
-        _colorBox.setY(colorBoxY);
-        _colorBox.setHeight(colorBoxH);
+                // Calculate ColorBox Y/H and set
+                Insets pad = _entryBox.getPadding();
+                Label label = (Label) _entryBox.getChild(0);
+                double strH = label.getPrefHeight();
+                double halfH = Math.ceil(strH/2);
+                double colorBoxY = _entryBox.getY() + pad.top + halfH;
+                double colorBoxH = _entryBox.getHeight() - pad.bottom - strH;
+                _colorBox.setY(colorBoxY);
+                _colorBox.setHeight(colorBoxH);
+            }
+        };
     }
 
     /**
