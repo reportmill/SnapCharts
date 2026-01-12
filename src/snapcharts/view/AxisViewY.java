@@ -8,7 +8,7 @@ import snap.geom.Side;
 import snap.util.ArrayUtils;
 import snap.view.Cursor;
 import snap.view.RowView;
-import snap.view.RowViewProxy;
+import snap.view.RowViewLayout;
 import snap.view.WrapView;
 import snapcharts.charts.*;
 
@@ -79,7 +79,7 @@ public class AxisViewY extends AxisView<AxisY> {
      */
     protected double getPrefWidthImpl(double aH)
     {
-        RowViewProxy<?> viewProxy = getViewProxy();
+        RowViewLayout<?> viewProxy = getViewLayout();
         return viewProxy.getPrefWidth(aH);
     }
 
@@ -89,7 +89,7 @@ public class AxisViewY extends AxisView<AxisY> {
     protected void layoutImpl()
     {
         // Layout as RowView
-        RowViewProxy<?> viewProxy = getViewProxy();
+        RowViewLayout<?> viewProxy = getViewLayout();
         viewProxy.layoutView();
 
         // Layout TickLabels
@@ -97,12 +97,12 @@ public class AxisViewY extends AxisView<AxisY> {
     }
 
     /**
-     * Returns a ViewProxy of AxisView to layout as RowView.
+     * Returns a layout of AxisView to layout as RowView.
      */
-    protected RowViewProxy<?> getViewProxy()
+    protected RowViewLayout<?> getViewLayout()
     {
-        // Create ViewProxy for AxisView
-        RowViewProxy<?> viewProxy = new RowViewProxy<>(this);
+        // Create layout for AxisView
+        RowViewLayout<?> viewProxy = new RowViewLayout<>(this);
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Axis axis = getAxis();

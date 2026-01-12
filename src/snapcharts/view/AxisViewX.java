@@ -5,9 +5,9 @@ package snapcharts.view;
 import snap.geom.Insets;
 import snap.geom.Side;
 import snap.util.ArrayUtils;
-import snap.view.ColViewProxy;
+import snap.view.ColViewLayout;
 import snap.view.Cursor;
-import snap.view.ViewProxy;
+import snap.view.ViewLayout;
 import snapcharts.charts.Axis;
 import snapcharts.charts.AxisX;
 
@@ -50,8 +50,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
      */
     protected double getPrefHeightImpl(double aW)
     {
-        ColViewProxy<?> viewProxy = getViewProxy();
-        return viewProxy.getPrefHeight(aW);
+        ColViewLayout<?> viewLayout = getViewLayout();
+        return viewLayout.getPrefHeight(aW);
     }
 
     /**
@@ -60,8 +60,8 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     protected void layoutImpl()
     {
         // Layout as ColView
-        ColViewProxy<?> viewProxy = getViewProxy();
-        viewProxy.layoutView();
+        ColViewLayout<?> viewLayout = getViewLayout();
+        viewLayout.layoutView();
 
         // Layout TickLabels
         layoutTickLabels();
@@ -72,26 +72,26 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     }
 
     /**
-     * Returns a ViewProxy for AxisView to layout as ColView.
+     * Returns a layout for AxisView to layout as ColView.
      */
-    protected ColViewProxy<?> getViewProxy()
+    protected ColViewLayout<?> getViewLayout()
     {
-        // Create ViewProxy for AxisView
-        ColViewProxy<?> viewProxy = new ColViewProxy<>(this);
+        // Create layout for AxisView
+        ColViewLayout<?> viewLayout = new ColViewLayout<>(this);
 
         // Get Axis
         Axis axis = getAxis();
 
         // If MarkersBox is visible, use margins instead
         if (_markersBox.isVisible()) {
-            viewProxy.setSpacing(0);
-            ViewProxy markersBoxProxy = viewProxy.getChildForClass(MarkersBox.class);
+            viewLayout.setSpacing(0);
+            ViewLayout markersBoxProxy = viewLayout.getChildForClass(MarkersBox.class);
             double axisSpacing = axis.getSpacing();
             markersBoxProxy.setMargin(new Insets(2, 0, axisSpacing - 2, 0));
         }
 
         // Reverse children (assumes Side == Bottom)
-        ArrayUtils.reverse(viewProxy.getChildren());
+        ArrayUtils.reverse(viewLayout.getChildren());
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Side axisSide = axis.getSide();
@@ -99,15 +99,15 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double tickLength = axis.getTickLength();
         double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
         if (tickIndent > 0) {
-            Insets padding = viewProxy.getPadding().clone();
+            Insets padding = viewLayout.getPadding().clone();
             if (axisSide == Side.TOP)
                 padding.bottom += tickIndent;
             else padding.top += tickIndent;
-            viewProxy.setPadding(padding);
+            viewLayout.setPadding(padding);
         }
 
-        // Return ViewProxy
-        return viewProxy;
+        // Return
+        return viewLayout;
     }
 
     /**

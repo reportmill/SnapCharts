@@ -17,19 +17,19 @@ public class ChartViewLayout {
     protected Rect _prefContentBounds;
 
     // The layout proxy
-    private ViewProxy<?>  _chartProxy;
+    private ViewLayout<?> _chartProxy;
 
     // The header proxy
-    private ViewProxy<HeaderView>  _headerProxy;
+    private ViewLayout<HeaderView> _headerProxy;
 
     // The legend proxy
-    private ViewProxy<LegendView>  _legendProxy;
+    private ViewLayout<LegendView> _legendProxy;
 
     // The contour proxy
-    private ViewProxy<ContourAxisView>  _contourProxy;
+    private ViewLayout<ContourAxisView> _contourProxy;
 
     // The content proxy
-    private ViewProxy<ContentView>  _contentProxy;
+    private ViewLayout<ContentView> _contentProxy;
 
     // The current inset for ContentView
     protected Insets _contentInsets = new Insets(0, 0, 0, 0);
@@ -56,8 +56,8 @@ public class ChartViewLayout {
      */
     public void layoutChart()
     {
-        // Create/set ViewProxy for Chart and Children
-        _chartProxy = ViewProxy.getProxy(_chartView);
+        // Create/set layout for Chart and Children
+        _chartProxy = ViewLayout.getProxy(_chartView);
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);
@@ -85,7 +85,7 @@ public class ChartViewLayout {
         _contentProxy.setBounds(contentBounds);
 
         // Adjust axes for ContentBounds
-        for (ViewProxy<?> child : _chartProxy.getChildren()) {
+        for (ViewLayout<?> child : _chartProxy.getChildren()) {
             if (child.getView() instanceof AxisViewX) {
                 child.setX(contentBounds.x);
                 child.setWidth(contentBounds.width);
@@ -110,7 +110,7 @@ public class ChartViewLayout {
     protected void layoutTopSide()
     {
         // Create view proxy for layout of chart top
-        ColViewProxy<?> topProxy = getTopViewProxy();
+        ColViewLayout<?> topProxy = getTopViewProxy();
 
         // Get top Width/Height for proxy: If no PrefContentBounds, use proxy PrefHeight
         Rect topBounds = getBoundsForSide(Side.TOP);
@@ -129,17 +129,17 @@ public class ChartViewLayout {
     }
 
     /**
-     * Returns the ViewProxy to layout chart top.
+     * Returns the layout to layout chart top.
      */
-    private ColViewProxy<?> getTopViewProxy()
+    private ColViewLayout<?> getTopViewProxy()
     {
-        ColViewProxy<?> viewProxy = new ColViewProxy<>(_chartView);
+        ColViewLayout<?> viewProxy = new ColViewLayout<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setPadding(getPaddingForSide(Side.TOP));
         viewProxy.setFillWidth(true);
-        ViewProxy<?>[] topViews = getViewsForSide(Side.TOP);
+        ViewLayout<?>[] topViews = getViewsForSide(Side.TOP);
         viewProxy.setChildren(topViews);
         return viewProxy;
     }
@@ -150,7 +150,7 @@ public class ChartViewLayout {
     protected void layoutBottomSide()
     {
         // Create view proxy for layout of chart bottom
-        ColViewProxy<?> bottomProxy = getBottomViewProxy();
+        ColViewLayout<?> bottomProxy = getBottomViewProxy();
 
         // Get/set bottomHeight for proxy: If no PrefContentBounds, use proxy PrefHeight
         Rect bottomBounds = getBoundsForSide(Side.BOTTOM);
@@ -167,7 +167,7 @@ public class ChartViewLayout {
 
         // Shift views to bottomBounds.y
         double bottomY = _chartProxy.getHeight() - bottomHeight;
-        for (ViewProxy<?> proxy : bottomProxy.getChildren())
+        for (ViewLayout<?> proxy : bottomProxy.getChildren())
             proxy.setY(proxy.getY() + bottomY);
 
         // Update insets
@@ -175,16 +175,16 @@ public class ChartViewLayout {
     }
 
     /**
-     * Returns the ViewProxy to layout chart bottom.
+     * Returns the layout to layout chart bottom.
      */
-    private ColViewProxy<?> getBottomViewProxy()
+    private ColViewLayout<?> getBottomViewProxy()
     {
-        ColViewProxy<?> viewProxy = new ColViewProxy<>(_chartView);
+        ColViewLayout<?> viewProxy = new ColViewLayout<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.TOP_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setFillWidth(true);
-        ViewProxy<?>[] bottomViews = getViewsForSide(Side.BOTTOM);
+        ViewLayout<?>[] bottomViews = getViewsForSide(Side.BOTTOM);
         viewProxy.setChildren(bottomViews);
         viewProxy.setPadding(getPaddingForSide(Side.BOTTOM));
         return viewProxy;
@@ -196,7 +196,7 @@ public class ChartViewLayout {
     protected void layoutLeftSide()
     {
         // Create view proxy for layout of chart left side
-        RowViewProxy<?> leftProxy = getLeftViewProxy();
+        RowViewLayout<?> leftProxy = getLeftViewProxy();
 
         // Get/set leftWidth for proxy: If no PrefContentBounds, use proxy PrefWidth
         Rect leftBounds = getBoundsForSide(Side.LEFT);
@@ -216,14 +216,14 @@ public class ChartViewLayout {
     }
 
     /**
-     * Returns the ViewProxy to layout chart left side.
+     * Returns the layout to layout chart left side.
      */
-    private RowViewProxy<?> getLeftViewProxy()
+    private RowViewLayout<?> getLeftViewProxy()
     {
-        RowViewProxy<?> viewProxy = new RowViewProxy<>(_chartView);
+        RowViewLayout<?> viewProxy = new RowViewLayout<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_RIGHT);
-        ViewProxy<?>[] leftViews = getViewsForSide(Side.LEFT);
+        ViewLayout<?>[] leftViews = getViewsForSide(Side.LEFT);
         viewProxy.setChildren(leftViews);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setFillHeight(true);
@@ -237,7 +237,7 @@ public class ChartViewLayout {
     protected void layoutRightSide()
     {
         // Create view proxy for layout of chart right side
-        RowViewProxy<?> rightProxy = getRightViewProxy();
+        RowViewLayout<?> rightProxy = getRightViewProxy();
 
         // Get/set rightWidth for proxy: If no PrefContentBounds, use proxy PrefWidth
         Rect rightBounds = getBoundsForSide(Side.RIGHT);
@@ -254,7 +254,7 @@ public class ChartViewLayout {
 
         // Shift views to rightBounds.x
         double rightX = _chartProxy.getWidth() - rightWidth;
-        for (ViewProxy<?> proxy : rightProxy.getChildren())
+        for (ViewLayout<?> proxy : rightProxy.getChildren())
             proxy.setX(proxy.getX() + rightX);
 
         // Update insets
@@ -262,14 +262,14 @@ public class ChartViewLayout {
     }
 
     /**
-     * Returns the ViewProxy to layout chart right side.
+     * Returns the layout to layout chart right side.
      */
-    private RowViewProxy<?> getRightViewProxy()
+    private RowViewLayout<?> getRightViewProxy()
     {
-        RowViewProxy<?> viewProxy = new RowViewProxy<>(_chartView);
+        RowViewLayout<?> viewProxy = new RowViewLayout<>(_chartView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_LEFT);
-        ViewProxy<?>[] rightViews = getViewsForSide(Side.RIGHT);
+        ViewLayout<?>[] rightViews = getViewsForSide(Side.RIGHT);
         viewProxy.setChildren(rightViews);
         viewProxy.setSpacing(VIEW_SPACING);
         viewProxy.setFillHeight(true);
@@ -332,17 +332,17 @@ public class ChartViewLayout {
     /**
      * Returns the array of views for given side.
      */
-    protected ViewProxy<?>[] getViewsForSide(Side aSide)
+    protected ViewLayout<?>[] getViewsForSide(Side aSide)
     {
         // Get Axes
-        ViewProxy<?>[] axes = getAxesForSide(aSide);
-        ViewProxy<?> axis1 = axes.length > 0 ? axes[0] : null;
-        ViewProxy<?> axis2 = axes.length > 1 ? axes[1] : null;
+        ViewLayout<?>[] axes = getAxesForSide(aSide);
+        ViewLayout<?> axis1 = axes.length > 0 ? axes[0] : null;
+        ViewLayout<?> axis2 = axes.length > 1 ? axes[1] : null;
 
         // Get Legend if on given side.
         LegendView legendView = _legendProxy!=null ? _legendProxy.getView() : null;
         boolean hasLegend = legendView!=null && !legendView.isInside() && legendView.getPosition().getSide() == aSide;
-        ViewProxy<?> legend = hasLegend ? _legendProxy : null;
+        ViewLayout<?> legend = hasLegend ? _legendProxy : null;
         if (hasLegend) {
             legend.setGrowWidth(aSide==Side.LEFT || aSide==Side.RIGHT);
             legend.setGrowHeight(aSide==Side.TOP || aSide==Side.BOTTOM);
@@ -350,7 +350,7 @@ public class ChartViewLayout {
 
         // Get Contour if on given side.
         boolean hasContour = _contourProxy!=null && _contourProxy.isVisible() && aSide == Side.RIGHT;
-        ViewProxy<?> contour = hasContour ? _contourProxy : null;
+        ViewLayout<?> contour = hasContour ? _contourProxy : null;
 
         // Handle sides
         switch (aSide)
@@ -366,24 +366,24 @@ public class ChartViewLayout {
     /**
      * Returns the axes for given side.
      */
-    public ViewProxy<?>[] getAxesForSide(Side aSide)
+    public ViewLayout<?>[] getAxesForSide(Side aSide)
     {
         // Handle ChartHelperPolar
         if (_chartView.getChartHelper() instanceof PolarChartHelper)
-            return new ViewProxy[0];
+            return new ViewLayout[0];
 
         // Handle Top
         if (aSide == Side.TOP)
-            return new ViewProxy[0];
+            return new ViewLayout[0];
 
         // Handle Bottom
         if (aSide == Side.BOTTOM)
-            return new ViewProxy[] { _chartProxy.getChildForClass(AxisViewX.class) };
+            return new ViewLayout[] { _chartProxy.getChildForClass(AxisViewX.class) };
 
         // Handle LEFT/RIGHT
-        ViewProxy<AxisViewY>[] axisViews = _chartProxy.getChildrenForClass(AxisViewY.class);
+        ViewLayout<AxisViewY>[] axisViews = _chartProxy.getChildrenForClass(AxisViewY.class);
         for (int i=0; i<axisViews.length; i++) {
-            ViewProxy<AxisViewY> axisView = axisViews[i];
+            ViewLayout<AxisViewY> axisView = axisViews[i];
             if (axisView.getView().getAxis().getSide() != aSide || !axisView.getView().isVisible())
                 axisViews[i] = null;
         }

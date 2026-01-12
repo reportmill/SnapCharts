@@ -21,7 +21,7 @@ public class LegendViewBoxV extends ChildView {
     private double  _maxX, _maxY;
 
     // The children from ChartView layout sizing
-    private ViewProxy<?>[]  _layoutChildren;
+    private ViewLayout<?>[]  _layoutChildren;
 
     /**
      * Override getPrefWidth() instead of Impl() to bypass normal view PrefSize caching.
@@ -44,8 +44,8 @@ public class LegendViewBoxV extends ChildView {
         // Relayout ScaleBox
         getParent().relayout();
 
-        // Get ViewProxy
-        ColViewProxy<?> viewProxy = getViewProxy();
+        // Get layout
+        ColViewLayout<?> viewLayout = getViewLayout();
 
         // If ChartHeight will definitely result in 5+ cols, bump ChartHeight to at least that
         int entryCount = getChildCount();
@@ -55,9 +55,9 @@ public class LegendViewBoxV extends ChildView {
             chartH = Math.ceil(minColH);
 
         // Run our first layout
-        viewProxy.setSize(-1, chartH);
-        layoutProxy(viewProxy);
-        _layoutChildren = viewProxy.getChildren();
+        viewLayout.setSize(-1, chartH);
+        layoutProxy(viewLayout);
+        _layoutChildren = viewLayout.getChildren();
 
         // If multi-column, see if scale up to 150% will eliminate a column
         if (_colCount > 1) {
@@ -69,11 +69,11 @@ public class LegendViewBoxV extends ChildView {
             for (int i = 1; i <= 10; i++) {
                 double scaleFactor = 1 + i / 20d;
                 double adjustedChartH = Math.round(chartH * scaleFactor);
-                viewProxy.setSize(-1, adjustedChartH);
-                viewProxy.clearChildren();
-                layoutProxy(viewProxy);
+                viewLayout.setSize(-1, adjustedChartH);
+                viewLayout.clearChildren();
+                layoutProxy(viewLayout);
                 if (_colCount < colCount && (_maxX < _maxY || i + 1 == 10)) {
-                    _layoutChildren = viewProxy.getChildren();
+                    _layoutChildren = viewLayout.getChildren();
                     colCount = _colCount;
                     maxX = _maxX;
                     maxY = _maxY;
@@ -104,18 +104,18 @@ public class LegendViewBoxV extends ChildView {
     @Override
     protected void layoutImpl()
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        viewProxy.setChildren(_layoutChildren);
-        viewProxy.setBoundsInClient();
+        ViewLayout<?> viewLayout = getViewLayout();
+        viewLayout.setChildren(_layoutChildren);
+        viewLayout.setBoundsInClient();
     }
 
     /**
      * Real layout method.
      */
-    protected void layoutProxy(ColViewProxy<?> viewProxy)
+    protected void layoutProxy(ColViewLayout<?> viewProxy)
     {
         // Get all children array and declare variable for current column X location
-        ViewProxy<?>[] childrenAll = viewProxy.getChildren();
+        ViewLayout<?>[] childrenAll = viewProxy.getChildren();
         double childX = 0;
 
         // Reset col count and max X/Y
@@ -126,15 +126,15 @@ public class LegendViewBoxV extends ChildView {
         LegendView legendView = getParent(LegendView.class);
         if (legendView._titleView.isVisible()) {
 
-            // Set ViewProxy.Children to TitleViewProxy, layout and update MaxX, MaxY for used space
-            ViewProxy<?> titleViewProxy = childrenAll[0];
-            viewProxy.setChildren(new ViewProxy<?>[] { titleViewProxy });
+            // Set layout children to TitleView layout, layout and update MaxX, MaxY for used space
+            ViewLayout<?> titleViewLayout = childrenAll[0];
+            viewProxy.setChildren(new ViewLayout<?>[] {titleViewLayout});
             viewProxy.setPadding(null);
             viewProxy.layoutProxy();
-            _maxX = titleViewProxy.getMaxX();
-            _maxY = titleViewProxy.getMaxY();
+            _maxX = titleViewLayout.getMaxX();
+            _maxY = titleViewLayout.getMaxY();
 
-            // Set ViewProxy.Padding to reserve TitleView space and set ViewProxy.Children to remaining children
+            // Set layout Padding to reserve TitleView space and set layout Children to remaining children
             viewProxy.setPadding(new Insets(_maxY + getSpacing(), 0, 0, 0));
             viewProxy.setChildren(Arrays.copyOfRange(childrenAll, 1, childrenAll.length));
         }
@@ -149,15 +149,15 @@ public class LegendViewBoxV extends ChildView {
             int indexOutOfBounds = getIndexOutOfBoundsY(viewProxy);
 
             // Break children into list of in-bounds and out-of-bounds
-            ViewProxy<?>[] children = viewProxy.getChildren();
-            ViewProxy<?>[] childrenIn = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, 0, indexOutOfBounds) : children;
-            ViewProxy<?>[] childrenOut = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, indexOutOfBounds, children.length) : new ViewProxy<?>[0];
+            ViewLayout<?>[] children = viewProxy.getChildren();
+            ViewLayout<?>[] childrenIn = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, 0, indexOutOfBounds) : children;
+            ViewLayout<?>[] childrenOut = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, indexOutOfBounds, children.length) : new ViewLayout<?>[0];
 
             // Update col count
             _colCount++;
 
             // Update Max X/Y
-            for (ViewProxy<?> child : childrenIn) {
+            for (ViewLayout<?> child : childrenIn) {
                 child.setX(childX);
                 _maxX = Math.max(_maxX, child.getMaxX());
                 _maxY = Math.max(_maxY, child.getMaxY());
@@ -172,28 +172,24 @@ public class LegendViewBoxV extends ChildView {
             viewProxy.setChildren(childrenOut);
         }
 
-        // Restore all children to ViewProxy
+        // Restore all children
         viewProxy.setChildren(childrenAll);
     }
 
     /**
-     * Returns ViewProxy to layout legend entries.
+     * Returns layout to layout legend entries.
      */
-    protected ColViewProxy<?> getViewProxy()
-    {
-        ColViewProxy<?> viewProxy = new ColViewProxy<>(this);
-        return viewProxy;
-    }
+    protected ColViewLayout<?> getViewLayout()  { return new ColViewLayout<>(this); }
 
     /**
      * Returns the index of first child below bottom bounds.
      */
-    private int getIndexOutOfBoundsY(ViewProxy<?> viewProxy)
+    private int getIndexOutOfBoundsY(ViewLayout<?> viewLayout)
     {
-        ViewProxy<?>[] children = viewProxy.getChildren();
+        ViewLayout<?>[] children = viewLayout.getChildren();
         for (int i = 0; i < children.length; i++) {
-            ViewProxy<?> child = children[i];
-            if (child.getMaxY() > viewProxy.getHeight())
+            ViewLayout<?> child = children[i];
+            if (child.getMaxY() > viewLayout.getHeight())
                 return i;
         }
         return -1;

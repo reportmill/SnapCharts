@@ -4,8 +4,8 @@
 package snapcharts.view;
 import snap.geom.Insets;
 import snap.view.ChildView;
-import snap.view.RowViewProxy;
-import snap.view.ViewProxy;
+import snap.view.RowViewLayout;
+import snap.view.ViewLayout;
 import snapcharts.charts.Chart;
 import snapcharts.charts.Legend;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class LegendViewBoxH extends ChildView {
     private double  _maxX, _maxY;
 
     // The children from ChartView layout sizing
-    private ViewProxy<?>[]  _layoutChildren;
+    private ViewLayout<?>[]  _layoutChildren;
 
     /**
      * Override getPrefWidth() instead of Impl() to bypass normal view PrefSize caching.
@@ -76,8 +76,8 @@ public class LegendViewBoxH extends ChildView {
         // Relayout ScaleBox
         getParent().relayout();
 
-        // Get ViewProxy
-        RowViewProxy<?> viewProxy = getViewProxy();
+        // Get layout
+        RowViewLayout<?> viewProxy = getViewLayout();
 
         // Remove Chart Padding, Legend Margin
         Chart chart = chartView.getChart();
@@ -144,18 +144,18 @@ public class LegendViewBoxH extends ChildView {
     @Override
     protected void layoutImpl()
     {
-        ViewProxy<?> viewProxy = getViewProxy();
-        viewProxy.setChildren(_layoutChildren);
-        viewProxy.setBoundsInClient();
+        ViewLayout<?> viewLayout = getViewLayout();
+        viewLayout.setChildren(_layoutChildren);
+        viewLayout.setBoundsInClient();
     }
 
     /**
      * Real layout method.
      */
-    protected void layoutProxy(RowViewProxy<?> viewProxy)
+    protected void layoutProxy(RowViewLayout<?> viewProxy)
     {
         // Get all children array and declare variable for current column X location
-        ViewProxy<?>[] childrenAll = viewProxy.getChildren();
+        ViewLayout<?>[] childrenAll = viewProxy.getChildren();
         double childY = 0;
 
         // Reset RowCount and MaxX/Y
@@ -172,15 +172,15 @@ public class LegendViewBoxH extends ChildView {
             int indexOutOfBounds = getIndexOutOfBoundsX(viewProxy);
 
             // Break children into list of in-bounds and out-of-bounds
-            ViewProxy<?>[] children = viewProxy.getChildren();
-            ViewProxy<?>[] childrenIn = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, 0, indexOutOfBounds) : children;
-            ViewProxy<?>[] childrenOut = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, indexOutOfBounds, children.length) : new ViewProxy<?>[0];
+            ViewLayout<?>[] children = viewProxy.getChildren();
+            ViewLayout<?>[] childrenIn = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, 0, indexOutOfBounds) : children;
+            ViewLayout<?>[] childrenOut = indexOutOfBounds > 0 ? Arrays.copyOfRange(children, indexOutOfBounds, children.length) : new ViewLayout<?>[0];
 
             // Update RowCount
             _rowCount++;
 
             // Update Max X/Y
-            for (ViewProxy<?> child : childrenIn) {
+            for (ViewLayout<?> child : childrenIn) {
                 child.setY(childY);
                 _maxX = Math.max(_maxX, child.getMaxX());
                 _maxY = Math.max(_maxY, child.getMaxY());
@@ -195,27 +195,27 @@ public class LegendViewBoxH extends ChildView {
             viewProxy.setChildren(childrenOut);
         }
 
-        // Restore all children to ViewProxy
+        // Restore all children
         viewProxy.setChildren(childrenAll);
     }
 
     /**
-     * Returns ViewProxy to layout legend entries.
+     * Returns layout to layout legend entries.
      */
-    protected RowViewProxy<?> getViewProxy()
+    protected RowViewLayout<?> getViewLayout()
     {
-        RowViewProxy<?> viewProxy = new RowViewProxy<>(this);
+        RowViewLayout<?> viewProxy = new RowViewLayout<>(this);
         return viewProxy;
     }
 
     /**
-     * Returns the average width of given ViewProxys in given array.
+     * Returns the average width of given layouts in given array.
      */
-    private static double getAverageWidth(ViewProxy<?>[] viewProxies)
+    private static double getAverageWidth(ViewLayout<?>[] viewProxies)
     {
         double totalW = 0;
-        for (ViewProxy<?> viewProxy : viewProxies)
-            totalW += viewProxy.getBestWidth(-1);
+        for (ViewLayout<?> viewLayout : viewProxies)
+            totalW += viewLayout.getBestWidth(-1);
         double avgW = totalW / viewProxies.length;
         return Math.ceil(avgW);
     }
@@ -223,12 +223,12 @@ public class LegendViewBoxH extends ChildView {
     /**
      * Returns the index of first child below bottom bounds.
      */
-    private static int getIndexOutOfBoundsX(ViewProxy<?> viewProxy)
+    private static int getIndexOutOfBoundsX(ViewLayout<?> viewLayout)
     {
-        double boundsW = viewProxy.getWidth();
-        ViewProxy<?>[] children = viewProxy.getChildren();
+        double boundsW = viewLayout.getWidth();
+        ViewLayout<?>[] children = viewLayout.getChildren();
         for (int i = 0; i < children.length; i++) {
-            ViewProxy<?> child = children[i];
+            ViewLayout<?> child = children[i];
             if (child.getMaxX() > boundsW)
                 return i;
         }
