@@ -17,7 +17,7 @@ public class ChartViewLayout {
     protected Rect _prefContentBounds;
 
     // The layout proxy
-    private ViewProxy<ChartView>  _chartProxy;
+    private ViewProxy<?>  _chartProxy;
 
     // The header proxy
     private ViewProxy<HeaderView>  _headerProxy;
@@ -57,7 +57,7 @@ public class ChartViewLayout {
     public void layoutChart()
     {
         // Create/set ViewProxy for Chart and Children
-        _chartProxy = new ViewProxy<>(_chartView);
+        _chartProxy = ViewProxy.getProxy(_chartView);
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);

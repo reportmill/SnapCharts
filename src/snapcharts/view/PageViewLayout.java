@@ -13,7 +13,7 @@ public class PageViewLayout {
     private PageView  _page;
 
     // The page
-    private ViewProxy<PageView>  _pageProxy;
+    private ViewProxy<?>  _pageProxy;
 
     // The page area bounds
     private int  _areaX, _areaY, _areaW, _areaH;
@@ -34,7 +34,7 @@ public class PageViewLayout {
      */
     public void layoutPage()
     {
-        _pageProxy = new ViewProxy<>(_page);
+        _pageProxy = ViewProxy.getProxy(_page);
         _chartProxies = _pageProxy.getChildrenForClass(ChartView.class);
 
         Insets ins = _page.getInsetsAll();
