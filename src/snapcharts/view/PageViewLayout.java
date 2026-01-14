@@ -34,7 +34,7 @@ public class PageViewLayout {
      */
     public void layoutPage()
     {
-        _pageProxy = ViewLayout.getProxy(_page);
+        _pageProxy = ViewLayout.getViewLayout(_page);
         _chartProxies = _pageProxy.getChildrenForClass(ChartView.class);
 
         Insets ins = _page.getInsetsAll();
@@ -64,7 +64,7 @@ public class PageViewLayout {
         // Set ContentViews children in ChartView proxies
         for (ViewLayout<ChartView> chartProxy : _chartProxies) {
             ContentView contentView = chartProxy.getView().getChildForClass(ContentView.class);
-            ViewLayout<?> contentViewLayout = ViewLayout.getProxy(contentView);
+            ViewLayout<?> contentViewLayout = ViewLayout.getViewLayout(contentView);
             contentViewLayout.setBounds(contentView.getX(), contentView.getY(), contentView.getWidth(), contentView.getHeight());
             chartProxy.setChildren(new ViewLayout[] {contentViewLayout});
             chartProxy.getView().relayout();

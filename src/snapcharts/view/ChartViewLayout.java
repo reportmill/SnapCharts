@@ -57,7 +57,7 @@ public class ChartViewLayout {
     public void layoutChart()
     {
         // Create/set layout for Chart and Children
-        _chartProxy = ViewLayout.getProxy(_chartView);
+        _chartProxy = ViewLayout.getViewLayout(_chartView);
         _headerProxy = _chartProxy.getChildForClass(HeaderView.class);
         _legendProxy = _chartProxy.getChildForClass(LegendView.class);
         _contourProxy = _chartProxy.getChildForClass(ContourAxisView.class);
@@ -122,7 +122,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as ColView
         topProxy.setSize(topBounds.width, topHeight);
-        topProxy.layoutViewImpl();
+        topProxy.layoutViewLayout();
 
         // Update insets
         _contentInsets.top = topHeight;
@@ -163,7 +163,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as ColView
         bottomProxy.setSize(bottomBounds.width, bottomHeight);
-        bottomProxy.layoutViewImpl();
+        bottomProxy.layoutViewLayout();
 
         // Shift views to bottomBounds.y
         double bottomY = _chartProxy.getHeight() - bottomHeight;
@@ -209,7 +209,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as RowView
         leftProxy.setSize(leftWidth, leftBounds.height);
-        leftProxy.layoutViewImpl();
+        leftProxy.layoutViewLayout();
 
         // Update insets
         _contentInsets.left = leftWidth;
@@ -250,7 +250,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as RowView
         rightProxy.setSize(rightWidth, rightBounds.height);
-        rightProxy.layoutViewImpl();
+        rightProxy.layoutViewLayout();
 
         // Shift views to rightBounds.x
         double rightX = _chartProxy.getWidth() - rightWidth;

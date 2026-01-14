@@ -130,7 +130,7 @@ public class LegendViewBoxV extends ChildView {
             ViewLayout<?> titleViewLayout = childrenAll[0];
             viewProxy.setChildren(new ViewLayout<?>[] {titleViewLayout});
             viewProxy.setPadding(null);
-            viewProxy.layoutViewImpl();
+            viewProxy.layoutViewLayout();
             _maxX = titleViewLayout.getMaxX();
             _maxY = titleViewLayout.getMaxY();
 
@@ -143,7 +143,7 @@ public class LegendViewBoxV extends ChildView {
         while (true) {
 
             // Layout entries
-            viewProxy.layoutViewImpl();
+            viewProxy.layoutViewLayout();
 
             // Get index of first child below bottom bounds
             int indexOutOfBounds = getIndexOutOfBoundsY(viewProxy);
