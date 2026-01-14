@@ -122,7 +122,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as ColView
         topProxy.setSize(topBounds.width, topHeight);
-        topProxy.layoutProxy();
+        topProxy.layoutViewImpl();
 
         // Update insets
         _contentInsets.top = topHeight;
@@ -163,7 +163,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as ColView
         bottomProxy.setSize(bottomBounds.width, bottomHeight);
-        bottomProxy.layoutProxy();
+        bottomProxy.layoutViewImpl();
 
         // Shift views to bottomBounds.y
         double bottomY = _chartProxy.getHeight() - bottomHeight;
@@ -209,7 +209,7 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as RowView
         leftProxy.setSize(leftWidth, leftBounds.height);
-        leftProxy.layoutProxy();
+        leftProxy.layoutViewImpl();
 
         // Update insets
         _contentInsets.left = leftWidth;
@@ -250,12 +250,12 @@ public class ChartViewLayout {
 
         // Set proxy size and layout as RowView
         rightProxy.setSize(rightWidth, rightBounds.height);
-        rightProxy.layoutProxy();
+        rightProxy.layoutViewImpl();
 
         // Shift views to rightBounds.x
         double rightX = _chartProxy.getWidth() - rightWidth;
-        for (ViewLayout<?> proxy : rightProxy.getChildren())
-            proxy.setX(proxy.getX() + rightX);
+        for (ViewLayout<?> child : rightProxy.getChildren())
+            child.setX(child.getX() + rightX);
 
         // Update insets
         _contentInsets.right = rightWidth;

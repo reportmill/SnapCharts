@@ -166,7 +166,7 @@ public class LegendViewBoxH extends ChildView {
         while (true) {
 
             // Layout entries
-            viewProxy.layoutProxy();
+            viewProxy.layoutViewImpl();
 
             // Get index of first child below bottom bounds
             int indexOutOfBounds = getIndexOutOfBoundsX(viewProxy);
