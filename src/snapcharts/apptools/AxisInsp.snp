@@ -94,10 +94,8 @@
     </RowView>
     <TextField Name="TickLabelRotationText" Align="CENTER" GrowWidth="true" />
   </RowView>
-  <RowView Spacing="4" GrowWidth="true">
-    <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
-      <Label Text="Minor Tick Count:" />
-      <TextField Name="MinorTickCountText" Align="CENTER" ColCount="5" />
-    </RowView>
+  <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
+    <Label Text="Minor Tick Count:" />
+    <TextField Name="MinorTickCountText" Align="CENTER" ColCount="5" />
   </RowView>
 </ColView>
