@@ -6,10 +6,7 @@ import snap.geom.Insets;
 import snap.geom.Pos;
 import snap.geom.Side;
 import snap.util.ArrayUtils;
-import snap.view.Cursor;
-import snap.view.RowView;
-import snap.view.RowViewLayout;
-import snap.view.WrapView;
+import snap.view.*;
 import snapcharts.charts.*;
 
 /**
@@ -69,40 +66,22 @@ public class AxisViewY extends AxisView<AxisY> {
     /**
      * Returns the axis.
      */
-    public AxisY getAxis()
-    {
-        return (AxisY) getChart().getAxisForType(_axisType);
-    }
+    public AxisY getAxis()  { return (AxisY) getChart().getAxisForType(_axisType); }
 
     /**
-     * Calculates the preferred width.
+     * Override to return row layout that also lays out tick labels.
      */
-    protected double getPrefWidthImpl(double aH)
-    {
-        RowViewLayout<?> viewProxy = getViewLayout();
-        return viewProxy.getPrefWidth(aH);
-    }
-
-    /**
-     * Actual method to layout children.
-     */
-    protected void layoutImpl()
-    {
-        // Layout as RowView
-        RowViewLayout<?> viewProxy = getViewLayout();
-        viewProxy.layoutView();
-
-        // Layout TickLabels
-        layoutTickLabels();
-    }
-
-    /**
-     * Returns a layout of AxisView to layout as RowView.
-     */
-    protected RowViewLayout<?> getViewLayout()
+    @Override
+    protected ViewLayout<?> getViewLayoutImpl()
     {
         // Create layout for AxisView
-        RowViewLayout<?> viewProxy = new RowViewLayout<>(this);
+        ViewLayout<?> viewProxy = new RowViewLayout<>(this) {
+            @Override
+            public void layoutView() {
+                super.layoutView();
+                layoutTickLabels();
+            }
+        };
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Axis axis = getAxis();

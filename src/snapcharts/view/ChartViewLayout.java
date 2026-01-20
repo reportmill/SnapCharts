@@ -133,7 +133,8 @@ public class ChartViewLayout {
      */
     private ColViewLayout<?> getTopViewProxy()
     {
-        ColViewLayout<?> viewProxy = new ColViewLayout<>(_chartView);
+        View virtualTopView = new View();
+        ColViewLayout<?> viewProxy = new ColViewLayout<>(virtualTopView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
@@ -179,7 +180,8 @@ public class ChartViewLayout {
      */
     private ColViewLayout<?> getBottomViewProxy()
     {
-        ColViewLayout<?> viewProxy = new ColViewLayout<>(_chartView);
+        View virtualBottomView = new View();
+        ColViewLayout<?> viewProxy = new ColViewLayout<>(virtualBottomView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.TOP_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
@@ -220,7 +222,8 @@ public class ChartViewLayout {
      */
     private RowViewLayout<?> getLeftViewProxy()
     {
-        RowViewLayout<?> viewProxy = new RowViewLayout<>(_chartView);
+        View virtualLeftView = new View();
+        RowViewLayout<?> viewProxy = new RowViewLayout<>(virtualLeftView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_RIGHT);
         ViewLayout<?>[] leftViews = getViewsForSide(Side.LEFT);
@@ -266,7 +269,8 @@ public class ChartViewLayout {
      */
     private RowViewLayout<?> getRightViewProxy()
     {
-        RowViewLayout<?> viewProxy = new RowViewLayout<>(_chartView);
+        View virtualRightView = new View();
+        RowViewLayout<?> viewProxy = new RowViewLayout<>(virtualRightView);
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_LEFT);
         ViewLayout<?>[] rightViews = getViewsForSide(Side.RIGHT);

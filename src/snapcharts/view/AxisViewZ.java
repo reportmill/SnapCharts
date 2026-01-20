@@ -31,35 +31,24 @@ public class AxisViewZ<T extends AxisZ> extends AxisView<T> {
     /**
      * Returns the axis.
      */
-    public AxisZ getAxis()
-    {
-        return getChart().getAxisZ();
-    }
+    public AxisZ getAxis()  { return getChart().getAxisZ(); }
 
     /**
-     * Actual method to layout children.
+     * Override to return column layout that also lays out tick and marker labels.
      */
-    protected void layoutImpl()
+    @Override
+    protected ViewLayout<?> getViewLayoutImpl()
     {
-        // Layout as ColView
-        ColViewLayout<?> viewLayout = getViewLayout();
-        viewLayout.layoutView();
-
-        // Layout TickLabels
-        layoutTickLabels();
-
-        // Layout MarkerLabels
-        if (_markersBox.isVisible())
-            layoutMarkerLabels();
-    }
-
-    /**
-     * Returns a layout for AxisView to layout as ColView.
-     */
-    protected ColViewLayout<?> getViewLayout()
-    {
-        // Create layout for AxisView
-        ColViewLayout<?> viewLayout = new ColViewLayout<>(this);
+        // Create column layout with override to layout tick labels and marker labels
+        ViewLayout<?> viewLayout = new ColViewLayout<>(this) {
+            @Override
+            public void layoutView() {
+                super.layoutView();
+                layoutTickLabels();
+                if (_markersBox.isVisible())
+                    layoutMarkerLabels();
+            }
+        };
 
         // Get Axis
         Axis axis = getAxis();
@@ -67,7 +56,7 @@ public class AxisViewZ<T extends AxisZ> extends AxisView<T> {
         // If MarkersBox is visible, use margins instead
         if (_markersBox.isVisible()) {
             viewLayout.setSpacing(0);
-            ViewLayout markersBoxProxy = viewLayout.getChildForClass(MarkersBox.class);
+            ViewLayout<?> markersBoxProxy = viewLayout.getChildForClass(MarkersBox.class);
             double axisSpacing = axis.getSpacing();
             markersBoxProxy.setMargin(new Insets(2, 0, axisSpacing - 2, 0));
         }

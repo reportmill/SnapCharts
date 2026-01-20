@@ -32,52 +32,24 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
     /**
      * Returns the axis.
      */
-    public AxisX getAxis()
-    {
-        return getChart().getAxisX();
-    }
+    public AxisX getAxis()  { return getChart().getAxisX(); }
 
     /**
-     * Calculates the preferred width.
+     * Override to return column layout that also lays out tick and marker labels.
      */
-    protected double getPrefWidthImpl(double aH)
-    {
-        return 200;
-    }
-
-    /**
-     * Override to calculate from labels and ticks.
-     */
-    protected double getPrefHeightImpl(double aW)
-    {
-        ColViewLayout<?> viewLayout = getViewLayout();
-        return viewLayout.getPrefHeight(aW);
-    }
-
-    /**
-     * Actual method to layout children.
-     */
-    protected void layoutImpl()
-    {
-        // Layout as ColView
-        ColViewLayout<?> viewLayout = getViewLayout();
-        viewLayout.layoutView();
-
-        // Layout TickLabels
-        layoutTickLabels();
-
-        // Layout MarkerLabels
-        if (_markersBox.isVisible())
-            layoutMarkerLabels();
-    }
-
-    /**
-     * Returns a layout for AxisView to layout as ColView.
-     */
-    protected ColViewLayout<?> getViewLayout()
+    @Override
+    protected ViewLayout<?> getViewLayoutImpl()
     {
         // Create layout for AxisView
-        ColViewLayout<?> viewLayout = new ColViewLayout<>(this);
+        ViewLayout<?> viewLayout = new ColViewLayout<>(this) {
+            @Override
+            public void layoutViewLayout() {
+                super.layoutViewLayout();
+                layoutTickLabels();
+                if (_markersBox.isVisible())
+                    layoutMarkerLabels();
+            }
+        };
 
         // Get Axis
         Axis axis = getAxis();
@@ -85,7 +57,7 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         // If MarkersBox is visible, use margins instead
         if (_markersBox.isVisible()) {
             viewLayout.setSpacing(0);
-            ViewLayout markersBoxProxy = viewLayout.getChildForClass(MarkersBox.class);
+            ViewLayout<?> markersBoxProxy = viewLayout.getChildForClass(MarkersBox.class);
             double axisSpacing = axis.getSpacing();
             markersBoxProxy.setMargin(new Insets(2, 0, axisSpacing - 2, 0));
         }

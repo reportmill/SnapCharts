@@ -1,6 +1,7 @@
 package snapcharts.view;
 import snap.view.ColViewLayout;
 import snap.view.StringView;
+import snap.view.ViewLayout;
 import snapcharts.charts.Chart;
 import snapcharts.charts.Header;
 
@@ -51,54 +52,21 @@ public class HeaderView extends ChartPartView<Header> {
         // Reset Title
         String title = header.getTitle();
         _titleView.setText(title);
-        _titleView.setVisible(title != null && title.length() > 0);
+        _titleView.setVisible(title != null && !title.isEmpty());
         _titleView.setFont(header.getFont());
         _titleView.setTextColor(header.getTextFill());
 
         // Reset Subtitle
         String subtitle = header.getSubtitle();
         _subtitleView.setText(subtitle);
-        _subtitleView.setVisible(subtitle != null && subtitle.length() > 0);
+        _subtitleView.setVisible(subtitle != null && !subtitle.isEmpty());
         _subtitleView.setFont(header.getSubtitleFont());
         _subtitleView.setTextColor(header.getTextFill());
     }
 
     /**
-     * Override to use ColView layout.
+     * Override to return column layout.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
-    {
-        ColViewLayout<?> viewProxy = getViewLayout();
-        return viewProxy.getPrefWidth(aH);
-    }
-
-    /**
-     * Override to use ColView layout.
-     */
-    @Override
-    protected double getPrefHeightImpl(double aW)
-    {
-        ColViewLayout<?> viewProxy = getViewLayout();
-        return viewProxy.getPrefHeight(aW);
-    }
-
-    /**
-     * Override to use ColView layout.
-     */
-    @Override
-    protected void layoutImpl()
-    {
-        ColViewLayout<?> viewProxy = getViewLayout();
-        viewProxy.layoutView();
-    }
-
-    /**
-     * Returns the layout to layout this HeaderView.
-     */
-    protected ColViewLayout<?> getViewLayout()
-    {
-        ColViewLayout<?> viewProxy = new ColViewLayout<>(this);
-        return viewProxy;
-    }
+    protected ViewLayout<?> getViewLayoutImpl()  { return new ColViewLayout<>(this); }
 }
