@@ -46,7 +46,7 @@ public class LegendEntryView extends Label {
     public boolean isShowText()
     {
         String text = getText();
-        return text != null;
+        return text != null && !text.isEmpty();
     }
 
     /**

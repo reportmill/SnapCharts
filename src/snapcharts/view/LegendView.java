@@ -318,18 +318,13 @@ public class LegendView extends ChartPartView<Legend> {
     }
 
     /**
-     * Creates the EntryBox that holds LegendEntryViews.
+     * Creates the row or column view that holds LegendEntryViews.
      */
     private ChildView newEntryBox()
     {
-        // Handle Vertical: create/return ColView
-        if (isVertical()) {
-            ChildView colView = new LegendViewBoxV();
-            return colView;
-        }
-
-        // Handle Horizontal: Create/return RowView
-        ChildView rowView = new LegendViewBoxH();
+        if (isVertical())
+            return new ColView();
+        ChildView rowView = new RowView();
         rowView.setSpacing(5);
         return rowView;
     }
@@ -368,31 +363,23 @@ public class LegendView extends ChartPartView<Legend> {
     }
 
     /**
-     * Override main version to bypass LegendView, ScaleBox and EntryBox PrefSize caching.
+     * Override return pref size for entry box (bypassing ScaleBox).
      */
     @Override
-    public double getPrefWidth(double aH)
+    protected double getPrefWidthImpl(double aH)
     {
-        // Get from EntryBox to bypass ScaleBox PrefSize caching. EntryBox does special PrefSize caching.
-        double prefW = _entryBox.getPrefWidth();
-
-        // Return EntryBox.PrefWidth + Insets.Width
-        Insets ins = getInsetsAll();
-        return prefW + ins.getWidth();
+        double entryBoxPrefW = _entryBox.getPrefWidth();
+        return entryBoxPrefW + getInsetsAll().getWidth();
     }
 
     /**
-     * Override main version to bypass LegendView, ScaleBox and EntryBox PrefSize caching.
+     * Override return pref size for entry box (bypassing ScaleBox).
      */
     @Override
-    public double getPrefHeight(double aW)
+    protected double getPrefHeightImpl(double aW)
     {
-        // Get from EntryBox to bypass ScaleBox PrefSize caching. EntryBox does special PrefSize caching.
-        double prefH = _entryBox.getPrefHeight();
-
-        // Return EntryBox.PrefHeight + Insets.Height
-        Insets ins = getInsetsAll();
-        return prefH + ins.getHeight();
+        double entryBoxPrefH = _entryBox.getPrefHeight();
+        return entryBoxPrefH + getInsetsAll().getHeight();
     }
 
     /**
