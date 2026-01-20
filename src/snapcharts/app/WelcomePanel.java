@@ -123,11 +123,11 @@ public class WelcomePanel extends ViewOwner {
         getUI(ChildView.class).addChild(animView, 0);
         animView.playAnimDeep();
 
-        // Configure SitesTable
-        TableView<WebFile> sitesTable = getView("SitesTable", TableView.class);
-        sitesTable.setRowHeight(24);
-        sitesTable.getCol(0).setItemTextFunction(i -> i.getName());
-        sitesTable.addEventHandler(this::handleSitesTableMouseRelease, MouseRelease);
+        // Configure SitesListView
+        ListView<WebFile> sitesListView = getView("SitesListView", ListView.class);
+        sitesListView.setRowHeight(24);
+        sitesListView.setItemTextFunction(WebFile::getName);
+        sitesListView.addEventHandler(this::handleSitesListViewMouseReleaseEvent, MouseRelease);
 
         // Init SelFile
         List<WebFile> recentFiles = getRecentFiles();
@@ -140,7 +140,6 @@ public class WelcomePanel extends ViewOwner {
         // Configure Window: Add WindowListener to indicate app should exit when close button clicked
         WindowView win = getWindow();
         win.setTitle("Welcome");
-        win.setResizable(false);
         win.addEventHandler(e -> { _exit = true; hide(); }, WinClose);
         getView("OpenButton", Button.class).setDefaultButton(true);
     }
@@ -151,8 +150,8 @@ public class WelcomePanel extends ViewOwner {
     public void resetUI()
     {
         setViewEnabled("OpenButton", getSelFile() != null);
-        setViewItems("SitesTable", getRecentFiles());
-        setViewSelItem("SitesTable", getSelFile());
+        setViewItems("SitesListView", getRecentFiles());
+        setViewSelItem("SitesListView", getSelFile());
     }
 
     /**
@@ -164,8 +163,8 @@ public class WelcomePanel extends ViewOwner {
         if (anEvent.equals("SamplesButton"))
             openSamples();
 
-        // Handle SitesTable
-        if (anEvent.equals("SitesTable"))
+        // Handle SitesListView
+        if (anEvent.equals("SitesListView"))
             setSelFile((WebFile) anEvent.getSelItem());
 
         // Handle NewButton
@@ -177,9 +176,9 @@ public class WelcomePanel extends ViewOwner {
         if (anEvent.equals("OpenPanelButton"))
             showOpenPanel();
 
-        // Handle OpenButton or SitesTable double-click
+        // Handle OpenButton or SitesListView double-click
         if (anEvent.equals("OpenButton")) {
-            WebFile file = (WebFile) getViewSelItem("SitesTable");
+            WebFile file = (WebFile) getViewSelItem("SitesListView");
             openFile(file);
         }
 
@@ -190,11 +189,11 @@ public class WelcomePanel extends ViewOwner {
         }
     }
 
-    private void handleSitesTableMouseRelease(ViewEvent anEvent)
+    private void handleSitesListViewMouseReleaseEvent(ViewEvent anEvent)
     {
         if (anEvent.getClickCount() > 1) {
-            TableView<WebFile> sitesTable = getView("SitesTable", TableView.class);
-            WebFile file = sitesTable.getSelItem();
+            ListView<WebFile> sitesListView = getView("SitesListView", ListView.class);
+            WebFile file = sitesListView.getSelItem();
             openFile(file);
         }
     }

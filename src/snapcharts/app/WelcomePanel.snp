@@ -6,9 +6,7 @@
       <ProgressBar Name="ProgressBar" PrefWidth="110" PrefHeight="20" LeanX="RIGHT" />
       <Button Name="SamplesButton" PrefWidth="110" PrefHeight="24" Margin="2,5,2,2" Padding="2" LeanX="RIGHT" Text="Show Samples" />
     </RowView>
-    <TableView Name="SitesTable" Font="Arial 14" GrowHeight="true">
-      <TableCol PrefWidth="120" HeaderText="Name" />
-    </TableView>
+    <ListView Name="SitesListView" Font="Arial 14" GrowHeight="true" />
     <RowView Align="CENTER" Spacing="10">
       <Button Name="NewButton" PrefWidth="80" PrefHeight="22" Text="New" />
       <Button Name="OpenPanelButton" PrefWidth="80" PrefHeight="22" Text="Open..." />
