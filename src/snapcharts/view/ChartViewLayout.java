@@ -116,7 +116,7 @@ public class ChartViewLayout {
         Rect topBounds = getBoundsForSide(Side.TOP);
         double topHeight = topBounds.height;
         if (_prefContentBounds == null) {
-            double prefHeight = topProxy.getPrefHeight(topBounds.width);
+            double prefHeight = topProxy.getView().getPrefHeight(topBounds.width);
             topHeight = Math.min(prefHeight, topHeight);
         }
 
@@ -157,7 +157,7 @@ public class ChartViewLayout {
         Rect bottomBounds = getBoundsForSide(Side.BOTTOM);
         double bottomHeight = bottomBounds.height;
         if (_prefContentBounds == null) {
-            double prefHeight = bottomProxy.getPrefHeight(bottomBounds.width);
+            double prefHeight = bottomProxy.getView().getPrefHeight(bottomBounds.width);
             prefHeight = Math.max(prefHeight, RIGHT_MARGIN_MIN);
             bottomHeight = Math.min(prefHeight, bottomHeight);
         }
@@ -204,7 +204,7 @@ public class ChartViewLayout {
         Rect leftBounds = getBoundsForSide(Side.LEFT);
         double leftWidth = leftBounds.width;
         if (_prefContentBounds == null) {
-            double prefWidth = leftProxy.getPrefWidth(-1);
+            double prefWidth = leftProxy.getView().getPrefWidth(-1);
             prefWidth = Math.max(prefWidth, RIGHT_MARGIN_MIN);
             leftWidth = Math.min(prefWidth, leftWidth);
         }
@@ -246,7 +246,7 @@ public class ChartViewLayout {
         Rect rightBounds = getBoundsForSide(Side.RIGHT);
         double rightWidth = rightBounds.width;
         if (_prefContentBounds == null) {
-            double prefWidth = rightProxy.getPrefWidth(-1);
+            double prefWidth = rightProxy.getView().getPrefWidth(-1);
             prefWidth = Math.max(prefWidth, RIGHT_MARGIN_MIN);
             rightWidth = Math.min(prefWidth, rightWidth);
         }
