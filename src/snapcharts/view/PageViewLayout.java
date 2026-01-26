@@ -13,13 +13,13 @@ public class PageViewLayout {
     private PageView  _page;
 
     // The page
-    private ViewLayout<?> _pageProxy;
+    private ViewLayout _pageProxy;
 
     // The page area bounds
     private int  _areaX, _areaY, _areaW, _areaH;
 
     // The proxies for ChartViews
-    private ViewLayout<ChartView>[] _chartProxies;
+    private ViewLayout[] _chartProxies;
 
     /**
      * Constructor.
@@ -62,9 +62,10 @@ public class PageViewLayout {
         }
 
         // Set ContentViews children in ChartView proxies
-        for (ViewLayout<ChartView> chartProxy : _chartProxies) {
-            ContentView contentView = chartProxy.getView().getChildForClass(ContentView.class);
-            ViewLayout<?> contentViewLayout = ViewLayout.getViewLayout(contentView);
+        for (ViewLayout chartProxy : _chartProxies) {
+            ChartView chartView = (ChartView) chartProxy.getView();
+            ContentView contentView = chartView.getChildForClass(ContentView.class);
+            ViewLayout contentViewLayout = ViewLayout.getViewLayout(contentView);
             contentViewLayout.setBounds(contentView.getX(), contentView.getY(), contentView.getWidth(), contentView.getHeight());
             chartProxy.setChildren(new ViewLayout[] {contentViewLayout});
             chartProxy.getView().relayout();
@@ -74,15 +75,15 @@ public class PageViewLayout {
         synchChartContentViewSizes();
 
         // Update Chart bounds from proxies (clear ChartProxy children so Chart bounds gets set)
-        for (ViewLayout<ChartView> chartProxy : _chartProxies)
+        for (ViewLayout chartProxy : _chartProxies)
             chartProxy.clearChildren();
         _pageProxy.setBoundsInClient();
 
         // If ChartScale not 1, adjust Chart scales and X/Y
         if (chartScale != 1) {
             double scaleBack = 1 / chartScale;
-            for (ViewLayout<ChartView> chartProxy : _chartProxies) {
-                ChartView chartView = chartProxy.getView();
+            for (ViewLayout chartProxy : _chartProxies) {
+                ChartView chartView = (ChartView) chartProxy.getView();
                 chartView.setScale(scaleBack);
                 double chartX = _areaX + (chartProxy.x - _areaX) * scaleBack - chartProxy.width * (1 - scaleBack) / 2;
                 double chartY = _areaY + (chartProxy.y - _areaY) * scaleBack - chartProxy.height * (1 - scaleBack) / 2;
@@ -106,8 +107,8 @@ public class PageViewLayout {
 
         for (int i=0; i<rowCount; i++) {
             for (int j=0; j<colCount; j++) {
-                ViewLayout<ChartView> chart = getChartForRowCol(i, j);
-                if (chart==null) break;
+                ViewLayout chart = getChartForRowCol(i, j);
+                if (chart == null) break;
                 double chartX = _areaX + (chartW + spaceW) * j;
                 double chartY = _areaY + (chartH + spaceH) * i;
                 chart.setBounds(chartX, chartY, chartW, chartH);
@@ -127,8 +128,7 @@ public class PageViewLayout {
         int marginsXCount = colCount + 1;
         int[] marginColsW = new int[marginsXCount];
         int totalMarginColsW = 0;
-        for (int i=0; i<marginsXCount; i++)
-        {
+        for (int i=0; i<marginsXCount; i++) {
             marginColsW[i] = getMaxMarginColWidth(i);
             totalMarginColsW += marginColsW[i];
         }
@@ -145,8 +145,7 @@ public class PageViewLayout {
         int marginsYCount = rowCount + 1;
         int[] marginRowsH = new int[marginsYCount];
         int totalMarginRowsH = 0;
-        for (int i=0; i<marginsYCount; i++)
-        {
+        for (int i=0; i<marginsYCount; i++) {
             marginRowsH[i] = getMaxMarginRowHeight(i);
             totalMarginRowsH += marginRowsH[i];
         }
@@ -178,8 +177,8 @@ public class PageViewLayout {
         int maxWidth = 0;
         for (int i=0; i<rowCount; i++)
         {
-            ViewLayout<ChartView> chartBefore = aCol>0 ? getChartForRowCol(i, aCol-1) : null;
-            ViewLayout<ChartView> chartAfter = aCol<colCount ? getChartForRowCol(i, aCol) : null;
+            ViewLayout chartBefore = aCol>0 ? getChartForRowCol(i, aCol-1) : null;
+            ViewLayout chartAfter = aCol<colCount ? getChartForRowCol(i, aCol) : null;
             double marginA = chartBefore!=null ? chartBefore.getWidth() - getContentView(chartBefore).getMaxX() : 0;
             double marginB = chartAfter!=null ? getContentView(chartAfter).getX() : 0;
             double spacing = chartBefore!=null && chartAfter!=null ? chartAfter.getX() - chartBefore.getMaxX() : 0;
@@ -198,8 +197,8 @@ public class PageViewLayout {
         int maxHeight = 0;
         for (int i=0; i<colCount; i++)
         {
-            ViewLayout<ChartView> chartBefore = aRow>0 ? getChartForRowCol(aRow - 1, i) : null;
-            ViewLayout<ChartView> chartAfter = aRow<rowCount ? getChartForRowCol(aRow, i) : null;
+            ViewLayout chartBefore = aRow>0 ? getChartForRowCol(aRow - 1, i) : null;
+            ViewLayout chartAfter = aRow<rowCount ? getChartForRowCol(aRow, i) : null;
             double marginA = chartBefore!=null ? chartBefore.getHeight() - getContentView(chartBefore).getMaxY() : 0;
             double marginB = chartAfter!=null ? getContentView(chartAfter).getY() : 0;
             double spacing = chartBefore!=null && chartAfter!=null ? chartAfter.getY() - chartBefore.getMaxY() : 0;
@@ -228,7 +227,7 @@ public class PageViewLayout {
             for (int j=0; j<colCount; j++)
             {
                 // Get ChartView proxy and set new ChartX (just break if we ran out of charts)
-                ViewLayout<ChartView> chartProxy = getChartForRowCol(i, j);
+                ViewLayout chartProxy = getChartForRowCol(i, j);
                 if (chartProxy == null) break;
                 chartProxy.setX(chartX);
 
@@ -244,19 +243,19 @@ public class PageViewLayout {
                 }
 
                 // Calc new ChartWidth based on given DataWidth and space on right of ContentView
-                ViewLayout<ContentView> dataProxy = getContentView(chartProxy);
+                ViewLayout dataProxy = getContentView(chartProxy);
                 int insRight = (int) Math.round(chartProxy.getWidth() - dataProxy.getMaxX());
                 int chartW = dataX + dataW + insRight;
 
                 // Get next chart. If no more charts in row, just set ChartWidth and break
-                ViewLayout<ChartView> nextChart = getChartForRowCol(i, j+1);
+                ViewLayout nextChart = getChartForRowCol(i, j+1);
                 if (nextChart == null) {
                     chartProxy.setWidth(chartW);
                     break;
                 }
 
                 // Calc ChartWidth again based on NextChart.ContentView.X. If extra space available, split difference
-                ViewLayout<ContentView> nextData = getContentView(nextChart);
+                ViewLayout nextData = getContentView(nextChart);
                 int nextDataX = (int) Math.round(nextData.getX());
                 int nextMarginColMaxX = marginColMaxX + dataW + marginColsW[j+1];
                 int chartW2 = nextMarginColMaxX - nextDataX - chartX;
@@ -291,7 +290,7 @@ public class PageViewLayout {
             for (int j = 0; j < rowCount; j++)
             {
                 // Get ChartView proxy and set new ChartY (just break if we ran out of charts)
-                ViewLayout<ChartView> chartProxy = getChartForRowCol(j, i);
+                ViewLayout chartProxy = getChartForRowCol(j, i);
                 if (chartProxy == null) break;
                 chartProxy.setY(chartY);
 
@@ -309,19 +308,19 @@ public class PageViewLayout {
                 }
 
                 // Calc new ChartHeight based on given DataHeight and space below ContentView
-                ViewLayout<ContentView> dataProxy = getContentView(chartProxy);
+                ViewLayout dataProxy = getContentView(chartProxy);
                 int insBottom = (int) Math.round(chartProxy.getHeight() - dataProxy.getMaxY());
                 int chartH = dataY + dataH + insBottom;
 
                 // Get next chart. If no more charts in column, just set ChartHeight and break
-                ViewLayout<ChartView> nextChart = getChartForRowCol(j+1, i);
+                ViewLayout nextChart = getChartForRowCol(j+1, i);
                 if (nextChart == null) {
                     chartProxy.setHeight(chartH);
                     break;
                 }
 
                 // Calc ChartHeight again based on NextChart.ContentView.Y. If extra space available, split difference
-                ViewLayout<ContentView> nextData = getContentView(nextChart);
+                ViewLayout nextData = getContentView(nextChart);
                 int nextDataY = (int) Math.round(nextData.getY());
                 int nextMarginRowMaxY = marginRowMaxY + dataH + marginRowsH[j+1];
                 int chartH2 = nextMarginRowMaxY - nextDataY - chartY;
@@ -340,25 +339,22 @@ public class PageViewLayout {
     private int getRowCount()  { return _page.getRowCount(); }
     private int getColCount()  { return _page.getColCount(); }
     private int getChartCount()  { return _page.getChartCount(); }
-    private ViewLayout<ChartView> getChartForRowCol(int aRow, int aCol)
+    private ViewLayout getChartForRowCol(int aRow, int aCol)
     {
         int index = aRow * getColCount() + aCol;
         return index < getChartCount() ? _chartProxies[index] : null;
     }
 
     // Conveniences for chart
-    private ViewLayout<ContentView> getContentView(ViewLayout<ChartView> aChartProxy)
+    private ViewLayout getContentView(ViewLayout aChartProxy)  { return aChartProxy.getChildForClass(ContentView.class); }
+    private Rect getPrefContentBounds(ViewLayout aChartProxy)
     {
-        return aChartProxy.getChildForClass(ContentView.class);
-    }
-    private Rect getPrefContentBounds(ViewLayout<ChartView> aChartProxy)
-    {
-        ChartView chartView = aChartProxy.getView();
+        ChartView chartView = (ChartView) aChartProxy.getView();
         return chartView.getPrefContentBounds();
     }
-    private void setPrefContentBounds(ViewLayout<ChartView> aChartProxy, Rect aRect)
+    private void setPrefContentBounds(ViewLayout aChartProxy, Rect aRect)
     {
-        ChartView chartView = aChartProxy.getView();
+        ChartView chartView = (ChartView) aChartProxy.getView();
         chartView.setPrefContentBounds(aRect);
     }
 }

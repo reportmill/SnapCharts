@@ -153,7 +153,7 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
      * Override to return row layout.
      */
     @Override
-    protected ViewLayout<?> getViewLayoutImpl()  { return new RowViewLayout<>(this, true); }
+    protected ViewLayout getViewLayoutImpl()  { return new RowViewLayout(this, true); }
 
     /**
      * A View subclass to show colors.

@@ -82,10 +82,10 @@ public class AxisViewY extends AxisView<AxisY> {
      * Override to return row layout.
      */
     @Override
-    protected ViewLayout<?> getViewLayoutImpl()
+    protected ViewLayout getViewLayoutImpl()
     {
         // Create row layout
-        ViewLayout<?> rowLayout = new RowViewLayout<>(this);
+        ViewLayout rowLayout = new RowViewLayout(this);
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Axis axis = getAxis();

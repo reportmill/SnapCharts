@@ -68,5 +68,5 @@ public class HeaderView extends ChartPartView<Header> {
      * Override to return column layout.
      */
     @Override
-    protected ViewLayout<?> getViewLayoutImpl()  { return new ColViewLayout<>(this); }
+    protected ViewLayout getViewLayoutImpl()  { return new ColViewLayout(this); }
 }

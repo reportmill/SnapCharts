@@ -49,10 +49,10 @@ public class AxisViewZ<T extends AxisZ> extends AxisView<T> {
      * Override to return column layout that also lays out tick and marker labels.
      */
     @Override
-    protected ViewLayout<?> getViewLayoutImpl()
+    protected ViewLayout getViewLayoutImpl()
     {
         // Create column layout
-        ViewLayout<?> colLayout = new ColViewLayout<>(this);
+        ViewLayout colLayout = new ColViewLayout(this);
 
         // Get Axis
         Axis axis = getAxis();
@@ -60,7 +60,7 @@ public class AxisViewZ<T extends AxisZ> extends AxisView<T> {
         // If MarkersBox is visible, use margins instead
         if (_markersBox.isVisible()) {
             colLayout.setSpacing(0);
-            ViewLayout<?> markersBoxProxy = colLayout.getChildForClass(MarkersBox.class);
+            ViewLayout markersBoxProxy = colLayout.getChildForClass(MarkersBox.class);
             double axisSpacing = axis.getSpacing();
             markersBoxProxy.setMargin(new Insets(2, 0, axisSpacing - 2, 0));
         }
