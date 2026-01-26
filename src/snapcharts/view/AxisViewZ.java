@@ -34,35 +34,39 @@ public class AxisViewZ<T extends AxisZ> extends AxisView<T> {
     public AxisZ getAxis()  { return getChart().getAxisZ(); }
 
     /**
+     * Override to layout tick and marker labels.
+     */
+    @Override
+    protected void layoutImpl()
+    {
+        super.layoutImpl();
+        layoutTickLabels();
+        if (_markersBox.isVisible())
+            layoutMarkerLabels();
+    }
+
+    /**
      * Override to return column layout that also lays out tick and marker labels.
      */
     @Override
     protected ViewLayout<?> getViewLayoutImpl()
     {
-        // Create column layout with override to layout tick labels and marker labels
-        ViewLayout<?> viewLayout = new ColViewLayout<>(this) {
-            @Override
-            public void layoutView() {
-                super.layoutView();
-                layoutTickLabels();
-                if (_markersBox.isVisible())
-                    layoutMarkerLabels();
-            }
-        };
+        // Create column layout
+        ViewLayout<?> colLayout = new ColViewLayout<>(this);
 
         // Get Axis
         Axis axis = getAxis();
 
         // If MarkersBox is visible, use margins instead
         if (_markersBox.isVisible()) {
-            viewLayout.setSpacing(0);
-            ViewLayout<?> markersBoxProxy = viewLayout.getChildForClass(MarkersBox.class);
+            colLayout.setSpacing(0);
+            ViewLayout<?> markersBoxProxy = colLayout.getChildForClass(MarkersBox.class);
             double axisSpacing = axis.getSpacing();
             markersBoxProxy.setMargin(new Insets(2, 0, axisSpacing - 2, 0));
         }
 
         // Reverse children (assumes Side == Bottom)
-        ArrayUtils.reverse(viewLayout.getChildren());
+        ArrayUtils.reverse(colLayout.getChildren());
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Side axisSide = axis.getSide();
@@ -70,15 +74,15 @@ public class AxisViewZ<T extends AxisZ> extends AxisView<T> {
         double tickLength = axis.getTickLength();
         double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
         if (tickIndent > 0) {
-            Insets padding = viewLayout.getPadding().clone();
+            Insets padding = colLayout.getPadding().clone();
             if (axisSide == Side.TOP)
                 padding.bottom += tickIndent;
             else padding.top += tickIndent;
-            viewLayout.setPadding(padding);
+            colLayout.setPadding(padding);
         }
 
         // Return
-        return viewLayout;
+        return colLayout;
     }
 
     /**

@@ -129,32 +129,31 @@ public class ContourAxisView extends ChartPartView<ContourAxis> {
     }
 
     /**
+     * Override to layout color box.
+     */
+    @Override
+    protected void layoutImpl()
+    {
+        super.layoutImpl();
+        if (_entryBox.getChildCount() == 0)
+            return;
+
+        // Calculate ColorBox Y/H and set
+        Insets pad = _entryBox.getPadding();
+        Label label = (Label) _entryBox.getChild(0);
+        double strH = label.getPrefHeight();
+        double halfH = Math.ceil(strH/2);
+        double colorBoxY = _entryBox.getY() + pad.top + halfH;
+        double colorBoxH = _entryBox.getHeight() - pad.bottom - strH;
+        _colorBox.setY(colorBoxY);
+        _colorBox.setHeight(colorBoxH);
+    }
+
+    /**
      * Override to return row layout.
      */
     @Override
-    protected ViewLayout<?> getViewLayoutImpl()
-    {
-        return new RowViewLayout<>(this, true) {
-
-            @Override
-            public void layoutView()
-            {
-                super.layoutView();
-                if (_entryBox.getChildCount() == 0)
-                    return;
-
-                // Calculate ColorBox Y/H and set
-                Insets pad = _entryBox.getPadding();
-                Label label = (Label) _entryBox.getChild(0);
-                double strH = label.getPrefHeight();
-                double halfH = Math.ceil(strH/2);
-                double colorBoxY = _entryBox.getY() + pad.top + halfH;
-                double colorBoxH = _entryBox.getHeight() - pad.bottom - strH;
-                _colorBox.setY(colorBoxY);
-                _colorBox.setHeight(colorBoxH);
-            }
-        };
-    }
+    protected ViewLayout<?> getViewLayoutImpl()  { return new RowViewLayout<>(this, true); }
 
     /**
      * A View subclass to show colors.

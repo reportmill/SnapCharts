@@ -69,19 +69,23 @@ public class AxisViewY extends AxisView<AxisY> {
     public AxisY getAxis()  { return (AxisY) getChart().getAxisForType(_axisType); }
 
     /**
-     * Override to return row layout that also lays out tick labels.
+     * Override to layout tick labels.
+     */
+    @Override
+    protected void layoutImpl()
+    {
+        super.layoutImpl();
+        layoutTickLabels();
+    }
+
+    /**
+     * Override to return row layout.
      */
     @Override
     protected ViewLayout<?> getViewLayoutImpl()
     {
-        // Create layout for AxisView
-        ViewLayout<?> viewProxy = new RowViewLayout<>(this) {
-            @Override
-            public void layoutView() {
-                super.layoutView();
-                layoutTickLabels();
-            }
-        };
+        // Create row layout
+        ViewLayout<?> rowLayout = new RowViewLayout<>(this);
 
         // If tick is 'Outside' or 'Across', adjust padding to accommodate tick inside axis bounds
         Axis axis = getAxis();
@@ -90,19 +94,19 @@ public class AxisViewY extends AxisView<AxisY> {
         double tickLength = axis.getTickLength();
         double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
         if (tickIndent > 0) {
-            Insets padding = viewProxy.getPadding().clone();
+            Insets padding = rowLayout.getPadding().clone();
             if (axisSide == Side.LEFT)
                 padding.right += tickIndent;
             else padding.left += tickIndent;
-            viewProxy.setPadding(padding);
+            rowLayout.setPadding(padding);
         }
 
         // If RightSide, reverse children
         boolean isRightSide = axisSide == Side.RIGHT;
-        viewProxy.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+        rowLayout.setAlign(isRightSide ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
         if (isRightSide)
-            ArrayUtils.reverse(viewProxy.getChildren());
-        return viewProxy;
+            ArrayUtils.reverse(rowLayout.getChildren());
+        return rowLayout;
     }
 
     /**
