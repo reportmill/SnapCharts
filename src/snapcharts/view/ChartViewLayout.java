@@ -133,8 +133,8 @@ public class ChartViewLayout {
      */
     private ColViewLayout<?> getTopViewProxy()
     {
-        View virtualTopView = new View();
-        ColViewLayout<?> viewProxy = new ColViewLayout<>(virtualTopView);
+        View virtualTopView = new ColView();
+        ColViewLayout<?> viewProxy = (ColViewLayout<?>) virtualTopView.getViewLayout();
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.BOTTOM_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
@@ -180,8 +180,8 @@ public class ChartViewLayout {
      */
     private ColViewLayout<?> getBottomViewProxy()
     {
-        View virtualBottomView = new View();
-        ColViewLayout<?> viewProxy = new ColViewLayout<>(virtualBottomView);
+        View virtualBottomView = new ColView();
+        ColViewLayout<?> viewProxy = (ColViewLayout<?>) virtualBottomView.getViewLayout();
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.TOP_CENTER);
         viewProxy.setSpacing(VIEW_SPACING);
@@ -222,8 +222,8 @@ public class ChartViewLayout {
      */
     private RowViewLayout<?> getLeftViewProxy()
     {
-        View virtualLeftView = new View();
-        RowViewLayout<?> viewProxy = new RowViewLayout<>(virtualLeftView);
+        View virtualLeftView = new RowView();
+        RowViewLayout<?> viewProxy = (RowViewLayout<?>) virtualLeftView.getViewLayout();
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_RIGHT);
         ViewLayout<?>[] leftViews = getViewsForSide(Side.LEFT);
@@ -269,8 +269,8 @@ public class ChartViewLayout {
      */
     private RowViewLayout<?> getRightViewProxy()
     {
-        View virtualRightView = new View();
-        RowViewLayout<?> viewProxy = new RowViewLayout<>(virtualRightView);
+        View virtualRightView = new RowView();
+        RowViewLayout<?> viewProxy = (RowViewLayout<?>) virtualRightView.getViewLayout();
         viewProxy.setBorder(Border.emptyBorder());
         viewProxy.setAlign(Pos.CENTER_LEFT);
         ViewLayout<?>[] rightViews = getViewsForSide(Side.RIGHT);
