@@ -532,7 +532,7 @@ public class ChartView extends ChartPartView<Chart> {
      * Override to return default chart width.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    protected double computePrefWidth(double aH)
     {
         return CHART_WIDTH;
     }
@@ -541,7 +541,7 @@ public class ChartView extends ChartPartView<Chart> {
      * Override to return default chart height (or proportional height if given width).
      */
     @Override
-    protected double getPrefHeightImpl(double aW)
+    protected double computePrefHeight(double aW)
     {
         // Return proportional height for given width, to retain aspect ratio
         double prefH = CHART_HEIGHT;

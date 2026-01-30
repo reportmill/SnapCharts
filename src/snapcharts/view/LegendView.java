@@ -366,7 +366,7 @@ public class LegendView extends ChartPartView<Legend> {
      * Override return pref size for entry box (bypassing ScaleBox).
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    protected double computePrefWidth(double aH)
     {
         double entryBoxPrefW = _entryBox.getPrefWidth();
         return entryBoxPrefW + getInsetsAll().getWidth();
@@ -376,7 +376,7 @@ public class LegendView extends ChartPartView<Legend> {
      * Override return pref size for entry box (bypassing ScaleBox).
      */
     @Override
-    protected double getPrefHeightImpl(double aW)
+    protected double computePrefHeight(double aW)
     {
         double entryBoxPrefH = _entryBox.getPrefHeight();
         return entryBoxPrefH + getInsetsAll().getHeight();

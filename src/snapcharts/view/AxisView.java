@@ -674,7 +674,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
          * Override to return something.
          */
         @Override
-        protected double getPrefWidthImpl(double aH)
+        protected double computePrefWidth(double aH)
         {
             return 200;
         }
@@ -683,7 +683,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
          * Override to return text height for AxisViewX.
          */
         @Override
-        protected double getPrefHeightImpl(double aW)
+        protected double computePrefHeight(double aW)
         {
             ParentView parent = getParent();
             if (parent instanceof AxisViewX) {

@@ -62,10 +62,10 @@ public class TickLabel extends StringView {
      * Override to add ExpText if label has exponent.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    protected double computePrefWidth(double aH)
     {
         // Do normal version and just return if no ExpText
-        double prefW = super.getPrefWidthImpl(aH);
+        double prefW = super.computePrefWidth(aH);
         if (_expText == null)
             return prefW;
 

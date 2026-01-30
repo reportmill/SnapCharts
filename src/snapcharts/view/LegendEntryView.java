@@ -87,7 +87,7 @@ public class LegendEntryView extends Label {
          * Override to return height to fit style.
          */
         @Override
-        protected double getPrefHeightImpl(double aW)
+        protected double computePrefHeight(double aW)
         {
             // Get marked height of line/area/symbol
             double markedHeight = 0;

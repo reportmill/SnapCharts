@@ -25,7 +25,7 @@ public class TickLabelBox extends ChildView {
      * Override to return TickLabels.MaxWidth for AxisViewY.
      */
     @Override
-    protected double getPrefWidthImpl(double aH)
+    protected double computePrefWidth(double aH)
     {
         // If X axis, just return 200 (X axis doesn't have a PrefWidth)
         AxisView axisView = (AxisView) getParent();
@@ -41,7 +41,7 @@ public class TickLabelBox extends ChildView {
      * Override to return text height for AxisViewX.
      */
     @Override
-    protected double getPrefHeightImpl(double aW)
+    protected double computePrefHeight(double aW)
     {
         // If Y axis, just return 200 (Y axis doesn't have a PrefHeight)
         AxisView axisView = (AxisView) getParent();
