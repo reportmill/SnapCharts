@@ -30,7 +30,9 @@ dependencies {
     //implementation project(':SnapKitGL')
 }
 
-mainClassName = 'snapcharts.app.App'
+application {
+    mainClass = 'snapcharts.app.App'
+}
 
 publishing {
 
