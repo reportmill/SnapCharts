@@ -6,8 +6,8 @@ plugins {
     id 'maven-publish'
 }
 
-group 'com.reportmill'
-version  new SimpleDateFormat("yyyy.MM").format(new Date())
+group = 'com.reportmill'
+version = new SimpleDateFormat("yyyy.MM").format(new Date())
 
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.main.resources.srcDirs = ['src']
@@ -17,16 +17,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
-
-    // SnapKit project
     implementation project(':SnapKit')
-
-    // SnapKitGL project
     //implementation project(':SnapKitGL')
 }
 
@@ -36,21 +30,9 @@ application {
 
 publishing {
 
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/reportmill/SnapCharts"
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-                println "GitHubPackages Publish Artifact:\n\tusername=$username\n\ttoken=$password"
-            }
-        }
-    }
-
     publications {
         gpr(MavenPublication) {
-            artifactId 'snapcharts'
+            artifactId = 'snapcharts'
             from(components.java)
         }
     }
