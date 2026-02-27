@@ -28,6 +28,10 @@ application {
     mainClass = 'snapcharts.app.App'
 }
 
+test {
+    failOnNoDiscoveredTests = false
+}
+
 publishing {
 
     publications {
