@@ -13,8 +13,7 @@ sourceSets.main.java.srcDirs = ['src']
 sourceSets.main.resources.srcDirs = ['src']
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
 repositories { mavenCentral() }
@@ -28,9 +27,7 @@ application {
     mainClass = 'snapcharts.app.App'
 }
 
-test {
-    failOnNoDiscoveredTests = false
-}
+//test { failOnNoDiscoveredTests = false }
 
 publishing {
 
