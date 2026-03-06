@@ -12,7 +12,7 @@ import snapcharts.apptools.ChartSetBasicTool;
 /**
  * A class to manage the inspector for ChartSetPane.
  */
-public class ChartSetPaneInsp extends ViewOwner {
+public class ChartSetPaneInsp extends ViewController {
 
     // The ChartSetPane
     protected ChartSetPane _epane;
@@ -27,7 +27,7 @@ public class ChartSetPaneInsp extends ViewOwner {
     private ColView  _inspColView;
 
     // The child inspector current installed in inspector panel
-    private ViewOwner  _childInspector;
+    private ViewController _childInspector;
 
     // The ChartSetBasicTool
     private ChartSetBasicTool  _csetBasic;
@@ -87,7 +87,7 @@ public class ChartSetPaneInsp extends ViewOwner {
         ChartSetPane dpane = getChartSetPane();
 
         // Get the inspector (owner)
-        ViewOwner owner = getInspector();
+        ViewController owner = getInspector();
 
         // Get inspector title from owner and set
         String title = "Inspector";
@@ -110,12 +110,12 @@ public class ChartSetPaneInsp extends ViewOwner {
     /**
      * Returns the inspector (owner) of the inspector pane.
      */
-    protected ViewOwner getInspector()  { return _childInspector; }
+    protected ViewController getInspector()  { return _childInspector; }
 
     /**
      * Sets the inspector in the inspector pane.
      */
-    protected void setInspector(ViewOwner anOwner)
+    protected void setInspector(ViewController anOwner)
     {
         // Set new inspector
         _childInspector = anOwner;

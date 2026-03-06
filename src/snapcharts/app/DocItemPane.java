@@ -5,13 +5,13 @@ package snapcharts.app;
 import snap.props.PropChange;
 import snap.view.View;
 import snap.view.ViewAnimUtils;
-import snap.view.ViewOwner;
+import snap.view.ViewController;
 import snapcharts.doc.DocItem;
 
 /**
  * The base class for DocItem editors.
  */
-public class DocItemPane<T extends DocItem> extends ViewOwner {
+public class DocItemPane<T extends DocItem> extends ViewController {
 
     // The DocPane that holds this DocItemPane
     private DocPane  _docPane;
@@ -83,7 +83,7 @@ public class DocItemPane<T extends DocItem> extends ViewOwner {
         _showInsp = aValue;
 
         // Get inspector and view
-        ViewOwner insp = getInspector(); if (insp==null) return;
+        ViewController insp = getInspector(); if (insp==null) return;
         View inspView = insp.getUI();
 
         // Set visible (animated)
@@ -93,7 +93,7 @@ public class DocItemPane<T extends DocItem> extends ViewOwner {
     /**
      * Returns the inspector.
      */
-    public ViewOwner getInspector()  { return null; }
+    public ViewController getInspector()  { return null; }
 
     /**
      * Called when DocItem has change.

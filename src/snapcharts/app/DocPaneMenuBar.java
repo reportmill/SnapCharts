@@ -5,13 +5,13 @@ package snapcharts.app;
 import snap.props.Undoer;
 import snap.view.MenuBar;
 import snap.view.ViewEvent;
-import snap.view.ViewOwner;
+import snap.view.ViewController;
 import snap.viewx.DevPane;
 
 /**
  * Menu bar for Editor pane.
  */
-public class DocPaneMenuBar extends ViewOwner {
+public class DocPaneMenuBar extends ViewController {
 
     // The DocPane
     private DocPane _dpane;

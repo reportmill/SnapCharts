@@ -2,8 +2,8 @@ package snapcharts.apptools;
 import snap.util.FormatUtils;
 import snap.util.StringUtils;
 import snap.view.ToggleButton;
+import snap.view.ViewController;
 import snap.view.ViewEvent;
-import snap.view.ViewOwner;
 import snapcharts.app.ChartSetPane;
 import snapcharts.doc.DocItemGroup;
 import snapcharts.charts.PageDisplay;
@@ -11,7 +11,7 @@ import snapcharts.charts.PageDisplay;
 /**
  * A class to manage UI to edit a ChartSetPane.
  */
-public class ChartSetBasicTool extends ViewOwner {
+public class ChartSetBasicTool extends ViewController {
 
     // The DocPane
     private ChartSetPane _chartSetPane;

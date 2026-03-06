@@ -11,7 +11,7 @@ import snapcharts.charts.Trace;
 import snapcharts.util.TraceUtils;
 
 /**
- * This ViewOwner subclass provides display and editing of a Trace and its DataSet.
+ * This view controller subclass provides display and editing of a Trace and its DataSet.
  */
 public class TracePane extends DocItemPane<DocItemTrace> {
 

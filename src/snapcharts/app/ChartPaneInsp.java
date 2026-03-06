@@ -14,7 +14,7 @@ import snapcharts.charts.*;
 /**
  * A class to manage inspector.
  */
-public class ChartPaneInsp extends ViewOwner {
+public class ChartPaneInsp extends ViewController {
 
     // The ChartPane
     protected ChartPane _chartPane;

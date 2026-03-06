@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * A class to manage charts/data in a ChartBook.
  */
-public class DocPane extends ViewOwner {
+public class DocPane extends ViewController {
 
     // The ChartDoc
     private Doc  _doc;
@@ -126,7 +126,7 @@ public class DocPane extends ViewOwner {
 
         // Remove old SelItem UI
         if (_selItem !=null) {
-            ViewOwner itemUI = getItemPane(_selItem);
+            ViewController itemUI = getItemPane(_selItem);
             _splitView.removeItem(itemUI.getUI());
         }
 

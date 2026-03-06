@@ -10,7 +10,7 @@ import snapcharts.appmisc.Collapser;
 /**
  * This class provides UI editing for miscellaneous ChartPart properties.
  */
-public class MiscInsp extends ViewOwner {
+public class MiscInsp extends ViewController {
 
     // The ChartPane
     private ChartPane  _chartPane;

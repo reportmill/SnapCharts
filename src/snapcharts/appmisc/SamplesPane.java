@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * A class to show samples.
  */
-public class SamplesPane extends ViewOwner {
+public class SamplesPane extends ViewController {
 
     // The DocPane
     private DocPane  _docPane;
@@ -204,7 +204,7 @@ public class SamplesPane extends ViewOwner {
 
         // Make sure all row views and image boxes are owned by ui
         for (View child : colView.getChildren())
-            child.setOwner(this);
+            child.setController(this);
 
         // Load images in background
         CompletableFuture.runAsync(this::loadImages);

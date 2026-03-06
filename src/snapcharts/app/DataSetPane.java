@@ -9,9 +9,9 @@ import snapcharts.appmisc.SheetView;
 import snapcharts.data.*;
 
 /**
- * This ViewOwner subclass provides display and editing of a DataSet.
+ * This view controller subclass provides display and editing of a DataSet.
  */
-public class DataSetPane extends ViewOwner {
+public class DataSetPane extends ViewController {
 
     // The DataSet
     protected DataSet  _dataSet;

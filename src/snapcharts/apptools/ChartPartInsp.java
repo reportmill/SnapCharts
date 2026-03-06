@@ -4,16 +4,16 @@ import snap.gfx.Border;
 import snap.gfx.Color;
 import snap.gfx.Font;
 import snap.view.Label;
-import snap.view.ViewOwner;
+import snap.view.ViewController;
 import snapcharts.app.ChartPane;
 import snapcharts.appmisc.Collapser;
 import snapcharts.charts.Chart;
 import snapcharts.charts.ChartPart;
 
 /**
- * A ViewOwner subclass for ChartPart inspectors.
+ * A view controller subclass for ChartPart inspectors.
  */
-public abstract class ChartPartInsp extends ViewOwner {
+public abstract class ChartPartInsp extends ViewController {
 
     // The ChartPane
     protected ChartPane _chartPane;

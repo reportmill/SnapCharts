@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A ViewOwner to handle display of whole ChartDoc.
+ * A view controller to handle display of whole ChartDoc.
  */
 public class ChartSetPane extends DocItemPane<DocItemGroup> {
 
@@ -54,7 +54,7 @@ public class ChartSetPane extends DocItemPane<DocItemGroup> {
     /**
      * Returns the inspector.
      */
-    public ViewOwner getInspector()  { return _insp; }
+    public ViewController getInspector()  { return _insp; }
 
     /**
      * Returns the list of PageView.

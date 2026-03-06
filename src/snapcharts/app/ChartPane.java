@@ -305,7 +305,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         // Get TabView and remove from SplitView (default mode)
         _traceTabView = getView("TabView", TabView.class);
         _splitView.removeItem(_traceTabView);
-        _traceTabView.setOwner(this);
+        _traceTabView.setController(this);
 
         // Create configure ChartPaneSel
         _selHpr = new ChartPaneSel(this);
