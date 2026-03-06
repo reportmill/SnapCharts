@@ -553,7 +553,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         for (Trace trace : traces) {
             DocItemTrace docItemTrace = new DocItemTrace(trace);
             TracePane tracePane = new TracePane(docItemTrace);
-            tabBuilder.title(trace.getName()).contentOwner(tracePane).add();
+            tabBuilder.title(trace.getName()).contentController(tracePane).add();
         }
     }
 

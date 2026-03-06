@@ -485,7 +485,7 @@ public class DocPane extends ViewController {
     protected void docPaneClosed()
     {
         // If another open editor is available focus on it, otherwise run WelcomePanel
-        DocPane dpane = WindowView.getOpenWindowOwner(DocPane.class);
+        DocPane dpane = WindowView.getOpenWindowController(DocPane.class);
         //if (dpane!=null) dpane.getEditor().requestFocus(); else
          if (dpane==null)
              WelcomePanel.getShared().showPanel();
