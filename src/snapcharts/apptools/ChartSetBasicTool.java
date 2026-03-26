@@ -1,6 +1,6 @@
 package snapcharts.apptools;
+import snap.util.Convert;
 import snap.util.FormatUtils;
-import snap.util.StringUtils;
 import snap.view.ToggleButton;
 import snap.view.ViewController;
 import snap.view.ViewEvent;
@@ -103,7 +103,7 @@ public class ChartSetBasicTool extends ViewController {
         // Handle ChartScaleButtons (ChartScaleButton.5, .75, 1, 1.25, 1.5, 1.75, ChartScaleButton2)
         String name = anEvent.getName();
         if (name.startsWith("ChartScaleButton")) {
-            double chartScale = StringUtils.doubleValue(name);
+            double chartScale = Convert.doubleValue(name);
             docItem.setChartScale(chartScale);
         }
     }
