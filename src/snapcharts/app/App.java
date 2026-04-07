@@ -1,7 +1,6 @@
 package snapcharts.app;
 import snap.gfx.GFXEnv;
 import snap.util.Prefs;
-import snap.view.ViewTheme;
 import snap.view.ViewUtils;
 import snap.web.RecentFiles;
 import snap.web.WebURL;
@@ -58,7 +57,6 @@ public class App {
 
         // Otherwise just present WelcomePanel
         else {
-            ViewTheme.setThemeForName("Light");
             WelcomePanel.getShared().setOnQuit(() -> quitApp());
             WelcomePanel.getShared().showPanel();
         }
