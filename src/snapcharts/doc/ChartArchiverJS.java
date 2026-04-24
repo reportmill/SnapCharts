@@ -3,7 +3,7 @@
  */
 package snapcharts.doc;
 import snap.props.*;
-import snap.util.JSObject;
+import snap.util.JsonObject;
 import snapcharts.data.*;
 import snapcharts.charts.*;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * An archiver for SnapCharts document file.
  */
-public class ChartArchiverJS extends PropArchiverJS {
+public class ChartArchiverJS extends PropArchiverJson {
 
     /**
      * Constructor.
@@ -43,7 +43,7 @@ public class ChartArchiverJS extends PropArchiverJS {
     /**
      * Returns an JSON object for a given PropObject.
      */
-    public JSObject writeToJSON(PropObject anObj)
+    public JsonObject writeToJSON(PropObject anObj)
     {
         return writePropObjectToJSON(anObj);
     }
@@ -53,7 +53,7 @@ public class ChartArchiverJS extends PropArchiverJS {
      */
     public byte[] writeToJSONBytes(PropObject anObj)
     {
-        JSObject jsonObj = writeToJSON(anObj);
+        JsonObject jsonObj = writeToJSON(anObj);
         String jsonStr = jsonObj.toString();
         return jsonStr.getBytes();
     }

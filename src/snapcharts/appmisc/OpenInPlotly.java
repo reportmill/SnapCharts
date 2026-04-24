@@ -134,10 +134,10 @@ public class OpenInPlotly {
     private void writeChartLayout(Chart aChart)
     {
         // Create layoutJS JSON node
-        JSObject layoutJS = new JSObject();
+        JsonObject layoutJS = new JsonObject();
 
         // Create title JSON node
-        JSObject titleJS = new JSObject();
+        JsonObject titleJS = new JsonObject();
         layoutJS.setValue("title", titleJS);
 
         // Get title/subtitle and add to layoutJS
@@ -174,19 +174,19 @@ public class OpenInPlotly {
     /**
      * Writes chart layout declaration.
      */
-    private void writeChartAxisLayout(Chart aChart, AxisType anAxisType, JSObject layoutJS)
+    private void writeChartAxisLayout(Chart aChart, AxisType anAxisType, JsonObject layoutJS)
     {
         // Get axis and axis name
         Axis axis = aChart.getAxisForType(anAxisType);
         String axisName = getAxisName(anAxisType);
 
         // Create axis JSONNode
-        JSObject axisJS = new JSObject();
+        JsonObject axisJS = new JsonObject();
 
         // Set title
         String title = axis.getTitle();
         if (title !=null && title.length() > 0) {
-            JSObject titleJS = new JSObject();
+            JsonObject titleJS = new JsonObject();
             titleJS.setNativeValue("text", title);
             axisJS.setValue("title", titleJS);
         }
@@ -197,7 +197,7 @@ public class OpenInPlotly {
         axisJS.setNativeValue("mirror", true);
 
         // If explicit axis range is set, configure axis.range
-        JSValue axisRangeJS = getAxisRange(axis);
+        JsonNode axisRangeJS = getAxisRange(axis);
         if (axisRangeJS != null)
             axisJS.setValue("range", axisRangeJS);
 
@@ -207,7 +207,7 @@ public class OpenInPlotly {
 
         // If X Axis, see if we need to add domain entry so additional axes don't overlap data area
         if (anAxisType == AxisType.X) {
-            JSValue domain = getXAxisDomain(aChart);
+            JsonNode domain = getXAxisDomain(aChart);
             if (domain != null)
                 axisJS.setValue("domain", domain);
         }
@@ -256,7 +256,7 @@ public class OpenInPlotly {
         }
 
         // Add TickFont family, size
-        JSObject tickfontJS = new JSObject();
+        JsonObject tickfontJS = new JsonObject();
         Font axisFont = axis.getFont();
         if (axisFont == null)
             axisFont = axis.getFont();
@@ -275,7 +275,7 @@ public class OpenInPlotly {
     private void writeTrace(Trace aTrace, int anIndex)
     {
         // Create new TraceJSON
-        JSObject traceJS = new JSObject();
+        JsonObject traceJS = new JsonObject();
 
         // Set the trace name
         traceJS.setNativeValue("name", aTrace.getName());
@@ -317,7 +317,7 @@ public class OpenInPlotly {
             if (isShowLine) {
 
                 // Create line node and add to trace
-                JSObject lineJS = new JSObject();
+                JsonObject lineJS = new JsonObject();
                 traceJS.setValue("line", lineJS);
 
                 // Set the line.color
@@ -343,7 +343,7 @@ public class OpenInPlotly {
             traceJS.setNativeValue("colorscale", "Jet");
 
             // line { smoothing : 0 }
-            JSObject lineJS = new JSObject();
+            JsonObject lineJS = new JsonObject();
             lineJS.setNativeValue("smoothing", "0");
             traceJS.setValue("line", lineJS);
 
@@ -351,7 +351,7 @@ public class OpenInPlotly {
             traceJS.setNativeValue("autocontour", false);
             traceJS.setNativeValue("ncontours", "16");
 
-            JSObject contourJS = new JSObject();
+            JsonObject contourJS = new JsonObject();
             contourJS.setNativeValue("start", dataSet.getMinZ());
             contourJS.setNativeValue("end", dataSet.getMaxZ());
             contourJS.setNativeValue("size", (dataSet.getMaxZ() - dataSet.getMinZ()) / 16);
@@ -368,14 +368,14 @@ public class OpenInPlotly {
             traceJS.setNativeValue("autocontour", false);
             traceJS.setNativeValue("ncontours", "16");
 
-            JSObject contourJS = new JSObject();
+            JsonObject contourJS = new JsonObject();
             contourJS.setNativeValue("start", dataSet.getMinZ());
             contourJS.setNativeValue("end", dataSet.getMaxZ());
             contourJS.setNativeValue("size", (dataSet.getMaxZ() - dataSet.getMinZ()) / 16);
             traceJS.setValue("contours", contourJS);
 
             // Set intensity to Z values
-            JSArray intensityJS = new JSArray();
+            JsonArray intensityJS = new JsonArray();
             for (int i = 0; i < pointCount; i++) {
                 Object val = dataSet.getZ(i);
                 intensityJS.addNativeValue(val);
@@ -400,7 +400,7 @@ public class OpenInPlotly {
             }
 
             // Get Channel, create valsJS and add to traceJS
-            JSArray valsJS = new JSArray();
+            JsonArray valsJS = new JsonArray();
             traceJS.setValue(dataChanStr, valsJS);
 
             // Iterate over values and add to valsJS
@@ -412,7 +412,7 @@ public class OpenInPlotly {
 
         // If TraceType.LINE_3D, add: fill: 'tozeroy'
         if (traceType == TraceType.Line3D) {
-            JSArray valsJS = new JSArray();
+            JsonArray valsJS = new JsonArray();
             traceJS.setValue("z", valsJS);
             for (int j = 0; j < pointCount; j++)
                 valsJS.addNativeValue(anIndex);
@@ -434,11 +434,11 @@ public class OpenInPlotly {
     /**
      * Writes chart legend layout declaration.
      */
-    private void writeChartLegendLayout(Chart aChart, JSObject layoutJS)
+    private void writeChartLegendLayout(Chart aChart, JsonObject layoutJS)
     {
         Legend legend = aChart.getLegend();
         if (!legend.isShowLegend()) return;
-        JSObject legendJS = new JSObject();
+        JsonObject legendJS = new JsonObject();
 
         Pos legendPos = legend.getPosition();
         if (legendPos == Pos.TOP_CENTER) {
@@ -459,10 +459,10 @@ public class OpenInPlotly {
     /**
      * Writes the chart Scene (3D) layout.
      */
-    private void writeChartSceneLayout(Chart aChart, JSObject layoutJS)
+    private void writeChartSceneLayout(Chart aChart, JsonObject layoutJS)
     {
         // Create Scene JSON
-        JSObject sceneJS = new JSObject();
+        JsonObject sceneJS = new JsonObject();
 
         // Get AxisTypes
         AxisType[] axisTypes = aChart.getContent().getAxisTypes();
@@ -473,7 +473,7 @@ public class OpenInPlotly {
         for (AxisType axisType : axisTypes) {
 
             String key = getAxisName(axisType);
-            JSValue axisJS = layoutJS.getValue(key);
+            JsonNode axisJS = layoutJS.getValue(key);
             if (axisJS != null) {
                 layoutJS.setValue(key, null);
                 sceneJS.setValue(key, axisJS);
@@ -505,13 +505,13 @@ public class OpenInPlotly {
     /**
      * Returns the range for an axis if explicitly set (null, otherwise).
      */
-    private JSArray getAxisRange(Axis anAxis)
+    private JsonArray getAxisRange(Axis anAxis)
     {
         if (anAxis.getMinBound() != AxisBound.VALUE || anAxis.getMaxBound() != AxisBound.VALUE)
             return null;
         double axisMin = anAxis.getMinValue();
         double axisMax = anAxis.getMaxValue();
-        JSArray node = new JSArray();
+        JsonArray node = new JsonArray();
         node.addNativeValue(axisMin);
         node.addNativeValue(axisMax);
         return node;
@@ -522,7 +522,7 @@ public class OpenInPlotly {
      *
      * It's rather lame that Plotly doesn't handle this kind of layout automatically.
      */
-    private JSArray getXAxisDomain(Chart aChart)
+    private JsonArray getXAxisDomain(Chart aChart)
     {
         AxisType[] axisTypes = aChart.getContent().getAxisTypes();
         if (axisTypes.length <= 2)
@@ -536,7 +536,7 @@ public class OpenInPlotly {
 
         double start = left==2 ? .3 : 0;
         double end = right==2 ? .7 : 1;
-        JSArray node = new JSArray();
+        JsonArray node = new JsonArray();
         node.addNativeValue(start);
         node.addNativeValue(end);
         return node; //"[" + FormatUtils.formatNum("#.#", start) + ", " + FormatUtils.formatNum("#.#", end) + "]";

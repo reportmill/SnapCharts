@@ -846,10 +846,10 @@ public class DocPane extends ViewController {
 
         // Get Doc as JSON
         ChartArchiverJS chartArchiverJS = new ChartArchiverJS();
-        JSObject docJS = chartArchiverJS.writePropObjectToJSON(doc);
+        JsonObject docJS = chartArchiverJS.writePropObjectToJSON(doc);
 
         // Get JSON String
-        JSWriter writer = new JSWriter();
+        JsonWriter writer = new JsonWriter();
         writer.setIndent("  ");
         writer.setQuoteKeys(false);
         String jsonStr = writer.getString(docJS);
