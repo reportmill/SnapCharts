@@ -161,7 +161,7 @@ public class PolarTraceView extends TraceView {
                 // Get symbol and color and paint
                 Symbol symbol = getDataSymbol();
                 double symbolOffset = symbol.getSize() / 2d;
-                Shape symbolShape = symbol.getShape().copyFor(new Transform(dispX - symbolOffset, dispY - symbolOffset));
+                Shape symbolShape = symbol.getShape().copyForTransform(new Transform(dispX - symbolOffset, dispY - symbolOffset));
                 aPntr.setColor(dataColor);
                 aPntr.fill(symbolShape);
             }
@@ -194,7 +194,7 @@ public class PolarTraceView extends TraceView {
         Color dataColor = getDataColor();
         Symbol dataSymbol = getDataSymbol();
         double symbolOffset = dataSymbol.getSize() / 2d;
-        Shape dataSymbolShape = dataSymbol.getShape().copyFor(new Transform(dispX - symbolOffset, dispY - symbolOffset));
+        Shape dataSymbolShape = dataSymbol.getShape().copyForTransform(new Transform(dispX - symbolOffset, dispY - symbolOffset));
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));

@@ -199,7 +199,7 @@ public class ScatterTraceView extends TraceView {
         Color dataColor = getDataColor();
         Symbol dataSymbol = getDataSymbol();
         double symbolOffset = dataSymbol.getSize() / 2d;
-        Shape dataSymbolShape = dataSymbol.getShape().copyFor(new Transform(dispX - symbolOffset, dispY - symbolOffset));
+        Shape dataSymbolShape = dataSymbol.getShape().copyForTransform(new Transform(dispX - symbolOffset, dispY - symbolOffset));
 
         // Set color for glow effect
         aPntr.setColor(dataColor.blend(Color.CLEARWHITE, .5));
