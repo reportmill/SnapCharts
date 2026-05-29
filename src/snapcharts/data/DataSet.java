@@ -2,7 +2,6 @@
  * Copyright (c) 2010, ReportMill Software. All rights reserved.
  */
 package snapcharts.data;
-import snap.props.Prop;
 import snap.props.PropObject;
 import snap.props.PropSet;
 import snap.util.ArrayUtils;
@@ -19,22 +18,22 @@ import java.util.Objects;
 public abstract class DataSet extends PropObject implements Cloneable {
 
     // The name
-    private String  _name;
+    private String _name;
 
     // The format of the data
-    private DataType  _dataType;
+    private DataType _dataType;
 
     // The DataArrays
-    protected DataArray[]  _dataArrays;
+    protected DataArray[] _dataArrays;
 
     // Cached DataArrays for common channels X/Y/Z
-    protected NumberArray  _dataX, _dataY, _dataZ;
+    protected NumberArray _dataX, _dataY, _dataZ;
 
     // Cached DataArrays for common channel C
-    protected StringArray  _dataC;
+    protected StringArray _dataC;
 
     // The number of points
-    protected int  _pointCount;
+    protected int _pointCount;
 
     // Properties
     public static final String Name_Prop = "Name";
@@ -102,11 +101,10 @@ public abstract class DataSet extends PropObject implements Cloneable {
             DataChan chan = channels[i];
             DataArray dataArray = _dataArrays[i];
             switch (chan) {
-                case X: _dataX = (NumberArray) dataArray; break;
-                case Y: _dataY = (NumberArray) dataArray; break;
-                case Z: _dataZ = (NumberArray) dataArray; break;
-                case C: _dataC = (StringArray) dataArray; break;
-                default: break;
+                case X -> _dataX = (NumberArray) dataArray;
+                case Y -> _dataY = (NumberArray) dataArray;
+                case Z -> _dataZ = (NumberArray) dataArray;
+                case C -> _dataC = (StringArray) dataArray;
             }
         }
 
@@ -424,33 +422,6 @@ public abstract class DataSet extends PropObject implements Cloneable {
     }
 
     /**
-     * Override to return props for DataType channels.
-     */
-    @Override
-    public Prop[] getPropsForArchivalExtra()
-    {
-        // Get DataType and channel count
-        DataType dataType = getDataType();
-        int chanCount = dataType.getChannelCount();
-
-        // Extend props array and add channels
-        Prop[] propsForDataType = new Prop[chanCount * 2];
-        for (int i = 0; i < chanCount; i++) {
-
-            // Create/add prop for channel data, e.g.: X, Y, Z, ...
-            DataChan dataChan = dataType.getChannel(i);
-            Class<?> propClass = dataChan.getDataArrayClass();
-            propsForDataType[i] = new Prop(dataChan.toString(), propClass, null);
-
-            // Create/add prop for channel unit, e.g.: XUnit, YUnit, ...
-            propsForDataType[chanCount + i] = new Prop(dataChan + "Unit", DataUnit.class, null);
-        }
-
-        // Return
-        return propsForDataType;
-    }
-
-    /**
      * Override to configure props for this class.
      */
     @Override
@@ -461,50 +432,59 @@ public abstract class DataSet extends PropObject implements Cloneable {
 
         // Name, DataType
         aPropSet.addPropNamed(Name_Prop, String.class, null);
-        Prop dataTypeProp = aPropSet.addPropNamed(DataType_Prop, DataType.class, DataType.XY);
-        dataTypeProp.setPropChanger(true);
+        aPropSet.addPropNamed(DataType_Prop, DataType.class, DataType.XY);
+
+        // Add props for all DataChan channels and channel units
+        for (DataChan dataChan : DataChan.values())
+            aPropSet.addPropNamed(dataChan.toString(), dataChan.getDataArrayClass(), null);
+        for (DataChan dataChan : DataChan.values())
+            aPropSet.addPropNamed(dataChan + "Unit", DataUnit.class, null);
     }
 
     /**
      * Override to support data type props.
      */
     @Override
-    public Object getPropDefault(String aPropName)
+    public Object getPropDefault(String propName)
     {
         // Handle DataType props
-        Object dataTypePropValue = getDataTypePropValue(aPropName);
+        Object dataTypePropValue = getDataTypePropValue(propName);
         if (dataTypePropValue != null)
             return null;
 
+        // Handle DataType Unit props
+        if (propName.endsWith("Unit"))
+            return null;
+
         // Do normal version
-        return super.getPropDefault(aPropName);
+        return super.getPropDefault(propName);
     }
 
     /**
      * Override to support props for this class.
      */
     @Override
-    public Object getPropValue(String aPropName)
+    public Object getPropValue(String propName)
     {
         // Handle DataType props
-        Object dataTypePropValue = getDataTypePropValue(aPropName);
+        Object dataTypePropValue = getDataTypePropValue(propName);
         if (dataTypePropValue != null)
             return dataTypePropValue;
 
         // Handle DataType Unit props
-        if (aPropName.endsWith("Unit"))
-            return getDataTypeUnitPropValue(aPropName);
+        if (propName.endsWith("Unit"))
+            return getDataTypeUnitPropValue(propName);
 
         // Handle standard props
-        switch (aPropName) {
+        return switch (propName) {
 
             // Name, DataType
-            case Name_Prop: return getName();
-            case DataType_Prop: return getDataType();
+            case Name_Prop -> getName();
+            case DataType_Prop -> getDataType();
 
             // Do normal version
-            default: return super.getPropValue(aPropName);
-        }
+            default -> super.getPropValue(propName);
+        };
     }
 
     /**
@@ -519,22 +499,22 @@ public abstract class DataSet extends PropObject implements Cloneable {
         switch (aPropName) {
 
             // Name, DataType
-            case Name_Prop: setName(Convert.stringValue(aValue)); break;
-            case DataType_Prop: setDataType((DataType) aValue); break;
+            case Name_Prop -> setName(Convert.stringValue(aValue));
+            case DataType_Prop -> setDataType((DataType) aValue);
 
             // Do normal version
-            default: super.setPropValue(aPropName, aValue); break;
+            default -> super.setPropValue(aPropName, aValue);
         }
     }
 
     /**
      * Returns a DataArray primitive array for PropName if it matches DataType channel.
      */
-    private Object getDataTypePropValue(String aPropName)
+    private Object getDataTypePropValue(String propName)
     {
         // Get DataChan for PropName (just return null if not found)
         DataType dataType = getDataType();
-        DataChan dataChan = dataType.getChannelForName(aPropName);
+        DataChan dataChan = dataType.getChannelForName(propName);
         if (dataChan == null)
             return null;
 
@@ -553,11 +533,11 @@ public abstract class DataSet extends PropObject implements Cloneable {
     /**
      * Returns a DataArray unit for PropName if it matches DataType channel + "Unit" (e.g., "XUnit").
      */
-    private Object getDataTypeUnitPropValue(String aPropName)
+    private Object getDataTypeUnitPropValue(String propName)
     {
         // Get DataChan for PropName (just return null if not found)
         DataType dataType = getDataType();
-        DataChan dataChan = dataType.getChannelForName(aPropName.replace("Unit", ""));
+        DataChan dataChan = dataType.getChannelForName(propName.replace("Unit", ""));
         if (dataChan == null)
             return null;
 
@@ -572,7 +552,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
     public String toStringProps()
     {
         // Add Name
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String name = getName();
         if (name != null)
             sb.append("Name=").append(getName()).append(", ");

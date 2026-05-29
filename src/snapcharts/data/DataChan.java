@@ -30,14 +30,6 @@ public enum DataChan {
     R;
 
     /**
-     * Return the char.
-     */
-    public char getChar()
-    {
-        return toString().charAt(0);
-    }
-
-    /**
      * Returns the name.
      */
     public String getName()  { return toString(); }
@@ -45,12 +37,12 @@ public enum DataChan {
     /**
      * Returns the data class.
      */
-    public Class getDataArrayClass()
+    public Class<?> getDataArrayClass()
     {
-        switch (this) {
-            case I: return int[].class;
-            case C: return String[].class;
-            default: return double[].class;
-        }
+        return switch (this) {
+            case I -> int[].class;
+            case C -> String[].class;
+            default -> double[].class;
+        };
     }
 }
