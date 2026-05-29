@@ -391,10 +391,10 @@ public class Chart extends ParentPart {
         aPropSet.addPropNamed(Content_Prop, Content.class, EMPTY_OBJECT);
 
         // Set all above ChartPart props preexisting, so they will be used in place during unarchival
-        Prop[] props = aPropSet.getProps();
-        for (Prop prop : props)
+        for (Prop prop : aPropSet.getProps()) {
             if (ChartPart.class.isAssignableFrom(prop.getPropClass()))
                 prop.setPreexisting(true);
+        }
     }
 
     /**

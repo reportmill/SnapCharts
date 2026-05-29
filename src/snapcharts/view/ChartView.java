@@ -596,7 +596,7 @@ public class ChartView extends ChartPartView<Chart> {
      * Standard toString implementation.
      */
     @Override
-    public String toStringProps()
+    protected String toStringProps()
     {
         return super.toStringProps() + ", Type=" + getTraceType();
     }

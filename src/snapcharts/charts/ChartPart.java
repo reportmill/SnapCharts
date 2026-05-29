@@ -592,7 +592,7 @@ public class ChartPart extends PropObject {
     /**
      * Standard toString implementation.
      */
-    public String toStringProps()
+    protected String toStringProps()
     {
         StringBuffer sb = new StringBuffer();
         String name = getName();

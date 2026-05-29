@@ -701,7 +701,7 @@ public abstract class Trace extends ChartPart {
      * Standard toStringProps implementation.
      */
     @Override
-    public String toStringProps()
+    protected String toStringProps()
     {
         // Do normal version
         StringBuilder sb = new StringBuilder(super.toStringProps());

@@ -549,6 +549,7 @@ public abstract class DataSet extends PropObject implements Cloneable {
     /**
      * Standard toStringProps implementation.
      */
+    @Override
     public String toStringProps()
     {
         // Add Name
