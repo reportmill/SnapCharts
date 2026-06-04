@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MenuBar Padding="0,10,0,10" Font="Arial 13">
+<MenuBar Padding="0,10,0,10">
   <Menu Name="FileMenu" Text="File">
     <MenuItem Name="NewMenuItem" Text="New" Shortcut="meta N" />
     <MenuItem Name="OpenMenuItem" Text="Open..." Shortcut="meta O" />
