@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ColView PrefWidth="300" Padding="3,0,0,0" Border="#C0 1" FillWidth="true">
+<ColView PrefWidth="300" Padding="3,0,0,0" Border="#C0" FillWidth="true">
   <Label Name="TitleLabel" PrefWidth="275" PrefHeight="24" Align="CENTER" Font="Arial 14" Text="Inspector" />
   <RowView Padding="0,8,3,8" Font="Arial 12">
     <TextField Name="SearchTextField" PrefHeight="28" Margin="4,12,4,12" BorderRadius="10" GrowWidth="true" PromptText="Search" />
