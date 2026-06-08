@@ -29,7 +29,7 @@ public class ChartArchiverJS extends PropArchiverJson {
      */
     public Doc getDocFromJSONBytes(byte[] xmlBytes)
     {
-        return (Doc) readPropObjectFromJSONBytes(xmlBytes);
+        return (Doc) readObjectFromJsonBytes(xmlBytes);
     }
 
     /**
@@ -37,7 +37,7 @@ public class ChartArchiverJS extends PropArchiverJson {
      */
     public ChartPart getChartPartFromJSONSource(Object anObj)
     {
-        return (ChartPart) readPropObjectFromJSONSource(anObj);
+        return (ChartPart) readObjectFromJsonSource(anObj);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ChartArchiverJS extends PropArchiverJson {
      */
     public JsonObject writeToJSON(PropObject anObj)
     {
-        return writePropObjectToJSON(anObj);
+        return writeObjectToJSON(anObj);
     }
 
     /**

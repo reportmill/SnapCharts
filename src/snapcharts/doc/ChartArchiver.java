@@ -33,7 +33,7 @@ public class ChartArchiver extends PropArchiverXML {
      */
     public Doc getDocFromXmlBytes(byte[] xmlBytes)
     {
-        return (Doc) readPropObjectFromXmlBytes(xmlBytes);
+        return (Doc) readObjectFromXmlBytes(xmlBytes);
     }
 
     /**
@@ -41,7 +41,7 @@ public class ChartArchiver extends PropArchiverXML {
      */
     public ChartPart getChartPartFromXmlBytes(byte[] theBytes)
     {
-        return (ChartPart) readPropObjectFromXmlBytes(theBytes);
+        return (ChartPart) readObjectFromXmlBytes(theBytes);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ChartArchiver extends PropArchiverXML {
      */
     public XMLElement writeToXML(PropObject anObj)
     {
-        XMLElement xml = writePropObjectToXml(anObj);
+        XMLElement xml = writeObjectToXml(anObj);
         return xml;
     }
 
@@ -122,14 +122,14 @@ public class ChartArchiver extends PropArchiverXML {
      * Override to preprocess Legacy XML if needed.
      */
     @Override
-    public PropObject readPropObjectFromXml(XMLElement anElement)
+    public PropObject readObjectFromXml(XMLElement anElement)
     {
         // Preprocess XML
         if (ChartArchiverLegacy.isLegacyXML(anElement))
             ChartArchiverLegacy.processLegacyXML(anElement);
 
         // Do normal version
-        return super.readPropObjectFromXml(anElement);
+        return super.readObjectFromXml(anElement);
     }
 
     /**

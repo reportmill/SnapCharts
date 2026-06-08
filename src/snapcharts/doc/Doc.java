@@ -116,7 +116,7 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
 
             // Create ChartArchiver and read
             ChartArchiver chartArchiver = new ChartArchiver();
-            Doc doc = (Doc) chartArchiver.readPropObjectFromXmlUrl(docUrl);
+            Doc doc = (Doc) chartArchiver.readObjectFromXmlUrl(docUrl);
 
             // Set URL
             if (doc != null && !docUrl.getString().contains("localhost"))

@@ -463,7 +463,7 @@ public class DocPane extends ViewController {
     private void addPlotlyButton()
     {
         Button samplesButton = getView("SamplesButton", Button.class);
-        Button plotlyButton = new ViewArchiver().copy(samplesButton);
+        Button plotlyButton = new ViewArchiver().copyPropObject(samplesButton);
         plotlyButton.setName("PlotlyButton");
         plotlyButton.setText("Plotly");
         samplesButton.setMargin(new Insets(0, 8, 0, 0));
@@ -819,7 +819,7 @@ public class DocPane extends ViewController {
 
         // Write to XML bytes
         ChartArchiver chartArchiver = new ChartArchiver();
-        byte[] xmlBytes = chartArchiver.writePropObjectToXmlBytes(doc);
+        byte[] xmlBytes = chartArchiver.writeObjectToXmlBytes(doc);
 
         // Write to file
         File file = new File("/tmp/PropArchTest.charts");
@@ -846,7 +846,7 @@ public class DocPane extends ViewController {
 
         // Get Doc as JSON
         ChartArchiverJS chartArchiverJS = new ChartArchiverJS();
-        JsonObject docJS = chartArchiverJS.writePropObjectToJSON(doc);
+        JsonObject docJS = chartArchiverJS.writeObjectToJSON(doc);
 
         // Get JSON String
         JsonWriter writer = new JsonWriter();
@@ -880,7 +880,7 @@ public class DocPane extends ViewController {
         WebURL charFileUrl = WebURL.getUrl("/tmp/PropArchTest.charts");
 
         ChartArchiver chartArchiver = new ChartArchiver();
-        Doc doc = (Doc) chartArchiver.readPropObjectFromXmlUrl(charFileUrl);
+        Doc doc = (Doc) chartArchiver.readObjectFromXmlUrl(charFileUrl);
 
         DocPane docPane = new DocPane();
         docPane.openDoc(doc);
