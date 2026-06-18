@@ -6,14 +6,14 @@
   <RowView Padding="4" Spacing="4">
     <Label Text="    Grid Color:" />
     <ColorButton Name="GridColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-    <Button Name="GridColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="GridColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="4" Spacing="4">
     <Label Text="    Grid Width:" />
     <TextField Name="GridWidthText" PrefWidth="50" Align="CENTER" />
-    <Button Name="GridWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-    <Button Name="GridWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
-    <Button Name="GridWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="GridWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+    <Button Name="GridWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" Plain="true" />
+    <Button Name="GridWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="4" Spacing="13" GrowWidth="true">
     <Label Text="    Grid Line Style:" />
@@ -21,12 +21,12 @@
   </RowView>
   <ColView Name="GridDashBox" Align="CENTER" Margin="0,20,0,20" Padding="4" Border="etch" GrowWidth="true">
     <ColView Align="CENTER" Padding="4" Spacing="2" GrowWidth="true">
-      <Button Name="GridDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="GridDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="GridDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="GridDashButton_3" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="GridDashButton_4" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="GridDashButton_5" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="GridDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="GridDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="GridDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="GridDashButton_3" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="GridDashButton_4" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="GridDashButton_5" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
     </ColView>
   </ColView>
 </ColView>

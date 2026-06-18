@@ -6,7 +6,7 @@
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Color:" />
     <ColorButton Name="FillColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="FillColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Fill Mode:" />

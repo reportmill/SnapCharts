@@ -6,26 +6,26 @@
   <RowView Padding="2,20,2,4" Spacing="4">
     <Label Text="Font:" />
     <TextField Name="TagFontText" GrowWidth="true" />
-    <Button Name="TagFontSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-    <Button Name="TagFontSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
-    <Button Name="TagFontResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="TagFontSizeAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+    <Button Name="TagFontSizeSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" Plain="true" />
+    <Button Name="TagFontResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Color:" />
     <ColorButton Name="TagColorButton" PrefWidth="32" PrefHeight="22" Title="Fill" />
-    <Button Name="TagColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="TagColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Border color:" />
     <ColorButton Name="TagBorderColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-    <Button Name="TagBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="TagBorderColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Border width:" />
     <TextField Name="TagBorderWidthText" PrefWidth="50" Align="CENTER" />
-    <Button Name="TagBorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-    <Button Name="TagBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
-    <Button Name="TagBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="TagBorderWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+    <Button Name="TagBorderWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" Plain="true" />
+    <Button Name="TagBorderWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4" GrowWidth="true">
     <Label Text="Ticks Format:" />

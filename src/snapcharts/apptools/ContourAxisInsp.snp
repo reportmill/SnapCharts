@@ -25,10 +25,10 @@
   <RowView Padding="4" Spacing="4">
     <Label Text="Levels:" />
     <TextField Name="LevelsText" PrefWidth="44" Align="CENTER" />
-    <Button Name="LevelsButton4" PrefWidth="20" Padding="2" Text="4" ShowArea="false" />
-    <Button Name="LevelsButton8" PrefWidth="20" Padding="2" Text="8" ShowArea="false" />
-    <Button Name="LevelsButton16" PrefWidth="20" Padding="2" Text="16" ShowArea="false" />
-    <Button Name="LevelsButton32" PrefWidth="20" Padding="2" Text="32" ShowArea="false" />
-    <Button Name="LevelsButton64" PrefWidth="20" Padding="2" Text="64" ShowArea="false" />
+    <Button Name="LevelsButton4" PrefWidth="20" Padding="2" Text="4" Plain="true" />
+    <Button Name="LevelsButton8" PrefWidth="20" Padding="2" Text="8" Plain="true" />
+    <Button Name="LevelsButton16" PrefWidth="20" Padding="2" Text="16" Plain="true" />
+    <Button Name="LevelsButton32" PrefWidth="20" Padding="2" Text="32" Plain="true" />
+    <Button Name="LevelsButton64" PrefWidth="20" Padding="2" Text="64" Plain="true" />
   </RowView>
 </ColView>

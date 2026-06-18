@@ -109,7 +109,7 @@ public class ChartPaneTools {
         toolButton.setToolTip(toolTip);
         Image buttonImage = Image.getImageForClassResource(getClass(), imagePath);
         toolButton.setImage(buttonImage);
-        toolButton.setShowArea(false);
+        toolButton.setPlain(true);
         toolButton.setPrefSize(24, 24);
 
         // Add to toolbar

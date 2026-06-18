@@ -16,9 +16,9 @@
     <RowView Spacing="2">
       <Label PrefWidth="50" Text="Margin:" />
       <TextField Name="MarginText" PrefWidth="80" Align="CENTER" />
-      <Button Name="MarginAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-      <Button Name="MarginSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
-      <Button Name="MarginResetButton" PrefWidth="20" PrefHeight="20" ToolTip="Clear Font Size" Text="&#10226;" ShowArea="false" />
+      <Button Name="MarginAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+      <Button Name="MarginSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" Plain="true" />
+      <Button Name="MarginResetButton" PrefWidth="20" PrefHeight="20" ToolTip="Clear Font Size" Text="&#10226;" Plain="true" />
     </RowView>
     <RowView Padding="1,0,0,52">
       <Label Name="MarginLabel" PrefWidth="80" Align="CENTER" Font="Arial 10" Text="tp, rt, btm, lft" />
@@ -28,9 +28,9 @@
     <RowView Spacing="2">
       <Label PrefWidth="50" Text="Padding:" />
       <TextField Name="PadText" PrefWidth="80" Align="CENTER" />
-      <Button Name="PadAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-      <Button Name="PadSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
-      <Button Name="PadResetButton" PrefWidth="20" PrefHeight="20" ToolTip="Clear Font Size" Text="&#10226;" ShowArea="false" />
+      <Button Name="PadAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+      <Button Name="PadSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" Plain="true" />
+      <Button Name="PadResetButton" PrefWidth="20" PrefHeight="20" ToolTip="Clear Font Size" Text="&#10226;" Plain="true" />
     </RowView>
     <RowView Padding="1,0,0,52">
       <Label Name="PadLabel" PrefWidth="80" Align="CENTER" Font="Arial 10" Text="tp, rt, btm, lft" />
@@ -39,8 +39,8 @@
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label PrefWidth="48" Text="Spacing:" />
     <TextField Name="SpacingText" PrefWidth="60" PrefHeight="22" Align="CENTER" />
-    <Button Name="SpacingAdd1Button" PrefWidth="20" PrefHeight="22" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-    <Button Name="SpacingSub1Button" PrefWidth="20" PrefHeight="22" Padding="2" Text="-1" ShowArea="false" />
-    <Button Name="SpacingResetButton" PrefWidth="20" PrefHeight="20" ToolTip="Clear Font Size" Text="&#10226;" ShowArea="false" />
+    <Button Name="SpacingAdd1Button" PrefWidth="20" PrefHeight="22" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+    <Button Name="SpacingSub1Button" PrefWidth="20" PrefHeight="22" Padding="2" Text="-1" Plain="true" />
+    <Button Name="SpacingResetButton" PrefWidth="20" PrefHeight="20" ToolTip="Clear Font Size" Text="&#10226;" Plain="true" />
   </RowView>
 </ColView>

@@ -6,14 +6,14 @@
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Color:" />
     <ColorButton Name="LineColorButton" PrefWidth="32" PrefHeight="22" Title="Stroke" />
-    <Button Name="LineColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="LineColorResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="4">
     <Label Text="Width:" />
     <TextField Name="LineWidthText" PrefWidth="50" Align="CENTER" />
-    <Button Name="LineWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" ShowArea="false" />
-    <Button Name="LineWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" ShowArea="false" />
-    <Button Name="LineWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="LineWidthAdd1Button" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 13" Text="+1" Plain="true" />
+    <Button Name="LineWidthSub1Button" PrefWidth="20" PrefHeight="20" Padding="2" Text="-1" Plain="true" />
+    <Button Name="LineWidthResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,4,2,4" Spacing="13" GrowWidth="true">
     <Label Text="Style:" />
@@ -21,12 +21,12 @@
   </RowView>
   <ColView Name="LineDashBox" Align="CENTER" Margin="0,20,0,20" Padding="2,4,2,4" Border="etch" GrowWidth="true">
     <ColView Align="CENTER" Padding="4" Spacing="2" GrowWidth="true">
-      <Button Name="LineDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="LineDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="LineDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="LineDashButton_3" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="LineDashButton_4" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
-      <Button Name="LineDashButton_5" PrefWidth="100" PrefHeight="20" Padding="2" ShowArea="false" />
+      <Button Name="LineDashButton_0" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="LineDashButton_1" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="LineDashButton_2" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="LineDashButton_3" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="LineDashButton_4" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
+      <Button Name="LineDashButton_5" PrefWidth="100" PrefHeight="20" Padding="2" Plain="true" />
     </ColView>
   </ColView>
   <RowView Padding="2,4,2,4" Spacing="13" GrowWidth="true">

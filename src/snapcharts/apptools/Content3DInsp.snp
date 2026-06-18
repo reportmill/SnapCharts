@@ -9,17 +9,17 @@
   <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
     <Label Margin="0,4,0,0" Text="Aspect Scale X:" />
     <TextField Name="AspectScaleXText" Align="CENTER" ColCount="6" />
-    <Button Name="AspectScaleXResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="AspectScaleXResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
     <Label Margin="0,4,0,0" Text="Aspect Scale Y:" />
     <TextField Name="AspectScaleYText" Align="CENTER" ColCount="6" />
-    <Button Name="AspectScaleYResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="AspectScaleYResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="2,5,2,5" GrowWidth="true" LeanX="CENTER">
     <Label Margin="0,4,0,0" Text="Aspect Scale Z:" />
     <TextField Name="AspectScaleZText" Align="CENTER" ColCount="6" />
-    <Button Name="AspectScaleZResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+    <Button Name="AspectScaleZResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
   </RowView>
   <RowView Padding="4,5,2,5" GrowWidth="true" LeanX="CENTER">
     <Label Margin="0,7,0,0" Text="Rendering:" />
@@ -48,14 +48,14 @@
     <RowView Padding="0,4,0,0" Spacing="5">
       <Slider Name="FOVSlider" PrefWidth="180" GrowWidth="true" Min="6" Max="60" />
       <TextField Name="FOVText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
-      <Button Name="FOVResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+      <Button Name="FOVResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
     </RowView>
   </TitleView>
   <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Gimbal Radius (distance from camera to model)">
     <RowView Padding="0,4,0,0" Spacing="5">
       <ThumbWheel Name="GimbalRadiusThumbWheel" PrefWidth="180" PrefHeight="16" Margin="2,1,1,1" GrowWidth="true" Type="linear" Max="500" Round="1" />
       <TextField Name="GimbalRadiusText" PrefWidth="50" PrefHeight="20" Align="CENTER" />
-      <Button Name="GimbalRadiusResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" ShowArea="false" />
+      <Button Name="GimbalRadiusResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" Text="&#10226;" Plain="true" />
     </RowView>
   </TitleView>
   <TitleView Margin="5" Padding="4,4,7,12" GrowWidth="true" Text="Default Camera Views">
@@ -66,7 +66,7 @@
       <Button Name="RightViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Right View" Text="R" />
       <Button Name="TopViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Top View" Text="T" />
       <Button Name="BottomViewButton" PrefWidth="22" PrefHeight="22" Padding="2" ToolTip="Bottom View" Text="B" />
-      <Button Name="CameraViewResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" ToolTip="Default View" Text="&#10226;" ShowArea="false" />
+      <Button Name="CameraViewResetButton" PrefWidth="20" PrefHeight="20" Padding="2" Font="Arial 12" ToolTip="Default View" Text="&#10226;" Plain="true" />
       <CheckBox Name="OrthoViewButton" Align="CENTER" LeanX="RIGHT" Text="Ortho" />
     </RowView>
   </TitleView>
