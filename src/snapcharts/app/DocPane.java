@@ -550,7 +550,7 @@ public class DocPane extends ViewController {
 
         // Configure window
         WindowView win = getWindow();
-        win.addEventHandler(e -> { close(); e.consume(); }, WinClose);
+        win.setCloseHandler(e -> { close(); e.consume(); });
 
         // If TeaVM, go full window
         if (SnapEnv.isTeaVM) {

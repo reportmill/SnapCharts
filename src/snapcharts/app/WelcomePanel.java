@@ -140,7 +140,7 @@ public class WelcomePanel extends ViewController {
         // Configure Window: Add WindowListener to indicate app should exit when close button clicked
         WindowView win = getWindow();
         win.setTitle("Welcome");
-        win.addEventHandler(e -> { _exit = true; hide(); }, WinClose);
+        win.setCloseHandler(e -> { _exit = true; hide(); });
         getView("OpenButton", Button.class).setDefaultButton(true);
     }
 
