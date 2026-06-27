@@ -12,7 +12,6 @@ import snapcharts.data.DataType;
 import snapcharts.charts.*;
 import snapcharts.data.MinMax;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -94,8 +93,8 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         addChild(_tickLabelBox);
 
         // Enable events
-        enableEvents(MouseEvents);
-        enableEvents(Scroll);
+        addEventHandler(e -> _chartHelper.processEventForChartPartView(this, e), MouseEvents);
+        addEventHandler(e -> _chartHelper.processEventForChartPartView(this, e), Scroll);
     }
 
     /**
@@ -454,7 +453,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
 
         // Get Markers for axis
         Predicate<Marker> filter = m -> m.isShowTextInAxis() && m.getCoordSpaceX().getAxisType() == axisType;
-        Marker[] axisMarkers = Stream.of(markers).filter(filter).collect(Collectors.toList()).toArray(new Marker[0]);
+        Marker[] axisMarkers = Stream.of(markers).filter(filter).toArray(Marker[]::new);
 
         // Get Marker paint properties
         Font markerFont = getFont();
@@ -565,11 +564,11 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
     @Override
     public Object getPropValue(String aPropName)
     {
-        switch (aPropName) {
-            case AxisMin_Prop: return getAxisMin();
-            case AxisMax_Prop: return getAxisMax();
-            default: return super.getPropValue(aPropName);
-        }
+        return switch (aPropName) {
+            case AxisMin_Prop -> getAxisMin();
+            case AxisMax_Prop -> getAxisMax();
+            default -> super.getPropValue(aPropName);
+        };
     }
 
     /**
@@ -603,7 +602,7 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         _titleView.setTextColor(axis.getTextFill());
 
         // If no title, make TitleView not visible so it takes no space (for AxisViewY, TitleView is in WrapView)
-        boolean titleVisible = title != null && title.length() > 0;
+        boolean titleVisible = title != null && !title.isEmpty();
         _titleView.setVisible(titleVisible);
         if (_titleView.getParent() != this)
             _titleView.getParent().setVisible(titleVisible);
@@ -614,15 +613,6 @@ public abstract class AxisView<T extends Axis> extends ChartPartView<T> {
         // If no MarkerLabels, make MarkersBox not visible
         TickLabel[] markerLabels = getMarkerLabels();
         _markersBox.setVisible(markerLabels.length > 0);
-    }
-
-    /**
-     * Override to forward to ChartHelper.
-     */
-    @Override
-    protected void processEvent(ViewEvent anEvent)
-    {
-        _chartHelper.processEventForChartPartView(this, anEvent);
     }
 
     /**

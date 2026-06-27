@@ -35,10 +35,7 @@ public class ContentView extends ChartPartView<Content> {
 
         // Config
         //setCursor(Cursor.MOVE);
-        enableEvents(MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
-
-        // Add event filter to clear/reset ChartView.TargPoint on MouseDrag/Release
-        addEventFilter(e -> processFilterEvent(e), MouseDrag, MouseRelease);
+        addEventHandler(this::handleMouseEvent, MousePress, MouseDrag, MouseRelease, Scroll, MouseMove, MouseExit);
     }
 
     /**
@@ -162,8 +159,6 @@ public class ContentView extends ChartPartView<Content> {
     {
         // Get MarkerViews
         MarkerView[] markerViews = getChartView().getMarkerViews();
-        if (markerViews.length == 0)
-            return;
 
         // Paint markers
         for (MarkerView markerView : markerViews) {
@@ -191,7 +186,7 @@ public class ContentView extends ChartPartView<Content> {
             aPntr.translate(markerX, markerY);
 
             // Paint MarkerView
-            ViewUtils.paintAll(markerView, aPntr);
+            ViewUtils.paintView(markerView, aPntr);
 
             // Restore graphics state
             aPntr.restore();
@@ -199,13 +194,22 @@ public class ContentView extends ChartPartView<Content> {
     }
 
     /**
-     * Override to forward to ChartHelper.
+     * Called on mouse events to clear/reset ChartView.TargPoint and to Forward to ChartHelper.
      */
-    @Override
-    protected void processEvent(ViewEvent anEvent)
+    private void handleMouseEvent(ViewEvent anEvent)
     {
+        // If MouseDrag, clear ChartView.TargPoint
+        if (anEvent.isMouseDrag())
+            _chartView.setTargPoint(null);
+
+            // If MouseRelease, reset ChartView.TargPoint
+        else if (anEvent.isMouseRelease()) {
+            Point point = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
+            _chartView.setTargPoint(point);
+        }
+
         // Handle MouseMove: Set ChartView.TargPoint
-        if (anEvent.isMouseMove()) {
+        else if (anEvent.isMouseMove()) {
             Point point = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
             _chartView.setTargPoint(point);
         }
@@ -223,25 +227,6 @@ public class ContentView extends ChartPartView<Content> {
             if (Objects.equals(dataPoint, _chartView.getSelDataPoint()))
                 dataPoint = null;
             _chartView.setSelDataPoint(dataPoint);
-        }
-
-        // Do normal version
-        super.processEvent(anEvent);
-    }
-
-    /**
-     * Override to clear/reset ChartView.TargPoint on MouseDrag/Release.
-     */
-    private void processFilterEvent(ViewEvent anEvent)
-    {
-        // If MouseDrag, clear ChartView.TargPoint
-        if (anEvent.isMouseDrag())
-            _chartView.setTargPoint(null);
-
-        // If MouseRelease, reset ChartView.TargPoint
-        else if (anEvent.isMouseRelease()) {
-            Point point = localToParent(anEvent.getX(), anEvent.getY(), _chartView);
-            _chartView.setTargPoint(point);
         }
     }
 
