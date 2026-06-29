@@ -218,17 +218,17 @@ public class DocItemGroup<T extends PropObject> extends DocItemParent<T> {
     @Override
     public Object getPropValue(String aPropName)
     {
-        switch (aPropName) {
+        return switch (aPropName) {
 
             // Portrait, PageDisplay_Prop, ItemsPerPage, ChartScale
-            case Portrait_Prop: return isPortrait();
-            case PageDisplay_Prop: return getPageDisplay();
-            case ItemsPerPage_Prop: return getItemsPerPage();
-            case ChartScale_Prop: return getChartScale();
+            case Portrait_Prop -> isPortrait();
+            case PageDisplay_Prop -> getPageDisplay();
+            case ItemsPerPage_Prop -> getItemsPerPage();
+            case ChartScale_Prop -> getChartScale();
 
             // Do normal version
-            default: return super.getPropValue(aPropName);
-        }
+            default -> super.getPropValue(aPropName);
+        };
     }
 
     /**
@@ -240,75 +240,13 @@ public class DocItemGroup<T extends PropObject> extends DocItemParent<T> {
         switch (aPropName) {
 
             // Portrait, PageDisplay_Prop, ItemsPerPage, ChartScale
-            case Portrait_Prop: setPortrait(Convert.boolValue(aValue)); break;
-            case PageDisplay_Prop: setPageDisplay((PageDisplay) aValue); break;
-            case ItemsPerPage_Prop: setItemsPerPage(Convert.intValue(aValue)); break;
-            case ChartScale_Prop: setChartScale(Convert.doubleValue(aValue)); break;
+            case Portrait_Prop -> setPortrait(Convert.boolValue(aValue));
+            case PageDisplay_Prop -> setPageDisplay((PageDisplay) aValue);
+            case ItemsPerPage_Prop -> setItemsPerPage(Convert.intValue(aValue));
+            case ChartScale_Prop -> setChartScale(Convert.doubleValue(aValue));
 
             // Do normal version
-            default: super.setPropValue(aPropName, aValue);
+            default -> super.setPropValue(aPropName, aValue);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Do normal version
-        XMLElement e = super.toXML(anArchiver);
-
-        // Archive Portrait, ItemsPerPage, ChartScale
-        if (!isPortrait())
-            e.add(Portrait_Prop, isPortrait());
-        if (getItemsPerPage() != 2)
-            e.add(ItemsPerPage_Prop, getItemsPerPage());
-        if (getChartScale() != 1)
-            e.add(ChartScale_Prop, getChartScale());
-
-        // Archive charts
-        XMLElement chartsXML = new XMLElement("Charts");
-        e.add(chartsXML);
-        for (DocItem docItem : getDocItems()) {
-            DocItemChart chartDocItem = docItem instanceof DocItemChart ? (DocItemChart)docItem : null;
-            if (chartDocItem!=null)
-                chartsXML.add(anArchiver.toXML(chartDocItem.getChart()));
-        }
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Do normal version
-        super.fromXML(anArchiver, anElement);
-
-        // Unarchive Portrait, ItemsPerPage, ChartScale
-        if(anElement.hasAttribute(Portrait_Prop))
-            setPortrait(anElement.getAttributeBoolValue(Portrait_Prop));
-        if(anElement.hasAttribute(ItemsPerPage_Prop))
-            setItemsPerPage(anElement.getAttributeIntValue(ItemsPerPage_Prop));
-        if(anElement.hasAttribute(ChartScale_Prop))
-            setChartScale(anElement.getAttributeDoubleValue(ChartScale_Prop));
-
-        // Unarchive charts
-        XMLElement chartsXML = anElement.get("Charts");
-        if (chartsXML!=null) {
-            List<XMLElement> chartXMLs = chartsXML.getElements("Chart");
-            for (XMLElement chartXML : chartXMLs) {
-                Chart chart = (Chart)anArchiver.fromXML(chartXML, this);
-                if (chart!=null)
-                    addChart(chart);
-            }
-        }
-
-        // Return this part
-        return this;
     }
 }

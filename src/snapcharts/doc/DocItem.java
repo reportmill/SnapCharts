@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Represents an item in a doc that holds other items.
  */
-public abstract class DocItem<T extends PropObject> extends PropObject implements XMLArchiver.Archivable {
+public abstract class DocItem<T extends PropObject> extends PropObject {
 
     // The DocItem that holds this item
     private DocItemParent  _parent;
@@ -132,15 +132,15 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
     @Override
     public Object getPropValue(String aPropName)
     {
-        switch (aPropName) {
+        return switch (aPropName) {
 
             // Name, Content
-            case Name_Prop: return getName();
-            case Content_Prop: return getContent();
+            case Name_Prop -> getName();
+            case Content_Prop -> getContent();
 
             // Do normal version
-            default: return super.getPropValue(aPropName);
-        }
+            default -> super.getPropValue(aPropName);
+        };
     }
 
     /**
@@ -152,43 +152,11 @@ public abstract class DocItem<T extends PropObject> extends PropObject implement
         switch (aPropName) {
 
             // Name, Content
-            case Name_Prop: setName(Convert.stringValue(aValue)); break;
-            case Content_Prop: setContent((T) aValue); break;
+            case Name_Prop -> setName(Convert.stringValue(aValue));
+            case Content_Prop -> setContent((T) aValue);
 
             // Do normal version
-            default: super.setPropValue(aPropName, aValue);
+            default -> super.setPropValue(aPropName, aValue);
         }
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Get new element with class name
-        String cname = getClass().getSimpleName();
-        XMLElement e = new XMLElement(cname);
-
-        // Archive name
-        if(getName() != null && getName().length() > 0)
-            e.add(Name_Prop, getName());
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive Name
-        if(anElement.hasAttribute(Name_Prop))
-            setName(anElement.getAttributeValue(Name_Prop));
-
-        // Return this part
-        return this;
     }
 }

@@ -1,7 +1,6 @@
 package snapcharts.doc;
 import snap.util.FilePathUtils;
 import snap.props.PropObject;
-import snap.util.XMLArchiver;
 import snap.util.XMLElement;
 import snap.web.WebURL;
 
@@ -74,32 +73,6 @@ public class Doc<T extends PropObject> extends DocItemGroup<T> {
         ChartArchiver archiver = new ChartArchiver();
         byte[] bytes = archiver.writeToXMLBytes(this);
         return bytes;
-    }
-
-    /**
-     * Archival.
-     */
-    @Override
-    public XMLElement toXML(XMLArchiver anArchiver)
-    {
-        // Archive basic attributes
-        XMLElement e = super.toXML(anArchiver);
-
-        // Return element
-        return e;
-    }
-
-    /**
-     * Unarchival.
-     */
-    @Override
-    public Object fromXML(XMLArchiver anArchiver, XMLElement anElement)
-    {
-        // Unarchive basic attributes
-        super.fromXML(anArchiver, anElement);
-
-        // Return this part
-        return this;
     }
 
     /**
