@@ -19,7 +19,6 @@ import snapcharts.view.ChartHelper;
 import snapcharts.view.ChartView;
 import snapcharts.view.ContentView;
 import snapcharts.viewx.TraceView3D;
-
 import java.util.List;
 
 /**
@@ -382,18 +381,17 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
     {
         ContentView contentView = _chartView.getContentView();
         View contentChild = contentView.getChildCount() > 0 ? contentView.getChild(0) : null;
-        if (contentChild instanceof TraceView3D) {
-            TraceView3D traceView3D = (TraceView3D) contentChild;
+        if (contentChild instanceof TraceView3D traceView3D) {
             CameraView cameraView = traceView3D.getCameraView();
             CubeView cubeView = cameraView.getCubeView();
-            cubeView.addEventFilter(e -> cubeViewDidMouseRelease(e), View.MouseRelease);
+            cubeView.addEventFilter(this::handleCubeViewMouseReleaseEvent, View.MouseRelease);
         }
     }
 
     /**
      * Called when 3D chart CubeView gets MouseRelease.
      */
-    private void cubeViewDidMouseRelease(ViewEvent anEvent)
+    private void handleCubeViewMouseReleaseEvent(ViewEvent anEvent)
     {
         if (anEvent.isMouseClick())
             _insp.showSceneInspector();

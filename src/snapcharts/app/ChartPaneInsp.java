@@ -171,7 +171,7 @@ public class ChartPaneInsp extends ViewController {
 
         // Add listener to update ChartPartInsp.Sel when label is clicked
         Label label = aChartPartInsp.getLabel();
-        label.addEventFilter(e -> runLater(() -> chartPartInspLabelMousePress(aChartPartInsp)), MousePress);
+        label.addEventFilter(e -> handleChartPartInspLabelMousePressEvent(aChartPartInsp), MousePress);
     }
 
     /**
@@ -235,7 +235,7 @@ public class ChartPaneInsp extends ViewController {
      */
     public void showSceneInspector()
     {
-        chartPartInspLabelMousePress(_contentInsp);
+        handleChartPartInspLabelMousePressEvent(_contentInsp);
         _contentInsp.showContent3D();
     }
 
@@ -264,7 +264,12 @@ public class ChartPaneInsp extends ViewController {
     /**
      * Called when label gets mouse press.
      */
-    public void chartPartInspLabelMousePress(ChartPartInsp anInsp)
+    private void handleChartPartInspLabelMousePressEvent(ChartPartInsp anInsp) { runLater(() -> handleChartPartInspLabelMousePressEventImpl(anInsp)); }
+
+    /**
+     * Called when label gets mouse press.
+     */
+    private void handleChartPartInspLabelMousePressEventImpl(ChartPartInsp anInsp)
     {
         // Get ChartPart for inspector
         ChartPart chartPart = anInsp.getChartPart();

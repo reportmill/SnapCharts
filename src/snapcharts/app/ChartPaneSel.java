@@ -60,11 +60,11 @@ public class ChartPaneSel {
         _chartView = aChartPane.getChartView();
 
         // Start listening to ChartView MouseEvents (for selection/targeting)
-        _chartView.addEventFilter(e -> chartViewMouseEvent(e), View.MouseEvents);
+        _chartView.addEventFilter(this::handleChartViewMouseEvent, View.MouseEvents);
         _chartView.addEventFilter(e -> repaintOnScrollStop(), View.Scroll);
 
         // Start listening to ChartBox MousePress (for select Chart)
-        _chartPane._chartBox.addEventHandler(e -> chartBoxMousePress(e), View.MousePress);
+        _chartPane._chartBox.addEventHandler(this::handleChartBoxMousePressEvent, View.MousePress);
     }
 
     /**
@@ -174,7 +174,7 @@ public class ChartPaneSel {
     /**
      * Called when ChartBox gets mouse press outside chart to reset SelChartPart to Chart.
      */
-    private void chartBoxMousePress(ViewEvent anEvent)
+    private void handleChartBoxMousePressEvent(ViewEvent anEvent)
     {
         double chartX = anEvent.getX() - _chartView.getX();
         double chartY = anEvent.getY() - _chartView.getY();
@@ -185,7 +185,7 @@ public class ChartPaneSel {
     /**
      * Called when ChartView gets mouse event.
      */
-    private void chartViewMouseEvent(ViewEvent anEvent)
+    private void handleChartViewMouseEvent(ViewEvent anEvent)
     {
         // Handle MouseMove
         if (anEvent.isMouseMove())

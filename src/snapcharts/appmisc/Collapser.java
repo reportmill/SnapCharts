@@ -65,7 +65,7 @@ public class Collapser {
         _label = aLabel;
 
         // Listen for Label MousePress to trigger expand
-        _label.addEventHandler(e -> labelWasPressed(e), View.MousePress);
+        _label.addEventHandler(this::handleLabelMousePressEvent, View.MousePress);
 
         // Set CollapseGraphic
         View graphic = getCollapseGraphic();
@@ -183,7 +183,7 @@ public class Collapser {
     /**
      * Called when Label is pressed.
      */
-    protected void labelWasPressed(ViewEvent anEvent)
+    protected void handleLabelMousePressEvent(ViewEvent anEvent)
     {
         setExpandedAnimated(!isExpanded());
     }

@@ -234,7 +234,7 @@ public class SamplesPane extends ViewController {
         itemBox.setAlign(Pos.CENTER);
         itemBox.setPadding(0, 0, 8, 0);
         itemBox.setName("ItemBox" + anIndex);
-        itemBox.addEventHandler(e -> itemBoxWasPressed(itemBox, e), MousePress);
+        itemBox.addEventHandler(e -> handleItemBoxMousePressEvent(itemBox, e), MousePress);
         itemBox.setChildren(imageView, label);
         setItemBoxSelected(itemBox, anIndex == 0);
 
@@ -260,7 +260,7 @@ public class SamplesPane extends ViewController {
     /**
      * Called when template ItemBox is clicked.
      */
-    private void itemBoxWasPressed(ColView anItemBox, ViewEvent anEvent)
+    private void handleItemBoxMousePressEvent(ColView anItemBox, ViewEvent anEvent)
     {
         // Get name and index of pressed ItemBox
         String name = anItemBox.getName();

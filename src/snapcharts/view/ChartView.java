@@ -126,7 +126,7 @@ public class ChartView extends ChartPartView<Chart> {
         resetLater();
 
         //
-        addEventFilter(e -> chartViewDidMouseRelease(e), MouseRelease);
+        addEventFilter(this::handleChartViewMouseReleaseEvent, MouseRelease);
     }
 
     /**
@@ -585,7 +585,7 @@ public class ChartView extends ChartPartView<Chart> {
     /**
      * Debug feature to open chart in browser.
      */
-    private void chartViewDidMouseRelease(ViewEvent anEvent)
+    private void handleChartViewMouseReleaseEvent(ViewEvent anEvent)
     {
         if (anEvent.getX() > getWidth() - 90 && anEvent.getY() < 90 && anEvent.isShiftDown()) {
             AppEnv.getEnv().openChartInBrowser(getChart(), anEvent.isControlDown());
