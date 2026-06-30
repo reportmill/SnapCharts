@@ -49,8 +49,7 @@ public class MarkerTool {
      */
     public void processMouseEvent(ViewEvent anEvent)
     {
-        ViewEvent.Type eventType = anEvent.getType();
-        switch (eventType) {
+        switch (anEvent.getType()) {
 
             // Handle MousePress
             case MousePress:
