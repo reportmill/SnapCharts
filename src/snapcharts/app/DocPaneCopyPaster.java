@@ -68,7 +68,7 @@ public class DocPaneCopyPaster {
         if (chartPart!=null) {
             XMLElement xml = new ChartArchiver().writeToXML(chartPart);
             String xmlStr = xml.getString();
-            cb.addData(SNAPCHART_XML_TYPE, xmlStr);
+            cb.addDataForMimeType(xmlStr, SNAPCHART_XML_TYPE);
             cb.addData(xmlStr);
         }
 
@@ -89,7 +89,7 @@ public class DocPaneCopyPaster {
         }
 
         // Handle SNAP_XML: Get bytes, unarchive view and add
-        if (clipboard.hasData(SNAPCHART_XML_TYPE)) {
+        if (clipboard.hasDataForMimeType(SNAPCHART_XML_TYPE)) {
             byte[] bytes = clipboard.getDataBytes(SNAPCHART_XML_TYPE);
             ChartPart chartPart = new ChartArchiver().getChartPartFromXmlBytes(bytes);
             _docPane.addChartPart(chartPart);
