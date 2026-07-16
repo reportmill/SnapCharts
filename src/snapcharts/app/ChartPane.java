@@ -524,7 +524,7 @@ public class ChartPane<T extends DocItem> extends DocItemPane<T> {
         marker.setName(aName);
 
         // Calculate bounds and set
-        Point chartXY = anEvent.getPoint(_chartView);
+        Point chartXY = anEvent.getPointForView(_chartView);
         double imageW = anImage.getWidth();
         double imageH = anImage.getHeight();
         double imageX = chartXY.x - Math.round(imageW / 2);
