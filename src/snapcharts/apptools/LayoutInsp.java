@@ -178,11 +178,11 @@ public class LayoutInsp extends ChartPartInsp {
 
         // Adjust range
         for(int i=range.start;i<=range.end;i++) {
-            switch(i) {
-                case 0: ins.top = Math.max(ins.top + aVal, 0); break;
-                case 1: ins.right = Math.max(ins.right + aVal, 0); break;
-                case 2: ins.bottom = Math.max(ins.bottom + aVal, 0); break;
-                case 3: ins.left = Math.max(ins.left + aVal, 0); break;
+            switch (i) {
+                case 0 -> ins = ins.withTop(Math.max(ins.top + aVal, 0));
+                case 1 -> ins = ins.withRight(Math.max(ins.right + aVal, 0));
+                case 2 -> ins = ins.withBottom(Math.max(ins.bottom + aVal, 0));
+                case 3 -> ins = ins.withLeft(Math.max(ins.left + aVal, 0));
             }
         }
 

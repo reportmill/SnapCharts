@@ -94,10 +94,10 @@ public class AxisViewY extends AxisView<AxisY> {
         double tickLength = axis.getTickLength();
         double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
         if (tickIndent > 0) {
-            Insets padding = rowLayout.getPadding().clone();
+            Insets padding = rowLayout.getPadding();
             if (axisSide == Side.LEFT)
-                padding.right += tickIndent;
-            else padding.left += tickIndent;
+                padding = padding.withRight(padding.right + tickIndent);
+            else padding = padding.withLeft(padding.left + tickIndent);
             rowLayout.setPadding(padding);
         }
 

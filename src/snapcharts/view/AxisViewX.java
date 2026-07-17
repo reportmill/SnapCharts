@@ -75,10 +75,10 @@ public class AxisViewX<T extends AxisX> extends AxisView<T> {
         double tickLength = axis.getTickLength();
         double tickIndent = tickPos == Axis.TickPos.Outside ? tickLength : tickPos == Axis.TickPos.Across ? tickLength / 2 : 0;
         if (tickIndent > 0) {
-            Insets padding = colLayout.getPadding().clone();
+            Insets padding = colLayout.getPadding();
             if (axisSide == Side.TOP)
-                padding.bottom += tickIndent;
-            else padding.top += tickIndent;
+                padding = padding.withBottom(padding.bottom + tickIndent);
+            else padding = padding.withTop(padding.top + tickIndent);
             colLayout.setPadding(padding);
         }
 

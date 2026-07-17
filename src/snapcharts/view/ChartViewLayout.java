@@ -125,7 +125,7 @@ public class ChartViewLayout {
         topProxy.layoutViewLayout();
 
         // Update insets
-        _contentInsets.top = topHeight;
+        _contentInsets = _contentInsets.withTop(topHeight);
     }
 
     /**
@@ -172,7 +172,7 @@ public class ChartViewLayout {
             proxy.setY(proxy.getY() + bottomY);
 
         // Update insets
-        _contentInsets.bottom = bottomHeight;
+        _contentInsets = _contentInsets.withBottom(bottomHeight);
     }
 
     /**
@@ -214,7 +214,7 @@ public class ChartViewLayout {
         leftProxy.layoutViewLayout();
 
         // Update insets
-        _contentInsets.left = leftWidth;
+        _contentInsets = _contentInsets.withLeft(leftWidth);
     }
 
     /**
@@ -261,7 +261,7 @@ public class ChartViewLayout {
             child.setX(child.getX() + rightX);
 
         // Update insets
-        _contentInsets.right = rightWidth;
+        _contentInsets = _contentInsets.withRight(rightWidth);
     }
 
     /**
@@ -357,14 +357,12 @@ public class ChartViewLayout {
         ViewLayout contour = hasContour ? _contourProxy : null;
 
         // Handle sides
-        switch (aSide)
-        {
-            case TOP: return getNonNullArray(_headerProxy, legend);
-            case BOTTOM: return getNonNullArray(axis1, legend);
-            case LEFT: return getNonNullArray(legend, axis2, axis1);
-            case RIGHT: return getNonNullArray(axis1, axis2, legend, contour);
-            default: throw new RuntimeException("ChartViewLayout.getViewsForSide: Unknown side: " + aSide);
-        }
+        return switch (aSide) {
+            case TOP -> getNonNullArray(_headerProxy, legend);
+            case BOTTOM -> getNonNullArray(axis1, legend);
+            case LEFT -> getNonNullArray(legend, axis2, axis1);
+            case RIGHT -> getNonNullArray(axis1, axis2, legend, contour);
+        };
     }
 
     /**
@@ -407,23 +405,17 @@ public class ChartViewLayout {
         double chartW = _chartProxy.getWidth();
         double chartH = _chartProxy.getHeight();
         Rect bounds = new Rect(0, 0, chartW, chartH);
-        switch (aSide)
-        {
-            case TOP:
-                bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
-                break;
-            case BOTTOM:
+        switch (aSide) {
+            case TOP -> bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
+            case BOTTOM -> {
                 bounds.height = Math.round(MAX_SIDE_RATIO * chartH);
                 bounds.y = chartH - bounds.height;
-                break;
-            case LEFT:
-                bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
-                break;
-            case RIGHT:
+            }
+            case LEFT -> bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
+            case RIGHT -> {
                 bounds.width = Math.round(MAX_SIDE_RATIO * chartW);
                 bounds.x = chartW - bounds.width;
-                break;
-            default: throw new RuntimeException("ChartViewLayout.getBoundsForSide: Unknown side" + aSide);
+            }
         }
 
         return bounds;
@@ -435,23 +427,17 @@ public class ChartViewLayout {
     protected Rect getBoundsForSideFixed(Side aSide)
     {
         Rect bounds = new Rect(0, 0, _chartProxy.getWidth(), _chartProxy.getHeight());
-        switch (aSide)
-        {
-            case TOP:
-                bounds.height = _prefContentBounds.y;
-                break;
-            case BOTTOM:
+        switch (aSide) {
+            case TOP -> bounds.height = _prefContentBounds.y;
+            case BOTTOM -> {
                 bounds.height = bounds.height - _prefContentBounds.getMaxY();
                 bounds.y = _prefContentBounds.getMaxY();
-                break;
-            case LEFT:
-                bounds.width = _prefContentBounds.x;
-                break;
-            case RIGHT:
+            }
+            case LEFT -> bounds.width = _prefContentBounds.x;
+            case RIGHT -> {
                 bounds.width = bounds.width - _prefContentBounds.getMaxX();
                 bounds.x = _prefContentBounds.getMaxX();
-                break;
-            default: throw new RuntimeException("ChartViewLayout.getBoundsForSideFixed: Unknown side: " + aSide);
+            }
         }
         return bounds;
     }
@@ -462,34 +448,15 @@ public class ChartViewLayout {
     private Insets getPaddingForSide(Side aSide)
     {
         // Start with ChartView.Padding
-        Insets padding = _chartView.getPadding().clone();
+        Insets padding = _chartView.getPadding();
 
         // Adjust for side
-        switch (aSide) {
-
-            // Handle TOP
-            case TOP: padding.bottom = 0; break;
-
-            // Handle BOTTOM
-            case BOTTOM: padding.top = 0; break;
-
-            // Handle LEFT
-            case LEFT:
-                padding.top = _contentInsets.top;
-                padding.bottom = _contentInsets.bottom;
-                padding.right = 0;
-                break;
-
-            // Handle RIGHT
-            case RIGHT:
-                padding.top = _contentInsets.top;
-                padding.bottom = _contentInsets.bottom;
-                padding.left = 0;
-                break;
-        }
-
-        // Return padding
-        return padding;
+        return switch (aSide) {
+            case TOP -> padding.withBottom(0);
+            case BOTTOM -> padding.withTop(0);
+            case LEFT -> new Insets(_contentInsets.top, 0, _contentInsets.bottom, padding.left);
+            case RIGHT -> new Insets(_contentInsets.top, padding.right, _contentInsets.bottom, 0);
+        };
     }
 
     /**
