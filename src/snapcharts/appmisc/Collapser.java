@@ -146,7 +146,7 @@ public class Collapser {
         _view.setPrefHeight(h);
 
         // Clip View to bounds? (was TitleView.Content)
-        _view.setClipToBounds(true);
+        _view.setOverflow(View.Overflow.Clip);
 
         // Configure anim to new size
         ViewAnim anim = _view.getAnim(0).clear();
