@@ -565,7 +565,7 @@ public class AxisBoxShape extends ParentShape {
         camera.setOrtho(true);
 
         // Create image
-        Image image = ViewUtils.getImageForScale(cameraView, 1);
+        Image image = ViewUtils.getImageForDpiScale(cameraView, 1);
 
         // Create image/texture and return
         Texture texture = new Texture(image);

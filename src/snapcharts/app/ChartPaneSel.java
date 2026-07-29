@@ -15,7 +15,7 @@ import snapcharts.view.*;
 public class ChartPaneSel {
 
     // The ChartPane
-    private ChartPane  _chartPane;
+    private ChartPane<?>  _chartPane;
 
     // The ChartView
     private ChartView  _chartView;
@@ -53,7 +53,7 @@ public class ChartPaneSel {
     /**
      * Constructor.
      */
-    public ChartPaneSel(ChartPane aChartPane)
+    public ChartPaneSel(ChartPane<?> aChartPane)
     {
         // Set ChartPane
         _chartPane = aChartPane;
@@ -104,10 +104,7 @@ public class ChartPaneSel {
     /**
      * Returns the selected ChartPartView.
      */
-    public ChartPartView getSelView()
-    {
-        return getChartPartViewForPart(_selPart);
-    }
+    public ChartPartView<?> getSelView()  { return getChartPartViewForPart(_selPart); }
 
     /**
      * Pops the selection.
@@ -144,17 +141,14 @@ public class ChartPaneSel {
     /**
      * Returns the targeted ChartPartView.
      */
-    public ChartPartView getTargView()
-    {
-        return getChartPartViewForPart(_targPart);
-    }
+    public ChartPartView<?> getTargView()  { return getChartPartViewForPart(_targPart); }
 
     /**
      * Returns the cursor for the TargView.
      */
     protected Cursor getTargViewCursor()
     {
-        ChartPartView targView = getTargView();
+        ChartPartView<?> targView = getTargView();
         if (targView != null && targView.isMovable())
             return Cursor.MOVE;
         if (targView instanceof ContentView)
@@ -165,7 +159,7 @@ public class ChartPaneSel {
     /**
      * Returns the ChartPartView for given ChartPart.
      */
-    private ChartPartView getChartPartViewForPart(ChartPart aChartPart)
+    private ChartPartView<?> getChartPartViewForPart(ChartPart aChartPart)
     {
         ChartHelper chartHelper = _chartView.getChartHelper();
         return chartHelper.getChartPartViewForPart(aChartPart);
@@ -215,7 +209,7 @@ public class ChartPaneSel {
     private void mouseMoved(ViewEvent anEvent)
     {
         // If event over SelView and resizable, and over handle, set cursor and return
-        ChartPartView selView = getSelView();
+        ChartPartView<?> selView = getSelView();
         if (selView != null && selView.isResizable()) {
             Pos handlePos = getHandlePosForPoint(selView, _chartView, anEvent.getX(), anEvent.getY());
             if (handlePos != null) {
@@ -243,7 +237,7 @@ public class ChartPaneSel {
         _lastMouseEvent = anEvent;
 
         // If event over SelView and resizable, and over handle, set handle and return
-        ChartPartView selView = getSelView();
+        ChartPartView<?> selView = getSelView();
         if (selView != null && selView.isResizable()) {
             Pos handlePos = getHandlePosForPoint(selView, _chartView, anEvent.getX(), anEvent.getY());
             if (handlePos != null) {
@@ -254,7 +248,7 @@ public class ChartPaneSel {
         }
 
         // If Movable, consume event
-        ChartPartView targView = getTargView();
+        ChartPartView<?> targView = getTargView();
         if (targView != null && targView.isMovable())
             anEvent.consume();
     }
@@ -266,14 +260,14 @@ public class ChartPaneSel {
     {
         // If resizing SelView, forward to SelView and return
         if (_resizeHandle != null) {
-            ChartPartView selView = getSelView();
+            ChartPartView<?> selView = getSelView();
             selView.processResizeEvent(anEvent, _lastMouseEvent, _resizeHandle);
             _lastMouseEvent = anEvent;
             anEvent.consume();
         }
 
         // If moving TargView, forward to TargView and return
-        ChartPartView targView = getTargView();
+        ChartPartView<?> targView = getTargView();
         if (targView != null && targView.isMovable()) {
             targView.processMoveEvent(anEvent, _lastMouseEvent);
             _lastMouseEvent = anEvent;
@@ -294,7 +288,7 @@ public class ChartPaneSel {
         }
 
         // If Movable, consume event, ensure targView selected, return
-        ChartPartView targView = getTargView();
+        ChartPartView<?> targView = getTargView();
         if (targView != null && targView.isMovable()) {
             anEvent.consume();
             ChartPart selPart = targView.getChartPart();
@@ -323,7 +317,7 @@ public class ChartPaneSel {
     private ChartPart getChartPartForXY(double aX, double aY)
     {
         // Get the ChartPartView at XY
-        ChartPartView hitView = getChartPartViewForXY(aX, aY);
+        ChartPartView<?> hitView = getChartPartViewForXY(aX, aY);
 
         // Handle ContentView special: If TargDataPoint, return TracePoint.Trace
         if (hitView instanceof ContentView) {
@@ -340,7 +334,7 @@ public class ChartPaneSel {
     /**
      * Returns the ChartPart for given point XY in ChartView coords.
      */
-    private ChartPartView getChartPartViewForXY(double aX, double aY)
+    private ChartPartView<?> getChartPartViewForXY(double aX, double aY)
     {
         // Check Markers first
         MarkerView markerView = getMarkerViewForXY(aX, aY);
@@ -348,13 +342,12 @@ public class ChartPaneSel {
             return markerView;
 
         // Get deepest selectable view for X/Y
-        View view = _chartView.getChildChartPartViewDeepForXY(aX, aY);
+        ChartPartView<?> view = _chartView.getChildChartPartViewDeepForXY(aX, aY);
 
         // Correct for Selecting/Targeting
         //while (view != null && !isSelectableView(view)) view = view.getParent();
 
-        // If as ChartPartView (or null)
-        return view instanceof ChartPartView ? (ChartPartView) view : null;
+        return view;
     }
 
     /**
@@ -415,7 +408,7 @@ public class ChartPaneSel {
         aPntr.clip(clipBounds);
 
         // If SelView set, paint it
-        ChartPartView selView = getSelView();
+        ChartPartView<?> selView = getSelView();
         if (selView != null && selView != _chartView) {
             if (selView.isShowing())
                 paintSelView(aPntr, selView, aHostView);
@@ -435,7 +428,7 @@ public class ChartPaneSel {
     /**
      * Paints the selection.
      */
-    protected void paintSelView(Painter aPntr, ChartPartView selView, View aHostView)
+    protected void paintSelView(Painter aPntr, ChartPartView<?> selView, View aHostView)
     {
         // Get SelView bounds shape in HostView coords
         Rect selViewBounds = selView.getBoundsLocal();
@@ -467,7 +460,7 @@ public class ChartPaneSel {
     /**
      * Paints the selection.
      */
-    protected void paintSelViewHandles(Painter aPntr, ChartPartView selView, View aHostView)
+    protected void paintSelViewHandles(Painter aPntr, ChartPartView<?> selView, View aHostView)
     {
         Rect[] handleRects = getHandleRects(selView, aHostView);
         for (Rect handleRect : handleRects)
@@ -498,7 +491,7 @@ public class ChartPaneSel {
         BoxView boxView = new BoxView(shapeView);
         boxView.setPadding(4, 4, 4, 4);
         boxView.setSizeToPrefSize();
-        Image image = ViewUtils.getImageForScale(boxView, -1);
+        Image image = ViewUtils.getImageForDpiScale(boxView, -1);
         return _handleImage = image;
     }
 
@@ -543,7 +536,7 @@ public class ChartPaneSel {
     /**
      * Returns handle rects for view.
      */
-    private Rect[] getHandleRects(ChartPartView aView, View aHostView)
+    private Rect[] getHandleRects(ChartPartView<?> aView, View aHostView)
     {
         // Get View bounds in HostView coords
         Point viewXY = aView.localToParent(0, 0, aHostView);
@@ -573,7 +566,7 @@ public class ChartPaneSel {
     /**
      * Returns a handle position for given rect.
      */
-    private Pos getHandlePosForPoint(ChartPartView aView, View aHostView, double aX, double aY)
+    private Pos getHandlePosForPoint(ChartPartView<?> aView, View aHostView, double aX, double aY)
     {
         Rect[] handleRects = getHandleRects(aView, aHostView);
         for (int i = 0; i < handleRects.length; i++) {
@@ -596,8 +589,7 @@ public class ChartPaneSel {
             return _selImageBox;
 
         // Get image box for SelView bounds shape
-        ImageBox imgBox = getImageBoxForShapeAndEffect(selViewShapeInHost, SEL_EFFECT, SEL_BORDER);
-        return _selImageBox = imgBox;
+        return _selImageBox = getImageBoxForShapeAndEffect(selViewShapeInHost, SEL_EFFECT, SEL_BORDER);
     }
 
     /**
@@ -611,8 +603,7 @@ public class ChartPaneSel {
             return _targImageBox;
 
         // Get image box for SelView bounds shape
-        ImageBox imgBox = getImageBoxForShapeAndEffect(targViewShapeInHost, TARG_EFFECT, TARG_BORDER);
-        return _targImageBox = imgBox;
+        return _targImageBox = getImageBoxForShapeAndEffect(targViewShapeInHost, TARG_EFFECT, TARG_BORDER);
     }
 
     /**
@@ -621,26 +612,24 @@ public class ChartPaneSel {
     private static ImageBox getImageBoxForShapeAndEffect(Shape aShape, Effect anEffect, Border aBorder)
     {
         // Create ShapeView for given Shape, effect and border
-        Rect bnds = aShape.getBounds();
-        Shape shape = aShape.copyForBounds(0, 0, bnds.width, bnds.height);
+        Shape shape = aShape.copyForBounds(0, 0, aShape.getWidth(), aShape.getHeight());
         ShapeView shapeView = new ShapeView(shape);
         shapeView.setBorder(aBorder);
         shapeView.setFill(aBorder.getColor());
         shapeView.setEffect(anEffect);
 
         // Get image and stamp out inner shadow
-        ImageBox imgBox = ViewUtils.getImageBoxForScale(shapeView, -1);
-        Image img = imgBox.getImage();
+        ImageBox imageBox = ImageBox.getImageBoxForView(shapeView);
+        Image img = imageBox.getImage();
         Painter pntr = img.getPainter();
         pntr.setColor(Color.CLEAR);
-        pntr.translate(-imgBox.getImageBounds().x, -imgBox.getImageBounds().y);
+        pntr.translate(-imageBox.getImageBounds().x, -imageBox.getImageBounds().y);
         pntr.setComposite(Painter.Composite.SRC_IN);
         pntr.clip(shape); // For browser, because browser has slightly different idea of SRC_IN
         pntr.fill(shape);
         pntr.setComposite(Painter.Composite.SRC_OVER);
 
-        // Return image
-        return imgBox;
+        return imageBox;
     }
 
     /**
@@ -676,6 +665,6 @@ public class ChartPaneSel {
         }
 
         // Otherwise kick off another periodic check
-        else ViewUtils.runDelayed(() -> checkScrollStop(), SCROLL_TIMEOUT);
+        else ViewUtils.runDelayed(this::checkScrollStop, SCROLL_TIMEOUT);
     }
 }

@@ -59,7 +59,7 @@ public class DocPaneCopyPaster {
         View view = docItemPane.getItemView();
         if (view!=null) {
             int scale = 1; //ViewUtils.isAltDown() ? 1 : 0;
-            Image image = ViewUtils.getImageForScale(view, scale);
+            Image image = ViewUtils.getImageForDpiScale(view, scale);
             cb.addData(image);
         }
 
